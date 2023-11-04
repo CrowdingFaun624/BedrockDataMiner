@@ -1,0 +1,43 @@
+import errno
+import os
+import sys
+from typing import IO
+
+from pathlib2 import Path
+import validators
+
+PARENT_FOLDER          = Path("./").absolute()
+print(PARENT_FOLDER)
+ASSETS_FOLDER          = Path(PARENT_FOLDER.joinpath("_assets"))
+STORED_VERSIONS_FOLDER = Path(ASSETS_FOLDER.joinpath("stored_versions"))
+STORED_VERSIONS_OBJECTS_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("objects"))
+STORED_VERSIONS_INDEXES_FILE = Path(STORED_VERSIONS_FOLDER.joinpath("indexes.zip"))
+STORED_VERSIONS_INPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("input"))
+STORED_VERSIONS_OUTPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("output"))
+VERSIONS_FILE          = Path(ASSETS_FOLDER.joinpath("versions.json"))
+VERSIONS_FOLDER        = Path(PARENT_FOLDER.joinpath("_versions"))
+
+def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
+    '''Returns True if the path name is valid on this OS.'''
+    ERROR_INVALID_NAME = 123
+    try:
+        if not isinstance(pathname, str) or not pathname:
+            return False
+        _, pathname = os.path.splitdrive(pathname)
+        root_dirname = os.environ.get('HOMEDRIVE', 'C:') \
+            if sys.platform == 'win32' else os.path.sep
+        assert os.path.isdir(root_dirname)
+        root_dirname = root_dirname.rstrip(os.path.sep) + os.path.sep
+        for pathname_part in pathname.split(os.path.sep):
+            try:
+                os.lstat(root_dirname + pathname_part)
+            except OSError as exc:
+                if hasattr(exc, 'winerror'):
+                    if exc.winerror == ERROR_INVALID_NAME:
+                        return False
+                elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
+                    return False
+    except TypeError as exc:
+        return False
+    else:
+        return True

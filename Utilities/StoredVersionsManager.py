@@ -1,0 +1,253 @@
+from itertools import islice
+from typing import IO, Iterable
+from pathlib2 import Path
+
+import hashlib
+import shutil
+import zipfile
+import gzip
+
+import Utilities.FileManager as FileManager
+
+COMPRESSIBLE_FORMATS = [ # WARNING: if you modify this, it will not be able to correctly extract files with these formats.
+    "lang",
+    "json",
+    "so", # code file
+    "dex", # classes.dex
+    "sf", # signature android manifest
+    "mf", # android manifest
+    "fsb",
+    "exe"
+]
+
+ILLEGAL_FORMATS = ["jar"] # just in case a download site is sketchy lol
+
+COMPRESS_SIZE = 65536 # size in bytes that it decides to make the file compressed
+
+def version_exists(version_name:str) -> bool:
+    '''Returns if the given version name is an existing index file.'''
+    return version_name in get_version_list()
+
+def get_version_list() -> list[str]:
+    '''Returns all version names present in `./_assets/stored_versions/indexes.zip`.'''
+    index_path = FileManager.STORED_VERSIONS_INDEXES_FILE
+    index_zip = zipfile.ZipFile(index_path, "r")
+    return [file.filename.replace(".txt", "") for file in index_zip.filelist]
+
+def get_sizes(version_name:str) -> dict[str,int]:
+    '''Returns a dictionary of file names to file sizes.'''
+    index = read_index(version_name)
+    sizes:dict[str,int] = {}
+    for file_name, hash in index.items():
+        path = get_hash_file_path(hash)
+        file_size = path.stat().st_size
+        sizes[file_name] = file_size
+    sizes = reverse_dict(sort_dict_values(sizes))
+    return sizes
+
+def write_index(version_name:str, index:dict[str,tuple[str,bool]]) -> None:
+    '''Writes the given hash index to the indexes archive.'''
+    index_path = FileManager.STORED_VERSIONS_INDEXES_FILE
+    index_zip = zipfile.ZipFile(index_path, "a")
+    index_content = "\n".join("%s %i %s" % (file_properties[0], int(file_properties[1]), file_name) for file_name, file_properties in index.items())
+    index_name = version_name + ".txt"
+    if index_name in (file.filename for file in index_zip.filelist):
+        print("Index \"%s\" already exists!" % version_name)
+    else:
+        index_zip.writestr(index_name, index_content, zipfile.ZIP_DEFLATED)
+
+def read_index(version_name:str) -> dict[str,tuple[str,bool]]:
+    '''Reads the given hash index file from the indexes archive.'''
+    index_path = FileManager.STORED_VERSIONS_INDEXES_FILE
+    index_zip = zipfile.ZipFile(index_path, "r")
+    file_name = version_name + ".txt"
+    if file_name not in (file.filename for file in index_zip.filelist):
+        raise FileNotFoundError("Hash index named \"%s\" does not exist!")
+    index_content = index_zip.read(file_name).decode()
+    index:dict[str,str] = {}
+    for line in index_content.split("\n"):
+        file_hash = line[:40]
+        file_compressed = bool(int(line[41]))
+        file_name = line[43:]
+        index[file_name] = (file_hash, file_compressed)
+    return index
+
+def sort_dict(input_dict:dict) -> dict: # https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
+    '''Returns a sorted copy of a dict by its keys.'''
+    return {k: v for k, v in sorted(input_dict.items(), key=lambda item: item[0])}
+
+def sort_dict_values(input_dict:dict) -> dict: # https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
+    '''Returns a sorted copy of a dict by its values.'''
+    return {k: v for k, v in sorted(input_dict.items(), key=lambda item: item[1])}
+
+def reverse_dict(input_dict:dict) -> dict:
+    '''Reverses the dictionary top-to-bottom-wise.'''
+    return dict(reversed(input_dict.items()))
+
+def extract(name:str, output_path:Path|None=None) -> None:
+    '''Extracts an apk file from the archive into the given file name, or the output folder if not given.'''
+    if output_path is None:
+        output_path = Path(FileManager.STORED_VERSIONS_OUTPUT_FOLDER.joinpath(name + ".apk"))
+    index = read_index(name) # {filename: (hash, compressed)}
+    if output_path.exists(): output_path.unlink()
+    with zipfile.ZipFile(output_path, "w") as zip_file:
+        for file_name, file_properties in index.items():
+            file_hash, file_compressed = file_properties
+            if file_compressed:
+                with open(get_hash_file_path(file_hash), "rb") as f:
+                    zip_file.writestr(file_name, gzip.decompress(f.read()), zipfile.ZIP_DEFLATED)
+            else:
+                zip_file.write(get_hash_file_path(file_hash), file_name, zipfile.ZIP_DEFLATED)
+    assert output_path.exists()
+
+def extract_file(version_name:str, file_name:str, destination:Path, index:dict[str,tuple[str,bool]]|None=None) -> None:
+    if index is None: index = read_index()
+    if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
+    file_hash, file_compressed = index[file_name]
+    if file_compressed:
+        with open(get_hash_file_path(file_hash), "rb") as f, open(destination, "wb") as g:
+            g.write(gzip.decompress(f.read()))
+    else:
+        shutil.copy(get_hash_file_path(file_hash), destination)
+
+def extract_files(version_name:str, files:Iterable[str], destinations:Iterable[Path]) -> None:
+    '''Copies files from the given version to the given destinations.'''
+    index = read_index(version_name)
+    for file, destination in zip(files, destinations):
+        extract_file(version_name, file, destination, index)
+
+def archive_all() -> None:
+    '''Archives the entire contents of the `./_assets/stored_versions/indexes` folder.'''
+    for file in FileManager.STORED_VERSIONS_INPUT_FOLDER.iterdir():
+        file:Path
+        zip_file = open_zip_file(file)
+        hashes = hash_files(zip_file)
+        archive(file, hashes)
+        print("archived \"%s\"." % file.name)
+
+def archive(path:Path, hashes:dict[str,bytes], version_name:str|None=None) -> dict[str,bytes]:
+    '''Places the contents of the zip file into the objects folder, and places an index file into the indexes folder.'''
+    if version_name is None: version_name = path.stem
+    zip_file = open_zip_file(path)
+    index:dict[str,tuple[str,bool]] = {}
+    objects_path = FileManager.STORED_VERSIONS_OBJECTS_FOLDER
+    for zip_info in zip_file.infolist():
+        if zip_info.is_dir():
+            continue
+        name = zip_info.filename
+        if name.split(".")[-1].lower() in ILLEGAL_FORMATS:
+            raise ValueError("Illegal file format detected in \"%s\"!" % (name))
+        completed = False # evil debug code
+        try:
+            file_hash = hashes[name]
+            completed = True # evil debug code
+        finally:
+            if not completed: print("Failed to find hash in \"%s\"!" % version_name)
+        
+        hex_hash = get_hexed_hash(file_hash)
+        zip_info.filename = get_hash_file_path(hex_hash, True) # slightly evil code that makes it not spit thousands of directories everywhere
+        str_hash = get_hexed_hash(file_hash)
+        new_path = get_hash_file_path(hex_hash)
+        do_write = not new_path.exists()
+        if do_write:
+            zip_file.extract(zip_info, objects_path)
+        compressed = name.split(".")[-1].lower() in COMPRESSIBLE_FORMATS and zip_info.file_size > COMPRESS_SIZE
+        if compressed and do_write:
+            with open(new_path, "rb") as f:
+                data = gzip.compress(f.read())
+            with open(new_path, "wb") as f:
+                f.write(data)
+        index[name] = (str_hash, compressed)
+    index = sort_dict(index)
+    write_index(version_name, index)
+    return index
+
+def hash_file(file:IO) -> bytes:
+    '''Takes in an open file object, and returns its hash.'''
+    BUFFER_SIZE = 65536 # 64kb
+    sha1_hash = hashlib.sha1()
+    while True:
+        data = file.read(BUFFER_SIZE)
+        if not data: break
+        sha1_hash.update(data)
+    return sha1_hash.digest()
+
+def hash_files(zip_file:zipfile.ZipFile) -> dict[str,bytes]:
+    '''Takes in a ZipFile object, returns a dictionary of stored file names and their hashes.'''
+    hashes:dict[str,bytes] = {}
+    for file in zip_file.filelist:
+        name = file.filename
+        with zip_file.open(file) as file:
+            hashes[name] = hash_file(file)
+    return hashes
+
+def open_zip_file(path:Path) -> zipfile.ZipFile:
+    '''Returns a ZipFile object in read mode from the given file name.'''
+    if not path.parent == FileManager.STORED_VERSIONS_INPUT_FOLDER: raise ValueError("Path is not within `./_assets/stored_versions`!")
+    # if not path.exists(): raise FileNotFoundError("File \"%s\" does not exist!" % str(path))
+    zip_file = zipfile.ZipFile(path, "r")
+    return zip_file
+
+def get_hexed_hash(hash:bytes) -> str:
+    '''Converts a byte hash into a hex string.'''
+    hex_string = hex(int.from_bytes(hash, "big"))[2:].zfill(40)
+    return hex_string
+
+def get_hash_file_path(str_hash:str, return_string:bool=False) -> Path:
+    '''Converts a byte hash into a Path object.'''
+    first_two = str_hash[:2]
+    if return_string:
+        return str(Path(first_two, str_hash))
+    else:
+        return Path(FileManager.STORED_VERSIONS_OBJECTS_FOLDER.joinpath(first_two, str_hash))
+
+def clear_objects() -> None:
+    '''Clears all files and directories in the `./_assets/stored_versions/objects` directory. Requires user input.'''
+    path = FileManager.STORED_VERSIONS_OBJECTS_FOLDER
+    user_requirement = "I would like to remove all files from \"./_assets/stored_versions/objects\""
+    print("Are you sure you want to remove all contents from `./_assets/stored_versions/objects`? (y/n) ")
+    print("If so, type \"%s\"." % user_requirement)
+    user_input = input()
+    if user_input != user_requirement: raise ValueError("Failed to clear all files.")
+    for file in path.iterdir():
+        file:Path
+        if file.is_dir():
+            shutil.rmtree(file)
+        else:
+            file.unlink()
+    print("Removed all files from `./_assets/stored_versions/objects`.")
+
+def extract_user() -> None:
+    '''Provides a user interface for extraction.'''
+    index_file = zipfile.ZipFile(FileManager.STORED_VERSIONS_INDEXES_FILE)
+    file_list = get_version_list()
+    print("Select a version from the list: %s" % list(file_list))
+    user_input = None
+    while user_input not in file_list:
+        user_input = input()
+    extract(user_input)
+    print("Extracted \"%s\"" % user_input)
+
+def stats_user() -> None:
+    index_file = zipfile.ZipFile(FileManager.STORED_VERSIONS_INDEXES_FILE)
+    file_list = get_version_list()
+    print("Select a version from the list: %s" % list(file_list))
+    user_input = None
+    while user_input not in file_list:
+        user_input = input()
+    sizes = get_sizes(user_input)
+    top_sizes = dict(islice(sizes.items(), 50))
+    print("Top sizes from \"%s\":" % user_input)
+    print("\t" + "".join("\n\t%s: %i" % (file_name, file_size) for file_name, file_size in top_sizes.items()))
+
+def main() -> None:
+    PROGRAMS = {
+        "archive": archive_all,
+        "clear_all": clear_objects,
+        "extract": extract_user,
+        "stats": stats_user,
+    }
+    user_input = None
+    while user_input not in PROGRAMS.keys():
+        user_input = input("Select a StoredVersions program from %s: " % str(PROGRAMS.keys()))
+    PROGRAMS[user_input]()
