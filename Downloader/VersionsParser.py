@@ -1,6 +1,7 @@
 import json
 from typing import Any, Iterable
 
+import Downloader.UrlValidator as UrlValidator
 import Utilities.FileManager as FileManager
 import Utilities.Version as Version
 import Utilities.VersionTags as VersionTags
@@ -22,7 +23,7 @@ def verify_data_types(data:list[dict[str,str|list[str]]]) -> None:
         keys = list(version_dict.keys())
         if set(keys) != set(VALID_KEYS):
             if "id" in version_dict and isinstance(version_dict["id"], str):
-                raise TypeError("Invalid set of keys in version %s of `data`!" % keys["id"])
+                raise TypeError("Invalid set of keys in version %s of `data`!" % version_dict["id"])
             else:
                 raise TypeError("Invalid set of keys in item %i of `data`!" % index)
         version_name = version_dict["id"]
@@ -113,6 +114,7 @@ def verify_ordering(versions:list[Version.Version]) -> None:
             previous_time = child.time
             previous_child = child
 
+
 def parse() -> list[Version.Version]:
     data = read_versions_file()
     verify_data_types(data)
@@ -136,6 +138,7 @@ def parse() -> list[Version.Version]:
 
     assign_parents(versions)
     verify_ordering(versions)
+    UrlValidator.validate_url_data(versions)
     return versions
 
 def main() -> None:
