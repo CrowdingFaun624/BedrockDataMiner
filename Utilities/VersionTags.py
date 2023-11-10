@@ -2,15 +2,16 @@ from typing import Any, Iterable
 
 class VersionTag(str): ...
 
-ALPHA    = VersionTag("alpha")
-BETA     = VersionTag("beta")
-IPA      = VersionTag("ipa")
-MAJOR    = VersionTag("major")
-MINOR    = VersionTag("minor")
-PATCH    = VersionTag("patch")
-REUPLOAD = VersionTag("reupload")
+ALPHA     = VersionTag("alpha")
+BETA      = VersionTag("beta")
+DEVELOPER = VersionTag("developer")
+IPA       = VersionTag("ipa")
+MAJOR     = VersionTag("major")
+MINOR     = VersionTag("minor")
+PATCH     = VersionTag("patch")
+REUPLOAD  = VersionTag("reupload")
 
-tag_list = [ALPHA, BETA, IPA, MAJOR, MINOR, PATCH, REUPLOAD]
+tag_list = [ALPHA, BETA, DEVELOPER, IPA, MAJOR, MINOR, PATCH, REUPLOAD]
 order_tags = [BETA, MAJOR, MINOR, PATCH, REUPLOAD]
 download_tracker_tags = [IPA]
 
