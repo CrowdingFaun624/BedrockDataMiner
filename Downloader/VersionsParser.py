@@ -12,25 +12,44 @@ def read_versions_file() -> Any:
     with open(path, "rt") as f:
         return json.load(f)
     
+def is_valid_keys(keys:Iterable[str], possible_keys:Iterable[str], optional_keys:Iterable[str], strict_ordering:bool) -> bool:
+    '''Checks the validity and order of the keys based off of the possible keys and the optional keys.'''
+    for key in keys:
+        if key not in possible_keys:
+            return False
+    required_keys = [possible_key for possible_key in possible_keys if possible_key not in optional_keys]
+    for required_key in required_keys:
+        if required_key not in keys:
+            return False
+    if not strict_ordering: return True
+    used_keys = [possible_key for possible_key in possible_keys if possible_key in keys]
+    if used_keys == keys: return True
+    else: return False
+
+def is_sorted(data:Iterable[Any]) -> bool:
+    return all(a <= b for a, b in zip(data, data[1:]))
+
 def verify_data_types(data:list[dict[str,str|list[str]]]) -> None:
     '''Raises a TypeError if the structure of `versions.json` is invalid.'''
-    VALID_KEYS = ["id", "download", "parent", "time", "tags"]
+    VALID_KEYS = ["id", "download", "parent", "time", "tags", "wiki_page", "development_categories"]
+    OPTIONAL_KEYS = ["wiki_page", "development_categories"]
     NoneType = type(None)
-    KEY_TYPES = {"id": str, "download": [NoneType, str], "parent": [NoneType, str], "time": [NoneType, str], "tags": list}
+    KEY_TYPES = {"id": str, "download": [NoneType, str], "parent": [NoneType, str], "time": [NoneType, str], "tags": list, "wiki_page": str, "development_categories": list}
     if not isinstance(data, list): raise TypeError("`data` is not a `list`!")
     for index, version_dict in enumerate(data):
         if not isinstance(version_dict, dict): raise TypeError("Item %i of `data` is not a `dict`!" % index)
         keys = list(version_dict.keys())
-        if set(keys) != set(VALID_KEYS):
+        if not is_valid_keys(keys, VALID_KEYS, OPTIONAL_KEYS, False):
             if "id" in version_dict and isinstance(version_dict["id"], str):
                 raise TypeError("Invalid set of keys in version %s of `data`!" % version_dict["id"])
             else:
                 raise TypeError("Invalid set of keys in item %i of `data`!" % index)
         version_name = version_dict["id"]
-        if keys != VALID_KEYS:
+        if not is_valid_keys(keys, VALID_KEYS, OPTIONAL_KEYS, True):
             raise TypeError("Keys \"%s\" are not in order in version %s of `data`!" % (str(keys), version_name))
         
         for key, key_type in KEY_TYPES.items():
+            if key not in keys: continue
             if isinstance(key_type, Iterable):
                 if not any(isinstance(key, key_subtype) for key_subtype in key_type):
                     raise TypeError("Key \"%s\" of version %s of `data` is not any of %s!" % (key, version_name, str(key_type)))
@@ -40,8 +59,14 @@ def verify_data_types(data:list[dict[str,str|list[str]]]) -> None:
         for tag_index, tag in enumerate(version_dict["tags"]):
             if not isinstance(tag, str):
                 raise TypeError("Tag %i of version %s of `data` is not a str!" % (tag_index, version_name))
-        if not all(a <= b for a, b in zip(version_dict["tags"], version_dict["tags"][1:])): # if the tags aren't sorted
+        if not is_sorted(version_dict["tags"]):
             raise TypeError("Tags in version \"%s\" of `data` is not sorted!" % version_name)
+        if "development_categories" in version_dict:
+            for development_category_index, development_category in enumerate(version_dict["development_categories"]):
+                if not isinstance(development_category, str):
+                    raise TypeError("Development categorie %i of version %s of `data` is not a str!" % (development_category_index, version_name))
+            if not is_sorted(version_dict["development_categories"]):
+                raise TypeError("Development categories in version \"%s\" of `data` is not sorted!" % version_name)
 
 def assign_parents(versions:list[Version.Version]) -> None:
     '''Calls `assign_parent` on all versions, giving them a link to another version.'''
@@ -114,6 +139,10 @@ def verify_ordering(versions:list[Version.Version]) -> None:
             previous_time = child.time
             previous_child = child
 
+def assign_wiki_pages(versions:list[Version.Version]) -> None:
+    '''Calls `assign_wiki_page` on all versions.'''
+    for version in versions:
+        version.assign_wiki_page()
 
 def parse() -> list[Version.Version]:
     data = read_versions_file()
@@ -127,7 +156,9 @@ def parse() -> list[Version.Version]:
         parent:str|None = version_dict["parent"]
         time:str|None = version_dict["time"]
         tags:list[str] = version_dict["tags"]
-        versions.append(Version.Version(id, download, parent, time, tags, index))
+        wiki_page:str|None = version_dict["wiki_page"] if "wiki_page" in version_dict else None
+        development_categories:list[str]|None = version_dict["development_categories"] if "development_categories" in version_dict else None
+        versions.append(Version.Version(id, download, parent, time, tags, index, wiki_page, development_categories))
 
         if id in already_names:
             raise KeyError("Version named \"%s\" already exists!" % id)
@@ -138,6 +169,7 @@ def parse() -> list[Version.Version]:
 
     assign_parents(versions)
     verify_ordering(versions)
+    assign_wiki_pages(versions)
     UrlValidator.validate_url_data(versions)
     return versions
 

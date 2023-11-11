@@ -11,13 +11,15 @@ DOWNLOAD_URL = "url"
 DOWNLOAD_FILE = "file"
 
 class Version():
-    def __init__(self, name:str, download_link:str|None, parent_str:str|None, time_str:str|None, tags_str:list[VersionTags.VersionTag], index:int) -> None:
+    def __init__(self, name:str, download_link:str|None, parent_str:str|None, time_str:str|None, tags_str:list[VersionTags.VersionTag], index:int, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
         self.name = name
         self.download_link = download_link
         self.parent_str = parent_str
         self.time_str = time_str
         self.tags_str = tags_str
         self.index = index
+        self.wiki_page = wiki_page
+        self.development_category_names = development_categories
 
         # attributes set in this __init__ function.
         self.download_method:str = None
@@ -29,12 +31,56 @@ class Version():
         self.siblings:list[Version]|None = None
         self.parent:"Version"|None = None
         self.time:datetime.date|None = None
+        self.ordering_tag:str = None
 
         self.validate_name()
         self.validate_download_link()
         self.validate_parent()
         self.validate_time()
         self.validate_tags()
+
+    def assign_wiki_page(self) -> None:
+        '''Sets this Version's `wiki_page` attribute.'''
+        if self.time is not None:
+            time = self.time
+        elif any(child.ordering_tag is VersionTags.REUPLOAD for child in self.children if child.time is not None):
+            time = [child.time for child in self.children if child.ordering_tag is VersionTags.REUPLOAD and child.time is not None][0]
+        elif any(child.ordering_tag is VersionTags.BETA for child in self.children if child.time is not None):
+            time = [child.time for child in self.children if child.ordering_tag is VersionTags.BETA and child.time is not None][-1]
+        elif any(child.ordering_tag is VersionTags.PATCH for child in self.children if child.time is not None):
+            time = [child.time for child in self.children if child.ordering_tag is VersionTags.PATCH and child.time is not None][0]
+        elif any(child.ordering_tag is VersionTags.MINOR for child in self.children if child.time is not None):
+            time = [child.time for child in self.children if child.ordering_tag is VersionTags.MINOR and child.time is not None][0]
+        elif self.parent is not None and self.parent.time is not None:
+            time = self.parent.time
+        else: raise RuntimeError("Unable to find time or related time of \"%s\"!" % self.name)
+        alpha = ""
+        if time >= datetime.date(2017, 7, 31):
+            edition = "Bedrock Edition"
+            alpha_positioned_before = True
+            if self.ordering_tag is VersionTags.BETA:
+                alpha = " beta"
+            development_category_suffix = " betas"
+        else:
+            edition = "Pocket Edition"
+            alpha_positioned_before = time >= datetime.date(2016, 11, 11)
+            if VersionTags.ALPHA in self.tags or self.ordering_tag is VersionTags.BETA:
+                alpha = " alpha"
+            elif self.ordering_tag is VersionTags.BETA:
+                alpha = " beta"
+            development_category_suffix = " builds"
+            
+        if "_build" in self.name:
+            build = " build " + self.name.split("_build")[1]
+        else: build = ""
+        trimmed_name = "".join(char for char in self.name.split("_")[0].split("-")[0] if char in "0123456789.")
+        if alpha_positioned_before:
+            page_name = edition + alpha + " " + trimmed_name + build
+        else:
+            page_name = edition + " v" + trimmed_name + alpha + build
+        if self.wiki_page is None: self.wiki_page = page_name
+        development_category_name = "Category:" + self.wiki_page + development_category_suffix
+        if self.development_category_names is None: self.development_category_names = [development_category_name]
 
     def validate_version_name(self, name:str) -> None:
         '''Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''

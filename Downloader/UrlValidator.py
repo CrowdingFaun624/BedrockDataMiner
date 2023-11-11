@@ -16,7 +16,7 @@ def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version],list[s
         if "/" not in stripped_url:
             return ["%s stripped url \"%s\" does not have a \"/\"!" % (matcher_name, stripped_url)]
         if (slash_count := stripped_url.count("/")) > 1:
-            return ["%s stripped url \"%s\" has too many \"/\" (count %i)!" (matcher_name, stripped_url, slash_count)]
+            return ["%s stripped url \"%s\" has too many \"/\" (count %i)!" % (matcher_name, stripped_url, slash_count)]
         date_string, id_string = stripped_url.split("/")
 
         try:

@@ -6,10 +6,12 @@ if __name__ == "__main__":
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
 import Downloader.VersionsParser as VersionParser
+import Downloader.WikiValidator as WikiValidator
 
 PROGRAM_NAMES = {
     "StoredVersions": StoredVersionsManager.main,
     "VersionParser": VersionParser.main,
+    "WikiValidator": WikiValidator.main
 }
 
 if __name__ == "__main__":
