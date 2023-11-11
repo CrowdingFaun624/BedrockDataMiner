@@ -189,6 +189,57 @@ def parse_client_downloads(client_dl_string:str, version:Version.Version) -> lis
             warning_messages.append("Link \"%s\" on \"%s\" is not in the page's links!" % (version.download_link, version.wiki_page))
     return warning_messages
 
+def parse_main_list(versions:list[Version.Version], rememberer:dict[str,str]) -> list[str]:
+    '''Compares Category:Bedrock Edition versions to the version list. Returns a list of warning messages.'''
+    try:
+        warning_messages:list[str] = []
+        EXCEPTIONS = [
+            "Bedrock Edition version history",
+            "Bedrock Edition version history/Development versions",
+            "Bedrock Edition 1.0.0", # redirect
+            "Bedrock Edition 1.1.0", # redirect
+            "Bedrock Edition 1.1.5", # redirect
+            "Bedrock Edition 1.1.7", # redirect
+            "Category:Pocket Edition versions",
+            "Category:Bedrock Edition development versions by year",
+            "Category:Bedrock Edition development versions by version",
+            "Pocket Edition 1.10.0", # redirect
+            "Pocket Edition 1.11.0", # redirect
+            "Pocket Edition 1.12.0", # redirect
+            "Pocket Edition 1.13.0", # redirect
+            "Pocket Edition 1.14.0", # redirect
+            "Pocket Edition 1.15.0", # redirect
+            "Pocket Edition 1.16.0", # redirect
+            "Pocket Edition 1.17.0", # redirect
+            "Pocket Edition 1.2.0", # redirect
+            "Pocket Edition 1.3.0", # redirect
+            "Pocket Edition 1.4.0", # redirect
+            "Pocket Edition 1.5.0", # redirect
+            "Pocket Edition 1.6.0", # redirect
+            "Pocket Edition 1.7.0", # redirect
+            "Pocket Edition 1.8.0", # redirect
+            "Pocket Edition 1.9.0", # redirect
+            "Category:Pocket Edition development versions by version",
+            "Category:Pocket Edition development versions by year",
+        ]
+        page_names = ["Category:Bedrock_Edition_versions", "Category:Pocket Edition versions"]
+        wiki_versions:list[str] = []
+        for page_name in page_names:
+            page = mwapi.page(page_name, auto_suggest=False)
+            wiki_versions.extend(get_category_members(page))
+        for exception in EXCEPTIONS:
+            if exception in wiki_versions: wiki_versions.remove(exception)
+        my_versions = [version.wiki_page for version in versions]
+        for my_version in my_versions:
+            if my_version not in wiki_versions:
+                warning_messages.append("My page \"%s\" does not exist on the wiki!" % (my_version))
+        for wiki_version in wiki_versions:
+            if wiki_version not in my_versions:
+                warning_messages.append("Wiki page \"%s\" does not exist in the versions file!" % (wiki_version))
+        rememberer["main"] = warning_messages
+    except Exception as e:
+        rememberer["main"] = e
+
 def validate(version:Version.Version, rememberer:dict[str,Any]) -> None:
     '''Prints a message if the wiki page of the version does not agree with the Version object.'''
     try:
@@ -224,11 +275,11 @@ def main() -> None:
     thread_statuses:dict[str,Any] = {}
     THREAD_LIMIT = 1
     SLEEP_TIME = 1.25
+
+    thread_statuses["main"] = None
+    new_thread = threading.Thread(target=parse_main_list, args=[versions, thread_statuses])
+    new_thread.start()
     for version in versions_to_scan:
-        print("Scanning \"%s\"..." % version.name)
-        thread_statuses[version.name] = None
-        new_thread = threading.Thread(target=validate, args=[version, thread_statuses])
-        new_thread.start()
         while len(thread_statuses) >= THREAD_LIMIT:
             time.sleep(SLEEP_TIME)
             for thread_name, thread_status in list(thread_statuses.items()):
@@ -240,4 +291,8 @@ def main() -> None:
                     if len(thread_status) > 0:
                         with open(FileManager.WIKI_VALIDATOR_WARNINGS_FILE, "at") as f:
                             f.write("\n" + "\n".join(sorted(list(set(thread_status)))))
+        print("Scanning \"%s\"..." % version.name)
+        thread_statuses[version.name] = None
+        new_thread = threading.Thread(target=validate, args=[version, thread_statuses])
+        new_thread.start()
     
