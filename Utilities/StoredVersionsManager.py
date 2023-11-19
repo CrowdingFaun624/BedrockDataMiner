@@ -1,6 +1,7 @@
 from itertools import islice
 from typing import IO, Iterable
 from pathlib2 import Path
+import uuid
 
 import hashlib
 import shutil
@@ -84,11 +85,11 @@ def reverse_dict(input_dict:dict) -> dict:
     '''Reverses the dictionary top-to-bottom-wise.'''
     return dict(reversed(input_dict.items()))
 
-def extract(name:str, output_path:Path|None=None) -> None:
+def extract(name:str, output_path:Path|None=None, index:dict[str,tuple[str,bool]]|None=None) -> None:
     '''Extracts an apk file from the archive into the given file name, or the output folder if not given.'''
     if output_path is None:
         output_path = Path(FileManager.STORED_VERSIONS_OUTPUT_FOLDER.joinpath(name + ".apk"))
-    index = read_index(name) # {filename: (hash, compressed)}
+    if index is None: index = read_index(name) # {filename: (hash, compressed)}
     if output_path.exists(): output_path.unlink()
     with zipfile.ZipFile(output_path, "w") as zip_file:
         for file_name, file_properties in index.items():
@@ -109,6 +110,30 @@ def extract_file(version_name:str, file_name:str, destination:Path, index:dict[s
             g.write(gzip.decompress(f.read()))
     else:
         shutil.copy(get_hash_file_path(file_hash), destination)
+
+def read_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tuple[str,bool]]|None=None) -> bytes|str:
+    if index is None: index = read_index()
+    if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
+    file_hash, file_compressed = index[file_name]
+    with open(get_hash_file_path(file_hash), "rb") as f:
+        if file_compressed: data = gzip.decompress(f.read())
+        else: data = f.read()
+        if mode == "t":
+            return data.decode("utf-8")
+        else:
+            return data
+
+def get_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tuple[str,bool]]|None=None) -> bytes|str:
+    '''Returns a file handle of the object.'''
+    if index is None: index = read_index()
+    if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
+    file_hash, file_compressed = index[file_name]
+    if file_compressed:
+        temp_path = Path(FileManager.TEMP_FOLDER.joinpath(str(uuid.uuid4())))
+        extract_file(version_name, file_name, temp_path, index)
+        return open(temp_path, "r" + mode)
+    else:
+        return open(get_hash_file_path(file_hash), "r" + mode)
 
 def extract_files(version_name:str, files:Iterable[str], destinations:Iterable[Path]) -> None:
     '''Copies files from the given version to the given destinations.'''
@@ -219,7 +244,6 @@ def clear_objects() -> None:
 
 def extract_user() -> None:
     '''Provides a user interface for extraction.'''
-    index_file = zipfile.ZipFile(FileManager.STORED_VERSIONS_INDEXES_FILE)
     file_list = get_version_list()
     print("Select a version from the list: %s" % list(file_list))
     user_input = None
@@ -229,7 +253,6 @@ def extract_user() -> None:
     print("Extracted \"%s\"" % user_input)
 
 def stats_user() -> None:
-    index_file = zipfile.ZipFile(FileManager.STORED_VERSIONS_INDEXES_FILE)
     file_list = get_version_list()
     print("Select a version from the list: %s" % list(file_list))
     user_input = None

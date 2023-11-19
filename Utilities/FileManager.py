@@ -1,10 +1,9 @@
 import errno
 import os
+import shutil
 import sys
-from typing import IO
 
 from pathlib2 import Path
-import validators
 
 PARENT_FOLDER          = Path("./").absolute()
 print(PARENT_FOLDER)
@@ -17,6 +16,7 @@ STORED_VERSIONS_OUTPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("output"))
 VERSIONS_FILE          = Path(ASSETS_FOLDER.joinpath("versions.json"))
 VERSION_PARSER_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("version_parser_warnings.txt"))
 WIKI_VALIDATOR_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("wiki_validator_warnings.txt"))
+TEMP_FOLDER            = Path(PARENT_FOLDER.joinpath("_temp"))
 VERSIONS_FOLDER        = Path(PARENT_FOLDER.joinpath("_versions"))
 
 def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
@@ -43,3 +43,13 @@ def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questio
         return False
     else:
         return True
+
+def clear_temp() -> None:
+    for file in TEMP_FOLDER.iterdir():
+        file:Path
+        if file.is_file():
+            file.unlink()
+        else:
+            shutil.rmtree(file)
+
+clear_temp()

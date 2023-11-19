@@ -5,10 +5,13 @@ class VersionTag(str): ...
 ALPHA      = VersionTag("alpha")
 BETA       = VersionTag("beta")
 DEVELOPER  = VersionTag("developer")
+DOUBLE_ASSETS = VersionTag("double-assets") # assigned by VersionParser
 IPA        = VersionTag("ipa")
 MAJOR      = VersionTag("major")
 MINOR      = VersionTag("minor")
 PATCH      = VersionTag("patch")
+POCKET_EDITION = VersionTag("pocket-edition") # assigned by VersionParser
+POCKET_EDITION_ALPHA_BEFORE = VersionTag("pocket-edition-alpha-before") # assigned by VersionParser
 REUPLOAD   = VersionTag("reupload")
 UNRELEASED = VersionTag("unreleased")
 

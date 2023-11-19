@@ -9,6 +9,7 @@ import Utilities.VersionTags as VersionTags
 DOWNLOAD_NONE = None
 DOWNLOAD_URL = "url"
 DOWNLOAD_FILE = "file"
+DOWNLOAD_LOCAL = "local"
 
 class Version():
     def __init__(self, name:str, download_link:str|None, parent_str:str|None, time_str:str|None, tags_str:list[VersionTags.VersionTag], index:int, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
@@ -41,21 +42,21 @@ class Version():
 
     def assign_wiki_page(self) -> None:
         '''Sets this Version's `wiki_page` attribute.'''
-        if self.time is not None:
-            time = self.time
-        elif any(child.ordering_tag is VersionTags.REUPLOAD for child in self.children if child.time is not None):
-            time = [child.time for child in self.children if child.ordering_tag is VersionTags.REUPLOAD and child.time is not None][0]
-        elif any(child.ordering_tag is VersionTags.BETA for child in self.children if child.time is not None):
-            time = [child.time for child in self.children if child.ordering_tag is VersionTags.BETA and child.time is not None][-1]
-        elif any(child.ordering_tag is VersionTags.PATCH for child in self.children if child.time is not None):
-            time = [child.time for child in self.children if child.ordering_tag is VersionTags.PATCH and child.time is not None][0]
-        elif any(child.ordering_tag is VersionTags.MINOR for child in self.children if child.time is not None):
-            time = [child.time for child in self.children if child.ordering_tag is VersionTags.MINOR and child.time is not None][0]
-        elif self.parent is not None and self.parent.time is not None:
-            time = self.parent.time
-        else: raise RuntimeError("Unable to find time or related time of \"%s\"!" % self.name)
+        # if self.time is not None:
+        #     time = self.time
+        # elif any(child.ordering_tag is VersionTags.REUPLOAD for child in self.children if child.time is not None):
+        #     time = [child.time for child in self.children if child.ordering_tag is VersionTags.REUPLOAD and child.time is not None][0]
+        # elif any(child.ordering_tag is VersionTags.BETA for child in self.children if child.time is not None):
+        #     time = [child.time for child in self.children if child.ordering_tag is VersionTags.BETA and child.time is not None][-1]
+        # elif any(child.ordering_tag is VersionTags.PATCH for child in self.children if child.time is not None):
+        #     time = [child.time for child in self.children if child.ordering_tag is VersionTags.PATCH and child.time is not None][0]
+        # elif any(child.ordering_tag is VersionTags.MINOR for child in self.children if child.time is not None):
+        #     time = [child.time for child in self.children if child.ordering_tag is VersionTags.MINOR and child.time is not None][0]
+        # elif self.parent is not None and self.parent.time is not None:
+        #     time = self.parent.time
+        # else: raise RuntimeError("Unable to find time or related time of \"%s\"!" % self.name)
         alpha = ""
-        if time >= datetime.date(2017, 7, 31):
+        if VersionTags.POCKET_EDITION not in self.tags:
             edition = "Bedrock Edition"
             alpha_positioned_before = True
             if self.ordering_tag is VersionTags.BETA:
@@ -63,7 +64,7 @@ class Version():
             development_category_suffix = " betas"
         else:
             edition = "Pocket Edition"
-            alpha_positioned_before = time >= datetime.date(2016, 11, 11)
+            alpha_positioned_before = VersionTags.POCKET_EDITION_ALPHA_BEFORE in self.tags
             if VersionTags.ALPHA in self.tags or self.ordering_tag is VersionTags.BETA:
                 alpha = " alpha"
             elif self.ordering_tag is VersionTags.BETA:
@@ -81,6 +82,13 @@ class Version():
         if self.wiki_page is None: self.wiki_page = page_name
         development_category_name = "Category:" + self.wiki_page + development_category_suffix
         if self.development_category_names is None: self.development_category_names = [development_category_name]
+    
+    def add_tag(self, tag:VersionTags.VersionTag) -> None:
+        '''Adds a tag to the Version.'''
+        if not isinstance(tag, VersionTags.VersionTag):
+            raise TypeError("Attempted to add a non-VersionTag object to \"%s\"'s tags!" % (self.name))
+        if tag not in self.tags:
+            self.tags.append(tag)
 
     def validate_version_name(self, name:str) -> None:
         '''Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''
@@ -105,6 +113,8 @@ class Version():
             self.download_method = DOWNLOAD_URL
         elif self.download_link.startswith("/") and StoredVersionsManager.version_exists(self.download_link[1:]):
             self.download_method = DOWNLOAD_FILE
+        elif self.download_link in ("release_local", "beta_local"):
+            self.download_method = DOWNLOAD_LOCAL
         else:
             raise ValueError("Download link \"%s\" is not valid!" % self.download_link)
 
@@ -157,7 +167,19 @@ class Version():
     def __hash__(self) -> int:
         return hash((self.index, self.name, self.download_link, self.parent_str, self.time_str))
     
-    def __lt__(self, other:"Version") -> bool: return self.index < other.index
-    def __gt__(self, other:"Version") -> bool: return self.index > other.index
-    def __le__(self, other:"Version") -> bool: return self.index <= other.index
-    def __ge__(self, other:"Version") -> bool: return self.index >= other.index
+    def __lt__(self, other:"Version") -> bool:
+        if not isinstance(other, Version):
+            raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
+        return self.index < other.index
+    def __gt__(self, other:"Version") -> bool:
+        if not isinstance(other, Version):
+            raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
+        return self.index > other.index
+    def __le__(self, other:"Version") -> bool:
+        if not isinstance(other, Version):
+            raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
+        return self.index <= other.index
+    def __ge__(self, other:"Version") -> bool:
+        if not isinstance(other, Version):
+            raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
+        return self.index >= other.index

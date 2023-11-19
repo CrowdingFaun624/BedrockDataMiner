@@ -4,6 +4,7 @@ from typing import Any, Iterable
 import Downloader.UrlValidator as UrlValidator
 import Utilities.FileManager as FileManager
 import Utilities.Version as Version
+import Utilities.VersionRange as VersionRange
 import Utilities.VersionTags as VersionTags
 
 def read_versions_file() -> Any:
@@ -144,6 +145,20 @@ def assign_wiki_pages(versions:list[Version.Version]) -> None:
     for version in versions:
         version.assign_wiki_page()
 
+def assign_additional_tags(versions:list[Version.Version]) -> None:
+    '''Assigns tags that are assigned by the VersionParser'''
+    version_dict = {version.name: version for version in versions}
+    double_assets_range = VersionRange.VersionRange(version_dict["1.20.50.22"], "-")
+    pocket_edition_ranges = VersionRange.VersionRange("-", version_dict["1.1.7"])
+    pocket_edition_alpha_before = VersionRange.VersionRange(version_dict["a0.17.0.1"], version_dict["1.1.7"])
+    for version in versions:
+        if version in double_assets_range and VersionTags.IPA not in version.tags:
+            version.add_tag(VersionTags.DOUBLE_ASSETS)
+        if version in pocket_edition_ranges:
+            version.add_tag(VersionTags.POCKET_EDITION)
+        if version in pocket_edition_alpha_before:
+            version.add_tag(VersionTags.POCKET_EDITION_ALPHA_BEFORE)
+
 def parse() -> list[Version.Version]:
     data = read_versions_file()
     verify_data_types(data)
@@ -169,6 +184,7 @@ def parse() -> list[Version.Version]:
 
     assign_parents(versions)
     verify_ordering(versions)
+    assign_additional_tags(versions)
     assign_wiki_pages(versions)
     UrlValidator.validate_url_data(versions)
     return versions
