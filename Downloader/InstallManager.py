@@ -35,7 +35,7 @@ class InstallManager():
         raise NotImplementedError("`install` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
     def read(self, file_name:str, mode:str="b") -> bytes|str:
-        '''Returns the contents of the given file name form the Version'''
+        '''Returns the contents of the given file name from the Version'''
         raise NotImplementedError("`read` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
     
     def get_file(self, file_name:str, mode:str="b") -> IO:
