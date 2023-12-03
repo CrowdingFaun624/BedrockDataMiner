@@ -19,6 +19,21 @@ WIKI_VALIDATOR_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("wiki_validator_warni
 TEMP_FOLDER            = Path(PARENT_FOLDER.joinpath("_temp"))
 VERSIONS_FOLDER        = Path(PARENT_FOLDER.joinpath("_versions"))
 
+def get_version_path(version_name:str) -> Path:
+    version_path = Path(VERSIONS_FOLDER.joinpath(version_name))
+    if VERSIONS_FOLDER not in version_path.parents:
+        raise FileNotFoundError("Version \"%s\"'s folder can not be created due to illegal characters!" % version_name)
+    return version_path
+
+def get_version_install_path(version_folder:Path) -> Path:
+    return Path(version_folder.joinpath("client"))
+
+def get_version_data_path(version_folder:Path, file_name:str) -> Path:
+    data_path = Path(version_folder.joinpath("/data/%s" % file_name))
+    if version_folder not in data_path.parents:
+        raise FileNotFoundError("Data file \"%s\" has an invalid name!" % file_name)
+    return data_path
+
 def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
     '''Returns True if the path name is valid on this OS.'''
     ERROR_INVALID_NAME = 123

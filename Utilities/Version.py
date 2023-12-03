@@ -1,10 +1,14 @@
 import datetime
 from pathlib2 import Path
+from typing import TYPE_CHECKING
 import validators
 
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
 import Utilities.VersionTags as VersionTags
+
+if TYPE_CHECKING:
+    import Downloader.InstallManager as InstallManager
 
 DOWNLOAD_NONE = None
 DOWNLOAD_URL = "url"
@@ -33,6 +37,7 @@ class Version():
         self.parent:"Version"|None = None
         self.time:datetime.date|None = None
         self.ordering_tag:str = None
+        self.install_manager:InstallManager.InstallManager|None = None
 
         self.validate_name()
         self.validate_download_link()
@@ -42,19 +47,6 @@ class Version():
 
     def assign_wiki_page(self) -> None:
         '''Sets this Version's `wiki_page` attribute.'''
-        # if self.time is not None:
-        #     time = self.time
-        # elif any(child.ordering_tag is VersionTags.REUPLOAD for child in self.children if child.time is not None):
-        #     time = [child.time for child in self.children if child.ordering_tag is VersionTags.REUPLOAD and child.time is not None][0]
-        # elif any(child.ordering_tag is VersionTags.BETA for child in self.children if child.time is not None):
-        #     time = [child.time for child in self.children if child.ordering_tag is VersionTags.BETA and child.time is not None][-1]
-        # elif any(child.ordering_tag is VersionTags.PATCH for child in self.children if child.time is not None):
-        #     time = [child.time for child in self.children if child.ordering_tag is VersionTags.PATCH and child.time is not None][0]
-        # elif any(child.ordering_tag is VersionTags.MINOR for child in self.children if child.time is not None):
-        #     time = [child.time for child in self.children if child.ordering_tag is VersionTags.MINOR and child.time is not None][0]
-        # elif self.parent is not None and self.parent.time is not None:
-        #     time = self.parent.time
-        # else: raise RuntimeError("Unable to find time or related time of \"%s\"!" % self.name)
         alpha = ""
         if VersionTags.POCKET_EDITION not in self.tags:
             edition = "Bedrock Edition"
@@ -99,8 +91,9 @@ class Version():
     def validate_name(self) -> None:
         '''Sets this Version's `version_folder` attribute based off of the value of `name`. Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''
         if not isinstance(self.name, str): raise TypeError("`name` is not a `str`!")
-        self.version_folder = Path(FileManager.VERSIONS_FOLDER.joinpath(self.name))
+        self.version_folder = FileManager.get_version_path(self.name)
         self.validate_version_name(self.name)
+        self.version_folder.mkdir(exist_ok=True)
 
     def validate_download_link(self) -> None:
         '''Sets this Version's `download_method` attribute based off of the value of `download_link`.

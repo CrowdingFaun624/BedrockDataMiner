@@ -1,5 +1,5 @@
 import os
-from typing import IO
+from typing import IO, Iterable
 from pathlib2 import Path
 
 import Downloader.InstallManager as InstallManager
@@ -33,8 +33,22 @@ class LocalManager(InstallManager.InstallManager):
     def install_all(self, destination:Path|None=None) -> None:
         pass # There is no need to do anything. All of the files are already there.
 
-    def install(self, destination:Path|None=None) -> None:
-        pass # There is no need to do anything. All of the files are already there.
+    def install(self, file_name:str, destination:Path|None=None) -> Path:
+        # There is no need to do anything else. All of the files are already there.
+        return Path(self.bedrock_local.joinpath(self.get_full_file_name(file_name)))
+
+    def get_file_list(self, path:Path|None) -> Iterable[str]:
+        if path is None:
+            strip_string = str(self.bedrock_local) + self.get_full_file_name("")
+            return [path.replace(strip_string, "") for path in self.get_file_list(self.bedrock_local)]
+        output:list[Path] = []
+        for subpath in path.iterdir():
+            subpath:Path
+            if subpath.is_file():
+                output.append(subpath)
+            elif subpath.is_dir():
+                output.extend(self.get_file_list(subpath))
+        return output
 
     def read(self, file_name:str, mode:str="b") -> bytes|str:
 

@@ -63,7 +63,7 @@ def read_index(version_name:str) -> dict[str,tuple[str,bool]]:
     index_zip = zipfile.ZipFile(index_path, "r")
     file_name = version_name + ".txt"
     if file_name not in (file.filename for file in index_zip.filelist):
-        raise FileNotFoundError("Hash index named \"%s\" does not exist!")
+        raise FileNotFoundError("Hash index named \"%s\" does not exist!" % file_name)
     index_content = index_zip.read(file_name).decode()
     index:dict[str,str] = {}
     for line in index_content.split("\n"):
@@ -105,6 +105,10 @@ def extract_file(version_name:str, file_name:str, destination:Path, index:dict[s
     if index is None: index = read_index()
     if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
     file_hash, file_compressed = index[file_name]
+    for parent in reversed(destination.parents):
+        parent:Path
+        parent.mkdir(exist_ok=True)
+        assert parent.exists()
     if file_compressed:
         with open(get_hash_file_path(file_hash), "rb") as f, open(destination, "wb") as g:
             g.write(gzip.decompress(f.read()))

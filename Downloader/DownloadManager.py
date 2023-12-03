@@ -1,6 +1,5 @@
-from typing import IO
+from typing import IO, Iterable, TYPE_CHECKING
 from pathlib2 import Path
-from os import sep
 import requests
 import time
 from urllib.parse import urlparse
@@ -9,8 +8,10 @@ import uuid
 
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
-import Utilities.Version as Version
 import Utilities.VersionTags as VersionTags
+
+if TYPE_CHECKING:
+    import Utilities.Version as Version
 
 CONNECTION_LIMITS:dict[str,int] = {}
 CONNECTION_LIMITS_DEFAULT = 1
@@ -22,10 +23,9 @@ class DownloadManager(InstallManager.InstallManager):
         self.apk_location = Path(str(self.location) + ".zip")
         self.url = None
         self.installed = False
+        self.installing = False
         self.zip_file = None
 
-        if not self.version.download_method is Version.DOWNLOAD_URL:
-            raise ValueError("Version \"%s\" is using a DownloadManager while having a \"%s\" download type!" % (self.version.name, self.version.download_method))
         self.url = self.version.download_link
         self.domain = urlparse(self.url).netloc
         if self.domain not in self.current_open_connections:
@@ -66,8 +66,15 @@ class DownloadManager(InstallManager.InstallManager):
             member.filename = destination.name
             self.zip_file.extract(file_name, destination.parents[0])
             member.filename = name_carry
+            return destination
         else:
             self.zip_file.extract(file_name, self.location)
+            return Path(self.location.joinpath(file_name))
+
+    def get_file_list(self) -> Iterable[str]:
+        if not self.installed:
+            self.install_all()
+        return [file.filename for file in self.zip_file.filelist]
 
     def read(self, file_name:str, mode:str="b") -> bytes|str:
 
@@ -115,14 +122,19 @@ class DownloadManager(InstallManager.InstallManager):
             raise TypeError("Parameter `destination` is not a `Path`!")
 
         if destination is None: destination = self.apk_location
-        if not self.apk_location.exists():
-            with open(destination, "wb") as f:
-                while self.current_open_connections[self.domain] >= self.connection_limit:
-                    time.sleep(0.1)
-                self.current_open_connections[self.domain] += 1
-                f.write(requests.get(self.url).content)
-                self.current_open_connections[self.domain] -= 1
-            self.installed = True
-        print("Set zip file")
-        self.zip_file = zipfile.ZipFile(self.apk_location)
-        self.members = {member.filename: member for member in self.zip_file.filelist}
+        if not self.apk_location.exists() and not self.installing:
+            self.installing = True
+            try:
+                with open(destination, "wb") as f:
+                    while self.current_open_connections[self.domain] >= self.connection_limit:
+                        time.sleep(0.1)
+                    self.current_open_connections[self.domain] += 1
+                    f.write(requests.get(self.url).content)
+                    self.current_open_connections[self.domain] -= 1
+                self.installed = True
+                self.zip_file = zipfile.ZipFile(self.apk_location)
+                self.members = {member.filename: member for member in self.zip_file.filelist}
+            finally:
+                self.installing = False
+        while self.installing:
+            time.sleep(0.05)

@@ -1,16 +1,15 @@
 from pathlib2 import Path
-from typing import IO
+from typing import IO, TYPE_CHECKING
 
-import Utilities.Version as Version
+if TYPE_CHECKING:
+    import Utilities.Version as Version
 
 class InstallManager():
-    def __init__(self, version:Version.Version, location:Path) -> None:
+    def __init__(self, version:"Version.Version", location:Path) -> None:
         '''
         :version: Version object this manager is based on.
         :location: File location to the folder containing extracted files.'''
 
-        if not isinstance(version, Version.Version):
-            raise TypeError("Parameter `version` is not a `Version`!")
         if not isinstance(location, Path):
             raise TypeError("Parameter `location` is not a `Path`!")
 
@@ -30,9 +29,13 @@ class InstallManager():
         '''Installs all of the files of the Version.'''
         raise NotImplementedError("`install_all` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
-    def install(self, file_name:str, destination:Path|None=None) -> None:
-        '''Installs the given file name from the Version.'''
+    def install(self, file_name:str, destination:Path|None=None) -> Path:
+        '''Installs the given file name from the Version. Returns its destination.'''
         raise NotImplementedError("`install` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
+
+    def get_file_list(self) -> list[str]:
+        '''Returns a list of all files in the archive.'''
+        raise NotImplementedError("`get_file_list` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
     def read(self, file_name:str, mode:str="b") -> bytes|str:
         '''Returns the contents of the given file name from the Version'''

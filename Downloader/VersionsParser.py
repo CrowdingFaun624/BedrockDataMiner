@@ -1,11 +1,24 @@
 import json
-from typing import Any, Iterable
+from typing import Any, Iterable, TYPE_CHECKING
 
 import Downloader.UrlValidator as UrlValidator
+import Downloader.DownloadManager as DownloadManager
+import Downloader.StoredManager as StoredManager
+import Downloader.LocalManager as LocalManager
 import Utilities.FileManager as FileManager
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
 import Utilities.VersionTags as VersionTags
+
+if TYPE_CHECKING:
+    import Downloader.InstallManager as InstallManager
+
+INSTALL_MANAGERS:dict[str,type["InstallManager.InstallManager"]|None] = {
+    Version.DOWNLOAD_FILE: StoredManager.StoredManager,
+    Version.DOWNLOAD_LOCAL: LocalManager.LocalManager,
+    Version.DOWNLOAD_NONE: None,
+    Version.DOWNLOAD_URL: DownloadManager.DownloadManager,
+}
 
 def read_versions_file() -> Any:
     '''Returns the contents of '''
@@ -145,6 +158,15 @@ def assign_wiki_pages(versions:list[Version.Version]) -> None:
     for version in versions:
         version.assign_wiki_page()
 
+def assign_install_managers(versions:list[Version.Version]) -> None:
+    '''Sets the `install_manager` attribute to its corresponding InstallManager.'''
+    for version in versions:
+        install_manager_type = INSTALL_MANAGERS[version.download_method]
+        if install_manager_type is None:
+            version.install_manager = None
+        else:
+            version.install_manager = install_manager_type(version, FileManager.get_version_install_path(version.version_folder))
+
 def assign_additional_tags(versions:list[Version.Version]) -> None:
     '''Assigns tags that are assigned by the VersionParser'''
     version_dict = {version.name: version for version in versions}
@@ -186,6 +208,7 @@ def parse() -> list[Version.Version]:
     verify_ordering(versions)
     assign_additional_tags(versions)
     assign_wiki_pages(versions)
+    assign_install_managers(versions)
     UrlValidator.validate_url_data(versions)
     return versions
 
