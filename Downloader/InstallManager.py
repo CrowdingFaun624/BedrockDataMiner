@@ -33,6 +33,10 @@ class InstallManager():
         '''Installs the given file name from the Version. Returns its destination.'''
         raise NotImplementedError("`install` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
+    def file_exists(self, name:str) -> bool:
+        '''Returns if the file exists in this version.'''
+        raise NotImplementedError("`file_exists` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
+
     def get_file_list(self) -> list[str]:
         '''Returns a list of all files in the archive.'''
         raise NotImplementedError("`get_file_list` is not implemented for \"%s\"'s InstallManager!" % self.version.name)

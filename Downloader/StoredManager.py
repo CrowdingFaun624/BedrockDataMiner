@@ -38,6 +38,9 @@ class StoredManager(InstallManager.InstallManager):
         strip_string = self.get_full_file_name("")
         return [index.replace(strip_string, "", 1) for index in self.index.keys()]
 
+    def file_exists(self, name:str) -> bool:
+        return self.get_full_file_name(name) in self.index
+
     def read(self, file_name:str, mode:str="b") -> bytes|str:
 
         if not isinstance(file_name, str):

@@ -49,6 +49,9 @@ class LocalManager(InstallManager.InstallManager):
             elif subpath.is_dir():
                 output.extend(self.get_file_list(subpath))
         return output
+    
+    def file_exists(self, name:str) -> bool:
+        return Path(self.bedrock_local.joinpath(self.get_full_file_name(name))).exists()
 
     def read(self, file_name:str, mode:str="b") -> bytes|str:
 

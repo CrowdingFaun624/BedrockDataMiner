@@ -9,6 +9,8 @@ import Utilities.FileManager as FileManager
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
 
+EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
+
 class DataMinerSettings():
     def __init__(self, start_version:Version.Version|Literal["-"], end_version:Version.Version|Literal["-"], dataminer_class:type["DataMiner"], dependencies:list[str]|None=None, **kwargs) -> None:
         if start_version != "-" and not isinstance(start_version, Version.Version):
@@ -87,16 +89,19 @@ class DataMiner():
     def read_file(self, file_name:str, mode:str="t") -> str|bytes:
         return self.version.install_manager.read(file_name, mode)
     
-    def read_files(self, files:list[str|tuple[str,str,None|Callable[[IO],Any]]]) -> dict[str,str|bytes|Any]:
+    def read_files(self, files:list[str|tuple[str,str,None|Callable[[IO],Any]]], non_exist_ok:bool=False) -> dict[str,str|bytes|Any]:
         '''Asynchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
-        def read_async(file_name:str, mode:str, callable:Callable[[IO],Any]|None, file_results:dict[str,str|bytes|Any]) -> str:
+        def read_async(file_name:str, mode:str, callable:Callable[[IO],Any]|None, file_results:dict[str,str|bytes|Any], non_exist_ok:bool) -> str:
             try:
-                if callable is None:
-                    file_results[file_name] = self.read_file(file_name, mode)
+                if not non_exist_ok or self.file_exists(file_name):
+                    if callable is None:
+                        file_results[file_name] = self.read_file(file_name, mode)
+                    else:
+                        with self.get_file(file_name, mode) as f:
+                            file_results[file_name] = callable(f)
                 else:
-                    with self.get_file(file_name, mode) as f:
-                        file_results[file_name] = callable(f)
+                    file_results[file_name] = EMPTY_FILE
             except Exception as e:
                 file_results[file_name] = e
         DEFAULT_MODE = "t"
@@ -108,7 +113,7 @@ class DataMiner():
         file_results:dict[str,str|bytes|Any] = {}
         for file_name, mode, callable in files:
             file_results[file_name] = None
-            thread = threading.Thread(target=read_async, args=[file_name, mode, callable, file_results])
+            thread = threading.Thread(target=read_async, args=[file_name, mode, callable, file_results, non_exist_ok])
             thread.start()
         while True:
             time.sleep(0.05)
@@ -127,7 +132,13 @@ class DataMiner():
                 raise RuntimeError("File fetching failed.")
             if all_complete:
                 break
+        for file_name, file_result in file_results.items(): # sets files that don't exist to None.
+            if file_result is EMPTY_FILE:
+                file_results[file_name] = None
         return file_results
+
+    def file_exists(self, file_name:str) -> bool:
+        return self.version.install_manager.file_exists(file_name)
 
     def get_file(self, file_name:str, mode:str="t") -> IO:
         return self.version.install_manager.get_file(file_name, mode)

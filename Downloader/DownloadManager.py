@@ -25,6 +25,7 @@ class DownloadManager(InstallManager.InstallManager):
         self.installed = False
         self.installing = False
         self.zip_file = None
+        self.file_list = None
 
         self.url = self.version.download_link
         self.domain = urlparse(self.url).netloc
@@ -45,10 +46,7 @@ class DownloadManager(InstallManager.InstallManager):
         self.file_prepension = prepend
 
     def get_full_file_name(self, asset_name:str) -> str:
-        if VersionTags.DOUBLE_ASSETS in self.version.tags:
-            prepend = "assets/assets/"
-        else: prepend = "assets/"
-        return prepend + asset_name
+        return self.file_prepension + asset_name
 
     def install(self, file_name:str, destination:Path|None=None) -> Path:
 
@@ -75,7 +73,14 @@ class DownloadManager(InstallManager.InstallManager):
         if not self.installed:
             self.install_all()
         strip_string = self.get_full_file_name("")
-        return [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist]
+        if self.file_list is None:
+            self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist]
+        return self.file_list
+
+    def file_exists(self, name:str) -> bool:
+        if not self.installed:
+            self.install_all()
+        return name in self.get_file_list()
 
     def read(self, file_name:str, mode:str="b") -> bytes|str:
 
@@ -106,14 +111,12 @@ class DownloadManager(InstallManager.InstallManager):
     
         if not self.installed:
             self.install_all()
-            print("Installing")
         file_name = self.get_full_file_name(file_name)
         if mode == "b":
             return self.zip_file.open(file_name)
         else:
             temp_path = Path(FileManager.TEMP_FOLDER.joinpath(str(uuid.uuid4())))
             path_that_zipfile_puts_it_in = Path(temp_path.joinpath(file_name))
-            print("Extracting from zip file")
             self.zip_file.extract(file_name, temp_path)
             return open(path_that_zipfile_puts_it_in, "rt")
 
