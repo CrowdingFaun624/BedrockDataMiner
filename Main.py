@@ -4,6 +4,7 @@ if __name__ == "__main__":
     os.path.split(os.path.split(__file__)[0])
 
 import Utilities.FileManager as FileManager
+import DataMiners.DataMiners as DataMiners
 import Downloader.AllVersions as AllVersions
 import Programs.GetFile as GetFile
 import Utilities.StoredVersionsManager as StoredVersionsManager
@@ -12,6 +13,7 @@ import Downloader.WikiValidator as WikiValidator
 
 PROGRAM_NAMES = {
     "AllVersions": AllVersions.main,
+    "DataMiners": DataMiners.user_interface,
     "GetFile": GetFile.main,
     "StoredVersions": StoredVersionsManager.main,
     "VersionParser": VersionParser.main,

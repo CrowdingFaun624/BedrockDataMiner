@@ -2,11 +2,12 @@ import errno
 import os
 import shutil
 import sys
+import time
+from typing import Any, IO
 
 from pathlib2 import Path
 
 PARENT_FOLDER          = Path("./").absolute()
-print(PARENT_FOLDER)
 ASSETS_FOLDER          = Path(PARENT_FOLDER.joinpath("_assets"))
 STORED_VERSIONS_FOLDER = Path(ASSETS_FOLDER.joinpath("stored_versions"))
 STORED_VERSIONS_OBJECTS_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("objects"))
@@ -14,10 +15,13 @@ STORED_VERSIONS_INDEXES_FILE = Path(STORED_VERSIONS_FOLDER.joinpath("indexes.zip
 STORED_VERSIONS_INPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("input"))
 STORED_VERSIONS_OUTPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("output"))
 VERSIONS_FILE          = Path(ASSETS_FOLDER.joinpath("versions.json"))
+RESOUCE_PACK_DATA_FILE      = Path(ASSETS_FOLDER.joinpath("resource_pack_data.json"))
 VERSION_PARSER_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("version_parser_warnings.txt"))
 WIKI_VALIDATOR_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("wiki_validator_warnings.txt"))
 TEMP_FOLDER            = Path(PARENT_FOLDER.joinpath("_temp"))
 VERSIONS_FOLDER        = Path(PARENT_FOLDER.joinpath("_versions"))
+
+opened_shared_files:set[Path] = set()
 
 def get_version_path(version_name:str) -> Path:
     version_path = Path(VERSIONS_FOLDER.joinpath(version_name))
@@ -28,11 +32,27 @@ def get_version_path(version_name:str) -> Path:
 def get_version_install_path(version_folder:Path) -> Path:
     return Path(version_folder.joinpath("client"))
 
-def get_version_data_path(version_folder:Path, file_name:str) -> Path:
-    data_path = Path(version_folder.joinpath("/data/%s" % file_name))
+def get_version_data_path(version_folder:Path, file_name:str|None) -> Path:
+    '''Returns the Path in the version folder that a data file name will be stored at. Set `file_name` to None to get the data path.'''
+    if file_name is None:
+        data_path = Path(version_folder.joinpath("./data"))
+    else:
+        data_path = Path(version_folder.joinpath("./data/%s" % file_name))
     if version_folder not in data_path.parents:
         raise FileNotFoundError("Data file \"%s\" has an invalid name!" % file_name)
+    if VERSIONS_FOLDER != version_folder.parent:
+        raise FileNotFoundError("Version folder \"%s\" has an invalid location!" % version_folder)
     return data_path
+
+def open_shared_file(path:Path, mode:str="r", *args, **kwargs) -> IO:
+    while path in opened_shared_files:
+        time.sleep(0.05)
+    opened_shared_files.add(path)
+    try:
+        open_file = open(path, mode, *args, **kwargs)
+    finally:
+        opened_shared_files.remove(path)
+    return open_file
 
 def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
     '''Returns True if the path name is valid on this OS.'''
