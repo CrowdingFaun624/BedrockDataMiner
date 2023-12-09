@@ -9,7 +9,10 @@ class VersionRange():
             raise ValueError("Start Version (\"%s\")in `VersionRange` occurs after stop Version (\"%s\")!" % (start.name, stop.name))
         self.start = start if start != "-" else None
         self.stop = stop if stop != "-" else None
-        self.equals = start == stop
+        self.equals = self.start == self.stop and self.start is not None
+    
+    def __repr__(self) -> str:
+        return "<VersionRange \"%s\"–\"%s\">" % (str(self.start), str(self.stop))
     
     def __contains__(self, version:Version.Version) -> bool:
         if not isinstance(version, Version.Version):
