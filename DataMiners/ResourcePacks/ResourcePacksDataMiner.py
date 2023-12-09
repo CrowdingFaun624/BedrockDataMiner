@@ -12,7 +12,7 @@ VANITY = "vanity"
 RESOUCE_PACK_TAGS = [CORE, EDUCATION, EXPERIMENTAL, EXTRA, VANITY]
 
 class ResourcePacksDataMiner(DataMiner.DataMiner):
-    def activate(self) -> list[dict[str,Any]]:
+    def activate(self, dependency_data:dict[str,Any]|None=None) -> list[dict[str,Any]]:
         return super().activate()
     
     def get_resource_pack_order(self) -> list[str]:

@@ -58,20 +58,28 @@ class DataMiner():
         if len(kwargs) > 0:
             raise NotImplementedError("`initialize` was called with non-empty parameters without being defined by a subclass.")
     
-    def activate(self) -> Any:
+    def activate(self, dependency_data:dict[str,Any]|None=None) -> Any:
         '''Makes the dataminer get the file. Returns the output.'''
         raise NotImplementedError("`activate` was called without being defined by a subclass.")
 
-    def store(self) -> Any:
+    def get_data_file_path(self) -> Path:
+        return FileManager.get_version_data_path(self.version.version_folder, self.file_name)
+
+    def store(self, dependency_data:dict[str,Any]|None=None) -> Any:
         '''Makes the dataminer get the file. Returns the output and stores it in a file.'''
-        data = self.activate()
+        data = self.activate(dependency_data)
         if data is None:
             raise RuntimeError("DataMiner %s returned None!" % self)
         data_path = FileManager.get_version_data_path(self.version.version_folder, None)
         if not data_path.exists():
             data_path.mkdir()
-        with open(FileManager.get_version_data_path(self.version.version_folder, self.file_name), "wt") as f:
+        with open(self.get_data_file_path(), "wt") as f:
             json.dump(data, f, indent=2)
+        return data
+    
+    def get_data_file(self) -> Any:
+        with open(self.get_data_file_path(), "rt") as f:
+            return json.load(f)
 
     def get_file_list(self) -> Iterable[str]:
         return self.version.install_manager.get_file_list()
