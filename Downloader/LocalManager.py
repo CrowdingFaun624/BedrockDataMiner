@@ -40,7 +40,7 @@ class LocalManager(InstallManager.InstallManager):
     def get_file_list(self, path:Path|None) -> Iterable[str]:
         if path is None:
             strip_string = str(self.bedrock_local) + self.get_full_file_name("")
-            return [path.replace(strip_string, "", 1) for path in self.get_file_list(self.bedrock_local)]
+            return [path.replace(strip_string, "", 1).replace("\\", "/") for path in self.get_file_list(self.bedrock_local)]
         output:list[Path] = []
         for subpath in path.iterdir():
             subpath:Path
