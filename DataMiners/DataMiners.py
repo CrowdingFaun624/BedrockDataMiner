@@ -1,5 +1,6 @@
 import threading
 import time
+import traceback
 from typing import Any
 
 import DataMiners.DataMiner as DataMiner
@@ -19,7 +20,16 @@ def run_with_dependencies(version:Version.Version, name:str, recalculate:bool=Fa
     dataminers_dict = {dataminer.name: dataminer.get_version(version) for dataminer in dataminers}
     if detect_cycle(name, dataminers_dict, []):
         raise RuntimeError("Dataminer \"%s\" for \"%s\" has a dependency cycle!" % (dataminers_dict[name], version))
-    __run_with_dependencies_child(data, running, name, dataminers_dict, recalculate, name)
+    return_data = __run_with_dependencies_child(data, running, name, dataminers_dict, recalculate, name)
+    exceptions:dict[str,Exception] = {}
+    for dependency, datum in data.items():
+        if isinstance(datum, Exception):
+            exceptions[dependency] = datum
+    if len(exceptions) > 0:
+        for dependency, error in exceptions.items():
+            print("File \"%s\" from \"%s\" errored!" % (name, version.name))
+            traceback.print_exception(error)
+        raise RuntimeError("Running dataminer \"%s\" on \"%s\" failed." % (name, version.name))
 
 def detect_cycle(name:str, dataminers_dict:dict[str,DataMiner.DataMiner], already_found:list[str]) -> bool:
     '''Returns True if there is a cycle in the DataMiner's dependencies.'''
@@ -44,24 +54,28 @@ def __run_with_dependencies_child(data:dict[str,Any], running:dict[str,bool], na
             time.sleep(0.05)
         return data[name]
     else:
-        dataminer = dataminers_dict[name]
-        if not recalculate and dataminer.get_data_file_path().exists(): # get the data file if it already exists.
-            return dataminer.get_data_file()
-        running[name] = True
-        if len(dataminer.dependencies) > 0:
-            for dependency in dataminer.dependencies:
-                if dependency not in dataminers_dict: # I've been misspelling existent the whole time
-                    raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminer, dependency))
-                thread = threading.Thread(target=__run_with_dependencies_child, args=[data, running, dependency, dataminers_dict, recalculate, parent])
-                thread.start()
-            while any(dependency not in data for dependency in dataminer.dependencies):
-                time.sleep(0.05)
-        if isinstance(dataminer, DataMiner.NullDataMiner):
-            raise RuntimeError("DataMiner \"%s\" references a NullDataMiner!" % parent)
-        return_data = dataminer.store(data)
-        data[name] = return_data
-        running[name] = False
-        return return_data
+        try:
+            dataminer = dataminers_dict[name]
+            if not recalculate and dataminer.get_data_file_path().exists(): # get the data file if it already exists.
+                return dataminer.get_data_file()
+            running[name] = True
+            if len(dataminer.dependencies) > 0:
+                for dependency in dataminer.dependencies:
+                    if dependency not in dataminers_dict: # I've been misspelling existent the whole time
+                        raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminer, dependency))
+                    thread = threading.Thread(target=__run_with_dependencies_child, args=[data, running, dependency, dataminers_dict, recalculate, parent])
+                    thread.start()
+                while any(dependency not in data for dependency in dataminer.dependencies):
+                    time.sleep(0.05)
+            if isinstance(dataminer, DataMiner.NullDataMiner):
+                raise RuntimeError("DataMiner \"%s\" references a NullDataMiner!" % parent)
+            return_data = dataminer.store(data)
+            data[name] = return_data
+            running[name] = False
+            return return_data
+        except Exception as e:
+            data[name] = e
+            running[name] = False
 
 def user_interface() -> None:
     import Downloader.VersionsParser as VersionsParser

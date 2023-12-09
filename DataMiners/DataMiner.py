@@ -122,7 +122,7 @@ class DataMiner():
                     all_complete = False
             if len(exceptions) > 0:
                 for file_name, exception in exceptions.items():
-                    print("File \"%s\" from \"%s\" errored!" % file_name, self.version.name)
+                    print("File \"%s\" from \"%s\" errored!" % (file_name, self.version.name))
                     traceback.print_exception(exception)
                 raise RuntimeError("File fetching failed.")
             if all_complete:
