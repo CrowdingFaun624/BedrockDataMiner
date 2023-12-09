@@ -74,7 +74,8 @@ class DownloadManager(InstallManager.InstallManager):
     def get_file_list(self) -> Iterable[str]:
         if not self.installed:
             self.install_all()
-        return [file.filename for file in self.zip_file.filelist]
+        strip_string = self.get_full_file_name("")
+        return [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist]
 
     def read(self, file_name:str, mode:str="b") -> bytes|str:
 
@@ -136,5 +137,8 @@ class DownloadManager(InstallManager.InstallManager):
                 self.members = {member.filename: member for member in self.zip_file.filelist}
             finally:
                 self.installing = False
+        elif self.zip_file is None:
+            self.zip_file = zipfile.ZipFile(self.apk_location)
+            self.members = {member.filename: member for member in self.zip_file.filelist}
         while self.installing:
             time.sleep(0.05)

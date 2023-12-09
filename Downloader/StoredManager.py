@@ -31,10 +31,12 @@ class StoredManager(InstallManager.InstallManager):
             raise TypeError("Parameter `destination` is not a `Path`!")
 
         if destination is None: destination = self.location
-        StoredVersionsManager.extract(self.name, destination, self.index)
+        if not destination.exists():
+            StoredVersionsManager.extract(self.name, destination, self.index)
 
     def get_file_list(self) -> Iterable[str]:
-        return self.index.keys()
+        strip_string = self.get_full_file_name("")
+        return [index.replace(strip_string, "", 1) for index in self.index.keys()]
 
     def read(self, file_name:str, mode:str="b") -> bytes|str:
 
