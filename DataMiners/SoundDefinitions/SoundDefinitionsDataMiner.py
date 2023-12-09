@@ -1,0 +1,3 @@
+import DataMiners.DataMiner as DataMiner
+
+class SoundDefinitionsDataMiner(DataMiner.DataMiner): ...
