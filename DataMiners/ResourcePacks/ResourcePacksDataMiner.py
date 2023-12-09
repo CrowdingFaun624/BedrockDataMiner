@@ -3,6 +3,7 @@ from typing import Any
 
 import Utilities.FileManager as FileManager
 import DataMiners.DataMiner as DataMiner
+import DataMiners.DataMinerTyping as DataMinerTyping
 
 CORE = "core"
 EDUCATION = "education"
@@ -12,7 +13,7 @@ VANITY = "vanity"
 RESOUCE_PACK_TAGS = [CORE, EDUCATION, EXPERIMENTAL, EXTRA, VANITY]
 
 class ResourcePacksDataMiner(DataMiner.DataMiner):
-    def activate(self, dependency_data:dict[str,Any]|None=None) -> list[dict[str,Any]]:
+    def activate(self, dependency_data:dict[str,Any]|None=None) -> list[DataMinerTyping.ResourcePackTypedDict]:
         return super().activate()
     
     def get_resource_pack_order(self) -> list[str]:

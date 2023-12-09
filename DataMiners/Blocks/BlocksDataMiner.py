@@ -1,16 +1,8 @@
-from typing import Any, TypedDict
+from typing import Any
 
 import DataMiners.DataMiner as DataMiner
-
-class BlockTypedDict(TypedDict):
-    name: str
-    defined_in: list[str]
-    properties: dict[str,Any]
-class ResourcePackTypedDict(TypedDict):
-    name: str
-    tags: list[str]
-    id: int
+import DataMiners.DataMinerTyping as DataMinerTyping
 
 class BlocksDataMiner(DataMiner.DataMiner):
-    def activate(self, dependency_data: dict[str,Any]|None=None) -> list[BlockTypedDict]:
+    def activate(self, dependency_data: dict[str,Any]|None=None) -> list[DataMinerTyping.BlockTypedDict]:
         return super().activate(dependency_data)
