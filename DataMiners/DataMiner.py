@@ -76,7 +76,7 @@ class DataMiner():
         if not data_path.exists():
             data_path.mkdir()
         with open(self.get_data_file_path(), "wt") as f:
-            json.dump(data, f, indent=2)
+            json.dump(data, f)
         return data
     
     def get_data_file(self) -> Any:
