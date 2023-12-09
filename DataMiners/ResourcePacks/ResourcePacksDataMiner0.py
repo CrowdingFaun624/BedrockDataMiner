@@ -23,4 +23,5 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
         
         if len(resource_packs) == 0:
             raise RuntimeError("No resource packs found in \"%s\"!" % self.version.name)
-        return resource_packs
+        sorted_resource_packs = sorted(resource_packs, key=lambda pack: pack["id"])
+        return sorted_resource_packs
