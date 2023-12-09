@@ -1,3 +1,8 @@
-import DataMiners.DataMiner as DataMiner
+from typing import Any
 
-class SoundDefinitionsDataMiner(DataMiner.DataMiner): ...
+import DataMiners.DataMiner as DataMiner
+import DataMiners.DataMinerTyping as DataMinerTyping
+
+class SoundDefinitionsDataMiner(DataMiner.DataMiner):
+    def activate(self, dependency_data:dict[str,Any]|None=None) -> dict[str,DataMinerTyping.SoundDefinitionTypedDict]:
+        return super().activate(dependency_data)

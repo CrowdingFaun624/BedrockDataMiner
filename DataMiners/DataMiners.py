@@ -8,10 +8,12 @@ import Utilities.Version as Version
 
 import DataMiners.Blocks.BlocksDataMiners as BlocksDataMiners
 import DataMiners.ResourcePacks.ResourcePacksDataMiners as ResourcePacksDataMiners
+import DataMiners.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinitionsDataMiners
 
 dataminers:list[DataMiner.DataMinerCollection] = [
     BlocksDataMiners.dataminers,
     ResourcePacksDataMiners.dataminers,
+    SoundDefinitionsDataMiners.dataminers,
 ]
 
 def run_with_dependencies(version:Version.Version, name:str, recalculate:bool=False) -> Any:
