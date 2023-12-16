@@ -1,28 +1,42 @@
 from typing import Any, TypedDict
 
-class BlockTypedDict(TypedDict):
-    name: str
-    defined_in: list[str]
-    properties: dict[str,Any]
+class BlocksJsonBlockTexturesTypedDict(TypedDict):
+    down: str
+    east: str
+    north: str
+    side: str
+    south: str
+    up: str
+    west: str
+
+class BlocksJsonBlockIsotropicTypedDict(TypedDict):
+    down: bool
+    up: bool
+
+class BlocksJsonBlockTypedDict(TypedDict):
+    isotropic: bool|BlocksJsonBlockIsotropicTypedDict
+    sound: str
+    textures: str|BlocksJsonBlockTexturesTypedDict
 
 class ResourcePackTypedDict(TypedDict):
+    brightness_gamma: float
+    id: int
     name: str
     tags: list[str]
-    id: int
 
-class SoundDefinitionSoundTypedDict(TypedDict):
-    name: str
-    stream: bool
+class SoundDefinitionsJsonSoundTypedDict(TypedDict):
     is3D: bool
-    volume: float
-    pitch: float
-    weight: int
     load_on_low_memory: bool
+    name: str
+    pitch: float
+    stream: bool
+    volume: float
+    weight: int
 
-class SoundDefinitionTypedDict(TypedDict):
-    defined_in: list[str]
+class SoundDefinitionsJsonSoundEventTypedDict(TypedDict):
     category: str
-    min_distance: int|float
+    defined_in: list[str]
     max_distance: int|float
-    sounds: list[str|SoundDefinitionSoundTypedDict]
+    min_distance: int|float
+    sounds: list[str|SoundDefinitionsJsonSoundTypedDict]
     subtitle: str # unused
