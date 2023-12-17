@@ -4,7 +4,7 @@ import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 
 class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
-    def activate(self, dependency_data:dict[str,Any]|None=None) -> list[DataMinerTyping.ResourcePackTypedDict]:
+    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict|None=None) -> list[DataMinerTyping.ResourcePackTypedDict]:
         resource_pack_data = self.get_resource_pack_order()
         resource_pack_order, resource_pack_tags = resource_pack_data["order"], resource_pack_data["types"]
         resource_pack_order_dict = {name: index for index, name in enumerate(resource_pack_order)} # So I don't have to index it a whole twelve times

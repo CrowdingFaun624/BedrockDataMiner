@@ -1,6 +1,10 @@
 from typing import TypedDict
 
-# TODO: make `dependencies` have its own thing here.
+class DependenciesTypedDict(TypedDict):
+    blocks: dict[str,dict[str,"BlocksJsonBlockTypedDict"]]
+    resource_packs: list["ResourcePackTypedDict"]
+    sound_definitions: dict[str,dict[str,"SoundDefinitionsJsonSoundEventTypedDict"]]
+    sounds_json: "MySoundsJsonTypedDict"
 
 # blocks.json
 

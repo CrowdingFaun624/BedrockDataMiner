@@ -5,7 +5,7 @@ import DataMiners.Blocks.BlocksDataMiner as BlocksDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 
 class BlocksDataMiner0(BlocksDataMiner.BlocksDataMiner):
-    def activate(self, dependency_data:dict[str,Any]|None=None) -> dict[str,dict[str,DataMinerTyping.BlocksJsonBlockTypedDict]]:
+    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict|None=None) -> dict[str,dict[str,DataMinerTyping.BlocksJsonBlockTypedDict]]:
         resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = dependency_data["resource_packs"]
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         resource_pack_files = {"resource_packs/%s/blocks.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
