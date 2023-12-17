@@ -1,5 +1,4 @@
 import json
-from typing import Any
 
 import Utilities.FileManager as FileManager
 import DataMiners.DataMiner as DataMiner

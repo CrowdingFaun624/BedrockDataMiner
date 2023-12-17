@@ -1,5 +1,4 @@
 import pyjson5 # supports comments
-from typing import Any
 
 import DataMiners.Blocks.BlocksDataMiner as BlocksDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
@@ -10,7 +9,7 @@ class BlocksDataMiner0(BlocksDataMiner.BlocksDataMiner):
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         resource_pack_files = {"resource_packs/%s/blocks.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         files_request = [(resource_pack_file, "t", pyjson5.load) for resource_pack_file in resource_pack_files.keys()]
-        files:dict[str,dict[str,Any]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
+        files:dict[str,dict[str,DataMinerTyping.BlocksJsonBlockTypedDict]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"blocks.json\" files found in \"%s\"" % self.version)
         

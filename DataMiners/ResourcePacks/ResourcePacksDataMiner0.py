@@ -1,5 +1,3 @@
-from typing import Any
-
 import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 

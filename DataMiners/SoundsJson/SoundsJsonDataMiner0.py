@@ -1,4 +1,3 @@
-from typing import Any
 import pyjson5 # supports comments
 
 import DataMiners.SoundsJson.SoundsJsonDataMiner as SoundsJsonDataMiner
