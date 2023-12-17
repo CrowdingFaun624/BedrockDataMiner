@@ -1,7 +1,6 @@
 from itertools import islice
 from typing import IO, Iterable
 from pathlib2 import Path
-import uuid
 
 import hashlib
 import shutil
@@ -133,7 +132,7 @@ def get_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tuple
     if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
     file_hash, file_compressed = index[file_name]
     if file_compressed:
-        temp_path = Path(FileManager.TEMP_FOLDER.joinpath(str(uuid.uuid4())))
+        temp_path = FileManager.get_temp_file_path()
         extract_file(version_name, file_name, temp_path, index)
         return open(temp_path, "r" + mode)
     else:

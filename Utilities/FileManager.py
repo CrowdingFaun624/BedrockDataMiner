@@ -4,6 +4,7 @@ import shutil
 import sys
 import time
 from typing import Any, IO
+import uuid
 
 from pathlib2 import Path
 
@@ -43,6 +44,10 @@ def get_version_data_path(version_folder:Path, file_name:str|None) -> Path:
     if VERSIONS_FOLDER != version_folder.parent:
         raise FileNotFoundError("Version folder \"%s\" has an invalid location!" % version_folder)
     return data_path
+
+def get_temp_file_path() -> Path:
+    '''Returns a path such as `./_temp/a6f780a3-83d0-4afd-a654-dc28df0b9831`.'''
+    return Path(TEMP_FOLDER.joinpath(str(uuid.uuid4())))
 
 def open_shared_file(path:Path, mode:str="r", *args, **kwargs) -> IO:
     while path in opened_shared_files:
