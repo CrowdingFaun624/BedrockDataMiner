@@ -9,12 +9,14 @@ import Utilities.Version as Version
 import DataMiners.Blocks.BlocksDataMiners as BlocksDataMiners
 import DataMiners.ResourcePacks.ResourcePacksDataMiners as ResourcePacksDataMiners
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinitionsDataMiners
+# import DataMiners.SoundFiles.SoundFilesDataMiners as SoundFilesDataMiners
 import DataMiners.SoundsJson.SoundsJsonDataMiners as SoundsJsonDataMiners
 
 dataminers:list[DataMiner.DataMinerCollection] = [
     BlocksDataMiners.dataminers,
     ResourcePacksDataMiners.dataminers,
     SoundDefinitionsDataMiners.dataminers,
+    # SoundFilesDataMiners.dataminers,
     SoundsJsonDataMiners.dataminers,
 ]
 

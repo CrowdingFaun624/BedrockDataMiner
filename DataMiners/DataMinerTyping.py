@@ -53,6 +53,10 @@ class SoundDefinitionsJsonSoundEventTypedDict(TypedDict):
     sounds: list[str|SoundDefinitionsJsonSoundTypedDict]
     subtitle: str # unused
 
+# sound files
+
+class SoundFilesTypedDict(TypedDict): ...
+
 # sounds.json
 
 class SoundsJsonSoundTypedDict(TypedDict):
