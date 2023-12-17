@@ -93,7 +93,7 @@ class DataMiner():
     def read_files(self, files:list[str|tuple[str,str,None|Callable[[IO],Any]]], non_exist_ok:bool=False) -> dict[str,str|bytes|Any]:
         '''Asynchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
-        def read_async(file_name:str, mode:str, callable:Callable[[IO],Any]|None, file_results:dict[str,str|bytes|Any], non_exist_ok:bool) -> str:
+        def read_async(file_name:str, mode:str, callable:Callable[[IO],Any]|None, file_results:dict[str,str|bytes|Any], threads_complete:dict[str,bool], non_exist_ok:bool) -> str:
             try:
                 if not non_exist_ok or self.file_exists(file_name):
                     if callable is None:
@@ -105,17 +105,23 @@ class DataMiner():
                     file_results[file_name] = EMPTY_FILE
             except Exception as e:
                 file_results[file_name] = e
+                threads_complete[file_name] = True
         DEFAULT_MODE = "t"
+        LIMIT = 16 # how many files can be open at once.
         files = [(file, DEFAULT_MODE, None) if isinstance(file, str) else file for file in files]
         file_names = [file[0] for file in files]
         if any(count >= 2 for count in (file_names.count(file_name) for file_name in file_names)): # duplicate item tester
             duplicate_files = [file for file in file_names if file_names.count(file) >= 2]
             raise ValueError("Duplicated files: %s" % str(duplicate_files))
         file_results:dict[str,str|bytes|Any] = {}
+        threads_complete:dict[str,bool] = {}
         for file_name, mode, callable in files:
             file_results[file_name] = None
-            thread = threading.Thread(target=read_async, args=[file_name, mode, callable, file_results, non_exist_ok])
+            thread = threading.Thread(target=read_async, args=[file_name, mode, callable, file_results, threads_complete, non_exist_ok])
+            threads_complete[file_name] = False
             thread.start()
+            while sum(1 for value in threads_complete.values() if value is False) >= LIMIT: # it says that .count() won't work.
+                time.sleep(0.05)
         while True:
             time.sleep(0.05)
             exceptions:dict[str,Exception] = {}
