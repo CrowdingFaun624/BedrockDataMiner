@@ -36,7 +36,7 @@ class StoredManager(InstallManager.InstallManager):
 
     def get_file_list(self) -> Iterable[str]:
         strip_string = self.get_full_file_name("")
-        return [index.replace(strip_string, "", 1) for index in self.index.keys()]
+        return [index.replace(strip_string, "", 1) for index in self.index.keys() if index.startswith(strip_string)]
 
     def file_exists(self, name:str) -> bool:
         return self.get_full_file_name(name) in self.index

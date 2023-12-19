@@ -74,7 +74,7 @@ class DownloadManager(InstallManager.InstallManager):
             self.install_all()
         strip_string = self.get_full_file_name("")
         if self.file_list is None:
-            self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist]
+            self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string)]
         return self.file_list
 
     def file_exists(self, name:str) -> bool:
