@@ -1,8 +1,9 @@
 from pathlib2 import Path
-from typing import IO, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
+    import Utilities.FileManager as FileManager
 
 class InstallManager():
     def __init__(self, version:"Version.Version", location:Path) -> None:
@@ -45,6 +46,6 @@ class InstallManager():
         '''Returns the contents of the given file name from the Version'''
         raise NotImplementedError("`read` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
     
-    def get_file(self, file_name:str, mode:str="b") -> IO:
-        '''Returns an IO object of the file.'''
+    def get_file(self, file_name:str, mode:str="b") -> "FileManager.FilePromise":
+        '''Returns a FilePromise object of the file.'''
         raise NotImplementedError("`get_file` is not implemented for \"%s\"'s InstallManager!" % self.version.name)

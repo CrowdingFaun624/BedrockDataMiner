@@ -1,15 +1,20 @@
 import errno
+import hashlib
 import os
 import shutil
 import sys
 import time
-from typing import Any, IO
+from typing import Any, Callable, IO, Literal
 import uuid
 
 from pathlib2 import Path
+from Utilities.FunctionCaller import FunctionCaller
 
 PARENT_FOLDER          = Path("./").absolute()
 ASSETS_FOLDER          = Path(PARENT_FOLDER.joinpath("_assets"))
+FILE_STORAGE_FOLDER    = Path(ASSETS_FOLDER.joinpath("file_storage"))
+FILE_STORAGE_OBJECTS_FOLDER = Path(FILE_STORAGE_FOLDER.joinpath("objects"))
+FILE_STORAGE_INDEX_FILE = Path(FILE_STORAGE_FOLDER.joinpath("index.txt"))
 STORED_VERSIONS_FOLDER = Path(ASSETS_FOLDER.joinpath("stored_versions"))
 STORED_VERSIONS_OBJECTS_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("objects"))
 STORED_VERSIONS_INDEXES_FILE = Path(STORED_VERSIONS_FOLDER.joinpath("indexes.zip"))
@@ -19,6 +24,9 @@ VERSIONS_FILE          = Path(ASSETS_FOLDER.joinpath("versions.json"))
 RESOUCE_PACK_DATA_FILE      = Path(ASSETS_FOLDER.joinpath("resource_pack_data.json"))
 VERSION_PARSER_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("version_parser_warnings.txt"))
 WIKI_VALIDATOR_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("wiki_validator_warnings.txt"))
+LIB_FOLDER             = Path(PARENT_FOLDER.joinpath("_lib"))
+LIB_FSB_FOLDER         = Path(LIB_FOLDER.joinpath("fsb"))
+LIB_FSB_EXE_FILE       = Path(LIB_FSB_FOLDER.joinpath("fsb_aud_extr.exe"))
 TEMP_FOLDER            = Path(PARENT_FOLDER.joinpath("_temp"))
 VERSIONS_FOLDER        = Path(PARENT_FOLDER.joinpath("_versions"))
 
@@ -84,6 +92,20 @@ def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questio
     else:
         return True
 
+def stringify_sha1_hash(sha1_hash:bytes) -> str:
+    '''Returns a hexadecimal string with length 40.'''
+    return hex(int.from_bytes(sha1_hash, "big"))[2:].zfill(40)
+
+def get_hash(file:IO) -> bytes:
+    '''Returns the sha1 hash of a file opened in binary mode.'''
+    BUFFER_SIZE = 65536 # 64kb
+    sha1_hash = hashlib.sha1()
+    while True:
+        data = file.read(BUFFER_SIZE)
+        if not data: break
+        sha1_hash.update(data)
+    return sha1_hash.digest()
+
 def clear_temp() -> None:
     for file in TEMP_FOLDER.iterdir():
         file:Path
@@ -91,5 +113,38 @@ def clear_temp() -> None:
             file.unlink()
         else:
             shutil.rmtree(file)
+
+class FilePromise():
+    '''An abstraction for a file that can return an IO object multiple times with FilePromise.open()'''
+    def __init__(self, open_callable:FunctionCaller[IO], name:str, mode:Literal["b", "t"], all_done_callable:FunctionCaller|Callable[[],Any]|None=None) -> None:
+        if not isinstance(name, str):
+            raise TypeError("`name` is not a str!")
+        if len(name) == 0:
+            raise ValueError("`name` is empty!")
+        if "/" in name or "\\" in name:
+            raise ValueError("`name` cannot have a \"/\" or \"\\\" character: \"%s\"" % name)
+        if not isinstance(mode, str):
+            raise TypeError("`mode` is not a str!")
+        if mode not in ("t", "b"):
+            raise ValueError("`mode` is not \"t\" or \"b\"!")
+        
+        self.open_callable = open_callable
+        self.all_done_callable = all_done_callable
+        self.name = name
+        self.mode = mode
+        self.is_all_done = False
+    
+    def open(self) -> IO:
+        if self.is_all_done:
+            raise RuntimeError("Attempted to open FilePromise \"%s\" that has been marked as all done!" % self.name)
+        return self.open_callable()
+    
+    def all_done(self) -> None:
+        self.is_all_done = True
+        if self.all_done_callable is not None:
+            self.all_done_callable()
+    
+    def __repr__(self) -> str:
+        return "<FilePromise %s in %s>" % (self.name, self.mode)
 
 clear_temp()

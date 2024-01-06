@@ -1,15 +1,15 @@
 from itertools import islice
-from typing import IO, Iterable
+from typing import Iterable
 from pathlib2 import Path
 
-import hashlib
 import shutil
 import zipfile
 import gzip
 
 import Utilities.FileManager as FileManager
+from Utilities.FunctionCaller import FunctionCaller
 
-COMPRESSIBLE_FORMATS = [ # WARNING: if you modify this, it will not be able to correctly extract files with these formats.
+COMPRESSIBLE_FORMATS = [
     "lang",
     "json",
     "so", # code file
@@ -126,17 +126,17 @@ def read_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tupl
         else:
             return data
 
-def get_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tuple[str,bool]]|None=None) -> bytes|str:
-    '''Returns a file handle of the object.'''
+def get_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tuple[str,bool]]|None=None) -> FileManager.FilePromise:
+    '''Returns a FilePromise of the object.'''
     if index is None: index = read_index()
     if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
     file_hash, file_compressed = index[file_name]
     if file_compressed:
         temp_path = FileManager.get_temp_file_path()
         extract_file(version_name, file_name, temp_path, index)
-        return open(temp_path, "r" + mode)
+        return FileManager.FilePromise(FunctionCaller(open, [temp_path, "r" + mode]), file_name.split("/")[-1], mode, temp_path.unlink)
     else:
-        return open(get_hash_file_path(file_hash), "r" + mode)
+        return FileManager.FilePromise(FunctionCaller(open, [get_hash_file_path(file_hash), "r" + mode]), file_name.split("/")[-1], mode)
 
 def extract_files(version_name:str, files:Iterable[str], destinations:Iterable[Path]) -> None:
     '''Copies files from the given version to the given destinations.'''
@@ -172,9 +172,9 @@ def archive(path:Path, hashes:dict[str,bytes], version_name:str|None=None) -> di
         finally:
             if not completed: print("Failed to find hash in \"%s\"!" % version_name)
         
-        hex_hash = get_hexed_hash(file_hash)
+        hex_hash = FileManager.stringify_sha1_hash(file_hash)
         zip_info.filename = get_hash_file_path(hex_hash, True) # slightly evil code that makes it not spit thousands of directories everywhere
-        str_hash = get_hexed_hash(file_hash)
+        str_hash = FileManager.stringify_sha1_hash(file_hash)
         new_path = get_hash_file_path(hex_hash)
         do_write = not new_path.exists()
         if do_write:
@@ -190,23 +190,13 @@ def archive(path:Path, hashes:dict[str,bytes], version_name:str|None=None) -> di
     write_index(version_name, index)
     return index
 
-def hash_file(file:IO) -> bytes:
-    '''Takes in an open file object, and returns its hash.'''
-    BUFFER_SIZE = 65536 # 64kb
-    sha1_hash = hashlib.sha1()
-    while True:
-        data = file.read(BUFFER_SIZE)
-        if not data: break
-        sha1_hash.update(data)
-    return sha1_hash.digest()
-
 def hash_files(zip_file:zipfile.ZipFile) -> dict[str,bytes]:
     '''Takes in a ZipFile object, returns a dictionary of stored file names and their hashes.'''
     hashes:dict[str,bytes] = {}
     for file in zip_file.filelist:
         name = file.filename
         with zip_file.open(file) as file:
-            hashes[name] = hash_file(file)
+            hashes[name] = FileManager.get_hash(file)
     return hashes
 
 def open_zip_file(path:Path) -> zipfile.ZipFile:
@@ -216,13 +206,8 @@ def open_zip_file(path:Path) -> zipfile.ZipFile:
     zip_file = zipfile.ZipFile(path, "r")
     return zip_file
 
-def get_hexed_hash(hash:bytes) -> str:
-    '''Converts a byte hash into a hex string.'''
-    hex_string = hex(int.from_bytes(hash, "big"))[2:].zfill(40)
-    return hex_string
-
 def get_hash_file_path(str_hash:str, return_string:bool=False) -> Path:
-    '''Converts a byte hash into a Path object.'''
+    '''Converts a string hash into a Path object.'''
     first_two = str_hash[:2]
     if return_string:
         return str(Path(first_two, str_hash))

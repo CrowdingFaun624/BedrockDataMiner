@@ -1,9 +1,11 @@
 import os
-from typing import IO, Iterable
+from typing import Iterable
 from pathlib2 import Path
 
 import Downloader.InstallManager as InstallManager
 import Utilities.Version as Version
+import Utilities.FileManager as FileManager
+from Utilities.FunctionCaller import FunctionCaller
 
 class LocalManager(InstallManager.InstallManager):
     def prepare_for_install(self) -> None:
@@ -67,7 +69,7 @@ class LocalManager(InstallManager.InstallManager):
         with open(full_path, "r" + mode) as f:
             return f.read()
     
-    def get_file(self, file_name:str, mode:str="b") -> IO:
+    def get_file(self, file_name:str, mode:str="b") -> FileManager.FilePromise:
 
         if not isinstance(file_name, str):
             raise TypeError("Parameter `file_name` is not a `str`!")
@@ -78,5 +80,5 @@ class LocalManager(InstallManager.InstallManager):
         
         file_name = self.get_full_file_name(file_name)
         full_path = Path(self.bedrock_local.joinpath(file_name))
-        return open(full_path, "r" + mode)
+        return FileManager.FilePromise(open, [full_path, "r" + mode])
             

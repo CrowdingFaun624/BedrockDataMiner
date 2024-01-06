@@ -1,14 +1,15 @@
-from typing import IO, Iterable, TYPE_CHECKING
+from typing import Iterable, TYPE_CHECKING
 from pathlib2 import Path
 import requests
+import threading
 import time
 from urllib.parse import urlparse
 import zipfile
-import uuid
 
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
 import Utilities.VersionTags as VersionTags
+from Utilities.FunctionCaller import FunctionCaller
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -23,7 +24,7 @@ class DownloadManager(InstallManager.InstallManager):
         self.apk_location = Path(str(self.location) + ".zip")
         self.url = None
         self.installed = False
-        self.installing = False
+        self.installation_lock = threading.Lock()
         self.zip_file = None
         self.file_list = None
 
@@ -100,7 +101,19 @@ class DownloadManager(InstallManager.InstallManager):
         else:
             return data
     
-    def get_file(self, file_name:str, mode:str="b") -> IO:
+    def get_file(self, file_name:str, mode:str="b") -> FileManager.FilePromise:
+
+        def clear_temp_file(temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
+            path_that_zipfile_puts_it_in.unlink()
+            folders_to_remove:list[Path] = []
+            while True:
+                children = list(temp_path.iterdir())
+                if len(children) == 0:
+                    break
+                assert len(children) == 1
+                folders_to_remove.extend(children)
+            for folder_to_remove in reversed(folders_to_remove):
+                folder_to_remove.rmdir()
 
         if not isinstance(file_name, str):
             raise TypeError("Parameter `file_name` is not a `str`!")
@@ -113,21 +126,21 @@ class DownloadManager(InstallManager.InstallManager):
             self.install_all()
         file_name = self.get_full_file_name(file_name)
         if mode == "b":
-            return self.zip_file.open(file_name)
+            return FileManager.FilePromise(FunctionCaller(self.zip_file.open, [file_name]), file_name.split("/")[-1], mode)
         else:
-            temp_path = Path(FileManager.TEMP_FOLDER.joinpath(str(uuid.uuid4())))
+            temp_path = FileManager.get_temp_file_path()
             path_that_zipfile_puts_it_in = Path(temp_path.joinpath(file_name))
             self.zip_file.extract(file_name, temp_path)
-            return open(path_that_zipfile_puts_it_in, "rt")
+            return FileManager.FilePromise(FunctionCaller(open, [path_that_zipfile_puts_it_in, "rt"]), file_name.split("/")[-1], mode, FunctionCaller(clear_temp_file, [temp_path, path_that_zipfile_puts_it_in]))
 
     def install_all(self, destination:Path|None=None) -> None:
 
         if destination is not None and not isinstance(destination, Path):
             raise TypeError("Parameter `destination` is not a `Path`!")
 
+        self.installation_lock.acquire()
         if destination is None: destination = self.apk_location
-        if not self.apk_location.exists() and not self.installing:
-            self.installing = True
+        if not self.installed:
             try:
                 with open(destination, "wb") as f:
                     while self.current_open_connections[self.domain] >= self.connection_limit:
@@ -139,9 +152,8 @@ class DownloadManager(InstallManager.InstallManager):
                 self.zip_file = zipfile.ZipFile(self.apk_location)
                 self.members = {member.filename: member for member in self.zip_file.filelist}
             finally:
-                self.installing = False
-        elif self.zip_file is None:
-            self.zip_file = zipfile.ZipFile(self.apk_location)
-            self.members = {member.filename: member for member in self.zip_file.filelist}
-        while self.installing:
-            time.sleep(0.05)
+                self.installation_lock.release()
+        # elif self.zip_file is None:
+        #     self.zip_file = zipfile.ZipFile(self.apk_location)
+        #     self.members = {member.filename: member for member in self.zip_file.filelist}
+        self.installation_lock.release()

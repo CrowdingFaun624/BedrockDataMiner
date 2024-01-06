@@ -99,8 +99,10 @@ class DataMiner():
                     if callable is None:
                         file_results[file_name] = self.read_file(file_name, mode)
                     else:
-                        with self.get_file(file_name, mode) as f:
+                        file = self.get_file(file_name, mode)
+                        with file.open() as f:
                             file_results[file_name] = callable(f)
+                        file.all_done()
                 else:
                     file_results[file_name] = EMPTY_FILE
             except Exception as e:
@@ -147,12 +149,12 @@ class DataMiner():
     def file_exists(self, file_name:str) -> bool:
         return self.version.install_manager.file_exists(file_name)
 
-    def get_file(self, file_name:str, mode:str="t") -> IO:
+    def get_file(self, file_name:str, mode:str="t") -> FileManager.FilePromise:
         return self.version.install_manager.get_file(file_name, mode)
 
 class NullDataMiner(DataMiner):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
-    def get_file(self, file_name:str, mode:str="t") -> IO:
+    def get_file(self, file_name:str, mode:str="t") -> FileManager.FilePromise:
         raise RuntimeError("Attempted to use `get_file` from a NullDataMiner!")
     def activate(self) -> Any:
         raise RuntimeError("Attempted to use `activate` from a NullDataMiner!")
