@@ -1,9 +1,9 @@
 import threading
 import time
 import traceback
-from typing import Any
 
 import DataMiners.DataMiner as DataMiner
+import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Version as Version
 
 import DataMiners.Blocks.BlocksDataMiners as BlocksDataMiners
@@ -20,13 +20,13 @@ dataminers:list[DataMiner.DataMinerCollection] = [
     SoundsJsonDataMiners.dataminers,
 ]
 
-def run_with_dependencies(version:Version.Version, name:str, recalculate:bool=False) -> Any:
-    data:dict[str,Any] = {}
+def run_with_dependencies(version:Version.Version, name:str, recalculate:bool=False) -> None:
+    data:DataMinerTyping.DependenciesTypedDict = {}
     running:dict[str,bool] = {}
     dataminers_dict = {dataminer.name: dataminer.get_version(version) for dataminer in dataminers}
     if detect_cycle(name, dataminers_dict, []):
         raise RuntimeError("Dataminer \"%s\" for \"%s\" has a dependency cycle!" % (dataminers_dict[name], version))
-    return_data = __run_with_dependencies_child(data, running, name, dataminers_dict, recalculate, name)
+    return_data = __run_with_dependencies_child(data, running, name, dataminers_dict, recalculate, dataminers_dict[name])
     exceptions:dict[str,Exception] = {}
     for dependency, datum in data.items():
         if isinstance(datum, Exception):
@@ -54,7 +54,7 @@ def detect_cycle(name:str, dataminers_dict:dict[str,DataMiner.DataMiner], alread
     else:
         return False
 
-def __run_with_dependencies_child(data:dict[str,Any], running:dict[str,bool], name:str, dataminers_dict:dict[str,DataMiner.DataMiner], recalculate:bool, parent:DataMiner.DataMiner) -> None:
+def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, running:dict[str,bool], name:str, dataminers_dict:dict[str,DataMiner.DataMiner], recalculate:bool, parent:DataMiner.DataMiner) -> None:
     if name in running and running[name]:
         while running[name]:
             time.sleep(0.05)
@@ -75,6 +75,9 @@ def __run_with_dependencies_child(data:dict[str,Any], running:dict[str,bool], na
                     time.sleep(0.05)
             if isinstance(dataminer, DataMiner.NullDataMiner):
                 raise RuntimeError("DataMiner \"%s\" references a NullDataMiner!" % parent)
+            for dependency in dataminer.dependencies:
+                if isinstance(data[dependency], Exception):
+                    raise RuntimeError("DataMiner \"%s\" cannot run because \"%s\" has raised an exception!" % (name, dependency))
             return_data = dataminer.store(data)
             data[name] = return_data
             running[name] = False
@@ -103,5 +106,5 @@ def user_interface() -> None:
         dataminer_names = [dataminer_collection]
 
     for dataminer_name in dataminer_names:
-        run_with_dependencies(version, dataminer_name, version)
+        run_with_dependencies(version, dataminer_name, True)
         print("Successfully stored %s for %s." % (dataminer_name, version))
