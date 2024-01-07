@@ -4,6 +4,7 @@ class DependenciesTypedDict(TypedDict):
     blocks: dict[str,dict[str,"BlocksJsonBlockTypedDict"]]
     resource_packs: list["ResourcePackTypedDict"]
     sound_definitions: dict[str,dict[str,"SoundDefinitionsJsonSoundEventTypedDict"]]
+    sound_files: "SoundFilesTypedDict"
     sounds_json: "MySoundsJsonTypedDict"
 
 # blocks.json
