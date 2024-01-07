@@ -1,36 +1,26 @@
-import fsb5
-from pathlib2 import Path
-
 import DataMiners.SoundFiles.SoundFilesDataMiner as SoundFilesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
-import Utilities.FileManager as FileManager
+import Programs.EvilFSBExtractor as EvilFSBExtractor
 
-class ArtificialSample():
-    def __init__(self, name, frequency, channels, dataOffset, samples, metadata, data) -> None:
-        self.name = name
-        self.frequency = frequency
-        self.channels = channels
-        self.dataOffset = dataOffset
-        self.samples = samples
-        self.metadata = metadata
-        self.data = data
 
 class SoundFilesDataMiner0(SoundFilesDataMiner.SoundFilesDataMiner):
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict|None=None) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
         file_list = self.get_file_list()
-        for file_name in file_list:
-            if not file_name.endswith(".fsb"): continue
-            print(file_name)
-            file = self.read_file(file_name, "b")
-            sound_file = fsb5.load(file)
-            header_list = list(sound_file.header) # Evil hack
-            header_list[6] = fsb5.SoundFormat.VORBIS
-            sound_file.header = fsb5.FSB5Header(*header_list)
-            reconstructed_file = sound_file.rebuild_sample(sound_file.samples[0])
+        assert not any("\\" in file for file in file_list) # can't trust it, you see.
+        if len(file_list) == 0:
+            raise FileNotFoundError("No files found for `sound_files` in version \"%s\"!" % self.version.name)
+        
+        output:dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]] = {}
+        for file_path in file_list:
+            if "." + file_path.split(".")[-1].lower() in SoundFilesDataMiner.ALL_SOUND_FILE_FORMATS and not file_path.endswith(".fsb"):
+                output[file_path] = {"main": SoundFilesDataMiner.get_metadata(self.get_file(file_path, "b"))}
 
-            print(reconstructed_file)
-            destination_path = Path(FileManager.TEMP_FOLDER.joinpath("evil_sound_file.wav"))
-            with open(destination_path, "wb") as f:
-                f.write(reconstructed_file)
-
-            assert False
+        fsb_file_names:dict[str,str] = (name for name in file_list if name.lower().endswith(".fsb"))
+        fsb_files = EvilFSBExtractor.extract_fsb_files((file_name, self.get_file(file_name, "b")) for file_name in fsb_file_names)
+        for file_name, wav_files in fsb_files:
+            output[file_name] = {}
+            for wav_file_name, wav_file_promise in wav_files.items():
+                output[file_name][wav_file_name] = SoundFilesDataMiner.get_metadata(wav_file_promise)
+        
+        output = {key: value for key, value in sorted(list(output.items()))}
+        return output

@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import Any, TypedDict
 
 class DependenciesTypedDict(TypedDict):
     blocks: dict[str,dict[str,"BlocksJsonBlockTypedDict"]]
@@ -55,7 +55,9 @@ class SoundDefinitionsJsonSoundEventTypedDict(TypedDict):
 
 # sound files
 
-class SoundFilesTypedDict(TypedDict): ...
+class SoundFilesTypedDict(TypedDict):
+    sha1_hash: str # hexadecimal 40-digit string
+    metadata:dict[str,Any]
 
 # sounds.json
 

@@ -1,0 +1,13 @@
+for OFFSET = 0
+    goto OFFSET
+    findloc OFFSET string "FSB5"
+    goto OFFSET
+    getdstring FSB_SIGN 4   # FSOUND_FSB_HEADER_FSB5 (fsb.h)
+    get version long
+    get numsamples long
+    get shdrsize long
+    get namesize long
+    get datasize long
+    xmath SIZE "0x3c + shdrsize + namesize + datasize"
+    log "" OFFSET SIZE
+next OFFSET + SIZE
