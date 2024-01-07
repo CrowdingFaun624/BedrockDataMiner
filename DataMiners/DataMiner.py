@@ -93,54 +93,64 @@ class DataMiner():
     def read_files(self, files:list[str|tuple[str,str,None|Callable[[IO],Any]]], non_exist_ok:bool=False) -> dict[str,str|bytes|Any]:
         '''Asynchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
-        def read_async(file_name:str, mode:str, callable:Callable[[IO],Any]|None, file_results:dict[str,str|bytes|Any], threads_complete:dict[str,bool], non_exist_ok:bool) -> str:
-            try:
-                if not non_exist_ok or self.file_exists(file_name):
-                    if callable is None:
-                        file_results[file_name] = self.read_file(file_name, mode)
-                    else:
-                        file = self.get_file(file_name, mode)
-                        with file.open() as f:
-                            file_results[file_name] = callable(f)
-                        file.all_done()
-                else:
-                    file_results[file_name] = EMPTY_FILE
-            except Exception as e:
-                file_results[file_name] = e
-                threads_complete[file_name] = True
+
+        def read_async(files:Iterable[tuple[str,str,None|Callable[[IO],Any]]], file_results:dict[str,str|bytes|Any], non_exist_ok:bool, lock:threading.Lock) -> str:
+            lock.acquire()
+            for file_name, mode, callable in files:
+                try:
+                    if not non_exist_ok or self.file_exists(file_name):
+                        if callable is None:
+                            file_results[file_name] = self.read_file(file_name, mode)
+                        else:
+                            file = self.get_file(file_name, mode)
+                            with file.open() as f:
+                                file_results[file_name] = callable(f)
+                            file.all_done()
+                    else: # file does not exist
+                        file_results[file_name] = EMPTY_FILE
+                except Exception as e:
+                    file_results[file_name] = e
+                    lock.release()
+            lock.release()
+
         DEFAULT_MODE = "t"
-        LIMIT = 16 # how many files can be open at once.
-        files = [(file, DEFAULT_MODE, None) if isinstance(file, str) else file for file in files]
+        LIMIT = 16 # how many threads can be created.
+        files:list[tuple[str,str,None|Callable[[IO],Any]]] = [(file, DEFAULT_MODE, None) if isinstance(file, str) else file for file in files]
         file_names = [file[0] for file in files]
+
         if any(count >= 2 for count in (file_names.count(file_name) for file_name in file_names)): # duplicate item tester
             duplicate_files = [file for file in file_names if file_names.count(file) >= 2]
             raise ValueError("Duplicated files: %s" % str(duplicate_files))
+        
+        thread_count = len(files) if len(files) < LIMIT else LIMIT
+        thread_responsibilities:list[list[tuple[str,str,None|Callable[[IO],Any]]]] = [[] for index in range(thread_count)] # keeps track of what each thread will do.
         file_results:dict[str,str|bytes|Any] = {}
-        threads_complete:dict[str,bool] = {}
-        for file_name, mode, callable in files:
+        for index, (file_name, mode, callable) in enumerate(files):
             file_results[file_name] = None
-            thread = threading.Thread(target=read_async, args=[file_name, mode, callable, file_results, threads_complete, non_exist_ok])
-            threads_complete[file_name] = False
+            thread_responsibilities[index % thread_count].append((file_name, mode, callable))
+        
+        locks = [threading.Lock() for index in range(LIMIT)]
+        for lock, thread_responsibility in zip(locks, thread_responsibilities):
+            thread = threading.Thread(target=read_async, args=[thread_responsibility, file_results, non_exist_ok, lock])
             thread.start()
-            while sum(1 for value in threads_complete.values() if value is False) >= LIMIT: # it says that .count() won't work.
-                time.sleep(0.05)
-        while True:
-            time.sleep(0.05)
-            exceptions:dict[str,Exception] = {}
-            all_complete = True
-            for file_name, file_result in file_results.items():
-                if isinstance(file_result, Exception):
-                    exceptions[file_name] = file_result
-                    all_complete = False
-                if file_result is None:
-                    all_complete = False
-            if len(exceptions) > 0:
-                for file_name, exception in exceptions.items():
-                    print("File \"%s\" from \"%s\" errored!" % (file_name, self.version.name))
-                    traceback.print_exception(exception)
-                raise RuntimeError("File fetching failed.")
-            if all_complete:
-                break
+        for lock in locks:
+            lock.acquire() # wait for every thread to finish
+
+        exceptions:dict[str,Exception|None] = {} # Exception if the thread had an exception; None if the file returned None (should not happen)
+        all_complete = True
+        for file_name, file_result in file_results.items():
+            if file_result is None or isinstance(file_result, Exception):
+                exceptions[file_name] = file_result
+                all_complete = False
+        for file_name, exception in exceptions.items():
+            print("File \"%s\" from \"%s\" errored!" % (file_name, self.version.name))
+            if exception is None:
+                print("File \"%s\" returned None! This should not happen!" % file_name)
+            else:
+                traceback.print_exception(exception)
+        if not all_complete:
+            raise RuntimeError("File fetching failed due to Exception or incompletion.")
+
         for file_name, file_result in file_results.items(): # sets files that don't exist to None.
             if file_result is EMPTY_FILE:
                 file_results[file_name] = None
