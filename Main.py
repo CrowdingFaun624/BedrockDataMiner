@@ -22,10 +22,21 @@ PROGRAM_NAMES = {
     "WikiValidator": WikiValidator.main,
 }
 
-if __name__ == "__main__":
+def main() -> None:
     user_input = None
     while user_input not in PROGRAM_NAMES:
         user_input = input("Choose a program (%s):\n" % str(list(PROGRAM_NAMES.keys())))
     PROGRAM_NAMES[user_input]()
+
+if __name__ == "__main__":
+    main()
+    # import cProfile
+    # from pathlib2 import Path
+    # import pstats
+    # profile = cProfile.Profile()
+    # profile.run("main()")
+    # with open(Path("./time_report.txt"), "wt") as stream:
+    #     stats = pstats.Stats(profile, stream=stream)
+    #     stats.print_stats()
 
 FileManager.clear_temp()
