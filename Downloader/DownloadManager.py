@@ -23,10 +23,17 @@ class DownloadManager(InstallManager.InstallManager):
     def prepare_for_install(self) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
         self.url = None
-        self.installed = False
-        self.installation_lock = threading.Lock()
-        self.zip_file = None
+        self.installed = self.apk_location.exists()
+
+        if self.installed: # If it's already installed, do stuff that's only done in self.install.
+            self.zip_file = zipfile.ZipFile(self.apk_location)
+            self.members = {member.filename: member for member in self.zip_file.filelist}
+        else:
+            self.zip_file = None
+            self.members = None
+
         self.file_list = None
+        self.installation_lock = threading.Lock()
 
         self.url = self.version.download_link
         self.domain = urlparse(self.url).netloc
@@ -106,12 +113,14 @@ class DownloadManager(InstallManager.InstallManager):
         def clear_temp_file(temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
             path_that_zipfile_puts_it_in.unlink()
             folders_to_remove:list[Path] = []
+            current_path = temp_path
             while True:
-                children = list(temp_path.iterdir())
+                children = list(current_path.iterdir())
                 if len(children) == 0:
                     break
                 assert len(children) == 1
                 folders_to_remove.extend(children)
+                current_path = children[0]
             for folder_to_remove in reversed(folders_to_remove):
                 folder_to_remove.rmdir()
 
@@ -141,19 +150,13 @@ class DownloadManager(InstallManager.InstallManager):
         self.installation_lock.acquire()
         if destination is None: destination = self.apk_location
         if not self.installed:
-            try:
-                with open(destination, "wb") as f:
-                    while self.current_open_connections[self.domain] >= self.connection_limit:
-                        time.sleep(0.1)
-                    self.current_open_connections[self.domain] += 1
-                    f.write(requests.get(self.url).content)
-                    self.current_open_connections[self.domain] -= 1
-                self.installed = True
-                self.zip_file = zipfile.ZipFile(self.apk_location)
-                self.members = {member.filename: member for member in self.zip_file.filelist}
-            finally:
-                self.installation_lock.release()
-        # elif self.zip_file is None:
-        #     self.zip_file = zipfile.ZipFile(self.apk_location)
-        #     self.members = {member.filename: member for member in self.zip_file.filelist}
+            with open(destination, "wb") as f:
+                while self.current_open_connections[self.domain] >= self.connection_limit:
+                    time.sleep(0.1)
+                self.current_open_connections[self.domain] += 1
+                f.write(requests.get(self.url).content)
+                self.current_open_connections[self.domain] -= 1
+            self.installed = True
+            self.zip_file = zipfile.ZipFile(self.apk_location)
+            self.members = {member.filename: member for member in self.zip_file.filelist}
         self.installation_lock.release()
