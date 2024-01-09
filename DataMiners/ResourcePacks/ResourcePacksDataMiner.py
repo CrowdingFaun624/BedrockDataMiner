@@ -37,8 +37,8 @@ class ResourcePacksDataMiner(DataMiner.DataMiner):
         if not isinstance(data["types"], dict):
             raise TypeError("File \"%s\".types is not a dict!" % file_name)
         if not all(key in data["order"] for key in data["types"]):
-            non_existant_packs = [key for key in data["types"] if key not in data["order"]]
-            raise ValueError("File \"%s\".types has an item that is not in \"%s\".order: %s" % (file_name, file_name, str(non_existant_packs)))
+            non_existent_packs = [key for key in data["types"] if key not in data["order"]]
+            raise ValueError("File \"%s\".types has an item that is not in \"%s\".order: %s" % (file_name, file_name, str(non_existent_packs)))
         if not all(isinstance(value, list) for value in data["types"].values()):
             non_list_items = [key for key, value in data["types"].items() if not isinstance(value, list)]
             raise TypeError("File \"%s\".types has an item that is not a list: %s" % (file_name, str(non_list_items)))
