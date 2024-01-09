@@ -1,5 +1,4 @@
 import threading
-import time
 import traceback
 
 import DataMiners.DataMiner as DataMiner
@@ -22,11 +21,10 @@ dataminers:list[DataMiner.DataMinerCollection] = [
 
 def run_with_dependencies(version:Version.Version, name:str, recalculate:bool=False) -> None:
     data:DataMinerTyping.DependenciesTypedDict = {}
-    running:dict[str,bool] = {}
     dataminers_dict = {dataminer.name: dataminer.get_version(version) for dataminer in dataminers}
     if detect_cycle(name, dataminers_dict, []):
         raise RuntimeError("Dataminer \"%s\" for \"%s\" has a dependency cycle!" % (dataminers_dict[name], version))
-    return_data = __run_with_dependencies_child(data, running, name, dataminers_dict, recalculate, dataminers_dict[name])
+    return_data = __run_with_dependencies_child(data, name, dataminers_dict, recalculate, dataminers_dict[name])
     exceptions:dict[str,Exception] = {}
     for dependency, datum in data.items():
         if isinstance(datum, Exception):
@@ -54,37 +52,40 @@ def detect_cycle(name:str, dataminers_dict:dict[str,DataMiner.DataMiner], alread
     else:
         return False
 
-def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, running:dict[str,bool], name:str, dataminers_dict:dict[str,DataMiner.DataMiner], recalculate:bool, parent:DataMiner.DataMiner) -> None:
-    if name in running and running[name]:
-        while running[name]:
-            time.sleep(0.05)
-        return data[name]
-    else:
-        try:
-            dataminer = dataminers_dict[name]
-            if not recalculate and dataminer.get_data_file_path().exists(): # get the data file if it already exists.
-                return dataminer.get_data_file()
-            running[name] = True
-            if len(dataminer.dependencies) > 0:
-                for dependency in dataminer.dependencies:
-                    if dependency not in dataminers_dict: # I've been misspelling existent the whole time
-                        raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminer, dependency))
-                    thread = threading.Thread(target=__run_with_dependencies_child, args=[data, running, dependency, dataminers_dict, recalculate, parent])
-                    thread.start()
-                while any(dependency not in data for dependency in dataminer.dependencies):
-                    time.sleep(0.05)
-            if isinstance(dataminer, DataMiner.NullDataMiner):
-                raise RuntimeError("DataMiner \"%s\" references a NullDataMiner!" % parent)
-            for dependency in dataminer.dependencies:
-                if isinstance(data[dependency], Exception):
-                    raise RuntimeError("DataMiner \"%s\" cannot run because \"%s\" has raised an exception!" % (name, dependency))
-            return_data = dataminer.store(data)
-            data[name] = return_data
-            running[name] = False
+def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, name:str, dataminers_dict:dict[str,DataMiner.DataMiner], recalculate:bool, parent:DataMiner.DataMiner) -> None:
+    if name in data:
+        if isinstance(data[name], Exception):
+            # don't need to do anything with this exception because data[name] is already an exception.
+            raise RuntimeError("Another copy of DataMiner \"%s\" errored!" % name)
+        else:
+            return data[name]
+    try:
+        dataminer = dataminers_dict[name]
+        if not recalculate and dataminer.get_data_file_path().exists(): # get the data file if it already exists.
+            return_data = dataminer.get_data_file()
             return return_data
-        except Exception as e:
-            data[name] = e
-            running[name] = False
+        
+        # Dependencies (if none, then nothing will happen)
+        threads:list[threading.Thread] = []
+        for dependency in dataminer.dependencies:
+            if dependency not in dataminers_dict: # I've been misspelling existent the whole time
+                raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminer, dependency))
+            thread = threading.Thread(target=__run_with_dependencies_child, args=[data, dependency, dataminers_dict, recalculate, parent])
+            thread.start()
+            threads.append(thread)
+        for thread in threads: # wait for all child threads
+            thread.join()
+
+        if isinstance(dataminer, DataMiner.NullDataMiner):
+            raise RuntimeError("DataMiner \"%s\" references a NullDataMiner!" % parent)
+        for dependency in dataminer.dependencies:
+            if isinstance(data[dependency], Exception):
+                raise RuntimeError("DataMiner \"%s\" cannot run because \"%s\" has raised an exception!" % (name, dependency))
+        return_data = dataminer.store(data)
+        data[name] = return_data
+        return return_data
+    except Exception as e:
+        data[name] = e
 
 def user_interface() -> None:
     import Downloader.VersionsParser as VersionsParser

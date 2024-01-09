@@ -1,6 +1,5 @@
 import json
 from pathlib2 import Path
-import time
 import threading
 import traceback
 from typing import Any, Callable, IO, Iterable, Literal

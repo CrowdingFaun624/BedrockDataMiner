@@ -3,7 +3,7 @@ import hashlib
 import os
 import shutil
 import sys
-import time
+import threading
 from typing import Any, Callable, IO, Literal
 import uuid
 
@@ -30,7 +30,7 @@ LIB_FSB_EXE_FILE       = Path(LIB_FSB_FOLDER.joinpath("fsb_aud_extr.exe"))
 TEMP_FOLDER            = Path(PARENT_FOLDER.joinpath("_temp"))
 VERSIONS_FOLDER        = Path(PARENT_FOLDER.joinpath("_versions"))
 
-opened_shared_files:set[Path] = set()
+opened_shared_files:dict[Path,threading.Lock] = set()
 
 def get_version_path(version_name:str) -> Path:
     version_path = Path(VERSIONS_FOLDER.joinpath(version_name))
@@ -58,13 +58,13 @@ def get_temp_file_path() -> Path:
     return Path(TEMP_FOLDER.joinpath(str(uuid.uuid4())))
 
 def open_shared_file(path:Path, mode:str="r", *args, **kwargs) -> IO:
-    while path in opened_shared_files:
-        time.sleep(0.05)
-    opened_shared_files.add(path)
+    if path not in opened_shared_files:
+        opened_shared_files[path] = threading.Lock()
+    opened_shared_files[path].acquire()
     try:
         open_file = open(path, mode, *args, **kwargs)
     finally:
-        opened_shared_files.remove(path)
+        opened_shared_files[path].release()
     return open_file
 
 def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
