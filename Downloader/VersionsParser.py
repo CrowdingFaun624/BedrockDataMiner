@@ -170,7 +170,7 @@ def assign_install_managers(versions:list[Version.Version]) -> None:
 def assign_additional_tags(versions:list[Version.Version]) -> None:
     '''Assigns tags that are assigned by the VersionParser'''
     version_dict = {version.name: version for version in versions}
-    double_assets_range = VersionRange.VersionRange(version_dict["1.20.50.22"], "-")
+    double_assets_range = VersionRange.VersionRange(version_dict["1.20.50.21"], "-")
     pocket_edition_ranges = VersionRange.VersionRange("-", version_dict["1.1.7"])
     pocket_edition_alpha_before = VersionRange.VersionRange(version_dict["a0.17.0.1"], version_dict["1.1.7"])
     for version in versions:
