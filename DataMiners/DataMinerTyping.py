@@ -1,7 +1,8 @@
 from typing import Any, TypedDict
 
 class DependenciesTypedDict(TypedDict):
-    blocks: dict[str,dict[str,"BlocksJsonBlockTypedDict"]]
+    blocks: dict[str,"MyBlocksJsonBlockTypedDict"]
+    languages: list["LanguagesTypedDict"]
     resource_packs: list["ResourcePackTypedDict"]
     sound_definitions: dict[str,dict[str,"SoundDefinitionsJsonSoundEventTypedDict"]]
     sound_files: "SoundFilesTypedDict"
@@ -27,6 +28,20 @@ class BlocksJsonBlockTypedDict(TypedDict):
     isotropic: bool|BlocksJsonBlockIsotropicTypedDict
     sound: str
     textures: str|BlocksJsonBlockTexturesTypedDict
+
+class MyBlocksJsonBlockTypedDict(TypedDict):
+    name: str
+    properties: BlocksJsonBlockTypedDict
+
+# languages
+
+class LanguagesPropertiesTypedDict(TypedDict):
+    name: str
+
+class LanguagesTypedDict(TypedDict):
+    code: str
+    defined_in: list[str]
+    properties: dict[str,LanguagesPropertiesTypedDict]
 
 # resource packs
 
