@@ -60,14 +60,14 @@ class DataMiner():
         if len(kwargs) > 0:
             raise NotImplementedError("`initialize` was called with non-empty parameters without being defined by a subclass.")
     
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict|None=None) -> Any:
+    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         '''Makes the dataminer get the file. Returns the output.'''
         raise NotImplementedError("`activate` was called without being defined by a subclass.")
 
     def get_data_file_path(self) -> Path:
         return FileManager.get_version_data_path(self.version.version_folder, self.file_name)
 
-    def store(self, dependency_data:DataMinerTyping.DependenciesTypedDict|None=None) -> Any:
+    def store(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         '''Makes the dataminer get the file. Returns the output and stores it in a file.'''
         data = self.activate(dependency_data)
         if data is None:
