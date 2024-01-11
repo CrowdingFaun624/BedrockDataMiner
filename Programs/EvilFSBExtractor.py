@@ -1,9 +1,12 @@
 from pathlib2 import Path
 import subprocess
+import threading
 from typing import Generator, Iterable
 
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller
+
+fsb_exe_lock = threading.Lock()
 
 def __output_file_all_done(input_file_releases:dict[str,bool], file_path:Path) -> dict[str,FileManager.FilePromise]:
     file_name = file_path.name
@@ -25,7 +28,8 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> None:
     input_file.all_done()
     
     # run fsb extractor on fsb file.
-    exe_return = subprocess.run([FileManager.LIB_FSB_EXE_FILE, temp_file], shell=True, cwd=temp_directory, capture_output=True)
+    with fsb_exe_lock as lock: # They raise an error code of 67 if started at exactly the same time.
+        exe_return = subprocess.run([FileManager.LIB_FSB_EXE_FILE, temp_file], shell=True, cwd=temp_directory, capture_output=True)
     if exe_return.returncode != 0:
         raise RuntimeError("EvilFSBExtractor returned a code of %i on file \"%s\"!" % (exe_return.returncode, input_file.name))
     
