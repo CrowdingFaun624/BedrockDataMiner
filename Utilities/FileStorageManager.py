@@ -29,8 +29,8 @@ def reopen_in_binary(file:FileManager.FilePromise) -> FileManager.FilePromise:
         temp_file_path = FileManager.get_temp_file_path()
         with open(temp_file_path, "wt") as temp_file, file.open() as file_io:
             temp_file.write(file_io.read())
-        file = FileManager.FilePromise(open, file.name, "b", [temp_file_path, "rb"])
-    return file
+        return FileManager.FilePromise(FunctionCaller(open, [temp_file_path, "rb"]), file.name, "b", temp_file_path.unlink)
+    else: return file
 
 def should_zip_file(file:FileManager.FilePromise) -> bool:
     '''Returns if the file is efficiently zippable.'''
