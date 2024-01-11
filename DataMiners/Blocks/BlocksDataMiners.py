@@ -2,11 +2,15 @@
 [
     {
         "name": "minecraft:stone",
-        "defined_in": ["vanilla", "experimental_update_announced_live2023"],
         "properties": {
-            "isotropic": true,
-            "textures": "dirt",
-            "sound": "gravel"
+            "vanilla": {
+                "isotropic": true,
+                "textures": "dirt",
+                "sound": "gravel"
+            },
+            "experimental_update_announced_live2023": {
+                "sound": "stone"
+            }
         }
     }
 ]'''
