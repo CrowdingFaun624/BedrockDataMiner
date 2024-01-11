@@ -30,7 +30,7 @@ LIB_FSB_EXE_FILE       = Path(LIB_FSB_FOLDER.joinpath("fsb_aud_extr.exe"))
 TEMP_FOLDER            = Path(PARENT_FOLDER.joinpath("_temp"))
 VERSIONS_FOLDER        = Path(PARENT_FOLDER.joinpath("_versions"))
 
-opened_shared_files:dict[Path,threading.Lock] = set()
+opened_shared_files:dict[Path,threading.Lock] = {}
 
 def get_version_path(version_name:str) -> Path:
     version_path = Path(VERSIONS_FOLDER.joinpath(version_name))
