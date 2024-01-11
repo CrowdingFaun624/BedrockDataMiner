@@ -22,9 +22,10 @@ dataminers:list[DataMiner.DataMinerCollection] = [
 def run_with_dependencies(version:Version.Version, name:str, recalculate:bool=False) -> None:
     data:DataMinerTyping.DependenciesTypedDict = {}
     dataminers_dict = {dataminer.name: dataminer.get_version(version) for dataminer in dataminers}
+    locks = {dataminer.name: threading.Lock() for dataminer in dataminers}
     if detect_cycle(name, dataminers_dict, []):
         raise RuntimeError("Dataminer \"%s\" for \"%s\" has a dependency cycle!" % (dataminers_dict[name], version))
-    return_data = __run_with_dependencies_child(data, name, dataminers_dict, recalculate, dataminers_dict[name])
+    __run_with_dependencies_child(data, locks, name, dataminers_dict, recalculate, dataminers_dict[name])
     exceptions:dict[str,Exception] = {}
     for dependency, datum in data.items():
         if isinstance(datum, Exception):
@@ -52,25 +53,27 @@ def detect_cycle(name:str, dataminers_dict:dict[str,DataMiner.DataMiner], alread
     else:
         return False
 
-def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, name:str, dataminers_dict:dict[str,DataMiner.DataMiner], recalculate:bool, parent:DataMiner.DataMiner) -> None:
+def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, locks:dict[str,threading.Lock], name:str, dataminers_dict:dict[str,DataMiner.DataMiner], recalculate:bool, parent:DataMiner.DataMiner) -> None:
+    lock = locks[name]
+    lock.acquire()
     if name in data:
         if isinstance(data[name], Exception):
             # don't need to do anything with this exception because data[name] is already an exception.
+            lock.release()
             raise RuntimeError("Another copy of DataMiner \"%s\" errored!" % name)
         else:
-            return data[name]
+            pass # Return values do not do anything; this function just needs to end to complete.
     try:
         dataminer = dataminers_dict[name]
         if not recalculate and dataminer.get_data_file_path().exists(): # get the data file if it already exists.
-            return_data = dataminer.get_data_file()
-            return return_data
+            data[name] = dataminer.get_data_file()
         
         # Dependencies (if none, then nothing will happen)
         threads:list[threading.Thread] = []
         for dependency in dataminer.dependencies:
             if dependency not in dataminers_dict: # I've been misspelling existent the whole time
                 raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminer, dependency))
-            thread = threading.Thread(target=__run_with_dependencies_child, args=[data, dependency, dataminers_dict, recalculate, parent])
+            thread = threading.Thread(target=__run_with_dependencies_child, args=[data, locks, dependency, dataminers_dict, recalculate, parent])
             thread.start()
             threads.append(thread)
         for thread in threads: # wait for all child threads
@@ -79,13 +82,15 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, na
         if isinstance(dataminer, DataMiner.NullDataMiner):
             raise RuntimeError("DataMiner \"%s\" references a NullDataMiner!" % parent)
         for dependency in dataminer.dependencies:
+            if dependency not in data:
+                raise KeyError("DataMiner \"%s\" failed to create child process of \"%s\"!" % (name, dependency))
             if isinstance(data[dependency], Exception):
                 raise RuntimeError("DataMiner \"%s\" cannot run because \"%s\" has raised an exception!" % (name, dependency))
-        return_data = dataminer.store(data)
-        data[name] = return_data
-        return return_data
+        data[name] = dataminer.store(data)
     except Exception as e:
         data[name] = e
+    finally:
+        lock.release()
 
 def user_interface() -> None:
     import Downloader.VersionsParser as VersionsParser
