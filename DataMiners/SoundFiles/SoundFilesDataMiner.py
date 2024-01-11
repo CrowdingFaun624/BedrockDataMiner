@@ -44,5 +44,5 @@ def serialize(data:Any) -> Any:
             return "Unencodable object \"%s\"" % data.__class__.__name__
 
 class SoundFilesDataMiner(DataMiner.DataMiner):
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict|None=None) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
+    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
         return super().activate(dependency_data)

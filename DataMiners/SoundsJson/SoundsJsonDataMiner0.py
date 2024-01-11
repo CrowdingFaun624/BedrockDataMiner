@@ -32,8 +32,8 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
                 else:
                     destination["events"][event_name][resource_pack_name] = event_properties
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict|None=None) -> DataMinerTyping.MySoundsJsonTypedDict:
-        resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = dependency_data["resource_packs"]
+    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.MySoundsJsonTypedDict:
+        resource_packs = dependency_data["resource_packs"]
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         resource_pack_files = {"resource_packs/%s/sounds.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         files_request = [(resource_pack_file, "t", pyjson5.load) for resource_pack_file in resource_pack_files.keys()]
@@ -94,4 +94,6 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
                         if entity_name not in sounds_json["interactive_entity_sounds"]:
                             sounds_json["interactive_entity_sounds"][entity_name] = {}
                         self.parse_sound_collection(entity_sounds, sounds_json["interactive_entity_sounds"][entity_name], resource_pack_name)
-        return sounds_json
+        
+        sorted_sounds_json:DataMinerTyping.MySoundsJsonTypedDict = {category: {key: value for key, value in sorted(category_content.items())} for category, category_content in sounds_json.items()}
+        return sorted_sounds_json

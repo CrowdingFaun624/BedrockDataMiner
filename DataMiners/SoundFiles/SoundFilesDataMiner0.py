@@ -4,7 +4,7 @@ import Programs.EvilFSBExtractor as EvilFSBExtractor
 
 
 class SoundFilesDataMiner0(SoundFilesDataMiner.SoundFilesDataMiner):
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict|None=None) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
+    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
         file_list = self.get_file_list()
         assert not any("\\" in file for file in file_list) # can't trust it, you see.
         if len(file_list) == 0:
