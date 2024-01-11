@@ -1,4 +1,5 @@
 from pathlib2 import Path
+import shutil
 from typing import Iterable
 
 import Downloader.InstallManager as InstallManager
@@ -8,6 +9,7 @@ import Utilities.FileManager as FileManager
 
 class StoredManager(InstallManager.InstallManager):
     def prepare_for_install(self) -> None:
+        self.apk_location = Path(str(self.location) + ".zip")
         self.name = self.version.download_link[1:]
         self.index = StoredVersionsManager.read_index(self.name)
         if not self.version.download_method is Version.DOWNLOAD_FILE:
@@ -31,7 +33,7 @@ class StoredManager(InstallManager.InstallManager):
         if destination is not None and not isinstance(destination, Path):
             raise TypeError("Parameter `destination` is not a `Path`!")
 
-        if destination is None: destination = self.location
+        if destination is None: destination = self.apk_location
         if not destination.exists():
             StoredVersionsManager.extract(self.name, destination, self.index)
 
@@ -68,3 +70,10 @@ class StoredManager(InstallManager.InstallManager):
 
         file_name = self.get_full_file_name(file_name)
         return StoredVersionsManager.get_file(self.name, file_name, mode, self.index)
+
+    def all_done(self) -> None:
+        if self.apk_location.exists():
+            self.apk_location.unlink()
+        assert self.location.name != self.version.name # self.location refers to the `client` subdirectory of the version folder.
+        if self.location.exists():
+            shutil.rmtree(self.location)

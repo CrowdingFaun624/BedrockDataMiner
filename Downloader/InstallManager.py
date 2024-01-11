@@ -49,3 +49,7 @@ class InstallManager():
     def get_file(self, file_name:str, mode:str="b") -> "FileManager.FilePromise":
         '''Returns a FilePromise object of the file.'''
         raise NotImplementedError("`get_file` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
+    
+    def all_done(self) -> None:
+        '''Removes all files that were created as part of the installation of this version.'''
+        raise NotImplementedError("`get_file` is not implemented for \"%s\"'s InstallManager!" % self.version.name)

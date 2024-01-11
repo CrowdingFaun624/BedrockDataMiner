@@ -81,4 +81,7 @@ class LocalManager(InstallManager.InstallManager):
         file_name = self.get_full_file_name(file_name)
         full_path = Path(self.bedrock_local.joinpath(file_name))
         return FileManager.FilePromise(open, [full_path, "r" + mode])
+    
+    def all_done(self) -> None:
+        pass # There is no need to do anything. All of the files are where they should be.
             

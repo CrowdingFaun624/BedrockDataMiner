@@ -1,6 +1,7 @@
 from typing import Iterable, TYPE_CHECKING
 from pathlib2 import Path
 import requests
+import shutil
 import threading
 import time
 from urllib.parse import urlparse
@@ -34,6 +35,7 @@ class DownloadManager(InstallManager.InstallManager):
 
         self.file_list = None
         self.installation_lock = threading.Lock()
+        self.get_file_list_lock = threading.Lock()
 
         self.url = self.version.download_link
         self.domain = urlparse(self.url).netloc
@@ -80,9 +82,12 @@ class DownloadManager(InstallManager.InstallManager):
     def get_file_list(self) -> Iterable[str]:
         if not self.installed:
             self.install_all()
-        strip_string = self.get_full_file_name("")
         if self.file_list is None:
-            self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string)]
+            with self.get_file_list_lock:
+                if self.file_list is not None:
+                    return self.file_list # If it started waiting and then it's complete when it's done waiting.
+                strip_string = self.get_full_file_name("")
+                self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string)]
         return self.file_list
 
     def file_exists(self, name:str) -> bool:
@@ -112,7 +117,7 @@ class DownloadManager(InstallManager.InstallManager):
 
         def clear_temp_file(temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
             path_that_zipfile_puts_it_in.unlink()
-            folders_to_remove:list[Path] = []
+            folders_to_remove:list[Path] = [temp_path] # with `temp_path` so that it removes the base, temporary path name
             current_path = temp_path
             while True:
                 children = list(current_path.iterdir())
@@ -159,4 +164,16 @@ class DownloadManager(InstallManager.InstallManager):
             self.installed = True
             self.zip_file = zipfile.ZipFile(self.apk_location)
             self.members = {member.filename: member for member in self.zip_file.filelist}
+        self.installation_lock.release()
+    
+    def all_done(self) -> None:
+        self.installation_lock.acquire() # So it doesn't do anything under my nose
+        self.installed = False
+        self.zip_file = None
+        self.members = None
+        if self.apk_location.exists():
+            self.apk_location.unlink()
+        assert self.location.name != self.version.name # self.location refers to the `client` subdirectory of the version folder.
+        if self.location.exists():
+            shutil.rmtree(self.location)
         self.installation_lock.release()
