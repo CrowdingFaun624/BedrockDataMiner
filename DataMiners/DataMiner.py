@@ -84,9 +84,13 @@ class DataMiner():
             return json.load(f)
 
     def get_file_list(self) -> Iterable[str]:
+        if self.version.install_manager is None:
+            raise RuntimeError("Attempted to call `get_file_list` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.get_file_list()
 
     def read_file(self, file_name:str, mode:str="t") -> str|bytes:
+        if self.version.install_manager is None:
+            raise RuntimeError("Attempted to call `read_file` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.read(file_name, mode)
     
     def read_files(self, files:list[str|tuple[str,str,None|Callable[[IO],Any]]], non_exist_ok:bool=False) -> dict[str,str|bytes|Any]:
@@ -111,6 +115,9 @@ class DataMiner():
                     file_results[file_name] = e
                     lock.release()
             lock.release()
+        
+        if self.version.install_manager is None:
+            raise RuntimeError("Attempted to call `read_files` on version (\"%s\") with no download available!" % self.version.name)
 
         DEFAULT_MODE = "t"
         LIMIT = 16 # how many threads can be created.
@@ -156,9 +163,13 @@ class DataMiner():
         return file_results
 
     def file_exists(self, file_name:str) -> bool:
+        if self.version.install_manager is None:
+            raise RuntimeError("Attempted to call `file_exists` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.file_exists(file_name)
 
     def get_file(self, file_name:str, mode:str="t") -> FileManager.FilePromise:
+        if self.version.install_manager is None:
+            raise RuntimeError("Attempted to call `get_file` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.get_file(file_name, mode)
 
 class NullDataMiner(DataMiner):
