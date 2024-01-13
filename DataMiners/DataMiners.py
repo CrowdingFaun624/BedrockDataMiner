@@ -57,42 +57,40 @@ def detect_cycle(name:str, dataminers_dict:dict[str,DataMiner.DataMiner], alread
 
 def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, locks:dict[str,threading.Lock], name:str, dataminers_dict:dict[str,DataMiner.DataMiner], recalculate:bool, parent:DataMiner.DataMiner) -> None:
     lock = locks[name]
-    lock.acquire()
-    if name in data:
-        if isinstance(data[name], Exception):
-            # don't need to do anything with this exception because data[name] is already an exception.
-            lock.release()
-            raise RuntimeError("Another copy of DataMiner \"%s\" errored!" % name)
-        else:
-            pass # Return values do not do anything; this function just needs to end to complete.
-    try:
-        dataminer = dataminers_dict[name]
-        if not recalculate and dataminer.get_data_file_path().exists(): # get the data file if it already exists.
-            data[name] = dataminer.get_data_file()
-        
-        # Dependencies (if none, then nothing will happen)
-        threads:list[threading.Thread] = []
-        for dependency in dataminer.dependencies:
-            if dependency not in dataminers_dict: # I've been misspelling existent the whole time
-                raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminer, dependency))
-            thread = threading.Thread(target=__run_with_dependencies_child, args=[data, locks, dependency, dataminers_dict, recalculate, parent])
-            thread.start()
-            threads.append(thread)
-        for thread in threads: # wait for all child threads
-            thread.join()
+    with lock:
+        if name in data:
+            if isinstance(data[name], Exception):
+                # don't need to do anything with this exception because data[name] is already an exception.
+                raise RuntimeError("Another copy of DataMiner \"%s\" errored!" % name)
+            else:
+                pass # Return values do not do anything; this function just needs to end to complete.
+        try:
+            dataminer = dataminers_dict[name]
+            if not recalculate and dataminer.get_data_file_path().exists(): # get the data file if it already exists.
+                data[name] = dataminer.get_data_file()
+                return # Return so it doesn't try to datamine the data file anyways.
 
-        if isinstance(dataminer, DataMiner.NullDataMiner):
-            raise RuntimeError("DataMiner \"%s\" references a NullDataMiner!" % parent)
-        for dependency in dataminer.dependencies:
-            if dependency not in data:
-                raise KeyError("DataMiner \"%s\" failed to create child process of \"%s\"!" % (name, dependency))
-            if isinstance(data[dependency], Exception):
-                raise RuntimeError("DataMiner \"%s\" cannot run because \"%s\" has raised an exception!" % (name, dependency))
-        data[name] = dataminer.store(data)
-    except Exception as e:
-        data[name] = e
-    finally:
-        lock.release()
+            # Dependencies (if none, then nothing will happen)
+            threads:list[threading.Thread] = []
+            for dependency in dataminer.dependencies:
+                if dependency not in dataminers_dict: # I've been misspelling existent the whole time
+                    raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminer, dependency))
+                thread = threading.Thread(target=__run_with_dependencies_child, args=[data, locks, dependency, dataminers_dict, recalculate, parent])
+                thread.start()
+                threads.append(thread)
+            for thread in threads: # wait for all child threads
+                thread.join()
+
+            if isinstance(dataminer, DataMiner.NullDataMiner):
+                raise RuntimeError("DataMiner \"%s\" references a NullDataMiner!" % parent)
+            for dependency in dataminer.dependencies:
+                if dependency not in data:
+                    raise KeyError("DataMiner \"%s\" failed to create child process of \"%s\"!" % (name, dependency))
+                if isinstance(data[dependency], Exception):
+                    raise RuntimeError("DataMiner \"%s\" cannot run because \"%s\" has raised an exception!" % (name, dependency))
+            data[name] = dataminer.store(data)
+        except Exception as e:
+            data[name] = e
 
 def user_interface() -> None:
     import Downloader.VersionsParser as VersionsParser

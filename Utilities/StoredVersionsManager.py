@@ -260,5 +260,5 @@ def main() -> None:
     }
     user_input = None
     while user_input not in PROGRAMS.keys():
-        user_input = input("Select a StoredVersions program from %s: " % str(PROGRAMS.keys()))
+        user_input = input("Select a StoredVersions program from %s: " % list(PROGRAMS.keys()))
     PROGRAMS[user_input]()

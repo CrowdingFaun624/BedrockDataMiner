@@ -60,21 +60,20 @@ def __output_file_all_done(input_file_releases:dict[str,bool], file_path:Path) -
     if all(input_file_releases.values()):
         file_path.parent.rmdir()
 
-# TODO: This can be optimized significantly. Hashing an FSB file is much faster than extracting it, so FSB files with a familiar hash should be compared against a cache.
 def extract_fsb_file(input_file:FileManager.FilePromise) -> None:
-    temp_directory = FileManager.get_temp_file_path()
-    temp_directory.mkdir()
-    temp_file = Path(temp_directory.joinpath("fsb.fsb"))
 
-    # copying file to temp directory
-    with open(temp_file, "wb") as dest, input_file.open() as fsb_file_io:
-        dest.write(fsb_file_io.read())
-    input_file.all_done()
-    
-    with open(temp_file, "rb") as f:
+    with input_file.open() as f:
         fsb_file_hash = FileManager.stringify_sha1_hash(FileManager.get_hash(f))
     cache_data = cache_read_item(fsb_file_hash)
+    
     if cache_data is None:
+        temp_directory = FileManager.get_temp_file_path()
+        temp_directory.mkdir()
+        temp_file = Path(temp_directory.joinpath("fsb.fsb"))
+        # copying file to temp directory
+        with open(temp_file, "wb") as dest, input_file.open() as fsb_file_io:
+            dest.write(fsb_file_io.read())
+        input_file.all_done()
         # run fsb extractor on fsb file.
         with fsb_exe_lock as lock: # They raise an error code of 67 if started at exactly the same time.
             exe_return = subprocess.run([FileManager.LIB_FSB_EXE_FILE, temp_file], shell=True, cwd=temp_directory, capture_output=True)
