@@ -96,6 +96,7 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
         return {result_file_path.name: FileManager.FilePromise(FunctionCaller(open, [result_file_path, "rb"]), "%s %s" % (input_file.name, result_file_path.name), "b", FunctionCaller(__output_file_all_done, [input_file_releases, result_file_path])) for result_file_path in result_file_paths}
     
     else: # If the fsb has been seen before, then it returns its wav files from FileStorage
+        input_file.all_done()
         return {cached_file_path: FileStorageManager.open_archived(cached_file_hash, "b") for cached_file_path, cached_file_hash in cache_data.items()}
 
 def extract_fsb_files(files:Iterable[tuple[str,FileManager.FilePromise]]|Generator[tuple[str,FileManager.FilePromise],None,None]) -> Generator[tuple[str,dict[str,FileManager.FilePromise]],None,None]:
