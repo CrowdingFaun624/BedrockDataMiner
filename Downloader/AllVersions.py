@@ -62,6 +62,7 @@ def main() -> None:
                 new_thread = threading.Thread(target=datamine_version, args=[version, dataminer_names, exceptions])
                 active_threads.append((new_thread, version))
                 new_thread.start()
+        active_threads = trim_inactive_threads(active_threads)
         time.sleep(0.05)
     if has_encountered_exception:
         raise RuntimeError("Versions [%s] errored!" % ", ".join("\"%s\"" % version.name for version in exception_versions))
