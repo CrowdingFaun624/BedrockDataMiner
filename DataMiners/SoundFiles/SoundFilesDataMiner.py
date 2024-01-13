@@ -26,6 +26,7 @@ def get_metadata(file:FileManager.FilePromise) -> dict[str,Any]:
                     print("audio_metadata failed to extract file \"%s\"!" % file.name)
                     raise exception
                 info = serialize(metadata)
+            temp_file.unlink()
         else:
             temp_file = None
             exception = None
@@ -42,8 +43,6 @@ def get_metadata(file:FileManager.FilePromise) -> dict[str,Any]:
         sha1_hash = FileManager.stringify_sha1_hash(FileManager.get_hash(file_io))
         info["sha1_hash"] = sha1_hash
     file.all_done()
-    if temp_file is not None:
-        temp_file.unlink()
     return info
 
 def serialize(data:Any) -> Any:
