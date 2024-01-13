@@ -21,6 +21,7 @@ STORED_VERSIONS_INDEXES_FILE = Path(STORED_VERSIONS_FOLDER.joinpath("indexes.zip
 STORED_VERSIONS_INPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("input"))
 STORED_VERSIONS_OUTPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("output"))
 VERSIONS_FILE          = Path(ASSETS_FOLDER.joinpath("versions.json"))
+FSB_CACHE_FILE         = Path(ASSETS_FOLDER.joinpath("fsb_cache.json"))
 RESOUCE_PACK_DATA_FILE      = Path(ASSETS_FOLDER.joinpath("resource_pack_data.json"))
 VERSION_PARSER_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("version_parser_warnings.txt"))
 WIKI_VALIDATOR_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("wiki_validator_warnings.txt"))
@@ -31,6 +32,13 @@ TEMP_FOLDER            = Path(PARENT_FOLDER.joinpath("_temp"))
 VERSIONS_FOLDER        = Path(PARENT_FOLDER.joinpath("_versions"))
 
 opened_shared_files:dict[Path,threading.Lock] = {}
+
+def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/getting-file-size-in-python
+    start = io.tell()
+    io.seek(0,2) # move the cursor to the end of the file
+    size = io.tell()
+    io.seek(start)
+    return size
 
 def get_version_path(version_name:str) -> Path:
     version_path = Path(VERSIONS_FOLDER.joinpath(version_name))

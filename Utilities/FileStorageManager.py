@@ -44,7 +44,7 @@ def get_file_path(hex_string:str) -> Path:
     return archived_path
 
 def archive(file:FileManager.FilePromise) -> str:
-    '''Stores a file in the `./_assets/file_storage/objects` directory, and adds its data to the `./_assets/file_storage/index.txt` file.
+    '''Takes in a FilePromise object, and stores a file in the `./_assets/file_storage/objects` directory, and adds its data to the `./_assets/file_storage/index.txt` file.
     Returns the sha1 hash in a hexadecimal string format that the file is stored at.
     If the file already exists in the archive, do nothing.'''
     file = reopen_in_binary(file)
@@ -55,6 +55,8 @@ def archive(file:FileManager.FilePromise) -> str:
     archived_folder.mkdir(exist_ok=True)
     zipped = should_zip_file(file)
     with open(archived_path, "wb") as destination, file.open() as source:
+        if FileManager.get_file_size(source) == 0:
+            raise ValueError("File \"%s\" returned an IO object with length 0!" % file.name)
         if zipped:
             destination.write(gzip.compress(source.read()))
         else:
@@ -68,8 +70,21 @@ def archive(file:FileManager.FilePromise) -> str:
 
     return hex_string
 
+def archive_io(file:IO, file_name:str) -> str:
+    '''Takes in a binary IO object, and stores a file in the `./_assets/file_storage/objects` directory, and adds its data to the `./_assets/file_storage/index.txt` file.
+    Returns the sha1 hash in a hexadecimal string format that the file is stored at.
+    If the file already exists in the archive, do nothing.'''
+    temp_file = FileManager.get_temp_file_path()
+    with open(temp_file, "wb") as f:
+        f.write(file.read()) # copying it so I can read it multiple times.
+    return_value = archive(FileManager.FilePromise(FunctionCaller(open, [temp_file, "rb"]), file_name, "b"))
+    temp_file.unlink()
+    return return_value
+
 def open_archived(hex_string:str, mode:Literal["t", "b"]) -> FileManager.FilePromise:
     archived_path = get_file_path(hex_string)
+    if not archived_path.exists():
+        raise FileNotFoundError("File with hash \"%s\" does not exist!" % hex_string)
     is_zipped, name = index[hex_string]
     if is_zipped:
         temp_file = FileManager.get_temp_file_path()
@@ -77,7 +92,7 @@ def open_archived(hex_string:str, mode:Literal["t", "b"]) -> FileManager.FilePro
             temp_file_io.write(gzip.decompress(f))
         return FileManager.FilePromise(FunctionCaller(open, [temp_file, "r" + mode]), temp_file.name, "b", temp_file.unlink)
     else:
-        return open(archived_path, "r" + mode)
+        return FileManager.FilePromise(FunctionCaller(open, [archived_path, "r" + mode]), hex_string, "b")
 
 def read_archived(hex_string:str, mode:Literal["t", "b"]) -> bytes|str:
     archived_path = get_file_path(hex_string)
