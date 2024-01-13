@@ -51,7 +51,7 @@ def cache_read_item(fsb_hash:str) -> dict[str,str]|None:
 
 fsb_cache = read_cache()
 
-def __output_file_all_done(input_file_releases:dict[str,bool], file_path:Path) -> dict[str,FileManager.FilePromise]:
+def __output_file_all_done(input_file_releases:dict[str,bool], file_path:Path) -> None:
     file_name = file_path.name
     if file_name not in input_file_releases:
         raise KeyError("\"%s\" is not a key in %s!" % (file_name, input_file_releases))
@@ -60,7 +60,7 @@ def __output_file_all_done(input_file_releases:dict[str,bool], file_path:Path) -
     if all(input_file_releases.values()):
         file_path.parent.rmdir()
 
-def extract_fsb_file(input_file:FileManager.FilePromise) -> None:
+def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager.FilePromise]:
 
     with input_file.open() as f:
         fsb_file_hash = FileManager.stringify_sha1_hash(FileManager.get_hash(f))
