@@ -106,7 +106,7 @@ def user_interface() -> None:
 
     dataminer_names = {dataminer.name: dataminer for dataminer in dataminers}
     dataminer_collection = None
-    while dataminer_collection not in dataminer_names or dataminer_collection == "*":
+    while dataminer_collection not in dataminer_names and dataminer_collection != "*":
         dataminer_collection = input("What will be datamined (* for all)? %s " % str([dataminer.name for dataminer in dataminers]))
     if dataminer_collection == "*":
         dataminer_names = [dataminer.name for dataminer in dataminers]
