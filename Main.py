@@ -6,6 +6,7 @@ if __name__ == "__main__":
 import Utilities.FileManager as FileManager
 import DataMiners.DataMiners as DataMiners
 import Downloader.AllVersions as AllVersions
+import Programs.Cleaner as Cleaner
 import Programs.FileSummary as FileSummary
 import Programs.GetFile as GetFile
 import Utilities.StoredVersionsManager as StoredVersionsManager
@@ -14,6 +15,7 @@ import Downloader.WikiValidator as WikiValidator
 
 PROGRAM_NAMES = {
     "AllVersions": AllVersions.main,
+    "Cleaner": Cleaner.main,
     "DataMiners": DataMiners.user_interface,
     "FileSummary": FileSummary.main,
     "GetFile": GetFile.main,
