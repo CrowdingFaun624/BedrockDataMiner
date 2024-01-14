@@ -47,7 +47,7 @@ class DownloadManager(InstallManager.InstallManager):
     def set_file_prepension(self) -> None:
         tags = self.version.tags
         if VersionTags.IPA in tags:
-            prepend = "Payload/minecraftpe.app/data"
+            prepend = "Payload/minecraftpe.app/data/"
         else:
             if VersionTags.DOUBLE_ASSETS in self.version.tags:
                 prepend = "assets/assets/"
@@ -108,7 +108,7 @@ class DownloadManager(InstallManager.InstallManager):
             self.install_all()
         file_name = self.get_full_file_name(file_name)
         data = self.zip_file.read(file_name)
-        if mode == "r":
+        if mode == "t":
             return data.decode("utf-8")
         else:
             return data

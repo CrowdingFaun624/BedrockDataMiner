@@ -54,7 +54,7 @@ class StoredManager(InstallManager.InstallManager):
             raise ValueError("Parameter `mode` is not \"b\" or \"t\"!")
 
         file_name = self.get_full_file_name(file_name)
-        StoredVersionsManager.read_file(self.name, file_name, mode, self.index)
+        return StoredVersionsManager.read_file(self.name, file_name, mode, self.index)
     
     def get_full_file_name(self, asset_name:str) -> str:
         return "assets/" + asset_name
