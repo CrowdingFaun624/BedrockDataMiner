@@ -66,6 +66,10 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
                 pass # Return values do not do anything; this function just needs to end to complete.
         try:
             dataminer = dataminers_dict[name]
+
+            if isinstance(dataminer, DataMiner.NullDataMiner):
+                return # If it is a null dataminer, then there is nothing else to do.
+            
             if not recalculate and dataminer.get_data_file_path().exists(): # get the data file if it already exists.
                 data[name] = dataminer.get_data_file()
                 return # Return so it doesn't try to datamine the data file anyways.
@@ -75,14 +79,14 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
             for dependency in dataminer.dependencies:
                 if dependency not in dataminers_dict: # I've been misspelling existent the whole time
                     raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminer, dependency))
+                if isinstance(dataminers_dict[dependency], DataMiner.NullDataMiner):
+                    raise RuntimeError("DataMiner \"%s\" on Version \"%s\" references a NullDataMiner for \"%s\"!" % (name, dataminer.version.name, dependency))
                 thread = threading.Thread(target=__run_with_dependencies_child, args=[data, locks, dependency, dataminers_dict, recalculate, parent])
                 thread.start()
                 threads.append(thread)
             for thread in threads: # wait for all child threads
                 thread.join()
 
-            if isinstance(dataminer, DataMiner.NullDataMiner):
-                raise RuntimeError("DataMiner \"%s\" references a NullDataMiner!" % parent)
             for dependency in dataminer.dependencies:
                 if dependency not in data:
                     raise KeyError("DataMiner \"%s\" failed to create child process of \"%s\"!" % (name, dependency))
@@ -95,8 +99,7 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
 def user_interface() -> None:
     import Downloader.VersionsParser as VersionsParser
 
-    versions = VersionsParser.parse()
-    version_names = {version.name: version for version in versions}
+    version_names = VersionsParser.versions_dict
     version = None
     while version not in version_names:
         version = input("What version will be datamined? ")

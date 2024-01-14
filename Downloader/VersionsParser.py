@@ -212,5 +212,8 @@ def parse() -> list[Version.Version]:
     UrlValidator.validate_url_data(versions)
     return versions
 
+versions = parse()
+versions_dict = {version.name: version for version in versions}
+
 def main() -> None:
     parse()

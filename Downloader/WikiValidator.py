@@ -256,7 +256,7 @@ def validate(version:Version.Version, rememberer:dict[str,Any]) -> None:
         rememberer[version.name] = e
 
 def main() -> None:
-    versions = VersionsParser.parse()
+    versions = VersionsParser.versions
     start_version = input("What version to start from? ")
     with open(FileManager.WIKI_VALIDATOR_WARNINGS_FILE, "wt") as f:
         f.write("")
