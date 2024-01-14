@@ -33,7 +33,7 @@ def main() -> None:
     has_encountered_exception = False
     exception_versions:list[Version.Version] = []
     version_index = 0
-    versions = list(reversed(VersionsParser.parse()))
+    versions = list(reversed(VersionsParser.versions))
     while len(active_threads) > 0 or (version_index < len(versions) and not has_encountered_exception):
         if version_index < len(versions):
             version = versions[version_index]
@@ -46,8 +46,9 @@ def main() -> None:
                 for exception_version, exception in local_exceptions.items():
                     print("Version \"%s\" errored!" % exception_version.name)
                     traceback.print_exception(exception)
+                    exception_versions.append(exception_version)
+                    print("Added \"%s\" to exception versions, is now \"%s\"" % (exception_version, exception_versions))
                 has_encountered_exception = True # stop processing versions
-                exception_versions.extend(local_exceptions.keys())
 
             # Waiting
             active_threads = trim_inactive_threads(active_threads)
