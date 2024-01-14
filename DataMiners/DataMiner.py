@@ -8,15 +8,24 @@ import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.FileManager as FileManager
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
+import Downloader.VersionsParser as VersionsParser
 
 EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
 
+def str_to_version(version_str:str) -> Version.Version|Literal["-"]:
+    if version_str == "-": return version_str
+    else:
+        if version_str in VersionsParser.versions_dict:
+            return VersionsParser.versions_dict[version_str]
+        else:
+            raise KeyError("Version \"%s\" does not exist!" % version_str)
+
 class DataMinerSettings():
-    def __init__(self, start_version:Version.Version|Literal["-"], end_version:Version.Version|Literal["-"], dataminer_class:type["DataMiner"], dependencies:list[str]|None=None, **kwargs) -> None:
-        if start_version != "-" and not isinstance(start_version, Version.Version):
-            raise TypeError("`start_version` is not a Version or Literal[\"-\"]!")
-        if end_version != "-" and not isinstance(end_version, Version.Version):
-            raise TypeError("`end_version` is not a Version or Literal[\"-\"]!")
+    def __init__(self, start_version_str:str|Literal["-"], end_version_str:str|Literal["-"], dataminer_class:type["DataMiner"], dependencies:list[str]|None=None, **kwargs) -> None:
+        if not isinstance(start_version_str, str):
+            raise TypeError("`start_version_str` is not a str, but instead \"%s\"!" % start_version_str)
+        if not isinstance(end_version_str, str):
+            raise TypeError("`end_version_str` is not a str, but instead \"%s\"!" % end_version_str)
         if not isinstance(dataminer_class, type):
             raise TypeError("`dataminer_class` is not a type!")
         if dependencies is not None and not isinstance(dependencies, list):
@@ -24,7 +33,7 @@ class DataMinerSettings():
         if dependencies is not None and not all(isinstance(dependency, str) for dependency in dependencies):
             raise TypeError("An item in `dependencies` is not a str!")
 
-        self.version_range = VersionRange.VersionRange(start_version, end_version)
+        self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
         self.file_name:str = None
         self.name:str = None
         self.dataminer_class = dataminer_class
@@ -52,17 +61,19 @@ class DataMiner():
         if not isinstance(self, NullDataMiner) and self.version not in self.settings.version_range:
             raise ValueError("Version \"%s\" is not a valid version for this dataminer!" % self.version.name)
         
+        self.initialize(**settings.kwargs)
+        
     def __repr__(self) -> str:
         return "<%s %s on %s>" % (self.__class__.__name__, self.name, self.version.name)
 
     def initialize(self, **kwargs) -> None:
         '''`DataMinerSettings.__init__(**kwargs)` -> `DataMiner.initialize(**kwargs)`.'''
         if len(kwargs) > 0:
-            raise NotImplementedError("`initialize` was called with non-empty parameters without being defined by a subclass.")
+            raise NotImplementedError("`initialize` was called with %i non-empty parameters by %s without being defined by a subclass:\n%s" % (len(kwargs), repr(self), kwargs))
     
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         '''Makes the dataminer get the file. Returns the output.'''
-        raise NotImplementedError("`activate` was called without being defined by a subclass.")
+        raise NotImplementedError("`activate` was called by %s without being defined by a subclass." % repr(self))
 
     def get_data_file_path(self) -> Path:
         return FileManager.get_version_data_path(self.version.version_folder, self.file_name)
@@ -176,9 +187,9 @@ class NullDataMiner(DataMiner):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
     def get_file(self, file_name:str, mode:str="t") -> FileManager.FilePromise:
         raise RuntimeError("Attempted to use `get_file` from a NullDataMiner!")
-    def activate(self) -> Any:
+    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         raise RuntimeError("Attempted to use `activate` from a NullDataMiner!")
-    def store(self) -> Any:
+    def store(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         raise RuntimeError("Attempted to use `store` from a NullDataMiner!")
     def get_file_list(self) -> Iterable[str]:
         raise RuntimeError("Attempted to use `get_file_list` from a NullDataMiner!")
@@ -208,9 +219,13 @@ class DataMinerCollection():
     def __repr__(self) -> str:
         return "<DataMinerCollection %s>" % self.name
     
+    def get_null_dataminer_settings(self) -> DataMinerSettings:
+        '''Returns an instance of DataMinerSettings that is usable on a NullDataMiner.'''
+        return DataMinerSettings("-", "-", NullDataMiner)
+
     def get_version(self, version:Version.Version) -> DataMiner:
         '''Returns a DataMiner such that `version` is in the dataminer's VersionRange.'''
         for dataminer_setting in self.dataminer_settings:
             if version in dataminer_setting.version_range:
                 return dataminer_setting.dataminer_class(version, dataminer_setting)
-        else: return NullDataMiner(version, dataminer_setting)
+        else: return NullDataMiner(version, self.get_null_dataminer_settings())

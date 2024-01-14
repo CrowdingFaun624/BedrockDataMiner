@@ -17,9 +17,11 @@ def get_metadata(file:FileManager.FilePromise) -> dict[str,Any]:
             exception = None
             with open(temp_file, "wb") as temp_file_io:
                 temp_file_io.write(file_io.read())
+                file_io.seek(0)
             with open(temp_file, "rb") as temp_file_io:
                 try:
                     metadata = audio_metadata.load(temp_file_io)
+                    file_io.seek(0)
                 except Exception as e:
                     exception = e
                 if exception is not None:
@@ -32,6 +34,7 @@ def get_metadata(file:FileManager.FilePromise) -> dict[str,Any]:
             exception = None
             try:
                 metadata = audio_metadata.load(file_io)
+                file_io.seek(0)
             except Exception as e:
                 exception = e
             if exception is not None:

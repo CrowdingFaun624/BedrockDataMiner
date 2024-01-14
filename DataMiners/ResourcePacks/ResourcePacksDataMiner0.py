@@ -2,6 +2,13 @@ import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 
 class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
+
+    def initialize(self, **kwargs) -> None:
+        if "resource_packs_folder" in kwargs:
+            self.resource_packs_folder:str = kwargs["resource_packs_folder"]
+        else:
+            raise ValueError("`ResourcePacksDataMiner0` was initialized without kwarg \"resource_packs_folder\"!")
+
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.ResourcePackTypedDict]:
         resource_pack_data = self.get_resource_pack_order()
         resource_pack_order, resource_pack_tags = resource_pack_data["order"], resource_pack_data["types"]
@@ -12,8 +19,10 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
 
         for file in file_list:
             assert not file.startswith("/") # just in case one of the InstallManagers goes wonky.
-            if file.startswith("resource_packs"):
+            if file.startswith(self.resource_packs_folder):
+                if file.count("/") == 1: continue # random file in resource packs folder, such as "flipbook_textures.json" in a0.16.0_build3
                 name = file.split("/")[1]
+                if name == "": continue # relic in old archive.org minecraft-iOS versions. Just a file with no content (b'')
                 if name not in resource_pack_order:
                     raise RuntimeError("Unknown resource pack name in \"%s\": \"%s\"" % (self.version.name, name))
                 if name in resource_pack_names: continue # so they aren't recorded multiple times - wonky behavior

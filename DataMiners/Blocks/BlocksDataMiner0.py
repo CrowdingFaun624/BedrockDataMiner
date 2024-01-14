@@ -4,10 +4,19 @@ import DataMiners.Blocks.BlocksDataMiner as BlocksDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 
 class BlocksDataMiner0(BlocksDataMiner.BlocksDataMiner):
+
+    def initialize(self, **kwargs) -> None:
+        if "blocks_locations" in kwargs:
+            self.blocks_locations = kwargs["blocks_locations"]
+        else:
+            raise ValueError("`BlocksDataMiner0` was initialized without kwarg \"blocks_locations\"!")
+
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,DataMinerTyping.MyBlocksJsonBlockTypedDict]:
         resource_packs = dependency_data["resource_packs"]
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
-        resource_pack_files = {"resource_packs/%s/blocks.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
+        resource_pack_files:dict[str,str] = {}
+        for blocks_location in self.blocks_locations:
+            resource_pack_files.update({blocks_location % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names})
         files_request = [(resource_pack_file, "t", pyjson5.load) for resource_pack_file in resource_pack_files.keys()]
         files:dict[str,dict[str,DataMinerTyping.BlocksJsonBlockTypedDict]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:

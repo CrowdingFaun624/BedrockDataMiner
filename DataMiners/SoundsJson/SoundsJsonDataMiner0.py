@@ -4,6 +4,13 @@ import DataMiners.SoundsJson.SoundsJsonDataMiner as SoundsJsonDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 
 class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
+
+    def initialize(self, **kwargs) -> None:
+        if "sounds_json_locations" in kwargs:
+            self.sounds_json_locations = kwargs["sounds_json_locations"]
+        else:
+            raise ValueError("`SoundsJsonDataMiner0` was initialized without kwarg \"sounds_json_locations\"!")
+
     def parse_flat_sound_collection(self, source:DataMinerTyping.SoundsJsonFlatCollectionTypedDict, destination:DataMinerTyping.ResourcePackSoundsJsonFlatCollectionTypedDict, resource_pack_name:str) -> None:
         if list(source.keys()) != ["events"]:
             raise KeyError("Invalid keys in a flat sound collection in \"%s\" in \"%s\": %s" % (resource_pack_name, self.version.name, str(list(source.keys()))))
@@ -35,11 +42,13 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.MySoundsJsonTypedDict:
         resource_packs = dependency_data["resource_packs"]
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
-        resource_pack_files = {"resource_packs/%s/sounds.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
+        resource_pack_files:dict[str,str] = {}
+        for sounds_json_location in self.sounds_json_locations:
+            resource_pack_files.update({sounds_json_location % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names})
         files_request = [(resource_pack_file, "t", pyjson5.load) for resource_pack_file in resource_pack_files.keys()]
         files:dict[str,DataMinerTyping.SoundsJsonTypedDict] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
-            raise FileNotFoundError("No \"sound_definitions.json\" files found in \"%s\"" % self.version)
+            raise FileNotFoundError("No \"sounds.json\" files found in \"%s\"" % self.version)
         
         sounds_json:DataMinerTyping.MySoundsJsonTypedDict = {
             "individual_event_sounds": {},
