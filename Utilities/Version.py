@@ -48,18 +48,18 @@ class Version():
     def assign_wiki_page(self) -> None:
         '''Sets this Version's `wiki_page` attribute.'''
         alpha = ""
-        if VersionTags.POCKET_EDITION not in self.tags:
+        if VersionTags.VersionTag.pocket_edition not in self.tags:
             edition = "Bedrock Edition"
             alpha_positioned_before = True
-            if self.ordering_tag is VersionTags.BETA:
+            if self.ordering_tag is VersionTags.VersionTag.beta:
                 alpha = " beta"
             development_category_suffix = " betas"
         else:
             edition = "Pocket Edition"
-            alpha_positioned_before = VersionTags.POCKET_EDITION_ALPHA_BEFORE in self.tags
-            if VersionTags.ALPHA in self.tags or self.ordering_tag is VersionTags.BETA:
+            alpha_positioned_before = VersionTags.VersionTag.pocket_edition_alpha_before in self.tags
+            if VersionTags.VersionTag.alpha in self.tags or self.ordering_tag is VersionTags.VersionTag.beta:
                 alpha = " alpha"
-            elif self.ordering_tag is VersionTags.BETA:
+            elif self.ordering_tag is VersionTags.VersionTag.beta:
                 alpha = " beta"
             development_category_suffix = " builds"
             
@@ -129,8 +129,8 @@ class Version():
 
     def validate_tags(self) -> None:
         '''Raises a ValueError if this Version's tags are not valid.'''
-        self.tags = VersionTags.get_tags(self.tags_str)
-        if not VersionTags.is_tags(self.tags):
+        self.tags = [VersionTags.VersionTag[tag_str] for tag_str in self.tags_str]
+        if not all(isinstance(tag, VersionTags.VersionTag) for tag in self.tags):
             raise ValueError("Version \"%s\" does not have valid VersionTags: \"%s\"!" % (self.name, str(self.tags)))
         self.ordering_tag = VersionTags.get_ordering_tag(self.tags)
     

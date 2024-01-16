@@ -12,9 +12,6 @@ import Utilities.FileManager as FileManager
 import Utilities.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller
 
-if TYPE_CHECKING:
-    import Utilities.Version as Version
-
 CONNECTION_LIMITS:dict[str,int] = {}
 CONNECTION_LIMITS_DEFAULT = 1
 
@@ -46,10 +43,10 @@ class DownloadManager(InstallManager.InstallManager):
 
     def set_file_prepension(self) -> None:
         tags = self.version.tags
-        if VersionTags.IPA in tags:
+        if VersionTags.VersionTag.ipa in tags:
             prepend = "Payload/minecraftpe.app/data/"
         else:
-            if VersionTags.DOUBLE_ASSETS in self.version.tags:
+            if VersionTags.VersionTag.double_assets in self.version.tags:
                 prepend = "assets/assets/"
             else:
                 prepend = "assets/"

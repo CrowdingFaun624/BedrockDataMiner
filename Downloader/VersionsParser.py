@@ -91,16 +91,16 @@ def assign_parents(versions:list[Version.Version]) -> None:
 def verify_ordering(versions:list[Version.Version]) -> None:
     '''Raises a ValueError if the ordering of the versions is incorrect in any way.'''
     ORDERING_TAGS = set(VersionTags.order_tags)
-    ORDER = [VersionTags.BETA, VersionTags.MAJOR, {VersionTags.MINOR, VersionTags.PATCH, VersionTags.REUPLOAD}]
+    ORDER = [VersionTags.VersionTag.beta, VersionTags.VersionTag.major, {VersionTags.VersionTag.minor, VersionTags.VersionTag.patch, VersionTags.VersionTag.reupload}]
     ALLOWED_CHILDREN = {
-        VersionTags.BETA: [VersionTags.REUPLOAD],
-        VersionTags.MAJOR: [VersionTags.BETA, VersionTags.MINOR, VersionTags.PATCH, VersionTags.REUPLOAD],
-        VersionTags.MINOR: [VersionTags.BETA, VersionTags.PATCH, VersionTags.REUPLOAD],
-        VersionTags.PATCH: [VersionTags.REUPLOAD],
-        VersionTags.REUPLOAD: []}
-    TOP_LEVEL_TAG = VersionTags.MAJOR
-    BEFORE_TAGS = [VersionTags.BETA]
-    AFTER_TAGS = [VersionTags.MINOR, VersionTags.PATCH, VersionTags.REUPLOAD]
+        VersionTags.VersionTag.beta: [VersionTags.VersionTag.reupload],
+        VersionTags.VersionTag.major: [VersionTags.VersionTag.beta, VersionTags.VersionTag.minor, VersionTags.VersionTag.patch, VersionTags.VersionTag.reupload],
+        VersionTags.VersionTag.minor: [VersionTags.VersionTag.beta, VersionTags.VersionTag.patch, VersionTags.VersionTag.reupload],
+        VersionTags.VersionTag.patch: [VersionTags.VersionTag.reupload],
+        VersionTags.VersionTag.reupload: []}
+    TOP_LEVEL_TAG = VersionTags.VersionTag.major
+    BEFORE_TAGS = [VersionTags.VersionTag.beta]
+    AFTER_TAGS = [VersionTags.VersionTag.minor, VersionTags.VersionTag.patch, VersionTags.VersionTag.reupload]
 
     for version in versions:
         if (order_tag_count := sum(order_tag in version.tags for order_tag in ORDERING_TAGS)) != 1:
@@ -174,12 +174,12 @@ def assign_additional_tags(versions:list[Version.Version]) -> None:
     pocket_edition_ranges = VersionRange.VersionRange("-", version_dict["1.1.7"])
     pocket_edition_alpha_before = VersionRange.VersionRange(version_dict["a0.17.0.1"], version_dict["1.1.7"])
     for version in versions:
-        if version in double_assets_range and VersionTags.IPA not in version.tags:
-            version.add_tag(VersionTags.DOUBLE_ASSETS)
+        if version in double_assets_range and VersionTags.VersionTag.ipa not in version.tags:
+            version.add_tag(VersionTags.VersionTag.double_assets)
         if version in pocket_edition_ranges:
-            version.add_tag(VersionTags.POCKET_EDITION)
+            version.add_tag(VersionTags.VersionTag.pocket_edition)
         if version in pocket_edition_alpha_before:
-            version.add_tag(VersionTags.POCKET_EDITION_ALPHA_BEFORE)
+            version.add_tag(VersionTags.VersionTag.pocket_edition_alpha_before)
 
 def parse() -> list[Version.Version]:
     data = read_versions_file()

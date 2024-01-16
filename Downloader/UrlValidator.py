@@ -32,7 +32,7 @@ def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version],list[s
         else:
             return ["%s id string \"%s\" does not start validly!" % (matcher_name, id_string)]
         id = stripped_id_string.replace("-", ".")
-        if VersionTags.ALPHA in version.tags:
+        if VersionTags.VersionTag.alpha in version.tags:
             id = "a" + id
         
         return_values:list[str] = []
