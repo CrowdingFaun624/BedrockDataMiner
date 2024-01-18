@@ -39,15 +39,20 @@ class LocalManager(InstallManager.InstallManager):
         # There is no need to do anything else. All of the files are already there.
         return Path(self.bedrock_local.joinpath(self.get_full_file_name(file_name)))
 
-    def get_file_list(self, path:Path|None) -> Iterable[str]:
+    def get_file_list(self, path:Path|None=None) -> Iterable[str]:
         if path is None:
-            strip_string = str(self.bedrock_local) + self.get_full_file_name("")
-            return [path.replace(strip_string, "", 1).replace("\\", "/") for path in self.get_file_list(self.bedrock_local) if path.startswith(strip_string)]
+            strip_string1 = self.bedrock_local.as_posix() + "/"
+            strip_string2 = self.get_full_file_name("")
+            output:list[str] = []
+            for file_path in self.get_file_list(self.bedrock_local):
+                stripped_path = file_path.replace(strip_string1, "", 1)
+                if stripped_path.startswith(strip_string2):
+                    output.append(stripped_path.replace(strip_string2, ""))
+            return output
         output:list[Path] = []
         for subpath in path.iterdir():
-            subpath:Path
             if subpath.is_file():
-                output.append(subpath)
+                output.append(subpath.as_posix())
             elif subpath.is_dir():
                 output.extend(self.get_file_list(subpath))
         return output
@@ -80,7 +85,7 @@ class LocalManager(InstallManager.InstallManager):
         
         file_name = self.get_full_file_name(file_name)
         full_path = Path(self.bedrock_local.joinpath(file_name))
-        return FileManager.FilePromise(open, [full_path, "r" + mode])
+        return FileManager.FilePromise(FunctionCaller(open, [full_path, "r" + mode]), file_name.split("/")[-1], mode)
     
     def all_done(self) -> None:
         pass # There is no need to do anything. All of the files are where they should be.
