@@ -1,10 +1,11 @@
 import DataMiners.DataMiner as DataMiner
+import DataMiners.Languages.LanguagesComparer as LanguagesComparer
 import DataMiners.Languages.LanguagesDataMiner0 as LanguagesDataMiner0
 import DataMiners.Languages.LanguagesDataMiner1 as LanguagesDataMiner1
 import DataMiners.Languages.LanguagesDataMiner2 as LanguagesDataMiner2
 import DataMiners.Languages.LanguagesDataMiner3 as LanguagesDataMiner3
 
-dataminers = DataMiner.DataMinerCollection("languages.json", "languages", [
+dataminers = DataMiner.DataMinerCollection("languages.json", "languages", LanguagesComparer.comparer, [
     DataMiner.DataMinerSettings("1.1.0", "-", LanguagesDataMiner0.LanguagesDataMiner0, ["resource_packs"]),
     DataMiner.DataMinerSettings("a0.17.0.2", "1.1.0", LanguagesDataMiner1.LanguagesDataMiner1, ["resource_packs"], languages_location="resource_packs/%s/texts/languages.json"),
     DataMiner.DataMinerSettings("a0.16.0_build4", "a0.17.0.2", LanguagesDataMiner1.LanguagesDataMiner1, ["resource_packs"], languages_location="resourcepacks/%s/texts/languages.json"),

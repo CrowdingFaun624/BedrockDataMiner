@@ -16,9 +16,10 @@
 ]'''
 
 import DataMiners.DataMiner as DataMiner
+import DataMiners.Blocks.BlocksComparer as BlocksComparer
 import DataMiners.Blocks.BlocksDataMiner0 as BlocksDataMiner0
 
-dataminers = DataMiner.DataMinerCollection("blocks.json", "blocks", [
+dataminers = DataMiner.DataMinerCollection("blocks.json", "blocks", BlocksComparer.comparer, [
     DataMiner.DataMinerSettings("a0.17.0.2", "-", BlocksDataMiner0.BlocksDataMiner0, ["resource_packs"], blocks_locations=["resource_packs/%s/blocks.json"]),
     DataMiner.DataMinerSettings("a0.15.0_build1", "a0.17.0.2", BlocksDataMiner0.BlocksDataMiner0, ["resource_packs"], blocks_locations=["resourcepacks/%s/blocks.json", "resourcepacks/%s/client/blocks.json"]),
     # Prior to a0.15.0_build1, neither resource packs nor blocks.json existed.
