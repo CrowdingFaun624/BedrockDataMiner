@@ -25,6 +25,7 @@ FSB_CACHE_FILE         = Path(ASSETS_FOLDER.joinpath("fsb_cache.json"))
 RESOUCE_PACK_DATA_FILE      = Path(ASSETS_FOLDER.joinpath("resource_pack_data.json"))
 VERSION_PARSER_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("version_parser_warnings.txt"))
 WIKI_VALIDATOR_WARNINGS_FILE = Path(ASSETS_FOLDER.joinpath("wiki_validator_warnings.txt"))
+COMPARISONS_FOLDER     = Path(PARENT_FOLDER.joinpath("_comparisons"))
 LIB_FOLDER             = Path(PARENT_FOLDER.joinpath("_lib"))
 LIB_FSB_FOLDER         = Path(LIB_FOLDER.joinpath("fsb"))
 LIB_FSB_EXE_FILE       = Path(LIB_FSB_FOLDER.joinpath("fsb_aud_extr.exe"))
@@ -32,6 +33,15 @@ TEMP_FOLDER            = Path(PARENT_FOLDER.joinpath("_temp"))
 VERSIONS_FOLDER        = Path(PARENT_FOLDER.joinpath("_versions"))
 
 opened_shared_files:dict[Path,threading.Lock] = {}
+
+def get_comparison_file_path(name:str, number:int|None=None) -> Path:
+    if number is None:
+        comparison_path = Path(COMPARISONS_FOLDER.joinpath(name))
+    else:
+        comparison_path = Path(COMPARISONS_FOLDER.joinpath(name, "report_%i.txt" % number))
+    if COMPARISONS_FOLDER not in comparison_path.parents:
+        raise FileNotFoundError("Comparison \"%s\" (%i)'s folder can not be created due to illegal characters!" % (name, number))
+    return comparison_path
 
 def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/getting-file-size-in-python
     start = io.tell()
