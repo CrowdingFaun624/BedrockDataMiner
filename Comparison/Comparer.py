@@ -458,9 +458,11 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
 
 class Comparer():
     '''Can be created by a DataMinerCollection to compare the output of the DataMiners with each other.'''
-    def __init__(self, normalizer:Callable[[a, "Version.Version", dict[str,"DataMiner.DataMinerCollection"]], b]|None, dependencies:list[str]|None, base_comparer_section:ComparerSection[b]) -> None:
+    def __init__(self, normalizer:Callable[[a, "Version.Version", dict[str,"DataMiner.DataMinerCollection"]], b]|None, dependencies:list[str]|None, base_comparer_section:ComparerSection[b], post_normalizer:Callable[[a],b]|None=None) -> None:
         if not isinstance(normalizer, (Callable, type(None))):
             raise TypeError("`normalizer` is not a Callable or None!")
+        if not isinstance(post_normalizer, (Callable, type(None))):
+            raise TypeError("`post_normalizer` is not a Callable or None!")
         if not isinstance(dependencies, (list, type(None))):
             raise TypeError("`dependencies` is not a list or None!")
         if isinstance(dependencies, list) and not all(isinstance(dependency, str) for dependency in dependencies):
@@ -474,6 +476,10 @@ class Comparer():
             self.normalizer = lambda data, version, dataminers: data
         else:
             self.normalizer = normalizer
+        if post_normalizer is None:
+            self.post_normalizer = lambda data: data
+        else:
+            self.post_normalizer = post_normalizer
         self.base_comparer_section = base_comparer_section
     
     def normalize(self, data:a, version:"Version.Version", dataminers:dict[str,"DataMiner.DataMinerCollection"]) -> b:

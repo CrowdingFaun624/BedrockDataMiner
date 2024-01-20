@@ -243,7 +243,7 @@ class DataMinerCollection():
         else:
             version1_data = self.comparer.normalize(self.get_data_file(version1), version1, dataminers_dict)
             version2_data = self.comparer.normalize(self.get_data_file(version2), version2, dataminers_dict)
-        data_comparison = Compare.compare(version1_data, version2_data)
+        data_comparison = self.comparer.post_normalizer(Compare.compare(version1_data, version2_data))
         report, had_changes = self.comparer.comparison_report(data_comparison, version1, version2, versions_between)
         if store and had_changes:
             self.comparer.store(report)

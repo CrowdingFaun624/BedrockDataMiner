@@ -92,6 +92,11 @@ class Diff(Generic[Dt1,Dt2]):
             return self.old < other
         else:
             return self.new < other
+    def __gt__(self, other:Any) -> bool:
+        if self.is_removal:
+            return self.old > other
+        else:
+            return self.new > other
 
 a = TypeVar("a")
 b = TypeVar("b")

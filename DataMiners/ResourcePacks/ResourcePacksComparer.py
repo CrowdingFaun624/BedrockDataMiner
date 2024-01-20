@@ -12,6 +12,7 @@ def normalize(data:DataMinerTyping.MyBlocks, version:"Version.Version", datamine
 
 comparer = Comparer.Comparer(
     normalizer=normalize,
+    post_normalizer=lambda data: sorted(data),
     dependencies=None,
     base_comparer_section=Comparer.ListComparerSection(
         name="resource pack",
