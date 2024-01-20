@@ -38,7 +38,7 @@ def get_comparison_file_path(name:str, number:int|None=None) -> Path:
     if number is None:
         comparison_path = Path(COMPARISONS_FOLDER.joinpath(name))
     else:
-        comparison_path = Path(COMPARISONS_FOLDER.joinpath(name, "report_%i.txt" % number))
+        comparison_path = Path(COMPARISONS_FOLDER.joinpath(name, "report_%s.txt" % str(number).zfill(4)))
     if COMPARISONS_FOLDER not in comparison_path.parents:
         raise FileNotFoundError("Comparison \"%s\" (%i)'s folder can not be created due to illegal characters!" % (name, number))
     return comparison_path
