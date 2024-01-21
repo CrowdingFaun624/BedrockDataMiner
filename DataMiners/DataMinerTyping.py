@@ -1,13 +1,15 @@
 from typing import Any, TypedDict
 
 import Comparison.Difference as D
+import Comparison.Compare as Compare
 
 class DependenciesTypedDict(TypedDict):
     blocks: dict[str,"MyBlocksJsonBlockTypedDict"]
+    duplicate_sounds: dict[str,list["DuplicateSoundsTypedDict"]] # [(name1)]
     languages: list["LanguagesTypedDict"]
     resource_packs: list["ResourcePackTypedDict"]
     sound_definitions: dict[str,dict[str,"SoundDefinitionsJsonSoundEventTypedDict"]]
-    sound_files: "SoundFilesTypedDict"
+    sound_files: dict[str,dict[str,"SoundFilesTypedDict"]]
     sounds_json: "MySoundsJsonTypedDict"
 
 # blocks.json
@@ -72,6 +74,15 @@ Blocks = dict[str,BlocksJsonBlockTypedDict]
 MyBlocks = list[MyBlocksJsonBlockTypedDict]
 NormalizedBlocks = dict[str,dict[str,DiffBlocksJsonBlockTypedDict]]
 DiffBlocks = dict[str|D.Diff[str,str],dict[str|D.Diff[str,str],DiffBlocksJsonBlockTypedDict|D.Diff[DiffBlocksJsonBlockTypedDict,DiffBlocksJsonBlockTypedDict]]]
+
+# duplicate sounds
+
+class DuplicateSoundsTypedDict(TypedDict):
+    file_name: str
+    file_internal_name: str
+
+DuplicateSounds = dict[str,list[DuplicateSoundsTypedDict]]
+NormalizedDuplicateSounds = dict[str,Compare.UnorderedList[DuplicateSoundsTypedDict]]
 
 # languages
 

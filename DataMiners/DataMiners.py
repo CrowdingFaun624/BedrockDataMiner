@@ -6,6 +6,7 @@ import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Version as Version
 
 import DataMiners.Blocks.BlocksDataMiners as BlocksDataMiners
+import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
 import DataMiners.Languages.LanguagesDataMiners as LanguagesDataMiners
 import DataMiners.ResourcePacks.ResourcePacksDataMiners as ResourcePacksDataMiners
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinitionsDataMiners
@@ -14,6 +15,7 @@ import DataMiners.SoundsJson.SoundsJsonDataMiners as SoundsJsonDataMiners
 
 dataminers:list[DataMiner.DataMinerCollection] = [
     BlocksDataMiners.dataminers,
+    DuplicateSoundsDataMiners.dataminers,
     LanguagesDataMiners.dataminers,
     ResourcePacksDataMiners.dataminers,
     SoundDefinitionsDataMiners.dataminers,
@@ -21,13 +23,13 @@ dataminers:list[DataMiner.DataMinerCollection] = [
     SoundsJsonDataMiners.dataminers,
 ]
 
-def run_with_dependencies(version:Version.Version, name:str, recalculate:bool=False) -> None:
+def run_with_dependencies(version:Version.Version, name:str, recalculate_this:bool=False, recalculate_everything:bool=False) -> None:
     data:DataMinerTyping.DependenciesTypedDict = {}
     dataminers_dict = {dataminer.name: dataminer.get_version(version) for dataminer in dataminers}
     locks = {dataminer.name: threading.Lock() for dataminer in dataminers}
     if detect_cycle(name, dataminers_dict, []):
         raise RuntimeError("Dataminer \"%s\" for \"%s\" has a dependency cycle!" % (dataminers_dict[name], version))
-    __run_with_dependencies_child(data, locks, name, dataminers_dict, recalculate, dataminers_dict[name])
+    __run_with_dependencies_child(data, locks, name, dataminers_dict, recalculate_this, recalculate_everything, dataminers_dict[name])
     exceptions:dict[str,Exception] = {}
     for dependency, datum in data.items():
         if isinstance(datum, Exception):
@@ -55,7 +57,7 @@ def detect_cycle(name:str, dataminers_dict:dict[str,DataMiner.DataMiner], alread
     else:
         return False
 
-def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, locks:dict[str,threading.Lock], name:str, dataminers_dict:dict[str,DataMiner.DataMiner], recalculate:bool, parent:DataMiner.DataMiner) -> None:
+def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, locks:dict[str,threading.Lock], name:str, dataminers_dict:dict[str,DataMiner.DataMiner], recalculate:bool, recalculate_everything:bool, parent:DataMiner.DataMiner) -> None:
     lock = locks[name]
     with lock:
         if name in data:
@@ -81,7 +83,7 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
                     raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminer, dependency))
                 if isinstance(dataminers_dict[dependency], DataMiner.NullDataMiner):
                     raise RuntimeError("DataMiner \"%s\" on Version \"%s\" references a NullDataMiner for \"%s\"!" % (name, dataminer.version.name, dependency))
-                thread = threading.Thread(target=__run_with_dependencies_child, args=[data, locks, dependency, dataminers_dict, recalculate, parent])
+                thread = threading.Thread(target=__run_with_dependencies_child, args=[data, locks, dependency, dataminers_dict, recalculate_everything, recalculate_everything, parent])
                 thread.start()
                 threads.append(thread)
             for thread in threads: # wait for all child threads
@@ -115,5 +117,5 @@ def user_interface() -> None:
         dataminer_names = [dataminer_collection]
 
     for dataminer_name in dataminer_names:
-        run_with_dependencies(version, dataminer_name, True)
+        run_with_dependencies(version, dataminer_name, recalculate_this=True, recalculate_everything=False)
         print("Successfully stored %s for %s." % (dataminer_name, version))
