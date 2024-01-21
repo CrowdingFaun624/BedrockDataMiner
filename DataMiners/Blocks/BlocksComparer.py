@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -13,7 +14,7 @@ def normalize(data:DataMinerTyping.MyBlocks, version:"Version.Version", datamine
             if "sounds" in resource_pack_properties: del resource_pack_properties["sounds"] # MCPE-76182
         return properties
     resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = dataminers["resource_packs"].get_data_file(version, True)
-    output = {datum["name"]: Comparer.collapse_resource_packs(fix_properties(datum["properties"]), resource_packs, version.name) for datum in data}
+    output = {datum["name"]: CollapseResourcePacks.collapse_resource_packs(fix_properties(datum["properties"]), resource_packs, version.name) for datum in data}
     return output
 
 comparer = Comparer.Comparer(

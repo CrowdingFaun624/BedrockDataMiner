@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -20,7 +21,7 @@ def normalize(data:DataMinerTyping.MySoundDefinitionsJson, version:"Version.Vers
     resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = dataminers["resource_packs"].get_data_file(version, True)
     if resource_packs is None:
         resource_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}] # hardcoded in sound definitions dataminer if there are no resource packs
-    return {sound_event_name: Comparer.collapse_resource_packs(fix_properties(sound_event_properties), resource_packs, version.name) for sound_event_name, sound_event_properties in data.items()}
+    return {sound_event_name: CollapseResourcePacks.collapse_resource_packs(fix_properties(sound_event_properties), resource_packs, version.name) for sound_event_name, sound_event_properties in data.items()}
 
 comparer = Comparer.Comparer(
     normalizer=normalize,

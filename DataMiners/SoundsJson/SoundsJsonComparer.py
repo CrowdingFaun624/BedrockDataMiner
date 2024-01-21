@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -14,8 +15,8 @@ def normalize(data:DataMinerTyping.MySoundsJsonTypedDict, version:"Version.Versi
         if "events" not in sound_collection:
             raise KeyError("Key \"events\" is not in `sound_collection` (name \"%s\"): %s" % (sound_collection_name, list(sound_collection.keys())))
         
-        if "volume" in sound_collection: sound_collection["volume"] = Comparer.collapse_resource_packs(sound_collection["volume"], resource_packs, version.name, False)
-        if "pitch" in sound_collection: sound_collection["pitch"] = Comparer.collapse_resource_packs(sound_collection["pitch"], resource_packs, version.name, False)
+        if "volume" in sound_collection: sound_collection["volume"] = CollapseResourcePacks.collapse_resource_packs(sound_collection["volume"], resource_packs, version.name, False)
+        if "pitch" in sound_collection: sound_collection["pitch"] = CollapseResourcePacks.collapse_resource_packs(sound_collection["pitch"], resource_packs, version.name, False)
 
         for sound_name, sound_properties in sound_collection["events"].items():
 
@@ -36,7 +37,7 @@ def normalize(data:DataMinerTyping.MySoundsJsonTypedDict, version:"Version.Versi
             for resource_pack_name in resource_packs_to_delete:
                 del sound_collection["events"][sound_name][resource_pack_name]
 
-            sound_collection["events"][sound_name] = Comparer.collapse_resource_packs(sound_properties, resource_packs, version.name, False)
+            sound_collection["events"][sound_name] = CollapseResourcePacks.collapse_resource_packs(sound_properties, resource_packs, version.name, False)
 
     def normalize_sound_collections(sound_collections:dict[str,DataMinerTyping.ResourcePackSoundsJsonSoundCollectionTypedDict], is_interactive_entites:bool=False) -> dict[str,DataMinerTyping.ResourcePackSoundsJsonSoundCollectionTypedDict]:
         if "defaults" in sound_collections and len(sound_collections["defaults"]) == 0:
