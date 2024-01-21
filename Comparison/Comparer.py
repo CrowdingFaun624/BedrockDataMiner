@@ -3,6 +3,7 @@ from typing import Any, Callable, Generic, Iterable, TypeVar, TYPE_CHECKING, Uni
 
 import Comparison.Difference as D
 import Utilities.FileManager as FileManager
+import Utilities.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -505,10 +506,14 @@ class Comparer():
         if self.name is None:
             raise RuntimeError("Attempted to create comparison report using Comparer with uninitialized `name`!")
         header:list[str] = []
+        beta_texts:list[str] = ["", ""]
+        for index, version in enumerate((version1, version2)):
+            if version is not None and version.ordering_tag is VersionTags.VersionTag.beta:
+                beta_texts[index] = " (beta of \"%s\")" % version.parent.name
         if version1 is None:
-            header.append("Addition of \"%s\" at \"%s\"." % (self.name, version2.name))
+            header.append("Addition of \"%s\"%s at \"%s\"%s." % (self.name, beta_texts[0], version2.name, beta_texts[1]))
         else:
-            header.append("Difference of \"%s\" between \"%s\" and \"%s\"." % (self.name, version1.name, version2.name))
+            header.append("Difference of \"%s\" between \"%s\"%s and \"%s\"%s." % (self.name, version1.name, beta_texts[0], version2.name, beta_texts[1]))
         if len(versions_between) > 0:
             files_word = "file" if len(versions_between) == 1 else "files"
             between_word = "before" if version1 is None else "between"
