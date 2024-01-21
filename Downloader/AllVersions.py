@@ -11,7 +11,7 @@ LIMIT = 4
 def datamine_version(version:Version.Version, dataminer_names:list[str], exceptions:dict[str,None|Exception]) -> None:
     try:
         for dataminer_name in dataminer_names:
-            DataMiners.run_with_dependencies(version, dataminer_name, recalculate=False)
+            DataMiners.run_with_dependencies(version, dataminer_name)
     except Exception as e:
         exceptions[version.name] = e
     else:
@@ -25,6 +25,17 @@ def trim_inactive_threads(threads:list[tuple[threading.Thread,Version.Version]])
 def get_exceptions(threads:list[tuple[threading.Thread,Version.Version]], exceptions:dict[str,None|Exception]) -> dict[Version.Version,Exception]:
     '''Returns a list of Exceptions.'''
     return {version: exceptions[version.name] for thread, version in threads if (version.name in exceptions and exceptions[version.name] is not None)}
+
+def do_exception_stuff(active_threads:list[tuple[threading.Thread,Version.Version]], exceptions:dict[str,None|Exception], exception_versions:list[Version.Version]) -> bool:
+    local_exceptions = get_exceptions(active_threads, exceptions)
+    if len(local_exceptions) > 0:
+        for exception_version, exception in local_exceptions.items():
+            print("Version \"%s\" errored!" % exception_version.name)
+            traceback.print_exception(exception)
+            exception_versions.append(exception_version)
+            # print("Added \"%s\" to exception versions, is now \"%s\"" % (exception_version, exception_versions))
+        return True # stop processing versions
+    return False
 
 def main() -> None:
     dataminer_names = [dataminer_collection.name for dataminer_collection in DataMiners.dataminers]
@@ -40,19 +51,13 @@ def main() -> None:
             version_index += 1
         while len(active_threads) >= LIMIT:
 
-            # Exceptions
-            local_exceptions = get_exceptions(active_threads, exceptions)
-            if len(local_exceptions) > 0:
-                for exception_version, exception in local_exceptions.items():
-                    print("Version \"%s\" errored!" % exception_version.name)
-                    traceback.print_exception(exception)
-                    exception_versions.append(exception_version)
-                    print("Added \"%s\" to exception versions, is now \"%s\"" % (exception_version, exception_versions))
-                has_encountered_exception = True # stop processing versions
+            do_exception_stuff(active_threads, exceptions, exception_versions)
 
             # Waiting
             active_threads = trim_inactive_threads(active_threads)
             time.sleep(0.05)
+        
+        has_encountered_exception = do_exception_stuff(active_threads, exceptions, exception_versions)
         
         # New threads
         if version_index < len(versions) and not has_encountered_exception:

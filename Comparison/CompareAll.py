@@ -31,7 +31,10 @@ def compare_all_of(dataminer_collection:DataMiner.DataMinerCollection, versions:
     try:
         previous_successful_version = None # The last Version that can be datamined for this file.
         undataminable_versions_between:list["Version.Version"] = []
-        for already_existing_comparison_file in FileManager.get_comparison_file_path(dataminer_collection.name).iterdir():
+        comparison_parent = FileManager.get_comparison_file_path(dataminer_collection.name)
+        if not comparison_parent.exists():
+            comparison_parent.mkdir()
+        for already_existing_comparison_file in comparison_parent.iterdir():
             already_existing_comparison_file.unlink()
         for version in versions:
             can_be_datamined = version.download_link is not None and not isinstance(dataminer_collection.get_version(version), DataMiner.NullDataMiner)

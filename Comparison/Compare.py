@@ -2,6 +2,12 @@ from typing import TypeVar
 
 import Comparison.Difference as D
 
+class UnorderedList(list):
+    '''Is exactly the same as a list, but it is compared like a set.'''
+    add = list.append
+    
+
+a = TypeVar("a")
 Ct1 = TypeVar("Ct1")
 Ct2 = TypeVar("Ct2")
 Ct3 = TypeVar("Ct3")
@@ -15,10 +21,10 @@ def compare(data1:Ct1, data2:Ct2) -> Ct1|Ct2|D.Diff[Ct1,Ct2]:
         return D.Diff(data1, data2)
     elif isinstance(data1, dict) and isinstance(data2, dict):
         return __compare_dict(data1, data2)
+    elif isinstance(data1, (set, UnorderedList)) and isinstance(data2, (set, UnorderedList)):
+        return __compare_set(data1, data2)
     elif isinstance(data1, list) and isinstance(data2, list):
         return __compare_list(data1, data2)
-    elif isinstance(data1, set) and isinstance(data2, set):
-        return __compare_set(data1, data2)
     else:
         if data1 == data2:
             return data1
@@ -60,7 +66,7 @@ def __compare_list(data1:list[Ct1], data2:list[Ct2]) -> list[Ct1|Ct2|D.Diff[Ct1,
     return output
 
 def __compare_set(data1:set[Ct1], data2:set[Ct2]) -> set[D.Diff[Ct1,Ct2]]:
-    output:set[D.Diff] = set()
+    output:set[D.Diff] = type(data1)()
     for item in data1:
         if item in data2: # item in both
             output.add(item)
