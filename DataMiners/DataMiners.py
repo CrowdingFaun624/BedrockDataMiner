@@ -8,6 +8,7 @@ import Utilities.Version as Version
 import DataMiners.Blocks.BlocksDataMiners as BlocksDataMiners
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
 import DataMiners.Languages.LanguagesDataMiners as LanguagesDataMiners
+import DataMiners.NonExistentSounds.NonExistentSoundsDataMiners as NonExistentSoundsDataMiners
 import DataMiners.ResourcePacks.ResourcePacksDataMiners as ResourcePacksDataMiners
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinitionsDataMiners
 import DataMiners.SoundFiles.SoundFilesDataMiners as SoundFilesDataMiners
@@ -17,6 +18,7 @@ dataminers:list[DataMiner.DataMinerCollection] = [
     BlocksDataMiners.dataminers,
     DuplicateSoundsDataMiners.dataminers,
     LanguagesDataMiners.dataminers,
+    NonExistentSoundsDataMiners.dataminers,
     ResourcePacksDataMiners.dataminers,
     SoundDefinitionsDataMiners.dataminers,
     SoundFilesDataMiners.dataminers,

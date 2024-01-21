@@ -1,16 +1,17 @@
-from typing import Any, TypedDict
+from typing import TypedDict
 
 import Comparison.Difference as D
 import Comparison.Compare as Compare
 
 class DependenciesTypedDict(TypedDict):
-    blocks: dict[str,"MyBlocksJsonBlockTypedDict"]
-    duplicate_sounds: dict[str,list["DuplicateSoundsTypedDict"]] # [(name1)]
-    languages: list["LanguagesTypedDict"]
-    resource_packs: list["ResourcePackTypedDict"]
-    sound_definitions: dict[str,dict[str,"SoundDefinitionsJsonSoundEventTypedDict"]]
-    sound_files: dict[str,dict[str,"SoundFilesTypedDict"]]
-    sounds_json: "MySoundsJsonTypedDict"
+    blocks: "MyBlocks"
+    duplicate_sounds: "DuplicateSounds"
+    languages: "Languages"
+    non_existent_sounds: "NonExistentSounds"
+    resource_packs: "ResourcePacks"
+    sound_definitions: "MySoundDefinitionsJson"
+    sound_files: "SoundFiles"
+    sounds_json: "MySoundsJson"
 
 # blocks.json
 
@@ -97,12 +98,19 @@ class LanguagesTypedDict(TypedDict):
 Languages = list[LanguagesTypedDict]
 NormalizedLanguages = dict[str,dict[str,LanguagesPropertiesTypedDict]]
 
+# non-existent sounds
+
+NonExistentSounds = dict[str,dict[str,list[str]]]
+NormalizedNonExistentSounds = dict[str,dict[str,set[str]]]
+
 # resource packs
 
 class ResourcePackTypedDict(TypedDict):
     id: int
     name: str
     tags: list[str]
+
+ResourcePacks = list["ResourcePackTypedDict"]
 
 # sound_definitions.json
 
@@ -219,3 +227,5 @@ class MySoundsJsonTypedDict(TypedDict):
     interactive_block_sounds: dict[str, ResourcePackSoundsJsonFlatCollectionTypedDict]
     entity_sounds: dict[str, ResourcePackSoundsJsonSoundCollectionTypedDict]
     interactive_entity_sounds: dict[str, ResourcePackSoundsJsonSoundCollectionTypedDict]
+
+MySoundsJson = MySoundsJsonTypedDict
