@@ -43,4 +43,4 @@ if __name__ == "__main__":
     #     stats = pstats.Stats(profile, stream=stream)
     #     stats.print_stats()
 
-FileManager.clear_temp()
+    FileManager.clear_temp()
