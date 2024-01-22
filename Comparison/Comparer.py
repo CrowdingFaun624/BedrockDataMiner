@@ -8,7 +8,6 @@ import Utilities.VersionTags as VersionTags
 if TYPE_CHECKING:
     import Utilities.Version as Version
     import DataMiners.DataMiner as DataMiner
-    import DataMiners.DataMinerTyping as DataMinerTyping
 
 a = TypeVar("a")
 b = TypeVar("b")
@@ -36,7 +35,7 @@ class ComparerSection(Generic[a]):
         self.name = name
     
     def __repr__(self) -> str:
-        return "<ComparerSet %s>" % self.name
+        return "<ComparerSection %s>" % self.name
 
     def print_single(self, key_str:str|None, data:d, message:str, output:list[str], printer:Union["ComparerSection[d]",None], trace:list[tuple[str,str]]) -> None:
         if printer is None:
@@ -456,6 +455,78 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
                             output.append("Changed %s:" % (self.name))
                         output.extend("\t" + line for line in subcomparer_lines)
         return output, any_changes
+
+def TypedDictComparerSection(name:str, types:list[tuple[str, type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool], ComparerSection[d]|None]]]]) -> DictComparerSection[c,d]:
+    '''Alias for a DictComparerSection that has certain named parameters.
+    * `name` is what the key of this dictionary is.
+    * `items` is a list of tuples describing the keys and values.
+    * The first item of each tuple of `items` is the key value; it will match this value to the key.
+    * The second item of each tuple describes the allowed types of the value.
+    * The third item of each tuple is the ComparerSection for the matched key and value.
+    * If the third item of each tuple is a list, then it will call the first item of each tuple with the key and value, and use the corresponding ComparerSection.'''
+    if not isinstance(name, str):
+        raise TypeError("`name` is not a str!")
+    if not isinstance(types, list):
+        raise TypeError("`types` is not a list!")
+    if len(types) == 0:
+        raise ValueError("`types` is empty!")
+    already_keys:set[str] = set()
+    for item in types:
+        if not isinstance(item, tuple):
+            raise TypeError("An item of `types` is not a tuple!")
+        if len(item) != 3:
+            raise ValueError("An item of `types` is not length 3!")
+        if not isinstance(item[0], str):
+            raise TypeError("The first item of an item of `types` is not a str or Callable!")
+        if item[0] in already_keys:
+            raise ValueError("The first item of an item of `types` is the same as another first item of an item of `types`!")
+        already_keys.add(item[0])
+        if not isinstance(item[1], (type, tuple)):
+            raise TypeError("The second item of an item of `types` is not a type or tuple!")
+        if isinstance(item[1], tuple) and not all(isinstance(types_item, type) for types_item in item[1]):
+            raise TypeError("An item of the second item of an item of `types` is not a type!")
+        if not isinstance(item[2], (ComparerSection, list)) and item[2] is not None:
+            raise TypeError("The third item of an item of `types` is not a ComparerSection, list, or None!")
+        if isinstance(item[2], list):
+            if len(item[2]) == 0:
+                raise ValueError("The third item of an item of `types` is empty!")
+            for comparer_item in item[2]:
+                if not isinstance(comparer_item, tuple):
+                    raise TypeError("An item of the third item of an item of `types` is not a tuple!")
+                if len(comparer_item) != 2:
+                    raise ValueError("An item of the third item of an item of `types` is not length 2!")
+                if not isinstance(comparer_item[0], Callable):
+                    raise TypeError("The first item of an item of the third item of an item of `types` is not a Callable!")
+                if not isinstance(comparer_item[1], ComparerSection) and comparer_item[1] is not None:
+                    raise TypeError("The second item of an item of the third item of an item of `types` is not a ComparerSection or None!")
+
+    def get_func(comparer_key:str, additional_function:Callable[[c,d],bool]) -> Callable[[c,d],bool]:
+        return lambda key, value: comparer_key == key and additional_function(key, value)
+
+    keys = {key for key, value_types, comparers in types}
+    value_types_dict = {key: value_types for key, value_types, comparers in types}
+    all_comparers:list[tuple[str,Callable[[c,d],bool], ComparerSection]] = []
+    for comparer_key, value_types, comparers in types:
+        if isinstance(comparers, ComparerSection) or comparers is None:
+            all_comparers.append((comparer_key, comparers))
+        else:
+            for additional_function, comparer in comparers:
+                all_comparers.append((get_func(comparer_key, additional_function), comparer))
+
+    # It is possible that all could have the same ComparerSection (such as if they are all None).
+    total_different_comparers:list[ComparerSection|None] = []
+    for function, comparer in all_comparers:
+        if comparer not in total_different_comparers:
+            total_different_comparers.append(comparer)
+    if len(total_different_comparers) == 1:
+        all_comparers = total_different_comparers[0]
+
+    return DictComparerSection(
+        name=name,
+        key_types=lambda key, value: key in keys,
+        value_types=lambda key, value: isinstance(value, value_types_dict[key]),
+        comparer=all_comparers
+    )
 
 class Comparer():
     '''Can be created by a DataMinerCollection to compare the output of the DataMiners with each other.'''

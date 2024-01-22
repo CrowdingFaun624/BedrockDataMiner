@@ -78,20 +78,18 @@ def make_sound_collection_comparer(is_flat:bool, is_interactive_entities:bool=Fa
     else:
         sound_comparers = [
             (lambda key, value: isinstance(value, str), None),
-            (lambda key, value: isinstance(value, dict), Comparer.DictComparerSection(
+            (lambda key, value: isinstance(value, dict), Comparer.TypedDictComparerSection(
                 name="sound",
-                key_types=lambda key, value: key in ("sound", "pitch", "volume"),
-                value_types=lambda key, value: isinstance(value, {
-                    "sound": (str,),
-                    "pitch": (float, int, list),
-                    "volume": (float, int, list),
-                }[key]),
-                comparer=[
-                    ("sound", None),
-                    (lambda key, value: key == "pitch" and isinstance(value, (float, int)), None),
-                    (lambda key, value: key == "pitch" and isinstance(value, list), make_pitch_volume_list_comparer("pitch")),
-                    (lambda key, value: key == "volume" and isinstance(value, (float, int)), None),
-                    (lambda key, value: key == "volume" and isinstance(value, list), make_pitch_volume_list_comparer("volume"))
+                types=[
+                    ("sound", str, None),
+                    ("pitch", (float, int, list), [
+                        (lambda key, value: isinstance(value, (float, int)), None),
+                        (lambda key, value: isinstance(value, list), make_pitch_volume_list_comparer("pitch"))
+                    ]),
+                    ("volume", (float, int, list), [
+                        (lambda key, value: isinstance(value, (float, int)), None),
+                        (lambda key, value: isinstance(value, list), make_pitch_volume_list_comparer("volume"))
+                    ])
                 ]
             ))
         ]
@@ -144,16 +142,14 @@ def make_sound_collections_comparer(name:str, is_flat:bool, is_interactive_entit
 comparer = Comparer.Comparer(
     normalizer=normalize,
     dependencies=["resource_packs"],
-    base_comparer_section=Comparer.DictComparerSection(
+    base_comparer_section=Comparer.TypedDictComparerSection(
         name="category",
-        key_types=lambda key, value: key in ("individual_event_sounds", "block_sounds", "interactive_block_sounds", "entity_sounds", "interactive_entity_sounds"),
-        value_types=(dict,),
-        comparer=[
-            ("individual_event_sounds", make_sound_collection_comparer(True)),
-            ("block_sounds", make_sound_collections_comparer("block", False)),
-            ("interactive_block_sounds", make_sound_collections_comparer("interactive block", False)),
-            ("entity_sounds", make_sound_collections_comparer("entity", False)),
-            ("interactive_entity_sounds", make_sound_collections_comparer("interactive entity", False, is_interactive_entities=True))
+        types=[
+            ("individual_event_sounds", dict, make_sound_collection_comparer(True)),
+            ("block_sounds", dict, make_sound_collections_comparer("block", False)),
+            ("interactive_block_sounds", dict, make_sound_collections_comparer("interactive block", False)),
+            ("entity_sounds", dict, make_sound_collections_comparer("entity", False)),
+            ("interactive_entity_sounds", dict, make_sound_collections_comparer("interactive entity", False, is_interactive_entities=True))
         ]
-    )
+    ),
 )

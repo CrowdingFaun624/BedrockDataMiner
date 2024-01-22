@@ -28,50 +28,46 @@ comparer = Comparer.Comparer(
             name="resource pack",
             key_types=(str,),
             value_types=(dict,),
-            comparer=Comparer.DictComparerSection(
+            comparer=Comparer.TypedDictComparerSection(
                 name="property",
-                key_types=lambda key, value: key in ("blockshape", "brightness_gamma", "carried_textures", "defined_in", "isotropic", "sound", "textures"),
-                value_types=lambda key, value: isinstance(value, {
-                    "blockshape": (str,),
-                    "brightness_gamma": (float),
-                    "carried_textures": (str, dict),
-                    "defined_in": (list,),
-                    "isotropic": (bool, dict),
-                    "sound": (str,),
-                    "textures": (str, dict)
-                }[key]),
-                comparer=[
-                    ("blockshape", None),
-                    ("brightness_gamma", None),
-                    (lambda key, value: (key == "carried_textures" and isinstance(value, str)), None),
-                    (lambda key, value: (key == "carried_textures" and isinstance(value, dict)), Comparer.DictComparerSection(
-                        name="direction",
-                        comparer=None,
-                        key_types=lambda key, value: key in ("down", "east", "north", "side", "south", "up", "west"),
-                        value_types=(str,)
-                    )),
-                    ("defined_in", Comparer.ListComparerSection(
+                types=[
+                    ("blockshape", str, None),
+                    ("brightness_gamma", float, None),
+                    ("carried_textures", (str, dict), [
+                        (lambda key, value: isinstance(value, str), None),
+                        (lambda key, value: isinstance(value, dict), Comparer.DictComparerSection(
+                            name="direction",
+                            comparer=None,
+                            key_types=lambda key, value: key in ("down", "east", "north", "side", "south", "up", "west"),
+                            value_types=(str,)
+                        ))
+                    ]),
+                    ("defined_in", list, Comparer.ListComparerSection(
                         name="resource pack",
                         comparer=None,
                         types=(str,),
                         print_flat=True,
                         ordered=False
                     )),
-                    (lambda key, value: (key == "isotropic" and isinstance(value, bool)), None),
-                    (lambda key, value: (key == "isotropic" and isinstance(value, dict)), Comparer.DictComparerSection(
-                        name="direction",
-                        comparer=None,
-                        key_types=lambda key, value: key in ("down", "up"),
-                        value_types=(bool,)
-                    )),
-                    ("sound", None),
-                    (lambda key, value: (key == "textures" and isinstance(value, str)), None),
-                    (lambda key, value: (key == "textures" and isinstance(value, dict)), Comparer.DictComparerSection(
-                        name="direction",
-                        comparer=None,
-                        key_types=lambda key, value: key in ("down", "east", "north", "side", "south", "up", "west"),
-                        value_types=(str,)
-                    ))
+                    ("isotropic", (bool, dict), [
+                        (lambda key, value: isinstance(value, bool), None),
+                        (lambda key, value: isinstance(value, dict), Comparer.DictComparerSection(
+                            name="direction",
+                            comparer=None,
+                            key_types=lambda key, value: key in ("down", "up"),
+                            value_types=(bool,)
+                        ))
+                    ]),
+                    ("sound", str, None),
+                    ("textures", (str, dict), [
+                        (lambda key, value: isinstance(value, str), None),
+                        (lambda key, value: isinstance(value, dict), Comparer.DictComparerSection(
+                            name="direction",
+                            comparer=None,
+                            key_types=lambda key, value: key in ("down", "east", "north", "side", "south", "up", "west"),
+                            value_types=(str,)
+                        ))
+                    ])
                 ]
             )
         )

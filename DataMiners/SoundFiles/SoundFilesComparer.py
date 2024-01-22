@@ -25,25 +25,16 @@ comparer = Comparer.Comparer(
             name="internal sound file",
             key_types=(str,),
             value_types=(dict,),
-            comparer=Comparer.DictComparerSection(
+            comparer=Comparer.TypedDictComparerSection(
                 name="property",
-                key_types=lambda key, value: key in ("filesize", "pictures", "tags", "_subchunks", "streaminfo", "sha1_hash"),
-                value_types=lambda key, value: isinstance(value, {
-                    "filesize": (int,),
-                    "pictures": (list,),
-                    "tags": (dict,),
-                    "_subchunks": (list,),
-                    "streaminfo": (dict,),
-                    "sha1_hash": (str,)
-                }[key]),
-                comparer=[
-                    ("filesize", None),
-                    ("pictures", Comparer.ListComparerSection(
+                types=[
+                    ("filesize", int, None),
+                    ("pictures", list, Comparer.ListComparerSection(
                         name="picture",
                         types=(type(None),), # idk
                         comparer=None
                     )),
-                    ("tags", Comparer.DictComparerSection(
+                    ("tags", dict, Comparer.DictComparerSection(
                         name="tag type",
                         key_types=lambda key, value: key in ("comment", "encoder", "title", "tracknumber"),
                         value_types=(list,),
@@ -53,51 +44,35 @@ comparer = Comparer.Comparer(
                             comparer=None
                         )
                     )),
-                    ("_subchunks", Comparer.ListComparerSection(
+                    ("_subchunks", list, Comparer.ListComparerSection(
                         name="subchunk",
                         types=(type(None),), # idk
                         comparer=None
                     )),
-                    ("streaminfo", Comparer.DictComparerSection(
+                    ("streaminfo", dict, Comparer.TypedDictComparerSection(
                         name="property",
-                        key_types=lambda key, value: key in ("_start", "_size", "_version", "_extension_data", "audio_format", "bit_depth", "bitrate", "channels", "duration", "max_bitrate", "min_bitrate", "nominal_bitrate", "sample_rate"),
-                        value_types=lambda key, value: isinstance(value, {
-                            "_start": (int,),
-                            "_size": (int,),
-                            "_version": (list,),
-                            "_extension_data": (type(None),),
-                            "audio_format": (str,),
-                            "bit_depth": (int,),
-                            "bitrate": (float, int),
-                            "channels": (int,),
-                            "duration": (float,),
-                            "max_bitrate": (int,),
-                            "min_bitrate": (int,),
-                            "nominal_bitrate": (int,),
-                            "sample_rate": (int),
-                        }[key]),
-                        comparer=[
-                            ("_start", None),
-                            ("_size", None),
-                            ("_version", Comparer.ListComparerSection(
+                        types=[
+                            ("_start", int, None),
+                            ("_size", int, None),
+                            ("_version", list, Comparer.ListComparerSection(
                                 name="version number",
                                 types=(int,),
                                 comparer=None,
                                 print_flat=True
                             )),
-                            ("_extension_data", None),
-                            ("audio_format", None),
-                            ("bit_depth", None),
-                            ("bitrate", None),
-                            ("channels", None),
-                            ("duration", None),
-                            ("max_bitrate", None),
-                            ("min_bitrate", None),
-                            ("nominal_bitrate", None),
-                            ("sample_rate", None)
+                            ("_extension_data", type(None), None),
+                            ("audio_format", str, None),
+                            ("bit_depth", int, None),
+                            ("bitrate", (float, int), None),
+                            ("channels", int, None),
+                            ("duration", float, None),
+                            ("max_bitrate", int, None),
+                            ("min_bitrate", int, None),
+                            ("nominal_bitrate", int, None),
+                            ("sample_rate", int, None)
                         ]
                     )),
-                    ("sha1_hash", None)
+                    ("sha1_hash", str, None)
                 ]
             )
         )

@@ -34,53 +34,42 @@ comparer = Comparer.Comparer(
             name="resource pack",
             key_types=(str,),
             value_types=(dict,),
-            comparer=Comparer.DictComparerSection(
+            comparer=Comparer.TypedDictComparerSection(
                 name="property",
-                key_types=lambda key, value: key in ("category", "defined_in", "min_distance", "max_distance", "sounds", "subtitle"),
-                value_types=lambda key, value: isinstance(value, {
-                    "category": (str,),
-                    "defined_in": (list,), # artificial
-                    "min_distance": (float, int),
-                    "max_distance": (float, int),
-                    "sounds": (list,),
-                    "subtitle": (str,)
-                }[key]),
-                comparer=[
-                    ("category", None),
-                    ("defined_in", Comparer.ListComparerSection(
+                types=[
+                    ("category", str, None),
+                    ("defined_in", list, Comparer.ListComparerSection(
                         name="resource pack",
                         types=(str,),
                         comparer=None,
                         print_flat=True,
                         ordered=False
                     )),
-                    ("min_distance", None),
-                    ("max_distance", None),
-                    ("sounds", Comparer.ListComparerSection(
+                    ("min_distance", (float, int), None),
+                    ("max_distance", (float, int), None),
+                    ("sounds", list, Comparer.ListComparerSection(
                         name="sound",
                         types=(str, dict),
                         ordered=False,
                         comparer=[
                             (lambda key, value: isinstance(value, str), None),
-                            (lambda key, value: isinstance(value, dict), Comparer.DictComparerSection(
+                            (lambda key, value: isinstance(value, dict), Comparer.TypedDictComparerSection(
                                 name="property",
-                                key_types=(str,),
-                                value_types=lambda key, value: isinstance(value, {
-                                    "exclude_from_pocket_platforms": (bool,), # older versions such as a0.15.0_build1
-                                    "is3D": (bool,),
-                                    "load_on_low_memory": (bool,),
-                                    "name": (str,),
-                                    "pitch": (float, int),
-                                    "stream": (bool,),
-                                    "type": (str,),
-                                    "volume": (float, int),
-                                    "weight": (int,),
-                                }[key]),
-                                comparer=None
+                                types=[
+                                    ("exclude_from_pocket_platforms", bool, None),
+                                    ("is3D", bool, None),
+                                    ("load_on_low_memory", bool, None),
+                                    ("name", str, None),
+                                    ("pitch", (float, int), None),
+                                    ("stream", bool, None),
+                                    ("type", str, None),
+                                    ("volume", (float, int), None),
+                                    ("weight", int, None)
+                                ]
                             ))
                         ]
                     )),
-                    ("subtitle", None)
+                    ("subtitle", str, None)
                 ]
             )
         )
