@@ -23,6 +23,11 @@ def normalize(data:DataMinerTyping.MySoundDefinitionsJson, version:"Version.Vers
         resource_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}] # hardcoded in sound definitions dataminer if there are no resource packs
     return {sound_event_name: CollapseResourcePacks.collapse_resource_packs(fix_properties(sound_event_properties), resource_packs, version.name) for sound_event_name, sound_event_properties in data.items()}
 
+def resource_pack_comparison_move_function(key:str, value:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict) -> DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict:
+    output = value.copy()
+    del value["defined_in"]
+    return output
+# TODO: change sounds list to dict of {name: properties (just {} if it's just a str)}
 comparer = Comparer.Comparer(
     normalizer=normalize,
     dependencies=["resource_packs"],
@@ -30,10 +35,13 @@ comparer = Comparer.Comparer(
         name="sound event",
         key_types=(str,),
         value_types=(dict,),
+        detect_key_moves=True,
         comparer=Comparer.DictComparerSection(
             name="resource pack",
             key_types=(str,),
             value_types=(dict,),
+            detect_key_moves=True,
+            comparison_move_function=resource_pack_comparison_move_function,
             comparer=Comparer.TypedDictComparerSection(
                 name="property",
                 types=[

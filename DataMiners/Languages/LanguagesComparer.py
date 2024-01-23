@@ -16,6 +16,10 @@ def normalize(data:DataMinerTyping.Languages, version:"Version.Version", datamin
         return output
     return {language["code"]: fix_properties(language) for language in data}
 
+def languages_comparison_move_function(key:str, value:DataMinerTyping.LanguagesTypedDict) -> dict[str,str]|None:
+    output = {resource_pack_name: resource_pack_properties["name"] for resource_pack_name, resource_pack_properties in value.items() if "name" in resource_pack_properties}
+    return None if len(output) == 0 else output
+
 comparer = Comparer.Comparer(
     normalizer=normalize,
     dependencies=None,
@@ -23,6 +27,8 @@ comparer = Comparer.Comparer(
         name="language",
         key_types=(str,),
         value_types=(dict,),
+        detect_key_moves=True,
+        comparison_move_function=languages_comparison_move_function,
         comparer=Comparer.DictComparerSection(
             name="resource pack",
             key_types=(str,),

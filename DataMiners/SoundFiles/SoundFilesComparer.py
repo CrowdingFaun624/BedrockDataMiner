@@ -14,6 +14,9 @@ def normalize(data:DataMinerTyping.SoundFiles, version:"Version.Version", datami
         return internal_sound_files
     return {sound_file_name: remove_obj(sound_file_properties) for sound_file_name, sound_file_properties in data.items()}
 
+def sound_file_comparison_move_function(key:str, value:dict[str,DataMinerTyping.NormalizedSoundFilesTypedDict]) -> dict[str,str]:
+    return {internal_sound_file_name: internal_sound_file_properties["sha1_hash"] for internal_sound_file_name, internal_sound_file_properties in value.items()}
+
 comparer = Comparer.Comparer(
     normalizer=normalize,
     dependencies=None,
@@ -21,10 +24,14 @@ comparer = Comparer.Comparer(
         name="sound file",
         key_types=(str,),
         value_types=(dict,),
+        detect_key_moves=True,
+        comparison_move_function=sound_file_comparison_move_function,
         comparer=Comparer.DictComparerSection(
             name="internal sound file",
             key_types=(str,),
             value_types=(dict,),
+            detect_key_moves=True,
+            comparison_move_function=lambda key, value: value["sha1_hash"],
             comparer=Comparer.TypedDictComparerSection(
                 name="property",
                 types=[

@@ -73,7 +73,8 @@ def make_sound_collection_comparer(is_flat:bool, is_interactive_entities:bool=Fa
             name="case",
             key_types=(str,),
             value_types=(str, dict),
-            comparer = None
+            comparer = None,
+            detect_key_moves=True
         )
     else:
         sound_comparers = [
@@ -103,10 +104,12 @@ def make_sound_collection_comparer(is_flat:bool, is_interactive_entities:bool=Fa
                 name="event",
                 key_types=(str,),
                 value_types=(dict,),
+                detect_key_moves=True,
                 comparer=Comparer.DictComparerSection(
                     name="resource pack",
                     key_types=(str,),
                     value_types=(str, dict),
+                    detect_key_moves=True, # no defined_in to deal with
                     comparer=sound_comparers
                 )
             )),
@@ -136,6 +139,7 @@ def make_sound_collections_comparer(name:str, is_flat:bool, is_interactive_entit
         name=name,
         key_types=(str,),
         value_types=(dict,),
+        detect_key_moves=True,
         comparer=make_sound_collection_comparer(is_flat, is_interactive_entities)
     )
 

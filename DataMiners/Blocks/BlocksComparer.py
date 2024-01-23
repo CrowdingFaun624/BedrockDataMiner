@@ -17,6 +17,11 @@ def normalize(data:DataMinerTyping.MyBlocks, version:"Version.Version", datamine
     output = {datum["name"]: CollapseResourcePacks.collapse_resource_packs(fix_properties(datum["properties"]), resource_packs, version.name) for datum in data}
     return output
 
+def resource_pack_comparison_move_function(key:str, value:DataMinerTyping.NormalizedBlocksJsonBlockTypedDict) -> DataMinerTyping.NormalizedBlocksJsonBlockTypedDict:
+    output = value.copy()
+    del output["defined_in"]
+    return output
+
 comparer = Comparer.Comparer(
     normalizer=normalize,
     dependencies=["resource_packs"],
@@ -24,10 +29,13 @@ comparer = Comparer.Comparer(
         name="block",
         key_types=(str,),
         value_types=(dict,),
+        detect_key_moves=True,
         comparer=Comparer.DictComparerSection(
             name="resource pack",
             key_types=(str,),
             value_types=(dict,),
+            detect_key_moves=True,
+            comparison_move_function=resource_pack_comparison_move_function,
             comparer=Comparer.TypedDictComparerSection(
                 name="property",
                 types=[

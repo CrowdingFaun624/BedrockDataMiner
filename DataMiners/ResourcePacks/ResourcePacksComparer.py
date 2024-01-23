@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     import DataMiners.DataMiner as DataMiner
 
 def normalize(data:DataMinerTyping.MyBlocks, version:"Version.Version", dataminers:dict[str,"DataMiner.DataMinerCollection"]) -> DataMinerTyping.NormalizedBlocks:
-    return {resource_pack["name"] for resource_pack in data}
+    return [resource_pack["name"] for resource_pack in data]
 
 comparer = Comparer.Comparer(
     normalizer=normalize,
