@@ -2,15 +2,14 @@ import json
 from pathlib2 import Path
 import subprocess
 import threading
-from typing import Any, Generator, Iterable
+from typing import Generator, Iterable
 
 import Utilities.FileManager as FileManager
 import Utilities.FileStorageManager as FileStorageManager
-from Utilities.FunctionCaller import FunctionCaller
+from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
 fsb_exe_lock = threading.Lock()
 cache_file_lock = threading.Lock()
-
 
 def read_cache() -> dict[str,dict[str,str]]:
     if not FileManager.FSB_CACHE_FILE.exists():
@@ -38,18 +37,20 @@ def cache_new_item(fsb_hash:str, data:dict[str,str]) -> None:
         if len(value) != 40:
             raise ValueError("A value in `data` is len %i isntead of 40: \"%s\": \"%s\"!" % (len(value), key, value))
     
+    cache = fsb_cache.get()
     with cache_file_lock:
-        fsb_cache[fsb_hash] = data
-    write_cache(fsb_cache)
+        cache[fsb_hash] = data
+    write_cache(cache)
 
 def cache_read_item(fsb_hash:str) -> dict[str,str]|None:
     '''Returns a dict of wav file names and file hashes in `./_assests/file_storage/objects` or None if the fsb file is unfamiliar.'''
-    if fsb_hash in fsb_cache:
-        return fsb_cache[fsb_hash]
+    cache = fsb_cache.get()
+    if fsb_hash in cache:
+        return cache[fsb_hash]
     else:
         return None
 
-fsb_cache = read_cache()
+fsb_cache = WaitValue(FunctionCaller(read_cache))
 
 def __output_file_all_done(input_file_releases:dict[str,bool], file_path:Path) -> None:
     file_name = file_path.name

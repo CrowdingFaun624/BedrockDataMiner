@@ -17,8 +17,9 @@ EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
 def str_to_version(version_str:str) -> Version.Version|Literal["-"]:
     if version_str == "-": return version_str
     else:
-        if version_str in VersionsParser.versions_dict:
-            return VersionsParser.versions_dict[version_str]
+        versions_dict = VersionsParser.versions_dict.get()
+        if version_str in versions_dict:
+            return versions_dict[version_str]
         else:
             raise KeyError("Version \"%s\" does not exist!" % version_str)
 

@@ -3,6 +3,25 @@ import os
 if __name__ == "__main__":
     os.path.split(os.path.split(__file__)[0])
 
+# import cProfile
+# from pathlib2 import Path
+# import pstats
+# profile = cProfile.Profile()
+# profile.run('''
+# import Utilities.FileManager as FileManager
+# import DataMiners.DataMiners as DataMiners
+# import Downloader.AllVersions as AllVersions
+# import Comparison.CompareAll as CompareAll
+# import Programs.Cleaner as Cleaner
+# import Programs.FileSummary as FileSummary
+# import Programs.GetFile as GetFile
+# import Utilities.StoredVersionsManager as StoredVersionsManager
+# import Downloader.VersionsParser as VersionParser
+# import Downloader.WikiValidator as WikiValidator''')
+# with open(Path("./time_report.txt"), "wt") as stream:
+#     stats = pstats.Stats(profile, stream=stream)
+#     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
+
 import Utilities.FileManager as FileManager
 import DataMiners.DataMiners as DataMiners
 import Downloader.AllVersions as AllVersions

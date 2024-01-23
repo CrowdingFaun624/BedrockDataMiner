@@ -9,6 +9,7 @@ import Utilities.FileManager as FileManager
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
 import Utilities.VersionTags as VersionTags
+from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
 if TYPE_CHECKING:
     import Downloader.InstallManager as InstallManager
@@ -212,8 +213,11 @@ def parse() -> list[Version.Version]:
     UrlValidator.validate_url_data(versions)
     return versions
 
-versions = parse()
-versions_dict = {version.name: version for version in versions}
+def get_version_dict() -> dict[str,Version.Version]:
+    return {version.name: version for version in versions.get()}
+
+versions = WaitValue(FunctionCaller(parse))
+versions_dict = WaitValue(FunctionCaller(get_version_dict))
 
 def main() -> None:
     parse()

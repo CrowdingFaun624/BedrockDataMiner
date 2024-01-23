@@ -19,3 +19,17 @@ class FunctionCaller(Generic[T]):
     
     def __call__(self) -> T:
         return self.target(*self.args, **self.kwargs)
+
+class WaitValue(Generic[T]):
+    '''Does not call the FunctionCaller until `get` is called. It then stores the output of the FunctionCaller for future calls of `get`.'''
+    def __init__(self, caller:FunctionCaller[T]) -> None:
+        if not isinstance(caller, FunctionCaller):
+            raise TypeError("`caller` is not a FunctionCaller!")
+        self.caller = caller
+        self.has_called = False
+        self.value = None
+    def get(self) -> T:
+        if not self.has_called:
+            self.has_called = True
+            self.value = self.caller()
+        return self.value

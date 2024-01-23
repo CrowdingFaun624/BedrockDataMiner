@@ -103,7 +103,7 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
 def user_interface() -> None:
     import Downloader.VersionsParser as VersionsParser
 
-    version_names = VersionsParser.versions_dict
+    version_names = VersionsParser.versions_dict.get()
     version = None
     while version not in version_names:
         version = input("What version will be datamined? ")

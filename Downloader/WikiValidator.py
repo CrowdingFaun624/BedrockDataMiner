@@ -1,7 +1,7 @@
 import datetime
 import time
 import threading
-from typing import Any, Iterable
+from typing import Any
 
 import Downloader.VersionsParser as VersionsParser
 import Utilities.FileManager as FileManager
@@ -10,8 +10,6 @@ import Utilities.VersionTags as VersionTags
 
 try:
     import mediawikiapi
-    config = mediawikiapi.config.Config(mediawiki_url="http://minecraft.wiki/api.php")
-    mwapi = mediawikiapi.MediaWikiAPI(config)
     api_is_working = True
 except:
     api_is_working = False
@@ -153,7 +151,7 @@ def parse_date(dates_string:str, version:Version.Version) -> list[str]:
         warning_messages.append("Version \"%s\" (page \"%s\") does not have any valid dates!" % (version.name, version.wiki_page))
     return warning_messages
 
-def parse_betas(version:Version.Version) -> list[str]:
+def parse_betas(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI) -> list[str]:
     '''Verifies information about the version's betas. Returns a list of warning messages.'''
     warning_messages:list[str] = []
     development_category_pages:list[mediawikiapi.WikipediaPage] = []
@@ -189,7 +187,7 @@ def parse_client_downloads(client_dl_string:str, version:Version.Version) -> lis
             warning_messages.append("Link \"%s\" on \"%s\" is not in the page's links!" % (version.download_link, version.wiki_page))
     return warning_messages
 
-def parse_main_list(versions:list[Version.Version], rememberer:dict[str,str]) -> list[str]:
+def parse_main_list(versions:list[Version.Version], rememberer:dict[str,str], mwapi:mediawikiapi.MediaWikiAPI) -> list[str]:
     '''Compares Category:Bedrock Edition versions to the version list. Returns a list of warning messages.'''
     try:
         warning_messages:list[str] = []
@@ -240,7 +238,7 @@ def parse_main_list(versions:list[Version.Version], rememberer:dict[str,str]) ->
     except Exception as e:
         rememberer["main"] = e
 
-def validate(version:Version.Version, rememberer:dict[str,Any]) -> None:
+def validate(version:Version.Version, rememberer:dict[str,Any], mwapi:mediawikiapi.MediaWikiAPI) -> None:
     '''Prints a message if the wiki page of the version does not agree with the Version object.'''
     try:
         if version.wiki_page is None: raise ValueError("Wiki page of \"%s\" is None!" % version.name)
@@ -249,14 +247,16 @@ def validate(version:Version.Version, rememberer:dict[str,Any]) -> None:
         infobox_data = get_infobox_data(wikitext, version)
         warning_messages:list[str] = []
         if "date" in infobox_data: warning_messages.extend(parse_date(infobox_data["date"], version))
-        warning_messages.extend(parse_betas(version))
+        warning_messages.extend(parse_betas(version, mwapi))
         if "clientdl" in infobox_data: warning_messages.extend(parse_client_downloads(infobox_data["clientdl"], version))
         rememberer[version.name] = warning_messages
     except Exception as e:
         rememberer[version.name] = e
 
 def main() -> None:
-    versions = VersionsParser.versions
+    config = mediawikiapi.config.Config(mediawiki_url="http://minecraft.wiki/api.php")
+    mwapi = mediawikiapi.MediaWikiAPI(config)
+    versions = VersionsParser.versions.get()
     start_version = input("What version to start from? ")
     with open(FileManager.WIKI_VALIDATOR_WARNINGS_FILE, "wt") as f:
         f.write("")
@@ -277,7 +277,7 @@ def main() -> None:
     SLEEP_TIME = 1.25
 
     thread_statuses["main"] = None
-    new_thread = threading.Thread(target=parse_main_list, args=[versions, thread_statuses])
+    new_thread = threading.Thread(target=parse_main_list, args=[versions, thread_statuses, mwapi])
     new_thread.start()
     for version in versions_to_scan:
         while len(thread_statuses) >= THREAD_LIMIT:
