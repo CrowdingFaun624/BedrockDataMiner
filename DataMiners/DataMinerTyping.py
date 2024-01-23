@@ -73,7 +73,7 @@ class NormalizedBlocksJsonBlockTypedDict(TypedDict):
 
 Blocks = dict[str,BlocksJsonBlockTypedDict]
 MyBlocks = list[MyBlocksJsonBlockTypedDict]
-NormalizedBlocks = dict[str,dict[str,DiffBlocksJsonBlockTypedDict]]
+NormalizedBlocks = dict[str,dict[str,NormalizedBlocksJsonBlockTypedDict]]
 DiffBlocks = dict[str|D.Diff[str,str],dict[str|D.Diff[str,str],DiffBlocksJsonBlockTypedDict|D.Diff[DiffBlocksJsonBlockTypedDict,DiffBlocksJsonBlockTypedDict]]]
 
 # duplicate sounds
@@ -134,6 +134,7 @@ class SoundDefinitionsJsonSoundEventTypedDict(TypedDict):
 
 class NormalizedSoundDefinitionsJsonSoundEventTypedDict(TypedDict):
     category: str
+    defined_in: list[str]
     max_distance: int|float
     min_distance: int|float
     sounds: list[str|SoundDefinitionsJsonSoundTypedDict]
