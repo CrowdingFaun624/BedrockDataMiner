@@ -16,7 +16,7 @@ if __name__ == "__main__":
 # import Programs.FileSummary as FileSummary
 # import Programs.GetFile as GetFile
 # import Utilities.StoredVersionsManager as StoredVersionsManager
-# import Downloader.VersionsParser as VersionParser
+# import Downloader.VersionsParser as VersionsParser
 # import Downloader.WikiValidator as WikiValidator''')
 # with open(Path("./time_report.txt"), "wt") as stream:
 #     stats = pstats.Stats(profile, stream=stream)
@@ -30,7 +30,7 @@ import Programs.Cleaner as Cleaner
 import Programs.FileSummary as FileSummary
 import Programs.GetFile as GetFile
 import Utilities.StoredVersionsManager as StoredVersionsManager
-import Downloader.VersionsParser as VersionParser
+import Downloader.VersionsParser as VersionsParser
 import Downloader.WikiValidator as WikiValidator
 
 PROGRAM_NAMES = {
@@ -41,7 +41,7 @@ PROGRAM_NAMES = {
     "FileSummary": FileSummary.main,
     "GetFile": GetFile.main,
     "StoredVersions": StoredVersionsManager.main,
-    "VersionParser": VersionParser.main,
+    "VersionsParser": VersionsParser.main,
     "WikiValidator": WikiValidator.main,
 }
 
@@ -63,3 +63,10 @@ if __name__ == "__main__":
     #     stats.print_stats()
 
     FileManager.clear_temp()
+
+pass
+# TODO: investigate counts on comparers being incorrect.
+# TODO: make folders in ./_versions have correct created dates.
+# TODO: make empty folders in ./_versions disappear if they're not in versions.json
+# TODO: make more dataminers
+# TODO: make more domains
