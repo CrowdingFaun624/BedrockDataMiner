@@ -169,7 +169,7 @@ def assign_install_managers(versions:list[Version.Version]) -> None:
             version.install_manager = install_manager_type(version, FileManager.get_version_install_path(version.version_folder))
 
 def assign_additional_tags(versions:list[Version.Version]) -> None:
-    '''Assigns tags that are assigned by the VersionParser'''
+    '''Assigns tags that are assigned by the VersionsParser'''
     version_dict = {version.name: version for version in versions}
     double_assets_range = VersionRange.VersionRange(version_dict["1.20.50.21"], "-")
     pocket_edition_ranges = VersionRange.VersionRange("-", version_dict["1.1.7"])
@@ -211,7 +211,21 @@ def parse() -> list[Version.Version]:
     assign_wiki_pages(versions)
     assign_install_managers(versions)
     UrlValidator.validate_url_data(versions)
+    fix_folders(versions)
     return versions
+
+def fix_folders(versions:list[Version.Version]) -> None:
+    '''Makes folders that are empty and don't exist disappear.
+    It is for scenarios like when a version is delayed and betas suddenly point to a new parent,
+    or when a version is renamed.'''
+    versions_dict = {version.name: version for version in versions}
+    for version_folder in FileManager.VERSIONS_FOLDER.iterdir():
+        if not version_folder.is_dir(): continue
+        if version_folder.name not in versions_dict:
+            if sum(1 for child in version_folder.iterdir()) == 0:
+                version_folder.rmdir()
+            else:
+                print("Version folder \"%s\" does not exist in versions.json and contains files!")
 
 def get_version_dict() -> dict[str,Version.Version]:
     return {version.name: version for version in versions.get()}
