@@ -332,6 +332,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
             new_keys_involved_in_key_change:set[c] = set()
             for old_key, old_comparison_value in old_comparison_values:
                 for new_key, new_comparison_value in new_comparison_values:
+                    if new_key in new_keys_involved_in_key_change: continue # to prevent multiple things moving to the same place.
                     # old_key cannot equal new_key
                     if old_comparison_value == new_comparison_value:
                         key_diff = D.Diff(old_key, new_key)
