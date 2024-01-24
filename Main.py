@@ -67,6 +67,5 @@ if __name__ == "__main__":
 pass
 # TODO: investigate counts on comparers being incorrect.
 # TODO: make folders in ./_versions have correct created dates.
-# TODO: make empty folders in ./_versions disappear if they're not in versions.json
 # TODO: make more dataminers
 # TODO: make more domains
