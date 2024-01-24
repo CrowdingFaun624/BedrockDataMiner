@@ -18,6 +18,7 @@ comparer = Comparer.Comparer(
         name="resource pack",
         types=(str,),
         comparer=None,
+        measure_length=True,
         ordered=False
     )
 )

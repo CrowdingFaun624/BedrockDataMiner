@@ -36,12 +36,14 @@ comparer = Comparer.Comparer(
         key_types=(str,),
         value_types=(dict,),
         detect_key_moves=True,
+        measure_length=True,
         comparer=Comparer.DictComparerSection(
             name="resource pack",
             key_types=(str,),
             value_types=(dict,),
             detect_key_moves=True,
             comparison_move_function=resource_pack_comparison_move_function,
+            measure_length=True,
             comparer=Comparer.TypedDictComparerSection(
                 name="property",
                 types=[
@@ -59,6 +61,7 @@ comparer = Comparer.Comparer(
                         name="sound",
                         types=(str, dict),
                         ordered=False,
+                        measure_length=True,
                         comparer=[
                             (lambda key, value: isinstance(value, str), None),
                             (lambda key, value: isinstance(value, dict), Comparer.TypedDictComparerSection(

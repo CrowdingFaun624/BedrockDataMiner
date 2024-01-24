@@ -26,12 +26,14 @@ comparer = Comparer.Comparer(
         value_types=(dict,),
         detect_key_moves=True,
         comparison_move_function=sound_file_comparison_move_function,
+        measure_length=True,
         comparer=Comparer.DictComparerSection(
             name="internal sound file",
             key_types=(str,),
             value_types=(dict,),
             detect_key_moves=True,
             comparison_move_function=lambda key, value: value["sha1_hash"],
+            measure_length=True,
             comparer=Comparer.TypedDictComparerSection(
                 name="property",
                 types=[
@@ -39,12 +41,14 @@ comparer = Comparer.Comparer(
                     ("pictures", list, Comparer.ListComparerSection(
                         name="picture",
                         types=(type(None),), # idk
-                        comparer=None
+                        comparer=None,
+                        measure_length=True,
                     )),
                     ("tags", dict, Comparer.DictComparerSection(
                         name="tag type",
                         key_types=lambda key, value: key in ("comment", "encoder", "title", "tracknumber"),
                         value_types=(list,),
+                        measure_length=True,
                         comparer=Comparer.ListComparerSection(
                             name="tag",
                             types=(str,),
@@ -54,7 +58,8 @@ comparer = Comparer.Comparer(
                     ("_subchunks", list, Comparer.ListComparerSection(
                         name="subchunk",
                         types=(type(None),), # idk
-                        comparer=None
+                        comparer=None,
+                        measure_length=True,
                     )),
                     ("streaminfo", dict, Comparer.TypedDictComparerSection(
                         name="property",

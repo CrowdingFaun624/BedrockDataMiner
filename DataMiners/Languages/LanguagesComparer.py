@@ -29,6 +29,7 @@ comparer = Comparer.Comparer(
         value_types=(dict,),
         detect_key_moves=True,
         comparison_move_function=languages_comparison_move_function,
+        measure_length=True,
         comparer=Comparer.DictComparerSection(
             name="resource pack",
             key_types=(str,),
