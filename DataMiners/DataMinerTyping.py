@@ -125,6 +125,16 @@ class SoundDefinitionsJsonSoundTypedDict(TypedDict):
     volume: float
     weight: int
 
+class NormalizedSoundDefinitionsJsonSoundTypedDict(TypedDict):
+    exclude_from_pocket_platforms: bool
+    is3D: bool
+    load_on_low_memory: bool
+    pitch: float
+    stream: bool
+    type: str
+    volume: float
+    weight: int
+
 class SoundDefinitionsJsonSoundEventTypedDict(TypedDict):
     category: str
     max_distance: int|float
@@ -137,7 +147,7 @@ class NormalizedSoundDefinitionsJsonSoundEventTypedDict(TypedDict):
     defined_in: list[str]
     max_distance: int|float
     min_distance: int|float
-    sounds: list[str|SoundDefinitionsJsonSoundTypedDict]
+    sounds: dict[str,SoundDefinitionsJsonSoundTypedDict]
     subtitle: str # unused
 
 SoundDefinitionsJson = dict[str,SoundDefinitionsJsonSoundEventTypedDict]

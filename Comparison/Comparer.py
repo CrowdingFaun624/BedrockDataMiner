@@ -422,6 +422,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
         for key, value in data.items():
+            can_print_print_all = True # if the print_all thing is overridden for whatever reason.
             key_str = key.first_existing_property() if isinstance(key, D.Diff) else key
             comparer_set = self.choose_comparer(key, value, trace)
 
@@ -429,6 +430,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
                 if key.is_addition:
                     pass # Behavior is handled in the check for `value` being a `D.Diff`.
                 elif key.is_change:
+                    can_print_print_all = False
                     any_changes = True
                     output.append("Moved %s %s to %s." % (self.name, stringify(key.old), stringify(key.new)))
                 elif key.is_removal:
@@ -450,7 +452,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
             else:
                 current_length += 1
                 if comparer_set[D.DiffType.not_diff] is None:
-                    if self.print_all:
+                    if self.print_all and can_print_print_all:
                         output.extend(self.print_item(key_str, value, comparer_set, trace, message="Unchanged "))
                     pass # This means that it is not a difference and does not contain differences.
                 else:
@@ -461,7 +463,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
                         any_changes = True
                         output.append("Changed %s %s:" % (self.name, stringify(key_str)))
                         output.extend("\t" + line for line in subcomparer_lines)
-                    elif self.print_all:
+                    elif self.print_all and can_print_print_all:
                         output.extend(self.print_item(key_str, value, comparer_set, trace, message="Unchanged "))
         if self.measure_length and size_changed:
             output = ["Total %s: %i (+%i, -%i)" % (self.name, current_length, addition_length, removal_length)] + output
