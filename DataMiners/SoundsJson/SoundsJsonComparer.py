@@ -62,7 +62,8 @@ def make_pitch_volume_list_comparer(name:str) -> Comparer.ListComparerSection:
         types=(float, int),
         comparer=None,
         print_flat=True,
-        ordered=True
+        ordered=True,
+        print_all=True,
     )
 
 def make_sound_collection_comparer(is_flat:bool, is_interactive_entities:bool=False) -> Comparer.DictComparerSection:

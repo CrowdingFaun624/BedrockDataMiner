@@ -24,6 +24,7 @@ comparer = Comparer.Comparer(
             types=(dict,),
             ordered=False,
             measure_length=True,
+            print_all=True,
             comparer=Comparer.DictComparerSection(
                 name="property",
                 key_types=lambda key, value: key in ("file_name", "file_internal_name"),

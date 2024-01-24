@@ -62,6 +62,7 @@ comparer = Comparer.Comparer(
                         types=(str, dict),
                         ordered=False,
                         measure_length=True,
+                        print_all=True,
                         comparer=[
                             (lambda key, value: isinstance(value, str), None),
                             (lambda key, value: isinstance(value, dict), Comparer.TypedDictComparerSection(
