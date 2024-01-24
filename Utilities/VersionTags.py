@@ -5,13 +5,13 @@ class VersionTag(enum.Enum):
     alpha      = "alpha"
     beta       = "beta"
     developer  = "developer"
-    double_assets = "double-assets" # assigned by VersionParser
+    double_assets = "double-assets" # assigned by VersionsParser
     ipa        = "ipa"
     major      = "major"
     minor      = "minor"
     patch      = "patch"
-    pocket_edition = "pocket-edition" # assigned by VersionParser
-    pocket_edition_alpha_before = "pocket-edition-alpha-before" # assigned by VersionParser
+    pocket_edition = "pocket-edition" # assigned by VersionsParser
+    pocket_edition_alpha_before = "pocket-edition-alpha-before" # assigned by VersionsParser
     reupload   = "reupload"
     unreleased = "unreleased"
 
