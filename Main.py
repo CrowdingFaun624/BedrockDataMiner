@@ -65,7 +65,5 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
-# TODO: investigate counts on comparers being incorrect.
-# TODO: make folders in ./_versions have correct created dates.
 # TODO: make more dataminers
 # TODO: make more domains
