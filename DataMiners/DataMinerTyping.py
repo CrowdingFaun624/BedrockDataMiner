@@ -110,7 +110,7 @@ class ResourcePackTypedDict(TypedDict):
     name: str
     tags: list[str]
 
-ResourcePacks = list["ResourcePackTypedDict"]
+ResourcePacks = list[ResourcePackTypedDict]
 
 # sound_definitions.json
 
