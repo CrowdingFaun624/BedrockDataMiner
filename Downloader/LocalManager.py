@@ -9,6 +9,7 @@ from Utilities.FunctionCaller import FunctionCaller
 
 class LocalManager(InstallManager.InstallManager):
     def prepare_for_install(self) -> None:
+        self.file_list:list[str] = None
         if not self.version.download_method is Version.DOWNLOAD_LOCAL:
             raise ValueError("Version \"%s\" is using a LocalManager while having a \"%s\" download type!" % (self.version.name, self.version.download_method))
         if os.name == "nt": # TODO: Make this part less sucky
@@ -39,23 +40,29 @@ class LocalManager(InstallManager.InstallManager):
         # There is no need to do anything else. All of the files are already there.
         return Path(self.bedrock_local.joinpath(self.get_full_file_name(file_name)))
 
+    def get_files_in(self, parent:str) -> Iterable[str]:
+        return [file for file in self.get_file_list() if file.startswith(parent)]
+
     def get_file_list(self, path:Path|None=None) -> Iterable[str]:
         if path is None:
-            strip_string1 = self.bedrock_local.as_posix() + "/"
-            strip_string2 = self.get_full_file_name("")
-            output:list[str] = []
-            for file_path in self.get_file_list(self.bedrock_local):
-                stripped_path = file_path.replace(strip_string1, "", 1)
-                if stripped_path.startswith(strip_string2):
-                    output.append(stripped_path.replace(strip_string2, ""))
+            if self.file_list is None:
+                strip_string1 = self.bedrock_local.as_posix() + "/"
+                strip_string2 = self.get_full_file_name("")
+                output:list[str] = []
+                for file_path in self.get_file_list(self.bedrock_local):
+                    stripped_path = file_path.replace(strip_string1, "", 1)
+                    if stripped_path.startswith(strip_string2):
+                        output.append(stripped_path.replace(strip_string2, ""))
+                self.file_list = output
+            return self.file_list
+        else:
+            output:list[Path] = []
+            for subpath in path.iterdir():
+                if subpath.is_file():
+                    output.append(subpath.as_posix())
+                elif subpath.is_dir():
+                    output.extend(self.get_file_list(subpath))
             return output
-        output:list[Path] = []
-        for subpath in path.iterdir():
-            if subpath.is_file():
-                output.append(subpath.as_posix())
-            elif subpath.is_dir():
-                output.extend(self.get_file_list(subpath))
-        return output
     
     def file_exists(self, name:str) -> bool:
         return Path(self.bedrock_local.joinpath(self.get_full_file_name(name))).exists()

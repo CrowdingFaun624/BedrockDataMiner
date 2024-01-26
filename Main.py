@@ -65,5 +65,6 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
+# TODO: optimize comparers
 # TODO: make more dataminers
 # TODO: make more domains

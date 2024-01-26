@@ -251,6 +251,9 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
     def check_types(self, data:dict[c,d], trace:list[tuple[str,str]]) -> list[tuple[list[tuple[str,str]],Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[list[tuple[str,str]]] = []
+        if not isinstance(data, dict):
+            output.append((trace, TypeError("`data` has the wrong type, %s instead of dict!" % type(data))))
+            return output
         for key, value in data.items():
             new_trace = trace.copy()
             new_trace.append((self.name, key))
@@ -693,31 +696,36 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
             output = ["Total %s: %i (+%i, -%i)" % (self.name, current_length, addition_length, removal_length)] + output
         return output, any_changes
 
-def TypedDictComparerSection(name:str, types:list[tuple[str, type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool], ComparerSection[d]|None]]]]) -> DictComparerSection[c,d]:
+def TypedDictComparerSection(name:str, types:list[tuple[str|list[str], type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool], ComparerSection[d]|None]]]]) -> DictComparerSection[c,d]:
     '''Alias for a DictComparerSection that has certain named parameters.
     * `name` is what the key of this dictionary is.
     * `items` is a list of tuples describing the keys and values.
     * The first item of each tuple of `items` is the key value; it will match this value to the key.
+    * If the first item of the tuple is a list, then it make the same comparer for all items of the list.
     * The second item of each tuple describes the allowed types of the value.
     * The third item of each tuple is the ComparerSection for the matched key and value.
     * If the third item of each tuple is a list, then it will call the first item of each tuple with the key and value, and use the corresponding ComparerSection.'''
     if not isinstance(name, str):
         raise TypeError("`name` is not a str!")
-    if not isinstance(types, list):
-        raise TypeError("`types` is not a list!")
-    if len(types) == 0:
-        raise ValueError("`types` is empty!")
+    if not isinstance(types, (list, tuple)):
+        raise TypeError("`types` is not a list or tuple!")
     already_keys:set[str] = set()
     for item in types:
-        if not isinstance(item, tuple):
+        if not isinstance(item, (tuple, list)):
+            # It is allowed to be a list so that it can be changed to allow for nesting.
             raise TypeError("An item of `types` is not a tuple!")
         if len(item) != 3:
             raise ValueError("An item of `types` is not length 3!")
-        if not isinstance(item[0], str):
-            raise TypeError("The first item of an item of `types` is not a str or Callable!")
-        if item[0] in already_keys:
+        if not isinstance(item[0], (str, list)):
+            raise TypeError("The first item of an item of `types` is not a str or list!")
+        if isinstance(item[0], list) and not all(isinstance(key, str) for key in item[0]):
+            raise TypeError("An item of the first item of an item of `types` is not a str!")
+        if (isinstance(item[0], str) and item[0] in already_keys) or (isinstance(item[0], list) and any(key in already_keys for key in item[0])):
             raise ValueError("The first item of an item of `types` is the same as another first item of an item of `types`!")
-        already_keys.add(item[0])
+        if isinstance(item[0], list):
+            already_keys.update(item[0])
+        else:
+            already_keys.add(item[0])
         if not isinstance(item[1], (type, tuple)):
             raise TypeError("The second item of an item of `types` is not a type or tuple!")
         if isinstance(item[1], tuple) and not all(isinstance(types_item, type) for types_item in item[1]):
@@ -727,23 +735,37 @@ def TypedDictComparerSection(name:str, types:list[tuple[str, type|tuple[type], C
         if isinstance(item[2], list):
             if len(item[2]) == 0:
                 raise ValueError("The third item of an item of `types` is empty!")
-            for comparer_item in item[2]:
+            for comparer_item_index, comparer_item in enumerate(item[2]):
                 if not isinstance(comparer_item, tuple):
                     raise TypeError("An item of the third item of an item of `types` is not a tuple!")
                 if len(comparer_item) != 2:
+                    print(comparer_item, comparer_item_index)
                     raise ValueError("An item of the third item of an item of `types` is not length 2!")
                 if not isinstance(comparer_item[0], Callable):
                     raise TypeError("The first item of an item of the third item of an item of `types` is not a Callable!")
                 if not isinstance(comparer_item[1], ComparerSection) and comparer_item[1] is not None:
                     raise TypeError("The second item of an item of the third item of an item of `types` is not a ComparerSection or None!")
 
-    def get_func(comparer_key:str, additional_function:Callable[[c,d],bool]) -> Callable[[c,d],bool]:
-        return lambda key, value: comparer_key == key and additional_function(key, value)
+    def get_func(comparer_key:str|Callable[[c],bool], additional_function:Callable[[c,d],bool]) -> Callable[[c,d],bool]:
+        if isinstance(comparer_key, str):
+            return lambda key, value: comparer_key == key and additional_function(key, value)
+        else:
+            return lambda key, value: comparer_key(key, value) and additional_function(key, value)
 
-    keys = {key for key, value_types, comparers in types}
-    value_types_dict = {key: value_types for key, value_types, comparers in types}
+    expanded_types:list[tuple[str|list[str], type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool], ComparerSection[d]|None]]]] = []
+    # `expanded_types` is just like `types`, but the first item is always a string.
+    for keys, value_types, comparers in types:
+        if isinstance(keys, list):
+            expanded_types.extend((key, value_types, comparers) for key in keys)
+        else:
+            expanded_types.append((keys, value_types, comparers))
+    keys_strings = {key for key, value_types, comparers in expanded_types if isinstance(key, str)}
+    # keys_functions = [key for key, value_types, comparers in types if isinstance(key, Callable)]
+
+    value_types_string_dict = {key: value_types for key, value_types, comparers in expanded_types}
+    # value_types_functions = [(key, value_types) for key, value_types, comparers in expanded_types if isinstance(key, Callable)]
     all_comparers:list[tuple[str,Callable[[c,d],bool], ComparerSection]] = []
-    for comparer_key, value_types, comparers in types:
+    for comparer_key, value_types, comparers in expanded_types:
         if isinstance(comparers, ComparerSection) or comparers is None:
             all_comparers.append((comparer_key, comparers))
         else:
@@ -760,10 +782,16 @@ def TypedDictComparerSection(name:str, types:list[tuple[str, type|tuple[type], C
 
     return DictComparerSection(
         name=name,
-        key_types=lambda key, value: key in keys,
-        value_types=lambda key, value: isinstance(value, value_types_dict[key]),
+        key_types=lambda key, value: key in keys_strings,
+        value_types=lambda key, value: (key in value_types_string_dict and isinstance(value, value_types_string_dict[key])),
         comparer=all_comparers,
         measure_length=False,
+    )
+
+def UnnamedDictComparerSection(*types:tuple[str|list[str], type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool], ComparerSection[d]|None]]], name:str="field") -> DictComparerSection:
+    return TypedDictComparerSection(
+        name=name,
+        types=types
     )
 
 class Comparer():
@@ -860,6 +888,8 @@ class Comparer():
         for trace, exception in traces:
             print("Exception in %s:" % stringify_trace(trace))
             traceback.print_exception(exception)
+            raise exception
+            # raise RuntimeError("An error occured!")
             print()
         if len(traces) > 0:
             raise TypeError("Type checking on %s failed!" % (self.name))
@@ -873,3 +903,6 @@ class Comparer():
     
     def print_text(self, data:b) -> list[str]:
         return self.base_comparer_section.print_text(data, [])
+
+default_comparer = Comparer(None, None, ComparerSection(""))
+#TODO: change check_types to a generator.

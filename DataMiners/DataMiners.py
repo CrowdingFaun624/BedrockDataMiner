@@ -5,24 +5,38 @@ import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Version as Version
 
+import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
 import DataMiners.Blocks.BlocksDataMiners as BlocksDataMiners
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
+import DataMiners.Entities.EntitiesDataMiners as EntitiesDataMiners
+import DataMiners.Items.ItemsDataMiners as ItemsDataMiners
 import DataMiners.Languages.LanguagesDataMiners as LanguagesDataMiners
+import DataMiners.MusicDefinitions.MusicDefinitionsDataMiners as MusicDefinitionsDataMiners
 import DataMiners.NonExistentSounds.NonExistentSoundsDataMiners as NonExistentSoundsDataMiners
+import DataMiners.Recipes.RecipesDataMiners as RecipesDataMiners
 import DataMiners.ResourcePacks.ResourcePacksDataMiners as ResourcePacksDataMiners
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinitionsDataMiners
 import DataMiners.SoundFiles.SoundFilesDataMiners as SoundFilesDataMiners
 import DataMiners.SoundsJson.SoundsJsonDataMiners as SoundsJsonDataMiners
+import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as UndefinedSoundEventsDataMiners
+import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
 
 dataminers:list[DataMiner.DataMinerCollection] = [
+    BehaviorPacksDataMiners.dataminers,
     BlocksDataMiners.dataminers,
     DuplicateSoundsDataMiners.dataminers,
+    EntitiesDataMiners.dataminers,
+    ItemsDataMiners.dataminers,
     LanguagesDataMiners.dataminers,
+    MusicDefinitionsDataMiners.dataminers,
     NonExistentSoundsDataMiners.dataminers,
+    RecipesDataMiners.dataminers,
     ResourcePacksDataMiners.dataminers,
     SoundDefinitionsDataMiners.dataminers,
     SoundFilesDataMiners.dataminers,
     SoundsJsonDataMiners.dataminers,
+    UndefinedSoundEventsDataMiners.dataminers,
+    UnusedSoundEventsDataMiners.dataminers,
 ]
 
 def run_with_dependencies(version:Version.Version, name:str, recalculate_this:bool=False, recalculate_everything:bool=False) -> None:

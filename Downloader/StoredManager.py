@@ -13,6 +13,7 @@ class StoredManager(InstallManager.InstallManager):
         self.apk_location = Path(str(self.location) + ".zip")
         self.name = self.version.download_link[1:]
         self.index_read_lock = threading.Lock()
+        self.file_list:list[str]|None = None
         self.index = None
         if not self.version.download_method is Version.DOWNLOAD_FILE:
             raise ValueError("Version \"%s\" is using a StoredManager while having a \"%s\" download type!" % (self.version.name, self.version.download_method))
@@ -47,10 +48,15 @@ class StoredManager(InstallManager.InstallManager):
             self.read_index()
             StoredVersionsManager.extract(self.name, destination, self.index)
 
+    def get_files_in(self, parent: str) -> Iterable[str]:
+        return [file for file in self.get_file_list() if file.startswith(parent)]
+
     def get_file_list(self) -> Iterable[str]:
-        strip_string = self.get_full_file_name("")
-        self.read_index()
-        return [index.replace(strip_string, "", 1) for index in self.index.keys() if index.startswith(strip_string)]
+        if self.file_list is None:
+            strip_string = self.get_full_file_name("")
+            self.read_index()
+            self.file_list = [index.replace(strip_string, "", 1) for index in self.index.keys() if index.startswith(strip_string)]
+        return self.file_list
 
     def file_exists(self, name:str) -> bool:
         self.read_index()

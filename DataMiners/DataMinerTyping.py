@@ -1,17 +1,33 @@
-from typing import TypedDict
+from typing import Any, TypedDict
 
 import Comparison.Difference as D
 import Comparison.Compare as Compare
 
 class DependenciesTypedDict(TypedDict):
+    behavior_packs: "BehaviorPacks"
     blocks: "MyBlocks"
     duplicate_sounds: "DuplicateSounds"
+    entities: "Entities"
+    items: "Items"
     languages: "Languages"
+    music_definitions: "MyMusicDefinitions"
     non_existent_sounds: "NonExistentSounds"
+    recipes: "Recipes"
     resource_packs: "ResourcePacks"
     sound_definitions: "MySoundDefinitionsJson"
     sound_files: "SoundFiles"
     sounds_json: "MySoundsJson"
+    undefined_sound_events: "UndefinedSoundEvents"
+    unused_sound_events: "UnusedSoundEvents"
+
+# behavior packs
+
+class BehaviorPackTypedDict(TypedDict):
+    id: int
+    name: str
+    tags: list[str]
+
+BehaviorPacks = list[BehaviorPackTypedDict]
 
 # blocks.json
 
@@ -85,6 +101,14 @@ class DuplicateSoundsTypedDict(TypedDict):
 DuplicateSounds = dict[str,list[DuplicateSoundsTypedDict]]
 NormalizedDuplicateSounds = dict[str,Compare.UnorderedList[DuplicateSoundsTypedDict]]
 
+# entities
+
+Entities = dict[str,dict[str,Any]] # TODO: fill this out
+
+# items
+
+Items = None # TODO: fill this out
+
 # languages
 
 class LanguagesPropertiesTypedDict(TypedDict):
@@ -98,10 +122,24 @@ class LanguagesTypedDict(TypedDict):
 Languages = list[LanguagesTypedDict]
 NormalizedLanguages = dict[str,dict[str,LanguagesPropertiesTypedDict]]
 
+# music_definitions.json
+
+class MusicDefinitionsEnvironmentTypedDict(TypedDict):
+    event_name: str
+    min_delay: int
+    max_delay: int
+
+MusicDefinitions = dict[str,MusicDefinitionsEnvironmentTypedDict]
+MyMusicDefinitions = dict[str,dict[str,MusicDefinitionsEnvironmentTypedDict]]
+
 # non-existent sounds
 
 NonExistentSounds = dict[str,dict[str,list[str]]]
 NormalizedNonExistentSounds = dict[str,dict[str,set[str]]]
+
+# recipes
+
+Recipes = dict[str,dict[str,Any]] # TODO: fill this out
 
 # resource packs
 
@@ -198,6 +236,7 @@ NormalizedSoundFiles=dict[str,dict[str,NormalizedSoundFilesTypedDict]]
 # sounds.json
 
 class SoundsJsonSoundTypedDict(TypedDict):
+    sound:str
     sounds: str
     volume: float|int|list[float|int,float|int]
     pitch: float|int|list[float|int,float|int]
@@ -205,7 +244,7 @@ class SoundsJsonSoundTypedDict(TypedDict):
 class SoundsJsonSoundCollectionTypedDict(TypedDict):
     volume: float|list[float,float]
     pitch: float|list[float,float]
-    events:dict[str, str|SoundsJsonSoundTypedDict]
+    events:dict[str, str|SoundsJsonSoundTypedDict]|dict[str,dict[str,str]]
 
 class SoundsJsonFlatCollectionTypedDict(TypedDict): # "flat" means that it doesn't have volume or pitch defined right here.
     events: dict[str, SoundsJsonSoundTypedDict]
@@ -225,12 +264,12 @@ class SoundsJsonTypedDict(TypedDict):
     interactive_sounds: SoundsJsonInteractiveSoundsTypedDict
 
 class ResourcePackSoundsJsonFlatCollectionTypedDict(TypedDict):
-    events: dict[str, dict[str, SoundsJsonSoundTypedDict]]
+    events: dict[str, dict[str, SoundsJsonSoundTypedDict]]|dict[str,dict[str,dict[str,str]]]
 
 class ResourcePackSoundsJsonSoundCollectionTypedDict(TypedDict):
     volume: dict[str, float|list[float, float]]
     pitch: dict[str, float|list[float, float]]
-    events: dict[str, dict[str, SoundsJsonSoundTypedDict]]
+    events: dict[str, dict[str, SoundsJsonSoundTypedDict]]|dict[str,dict[str,dict[str,str]]]
 
 class MySoundsJsonTypedDict(TypedDict):
     individual_event_sounds: ResourcePackSoundsJsonFlatCollectionTypedDict
@@ -240,3 +279,11 @@ class MySoundsJsonTypedDict(TypedDict):
     interactive_entity_sounds: dict[str, ResourcePackSoundsJsonSoundCollectionTypedDict]
 
 MySoundsJson = MySoundsJsonTypedDict
+
+# undefined_sound_events
+
+UndefinedSoundEvents = dict[str,list[list[str]]] # TODO: fill this out
+
+# unused_sound_events
+
+UnusedSoundEvents = list[str]

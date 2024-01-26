@@ -76,6 +76,9 @@ class DownloadManager(InstallManager.InstallManager):
             self.zip_file.extract(file_name, self.location)
             return Path(self.location.joinpath(file_name))
 
+    def get_files_in(self, parent: str) -> Iterable[str]:
+        return [file for file in self.get_file_list() if file.startswith(parent)]
+
     def get_file_list(self) -> Iterable[str]:
         if not self.installed:
             self.install_all()

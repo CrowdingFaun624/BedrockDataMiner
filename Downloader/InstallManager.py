@@ -1,5 +1,5 @@
 from pathlib2 import Path
-from typing import TYPE_CHECKING
+from typing import Iterable, TYPE_CHECKING
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -37,6 +37,10 @@ class InstallManager():
     def file_exists(self, name:str) -> bool:
         '''Returns if the file exists in this version.'''
         raise NotImplementedError("`file_exists` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
+
+    def get_files_in(self, parent:str) -> Iterable[str]:
+        '''Returns a list of all files that are within the given directory.'''
+        raise NotImplementedError("`get_files_in` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
     def get_file_list(self) -> list[str]:
         '''Returns a list of all files in the archive.'''

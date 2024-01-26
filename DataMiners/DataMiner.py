@@ -1,8 +1,8 @@
 import json
 from pathlib2 import Path
 import threading
+from typing import Any, Callable, Generic, IO, Iterable, Literal, TypeVar
 import traceback
-from typing import Any, Callable, IO, Iterable, Literal
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.FileManager as FileManager
@@ -39,6 +39,7 @@ class DataMinerSettings():
         self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
         self.file_name:str = None
         self.name:str = None
+        self.comparer:Comparer.Comparer = None
         self.dataminer_class = dataminer_class
         self.dependencies = dependencies if dependencies is not None else []
         self.kwargs = kwargs
@@ -83,12 +84,18 @@ class DataMiner():
 
     def store(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         '''Makes the dataminer get the file. Returns the output and stores it in a file.'''
+        a = TypeVar("a")
+        class FakeDataMinerCollection(Generic[a]):
+            def __init__(self, data:a) -> None: self.data = data
+            def get_data_file(self, version:Version.Version, non_exist_ok:bool=False) -> a: return self.data
         data = self.activate(dependency_data)
         if data is None:
             raise RuntimeError("DataMiner %s returned None!" % self)
         data_path = FileManager.get_version_data_path(self.version.version_folder, None)
         if not data_path.exists():
             data_path.mkdir()
+        normalized_data = self.settings.comparer.normalize(data, self.version, {dataminer_name: FakeDataMinerCollection(dependency) for dataminer_name, dependency in dependency_data.items()})
+        self.settings.comparer.check_types(normalized_data)
         with open(self.get_data_file_path(), "wt") as f:
             json.dump(data, f)
         return data
@@ -96,6 +103,11 @@ class DataMiner():
     def get_data_file(self) -> Any:
         with open(self.get_data_file_path(), "rt") as f:
             return json.load(f)
+
+    def get_files_in(self, parent:str) -> Iterable[str]:
+        if self.version.install_manager is None:
+            raise RuntimeError("Attempted to call `get_files_in` on version (\"%s\") with no download available!" % self.version.name)
+        return self.version.install_manager.get_files_in(parent)
 
     def get_file_list(self) -> Iterable[str]:
         if self.version.install_manager is None:
@@ -223,6 +235,7 @@ class DataMinerCollection():
         for dataminer in dataminers:
             dataminer.file_name = self.file_name
             dataminer.name = self.name
+            dataminer.comparer = self.comparer
     
     def get_data_file(self, version:Version.Version, non_exist_ok:bool=False) -> Any:
         '''Opens the data file if it exists, and raises an error if it doesn't, or returns None if `non_exist_ok` is True'''
