@@ -7,37 +7,30 @@ def get_filter_comparer() -> Comparer.DictComparerSection:
         ["all_of", list, None],
         ["any_of", list, None],
         ("domain", str, None),
+        ["none_of", list, None],
         ("operator", str, None),
         ("subject", str, None),
         ("test", str, None),
         ("value", (bool, float, int, str), None),
     ]
-    types[0][2] = Comparer.ListComparerSection(
-        name="filter",
-        types=(dict,),
-        measure_length=True,
-        ordered=False,
-        comparer=Comparer.TypedDictComparerSection(
-            name="filter property",
-            types=types
-        )
-    )
-    types[1][2] = Comparer.ListComparerSection(
-        name="filter",
-        types=(dict,),
-        measure_length=True,
-        ordered=False,
-        comparer=Comparer.TypedDictComparerSection(
-            name="filter property",
-            types=types
-        )
-    )
-    types[0] = tuple(types[0])
-    types[1] = tuple(types[1])
-    return Comparer.TypedDictComparerSection(
+    typed_dict = Comparer.TypedDictComparerSection(
         name="filter property",
         types=types
     )
+    list_comparer_section = Comparer.ListComparerSection(
+        name="filter",
+        types=(dict,),
+        measure_length=True,
+        ordered=False,
+        comparer=typed_dict
+    )
+    types[0][2] = list_comparer_section
+    types[1][2] = list_comparer_section
+    types[3][2] = list_comparer_section
+    types[0] = tuple(types[0])
+    types[1] = tuple(types[1])
+    types[3] = tuple(types[3])
+    return typed_dict
 
 
 filter_comparer = get_filter_comparer()
@@ -77,9 +70,10 @@ coordinate_comparer = Comparer.ListComparerSection(
 )
 
 damage_comparer=[
-    ("damage", (int, list), [
-        ((lambda key, value: isinstance(value, int)), None),
-        ((lambda key, value: isinstance(value, list)), range_comparer),
+    ("damage", (dict, int, list), [
+        (lambda key, value: isinstance(value, dict), range_dict_comparer),
+        (lambda key, value: isinstance(value, int), None),
+        (lambda key, value: isinstance(value, list), range_comparer),
     ]),
     ("destroy_on_hit", bool, None),
     ("effect_name", str, None),
@@ -90,6 +84,10 @@ damage_comparer=[
     ("power_multiplier", float, None),
     ("semi_random_diff_damage", bool, None),
 ]
+
+value_comparer = Comparer.UnnamedDictComparerSection(
+    ("value", (bool, float, int), None),
+)
 
 value_max_comparer = Comparer.UnnamedDictComparerSection(
     ("value", (bool, float, int), None),
@@ -103,7 +101,16 @@ event_target_comparer = Comparer.UnnamedDictComparerSection(
 
 event_target_filters_comparer = Comparer.UnnamedDictComparerSection(
     ("event", str, None),
-    ("filters", dict, filter_comparer),
+    ("filters", (dict, list), [
+        (lambda key, value: isinstance(value, dict), filter_comparer),
+        (lambda key, value: isinstance(value, list), Comparer.ListComparerSection(
+            name="filter",
+            measure_length=True,
+            ordered=False,
+            types=(dict,),
+            comparer=filter_comparer
+        )),
+    ]),
     ("target", str, None),
 )
 
@@ -177,6 +184,7 @@ entity_types_comparer = Comparer.UnnamedDictComparerSection(
     ("priority", int, None),
     ("sprint_speed_multiplier", (float, int), None),
     ("walk_speed_multiplier", (float, int), None),
+    ("within_default", int, None),
 )
 
 baby_comparer = Comparer.UnnamedDictComparerSection(

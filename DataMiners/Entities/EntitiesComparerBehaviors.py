@@ -34,6 +34,14 @@ defend_trusted_target_comparer =\
     ("within_radius", int, None),
 ))
 
+defend_village_target_comparer =\
+("minecraft:behavior.defend_village_target", dict, Comparer.UnnamedDictComparerSection(
+    ("attack_chance", float, None),
+    ("entity_types", dict, EntitiesComparerTemplates.entity_types_comparer),
+    ("must_reach", bool, None),
+    ("priority", int, None),
+))
+
 dragonchargeplayer_comparer =\
 ("minecraft:behavior.dragonchargeplayer", dict, Comparer.UnnamedDictComparerSection(
     ("priority", int, None),
@@ -96,6 +104,12 @@ drop_item_for_comparer =\
     ("time_of_day_range", list, EntitiesComparerTemplates.range_comparer),
 ))
 
+eat_carried_item_comparer =\
+("minecraft:behavior.eat_carried_item", dict, Comparer.UnnamedDictComparerSection(
+    ("delay_before_eating", int, None),
+    ("priority", int, None),
+))
+
 enderman_leave_block_comparer =\
 ("minecraft:behavior.enderman_leave_block", dict, Comparer.UnnamedDictComparerSection(
     ("priority", int, None),
@@ -116,6 +130,12 @@ find_cover_comparer =\
     ("cooldown_time", float, None),
     ("priority", int, None),
     ("speed_multiplier", int, None),
+))
+
+find_mount_comparer =\
+("minecraft:behavior.find_mount", dict, Comparer.UnnamedDictComparerSection(
+    ("priority", int, None),
+    ("within_radius", int, None),
 ))
 
 find_underwater_treasure_comparer =\
@@ -140,6 +160,8 @@ float_comparer =\
 float_wander_comparer =\
 ("minecraft:behavior.float_wander", dict, Comparer.UnnamedDictComparerSection(
     ("float_duration", list, EntitiesComparerTemplates.range_comparer),
+    ("must_reach", bool, None),
+    ("priority", int, None),
     ("random_reselect", bool, None),
     ("xz_dist", int, None),
     ("y_dist", int, None),
@@ -168,6 +190,7 @@ guardian_attack_comparer =\
 hurt_by_target_comparer =\
 ("minecraft:behavior.hurt_by_target", dict, Comparer.UnnamedDictComparerSection(
     ("priority", int, None),
+    ("entity_types", dict, EntitiesComparerTemplates.entity_types_comparers),
 ))
 
 leap_at_target_comparer =\
@@ -231,6 +254,13 @@ mount_pathing_comparer =\
     ("track_target", bool, None),
 ))
 
+move_through_village_comparer =\
+("minecraft:behavior.move_through_village", dict, Comparer.UnnamedDictComparerSection(
+    ("only_at_night", bool, None),
+    ("priority", int, None),
+    ("speed_multiplier", float, None),
+))
+
 move_to_village_comparer =\
 ("minecraft:behavior.move_to_village", dict, Comparer.UnnamedDictComparerSection(
     ("priority", int, None),
@@ -247,12 +277,20 @@ move_to_water_comparer =\
 move_towards_dwelling_restriction_comparer =\
 ("minecraft:behavior.move_towards_dwelling_restriction", dict, Comparer.UnnamedDictComparerSection(
     ("priority", int, None),
+    ("speed_multiplier", int, None),
 ))
 
 move_towards_home_restriction_comparer =\
 ("minecraft:behavior.move_towards_home_restriction", dict, Comparer.UnnamedDictComparerSection(
     ("priority", int, None),
     ("speed_multiplier", float, None),
+))
+
+move_towards_target_comparer =\
+("minecraft:behavior.move_towards_target", dict, Comparer.UnnamedDictComparerSection(
+    ("priority", int, None),
+    ("speed_multiplier", float, None),
+    ("within_radius", int, None),
 ))
 
 nap_comparer =\
@@ -271,6 +309,7 @@ nearest_attackable_target_comparer =\
     ("attack_interval", int, None),
     ("attack_interval_min", float, None),
     ("entity_types", list, EntitiesComparerTemplates.entity_types_comparers),
+    ("must_reach", bool, None),
     ("must_see", bool, None),
     ("must_see_forget_duration", float, None),
     ("persist_time", float, None),
@@ -309,6 +348,12 @@ ocelotattack_comparer =\
     ("y_max_head_rotation", float, None),
 ))
 
+offer_flower_comparer =\
+("minecraft:behavior.offer_flower", dict, Comparer.UnnamedDictComparerSection(
+    ("filters", dict, EntitiesComparerTemplates.filter_comparer),
+    ("priority", int, None),
+))
+
 panic_comparer =\
 ("minecraft:behavior.panic", dict, Comparer.UnnamedDictComparerSection(
     ("priority", int, None),
@@ -338,6 +383,24 @@ pickup_items_comparer =\
 player_ride_tamed_comparer =\
 ("minecraft:behavior.player_ride_tamed", dict, Comparer.UnnamedDictComparerSection())
 
+raid_garden_comparer =\
+("minecraft:behavior.raid_garden", dict, Comparer.UnnamedDictComparerSection(
+    ("priority", int, None),
+    ("blocks", list, Comparer.ListComparerSection(
+        name="block",
+        ordered=False,
+        measure_length=True,
+        types=(str,),
+        comparer=None
+    )),
+    ("speed_multiplier", float, None),
+    ("search_range", int, None),
+    ("search_height", int, None),
+    ("goal_radius", float, None),
+    ("max_to_eat", int, None),
+    ("initial_eat_delay", int, None),
+))
+
 random_breach_comparer =\
 ("minecraft:behavior.random_breach", dict, Comparer.UnnamedDictComparerSection(
     ("cooldown_time", float, None),
@@ -351,10 +414,21 @@ random_look_around_comparer =\
     ("priority", int, None),
 ))
 
+random_look_around_and_sit_comparer =\
+("minecraft:behavior.random_look_around_and_sit", dict, Comparer.UnnamedDictComparerSection(
+    ("max_look_count", int, None),
+    ("max_look_time", int, None),
+    ("min_look_count", int, None),
+    ("min_look_time", int, None),
+    ("priority", int, None),
+    ("probability", float, None),
+))
+
 random_stroll_comparer =\
 ("minecraft:behavior.random_stroll", dict, Comparer.UnnamedDictComparerSection(
     ("priority", int, None),
     ("speed_multiplier", (float, int), None),
+    ("xz_dist", int, None),
 ))
 
 random_swim_comparer =\
@@ -374,8 +448,8 @@ ranged_attack_comparer =\
     ("attack_radius", (float, int), None),
     ("burst_interval", float, None),
     ("burst_shots", int, None),
-    ("charge_charged_trigger", float, None),
-    ("charge_shoot_trigger", float, None),
+    ("charge_charged_trigger", (float, int), None),
+    ("charge_shoot_trigger", (float, int), None),
     ("priority", int, None),
     ("swing", bool, None),
 ))
@@ -475,6 +549,13 @@ swim_with_entity_comparer =\
     ("success_rate", float, None),
 ))
 
+target_when_pushed_comparer =\
+("minecraft:behavior.target_when_pushed", dict, Comparer.UnnamedDictComparerSection(
+    ("entity_types", (dict, list), EntitiesComparerTemplates.entity_types_comparers),
+    ("percent_chance", float, None),
+    ("priority", int, None),
+))
+
 tempt_comparer =\
 ("minecraft:behavior.tempt", dict, Comparer.UnnamedDictComparerSection(
     ("priority", int, None),
@@ -491,6 +572,7 @@ comparers = [
     breed_comparer,
     celebrate_comparer,
     defend_trusted_target_comparer,
+    defend_village_target_comparer,
     dragonchargeplayer_comparer,
     dragondeath_comparer,
     dragonflaming_comparer,
@@ -500,10 +582,12 @@ comparers = [
     dragonstrafeplayer_comparer,
     dragontakeoff_comparer,
     drop_item_for_comparer,
+    eat_carried_item_comparer,
     enderman_leave_block_comparer,
     enderman_take_block_comparer,
     equip_item_comparer,
     find_cover_comparer,
+    find_mount_comparer,
     find_underwater_treasure_comparer,
     flee_sun_comparer,
     float_comparer,
@@ -520,19 +604,24 @@ comparers = [
     mount_pathing_comparer,
     move_to_village_comparer,
     move_to_water_comparer,
+    move_through_village_comparer,
     move_towards_dwelling_restriction_comparer,
     move_towards_home_restriction_comparer,
+    move_towards_target_comparer,
     nap_comparer,
     nearest_attackable_target_comparer,
     nearest_prioritized_attackable_target_comparer,
     ocelot_sit_on_block_comparer,
     ocelotattack_comparer,
+    offer_flower_comparer,
     panic_comparer,
     pet_sleep_with_owner_comparer,
     pickup_items_comparer,
     player_ride_tamed_comparer,
+    raid_garden_comparer,
     random_breach_comparer,
     random_look_around_comparer,
+    random_look_around_and_sit_comparer,
     random_stroll_comparer,
     random_swim_comparer,
     ranged_attack_comparer,
@@ -547,5 +636,6 @@ comparers = [
     swim_idle_comparer,
     swim_wander_comparer,
     swim_with_entity_comparer,
+    target_when_pushed_comparer,
     tempt_comparer,
 ]
