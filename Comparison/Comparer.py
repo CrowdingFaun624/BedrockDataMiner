@@ -1,6 +1,7 @@
 import json
 import traceback
 from typing import Any, Callable, Generator, Generic, Iterable, TypeVar, TYPE_CHECKING, Union
+from types import UnionType
 
 import Comparison.Difference as D
 import Utilities.FileManager as FileManager
@@ -504,7 +505,7 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
                 raise TypeError("`comparer` is not a list of tuples of Callables and ComparerSections!")
         if isinstance(types, type) or (not isinstance(types, (tuple, Callable)) and types is not None):
             raise TypeError("`types` is not an Iterable, Callable, or None!")
-        if isinstance(types, tuple) and not all(isinstance(item, (type)) for item in types):
+        if isinstance(types, tuple) and not all(isinstance(item, (type, UnionType)) for item in types):
             raise TypeError("An item of `types` is not a type!")
         if not isinstance(print_flat, bool):
             raise TypeError("`print_flat` is not a bool!")
@@ -696,7 +697,7 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
             output = ["Total %s: %i (+%i, -%i)" % (self.name, current_length, addition_length, removal_length)] + output
         return output, any_changes
 
-def TypedDictComparerSection(name:str, types:list[tuple[str|list[str], type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool], ComparerSection[d]|None]]]]) -> DictComparerSection[c,d]:
+def TypedDictComparerSection(name:str, types:list[tuple[str|list[str], type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool], ComparerSection[d]|None]]]], measure_length:bool=False) -> DictComparerSection[c,d]:
     '''Alias for a DictComparerSection that has certain named parameters.
     * `name` is what the key of this dictionary is.
     * `items` is a list of tuples describing the keys and values.
@@ -713,9 +714,9 @@ def TypedDictComparerSection(name:str, types:list[tuple[str|list[str], type|tupl
     for item in types:
         if not isinstance(item, (tuple, list)):
             # It is allowed to be a list so that it can be changed to allow for nesting.
-            raise TypeError("An item of `types` is not a tuple!")
+            raise TypeError("An item of `types` is not a tuple: %s" % (item,))
         if len(item) != 3:
-            raise ValueError("An item of `types` is not length 3!")
+            raise ValueError("An item of `types` is not length 3: %s" % (item,))
         if not isinstance(item[0], (str, list)):
             raise TypeError("The first item of an item of `types` is not a str or list!")
         if isinstance(item[0], list) and not all(isinstance(key, str) for key in item[0]):
@@ -726,9 +727,9 @@ def TypedDictComparerSection(name:str, types:list[tuple[str|list[str], type|tupl
             already_keys.update(item[0])
         else:
             already_keys.add(item[0])
-        if not isinstance(item[1], (type, tuple)):
+        if not isinstance(item[1], (type, UnionType, tuple)):
             raise TypeError("The second item of an item of `types` is not a type or tuple!")
-        if isinstance(item[1], tuple) and not all(isinstance(types_item, type) for types_item in item[1]):
+        if isinstance(item[1], tuple) and not all(isinstance(types_item, (type, UnionType)) for types_item in item[1]):
             raise TypeError("An item of the second item of an item of `types` is not a type!")
         if not isinstance(item[2], (ComparerSection, list)) and item[2] is not None:
             raise TypeError("The third item of an item of `types` is not a ComparerSection, list, or None!")
@@ -785,12 +786,17 @@ def TypedDictComparerSection(name:str, types:list[tuple[str|list[str], type|tupl
         key_types=lambda key, value: key in keys_strings,
         value_types=lambda key, value: (key in value_types_string_dict and isinstance(value, value_types_string_dict[key])),
         comparer=all_comparers,
-        measure_length=False,
+        measure_length=measure_length,
     )
 
-def UnnamedDictComparerSection(*types:tuple[str|list[str], type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool], ComparerSection[d]|None]]], name:str="field") -> DictComparerSection:
+def UnnamedDictComparerSection(
+        *types:tuple[str|list[str],type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool], ComparerSection[d]|None]]],
+        name:str="field",
+        measure_length:bool=False
+    ) -> DictComparerSection:
     return TypedDictComparerSection(
         name=name,
+        measure_length=measure_length,
         types=types
     )
 
