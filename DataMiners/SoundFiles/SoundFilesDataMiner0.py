@@ -1,7 +1,7 @@
 import DataMiners.SoundFiles.SoundFilesDataMiner as SoundFilesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Programs.EvilFSBExtractor as EvilFSBExtractor
-import json
+import Utilities.Sorting as Sorting
 
 class SoundFilesDataMiner0(SoundFilesDataMiner.SoundFilesDataMiner):
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
@@ -22,5 +22,4 @@ class SoundFilesDataMiner0(SoundFilesDataMiner.SoundFilesDataMiner):
             for wav_file_name, wav_file_promise in wav_files.items():
                 output[file_name][wav_file_name] = SoundFilesDataMiner.get_metadata(wav_file_promise)
         
-        output = {key: value for key, value in sorted(list(output.items()))}
-        return output
+        return Sorting.sort_everything(output)

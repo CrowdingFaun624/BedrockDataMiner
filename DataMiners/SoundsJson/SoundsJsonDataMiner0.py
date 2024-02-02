@@ -2,6 +2,7 @@ import pyjson5 # supports comments
 
 import DataMiners.SoundsJson.SoundsJsonDataMiner as SoundsJsonDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.Sorting as Sorting
 
 class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
 
@@ -104,5 +105,4 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
                             sounds_json["interactive_entity_sounds"][entity_name] = {}
                         self.parse_sound_collection(entity_sounds, sounds_json["interactive_entity_sounds"][entity_name], resource_pack_name)
         
-        sorted_sounds_json:DataMinerTyping.MySoundsJsonTypedDict = {category: {key: value for key, value in sorted(category_content.items())} for category, category_content in sounds_json.items()}
-        return sorted_sounds_json
+        return Sorting.sort_everything(sounds_json)

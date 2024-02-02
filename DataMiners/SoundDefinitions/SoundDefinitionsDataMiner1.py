@@ -1,8 +1,8 @@
-from typing import IO
 import json
 
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiner as SoundDefinitionsDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.Sorting as Sorting
 
 class SoundDefinitionsDataMiner1(SoundDefinitionsDataMiner.SoundDefinitionsDataMiner):
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]]:
@@ -15,4 +15,4 @@ class SoundDefinitionsDataMiner1(SoundDefinitionsDataMiner.SoundDefinitionsDataM
         for sound_name, sound_properties in sound_definitions_file.items():
             sound_definitions[sound_name] = {"vanilla": sound_properties}
 
-        return {key: value for key, value in sorted(sound_definitions.items())}
+        return Sorting.sort_everything(sound_definitions)

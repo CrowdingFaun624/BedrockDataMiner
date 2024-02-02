@@ -2,6 +2,7 @@ import pyjson5 # supports comments
 
 import DataMiners.Blocks.BlocksDataMiner as BlocksDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.Sorting as Sorting
 
 class BlocksDataMiner0(BlocksDataMiner.BlocksDataMiner):
 
@@ -31,4 +32,4 @@ class BlocksDataMiner0(BlocksDataMiner.BlocksDataMiner):
                     blocks[block_name] = {"name": block_name, "properties": {resource_pack_name: block_properties}}
                 else:
                     blocks[block_name]["properties"][resource_pack_name] = block_properties
-        return sorted(list(blocks.values()), key=lambda x: x["name"])
+        return sorted((Sorting.sort_everything(value) for value in blocks.values()), key=lambda x: x["name"])

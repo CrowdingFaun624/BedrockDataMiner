@@ -2,6 +2,7 @@ import json
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.MusicDefinitions.MusicDefinitionsDataMiner as MusicDefinitionsDataMiner
+import Utilities.Sorting as Sorting
 
 class MusicDefinitionsDataMiner0(MusicDefinitionsDataMiner.MusicDefinitionsDataMiner):
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.MyMusicDefinitions:
@@ -21,4 +22,4 @@ class MusicDefinitionsDataMiner0(MusicDefinitionsDataMiner.MusicDefinitionsDataM
                     music_definitions[environment_name] = {resource_pack_name: environment_properties}
                 else:
                     music_definitions[environment_name][resource_pack_name] = environment_properties
-        return {key: value for key, value in sorted(music_definitions.items())}
+        return Sorting.sort_everything(music_definitions)

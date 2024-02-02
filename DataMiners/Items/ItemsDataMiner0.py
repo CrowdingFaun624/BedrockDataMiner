@@ -2,6 +2,7 @@ import pyjson5
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Items.ItemsDataMiner as ItemsDataMiner
+import Utilities.Sorting as Sorting
 
 class ItemsDataMiner0(ItemsDataMiner.ItemsDataMiner):
     def initialize(self, **kwargs) -> None:
@@ -27,4 +28,4 @@ class ItemsDataMiner0(ItemsDataMiner.ItemsDataMiner):
                 output[item_name] = {behavior_pack_name: item_data}
             else:
                 output[item_name][behavior_pack_name] = item_data
-        return output
+        return Sorting.sort_everything(output)

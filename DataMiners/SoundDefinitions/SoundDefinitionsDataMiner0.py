@@ -3,6 +3,7 @@ import pyjson5 # supports comments
 
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiner as SoundDefinitionsDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.Sorting as Sorting
 
 class SoundDefinitionsDataMiner0(SoundDefinitionsDataMiner.SoundDefinitionsDataMiner):
     def normalize(self, file:IO) -> dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]:
@@ -28,4 +29,4 @@ class SoundDefinitionsDataMiner0(SoundDefinitionsDataMiner.SoundDefinitionsDataM
                     sound_definitions[sound_name] = {resource_pack_name: sound_properties}
                 else:
                     sound_definitions[sound_name][resource_pack_name] = sound_properties
-        return {key: value for key, value in sorted(sound_definitions.items())}
+        return Sorting.sort_everything(sound_definitions)
