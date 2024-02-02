@@ -1,0 +1,83 @@
+{
+    "main": {
+        "type": "Main",
+        "normalizer": "normalize",
+        "dependencies": ["resource_packs"],
+        "base_comparer_section": "block"
+    },
+    "block": {
+        "type": "Dict",
+        "field": "block",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": "resource_pack"
+    },
+    "resource_pack": {
+        "type": "Dict",
+        "field": "resource pack",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "resource_pack_comparison_move_function",
+        "measure_length": true,
+        "comparer": "block_properties"
+    },
+    "block_properties": {
+        "type": "TypedDict",
+        "field": "property",
+        "types": [
+            ["blockshape", "str", null],
+            ["brightness_gamma", "float", null],
+            ["carried_textures", ["dict", "str"], "textures_group"],
+            ["defined_in", "list", "defined_in"],
+            ["isotropic", ["bool", "dict"], "isotropic_group"],
+            ["sound", "str", null],
+            ["textures", ["dict", "str"], "textures_group"]
+        ]
+    },
+    "textures_group": {
+        "type": "Group",
+        "types": [
+            ["dict", "textures"],
+            ["str", null]
+        ]
+    },
+    "isotropic_group": {
+        "type": "Group",
+        "types": [
+            ["bool", null],
+            ["dict", "isotropic"]
+        ]
+    },
+    "defined_in": {
+        "field": "resource_pack",
+        "type": "List",
+        "comparer": null,
+        "types": ["str"],
+        "print_flat": true,
+        "ordered": false
+    },
+    "textures": {
+        "type": "TypedDict",
+        "field": "direction",
+        "types": [
+            ["down", "str", null],
+            ["east", "str", null],
+            ["north", "str", null],
+            ["side", "str", null],
+            ["south", "str", null],
+            ["up", "str", null],
+            ["west", "str", null]
+        ]
+    },
+    "isotropic": {
+        "type": "TypedDict",
+        "field": "direction",
+        "types": [
+            ["down", "bool", null],
+            ["up", "bool", null]
+        ]
+    }
+}

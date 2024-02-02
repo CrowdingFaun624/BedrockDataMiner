@@ -453,7 +453,7 @@ hold_ground_comparer =\
 hurt_by_target_comparer =\
 ("minecraft:behavior.hurt_by_target", dict, Comparer.UnnamedDictComparerSection(
     ("alert_same_type", bool, None),
-    ("entity_types", dict, EntitiesComparerTemplates.entity_types_comparers),
+    ("entity_types", (dict, list), EntitiesComparerTemplates.entity_types_comparers),
     ("hurt_owner", bool, None),
     ("priority", int, None),
 ))
