@@ -2,6 +2,7 @@ import pyjson5
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Entities.EntitiesDataMiner as EntitiesDataMiner
+import Utilities.Sorting as Sorting
 
 class EntitiesDataMiner0(EntitiesDataMiner.EntitiesDataMiner):
     def initialize(self, **kwargs) -> None:
@@ -27,4 +28,4 @@ class EntitiesDataMiner0(EntitiesDataMiner.EntitiesDataMiner):
                 output[entity_name] = {behavior_pack_name: entity_data}
             else:
                 output[entity_name][behavior_pack_name] = entity_data
-        return output
+        return Sorting.sort_everything(output)
