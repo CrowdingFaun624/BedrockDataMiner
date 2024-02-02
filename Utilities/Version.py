@@ -133,6 +133,9 @@ class Version():
         if not all(isinstance(tag, VersionTags.VersionTag) for tag in self.tags):
             raise ValueError("Version \"%s\" does not have valid VersionTags: \"%s\"!" % (self.name, str(self.tags)))
         self.ordering_tag = VersionTags.get_ordering_tag(self.tags)
+        if VersionTags.VersionTag.unreleased in self.tags:
+            if self.download_method is not DOWNLOAD_NONE:
+                raise ValueError("Version \"%s\" has the \"%s\" tag but has a download method!" % (self.name, VersionTags.VersionTag.unreleased))
     
     def get_children_recursive(self) -> list["Version"]:
         children = self.children[:]
