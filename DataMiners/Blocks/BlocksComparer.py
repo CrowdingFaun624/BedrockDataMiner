@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
+# import Comparison.ComparerImporter as ComparerImporter
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -22,6 +23,7 @@ def resource_pack_comparison_move_function(key:str, value:DataMinerTyping.Normal
     del output["defined_in"]
     return output
 
+# comparer = ComparerImporter.load_from_file("blocks", {"normalize": normalize, "resource_pack_comparison_move_function": resource_pack_comparison_move_function})
 comparer = Comparer.Comparer(
     normalizer=normalize,
     dependencies=["resource_packs"],

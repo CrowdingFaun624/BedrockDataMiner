@@ -12,6 +12,7 @@ from Utilities.FunctionCaller import FunctionCaller
 
 PARENT_FOLDER          = Path("./").absolute()
 ASSETS_FOLDER          = Path(PARENT_FOLDER.joinpath("_assets"))
+COMPARERS_FOLDER       = Path(ASSETS_FOLDER.joinpath("comparers"))
 FILE_STORAGE_FOLDER    = Path(ASSETS_FOLDER.joinpath("file_storage"))
 FILE_STORAGE_OBJECTS_FOLDER = Path(FILE_STORAGE_FOLDER.joinpath("objects"))
 FILE_STORAGE_INDEX_FILE = Path(FILE_STORAGE_FOLDER.joinpath("index.txt"))
@@ -49,6 +50,12 @@ def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/g
     size = io.tell()
     io.seek(start)
     return size
+
+def get_comparer_path(comparer_name:str) -> Path:
+    comparer_path = Path(COMPARERS_FOLDER.joinpath(comparer_name + ".json"))
+    if COMPARERS_FOLDER not in comparer_path.parents:
+        raise FileNotFoundError("Comparer \"%s\" can not be created due to illegal characters!" % comparer_name)
+    return comparer_path
 
 def get_version_path(version_name:str) -> Path:
     version_path = Path(VERSIONS_FOLDER.joinpath(version_name))
