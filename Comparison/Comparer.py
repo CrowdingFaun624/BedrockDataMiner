@@ -891,12 +891,14 @@ class Comparer():
     def check_types(self, data:b) -> None:
         '''Raises an exception with data about what went wrong if an error occurs.'''
         traces = self.base_comparer_section.check_types(data, [])
+        if isinstance(self, DefaultComparer): return
         for trace, exception in traces:
             print("Exception in %s:" % stringify_trace(trace))
             traceback.print_exception(exception)
-            raise exception
-            # raise RuntimeError("An error occured!")
+            # raise exception
             print()
+        if len(traces) > 0:
+            raise RuntimeError("An error occured!")
         if len(traces) > 0:
             raise TypeError("Type checking on %s failed!" % (self.name))
 
@@ -910,5 +912,9 @@ class Comparer():
     def print_text(self, data:b) -> list[str]:
         return self.base_comparer_section.print_text(data, [])
 
-default_comparer = Comparer(None, None, ComparerSection(""))
+class DefaultComparer(Comparer):
+    def __init__(self) -> None:
+        super().__init__(None, None, ComparerSection(""))
+
+default_comparer = DefaultComparer()
 #TODO: change check_types to a generator.

@@ -23,7 +23,6 @@ def normalize(data:DataMinerTyping.MySoundsJsonTypedDict, version:"Version.Versi
             # bug fixes.
             resource_packs_to_delete:list[str] = []
             for resource_pack_name, resource_pack_properties in sound_properties.items():
-                # print(sound_collection_name, resource_pack_name, not isinstance(resource_pack_properties, str), "sound" in resource_pack_properties, (is_interactive_entites and "default" in resource_pack_properties), resource_pack_properties)
                 if not isinstance(resource_pack_properties, str):
                     if not ("sound" in resource_pack_properties or (is_interactive_entites and "default" in resource_pack_properties)):
                         resource_packs_to_delete.append(resource_pack_name)

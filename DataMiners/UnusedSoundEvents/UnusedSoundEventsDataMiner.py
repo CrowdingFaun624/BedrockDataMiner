@@ -10,8 +10,6 @@ def get_new_trace(trace:list[str], new_items:list[str]|str) -> list[str]:
     return new_trace
 
 def add_item_to_output(output:dict[str,list[list[str]]], sound:str, trace:list[str]) -> None:
-    if sound == "mob.irongolem.death":
-        print(trace)
     if sound in output:
         output[sound].append(trace)
     else:
