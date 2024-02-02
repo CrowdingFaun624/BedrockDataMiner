@@ -15,10 +15,10 @@ if TYPE_CHECKING:
     import Downloader.InstallManager as InstallManager
 
 INSTALL_MANAGERS:dict[str,type["InstallManager.InstallManager"]|None] = {
-    Version.DOWNLOAD_FILE: StoredManager.StoredManager,
-    Version.DOWNLOAD_LOCAL: LocalManager.LocalManager,
-    Version.DOWNLOAD_NONE: None,
-    Version.DOWNLOAD_URL: DownloadManager.DownloadManager,
+    Version.DownloadMethod.DOWNLOAD_FILE: StoredManager.StoredManager,
+    Version.DownloadMethod.DOWNLOAD_LOCAL: LocalManager.LocalManager,
+    Version.DownloadMethod.DOWNLOAD_NONE: None,
+    Version.DownloadMethod.DOWNLOAD_URL: DownloadManager.DownloadManager,
 }
 
 def read_versions_file() -> Any:

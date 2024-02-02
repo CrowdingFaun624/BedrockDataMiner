@@ -1,4 +1,5 @@
 import datetime
+import enum
 from pathlib2 import Path
 from typing import TYPE_CHECKING
 import validators
@@ -10,10 +11,11 @@ import Utilities.VersionTags as VersionTags
 if TYPE_CHECKING:
     import Downloader.InstallManager as InstallManager
 
-DOWNLOAD_NONE = None
-DOWNLOAD_URL = "url"
-DOWNLOAD_FILE = "file"
-DOWNLOAD_LOCAL = "local"
+class DownloadMethod(enum.Enum):
+    DOWNLOAD_NONE = None
+    DOWNLOAD_URL = "url"
+    DOWNLOAD_FILE = "file"
+    DOWNLOAD_LOCAL = "local"
 
 class Version():
     def __init__(self, name:str, download_link:str|None, parent_str:str|None, time_str:str|None, tags_str:list[VersionTags.VersionTag], index:int, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
@@ -99,15 +101,15 @@ class Version():
         '''Sets this Version's `download_method` attribute based off of the value of `download_link`.
         Raises a ValueError if it is not valid, or a TypeError if `download_link` is the wrong type.'''
         if self.download_link is None:
-            self.download_method = DOWNLOAD_NONE
+            self.download_method = DownloadMethod.DOWNLOAD_NONE
             return
         if not isinstance(self.download_link, str): raise TypeError("`download_link` is not a `str`!")
         if validators.url(self.download_link):
-            self.download_method = DOWNLOAD_URL
+            self.download_method = DownloadMethod.DOWNLOAD_URL
         elif self.download_link.startswith("/") and StoredVersionsManager.version_exists(self.download_link[1:]):
-            self.download_method = DOWNLOAD_FILE
+            self.download_method = DownloadMethod.DOWNLOAD_FILE
         elif self.download_link in ("release_local", "beta_local"):
-            self.download_method = DOWNLOAD_LOCAL
+            self.download_method = DownloadMethod.DOWNLOAD_LOCAL
         else:
             raise ValueError("Download link \"%s\" is not valid!" % self.download_link)
 
@@ -134,7 +136,7 @@ class Version():
             raise ValueError("Version \"%s\" does not have valid VersionTags: \"%s\"!" % (self.name, str(self.tags)))
         self.ordering_tag = VersionTags.get_ordering_tag(self.tags)
         if VersionTags.VersionTag.unreleased in self.tags:
-            if self.download_method is not DOWNLOAD_NONE:
+            if self.download_method is not DownloadMethod.DOWNLOAD_NONE:
                 raise ValueError("Version \"%s\" has the \"%s\" tag but has a download method!" % (self.name, VersionTags.VersionTag.unreleased))
     
     def get_children_recursive(self) -> list["Version"]:

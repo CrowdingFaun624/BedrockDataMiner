@@ -89,7 +89,7 @@ KNOWN_URLS:dict[str,tuple[str,Callable[[Version.Version],list[str]]]] = {
 
 def validate(version:Version.Version) -> list[str]:
     '''Returns a list of warning strings about the given version.'''
-    if version.download_method is not Version.DOWNLOAD_URL: return []
+    if version.download_method is not Version.DownloadMethod.DOWNLOAD_URL: return []
     url = version.download_link
     for url_id, url_data in KNOWN_URLS.items():
         url_start, url_function = url_data
@@ -101,7 +101,7 @@ def validate_url_data(versions:list[Version.Version]) -> None:
     '''Writes a list of warning strings to "./_assets/version_parser_warnings.txt"'''
     warnings_list:list[str] = []
     for version in versions:
-        if version.download_method is not Version.DOWNLOAD_URL: continue
+        if version.download_method is not Version.DownloadMethod.DOWNLOAD_URL: continue
         warnings_list.extend(validate(version))
     with open(FileManager.VERSION_PARSER_WARNINGS_FILE, "wt") as f:
         f.write("\n".join(warnings_list))

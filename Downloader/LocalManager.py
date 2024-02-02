@@ -10,7 +10,7 @@ from Utilities.FunctionCaller import FunctionCaller
 class LocalManager(InstallManager.InstallManager):
     def prepare_for_install(self) -> None:
         self.file_list:list[str] = None
-        if not self.version.download_method is Version.DOWNLOAD_LOCAL:
+        if not self.version.download_method is Version.DownloadMethod.DOWNLOAD_LOCAL:
             raise ValueError("Version \"%s\" is using a LocalManager while having a \"%s\" download type!" % (self.version.name, self.version.download_method))
         if os.name == "nt": # TODO: Make this part less sucky
             windows_apps = Path("C:\Program Files\WindowsApps") 

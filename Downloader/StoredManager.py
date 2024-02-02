@@ -15,7 +15,7 @@ class StoredManager(InstallManager.InstallManager):
         self.index_read_lock = threading.Lock()
         self.file_list:list[str]|None = None
         self.index = None
-        if not self.version.download_method is Version.DOWNLOAD_FILE:
+        if not self.version.download_method is Version.DownloadMethod.DOWNLOAD_FILE:
             raise ValueError("Version \"%s\" is using a StoredManager while having a \"%s\" download type!" % (self.version.name, self.version.download_method))
     
     def read_index(self) -> None:

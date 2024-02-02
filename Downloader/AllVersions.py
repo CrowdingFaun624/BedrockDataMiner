@@ -61,7 +61,7 @@ def main() -> None:
         
         # New threads
         if version_index < len(versions) and not has_encountered_exception:
-            if version.download_method is Version.DOWNLOAD_NONE:
+            if version.download_method is Version.DownloadMethod.DOWNLOAD_NONE:
                 print("Skipped \"%s\" due to being unarchived." % version.name)
             else:
                 print("Started \"%s\"." % version.name)
