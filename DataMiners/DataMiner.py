@@ -94,10 +94,10 @@ class DataMiner():
         data_path = FileManager.get_version_data_path(self.version.version_folder, None)
         if not data_path.exists():
             data_path.mkdir()
-        normalized_data = self.settings.comparer.normalize(data, self.version, {dataminer_name: FakeDataMinerCollection(dependency) for dataminer_name, dependency in dependency_data.items()})
-        self.settings.comparer.check_types(normalized_data)
         with open(self.get_data_file_path(), "wt") as f:
             json.dump(data, f)
+        normalized_data = self.settings.comparer.normalize(data, self.version, {dataminer_name: FakeDataMinerCollection(dependency) for dataminer_name, dependency in dependency_data.items()})
+        self.settings.comparer.check_types(normalized_data)
         return data
     
     def get_data_file(self) -> Any:
