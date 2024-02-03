@@ -99,7 +99,7 @@ class DuplicateSoundsTypedDict(TypedDict):
     file_internal_name: str
 
 DuplicateSounds = dict[str,list[DuplicateSoundsTypedDict]]
-NormalizedDuplicateSounds = dict[str,Compare.UnorderedList[DuplicateSoundsTypedDict]]
+NormalizedDuplicateSounds = dict[str,list[DuplicateSoundsTypedDict]]
 
 # entities
 

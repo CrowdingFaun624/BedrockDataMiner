@@ -562,7 +562,8 @@ def get_link_final_order(intermediate_comparers:Iterable[Intermediate]) -> Gener
     for intermediates in intermediate_types.values():
         yield from intermediates
 
-def load_from_file(name:str, functions:dict[str,Callable]) -> Comparer.Comparer:
+def load_from_file(name:str, functions:dict[str,Callable]=None) -> Comparer.Comparer:
+    if functions is None: functions = {}
     if not isinstance(name, str):
         raise TypeError("`name` is not a str!")
     if not isinstance(functions, dict):
