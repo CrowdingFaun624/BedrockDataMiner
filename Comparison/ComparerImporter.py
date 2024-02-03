@@ -12,6 +12,7 @@ class DictComparerTypedDict(TypedDict):
     key_types: list[str]
     measure_length: bool
     type: Literal["Dict"]
+    print_all: bool
     value_types: list[str]
 
 class GroupTypedDict(TypedDict):
@@ -102,7 +103,7 @@ class Intermediate():
             for index, key in enumerate(reversed(keys))
             )
         if name not in intermediate_comparers:
-            raise KeyError("%s \"%s\", referenced in %s%s \"%s\", does not exist!" % (required_type.__name__, name, get_keys_strs(False), self.__class__.__name__, self.name))
+            raise KeyError("%s \"%s\", referenced in %s%s \"%s\", does not exist!" % (required_type_str, name, get_keys_strs(False), self.__class__.__name__, self.name))
         comparer = intermediate_comparers[name]
         if not isinstance(comparer, required_type):
             raise ValueError("%s%s \"%s\" references object \"%s\", expecting %s but getting a %s!" % (get_keys_strs(True), self.__class__.__name__, self.name, name, required_type_str, comparer.__class__.__name__))
@@ -126,6 +127,7 @@ class DictComparerIntermediate(ComparerIntermediate):
             ("field", str, "a str", False),
             ("key_types", list, "a list", True),
             ("measure_length", bool, "a bool", False),
+            ("print_all", bool, "a bool", False),
             ("type", str, "a str", True),
             ("value_types", list, "a list", True),
         ])
@@ -145,6 +147,7 @@ class DictComparerIntermediate(ComparerIntermediate):
         self.field = "field" if "field" not in data else data["field"]
         self.key_types_strs = data["key_types"]
         self.measure_length = False if "measure_length" not in data else data["measure_length"]
+        self.print_all = False if "print_all" not in data else data["print_all"]
         self.value_types_strs = data["value_types"]
 
         self.comparer:ComparerIntermediate|None = None
@@ -208,6 +211,7 @@ class DictComparerIntermediate(ComparerIntermediate):
             detect_key_moves=self.detect_key_moves,
             comparison_move_function=self.comparison_move_function,
             measure_length=self.measure_length,
+            print_all=self.print_all
         )
     def link_finals(self) -> None:
         if self.comparer is None:
