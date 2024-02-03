@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 
-import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
+import Comparison.ComparerImporter as ComparerImporter
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -26,33 +26,4 @@ def languages_comparison_move_function(key:str, value:DataMinerTyping.LanguagesT
     output = {resource_pack_name: resource_pack_properties["name"] for resource_pack_name, resource_pack_properties in value.items() if "name" in resource_pack_properties}
     return None if len(output) == 0 else output
 
-comparer = Comparer.Comparer(
-    normalizer=normalize,
-    dependencies=["resource_packs"],
-    base_comparer_section=Comparer.DictComparerSection(
-        name="language",
-        key_types=(str,),
-        value_types=(dict,),
-        detect_key_moves=True,
-        comparison_move_function=languages_comparison_move_function,
-        measure_length=True,
-        comparer=Comparer.DictComparerSection(
-            name="resource pack",
-            key_types=(str,),
-            value_types=(dict,),
-            comparer=Comparer.TypedDictComparerSection(
-                name="property",
-                types=[
-                    ("name", str, None),
-                    ("defined_in", list, Comparer.ListComparerSection(
-                        name="resource pack",
-                        types=(str,),
-                        print_flat=True,
-                        ordered=False,
-                        comparer=None,
-                    ))
-                ]
-            )
-        )
-    )
-)
+comparer = ComparerImporter.load_from_file("languages", {"normalize": normalize, "languages_comparison_move_function": languages_comparison_move_function})
