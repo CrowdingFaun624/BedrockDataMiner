@@ -1,4 +1,4 @@
-from typing import Iterable, TYPE_CHECKING
+from typing import Iterable
 from pathlib2 import Path
 import requests
 import shutil
@@ -23,12 +23,7 @@ class DownloadManager(InstallManager.InstallManager):
         self.url = None
         self.installed = self.apk_location.exists()
 
-        if self.installed: # If it's already installed, do stuff that's only done in self.install.
-            self.zip_file = zipfile.ZipFile(self.apk_location)
-            self.members = {member.filename: member for member in self.zip_file.filelist}
-        else:
-            self.zip_file = None
-            self.members = None
+        self.has_zip_file_opened = False
 
         self.file_list = None
         self.installation_lock = threading.Lock()
@@ -40,6 +35,13 @@ class DownloadManager(InstallManager.InstallManager):
             self.current_open_connections[self.domain] = 0
         self.connection_limit = CONNECTION_LIMITS[self.domain] if self.domain in CONNECTION_LIMITS else CONNECTION_LIMITS_DEFAULT
         self.set_file_prepension()
+
+    def open_zip_file(self) -> None:
+        '''Opens the zip file if it hasn't already.'''
+        if not self.has_zip_file_opened:
+            self.zip_file = zipfile.ZipFile(self.apk_location)
+            self.members = {member.filename: member for member in self.zip_file.filelist}
+            self.has_zip_file_opened = True
 
     def set_file_prepension(self) -> None:
         tags = self.version.tags
@@ -66,6 +68,7 @@ class DownloadManager(InstallManager.InstallManager):
             self.install_all()
         file_name = self.get_full_file_name(file_name)
         member = self.members[file_name]
+        self.open_zip_file()
         if destination is not None:
             name_carry = member.filename
             member.filename = destination.name
@@ -80,6 +83,7 @@ class DownloadManager(InstallManager.InstallManager):
         return [file for file in self.get_file_list() if file.startswith(parent)]
 
     def get_file_list(self) -> Iterable[str]:
+        self.open_zip_file()
         if not self.installed:
             self.install_all()
         if self.file_list is None:
@@ -107,6 +111,7 @@ class DownloadManager(InstallManager.InstallManager):
         if not self.installed:
             self.install_all()
         file_name = self.get_full_file_name(file_name)
+        self.open_zip_file()
         data = self.zip_file.read(file_name)
         if mode == "t":
             return data.decode("utf-8")
@@ -139,6 +144,7 @@ class DownloadManager(InstallManager.InstallManager):
         if not self.installed:
             self.install_all()
         file_name = self.get_full_file_name(file_name)
+        self.open_zip_file()
         if mode == "b":
             return FileManager.FilePromise(FunctionCaller(self.zip_file.open, [file_name]), file_name.split("/")[-1], mode)
         else:
@@ -162,8 +168,7 @@ class DownloadManager(InstallManager.InstallManager):
                 f.write(requests.get(self.url).content)
                 self.current_open_connections[self.domain] -= 1
             self.installed = True
-            self.zip_file = zipfile.ZipFile(self.apk_location)
-            self.members = {member.filename: member for member in self.zip_file.filelist}
+            self.open_zip_file()
         self.installation_lock.release()
     
     def all_done(self) -> None:
@@ -171,6 +176,7 @@ class DownloadManager(InstallManager.InstallManager):
         self.installed = False
         self.zip_file = None
         self.members = None
+        self.has_zip_file_opened = False
         if self.apk_location.exists():
             self.apk_location.unlink()
         assert self.location.name != self.version.name # self.location refers to the `client` subdirectory of the version folder.
