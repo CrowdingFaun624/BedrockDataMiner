@@ -55,7 +55,8 @@ class TypedDictComparerTypedDict(TypedDict):
 
 ComparerType = dict[str,DictComparerTypedDict|GroupTypedDict|ListComparerTypedDict|MainTypedDict|TypedDictComparerTypedDict]
 
-DEFAULT_TYPES = {"bool": bool, "dict": dict, "float": float, "int": int, "list": list, "str": str}
+DEFAULT_TYPES:dict[str,type] = {"bool": bool, "dict": dict, "float": float, "int": int, "list": list, "str": str}
+REQUIRES_COMPARER_TYPES = set([dict, list])
 
 a = TypeVar("a")
 b = TypeVar("b")
@@ -92,6 +93,8 @@ class Intermediate():
     def link_finals(self) -> None:
         '''Links this Intermediate's final object to other final objects.'''
         pass
+    def check(self) -> None:
+        '''Make sure that this Intermediate's types are all in order; no error could occur.'''
     def choose_intermediate(self, name:str, required_type:type[b], required_type_str:str, intermediate_comparers:dict[str,"Intermediate"], keys:list[str]) -> b:
         get_keys_strs:Callable[[bool],str] = lambda is_capital: "".join(
             ("%sey \"%s\" of " % ("K" if index == 0 and is_capital else "k", key)) if isinstance(key, str)
@@ -108,11 +111,13 @@ class Intermediate():
         return hash(self.name)
 
 class ComparerIntermediate(Intermediate): # just for type hints lol
+    my_type:list[type]
     def __init__(self, data: a, name: str, index: int) -> None:
         self.name = name
         self.final:Comparer.ComparerSection = None
 
 class DictComparerIntermediate(ComparerIntermediate):
+    my_type = [dict]
     def __init__(self, data:DictComparerTypedDict, name:str, index:int) -> None:
         self.check_types(data, name, index, [
             ("comparer", (str, type(None)), "a str or None", True),
@@ -147,6 +152,8 @@ class DictComparerIntermediate(ComparerIntermediate):
         self.key_types:list[type|TypeAliasIntermediate] = []
         self.value_types:list[type|TypeAliasIntermediate] = []
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.key_types_final:list[type] = None
+        self.value_types_final:list[type] = None
         self.final:Comparer.DictComparerSection = None
     
     def choose_types(self, key:str, types_strs:list[str], intermediate_comparers:dict[str,Intermediate]) -> list[Union[type,"TypeAliasIntermediate"]]:
@@ -191,13 +198,13 @@ class DictComparerIntermediate(ComparerIntermediate):
         return tuple(output)
 
     def create_final(self) -> None:
-        key_types_final = self.get_types_final(self.key_types)
-        value_types_final = self.get_types_final(self.value_types)
+        self.key_types_final = self.get_types_final(self.key_types)
+        self.value_types_final = self.get_types_final(self.value_types)
         self.final = Comparer.DictComparerSection(
             name=self.field,
             comparer=None,
-            key_types=key_types_final,
-            value_types=value_types_final,
+            key_types=self.key_types_final,
+            value_types=self.value_types_final,
             detect_key_moves=self.detect_key_moves,
             comparison_move_function=self.comparison_move_function,
             measure_length=self.measure_length,
@@ -207,6 +214,16 @@ class DictComparerIntermediate(ComparerIntermediate):
             self.final.comparer = None
         else:
             self.final.comparer = self.comparer.final
+    def check(self) -> None:
+        if self.comparer is None:
+            for value_type in self.value_types_final:
+                if value_type in REQUIRES_COMPARER_TYPES:
+                    raise TypeError("DictComparer \"%s\" accepts type %s, but has a null comparer!" % (self.name, value_type.__name__))
+        else:
+            for value_type in self.value_types_final:
+                if value_type not in self.comparer.my_type:
+                    its_types = ", ".join(type_item.__name__ for type_item in self.comparer.my_type)
+                    raise TypeError("DictComparer \"%s\" accepts type %s, but its comparer, \"%s\", only accepts type [%s]!" % (self.name, value_type.__name__, self.comparer.name, its_types))
 
 class GroupIntermediate(Intermediate):
     def __init__(self, data:GroupTypedDict, name:str, index:int) -> None:
@@ -232,6 +249,8 @@ class GroupIntermediate(Intermediate):
 
         self.types:list[tuple[type|TypeAliasIntermediate,ComparerIntermediate|None]] = None
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.my_type:set[type] = set()
+        self.check_types_final:list[tuple[type|tuple[type,...], ComparerIntermediate]] = None
         self.final:list[list[Callable[[str,Any],bool], Comparer.ComparerSection|None]] = None
     
     def set(self, intermediate_comparers:dict[str,Intermediate], functions:dict[str,Callable]) -> None:
@@ -243,9 +262,11 @@ class GroupIntermediate(Intermediate):
             already_types.add(type_str)
             if type_str in DEFAULT_TYPES:
                 comparer_type = DEFAULT_TYPES[type_str]
+                self.my_type.add(comparer_type)
             else:
                 comparer_type = self.choose_intermediate(type_str, TypeAliasIntermediate, "a TypeAlias", intermediate_comparers, ["types", index])
                 self.links_to_other_intermediates.append(comparer_type)
+                self.my_type.update(comparer_type.types)
             if comparer_str is None:
                 comparer = None
             else:
@@ -257,6 +278,7 @@ class GroupIntermediate(Intermediate):
         self.final = []
     
     def link_finals(self) -> None:
+        self.check_types_final = []
         for comparer_type, comparer_intermediate in self.types:
             if isinstance(comparer_type, type):
                 valid_types = comparer_type
@@ -264,11 +286,28 @@ class GroupIntermediate(Intermediate):
                 valid_types = tuple(comparer_type.types)
             if comparer_intermediate is None:
                 comparer = None
+                comparer_final = None
             else:
-                comparer = comparer_intermediate.final
-            self.final.append((valid_types, comparer))
+                comparer = comparer_intermediate
+                comparer_final = comparer.final
+            self.check_types_final.append((valid_types, comparer))
+            self.final.append((valid_types, comparer_final))
+    
+    def check(self) -> None:
+        for index, (types, comparer) in enumerate(self.check_types_final):
+            if not isinstance(types, tuple):
+                types = (types,)
+            if comparer is None:
+                for type_item in types:
+                    if type_item in REQUIRES_COMPARER_TYPES:
+                        raise TypeError("Item %i of Group \"%s\" accepts type %s, but has a null comparer!" % (index, self.name, type_item.__name__))
+            else:
+                for type_item in types:
+                    if type_item not in comparer.my_type:
+                        raise TypeError("Item %i of Group \"%s\" accepts type %s, but its comparer, \"%s\", only accepts type %s!" % (index, self.name, type_item.__name__, comparer.name, comparer.my_type.__name__))
 
 class ListComparerIntermediate(ComparerIntermediate):
+    my_type = [list]
     def __init__(self, data:ListComparerTypedDict, name:str, index:int) -> None:
         self.check_types(data, name, index, [
             ("comparer", (str, type(None)), "a str or None", True),
@@ -299,6 +338,7 @@ class ListComparerIntermediate(ComparerIntermediate):
         self.comparer:ComparerIntermediate|None = None
         self.types:list[type|TypeAliasIntermediate] = None
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.types_final:list[type] = []
         self.final:Comparer.ListComparerSection = None
     
     def set(self, intermediate_comparers:dict[str,Intermediate], functions:dict[str,Callable]) -> None:
@@ -317,16 +357,16 @@ class ListComparerIntermediate(ComparerIntermediate):
                 self.links_to_other_intermediates.append(type_intermediate)
                 self.types.append(type_intermediate)
     def create_final(self) -> None:
-        types_final:list[type] = []
+        self.types_final:list[type] = []
         for types_item in self.types:
             if isinstance(types_item, type):
-                types_final.append(types_item)
+                self.types_final.append(types_item)
             else:
-                types_final.extend(types_item.types)
+                self.types_final.extend(types_item.types)
         self.final = Comparer.ListComparerSection(
             name=self.field,
             comparer=None,
-            types=tuple(types_final),
+            types=tuple(self.types_final),
             print_flat=self.print_flat,
             print_all=self.print_all,
             measure_length=self.measure_length,
@@ -337,6 +377,16 @@ class ListComparerIntermediate(ComparerIntermediate):
             self.final.comparer = None
         else:
             self.final.comparer = self.comparer.final
+    def check(self) -> None:
+        if self.comparer is None:
+            for value_type in self.types_final:
+                if value_type in REQUIRES_COMPARER_TYPES:
+                    raise TypeError("ListComparer \"%s\" accepts type %s, but has a null comparer!" % (self.name, value_type.__name__))
+        else:
+            for value_type in self.types_final:
+                if value_type not in self.comparer.my_type:
+                    its_types = ", ".join(type_item.__name__ for type_item in self.comparer.my_type)
+                    raise TypeError("ListComparer \"%s\" accepts type %s, but its comparer, \"%s\", only accepts type [%s]!" % (self.name, value_type.__name__, self.comparer.name, its_types))
 
 class MainIntermediate(Intermediate):
     def __init__(self, data:MainTypedDict, name:str, index:int) -> None:
@@ -421,6 +471,7 @@ class TypeAliasIntermediate(Intermediate):
                 raise KeyError("TypeAlias refers to type \"%s\", which is not a valid default type!" % type_str)
 
 class TypedDictIntermediate(ComparerIntermediate):
+    my_type = [dict]
     def __init__(self, data:TypedDictComparerTypedDict, name:str, index:int) -> None:
         self.check_types(data, name, index, [
             ("field", str, "a str", False),
@@ -458,6 +509,7 @@ class TypedDictIntermediate(ComparerIntermediate):
         self.measure_length = False if "measure_length" not in data else data["measure_length"]
 
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.types_final:dict[str,tuple[list[type],ComparerIntermediate|GroupIntermediate]] = None
         self.final:Comparer.DictComparerSection = None
     
     def choose_types_type_iterator(self, data:TypedDictTypeTypedDict) -> Generator[tuple[int|None, str], None, None]:
@@ -507,7 +559,8 @@ class TypedDictIntermediate(ComparerIntermediate):
             measure_length=self.measure_length
         )
     def link_finals(self) -> None:
-        types_final:list[tuple[str, type|list[type], Comparer.ComparerSection|None]] = []
+        types_final:list[tuple[str, type|tuple[type,...], Comparer.ComparerSection|None]] = []
+        self.types_final = {}
         for key, data in self.types.items():
             types:list[type] = []
             for types_item in data["type"]:
@@ -515,20 +568,36 @@ class TypedDictIntermediate(ComparerIntermediate):
                     types.append(types_item)
                 else:
                     types.extend(types_item.types)
+            check_types_ouptut = types
             if len(types) == 1:
-                types = types[0]
+                types_output = types[0]
             else:
-                types = tuple(types)
+                types_output = tuple(types)
             if data["comparer"] is None:
                 comparer = None
+                comparer_final = None
             else:
-                comparer = data["comparer"].final
-            types_final.append((key, types, comparer))
+                comparer = data["comparer"]
+                comparer_final = comparer.final
+            self.types_final[key] = (check_types_ouptut, comparer)
+            types_final.append((key, types_output, comparer_final))
         Comparer.type_check_TypedDictComparerSection_parameters(self.field, types_final)
         key_types_lambda, value_types_lambda, all_comparers = Comparer.get_TypedDictComparerSection_attributes(self.field, types_final)
         self.final.key_types = key_types_lambda
         self.final.value_types = value_types_lambda
         self.final.comparer = all_comparers
+
+    def check(self) -> None:
+        for key, (key_types, comparer) in self.types_final.items():
+            if comparer is None:
+                for type_item in key_types:
+                    if type_item in REQUIRES_COMPARER_TYPES:
+                        raise TypeError("Key \"%s\" of TypedDictComparer \"%s\" accepts type %s, but has a null comparer!" % (self.name, type_item.__name__))
+            else:
+                if set(key_types) != set(comparer.my_type):
+                    my_types = ", ".join(type_item.__name__ for type_item in sorted(key_types, key=lambda x: x.__name__))
+                    its_types = ", ".join(type_item.__name__ for type_item in sorted(comparer.my_type, key=lambda x: x.__name__))
+                    raise TypeError("Key \"%s\" of TypedDictComparer \"%s\" accepts types [%s], but its comparer, \"%s\", only accepts type [%s]!" % (key, self.name, my_types, comparer.name, its_types))
 
 def get_file(name:str) -> ComparerType:
     with open(FileManager.get_comparer_path(name), "rt") as f:
@@ -621,5 +690,7 @@ def load_from_file(name:str, functions:dict[str,Callable]=None) -> Comparer.Comp
         comparer_intermediate.create_final()
     for comparer_intermediate in get_link_final_order(intermediate_comparers.values()):
         comparer_intermediate.link_finals()
+    for comparer_intermediate in intermediate_comparers.values():
+        comparer_intermediate.check()
 
     return main_comparer.final
