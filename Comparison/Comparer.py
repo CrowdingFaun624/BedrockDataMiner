@@ -377,7 +377,15 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
 
     def choose_comparer(self, key:c, value:d, trace:list[tuple[str,str]]) -> ComparerSet:
         def lambda_test_value(test_function:Callable[[c,d],bool], test_key:c, test_value:d) -> bool:
-            test_value_output = test_function(test_key, test_value)
+            exception = None
+            try:
+                test_value_output = test_function(test_key, test_value)
+            except Exception as e:
+                exception_args = list(e.args)
+                exception_args.append("Test function \"%s\" on \"%s\" for %s excepted!" % (test_function, test_key, stringify_trace(trace, self.name)))
+                e.args = tuple(exception_args)
+                exception = e
+            if exception is not None: raise exception
             if not isinstance(test_value_output, bool):
                 raise TypeError("Test function \"%s\" on \"%s\" for %s failed!" % (test_function, test_key, stringify_trace(trace, self.name)))
             return test_value_output
