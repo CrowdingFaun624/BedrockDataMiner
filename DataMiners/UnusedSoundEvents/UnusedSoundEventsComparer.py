@@ -1,13 +1,3 @@
-import Comparison.Comparer as Comparer
+import Comparison.ComparerImporter as ComparerImporter
 
-comparer = Comparer.Comparer(
-    normalizer=None,
-    dependencies=None,
-    base_comparer_section=Comparer.ListComparerSection(
-        name="sound event",
-        types=(str,),
-        measure_length=True,
-        ordered=False,
-        comparer=None,
-    )
-)
+comparer = ComparerImporter.load_from_file("unused_sound_events")
