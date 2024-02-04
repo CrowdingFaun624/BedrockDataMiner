@@ -56,7 +56,7 @@ class TypedDictComparerTypedDict(TypedDict):
 
 ComparerType = dict[str,DictComparerTypedDict|GroupTypedDict|ListComparerTypedDict|MainTypedDict|TypedDictComparerTypedDict]
 
-DEFAULT_TYPES:dict[str,type] = {"bool": bool, "dict": dict, "float": float, "int": int, "list": list, "str": str}
+DEFAULT_TYPES:dict[str,type] = {"bool": bool, "dict": dict, "float": float, "int": int, "list": list, "null": type(None), "str": str}
 REQUIRES_COMPARER_TYPES = set([dict, list])
 
 a = TypeVar("a")
@@ -150,7 +150,7 @@ class DictComparerIntermediate(ComparerIntermediate):
         self.print_all = False if "print_all" not in data else data["print_all"]
         self.value_types_strs = data["value_types"]
 
-        self.comparer:ComparerIntermediate|None = None
+        self.comparer:ComparerIntermediate|GroupIntermediate|None = None
         self.comparison_move_function:Callable|None = None
         self.key_types:list[type|TypeAliasIntermediate] = []
         self.value_types:list[type|TypeAliasIntermediate] = []
@@ -178,7 +178,7 @@ class DictComparerIntermediate(ComparerIntermediate):
         if self.comparer_str is None:
             self.comparer = None
         else:
-            comparer = self.choose_intermediate(self.comparer_str, ComparerIntermediate, "a Comparer", intermediate_comparers, ["comparer"])
+            comparer = self.choose_intermediate(self.comparer_str, ComparerIntermediate|GroupIntermediate, "a Comparer or Group", intermediate_comparers, ["comparer"])
             self.links_to_other_intermediates.append(comparer)
             self.comparer = comparer
         if self.comparison_move_function_str is None:
@@ -282,6 +282,8 @@ class GroupIntermediate(Intermediate):
         self.final = []
     
     def link_finals(self) -> None:
+        def get_lambda(valid_types:type|tuple[type,...]) -> Callable[[str,Any],bool]:
+            return lambda key, value: isinstance(value, valid_types)
         self.check_types_final = []
         for comparer_type, comparer_intermediate in self.types:
             if isinstance(comparer_type, type):
@@ -295,7 +297,7 @@ class GroupIntermediate(Intermediate):
                 comparer = comparer_intermediate
                 comparer_final = comparer.final
             self.check_types_final.append((valid_types, comparer))
-            self.final.append((valid_types, comparer_final))
+            self.final.append((get_lambda(valid_types), comparer_final))
     
     def check(self) -> None:
         for index, (types, comparer) in enumerate(self.check_types_final):
@@ -623,8 +625,8 @@ def get_used_intermediates(main_comparer:MainIntermediate) -> set[Intermediate]:
 
 def get_link_final_order(intermediate_comparers:Iterable[Intermediate]) -> Generator[Intermediate, None, None]:
     intermediate_types:dict[type[Intermediate], list[Intermediate]] = {
-        DictComparerIntermediate: [],
         GroupIntermediate: [],
+        DictComparerIntermediate: [],
         ListComparerIntermediate: [],
         MainIntermediate: [],
         TypeAliasIntermediate: [],
@@ -644,7 +646,7 @@ def load_from_file(name:str, functions:dict[str,Callable]=None) -> Comparer.Comp
     for index, (key, value) in enumerate(functions.items()):
         if not isinstance(key, str):
             raise TypeError("Key of index %i of `functions` of `load_from_file` \"%s\" is not a str!" % (index, name))
-        if not isinstance(value, Callable):
+        if isinstance(value, type) or not isinstance(value, Callable):
             raise TypeError("Value of key \"%s\" of `functions` of `load_from_file` \"%s\" is not a Callable!" % (key, name))
     
     data = get_file(name)
