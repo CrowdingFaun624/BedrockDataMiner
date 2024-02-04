@@ -17,7 +17,7 @@ class DictComparerTypedDict(TypedDict):
 
 class GroupTypedDict(TypedDict):
     type: Literal["Group"]
-    types: list[list[str, str|None]]
+    types: dict[str,str|None]
 
 class ListComparerTypedDict(TypedDict):
     comparer: str|None
@@ -233,20 +233,16 @@ class GroupIntermediate(Intermediate):
     def __init__(self, data:GroupTypedDict, name:str, index:int) -> None:
         self.check_types(data, name, index, [
             ("type", str, "a str", True),
-            ("types", list, "a list", True),
+            ("types", dict, "a dict", True),
         ])
         if data["type"] != "Group":
             raise ValueError("Key \"type\" of Group \"%s\" is not \"Group\"!" % (name))
         if len(data["types"]) == 0:
             raise ValueError("Key \"types\" of Group \"%s\" is empty!" % (name))
-        if not all(isinstance(item, list) for item in data["types"]):
-            raise TypeError("An item of key \"types\" in Group \"%s\" is not a list!" % (name))
-        if not all(len(item) == 2 for item in data["types"]):
-            raise ValueError("An item of key \"types\" in Group \"%s\" is not length 2!" % (name))
-        if not all(isinstance(item[0], str) for item in data["types"]):
-            raise TypeError("The first item of an item of key \"types\" in Group \"%s\" is not a str!" % (name))
-        if not all(isinstance(item[1], str) or item[1] is None for item in data["types"]):
-            raise TypeError("The second item of an item of key \"types\" in Group \"%s\" is not a str or None!" % (name))
+        if not all(isinstance(key, str) for key in data["types"].keys()):
+            raise TypeError("A key of key \"types\" in Group \"%s\" is not a str!" % (name))
+        if not all(isinstance(value, str) or value is None for value in data["types"].values()):
+            raise TypeError("A value of key \"types\" in Group \"%s\" is not a str or None!" % (name))
         
         self.name = name
         self.types_strs = data["types"]
@@ -260,7 +256,7 @@ class GroupIntermediate(Intermediate):
     def set(self, intermediate_comparers:dict[str,Intermediate], functions:dict[str,Callable]) -> None:
         self.types = []
         already_types:set[str] = set()
-        for index, (type_str, comparer_str) in enumerate(self.types_strs):
+        for index, (type_str, comparer_str) in enumerate(self.types_strs.items()):
             if type_str in already_types:
                 raise KeyError("Duplicate type \"%s\" of Group \"%s\"." % (type_str, self.name))
             already_types.add(type_str)

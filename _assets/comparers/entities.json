@@ -1,0 +1,150 @@
+{
+    "main": {
+        "type": "Main",
+        "normalizer": "normalize",
+        "dependencies": "behavior_packs",
+        "base_comparer_section": "entities"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "entities": {
+        "type": "Dict",
+        "field": "entity",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": false,
+        "measure_length": true,
+        "comparer": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "field": "behavior pack",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "behavior_pack_comparison_move_function",
+        "comparer": "entity"
+    },
+    "entity": {
+        "type": "TypedDict",
+        "types": {
+            "defined_in": {"type": "list", "comparer": "defined_in"},
+            "format_version": {"type": "str", "comparer": null},
+            "minecraft:entity": {"type": "str", "comparer": "minecraft:entity"}
+        }
+    },
+    "minecraft:entity": {
+        "type": "TypedDict",
+        "types": {
+            "description": {"type": "dict", "comparer": "description"},
+            "component_groups": {"type": "dict", "comparer": "component_groups"},
+            "components": {"type": "dict", "comparer": "components"},
+            "events": {"type": "dict", "comparer": "events"}
+        }
+    },
+    "description": {
+        "type": "TypedDict",
+        "field": "description",
+        "types": {
+            "identifier": {"type": "str", "comparer": null},
+            "is_spawnable": {"type": "bool", "comparer": null},
+            "is_summonable": {"type": "bool", "comparer": null},
+            "is_experimental": {"type": "bool", "comparer": null},
+            "properties": {"type": "dict", "comparer": "properties"}
+        }
+    },
+    "properties": {
+        "type": "Dict",
+        "field": "property",
+        "measure_length": true,
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "comparer": "property"
+    },
+    "property": {
+        "type": "TypedDict",
+        "types": {
+            "type": {"type": "str", "comparer": null},
+            "client_sync": {"type": "bool", "comparer": null},
+            "default": {"type": ["bool", "str"], "comparer": null}
+        }
+    },
+    "component_groups": {
+        "type": "Dict",
+        "field": "component group",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "measure_length": true,
+        "comparer": "components"
+    },
+    "components": {
+        "type": "TypedDict",
+        "field": "component",
+        "types": {
+            "minecraft:addrider": {"type": "dict", "comparer": "component.addrider"},
+            "minecraft:admire_item": {"type": "dict", "comparer": "component.admire_item"},
+            "minecraft:ageable": {"type": "dict", "comparer": "component.ageable"}
+        }
+    },
+    "event_target": {
+        "type": "TypedDict",
+        "types": {
+            "event": {"type": "str", "comparer": null},
+            "target": {"type": "str", "comparer": null}
+        }
+    },
+    "item_list": {
+        "type": "List",
+        "field": "item",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
+    "component.addrider": {
+        "type": "TypedDict",
+        "types": {
+            "entity_type": {"type": "str", "comparer": null},
+            "spawn_event": {"type": "str", "comparer": null}
+        }
+    },
+    "component.admire_item": {
+        "type": "TypedDict",
+        "types": {
+            "cooldown_after_being_attacked": {"type": "int", "comparer": null},
+            "duration": {"type": "int", "comparer": null}
+        }
+    },
+    "component.ageable": {
+        "type": "TypedDict",
+        "types": {
+            "drop_items": {"type": ["list", "str"], "comparer": "component.ageable:drop_items"},
+            "duration": {"type": "decimal", "comparer": null},
+            "feed_items": {"type": "list", "comparer": "component.ageable:feed_items"},
+            "grow_up": {"type": "dict", "comparer": "event_target"}
+        }
+    },
+    "component.ageable:drop_items": {
+        "type": "Group",
+        "types": [
+            ["list", "item_list"],
+            ["str", null]
+        ]
+    },
+    "component.ageable:feed_items": {
+        "type": "List",
+        "types": ["dict", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "component.ageable:feed_items.item_group"
+    },
+    "component.ageable:feed_items.item_group": {
+        "type": "Group",
+        "types": [
+            ["dict", "component.ageable.feed_items.dict_item"],
+            ["str", null]
+        ]
+    }
+}
