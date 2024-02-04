@@ -6,6 +6,7 @@ import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
 import DataMiners.Entities.EntitiesComparerComponents as EntitiesComparerComponents
 import DataMiners.Entities.EntitiesComparerTemplates as EntitiesComparerTemplates
+import Comparison.ComparerImporter as ComparerImporter
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -34,6 +35,10 @@ def behavior_pack_comparison_move_function(key:str, value:DataMinerTyping.Normal
     del output["defined_in"]
     return output
 
+comparer = ComparerImporter.load_from_file("entities", {
+    "normalize": normalize,
+    "behavior_pack_comparison_move_function": behavior_pack_comparison_move_function,
+})
 comparer = Comparer.Comparer(
     normalizer=normalize,
     dependencies=["behavior_packs"],

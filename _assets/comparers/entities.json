@@ -2,12 +2,16 @@
     "main": {
         "type": "Main",
         "normalizer": "normalize",
-        "dependencies": "behavior_packs",
+        "dependencies": ["behavior_packs"],
         "base_comparer_section": "entities"
     },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
+    },
+    "range": {
+        "type": "TypeAlias",
+        "types": ["dict", "list"]
     },
     "entities": {
         "type": "Dict",
@@ -32,8 +36,16 @@
         "types": {
             "defined_in": {"type": "list", "comparer": "defined_in"},
             "format_version": {"type": "str", "comparer": null},
-            "minecraft:entity": {"type": "str", "comparer": "minecraft:entity"}
+            "minecraft:entity": {"type": "dict", "comparer": "minecraft:entity"}
         }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "behavior pack",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["str"],
+        "comparer": null
     },
     "minecraft:entity": {
         "type": "TypedDict",
@@ -71,6 +83,72 @@
             "default": {"type": ["bool", "str"], "comparer": null}
         }
     },
+    "events": {
+        "type": "Dict",
+        "field": "event",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "measure_length": true,
+        "comparer": "events_event"
+    },
+    "events_event": {
+        "type": "TypedDict",
+        "types": {
+            "add": {"type": "dict", "comparer": "component_groups_add_remove"},
+            "emit_vibration": {"type": "dict", "comparer": "event:emit_vibration"},
+            "filters": {"type": "dict", "comparer": "filter"},
+            "randomize": {"type": "list", "comparer": "event:randomize"},
+            "remove": {"type": "dict", "comparer": "component_groups_add_remove"},
+            "sequence": {"type": "list", "comparer": "event:sequence"},
+            "set_property": {"type": "dict", "comparer": "event:set_property"},
+            "trigger": {"type": "str", "comparer": null},
+            "weight": {"type": "int", "comparer": null}
+        }
+    },
+    "component_groups_add_remove": {
+        "type": "TypedDict",
+        "types": {
+            "component_groups": {"type": "list", "comparer": "component_group_list"}
+        }
+    },
+    "component_group_list": {
+        "type": "List",
+        "field": "component group",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["str"],
+        "comparer": null
+    },
+    "event:emit_vibration": {
+        "type": "TypedDict",
+        "types": {
+            "vibration": {"type": "str", "comparer": null}
+        }
+    },
+    "event:randomize": {
+        "type": "List",
+        "field": "randomize item",
+        "ordered": false,
+        "types": ["dict"],
+        "measure_length": true,
+        "comparer": "events_event"
+    },
+    "event:sequence": {
+        "type": "List",
+        "field": "sequence item",
+        "ordered": true,
+        "types": ["dict"],
+        "measure_length": true,
+        "comparer": "events_event"
+    },
+    "event:set_property": {
+        "type": "Dict",
+        "field": "property",
+        "key_types": ["str"],
+        "value_types": ["bool"],
+        "measure_length": true,
+        "comparer": null
+    },
     "component_groups": {
         "type": "Dict",
         "field": "component group",
@@ -85,7 +163,87 @@
         "types": {
             "minecraft:addrider": {"type": "dict", "comparer": "component.addrider"},
             "minecraft:admire_item": {"type": "dict", "comparer": "component.admire_item"},
-            "minecraft:ageable": {"type": "dict", "comparer": "component.ageable"}
+            "minecraft:ageable": {"type": "dict", "comparer": "component.ageable"},
+            "minecraft:ambient_sound_interval": {"type": "dict", "comparer": "component.ambient_sound_interval"},
+            "minecraft:anger_level": {"type": "dict", "comparer": "component.anger_level"},
+            "minecraft:angry": {"type": "dict", "comparer": "component.angry"},
+            "minecraft:annotation.break_door": {"type": "dict", "comparer": "component.annotation.break_door"},
+            "minecraft:annotation.open_door": {"type": "dict", "comparer": "empty"},
+            "minecraft:area_attack": {"type": "dict", "comparer": "component.area_attack"},
+            "minecraft:attack": {"type": "dict", "comparer": "component.attack"},
+            "minecraft:attack_cooldown": {"type": "dict", "comparer": "component.attack_cooldown"},
+            "minecraft:attack_damage": {"type": "dict", "comparer": "component.attack_damage"},
+            "minecraft:balloonable": {"type": "dict", "comparer": "component.balloonable"},
+            "minecraft:barter": {"type": "dict", "comparer": "component.barter"},
+            "minecraft:block_climber": {"type": "dict", "comparer": "empty"},
+            "minecraft:block_sensor": {"type": "dict", "comparer": "component.block_sensor"},
+            "minecraft:boostable": {"type": "dict", "comparer": "component.boostable"},
+            "minecraft:boss": {"type": "dict", "comparer": "component.boss"},
+            "minecraft:break_blocks": {"type": "dict", "comparer": "component.break_blocks"},
+            "minecraft:breathable": {"type": "dict", "comparer": "component.breathable"},
+            "minecraft:breedable": {"type": "dict", "comparer": "component.breedable"},
+            "minecraft:bribeable": {"type": "dict", "comparer": "component.bribeable"},
+            "minecraft:buoyant": {"type": "dict", "comparer": "component.buoyant"},
+            "minecraft:burns_in_daylight": {"type": ["bool", "dict"], "comparer": "component.burns_in_daylight"},
+            "minecraft:can_climb": {"type": "dict", "comparer": "empty"},
+            "minecraft:can_fly": {"type": "dict", "comparer": "empty"},
+            "minecraft:can_join_raid": {"type": "dict", "comparer": "empty"},
+            "minecraft:can_power_jump": {"type": "dict", "comparer": "empty"},
+            "minecraft:celebrate_hunt": {"type": "dict", "comparer": "component.celebrate_hunt"},
+            "minecraft:color": {"type": "dict", "comparer": "component.color"},
+            "minecraft:color2": {"type": "dict", "comparer": "component.color2"},
+            "minecraft:combat_regeneration": {"type": "dict", "comparer": "component.combat_regeneration"},
+            "minecraft:conditional_bandwidth_optimization": {"type": "dict", "comparer": "component.conditional_bandwidth_optimization"},
+            "minecraft:custom_hit_test": {"type": "dict", "comparer": "component.custom_hit_test"},
+            "minecraft:damage_over_time": {"type": "dict", "comparer": "component.damage_over_time"},
+            "minecraft:damage_sensor": {"type": "dict", "comparer": "component.damage_sensor"},
+            "minecraft:dash": {"type": "dict", "comparer": "component.dash"},
+            "minecraft:default_look_angle": {"type": "dict", "comparer": "component.default_look_angle"},
+            "minecraft:despawn": {"type": "dict", "comparer": "component.despawn"},
+            "minecraft:drying_out_timer": {"type": "dict", "comparer": "component.drying_out_timer"},
+            "minecraft:dweller": {"type": "dict", "comparer": "component.dweller"},
+            "minecraft:economy_trade_table": {"type": "dict", "comparer": "component.economy_trade_table"},
+            "minecraft:entity_sensor": {"type": "dict", "comparer": "component.entity_sensor"},
+            "minecraft:environment_sensor": {"type": "dict", "comparer": "component.environment_sensor"},
+            "minecraft:equip_item": {"type": "dict", "comparer": "component.equip_item"},
+            "minecraft:equipment": {"type": "dict", "comparer": "component.equipment"},
+            "minecraft:equippable": {"type": "dict", "comparer": "component.equippable"},
+            "minecraft:exhaustion_values": {"type": "dict", "comparer": "component.exhaustion_values"},
+            "minecraft:experience_reward": {"type": "dict", "comparer": "component.experience_reward"},
+            "minecraft:explode": {"type": "dict", "comparer": "component.explode"}
+        }
+    },
+    "block_list": {
+        "type": "List",
+        "field": "block",
+        "measure_length": true,
+        "ordered": false,
+        "types": ["str"],
+        "comparer": null
+    },
+    "block_list_or_block": {
+        "type": "Group",
+        "types": {
+            "list": "block_list",
+            "str": null
+        }
+    },
+    "empty": {
+        "type": "TypedDict",
+        "types": {}
+    },
+    "entity_list": {
+        "type": "List",
+        "field": "entity",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
+    "event": {
+        "type": "TypedDict",
+        "types": {
+            "event": {"type": "str", "comparer": null}
         }
     },
     "event_target": {
@@ -95,12 +253,116 @@
             "target": {"type": "str", "comparer": null}
         }
     },
+    "event_target_filters": {
+        "type": "TypedDict",
+        "types": {
+            "event": {"type": "str", "comparer": null},
+            "filters": {"type": "dict", "comparer": "filter"},
+            "target": {"type": "str", "comparer": null}
+        }
+    },
+    "filter": {
+        "type": "TypedDict",
+        "field": "filter property",
+        "types": {
+            "all_of": {"type": "list", "comparer": "filter_list"},
+            "any_of": {"type": "list", "comparer": "filter_list"},
+            "domain": {"type": "str", "comparer": null},
+            "none_of": {"type": "list", "comparer": "filter_list"},
+            "operator": {"type": "str", "comparer": null},
+            "other_with_families": {"type": "str", "comparer": null},
+            "subject": {"type": "str", "comparer": null},
+            "test": {"type": "str", "comparer": null},
+            "value": {"type": ["bool", "decimal", "str"], "comparer": null}
+        }
+    },
+    "filter_list": {
+        "type": "List",
+        "field": "filter",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict"],
+        "comparer": "filter"
+    },
     "item_list": {
         "type": "List",
         "field": "item",
         "types": ["str"],
         "ordered": false,
         "measure_length": true,
+        "comparer": null
+    },
+    "item_list_or_item": {
+        "type": "Group",
+        "types": {
+            "list": "item_list",
+            "str": null
+        }
+    },
+    "range_dict_decimal": {
+        "type": "TypedDict",
+        "print_all": true,
+        "types": {
+            "range_max": {"type": "decimal", "comparer": null},
+            "range_min": {"type": "decimal", "comparer": null}
+        }
+    },
+    "range_dict_int": {
+        "type": "TypedDict",
+        "print_all": true,
+        "types": {
+            "range_max": {"type": "int", "comparer": null},
+            "range_min": {"type": "int", "comparer": null}
+        }
+    },
+    "range_group_decimal": {
+        "type": "Group",
+        "types": {
+            "dict": "range_dict_decimal",
+            "list": "range_list_decimal"
+        }
+    },
+    "range_group_int": {
+        "type": "Group",
+        "types": {
+            "dict": "range_dict_int",
+            "list": "range_list_int"
+        }
+    },
+    "range_list_decimal": {
+        "type": "List",
+        "field": "range item",
+        "ordered": true,
+        "types": ["decimal"],
+        "print_all": true,
+        "print_flat": true,
+        "comparer": null
+    },
+    "range_list_int": {
+        "type": "List",
+        "field": "range item",
+        "ordered": true,
+        "types": ["int"],
+        "print_all": true,
+        "print_flat": true,
+        "comparer": null
+    },
+    "vector_decimal": {
+        "type": "List",
+        "field": "vector item",
+        "ordered": true,
+        "types": ["decimal"],
+        "print_all": true,
+        "print_flat": true,
+        "comparer": null
+    },
+    "vector_int": {
+        "type": "List",
+        "field": "vector item",
+        "ordered": true,
+        "types": ["int"],
+        "print_all": true,
+        "print_flat": true,
         "comparer": null
     },
     "component.addrider": {
@@ -120,21 +382,15 @@
     "component.ageable": {
         "type": "TypedDict",
         "types": {
-            "drop_items": {"type": ["list", "str"], "comparer": "component.ageable:drop_items"},
+            "drop_items": {"type": ["list", "str"], "comparer": "item_list_or_item"},
             "duration": {"type": "decimal", "comparer": null},
             "feed_items": {"type": "list", "comparer": "component.ageable:feed_items"},
             "grow_up": {"type": "dict", "comparer": "event_target"}
         }
     },
-    "component.ageable:drop_items": {
-        "type": "Group",
-        "types": [
-            ["list", "item_list"],
-            ["str", null]
-        ]
-    },
     "component.ageable:feed_items": {
         "type": "List",
+        "field": "item",
         "types": ["dict", "str"],
         "ordered": false,
         "measure_length": true,
@@ -142,9 +398,641 @@
     },
     "component.ageable:feed_items.item_group": {
         "type": "Group",
-        "types": [
-            ["dict", "component.ageable.feed_items.dict_item"],
-            ["str", null]
-        ]
+        "types": {
+            "dict": "component.ageable:feed_items.dict_item",
+            "str": null
+        }
+    },
+    "component.ageable:feed_items.dict_item": {
+        "type": "TypedDict",
+        "types": {
+            "item": {"type": "str", "comparer": null},
+            "growth": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.ambient_sound_interval": {
+        "type": "TypedDict",
+        "types": {
+            "event_name": {"type": "str", "comparer": null},
+            "event_names": {"type": "list", "comparer": "component.ambient_sound_interval:event_names"},
+            "range": {"type": "decimal", "comparer": null},
+            "value": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.ambient_sound_interval:event_names": {
+        "type": "List",
+        "field": "event",
+        "ordered": true,
+        "measure_length": true,
+        "types": ["dict"],
+        "comparer": "component.ambient_sound_interval:event_names.item"
+    },
+    "component.ambient_sound_interval:event_names.item": {
+        "type": "TypedDict",
+        "types": {
+            "condition": {"type": "str", "comparer": null},
+            "event_name": {"type": "str", "comparer": null}
+        }
+    },
+    "component.anger_level": {
+        "type": "TypedDict",
+        "types": {
+            "anger_decrement_interval": {"type": "decimal", "comparer": null},
+            "angry_boost": {"type": "int", "comparer": null},
+            "angry_threshold": {"type": "int", "comparer": null},
+            "default_annoyingness": {"type": "int", "comparer": null},
+            "default_projectile_annoyingness": {"type": "int", "comparer": null},
+            "max_anger": {"type": "int", "comparer": null},
+            "nuisance_filter": {"type": "dict", "comparer": "filter"},
+            "on_increase_sounds": {"type": "list", "comparer": "component.anger_level:on_increase_sounds"},
+            "remove_targets_below_anger_threshold": {"type": "bool", "comparer": null}
+        }
+    },
+    "component.anger_level:on_increase_sounds": {
+        "type": "List",
+        "field": "sound",
+        "ordered": true,
+        "measure_length": true,
+        "types": ["dict"],
+        "comparer": "component.anger_level:on_increase_sounds.item"
+    },
+    "component.anger_level:on_increase_sounds.item": {
+        "type": "TypedDict",
+        "types": {
+            "condition": {"type": "str", "comparer": null},
+            "sound": {"type": "str", "comparer": null}
+        }
+    },
+    "component.angry": {
+        "type": "TypedDict",
+        "types": {
+            "angry_sound": {"type": "str", "comparer": null},
+            "broadcast_anger": {"type": "bool", "comparer": null},
+            "broadcast_anger_on_attack": {"type": "bool", "comparer": null},
+            "broadcast_anger_on_being_attacked": {"type": "bool", "comparer": null},
+            "broadcast_filters": {"type": "dict", "comparer": "filter"},
+            "broadcast_range": {"type": "int", "comparer": null},
+            "broadcast_targets": {"type": "list", "comparer": "entity_list"},
+            "calm_event": {"type": "dict", "comparer": "event_target"},
+            "duration": {"type": "int", "comparer": null},
+            "duration_delta": {"type": "int", "comparer": null},
+            "filters": {"type": "dict", "comparer": "filter"},
+            "sound_interval": {"type": "range", "comparer": "range_group_decimal"}
+        }
+    },
+    "component.annotation.break_door": {
+        "type": "TypedDict",
+        "types": {
+            "break_time": {"type": "decimal", "comparer": null},
+            "min_difficulty": {"type": "str", "comparer": null}
+        }
+    },
+    "component.area_attack": {
+        "type": "TypedDict",
+        "types": {
+            "cause": {"type": "str", "comparer": null},
+            "entity_filter": {"type": "dict", "comparer": "filter"},
+            "damage_per_tick": {"type": "int", "comparer": null},
+            "damage_range": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.attack": {
+        "type": "TypedDict",
+        "types": {
+            "damage": {"type": ["decimal", "dict", "list"], "comparer": "component.attack:damage"},
+            "effect_duration": {"type": "decimal", "comparer": null},
+            "effect_name": {"type": "str", "comparer": null}
+        }
+    },
+    "component.attack:damage": {
+        "type": "Group",
+        "types": {
+            "decimal": null,
+            "dict": "range_dict_decimal",
+            "list": "range_list_decimal"
+        }
+    },
+    "component.attack_cooldown": {
+        "type": "TypedDict",
+        "types": {
+            "attack_cooldown_complete_event": {"type": "dict", "comparer": "event_target"},
+            "attack_cooldown_time": {"type": ["dict", "list"], "comparer": "range_group_decimal"}
+        }
+    },
+    "component.attack_damage": {
+        "type": "TypedDict",
+        "types": {
+            "value": {"type": "int", "comparer": null}
+        }
+    },
+    "component.balloonable": {
+        "type": "TypedDict",
+        "types": {
+            "mass": {"type": "decimal", "comparer": null},
+            "max_distance": {"type": "decimal", "comparer": null},
+            "on_balloon": {"type": "str", "comparer": null},
+            "on_unballoon": {"type": "str", "comparer": null},
+            "soft_distance": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.barter": {
+        "type": "TypedDict",
+        "types": {
+            "barter_table": {"type": "str", "comparer": null},
+            "cooldown_fater_being_attacked": {"type": "int", "comparer": null}
+        }
+    },
+    "component.block_sensor": {
+        "type": "TypedDict",
+        "types": {
+            "on_break": {"type": "list", "comparer": "component.block_sensor:on_break"},
+            "sensor_radius": {"type": "decimal", "comparer": null},
+            "sources": {"type": "list", "comparer": "filter_list"}
+        }
+    },
+    "component.block_sensor:on_break": {
+        "type": "List",
+        "field": "event",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict"],
+        "comparer": "component.block_sensor:on_break.item"
+    },
+    "component.block_sensor:on_break.item": {
+        "type": "TypedDict",
+        "types": {
+            "block_list": {"type": "list", "comparer": "block_list"},
+            "on_block_broken": {"type": "str", "comparer": null}
+        }
+    },
+    "component.boostable": {
+        "type": "TypedDict",
+        "types": {
+            "boost_items": {"type": "list", "comparer": "component.boostable:boost_items"},
+            "duration": {"type": "decimal", "comparer": null},
+            "speed_multiplier": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.boostable:boost_items": {
+        "type": "List",
+        "field": "block",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict"],
+        "comparer": "component.boostable:boost_items.item"
+    },
+    "component.boostable:boost_items.item": {
+        "type": "TypedDict",
+        "types": {
+            "damage": {"type": "int", "comparer": null},
+            "item": {"type": "str", "comparer": null},
+            "replace_item": {"type": "str", "comparer": null}
+        }
+    },
+    "component.boss": {
+        "type": "TypedDict",
+        "types": {
+            "hud_range": {"type": "int", "comparer": null},
+            "name": {"type": "str", "comparer": null},
+            "should_darken_sky": {"type": "bool", "comparer": null}
+        }
+    },
+    "component.break_blocks": {
+        "type": "TypedDict",
+        "types": {
+            "breakable_blocks": {"type": "list", "comparer": "block_list"}
+        }
+    },
+    "component.breathable": {
+        "type": "TypedDict",
+        "types": {
+            "breathe_blocks": {"type": "list", "comparer": "block_list"},
+            "breathes_air": {"type": "bool", "comparer": null},
+            "breathes_lava": {"type": "bool", "comparer": null},
+            "breathes_solids": {"type": "bool", "comparer": null},
+            "breathes_water": {"type": "bool", "comparer": null},
+            "generates_bubbles": {"type": "bool", "comparer": null},
+            "inhale_time": {"type": "decimal", "comparer": null},
+            "non_breathe_blocks": {"type": "list", "comparer": "block_list"},
+            "suffocate_time": {"type": "int", "comparer": null},
+            "total_supply": {"type": "int", "comparer": null}
+        }
+    },
+    "component.breedable": {
+        "type": "TypedDict",
+        "types": {
+            "allow_sitting": {"type": "bool", "comparer": null},
+            "blend_attributes": {"type": "bool", "comparer": null},
+            "breed_cooldown": {"type": "decimal", "comparer": null},
+            "breed_items": {"type": ["list", "str"], "comparer": "item_list_or_item"},
+            "breeds_with": {"type": "list", "comparer": "component.breedable:breeds_with"},
+            "causes_pregnancy": {"type": "bool", "comparer": null},
+            "deny_parents_variant": {"type": "dict", "comparer": "component.breedable:deny_parents_variant"},
+            "environment_requirements": {"type": "dict", "comparer": "component.breedable:environment_requirements"},
+            "extra_baby_chance": {"type": "decimal", "comparer": null},
+            "inherit_tamed": {"type": "bool", "comparer": null},
+            "love_filters": {"type": "dict", "comparer": "filter"},
+            "mutation_factor": {"type": "dict", "comparer": "component.breedable:mutation_factor"},
+            "mutation_strategy": {"type": "str", "comparer": null},
+            "parent_centric_attribute_blending": {"type": "list", "comparer": "component.breedable:parent_centric_attribute_blending"},
+            "random_extra_variant_mutation_interval": {"type": "range", "comparer": "range_group_int"},
+            "random_variant_mutation_interval": {"type": "range", "comparer": "range_group_int"},
+            "require_full_health": {"type": "bool", "comparer": null},
+            "require_tame": {"type": "bool", "comparer": null}
+        }
+    },
+    "component.breedable:breeds_with": {
+        "type": "List",
+        "field": "entity",
+        "measure_length": true,
+        "ordered": false,
+        "types": ["dict"],
+        "comparer": "component.breedable:breeds_with.item"
+    },
+    "component.breedable:breeds_with.item": {
+        "type": "TypedDict",
+        "types": {
+            "baby_type": {"type": "str", "comparer": null},
+            "breed_event": {"type": "str", "comparer": null},
+            "mate_type": {"type": "str", "comparer": null}
+        }
+    },
+    "component.breedable:deny_parents_variant": {
+        "type": "TypedDict",
+        "types": {
+            "chance": {"type": "decimal", "comparer": null},
+            "max_variant": {"type": "int", "comparer": null},
+            "min_variant": {"type": "int", "comparer": null}
+        }
+    },
+    "component.breedable:environment_requirements": {
+        "type": "TypedDict",
+        "types": {
+            "blocks": {"type": ["list", "str"], "comparer": "block_list_or_block"},
+            "count": {"type": "int", "comparer": null},
+            "radius": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.breedable:mutation_factor": {
+        "type": "TypedDict",
+        "types": {
+            "color": {"type": "decimal", "comparer": null},
+            "extra_baby_chance": {"type": "decimal", "comparer": null},
+            "extra_variant": {"type": "decimal", "comparer": null},
+            "inherit_tamed": {"type": "bool", "comparer": null},
+            "variant": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.breedable:parent_centric_attribute_blending": {
+        "type": "List",
+        "field": "attribute",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["str"],
+        "comparer": null
+    },
+    "component.bribeable": {
+        "type": "TypedDict",
+        "types": {
+            "bribe_cooldown": {"type": "decimal", "comparer": null},
+            "bribe_items": {"type": ["list", "str"], "comparer": "item_list_or_item"}
+        }
+    },
+    "component.buoyant": {
+        "type": "TypedDict",
+        "types": {
+            "apply_gravity": {"type": "bool", "comparer": null},
+            "base_buoyancy": {"type": "decimal", "comparer": null},
+            "big_wave_probability": {"type": "decimal", "comparer": null},
+            "big_wave_speed": {"type": "decimal", "comparer": null},
+            "drag_down_on_buoyancy_removed": {"type": "decimal", "comparer": null},
+            "liquid_blocks": {"type": "list", "comparer": "block_list"},
+            "simulate_waves": {"type": "bool", "comparer": null}
+        }
+    },
+    "component.burns_in_daylight": {
+        "type": "Group",
+        "types": {
+            "bool": null,
+            "dict": "empty"
+        }
+    },
+    "component.celebrate_hunt": {
+        "type": "TypedDict",
+        "types": {
+            "broadcast": {"type": "bool", "comparer": null},
+            "celebration_targets": {"type": "dict", "comparer": "filter"},
+            "celebrate_sound": {"type": "str", "comparer": null},
+            "duration": {"type": "int", "comparer": null},
+            "radius": {"type": "decimal", "comparer": null},
+            "sound_interval": {"type": "range", "comparer": "range_group_decimal"}
+        }
+    },
+    "component.color": {
+        "type": "TypedDict",
+        "types": {
+            "value": {"type": "int", "comparer": null}
+        }
+    },
+    "component.color2": {
+        "type": "TypedDict",
+        "types": {
+            "value": {"type": "int", "comparer": null}
+        }
+    },
+    "component.combat_regeneration": {
+        "type": "TypedDict",
+        "types": {
+            "apply_to_family": {"type": "bool", "comparer": null},
+            "apply_to_self": {"type": "bool", "comparer": null},
+            "regeneration_duration": {"type": "int", "comparer": null}
+        }
+    },
+    "component.conditional_bandwidth_optimization": {
+        "type": "TypedDict",
+        "types": {
+            "conditional_values": {"type": "list", "comparer": "component.conditional_bandwidth_optimization:conditional_values"},
+            "default_values": {"type": "dict", "comparer": "component.conditional_bandwidth_optimization:default_values"}
+        }
+    },
+    "component.conditional_bandwidth_optimization:conditional_values": {
+        "type": "List",
+        "field": "condition",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict"],
+        "comparer": "component.conditional_bandwidth_optimization:conditional_values.item"
+    },
+    "component.conditional_bandwidth_optimization:conditional_values.item": {
+        "type": "TypedDict",
+        "types": {
+            "conditional_values": {"type": "list", "comparer": "filter_list"},
+            "max_dropped_ticks": {"type": "int", "comparer": null},
+            "max_optimized_distance": {"type": "int", "comparer": null},
+            "use_motion_prediction_hints": {"type": "bool", "comparer": null}
+        }
+    },
+    "component.conditional_bandwidth_optimization:default_values": {
+        "type": "TypedDict",
+        "types": {
+            "max_dropped_ticks": {"type": "int", "comparer": null},
+            "max_optimized_distance": {"type": "int", "comparer": null},
+            "use_motion_prediction_hints": {"type": "bool", "comparer": null}
+        }
+    },
+    "component.custom_hit_test": {
+        "type": "TypedDict",
+        "types": {
+            "hitboxes": {"type": "list", "comparer": "component.custom_hit_test:hitboxes"}
+        }
+    },
+    "component.custom_hit_test:hitboxes": {
+        "type": "List",
+        "field": "hitbox",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict"],
+        "comparer": "component.custom_hit_test:hitboxes.item"
+    },
+    "component.custom_hit_test:hitboxes.item": {
+        "type": "TypedDict",
+        "types": {
+            "height": {"type": "decimal", "comparer": null},
+            "width": {"type": "decimal", "comparer": null},
+            "pivot": {"type": "list", "comparer": "vector_decimal"}
+        }
+    },
+    "component.damage_over_time": {
+        "type": "TypedDict",
+        "types": {
+            "damage_per_hurt": {"type": "int", "comparer": null},
+            "time_between_hurt": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.damage_sensor": {
+        "type": "TypedDict",
+        "types": {
+            "triggers": {"type": ["dict", "list"], "comparer": "component.damage_sensor:triggers_group"}
+        }
+    },
+    "component.damage_sensor:triggers_group": {
+        "type": "Group",
+        "types": {
+            "dict": "component.damage_sensor:trigger",
+            "list": "component.damage_sensor:trigger_list"
+        }
+    },
+    "component.damage_sensor:trigger_list": {
+        "type": "List",
+        "field": "trigger",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict"],
+        "comparer": "component.damage_sensor:trigger"
+    },
+    "component.damage_sensor:trigger": {
+        "type": "TypedDict",
+        "types": {
+            "cause": {"type": "str", "comparer": null},
+            "damage_modifier": {"type": "decimal", "comparer": null},
+            "damage_multiplier": {"type": "decimal", "comparer": null},
+            "deals_damage": {"type": "bool", "comparer": null},
+            "on_damage": {"type": "dict", "comparer": "event_target_filters"},
+            "on_damage_sound_event": {"type": "str", "comparer": null}
+        }
+    },
+    "component.dash": {
+        "type": "TypedDict",
+        "types": {
+            "cooldown_time": {"type": "decimal", "comparer": null},
+            "horizontal_momentum": {"type": "decimal", "comparer": null},
+            "vertical_momentum": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.default_look_angle": {
+        "type": "TypedDict",
+        "types": {
+            "value": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.despawn": {
+        "type": "TypedDict",
+        "types": {
+            "despawn_from_distance": {"type": "dict", "comparer": "component.despawn:despawn_from_distance"},
+            "despawn_from_chance": {"type": "bool", "comparer": null},
+            "despawn_from_inactivity": {"type": "bool", "comparer": null},
+            "despawn_from_simulation_edge": {"type": "bool", "comparer": null},
+            "filters": {"type": "dict", "comparer": "filter"},
+            "min_range_inactivity_timer": {"type": "int", "comparer": null},
+            "remove_child_entities": {"type": "bool", "comparer": null}
+        }
+    },
+    "component.despawn:despawn_from_distance": {
+        "type": "TypedDict",
+        "types": {
+            "max_distance": {"type": "int", "comparer": null},
+            "min_distance": {"type": "int", "comparer": null}
+        }
+    },
+    "component.drying_out_timer": {
+        "type": "TypedDict",
+        "types": {
+            "total_time": {"type": "decimal", "comparer": null},
+            "dried_out_event": {"type": "dict", "comparer": "event"},
+            "recover_after_dried_out_event": {"type": "dict", "comparer": "event"},
+            "stopped_drying_out_event": {"type": "dict", "comparer": "event"},
+            "water_bottle_refill_time": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.dweller": {
+        "type": "TypedDict",
+        "types": {
+            "dwelling_type": {"type": "str", "comparer": null},
+            "dweller_role": {"type": "str", "comparer": null},
+            "update_interval_base": {"type": "decimal", "comparer": null},
+            "update_interval_variant": {"type": "decimal", "comparer": null},
+            "can_find_poi": {"type": "bool", "comparer": null},
+            "first_founding_reward": {"type": "int", "comparer": null},
+            "can_migrate": {"type": "bool", "comparer": null},
+            "dwelling_bounds_tolerance": {"type": "float", "comparer": null},
+            "preferred_profession": {"type": "str", "comparer": null}
+        }
+    },
+    "component.economy_trade_table": {
+        "type": "TypedDict",
+        "types": {
+            "convert_trades_economy": {"type": "bool", "comparer": null},
+            "cured_discount": {"type": "range", "comparer": "range_group_int"},
+            "display_name": {"type": "str", "comparer": null},
+            "hero_demand_discount": {"type": "int", "comparer": null},
+            "max_cured_discount": {"type": "range", "comparer": "range_group_int"},
+            "max_nearby_cured_discount": {"type": "int", "comparer": null},
+            "nearby_cured_discount": {"type": "int", "comparer": null},
+            "new_screen": {"type": "bool", "comparer": null},
+            "persist_trades": {"type": "bool", "comparer": null},
+            "show_trade_screen": {"type": "bool", "comparer": null},
+            "table": {"type": "str", "comparer": null},
+            "use_legacy_price_formula": {"type": "bool", "comparer": null}
+        }
+    },
+    "component.entity_sensor": {
+        "type": "TypedDict",
+        "types": {
+            "event_filters": {"type": "dict", "comparer": "filter"},
+            "event": {"type": "str", "comparer": null},
+            "maximum_count": {"type": "int", "comparer": null},
+            "minimum_count": {"type": "int", "comparer": null},
+            "relative_range": {"type": "bool", "comparer": null},
+            "require_all": {"type": "bool", "comparer": null},
+            "sensor_range": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.environment_sensor": {
+        "type": "TypedDict",
+        "types": {
+            "triggers": {"type": ["dict", "list"], "comparer": "component.environment_sensor:triggers_group"}
+        }
+    },
+    "component.environment_sensor:triggers_group": {
+        "type": "Group",
+        "types": {
+            "dict": "event_target_filters",
+            "list": "component.environment_sensor:trigger_list"
+        }
+    },
+    "component.environment_sensor:trigger_list": {
+        "type": "List",
+        "field": "trigger",
+        "measure_length": true,
+        "ordered": false,
+        "types": ["dict"],
+        "comparer": "event_target_filters"
+    },
+    "component.equip_item": {
+        "type": "TypedDict",
+        "types": {
+            "excluded_items": {"type": "list", "comparer": "item_list"}
+        }
+    },
+    "component.equipment": {
+        "type": "TypedDict",
+        "types": {
+            "slot_drop_chance": {"type": "list", "comparer": "component.equipment:slot_drop_chance"},
+            "table": {"type": "str", "comparer": null}
+        }
+    },
+    "component.equipment:slot_drop_chance": {
+        "type": "List",
+        "field": "slot",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict"],
+        "comparer": "component.equipment:slot_drop_chance.item"
+    },
+    "component.equipment:slot_drop_chance.item": {
+        "type": "TypedDict",
+        "types": {
+            "drop_chance": {"type": "decimal", "comparer": null},
+            "slot": {"type": "str", "comparer": null}
+        }
+    },
+    "component.equippable": {
+        "type": "TypedDict",
+        "types": {
+            "slots": {"type": "list", "comparer": "component.equippable:slots"}
+        }
+    },
+    "component.equippable:slots": {
+        "type": "List",
+        "field": "slot",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict"],
+        "comparer": "component.equippable:slots.item"
+    },
+    "component.equippable:slots.item": {
+        "type": "TypedDict",
+        "types": {
+            "accepted_items": {"type": "list", "comparer": "item_list"},
+            "interact_text": {"type": "str", "comparer": null},
+            "item": {"type": "str", "comparer": null},
+            "on_equip": {"type": "dict", "comparer": "event"},
+            "on_unequip": {"type": "dict", "comparer": "event"},
+            "slot": {"type": "int", "comparer": null}
+        }
+    },
+    "component.exhaustion_values": {
+        "type": "TypedDict",
+        "types": {
+            "attack": {"type": "decimal", "comparer": null},
+            "damage": {"type": "decimal", "comparer": null},
+            "heal": {"type": "decimal", "comparer": null},
+            "jump": {"type": "decimal", "comparer": null},
+            "mine": {"type": "decimal", "comparer": null},
+            "sprint": {"type": "decimal", "comparer": null},
+            "sprint_jump": {"type": "decimal", "comparer": null},
+            "swim": {"type": "decimal", "comparer": null},
+            "walk": {"type": "decimal", "comparer": null}
+        }
+    },
+    "component.experience_reward": {
+        "type": "TypedDict",
+        "types": {
+            "on_bred": {"type": "str", "comparer": null},
+            "on_death": {"type": "str", "comparer": null}
+        }
+    },
+    "component.explode": {
+        "type": "TypedDict",
+        "types": {
+            "breaks_blocks": {"type": "bool", "comparer": null},
+            "causes_fire": {"type": "bool", "comparer": null},
+            "destroy_affected_by_griefing": {"type": "bool", "comparer": null},
+            "fire_affected_by_griefing": {"type": "bool", "comparer": null},
+            "fuse_length": {"type": "range", "comparer": "range_group_decimal"},
+            "fuse_lit": {"type": "bool", "comparer": null},
+            "max_resistance": {"type": "decimal", "comparer": null},
+            "power": {"type": "decimal", "comparer": null}
+        }
     }
 }
