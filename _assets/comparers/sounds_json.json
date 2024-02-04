@@ -1,0 +1,193 @@
+{
+    "main": {
+        "type": "Main",
+        "normalizer": "normalize",
+        "dependencies": ["resource_packs"],
+        "base_comparer_section": "categories"
+    },
+    "categories": {
+        "type": "TypedDict",
+        "field": "category",
+        "types": {
+            "individual_event_sounds": {"type": "dict", "comparer": "flat_sound_collection"},
+            "block_sounds": {"type": "dict", "comparer": "block_sound_collections"},
+            "interactive_block_sounds": {"type": "dict", "comparer": "interactive_block_sound_collections"},
+            "entity_sounds": {"type": "dict", "comparer": "entity_sound_collections"},
+            "interactive_entity_sounds": {"type": "dict", "comparer": "interactive_entity_sound_collections"}
+        }
+    },
+    "block_sound_collections": {
+        "type": "Dict",
+        "field": "block",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "sound_collections_comparison_move_function",
+        "measure_length": true,
+        "comparer": "sound_collection"
+    },
+    "interactive_block_sound_collections": {
+        "type": "Dict",
+        "field": "interactive block",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "sound_collections_comparison_move_function",
+        "measure_length": true,
+        "comparer": "sound_collection"
+    },
+    "entity_sound_collections": {
+        "type": "Dict",
+        "field": "entity",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "sound_collections_comparison_move_function",
+        "measure_length": true,
+        "comparer": "sound_collection"
+    },
+    "interactive_entity_sound_collections": {
+        "type": "Dict",
+        "field": "interactive entity",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "sound_collections_comparison_move_function",
+        "measure_length": true,
+        "comparer": "interactive_entity_sound_collection"
+    },
+    "flat_sound_collection": {
+        "type": "TypedDict",
+        "field": "property",
+        "types": {
+            "events": {"type": "dict", "comparer": "events"}
+        }
+    },
+    "sound_collection": {
+        "type": "TypedDict",
+        "field": "property",
+        "types": {
+            "events": {"type": "dict", "comparer": "events"},
+            "pitch": {"type": "dict", "comparer": "pitch_resource_packs"},
+            "volume": {"type": "dict", "comparer": "volume_resource_packs"}
+        }
+    },
+    "interactive_entity_sound_collection": {
+        "type": "TypedDict",
+        "field": "property",
+        "types": {
+            "events": {"type": "dict", "comparer": "interactive_entity_events"},
+            "pitch": {"type": "dict", "comparer": "pitch_resource_packs"},
+            "volume": {"type": "dict", "comparer": "volume_resource_packs"}
+        }
+    },
+    "pitch_resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "key_types": ["str"],
+        "value_types": ["float", "int", "list"],
+        "comparer": "pitch_group"
+    },
+    "volume_resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "key_types": ["str"],
+        "value_types": ["float", "int", "list"],
+        "comparer": "volume_group"
+    },
+    "pitch_group": {
+        "type": "Group",
+        "types": [
+            ["float", null],
+            ["int", null],
+            ["list", "pitch_list"]
+        ]
+    },
+    "volume_group": {
+        "type": "Group",
+        "types": [
+            ["float", null],
+            ["int", null],
+            ["list", "volume_list"]
+        ]
+    },
+    "pitch_list": {
+        "type": "List",
+        "field": "pitch",
+        "types": ["float", "int"],
+        "comparer": null,
+        "print_flat": true,
+        "ordered": true,
+        "print_all": true
+    },
+    "volume_list": {
+        "type": "List",
+        "field": "volume",
+        "types": ["float", "int"],
+        "comparer": null,
+        "print_flat": true,
+        "ordered": true,
+        "print_all": true
+    },
+    "events": {
+        "type": "Dict",
+        "field": "event",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": "events_resource_packs"
+    },
+    "interactive_entity_events": {
+        "type": "Dict",
+        "field": "event",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": "interactive_entity_events_resource_packs"
+    },
+    "events_resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "key_types": ["str"],
+        "value_types": ["str", "dict"],
+        "detect_key_moves": true,
+        "comparer": "sound_group",
+        "measure_length": true
+    },
+    "interactive_entity_events_resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "comparer": "sound_case",
+        "measure_length": true
+    },
+    "sound_case": {
+        "type": "Dict",
+        "field": "case",
+        "key_types": ["str"],
+        "value_types": ["str", "dict"],
+        "comparer": "sound_group",
+        "detect_key_moves": true,
+        "measure_length": true
+    },
+    "sound_group": {
+        "type": "Group",
+        "types": [
+            ["str", null],
+            ["dict", "sound"]
+        ]
+    },
+    "sound": {
+        "type": "TypedDict",
+        "field": "sound",
+        "types": {
+            "pitch": {"type": ["float", "int", "list"], "comparer": "pitch_group"},
+            "sound": {"type": "str", "comparer": null},
+            "volume": {"type": ["float", "int", "list"], "comparer": "volume_group"}
+        }
+    }
+}

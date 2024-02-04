@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
-import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Comparison.ComparerImporter as ComparerImporter
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -17,76 +17,8 @@ def normalize(data:DataMinerTyping.SoundFiles, version:"Version.Version", datami
 def sound_file_comparison_move_function(key:str, value:dict[str,DataMinerTyping.NormalizedSoundFilesTypedDict]) -> dict[str,str]:
     return {internal_sound_file_name: internal_sound_file_properties["sha1_hash"] for internal_sound_file_name, internal_sound_file_properties in value.items()}
 
-comparer = Comparer.Comparer(
-    normalizer=normalize,
-    dependencies=None,
-    base_comparer_section=Comparer.DictComparerSection(
-        name="sound file",
-        key_types=(str,),
-        value_types=(dict,),
-        detect_key_moves=True,
-        comparison_move_function=sound_file_comparison_move_function,
-        measure_length=True,
-        comparer=Comparer.DictComparerSection(
-            name="internal sound file",
-            key_types=(str,),
-            value_types=(dict,),
-            detect_key_moves=True,
-            comparison_move_function=lambda key, value: value["sha1_hash"],
-            measure_length=True,
-            comparer=Comparer.TypedDictComparerSection(
-                name="property",
-                types=[
-                    ("filesize", int, None),
-                    ("pictures", list, Comparer.ListComparerSection(
-                        name="picture",
-                        types=(type(None),), # idk
-                        comparer=None,
-                        measure_length=True,
-                    )),
-                    ("tags", dict, Comparer.DictComparerSection(
-                        name="tag type",
-                        key_types=lambda key, value: key in ("comment", "encoder", "title", "tracknumber"),
-                        value_types=(list,),
-                        measure_length=True,
-                        comparer=Comparer.ListComparerSection(
-                            name="tag",
-                            types=(str,),
-                            comparer=None
-                        )
-                    )),
-                    ("_subchunks", list, Comparer.ListComparerSection(
-                        name="subchunk",
-                        types=(type(None),), # idk
-                        comparer=None,
-                        measure_length=True,
-                    )),
-                    ("streaminfo", dict, Comparer.TypedDictComparerSection(
-                        name="property",
-                        types=[
-                            ("_start", int, None),
-                            ("_size", int, None),
-                            ("_version", list, Comparer.ListComparerSection(
-                                name="version number",
-                                types=(int,),
-                                comparer=None,
-                                print_flat=True
-                            )),
-                            ("_extension_data", type(None), None),
-                            ("audio_format", str, None),
-                            ("bit_depth", int, None),
-                            ("bitrate", (float, int), None),
-                            ("channels", int, None),
-                            ("duration", float, None),
-                            ("max_bitrate", int, None),
-                            ("min_bitrate", int, None),
-                            ("nominal_bitrate", int, None),
-                            ("sample_rate", int, None)
-                        ]
-                    )),
-                    ("sha1_hash", str, None)
-                ]
-            )
-        )
-    )
-)
+comparer = ComparerImporter.load_from_file("sound_files", {
+    "normalize": normalize,
+    "sound_file_comparison_move_function": sound_file_comparison_move_function,
+    "internal_sound_file_comparison_move_function": lambda key, value: value["sha1_hash"]
+    })

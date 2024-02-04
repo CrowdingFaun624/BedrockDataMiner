@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
+import Comparison.ComparerImporter as ComparerImporter
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -148,17 +149,21 @@ def make_sound_collections_comparer(name:str, is_flat:bool, is_interactive_entit
         comparer=make_sound_collection_comparer(is_flat, is_interactive_entities)
     )
 
-comparer = Comparer.Comparer(
-    normalizer=normalize,
-    dependencies=["resource_packs"],
-    base_comparer_section=Comparer.TypedDictComparerSection(
-        name="category",
-        types=[
-            ("individual_event_sounds", dict, make_sound_collection_comparer(True)),
-            ("block_sounds", dict, make_sound_collections_comparer("block", False)),
-            ("interactive_block_sounds", dict, make_sound_collections_comparer("interactive block", False)),
-            ("entity_sounds", dict, make_sound_collections_comparer("entity", False)),
-            ("interactive_entity_sounds", dict, make_sound_collections_comparer("interactive entity", False, is_interactive_entities=True))
-        ]
-    ),
-)
+comparer = ComparerImporter.load_from_file("sounds_json", {
+    "normalize": normalize,
+    "sound_collections_comparison_move_function": lambda key, value: None if len(value) == 0 else value,
+    })
+# comparer = Comparer.Comparer(
+#     normalizer=normalize,
+#     dependencies=["resource_packs"],
+#     base_comparer_section=Comparer.TypedDictComparerSection(
+#         name="category",
+#         types=[
+#             ("individual_event_sounds", dict, make_sound_collection_comparer(True)),
+#             ("block_sounds", dict, make_sound_collections_comparer("block", False)),
+#             ("interactive_block_sounds", dict, make_sound_collections_comparer("interactive block", False)),
+#             ("entity_sounds", dict, make_sound_collections_comparer("entity", False)),
+#             ("interactive_entity_sounds", dict, make_sound_collections_comparer("interactive entity", False, is_interactive_entities=True))
+#         ]
+#     ),
+# )

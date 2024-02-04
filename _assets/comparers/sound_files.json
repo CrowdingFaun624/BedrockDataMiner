@@ -1,0 +1,94 @@
+{
+    "main": {
+        "type": "Main",
+        "normalizer": "normalize",
+        "base_comparer_section": "sound_file"
+    },
+    "sound_file": {
+        "type": "Dict",
+        "field": "sound file",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "sound_file_comparison_move_function",
+        "measure_length": true,
+        "comparer": "internal_sound_file"
+    },
+    "internal_sound_file": {
+        "type": "Dict",
+        "field": "internal sound file",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "internal_sound_file_comparison_move_function",
+        "measure_length": true,
+        "comparer": "sound_property"
+    },
+    "sound_property": {
+        "type": "TypedDict",
+        "field": "property",
+        "types": {
+            "filesize": {"type": "int", "comparer": null},
+            "pictures": {"type": "list", "comparer": "pictures"},
+            "tags": {"type": "dict", "comparer": "tags"},
+            "_subchunks": {"type": "list", "comparer": "subchunks"},
+            "streaminfo": {"type": "dict", "comparer": "streaminfo"},
+            "sha1_hash": {"type": "str", "comparer": null}
+        }
+    },
+    "pictures": {
+        "type": "List",
+        "field": "picture",
+        "types": ["null"],
+        "comparer": null,
+        "measure_length": true
+    },
+    "tags": {
+        "type": "TypedDict",
+        "field": "tag type",
+        "types": {
+            "comment": {"type": "list", "comparer": "tag"},
+            "encoder": {"type": "list", "comparer": "tag"},
+            "title": {"type": "list", "comparer": "tag"},
+            "tracknumber": {"type": "list", "comparer": "tag"}
+        }
+    },
+    "tag": {
+        "type": "List",
+        "field": "tag",
+        "types": ["str"],
+        "comparer": null
+    },
+    "subchunks": {
+        "type": "List",
+        "types": ["null"],
+        "comparer": null,
+        "measure_length": true
+    },
+    "streaminfo": {
+        "type": "TypedDict",
+        "field": "property",
+        "types": {
+            "_start": {"type": "int", "comparer": null},
+            "_size": {"type": "int", "comparer": null},
+            "_version": {"type": "list", "comparer": "version"},
+            "_extension_data": {"type": "null", "comparer": null},
+            "audio_format": {"type": "str", "comparer": null},
+            "bit_depth": {"type": "int", "comparer": null},
+            "bitrate": {"type": ["float", "int"], "comparer": null},
+            "channels": {"type": "int", "comparer": null},
+            "duration": {"type": "float", "comparer": null},
+            "max_bitrate": {"type": "int", "comparer": null},
+            "min_bitrate": {"type": "int", "comparer": null},
+            "nominal_bitrate": {"type": "int", "comparer": null},
+            "sample_rate": {"type": "int", "comparer": null}
+        }
+    },
+    "version": {
+        "type": "List",
+        "field": "version number",
+        "types": ["int"],
+        "comparer": null,
+        "print_flat": true
+    }
+}

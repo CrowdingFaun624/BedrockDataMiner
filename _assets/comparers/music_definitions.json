@@ -1,0 +1,43 @@
+{
+    "main": {
+        "type": "Main",
+        "normalizer": "normalize",
+        "dependencies": ["resource_packs"],
+        "base_comparer_section": "environment"
+    },
+    "environment": {
+        "type": "Dict",
+        "field": "environment",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparer": "resource_pack"
+    },
+    "resource_pack": {
+        "type": "Dict",
+        "field": "resource pack",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparer": "music_property"
+    },
+    "music_property": {
+        "type": "TypedDict",
+        "field": "property",
+        "types": {
+            "defined_in": {"type": "list", "comparer": "defined_in"},
+            "event_name": {"type": "str", "comparer": null},
+            "max_delay": {"type": "int", "comparer": null},
+            "min_delay": {"type": "int", "comparer": null}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "print_flat": true,
+        "comparer": null
+    }
+}

@@ -1,0 +1,70 @@
+{
+    "main": {
+        "type": "Main",
+        "normalizer": "normalize",
+        "base_comparer_section": "sound_event"
+    },
+    "sound_event": {
+        "type": "Dict",
+        "field": "sound event",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": "resource_pack"
+    },
+    "resource_pack": {
+        "type": "Dict",
+        "field": "resource pack",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "resource_pack_comparison_move_function",
+        "measure_length": true,
+        "comparer": "sound_event_property"
+    },
+    "sound_event_property": {
+        "type": "TypedDict",
+        "field": "property",
+        "types": {
+            "category": {"type": "str", "comparer": null},
+            "defined_in": {"type": "list", "comparer": "defined_in"},
+            "min_distance": {"type": ["float", "int"], "comparer": null},
+            "sounds": {"type": "dict", "comparer": "sounds"},
+            "subtitle": {"type": "str", "comparer": null}
+        }
+    },
+    "sounds": {
+        "type": "Dict",
+        "field": "sound",
+        "key_types": ["str"],
+        "value_types": ["dict"],
+        "measure_length": true,
+        "print_all": true,
+        "detect_key_moves": true,
+        "comparison_move_function": "sound_comparison_move_function",
+        "comparer": "sound_properties"
+    },
+    "sound_properties": {
+        "type": "TypedDict",
+        "field": "property",
+        "types": {
+            "exclude_from_pocket_platforms": {"type": "bool", "comparer": null},
+            "is3D": {"type": "bool", "comparer": null},
+            "load_on_low_memory": {"type": "bool", "comparer": null},
+            "pitch": {"type": ["float", "int"], "comparer": null},
+            "stream": {"type": "bool", "comparer": null},
+            "type": {"type": "str", "comparer": null},
+            "volume": {"type": ["float", "int"], "comparer": null},
+            "weight": {"type": "int", "comparer": null}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "comparer": null,
+        "print_flat": true,
+        "ordered": false
+    }
+}

@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 
-import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
+import Comparison.ComparerImporter as ComparerImporter
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -42,63 +42,8 @@ def resource_pack_comparison_move_function(key:str, value:DataMinerTyping.Normal
 def sound_comparison_move_function(key:str, value:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundTypedDict) -> str:
     return key.split("/")[-1]
 
-comparer = Comparer.Comparer(
-    normalizer=normalize,
-    dependencies=["resource_packs"],
-    base_comparer_section=Comparer.DictComparerSection(
-        name="sound event",
-        key_types=(str,),
-        value_types=(dict,),
-        detect_key_moves=True,
-        measure_length=True,
-        comparer=Comparer.DictComparerSection(
-            name="resource pack",
-            key_types=(str,),
-            value_types=(dict,),
-            detect_key_moves=True,
-            comparison_move_function=resource_pack_comparison_move_function,
-            measure_length=True,
-            comparer=Comparer.TypedDictComparerSection(
-                name="property",
-                types=[
-                    ("category", str, None),
-                    ("defined_in", list, Comparer.ListComparerSection(
-                        name="resource pack",
-                        types=(str,),
-                        comparer=None,
-                        print_flat=True,
-                        ordered=False
-                    )),
-                    ("min_distance", (float, int), None),
-                    ("max_distance", (float, int), None),
-                    ("sounds", dict, Comparer.DictComparerSection(
-                        name="sound",
-                        key_types=(str,),
-                        value_types=(dict,),
-                        measure_length=True,
-                        print_all=True,
-                        detect_key_moves=True,
-                        comparison_move_function=sound_comparison_move_function,
-                        comparer=[
-                            (lambda key, value: isinstance(value, str), None),
-                            (lambda key, value: isinstance(value, dict), Comparer.TypedDictComparerSection(
-                                name="property",
-                                types=[
-                                    ("exclude_from_pocket_platforms", bool, None),
-                                    ("is3D", bool, None),
-                                    ("load_on_low_memory", bool, None),
-                                    ("pitch", (float, int), None),
-                                    ("stream", bool, None),
-                                    ("type", str, None),
-                                    ("volume", (float, int), None),
-                                    ("weight", int, None)
-                                ]
-                            ))
-                        ]
-                    )),
-                    ("subtitle", str, None)
-                ]
-            )
-        )
-    )
-)
+comparer = ComparerImporter.load_from_file("sound_definitions", {
+    "normalize": normalize,
+    "resource_pack_comparison_move_function": resource_pack_comparison_move_function,
+    "sound_comparison_move_function": sound_comparison_move_function
+    })
