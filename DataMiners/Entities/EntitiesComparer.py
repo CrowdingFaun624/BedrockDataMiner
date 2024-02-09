@@ -76,9 +76,16 @@ comparer = Comparer.Comparer(
                             key_types=(str,),
                             value_types=(dict,),
                             comparer=Comparer.UnnamedDictComparerSection(
-                                ("type", str, None),
                                 ("client_sync", bool, None),
                                 ("default", (bool, str), None),
+                                ("type", str, None),
+                                ("values", list, Comparer.ListComparerSection(
+                                    name="possible property",
+                                    types=(str,),
+                                    ordered=False,
+                                    measure_length=True,
+                                    comparer=None
+                                )),
                             )
                         )),
                         name="description"

@@ -1414,9 +1414,16 @@ timer_flag_1_comparer =\
         types=(str,),
         comparer=None,
     )),
-    ("cooldown_range", list, EntitiesComparerTemplates.range_comparer),
-    ("duration_range", decimal, None),
+    ("cooldown_range", (decimal, list), [
+        (lambda key, value: isinstance(value, decimal), None),
+        (lambda key, value: isinstance(value, list), EntitiesComparerTemplates.range_comparer),
+    ]),
+    ("duration_range", (decimal, list), [
+        (lambda key, value: isinstance(value, decimal), None),
+        (lambda key, value: isinstance(value, list), EntitiesComparerTemplates.range_comparer),
+    ]),
     ("on_end", dict, EntitiesComparerTemplates.event_target_comparer),
+    ("on_start", dict, EntitiesComparerTemplates.event_target_comparer),
     ("priority", int, None),
 ))
 

@@ -322,7 +322,7 @@ def get_events_event_comparer() -> Comparer.DictComparerSection:
         ("set_property", dict, Comparer.DictComparerSection(
             name="property",
             key_types=(str,),
-            value_types=(bool,),
+            value_types=(bool, str),
             measure_length=True,
             comparer=None
         )),
