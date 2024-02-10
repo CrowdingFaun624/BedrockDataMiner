@@ -43,10 +43,12 @@ class TypeAliasTypedDict(TypedDict):
 class TypedDictTypeTypedDict(TypedDict):
     type: str|list[str]
     comparer: str|None
+    tags: list[str]
 
 class TypedDictTypeFilledTypedDict(TypedDict):
     type: list[Union[type, "TypeAliasIntermediate"]]
     comparer: Union["ComparerIntermediate", "GroupIntermediate", None]
+    tags: list[str]
 
 class TypedDictComparerTypedDict(TypedDict):
     field: str
@@ -501,6 +503,12 @@ class TypedDictIntermediate(ComparerIntermediate):
                     case "comparer":
                         if not (isinstance(value_value, str) or value_value is None):
                             raise TypeError("Key \"%s\" of key \"%s\" of key \"types\" of TypedDict \"%s\" is not a str or None!" % (value_key, key, name))
+                    case "tags":
+                        if not isinstance(value_value, list):
+                            raise TypeError("Key \"%s\" of key \"%s\" of key \"types \" of TypedDict \"%s\" is not a list!" % (value_key, key, name))
+                        for tag_index, tag_item in enumerate(value_value):
+                            if not isinstance(tag_item, str):
+                                raise TypeError("Item %i of key \"%s\" of key \"%s\" of key \"types\" of TypedDict \"%s\" is not a str!" % (tag_index, value_key, key, name))
                     case _:
                         raise KeyError("Key \"%s\" of key \"%s\" of \"types\" of TypedDict \"%s\" is not a valid key!" % (value_key, key, name))
             for required_key in ("type", "comparer"):
@@ -513,6 +521,8 @@ class TypedDictIntermediate(ComparerIntermediate):
         self.types:dict[str,TypedDictTypeFilledTypedDict] = None
         self.measure_length = False if "measure_length" not in data else data["measure_length"]
         self.print_all = False if "print_all" not in data else data["print_all"]
+        self.tags = {key: (value["tags"] if "tags" in value else []) for key, value in self.types_strs.items()}
+        if any(len(item) > 0 for item in self.tags.values()): print(self.tags)
 
         self.links_to_other_intermediates:list[Intermediate] = []
         self.types_final:dict[str,tuple[list[type],ComparerIntermediate|GroupIntermediate]] = None
@@ -599,7 +609,7 @@ class TypedDictIntermediate(ComparerIntermediate):
             if comparer is None:
                 for type_item in key_types:
                     if type_item in REQUIRES_COMPARER_TYPES:
-                        raise TypeError("Key \"%s\" of TypedDictComparer \"%s\" accepts type %s, but has a null comparer!" % (self.name, type_item.__name__))
+                        raise TypeError("Key \"%s\" of TypedDictComparer \"%s\" accepts type %s, but has a null comparer!" % (key, self.name, type_item.__name__))
             else:
                 if set(key_types) != set(comparer.my_type):
                     my_types = ", ".join(type_item.__name__ for type_item in sorted(key_types, key=lambda x: x.__name__))
