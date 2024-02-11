@@ -6,7 +6,7 @@ import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Version as Version
 
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
-import DataMiners.Blocks.BlocksDataMiners as BlocksDataMiners
+import DataMiners.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
 import DataMiners.Entities.EntitiesDataMiners as EntitiesDataMiners
 import DataMiners.Items.ItemsDataMiners as ItemsDataMiners
@@ -23,7 +23,7 @@ import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEv
 
 dataminers:list[DataMiner.DataMinerCollection] = [
     BehaviorPacksDataMiners.dataminers,
-    BlocksDataMiners.dataminers,
+    BlocksClientDataMiners.dataminers,
     DuplicateSoundsDataMiners.dataminers,
     EntitiesDataMiners.dataminers,
     ItemsDataMiners.dataminers,

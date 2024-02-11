@@ -5,7 +5,7 @@ import Comparison.Compare as Compare
 
 class DependenciesTypedDict(TypedDict):
     behavior_packs: "BehaviorPacks"
-    blocks: "MyBlocks"
+    blocks: "MyBlocksClient"
     duplicate_sounds: "DuplicateSounds"
     entities: "Entities"
     items: "Items"
@@ -44,7 +44,7 @@ class BlocksJsonBlockIsotropicTypedDict(TypedDict):
     down: bool
     up: bool
 
-class BlocksJsonBlockTypedDict(TypedDict):
+class BlocksJsonClientBlockTypedDict(TypedDict):
     blockshape: str
     brightness_gamma: float
     carried_textures: str|BlocksJsonBlockTexturesTypedDict
@@ -52,11 +52,11 @@ class BlocksJsonBlockTypedDict(TypedDict):
     sound: str
     textures: str|BlocksJsonBlockTexturesTypedDict
 
-class MyBlocksJsonBlockTypedDict(TypedDict):
+class MyBlocksJsonClientBlockTypedDict(TypedDict):
     name: str
-    properties: BlocksJsonBlockTypedDict
+    properties: BlocksJsonClientBlockTypedDict
 
-class DiffBlocksJsonBlockTexturesTypedDict(TypedDict):
+class DiffBlocksJsonClientBlockTexturesTypedDict(TypedDict):
     down: str|D.Diff[str,str]
     east: str|D.Diff[str,str]
     north: str|D.Diff[str,str]
@@ -65,20 +65,20 @@ class DiffBlocksJsonBlockTexturesTypedDict(TypedDict):
     up: str|D.Diff[str,str]
     west: str|D.Diff[str,str]
 
-class DiffBlocksJsonBlockIsotropicTypedDict(TypedDict):
+class DiffBlocksJsonClientBlockIsotropicTypedDict(TypedDict):
     down: bool|D.Diff[bool,bool]
     up: bool|D.Diff[bool,bool]
 
-class DiffBlocksJsonBlockTypedDict(TypedDict):
+class DiffBlocksJsonClientBlockTypedDict(TypedDict):
     blockshape: str|D.Diff[str,str]
     brightness_gamma: float|D.Diff[float,float]
-    carried_textures: str|DiffBlocksJsonBlockTexturesTypedDict|D.Diff[str|DiffBlocksJsonBlockTexturesTypedDict,str|DiffBlocksJsonBlockTexturesTypedDict]
+    carried_textures: str|DiffBlocksJsonClientBlockTexturesTypedDict|D.Diff[str|DiffBlocksJsonClientBlockTexturesTypedDict,str|DiffBlocksJsonClientBlockTexturesTypedDict]
     defined_in: list[str|D.Diff[str,str]]
-    isotropic: bool|DiffBlocksJsonBlockIsotropicTypedDict|D.Diff[bool|DiffBlocksJsonBlockIsotropicTypedDict,bool|DiffBlocksJsonBlockIsotropicTypedDict]
+    isotropic: bool|DiffBlocksJsonClientBlockIsotropicTypedDict|D.Diff[bool|DiffBlocksJsonClientBlockIsotropicTypedDict,bool|DiffBlocksJsonClientBlockIsotropicTypedDict]
     sound: str|D.Diff[str,str]
-    textures: str|DiffBlocksJsonBlockTexturesTypedDict|D.Diff[str|DiffBlocksJsonBlockTexturesTypedDict,str|DiffBlocksJsonBlockTexturesTypedDict]
+    textures: str|DiffBlocksJsonClientBlockTexturesTypedDict|D.Diff[str|DiffBlocksJsonClientBlockTexturesTypedDict,str|DiffBlocksJsonClientBlockTexturesTypedDict]
 
-class NormalizedBlocksJsonBlockTypedDict(TypedDict):
+class NormalizedBlocksJsonClientBlockTypedDict(TypedDict):
     blockshape: str
     brightness_gamma: float
     carried_textures: str|BlocksJsonBlockTexturesTypedDict
@@ -87,10 +87,10 @@ class NormalizedBlocksJsonBlockTypedDict(TypedDict):
     sound: str
     textures: str|BlocksJsonBlockTexturesTypedDict
 
-Blocks = dict[str,BlocksJsonBlockTypedDict]
-MyBlocks = list[MyBlocksJsonBlockTypedDict]
-NormalizedBlocks = dict[str,dict[str,NormalizedBlocksJsonBlockTypedDict]]
-DiffBlocks = dict[str|D.Diff[str,str],dict[str|D.Diff[str,str],DiffBlocksJsonBlockTypedDict|D.Diff[DiffBlocksJsonBlockTypedDict,DiffBlocksJsonBlockTypedDict]]]
+BlocksClient = dict[str,BlocksJsonClientBlockTypedDict]
+MyBlocksClient = list[MyBlocksJsonClientBlockTypedDict]
+NormalizedBlocksClient = dict[str,dict[str,NormalizedBlocksJsonClientBlockTypedDict]]
+DiffBlocksClient = dict[str|D.Diff[str,str],dict[str|D.Diff[str,str],DiffBlocksJsonClientBlockTypedDict|D.Diff[DiffBlocksJsonClientBlockTypedDict,DiffBlocksJsonClientBlockTypedDict]]]
 
 # duplicate sounds
 
