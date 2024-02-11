@@ -6,11 +6,11 @@ import traceback
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.FileManager as FileManager
+from Utilities.FunctionCaller import WaitValue
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
 import Downloader.VersionsParser as VersionsParser
 import Comparison.Comparer as Comparer
-import Comparison.Compare as Compare
 
 EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
 
@@ -39,7 +39,7 @@ class DataMinerSettings():
         self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
         self.file_name:str = None
         self.name:str = None
-        self.comparer:Comparer.Comparer = None
+        self.comparer:WaitValue[Comparer.Comparer] = None
         self.dataminer_class = dataminer_class
         self.dependencies = dependencies if dependencies is not None else []
         self.kwargs = kwargs
@@ -96,8 +96,8 @@ class DataMiner():
             data_path.mkdir()
         with open(self.get_data_file_path(), "wt") as f:
             json.dump(data, f)
-        normalized_data = self.settings.comparer.normalize(data, self.version, {dataminer_name: FakeDataMinerCollection(dependency) for dataminer_name, dependency in dependency_data.items()})
-        self.settings.comparer.check_types(normalized_data)
+        normalized_data = self.settings.comparer.get().normalize(data, self.version, {dataminer_name: FakeDataMinerCollection(dependency) for dataminer_name, dependency in dependency_data.items()})
+        self.settings.comparer.get().check_types(normalized_data)
         return data
     
     def get_data_file(self) -> Any:
@@ -215,13 +215,13 @@ class NullDataMiner(DataMiner):
         raise RuntimeError("Attempted to use `read_files` from a NullDataMiner!")
 
 class DataMinerCollection():
-    def __init__(self, file_name:str, name:str, comparer:Comparer.Comparer, dataminers:list[DataMinerSettings]) -> None:
+    def __init__(self, file_name:str, name:str, comparer:WaitValue[Comparer.Comparer], dataminers:list[DataMinerSettings]) -> None:
         if not isinstance(file_name, str):
             raise TypeError("`file_name` is not a str!")
         if not isinstance(name, str):
             raise TypeError("`name` is not a str!")
-        if not isinstance(comparer, Comparer.Comparer):
-            raise TypeError("`comparer` is not a Comparer!")
+        if not isinstance(comparer, (Comparer.Comparer, WaitValue)):
+            raise TypeError("`comparer` is not a Comparer or WaitValue!")
         if not isinstance(dataminers, list):
             raise TypeError("`dataminers` is not a list!")
         if not all(isinstance(setting, DataMinerSettings) for setting in dataminers):

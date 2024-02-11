@@ -2,6 +2,7 @@ import json
 from typing import Any, Callable, Generator, Iterable, Literal, TypedDict, TypeVar, Union
 
 import Utilities.FileManager as FileManager
+from Utilities.FunctionCaller import FunctionCaller, WaitValue
 import Comparison.Comparer as Comparer
 
 class DictComparerTypedDict(TypedDict):
@@ -647,7 +648,7 @@ def get_link_final_order(intermediate_comparers:Iterable[Intermediate]) -> Gener
     for intermediates in intermediate_types.values():
         yield from intermediates
 
-def load_from_file(name:str, functions:dict[str,Callable]=None) -> Comparer.Comparer:
+def parse_comparer_file(name:str, data:dict[str,dict], functions:dict[str,Callable]=None) -> Comparer.Comparer:
     if functions is None: functions = {}
     if not isinstance(name, str):
         raise TypeError("`name` is not a str!")
@@ -659,7 +660,6 @@ def load_from_file(name:str, functions:dict[str,Callable]=None) -> Comparer.Comp
         if isinstance(value, type) or not isinstance(value, Callable):
             raise TypeError("Value of key \"%s\" of `functions` of `load_from_file` \"%s\" is not a Callable!" % (key, name))
     
-    data = get_file(name)
     if not isinstance(data, dict):
         raise TypeError("Comparer file \"%s\" is not a dict!" % (name))
     intermediate_comparers:dict[str,Intermediate] = {}
@@ -712,3 +712,10 @@ def load_from_file(name:str, functions:dict[str,Callable]=None) -> Comparer.Comp
         comparer_intermediate.check()
 
     return main_comparer.final
+
+def load_from_file(name:str, functions:dict[str,Callable]=None) -> WaitValue[Comparer.Comparer]:
+    if not isinstance(name, str):
+        raise TypeError("`name` is not a str!")
+    
+    data = get_file(name)
+    return WaitValue(FunctionCaller(parse_comparer_file, args=[name, data, functions]))
