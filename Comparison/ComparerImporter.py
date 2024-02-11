@@ -511,7 +511,7 @@ class TypedDictIntermediate(ComparerIntermediate):
                                 raise TypeError("Item %i of key \"%s\" of key \"%s\" of key \"types\" of TypedDict \"%s\" is not a str!" % (tag_index, value_key, key, name))
                     case _:
                         raise KeyError("Key \"%s\" of key \"%s\" of \"types\" of TypedDict \"%s\" is not a valid key!" % (value_key, key, name))
-            for required_key in ("type", "comparer"):
+            for required_key in ("type",):
                 if required_key not in value:
                     raise KeyError("Key \"%s\" of key \"types\" of TypedDict \"%s\" does not have the required key \"%s\"!" % (key, name, required_key))
 
@@ -522,7 +522,6 @@ class TypedDictIntermediate(ComparerIntermediate):
         self.measure_length = False if "measure_length" not in data else data["measure_length"]
         self.print_all = False if "print_all" not in data else data["print_all"]
         self.tags = {key: (value["tags"] if "tags" in value else []) for key, value in self.types_strs.items()}
-        if any(len(item) > 0 for item in self.tags.values()): print(self.tags)
 
         self.links_to_other_intermediates:list[Intermediate] = []
         self.types_final:dict[str,tuple[list[type],ComparerIntermediate|GroupIntermediate]] = None
@@ -553,7 +552,7 @@ class TypedDictIntermediate(ComparerIntermediate):
         return types
         
     def set_comparer(self, key:str, data:TypedDictTypeTypedDict, intermediate_comparers:dict[str,Intermediate]) -> ComparerIntermediate|None:
-        if data["comparer"] is None: return None
+        if "comparer" not in data or data["comparer"] is None: return None
         comparer = self.choose_intermediate(data["comparer"], ComparerIntermediate|GroupIntermediate, "a Comparer or Group", intermediate_comparers, ["types", key, "comparer"])
         self.links_to_other_intermediates.append(comparer)
         return comparer
