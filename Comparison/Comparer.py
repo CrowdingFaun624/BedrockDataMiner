@@ -823,7 +823,9 @@ def UnnamedDictComparerSection(
 
 class Comparer():
     '''Can be created by a DataMinerCollection to compare the output of the DataMiners with each other.'''
-    def __init__(self, normalizer:Callable[[a, "Version.Version", dict[str,"DataMiner.DataMinerCollection"]], b]|None, dependencies:list[str]|None, base_comparer_section:ComparerSection[b], post_normalizer:Callable[[a],b]|None=None) -> None:
+    def __init__(self, name:str, normalizer:Callable[[a, "Version.Version", dict[str,"DataMiner.DataMinerCollection"]], b]|None, dependencies:list[str]|None, base_comparer_section:ComparerSection[b], post_normalizer:Callable[[a],b]|None=None) -> None:
+        if not isinstance(name, str):
+            raise TypeError("`name` is not a str!")
         if not isinstance(normalizer, (Callable, type(None))):
             raise TypeError("`normalizer` is not a Callable or None!")
         if not isinstance(post_normalizer, (Callable, type(None))):
@@ -835,7 +837,7 @@ class Comparer():
         if not (isinstance(base_comparer_section, ComparerSection) or base_comparer_section is None):
             raise TypeError("`base_comparer_section` is not a ComparerSection!")
 
-        self.name = None
+        self.name = name
         self.dependencies = [] if dependencies is None else dependencies
         if normalizer is None:
             self.normalizer = lambda data, version, dataminers: data
@@ -943,7 +945,7 @@ class Comparer():
 
 class DefaultComparer(Comparer):
     def __init__(self) -> None:
-        super().__init__(None, None, ComparerSection(""))
+        super().__init__("default", None, None, ComparerSection(""))
 
 default_comparer = DefaultComparer()
 #TODO: change check_types to a generator.

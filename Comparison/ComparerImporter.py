@@ -399,6 +399,7 @@ class MainIntermediate(Intermediate):
         self.check_types(data, name, index, [
             ("base_comparer_section", str, "a str", True),
             ("dependencies", list, "a list", False),
+            ("name", str, "a str", True),
             ("normalizer", str, "a str", False),
             ("post_normalizer", str, "a str", False),
             ("type", str, "a str", True),
@@ -409,6 +410,7 @@ class MainIntermediate(Intermediate):
             raise TypeError("An item of key \"dependencies\" of Main \"%s\" is not a str!" % (name))
         
         self.name = name
+        self.comparer_name = data["name"]
         self.base_comparer_section_str = data["base_comparer_section"]
         self.dependencies = [] if "dependencies" not in data else data["dependencies"]
         self.normalizer_str = None if "normalizer" not in data else data["normalizer"]
@@ -438,6 +440,7 @@ class MainIntermediate(Intermediate):
     
     def create_final(self) -> None:
         self.final = Comparer.Comparer(
+            name=self.comparer_name,
             normalizer=self.normalizer,
             post_normalizer=self.post_normalizer,
             dependencies=self.dependencies,

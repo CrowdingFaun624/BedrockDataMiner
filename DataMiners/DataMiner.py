@@ -96,8 +96,8 @@ class DataMiner():
             data_path.mkdir()
         with open(self.get_data_file_path(), "wt") as f:
             json.dump(data, f)
-        normalized_data = self.settings.comparer.get().normalize(data, self.version, {dataminer_name: FakeDataMinerCollection(dependency) for dataminer_name, dependency in dependency_data.items()})
-        self.settings.comparer.get().check_types(normalized_data)
+        # normalized_data = self.settings.comparer.get().normalize(data, self.version, {dataminer_name: FakeDataMinerCollection(dependency) for dataminer_name, dependency in dependency_data.items()})
+        # self.settings.comparer.get().check_types(normalized_data)
         return data
     
     def get_data_file(self) -> Any:
@@ -231,7 +231,6 @@ class DataMinerCollection():
         self.name = name
         self.comparer = comparer
         self.file_name = file_name
-        self.comparer.name = self.name
         for dataminer in dataminers:
             dataminer.file_name = self.file_name
             dataminer.name = self.name
@@ -259,9 +258,9 @@ class DataMinerCollection():
             version1_data = self.get_data_file(version1)
             version2_data = self.get_data_file(version2)
         dataminers_dict = {dataminer.name: dataminer for dataminer in all_dataminers}
-        report, had_changes = self.comparer.comparison_report(version1_data, version2_data, version1, version2, versions_between, dataminers_dict)
+        report, had_changes = self.comparer.get().comparison_report(version1_data, version2_data, version1, version2, versions_between, dataminers_dict)
         if store and had_changes:
-            self.comparer.store(report)
+            self.comparer.get().store(report)
         return report
 
     def __repr__(self) -> str:
