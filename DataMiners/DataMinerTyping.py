@@ -1,7 +1,6 @@
 from typing import Any, TypedDict
 
 import Comparison.Difference as D
-import Comparison.Compare as Compare
 
 class DependenciesTypedDict(TypedDict):
     behavior_packs: "BehaviorPacks"
