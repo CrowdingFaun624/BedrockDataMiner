@@ -107,7 +107,7 @@ Entities = dict[str,dict[str,Any]] # TODO: fill this out
 
 # items
 
-Items = None # TODO: fill this out
+Items = dict[str,dict[str,Any]] # TODO: fill this out
 
 # languages
 
