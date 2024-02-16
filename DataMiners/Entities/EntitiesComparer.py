@@ -1,6 +1,5 @@
 from typing import Any, TYPE_CHECKING
 
-import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
@@ -28,7 +27,7 @@ def normalize(data:DataMinerTyping.Entities, version:"Version.Version", datamine
         return entity_behavior_packs
     return {entity_name: fix_weird_components(entity_name, CollapseResourcePacks.collapse_resource_packs(entity_behavior_packs, behavior_packs, version.name)) for entity_name, entity_behavior_packs in data.items()}
 
-def behavior_pack_comparison_move_function(key:str, value:DataMinerTyping.NormalizedBlocksJsonClientBlockTypedDict) -> DataMinerTyping.NormalizedBlocksJsonClientBlockTypedDict:
+def behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()
     del output["defined_in"]
     return output

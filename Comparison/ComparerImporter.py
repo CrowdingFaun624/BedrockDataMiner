@@ -716,9 +716,11 @@ def parse_comparer_file(name:str, data:dict[str,dict], functions:dict[str,Callab
 
     return main_comparer.final
 
-def load_from_file(name:str, functions:dict[str,Callable]=None) -> WaitValue[Comparer.Comparer]:
+def load(name:str, functions:dict[str,Callable]=None) -> Comparer.Comparer:
     if not isinstance(name, str):
         raise TypeError("`name` is not a str!")
-    
     data = get_file(name)
-    return WaitValue(FunctionCaller(parse_comparer_file, args=[name, data, functions]))
+    return parse_comparer_file(name, data, functions)
+
+def load_from_file(name:str, functions:dict[str,Callable]=None) -> WaitValue[Comparer.Comparer]:
+    return WaitValue(FunctionCaller(load, args=[name, functions]))

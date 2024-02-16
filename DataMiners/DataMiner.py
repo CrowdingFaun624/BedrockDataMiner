@@ -215,7 +215,7 @@ class NullDataMiner(DataMiner):
         raise RuntimeError("Attempted to use `read_files` from a NullDataMiner!")
 
 class DataMinerCollection():
-    def __init__(self, file_name:str, name:str, comparer:WaitValue[Comparer.Comparer], dataminers:list[DataMinerSettings]) -> None:
+    def __init__(self, file_name:str, name:str, comparer:WaitValue[Comparer.Comparer]|Comparer.Comparer, dataminers:list[DataMinerSettings]) -> None:
         if not isinstance(file_name, str):
             raise TypeError("`file_name` is not a str!")
         if not isinstance(name, str):
@@ -229,7 +229,7 @@ class DataMinerCollection():
         
         self.dataminer_settings = dataminers
         self.name = name
-        self.comparer = comparer
+        self.comparer = comparer if isinstance(comparer, WaitValue) else WaitValue(lambda: comparer)
         self.file_name = file_name
         for dataminer in dataminers:
             dataminer.file_name = self.file_name

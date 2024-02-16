@@ -114,6 +114,11 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
         except Exception as e:
             data[name] = e
 
+def test_comparers() -> None:
+    for dataminer in dataminers:
+        print(dataminer.comparer.get())
+    print("All comparers successfully parsed.")
+
 def user_interface() -> None:
     import Downloader.VersionsParser as VersionsParser
 
