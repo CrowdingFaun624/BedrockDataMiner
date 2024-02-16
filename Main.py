@@ -41,6 +41,7 @@ PROGRAM_NAMES = {
     "FileSummary": FileSummary.main,
     "GetFile": GetFile.main,
     "StoredVersions": StoredVersionsManager.main,
+    "TestComparers": DataMiners.test_comparers,
     "VersionsParser": VersionsParser.main,
     "WikiValidator": WikiValidator.main,
 }
