@@ -4,8 +4,6 @@ import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
-import DataMiners.Entities.EntitiesComparerComponents as EntitiesComparerComponents
-import DataMiners.Entities.EntitiesComparerTemplates as EntitiesComparerTemplates
 import Comparison.ComparerImporter as ComparerImporter
 
 if TYPE_CHECKING:
@@ -39,68 +37,3 @@ comparer = ComparerImporter.load_from_file("entities", {
     "normalize": normalize,
     "behavior_pack_comparison_move_function": behavior_pack_comparison_move_function,
 })
-comparer = Comparer.Comparer(
-    normalizer=normalize,
-    dependencies=["behavior_packs"],
-    base_comparer_section=Comparer.DictComparerSection(
-        name="entity",
-        key_types=(str,),
-        value_types=(dict,),
-        detect_key_moves=False, # haha lol no not doing that right now
-        measure_length=True,
-        comparer=Comparer.DictComparerSection(
-            name="behavior pack",
-            key_types=(str,),
-            value_types=(dict,),
-            measure_length=True,
-            detect_key_moves=True,
-            comparison_move_function=behavior_pack_comparison_move_function,
-            comparer=Comparer.UnnamedDictComparerSection(
-                ("defined_in", list, Comparer.ListComparerSection(
-                    name="behavior pack",
-                    types=(str,),
-                    ordered=False,
-                    measure_length=True,
-                    comparer=None,
-                )),
-                ("format_version", str, None),
-                ("minecraft:entity", dict, Comparer.UnnamedDictComparerSection(
-                    ("description", dict, Comparer.UnnamedDictComparerSection(
-                        ("identifier", str, None),
-                        ("is_spawnable", bool, None),
-                        ("is_summonable", bool, None),
-                        ("is_experimental", bool, None),
-                        ("properties", dict, Comparer.DictComparerSection(
-                            name="property",
-                            measure_length=True,
-                            key_types=(str,),
-                            value_types=(dict,),
-                            comparer=Comparer.UnnamedDictComparerSection(
-                                ("client_sync", bool, None),
-                                ("default", (bool, str), None),
-                                ("type", str, None),
-                                ("values", list, Comparer.ListComparerSection(
-                                    name="possible property",
-                                    types=(str,),
-                                    ordered=False,
-                                    measure_length=True,
-                                    comparer=None
-                                )),
-                            )
-                        )),
-                        name="description"
-                    )),
-                    ("component_groups", dict, Comparer.DictComparerSection(
-                        name="component group",
-                        key_types=(str,),
-                        value_types=(dict,),
-                        measure_length=True,
-                        comparer=EntitiesComparerComponents.comparer
-                    )),
-                    ("components", dict, EntitiesComparerComponents.comparer),
-                    ("events", dict, EntitiesComparerTemplates.events_comparer),
-                ))
-            )
-        )
-    )
-)
