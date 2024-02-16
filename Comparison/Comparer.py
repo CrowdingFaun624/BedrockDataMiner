@@ -29,25 +29,45 @@ def glue_iterables(iter1:Iterable[a], iter2:Iterable[b]) -> Generator[a|b,None,N
 def stringify(data:Any) -> str:
     '''Returns the string of data containing no Diffs. Is used in the comparison reporter.'''
     return json.dumps(data)
-def stringify_trace(trace:list[tuple[str,str]], name:str|None=None) -> str:
-    if name is None:
-        return ".".join("%s[%s]" % (name, index) for name, index in trace)
-    else:
-        if len(trace) == 0:
-            return name
+
+class Trace():
+    def __init__(self, data:list[tuple[str,str|int]]=None, current_key:str=None) -> None:
+        self.data = [] if data is None else data
+        self.current_key = current_key
+
+    def copy(self, name:str|None=None, key:str|int|None=None) -> "Trace":
+        if name is None:
+            return Trace(self.data.copy())
         else:
-            return ".".join("%s[%s]" % (name, index) for name, index in trace) + ".%s" % (name)
+            new_trace = self.data.copy()
+            new_trace.append((name, key))
+            return Trace(new_trace)
+
+    def give_key(self, current_key:str|int) -> "Trace":
+        self.current_key = current_key
+
+    def __str__(self) -> str:
+        if self.current_key is None:
+            return ".".join("%s[%s]" % (name, index) for name, index in self.data)
+        else:
+            if len(self.data) == 0:
+                return self.current_key
+            else:
+                return ".".join("%s[%s]" % (name, index) for name, index in self.data) + ".%s" % (self.current_key)
 
 class ComparerSection(Generic[a]):
     def __init__(self, name:str) -> None:
-        if not isinstance(name, str):
-            raise TypeError("`name` is not a str!")
         self.name = name
+        self.check_initialization_parameters()
     
+    def check_initialization_parameters(self) -> None:
+        if not isinstance(self.name, str):
+            raise TypeError("`name` is not a str!")
+
     def __repr__(self) -> str:
         return "<ComparerSection %s>" % self.name
 
-    def print_single(self, key_str:str|None, data:d, message:str, output:list[str], printer:Union["ComparerSection[d]",None], trace:list[tuple[str,str]]) -> None:
+    def print_single(self, key_str:str|None, data:d, message:str, output:list[str], printer:Union["ComparerSection[d]",None], trace:Trace) -> None:
         if printer is None:
             stringified_data = stringify(data)
             if key_str is None:
@@ -55,8 +75,7 @@ class ComparerSection(Generic[a]):
             else:
                 output.append("%s %s %s of %s." % (message, self.name, stringify(key_str), stringified_data))
         else:
-            new_trace = trace.copy()
-            new_trace.append((self.name, key_str))
+            new_trace = trace.copy(self.name, key_str)
             subcomparer_output = self.check_printer_output(printer.print_text(data, new_trace), new_trace)
             if len(subcomparer_output) == 0:
                 if key_str is None:
@@ -74,10 +93,9 @@ class ComparerSection(Generic[a]):
                 else:
                     output.append("%s %s %s:" % (message, self.name, stringify(key_str)))
                 output.extend("\t" + line for line in subcomparer_output)
-    
-    def print_double(self, key_str:str|None, data1:d, data2:d, message:str, output:list[str], printers:"ComparerSet", trace:list[tuple[str,str]]) -> None:
-        new_trace = trace.copy()
-        new_trace.append((self.name, key_str))
+
+    def print_double(self, key_str:str|None, data1:d, data2:d, message:str, output:list[str], printers:"ComparerSet", trace:Trace) -> None:
+        new_trace = trace.copy(self.name, key_str)
         subcomparer_output1 = self.check_printer_output(printers.print_text(0, data1, new_trace), new_trace)
         subcomparer_output2 = self.check_printer_output(printers.print_text(-1, data2, new_trace), new_trace) # [-1] because it must be the last item anyways.
         if len(subcomparer_output1) == 0: subcomparer_output1 = ["empty"]
@@ -108,32 +126,32 @@ class ComparerSection(Generic[a]):
             output.append("to:")
             output.extend("\t" + line for line in subcomparer_output2)
 
-    def check_comparer_output(self, output:a, trace:list[tuple[str,str]]) -> a:
+    def check_comparer_output(self, output:a, trace:Trace) -> a:
         if not isinstance(output, tuple):
-            raise TypeError("%s did not return a tuple!" % (stringify_trace(trace, self.name)))
+            raise TypeError("%s did not return a tuple!" % (trace.give_key(self.name)))
         if len(output) != 2:
-            raise ValueError("%s did not return a tuple with length 2!" % (stringify_trace(trace, self.name)))
+            raise ValueError("%s did not return a tuple with length 2!" % (trace.give_key(self.name)))
         if not isinstance(output[0], list):
-            raise TypeError("The first item of the return of %s is not a list!" % (stringify_trace(trace, self.name)))
+            raise TypeError("The first item of the return of %s is not a list!" % (trace.give_key(self.name)))
         if not isinstance(output[1], bool):
-            raise TypeError("The second item of the return of %s is not a bool!" % (stringify_trace(trace, self.name)))
+            raise TypeError("The second item of the return of %s is not a bool!" % (trace.give_key(self.name)))
         if output[1] is True and len(output[0]) == 0:
-            raise ValueError("The first item of the return of %s is empty and should not be!" % (stringify_trace(trace, self.name)))
+            raise ValueError("The first item of the return of %s is empty and should not be!" % (trace.give_key(self.name)))
         if not all(isinstance(line, str) for line in output[0]):
-            raise TypeError("An item of the first item of the return of %s is not a str!" % (stringify_trace(trace, self.name)))
-        return output
-    
-    def check_printer_output(self, output:a, trace:list[tuple[str,str]]) -> a:
-        if not isinstance(output, list):
-            raise TypeError("%s did not return a list!" % (stringify_trace(trace, self.name)))
-        if not all(isinstance(line, str) for line in output):
-            raise TypeError("An item of the return value of %s is not a str!" % (stringify_trace(trace, self.name)))
+            raise TypeError("An item of the first item of the return of %s is not a str!" % (trace.give_key(self.name)))
         return output
 
-    def check_types(self, data:a, trace:list[tuple[str,str]]) -> list[tuple[list[tuple[str,str]], Exception]]: ...
-    def compare_text(self, data:a, trace:list[tuple[str,str]]) -> tuple[list[str],bool]: ...
-    def print_text(self, data:a, trace:list[tuple[str,str]]) -> list[str]: ...
-    def compare(self, data1:a, data2:a, trace:list[tuple[str,str]]) -> a: ...
+    def check_printer_output(self, output:a, trace:Trace) -> a:
+        if not isinstance(output, list):
+            raise TypeError("%s did not return a list!" % (trace.give_key(self.name)))
+        if not all(isinstance(line, str) for line in output):
+            raise TypeError("An item of the return value of %s is not a str!" % (trace.give_key(self.name)))
+        return output
+
+    def check_types(self, data:a, trace:Trace) -> list[tuple[Trace, Exception]]: ...
+    def compare_text(self, data:a, trace:Trace) -> tuple[list[str],bool]: ...
+    def print_text(self, data:a, trace:Trace) -> list[str]: ...
+    def compare(self, data1:a, data2:a, trace:Trace) -> a: ...
 
 class ComparerSet(Generic[d]):
     '''Contains one or two ComparerSections. Is used internally.
@@ -149,9 +167,9 @@ class ComparerSet(Generic[d]):
             raise TypeError("A key of `comparers` is not a DiffType!")
         if not all(isinstance(value, ComparerSection) or value is None for value in comparers.values()):
             raise TypeError("A value of `comparers` is not a ComparerSection or None!")
-        
+
         self.comparers = comparers
-    
+
     def __repr__(self) -> str:
         return "<ComparerSet %s>" % self.comparers
 
@@ -166,19 +184,19 @@ class ComparerSet(Generic[d]):
             return list(self.comparers.values())[key]
         else:
             raise KeyError("Attempted to index a ComparerSet using a %s rather than a D.DiffType!" % type(key))
-    def print_text(self, key:D.DiffType|int, data:d, trace:list[tuple[str,str]]) -> list[str]:
+    def print_text(self, key:D.DiffType|int, data:d, trace:Trace) -> list[str]:
         comparer = self[key]
         if comparer is None:
             return [stringify(data)]
         else:
             return comparer.print_text(data, trace)
-    def compare_text(self, key:D.DiffType|int, data:d, trace:list[tuple[str,str]]) -> tuple[list[str],bool]:
+    def compare_text(self, key:D.DiffType|int, data:d, trace:Trace) -> tuple[list[str],bool]:
         comparer = self[key]
         if comparer is None:
-            raise RuntimeError("Attempted to compare (key %s) using a NoneType object at %s!" % (key, stringify_trace(trace)))
+            raise RuntimeError("Attempted to compare (key %s) using a NoneType object at %s!" % (key, trace))
         else:
             return comparer.compare_text(data, trace)
-    def compare(self, data1:d, data2:d, trace:list[tuple[str,str]]) -> d:
+    def compare(self, data1:d, data2:d, trace:Trace) -> d:
         if (len(self) == 1) or (len(self) == 2 and self[0] == self[1]):
             # both items have the same ComparerSection.
             comparer = self[0]
@@ -195,9 +213,8 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
     def __init__(
             self,
             name:str,
-            comparer:ComparerSection[d]|None|list[tuple[Callable[[c, d],bool]|str,ComparerSection[d]|None]],
-            key_types:tuple[type]|Callable[[c, d],bool]|None,
-            value_types:tuple[type]|Callable[[c, d],bool]|None,
+            comparer:ComparerSection[d]|None|dict[type,ComparerSection[d]|None],
+            types:tuple[type]|None,
             detect_key_moves:bool=False,
             comparison_move_function:Callable[[c, d], b]|None=None,
             measure_length:bool=False,
@@ -219,74 +236,56 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
          * If `comparison_move_function` returns None, then it will not attempt to detect moves for that value.
          * If `measure_length` is True, then it will show how the length of the data changed when comparing.
          * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.'''
-        if not isinstance(name, str):
-            raise TypeError("`name` is not a str!")
-        if not isinstance(comparer, (ComparerSection, type(None), list)):
-            raise TypeError("`comparer` is not a ComparerSection, NoneType, or list!")
-        if isinstance(comparer, list):
-            if not all(isinstance(item, tuple) and len(item) == 2 and isinstance(item[0], (Callable, str)) and isinstance(item[1], (ComparerSection, type(None))) for item in comparer):
-                raise TypeError("`comparer` is not a list of tuples of Callables and ComparerSections!")
-        for name_types, types in (("key_types", key_types), ("value_types", value_types)):
-            if isinstance(types, type) or (not isinstance(types, (tuple, Callable)) and types is not None):
-                raise TypeError("`%s` is not an Iterable, Callable, or None!" % (name_types))
-            if isinstance(types, tuple) and not all(isinstance(item, (type)) for item in types):
-                raise TypeError("An item of `%s` is not a type!" % (name_types))
-        if not isinstance(detect_key_moves, bool):
-            raise TypeError("`detect_key_moves` is not a bool!")
-        if not isinstance(comparison_move_function, Callable) and comparison_move_function is not None:
-            raise TypeError("`comparison_move_function` is not a Callable or None!")
-        if not isinstance(measure_length, bool):
-            raise TypeError("`measure_length` is not a bool!")
-        if not isinstance(print_all, bool):
-            raise TypeError("`print_all` is not a bool!")
-        
+
         self.name = name
         self.comparer = comparer
-        self.key_types = (object,) if key_types is None else key_types
-        self.value_types = (object,) if value_types is None else value_types
+        self.types = (object,) if types is None else types
         self.detect_key_moves = detect_key_moves
         self.comparison_move_function = (lambda key, value: value) if comparison_move_function is None else comparison_move_function
         self.measure_length = measure_length
         self.print_all = print_all
+        self.check_initialization_parameters()
 
-    def check_types(self, data:dict[c,d], trace:list[tuple[str,str]]) -> list[tuple[list[tuple[str,str]],Exception]]:
+    def check_initialization_parameters(self) -> None:
+        if not isinstance(self.name, str):
+            raise TypeError("`name` is not a str!")
+        if not (self.comparer is None or isinstance(self.comparer, (ComparerSection, dict))):
+            raise TypeError("`comparer` is not a ComparerSection, NoneType, or list!")
+        if isinstance(self.comparer, dict):
+            for comparer_index, (comparer_key, comparer_value) in enumerate(self.comparer.items()):
+                if not isinstance(comparer_key, type):
+                    raise TypeError("Key number %i of `comparer` is not a type!" % (comparer_index))
+                if not (comparer_value is None or isinstance(comparer_value, ComparerSection)):
+                    raise TypeError("Key \"%s\" of `comparer` is not a ComparerSection or None!" % (comparer_key.__name__))
+        if not isinstance(self.types, tuple) and self.types is not None:
+            raise TypeError("`value_types` is not a tuple or None!")
+        if isinstance(self.types, tuple) and not all(isinstance(item, (type)) for item in self.types):
+            raise TypeError("An item of `value_types` is not a type!")
+        if not isinstance(self.detect_key_moves, bool):
+            raise TypeError("`detect_key_moves` is not a bool!")
+        if not isinstance(self.comparison_move_function, Callable) and self.comparison_move_function is not None:
+            raise TypeError("`comparison_move_function` is not a Callable or None!")
+        if not isinstance(self.measure_length, bool):
+            raise TypeError("`measure_length` is not a bool!")
+        if not isinstance(self.print_all, bool):
+            raise TypeError("`print_all` is not a bool!")
+
+    def check_types(self, data:dict[c,d], trace:Trace) -> list[tuple[Trace,Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
-        output:list[list[tuple[str,str]]] = []
+        output:list[tuple[Trace,Exception]] = []
         if not isinstance(data, dict):
             output.append((trace, TypeError("`data` has the wrong type, %s instead of dict!" % type(data))))
             return output
         for key, value in data.items():
-            new_trace = trace.copy()
-            new_trace.append((self.name, key))
+            new_trace = trace.copy(self.name, key)
             if isinstance(key, D.Diff) or isinstance(value, D.Diff):
                 raise TypeError("`check_types` was given data containg Diffs!")
-            
-            excepted = False
-            for label, item, types in (("key", key, self.key_types), ("value", value, self.value_types)):
-                if isinstance(types, tuple):
-                    if not isinstance(item, types):
-                        excepted = True
-                        output.append((new_trace, TypeError("Key, value %s: %s in %s excepted because %s is not %s!" % (stringify(key), stringify(value), self.name, label, types))))
-                        break
-                else:
-                    try:
-                        types_output = types(key, value)
-                    except Exception as e:
-                        excepted = True
-                        types_output = None
-                        arguments = list(e.args)
-                        arguments.append("Type checker of %s for %s in key, value %s: %s excepted!" % (label, self.name, stringify(key), stringify(value)))
-                        e.args = tuple(arguments)
-                        output.append((new_trace, e))
-                        break
-                    if types_output is not True:
-                        excepted = True
-                        output.append((new_trace, TypeError("Type checker of %s for %s in key, value %s: %s returned False!" % (label, self.name, stringify(key), stringify(value)))))
-                        break
-            if excepted:
+
+            if not isinstance(value, self.types):
+                output.append((new_trace.copy().give_key(self.name), TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (stringify(key), stringify(value), self.name, self.types))))
                 continue
-                
-            comparer_set = self.choose_comparer(key, value, trace)
+
+            comparer_set = self.choose_comparer(key, value)
             if len(comparer_set) != 1 or D.DiffType.not_diff not in comparer_set:
                 raise TypeError("`check_types` was given data containg Diffs!")
             comparer = comparer_set[D.DiffType.not_diff]
@@ -294,7 +293,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
                 output.extend(comparer.check_types(value, new_trace))
         return output
 
-    def compare(self, data1: dict[c,d], data2: dict[c,d], trace:list[tuple[str,str]]) -> dict[c|D.Diff[c,c],d|D.Diff[d,d]]:
+    def compare(self, data1: dict[c,d], data2: dict[c,d], trace:Trace) -> dict[c|D.Diff[c,c],d|D.Diff[d,d]]:
         key_occurences:dict[c,list[D.DiffType]] = {}
 
         # get occurence counts
@@ -305,7 +304,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
                 key_occurences[key].append(diff_type)
             else:
                 key_occurences[key] = [diff_type]
-            
+
         data_for_add_remove_change_compare:dict[c|D.Diff[c,c],tuple[tuple[D.DiffType, d],...]] = {}
         # assemble key change dicts.
         if self.detect_key_moves:
@@ -330,7 +329,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
                 data_for_add_remove_change_compare[key] = ((D.DiffType.old, data1[key]), (D.DiffType.new, data2[key]))
             else:
                 raise RuntimeError("Illegal state!")
-    
+
         if self.detect_key_moves: # if False, then additions and removals are added to data_for_add_remove_change_compare above.
             # find matching values.
             new_keys_involved_in_key_change:set[c] = set()
@@ -357,10 +356,8 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
                 if value1 == value2:
                     output[key] = value1
                 else:
-                    comparer_set = self.choose_comparer(key, D.Diff(value1, value2), trace)
-                    new_trace = trace.copy()
-                    new_trace.append((self.name, key))
-                    output[key] = comparer_set.compare(value1, value2, new_trace)
+                    comparer_set = self.choose_comparer(key, D.Diff(value1, value2))
+                    output[key] = comparer_set.compare(value1, value2, trace.copy(self.name, key))
                     continue
             elif len(occurences) == 1:
                 # since there's now only one value, there's no more comparing to do.
@@ -375,38 +372,18 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
                 raise RuntimeError("Illegal state!")
         return {key: value for key, value in sorted(output.items())}
 
-    def choose_comparer(self, key:c, value:d, trace:list[tuple[str,str]]) -> ComparerSet:
-        def lambda_test_value(test_function:Callable[[c,d],bool], test_key:c, test_value:d) -> bool:
-            exception = None
-            try:
-                test_value_output = test_function(test_key, test_value)
-            except Exception as e:
-                exception_args = list(e.args)
-                exception_args.append("Test function \"%s\" on \"%s\" for %s excepted!" % (test_function, test_key, stringify_trace(trace, self.name)))
-                e.args = tuple(exception_args)
-                exception = e
-            if exception is not None: raise exception
-            if not isinstance(test_value_output, bool):
-                raise TypeError("Test function \"%s\" on \"%s\" for %s failed!" % (test_function, test_key, stringify_trace(trace, self.name)))
-            return test_value_output
-        
+    def choose_comparer(self, key:c, value:d) -> ComparerSet:
         output:dict[D.DiffType,ComparerSection] = {}
         for key_iter, value_iter, key_diff_type, value_diff_type in D.double_iter_diff(key, value):
-            if isinstance(self.comparer, list):
-                for test_function, new_comparer in self.comparer:
-                    if (isinstance(test_function, str) and key_iter == test_function) or (isinstance(test_function, Callable) and lambda_test_value(test_function, key_iter, value_iter)):
-                        output[value_diff_type] = new_comparer
-                        break
-                    else: continue
-                else:
-                    raise KeyError("Unable to find a ComparerSection for %s %s: %s!" % (stringify_trace(trace, self.name), stringify(key_iter), stringify(value_iter)))
+            if isinstance(self.comparer, dict):
+                output[value_diff_type] = self.comparer[type(value_iter)]
+                # errors should be caught by the type checker.
             else:
                 output[value_diff_type] = self.comparer
         return ComparerSet(output)
 
-    def print_item(self, key:c, value:d, comparer_set:ComparerSet[d], trace:list[tuple[str,str]], message:str="") -> list[str]:
-        new_trace = trace.copy()
-        new_trace.append((self.name, key))
+    def print_item(self, key:c, value:d, comparer_set:ComparerSet[d], trace:Trace, message:str="") -> list[str]:
+        new_trace = trace.copy(self.name, key)
         subcomparer_output = self.check_printer_output(comparer_set.print_text(D.DiffType.not_diff, value, new_trace), new_trace)
         if len(subcomparer_output) == 0:
             return ["%s%s %s: empty" % (message, self.name, stringify(key))]
@@ -418,26 +395,26 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
             output.extend("\t" + line for line in subcomparer_output)
             return output
 
-    def print_text(self, data:dict[c, d], trace:list[tuple[str,str]]) -> list[str]:
+    def print_text(self, data:dict[c, d], trace:Trace) -> list[str]:
         output:list[str] = []
         if not isinstance(data, dict):
-            raise TypeError("`data` is not a dict at %s, but instead type %s!" % (stringify_trace(trace, self.name), type(data)))
+            raise TypeError("`data` is not a dict at %s, but instead type %s!" % (trace.give_key(self.name), type(data)))
         for key, value in data.items():
-            comparer_set = self.choose_comparer(key, value, trace)
+            comparer_set = self.choose_comparer(key, value)
             output.extend(self.print_item(key, value, comparer_set, trace))
         return output
 
-    def compare_text(self, data:dict[c, d], trace:list[tuple[str,str]]) -> tuple[list[str],bool]:
+    def compare_text(self, data:dict[c, d], trace:Trace) -> tuple[list[str],bool]:
         output:list[str] = []
         any_changes = False
         if not isinstance(data, dict):
-            raise TypeError("`data` is not a dict at %s, but instead type %s!" % (stringify_trace(trace, self.name), type(data)))
+            raise TypeError("`data` is not a dict at %s, but instead type %s!" % (trace.give_key(self.name), type(data)))
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
         for key, value in data.items():
             can_print_print_all = True # if the print_all thing is overridden for whatever reason.
             key_str = key.first_existing_property() if isinstance(key, D.Diff) else key
-            comparer_set = self.choose_comparer(key, value, trace)
+            comparer_set = self.choose_comparer(key, value)
 
             if isinstance(key, D.Diff):
                 if key.is_addition:
@@ -469,8 +446,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
                         output.extend(self.print_item(key_str, value, comparer_set, trace, message="Unchanged "))
                     pass # This means that it is not a difference and does not contain differences.
                 else:
-                    new_trace = trace.copy()
-                    new_trace.append((self.name, key_str))
+                    new_trace = trace.copy(self.name, key_str)
                     subcomparer_lines, has_changes = self.check_comparer_output(comparer_set.compare_text(D.DiffType.not_diff, value, new_trace), new_trace)
                     if has_changes:
                         any_changes = True
@@ -486,8 +462,8 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
     def __init__(
             self,
             name:str,
-            comparer:ComparerSection[d]|None|list[tuple[Callable[[int, d],bool],ComparerSection[d]|None]],
-            types:tuple[type]|Callable[[int, c],bool]|None,
+            comparer:ComparerSection[d]|None|dict[type,ComparerSection[d]|None],
+            types:tuple[type]|None,
             print_flat:bool=False,
             ordered:bool=True,
             measure_length:bool=False,
@@ -506,21 +482,6 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
          * If `print_flat` is False: then lists are printed such as 0: item1\\n1: item2\\n2: item3
          * If `measure_length` is True, then it will show how the length of the data changed when comparing.
          * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.'''
-        if not isinstance(name, str):
-            raise TypeError("`name` is not a str!")
-        if isinstance(comparer, list):
-            if not all(isinstance(item, tuple) and len(item) == 2 and isinstance(item[0], Callable) and isinstance(item[1], (ComparerSection)) or item[1] is None for item in comparer):
-                raise TypeError("`comparer` is not a list of tuples of Callables and ComparerSections!")
-        if isinstance(types, type) or (not isinstance(types, (tuple, Callable)) and types is not None):
-            raise TypeError("`types` is not an Iterable, Callable, or None but instead a \"%s\"!" % types.__class__.__name__)
-        if isinstance(types, tuple) and not all(isinstance(item, (type, UnionType)) for item in types):
-            raise TypeError("An item of `types` is not a type!")
-        if not isinstance(print_flat, bool):
-            raise TypeError("`print_flat` is not a bool!")
-        if not isinstance(measure_length, bool):
-            raise TypeError("`measure_length` is not a bool!")
-        if not isinstance(print_all, bool):
-            raise TypeError("`print_all` is not a bool!")
 
         self.name = name
         self.comparer = comparer
@@ -529,43 +490,51 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
         self.ordered = ordered
         self.measure_length = measure_length
         self.print_all = print_all
-    
-    def check_types(self, data:list[d], trace:list[tuple[str,str]]) -> list[tuple[list[tuple[str,str]],Exception]]:
+        self.check_initialization_parameters()
+
+    def check_initialization_parameters(self) -> None:
+        if not isinstance(self.name, str):
+            raise TypeError("`name` is not a str!")
+        if not (self.comparer is None or isinstance(self.comparer, (ComparerSection, dict))):
+            raise TypeError("`comparer` is not a ComparerSection, dict, or None!")
+        if isinstance(self.comparer, dict):
+            for comparer_index, (comparer_key, comparer_value) in enumerate(self.comparer.items()):
+                if not isinstance(comparer_key, type):
+                    raise TypeError("Key number %i of `comparer` is not a type!" % (comparer_index))
+                if not (comparer_value is None or isinstance(comparer_value, ComparerSection)):
+                    raise TypeError("Key \"%s\" of `comparer` is not a ComparerSection or None!" % (comparer_key.__name__))
+        if not (self.types is None or isinstance(self.types, tuple)):
+            raise TypeError("`types` is not an a tuple or None but instead a \"%s\"!" % self.types.__class__.__name__)
+        if isinstance(self.types, tuple) and not all(isinstance(item, (type, UnionType)) for item in self.types):
+            raise TypeError("An item of `types` is not a type!")
+        if not isinstance(self.print_flat, bool):
+            raise TypeError("`print_flat` is not a bool!")
+        if not isinstance(self.measure_length, bool):
+            raise TypeError("`measure_length` is not a bool!")
+        if not isinstance(self.print_all, bool):
+            raise TypeError("`print_all` is not a bool!")
+
+    def check_types(self, data:list[d], trace:Trace) -> list[tuple[list[tuple[str,str]],Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[list[tuple[int,d]]] = []
         for index, item in enumerate(data):
-            new_trace = trace.copy()
-            new_trace.append((self.name, index))
+            new_trace = trace.copy(self.name, index)
             if isinstance(item, D.Diff):
                 raise TypeError("`check_types` was given data containg Diffs!")
-            
-            if isinstance(self.types, tuple):
-                if not isinstance(item, self.types):
-                    output.append((new_trace, TypeError("Index, item %i: %s in %s excepted because item is not %s!" % (index, stringify(item), self.name, self.types))))
-                    continue
-            else:
-                try:
-                    types_output = self.types(index, item)
-                except Exception as e:
-                    types_output = None
-                    arguments = list(e.args)
-                    arguments.append("Type checker for %s in index, item %i: %s excepted!" % (self.name, index, stringify(item)))
-                    e.args = tuple(arguments)
-                    output.append(new_trace)
-                    continue
-                if types_output is not True:
-                    output.append((new_trace, TypeError("Type checker for %s in index, item %i: %s returned False!" % (self.name, index, stringify(item)))))
-                    continue
-                
-            comparer_set = self.choose_comparer(index, item, trace)
+
+            if not isinstance(item, self.types):
+                output.append((new_trace.copy().give_key(self.name), TypeError("Index, item %i: %s in %s excepted because item is not %s!" % (index, stringify(item), self.name, self.types))))
+                continue
+
+            comparer_set = self.choose_comparer(index, item)
             if len(comparer_set) != 1 or D.DiffType.not_diff not in comparer_set:
                 raise TypeError("`check_types` was given data containg Diffs!")
             comparer = comparer_set[D.DiffType.not_diff]
             if comparer is not None:
                 output.extend(comparer.check_types(item, new_trace))
         return output
-    
-    def compare(self, data1:Iterable[d], data2:Iterable[d], trace:list[tuple[str,str]]) -> Iterable[d]:
+
+    def compare(self, data1:Iterable[d], data2:Iterable[d], trace:Trace) -> Iterable[d]:
         output:list[d|D.Diff[d]] = []
         if self.ordered:
             index = -1
@@ -573,10 +542,8 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
                 if item1 == item2:
                     output.append(item1)
                 else:
-                    comparer_set = self.choose_comparer(index, D.Diff(item1, item2), trace)
-                    new_trace = trace.copy()
-                    new_trace.append((self.name, index))
-                    output.append(comparer_set.compare(item1, item2, new_trace))
+                    comparer_set = self.choose_comparer(index, D.Diff(item1, item2))
+                    output.append(comparer_set.compare(item1, item2, trace.copy(self.name, index)))
             # now, only the shortest iterable has been consumed.
             if len(data1) > len(data2):
                 output.extend(D.Diff(old=data1[i]) for i in range(index + 1, len(data1)))
@@ -596,21 +563,12 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
                 else:
                     output.append(D.Diff(new=item))
             return output
-    
-    def choose_comparer(self, index:int, item:d, trace:list[tuple[str,str]]) -> ComparerSet:
+
+    def choose_comparer(self, index:int, item:d) -> ComparerSet:
         output:dict[D.DiffType,ComparerSection] = {}
         for item_iter, diff_type in D.iter_diff(item):
-            if isinstance(self.comparer, list):
-                for test_value, new_comparer in self.comparer:
-                    test_value_output = test_value(index, item_iter)
-                    if not isinstance(test_value_output, bool):
-                        raise TypeError("Test value \"%s\" on \"%s\" for %s failed!" % (test_value, item_iter, stringify_trace(trace, self.name)))
-                    if test_value_output:
-                        output[diff_type] = new_comparer
-                        break
-                    else: continue
-                else:
-                    raise KeyError("Unable to find a ComparerSection for %s %s!" % (stringify_trace(trace, self.name), str(item_iter)))
+            if isinstance(self.comparer, dict):
+                output[diff_type] = self.comparer[type(item_iter)]
             else:
                 output[diff_type] = self.comparer
         return ComparerSet(output)
@@ -635,37 +593,36 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
             output.extend("\t" + line for line in subcomparer_output)
             return output
 
-    def print_text(self, data:Iterable[d], trace:list[tuple[str,str]]) -> list[str]:
+    def print_text(self, data:Iterable[d], trace:Trace) -> list[str]:
         output:list[str] = []
         items_str:list[str] = [] # print_flat only
         if not isinstance(data, Iterable):
-            raise TypeError("`data` is not an Iterable at %s, but instead type %s!" % (stringify_trace(trace, self.name), type(data)))
+            raise TypeError("`data` is not an Iterable at %s, but instead type %s!" % (trace.give_key(self.name), type(data)))
         for index, item in enumerate(data):
-            comparer_set = self.choose_comparer(index, item, trace)
+            comparer_set = self.choose_comparer(index, item)
 
-            new_trace = trace.copy()
-            new_trace.append((self.name, str(index)))
+            new_trace = trace.copy(self.name, index)
             subcomparer_output = self.check_printer_output(comparer_set.print_text(D.DiffType.not_diff, item, new_trace), new_trace)
             if self.print_flat:
                 if len(subcomparer_output) == 1:
                     items_str.append(subcomparer_output[0])
                 else:
-                    raise RuntimeError("Subcomparer of flat-printing %s returned multiple lines!" % (stringify_trace(trace, self.name)))
+                    raise RuntimeError("Subcomparer of flat-printing %s returned multiple lines!" % (trace.give_key(self.name)))
             else:
                 output.extend(self.print_item(index, item, subcomparer_output))
         if self.print_flat:
             output.append("[" + ", ".join(items_str) + "]")
         return output
 
-    def compare_text(self, data:Iterable[d], trace:list[tuple[str,str]]) -> tuple[list[str],bool]:
+    def compare_text(self, data:Iterable[d], trace:Trace) -> tuple[list[str],bool]:
         output:list[str] = []
         any_changes = False
         if not isinstance(data, Iterable):
-            raise TypeError("`data` is not an Iterable at %s, but instead type %s!" % (stringify_trace(trace, self.name), type(data)))
+            raise TypeError("`data` is not an Iterable at %s, but instead type %s!" % (trace, type(data)))
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
         for index, item in enumerate(data):
-            comparer_set = self.choose_comparer(index, item, trace)
+            comparer_set = self.choose_comparer(index, item)
 
             if isinstance(item, D.Diff):
                 any_changes = True
@@ -684,13 +641,11 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
                 current_length += 1
                 if comparer_set[D.DiffType.not_diff] is None:
                     if self.print_all:
-                        new_trace = trace.copy()
-                        new_trace.append((self.name, str(index)))
+                        new_trace = trace.copy(self.name, index)
                         output.extend(self.print_item(index, item, self.check_printer_output(comparer_set.print_text(D.DiffType.not_diff, item, new_trace), new_trace), message="Unchanged "))
                     pass # This means that it is not a Diff and does not contains Diffs, so there is no text to write.
                 else:
-                    new_trace = trace.copy()
-                    new_trace.append((self.name, str(index)))
+                    new_trace = trace.copy(self.name, index)
                     subcomparer_lines, has_changes = self.check_comparer_output(comparer_set.compare_text(D.DiffType.not_diff, item, new_trace), new_trace)
                     if has_changes:
                         any_changes = True
@@ -705,121 +660,63 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
             output = ["Total %s: %i (+%i, -%i)" % (self.name, current_length, addition_length, removal_length)] + output
         return output, any_changes
 
-def get_TypedDictComparerSection_attributes(
-        name:str,
-        types:list[tuple[str|list[str], type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool]|type|tuple[type], ComparerSection[d]|None]]]],
-        ) -> tuple[Callable[[str,Any],bool,], Callable[[str,Any],bool], list[tuple[str,Callable[[c,d],bool], ComparerSection]]]:
-    def get_func(comparer_key:str|Callable[[c],bool], additional_function:Callable[[c,d],bool]|type|tuple[type]) -> Callable[[c,d],bool]:
-        if isinstance(additional_function, (tuple, type)):
-            if isinstance(comparer_key, str):
-                return lambda key, value: comparer_key == key and isinstance(value, additional_function)
-            else:
-                return lambda key, value: comparer_key(key, value) and isinstance(value, additional_function)
-        else:
-            if isinstance(comparer_key, str):
-                return lambda key, value: comparer_key == key and additional_function(key, value)
-            else:
-                return lambda key, value: comparer_key(key, value) and additional_function(key, value)
+class TypedDictComparerSection(DictComparerSection[str,d]):
+    def __init__(self, name:str, types:dict[str,dict[type,ComparerSection[d]|None]], measure_length:bool=False, print_all:bool=False) -> None:
+        self.name = name
+        self.types = types
+        self.check_initialization_parameters()
+        self.detect_key_moves = False
+        self.measure_length = measure_length
+        self.print_all = print_all
 
-    expanded_types:list[tuple[str|list[str], type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool]|type|tuple[type], ComparerSection[d]|None]]]] = []
-    # `expanded_types` is just like `types`, but the first item is always a string.
-    for keys, value_types, comparers in types:
-        if isinstance(keys, list):
-            expanded_types.extend((key, value_types, comparers) for key in keys)
-        else:
-            expanded_types.append((keys, value_types, comparers))
-    keys_strings = {key for key, value_types, comparers in expanded_types if isinstance(key, str)}
+    def check_initialization_parameters(self) -> None:
+        if not isinstance(self.name, str):
+            raise TypeError("`name` is not a str!")
+        if not isinstance(self.types, dict):
+            raise TypeError("`types` is not a dict!")
+        for index, (key, value) in enumerate(self.types.items()):
+            if not isinstance(key, str):
+                raise TypeError("Key number %i of `types` is not a str, but instead %s!" % (index, key.__class__.__name__))
+            if not isinstance(value, dict):
+                raise TypeError("Value of key \"%s\" of `types` is not a dict, but instead %s!" % (key, value.__class__.__name__))
+            for sub_index, (sub_key, sub_value) in enumerate(value.items()):
+                if not isinstance(sub_key, type):
+                    raise TypeError("Key number %i of value of key \"%s\" of `types` is not a type, but instead %s!" % (sub_index, key, sub_key.__class__.__name__))
+                if not (sub_value is None or isinstance(sub_value, ComparerSection)):
+                    raise TypeError("Value of key \"%s\" of value of key \"%s\" of `types` is not a ComparerSection or None, but instead %s!" % (sub_key, key, sub_value.__class__.__name__))
 
-    value_types_string_dict = {key: value_types for key, value_types, comparers in expanded_types}
-    all_comparers:list[tuple[str,Callable[[c,d],bool], ComparerSection]] = []
-    for comparer_key, value_types, comparers in expanded_types:
-        if isinstance(comparers, ComparerSection) or comparers is None:
-            all_comparers.append((comparer_key, comparers))
-        else:
-            for additional_function, comparer in comparers:
-                all_comparers.append((get_func(comparer_key, additional_function), comparer))
-    return (
-        lambda key, value: key in keys_strings,
-        lambda key, value: (key in value_types_string_dict and isinstance(value, value_types_string_dict[key])),
-        all_comparers,
-    )
+    def check_types(self, data:dict[str,d], trace:Trace) -> list[tuple[Trace,Exception]]:
+        '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
+        output:list[tuple[Trace,Exception]] = []
+        if not isinstance(data, dict):
+            output.append((trace, TypeError("`data` has the wrong type, %s instead of dict!" % (type(data)))))
+            return output
+        for key, value in data.items():
+            new_trace = trace.copy(self.name, key)
+            if isinstance(key, D.Diff) or isinstance(value, D.Diff):
+                raise TypeError("`check_types` was given data containg Diffs!")
 
-def type_check_TypedDictComparerSection_parameters(
-    name:str,
-    types:list[tuple[str|list[str], type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool]|type|tuple[type], ComparerSection[d]|None]]]],
-) -> None:
-    if not isinstance(name, str):
-        raise TypeError("`name` is not a str!")
-    if not isinstance(types, (list, tuple)):
-        raise TypeError("`types` is not a list or tuple!")
-    already_keys:set[str] = set()
-    for index, item in enumerate(types):
-        if not isinstance(item, (tuple, list)):
-            # It is allowed to be a list so that it can be changed to allow for nesting.
-            raise TypeError("Item %i of `types` is not a tuple: %s" % (index, item))
-        if len(item) != 3:
-            raise ValueError("Item %i of `types` is not length 3: %s" % (index, item))
-        if not isinstance(item[0], (str, list)):
-            raise TypeError("The first item of item %i of `types` is not a str or list!" % (index,))
-        if isinstance(item[0], list) and not all(isinstance(key, str) for key in item[0]):
-            raise TypeError("An item of the first item of item %i of `types` is not a str!" % (index,))
-        if (isinstance(item[0], str) and item[0] in already_keys) or (isinstance(item[0], list) and any(key in already_keys for key in item[0])):
-            raise ValueError("The first item of item %i of `types` is the same as another first item of an item of `types`!" % (index,))
-        if isinstance(item[0], list):
-            already_keys.update(item[0])
-        else:
-            already_keys.add(item[0])
-        if not isinstance(item[1], (type, UnionType, tuple)):
-            raise TypeError("The second item of item %i of `types` is not a type or tuple, but instead a %s!" % (index, item[1].__class__.__name__))
-        if isinstance(item[1], tuple) and not all(isinstance(types_item, (type, UnionType)) for types_item in item[1]):
-            raise TypeError("An item of the second item of item %i of `types` is not a type!" % (index,))
-        if not isinstance(item[2], (ComparerSection, list)) and item[2] is not None:
-            raise TypeError("The third item of item %i of `types` is not a ComparerSection, list, or None!" % (index,))
-        if isinstance(item[2], list):
-            if len(item[2]) == 0:
-                raise ValueError("The third item of item %i of `types` is empty!" % (index,))
-            for comparer_item_index, comparer_item in enumerate(item[2]):
-                if not isinstance(comparer_item, (list, tuple)):
-                    raise TypeError("Item %i of the third item of item %i of `types` is not a list or tuple!" % (comparer_item_index, index))
-                if len(comparer_item) != 2:
-                    raise ValueError("Item %i of the third item of item %i of `types` is not length 2!" % (index,))
-                if not isinstance(comparer_item[0], (Callable, type, tuple)):
-                    raise TypeError("The first item of item %i of the third item of item %i of `types` is not a Callable, type, or tuple!" % (comparer_item_index, index))
-                if isinstance(comparer_item[0], tuple) and not all(isinstance(type_item, type) for type_item in comparer_item[0]):
-                    raise TypeError("An item of the first item of item %i of the third item of item %i of `types` is not a type!" % (comparer_item_index, index))
-                if not isinstance(comparer_item[1], ComparerSection) and comparer_item[1] is not None:
-                    raise TypeError("The second item of item %i of the third item of item %i of `types` is not a ComparerSection or None!" % (comparer_item_index, index))
+            if key not in self.types:
+                output.append((new_trace.copy().give_key(self.name), TypeError("Key, value %s: %s in %s excepted because key is not recognized!" % (stringify(key), stringify(value), self.name))))
+                continue
+            if type(value) not in self.types[key]:
+                value_types_string = ", ".join(type_key.__name__ for type_key in self.types[key])
+                output.append((new_trace.copy().give_key(self.name), TypeError("Key, value %s: %s in %s excepted because value is %s instead of [%s]!" % (stringify(key), stringify(value), self.name, value_types_string))))
+                continue
 
-def TypedDictComparerSection(name:str, types:list[tuple[str|list[str], type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool]|type|tuple[type], ComparerSection[d]|None]]]], measure_length:bool=False) -> DictComparerSection[c,d]:
-    '''Alias for a DictComparerSection that has certain named parameters.
-    * `name` is what the key of this dictionary is.
-    * `items` is a list of tuples describing the keys and values.
-    * The first item of each tuple of `items` is the key value; it will match this value to the key.
-    * If the first item of the tuple is a list, then it make the same comparer for all items of the list.
-    * The second item of each tuple describes the allowed types of the value.
-    * The third item of each tuple is the ComparerSection for the matched key and value.
-    * If the third item of each tuple is a list, then it will call the first item of each tuple with the key and value, and use the corresponding ComparerSection.'''
-    type_check_TypedDictComparerSection_parameters(name, types)
-    key_types_lambda, value_types_lambda, all_comparers = get_TypedDictComparerSection_attributes(name, types)
-
-    return DictComparerSection(
-        name=name,
-        key_types=key_types_lambda,
-        value_types=value_types_lambda,
-        comparer=all_comparers,
-        measure_length=measure_length,
-    )
-
-def UnnamedDictComparerSection(
-        *types:tuple[str|list[str],type|tuple[type], ComparerSection[d]|None|list[tuple[Callable[[c,d],bool], ComparerSection[d]|None]]],
-        name:str="field",
-        measure_length:bool=False
-    ) -> DictComparerSection:
-    return TypedDictComparerSection(
-        name=name,
-        measure_length=measure_length,
-        types=types
-    )
+            comparer_set = self.choose_comparer(key, value)
+            if len(comparer_set) != 1 or D.DiffType.not_diff not in comparer_set:
+                raise TypeError("`check_types` was given data containg Diffs!")
+            comparer = comparer_set[D.DiffType.not_diff]
+            if comparer is not None:
+                output.extend(comparer.check_types(value, new_trace))
+        return output
+    
+    def choose_comparer(self, key:str, value:d) -> ComparerSet:
+        output:dict[D.DiffType,ComparerSection] = {}
+        for key_iter, value_iter, key_diff_type, value_diff_type in D.double_iter_diff(key, value):
+            output[value_diff_type] = self.types[key_iter][type(value_iter)]
+        return ComparerSet(output)
 
 class Comparer():
     '''Can be created by a DataMinerCollection to compare the output of the DataMiners with each other.'''
@@ -848,7 +745,7 @@ class Comparer():
         else:
             self.post_normalizer = post_normalizer
         self.base_comparer_section = base_comparer_section
-    
+
     def normalize(self, data:a, version:"Version.Version", dataminers:dict[str,"DataMiner.DataMinerCollection"]) -> b:
         '''Manipulates the data before comparison.'''
         return self.normalizer(data, version, dataminers)
@@ -910,15 +807,15 @@ class Comparer():
         final.extend(lines)
 
         return "\n".join(final), any_changes
-    
+
     def check_types(self, data:b) -> None:
         '''Raises an exception with data about what went wrong if an error occurs.'''
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
-        traces = self.base_comparer_section.check_types(data, [])
+        traces = self.base_comparer_section.check_types(data, Trace())
         if isinstance(self, DefaultComparer): return
         for trace, exception in traces:
-            print("Exception in %s:" % stringify_trace(trace))
+            print("Exception in %s:" % trace)
             traceback.print_exception(exception)
             # raise exception
             print()
@@ -930,18 +827,18 @@ class Comparer():
     def compare(self, data1:b, data2:b) -> b:
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
-        return self.base_comparer_section.compare(data1, data2, [])
+        return self.base_comparer_section.compare(data1, data2, Trace())
 
     def compare_text(self, data:b) -> tuple[list[str],bool]:
         '''Returns a list of lines and if there were any changes'''
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
-        return self.base_comparer_section.compare_text(data, [])
-    
+        return self.base_comparer_section.compare_text(data, Trace())
+
     def print_text(self, data:b) -> list[str]:
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
-        return self.base_comparer_section.print_text(data, [])
+        return self.base_comparer_section.print_text(data, Trace())
 
 class DefaultComparer(Comparer):
     def __init__(self) -> None:
