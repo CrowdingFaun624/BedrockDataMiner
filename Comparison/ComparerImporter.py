@@ -248,7 +248,7 @@ class GroupIntermediate(Intermediate):
         self.links_to_other_intermediates:list[Intermediate] = []
         self.my_type:set[type] = set()
         self.check_types_final:list[tuple[list[type], ComparerIntermediate]] = None
-        self.final:list[list[Callable[[str,Any],bool], Comparer.ComparerSection|None]] = None
+        self.final:dict[type,Comparer.ComparerSection] = None
 
     def set(self, intermediate_comparers:dict[str,Intermediate], functions:dict[str,Callable]) -> None:
         self.types = []
@@ -518,7 +518,7 @@ class TypedDictIntermediate(ComparerIntermediate):
         self.tags = {key: (value["tags"] if "tags" in value else []) for key, value in self.types_strs.items()}
 
         self.links_to_other_intermediates:list[Intermediate] = []
-        self.types_final:dict[str,dict[type,Comparer.ComparerSection|None]] = None
+        self.types_final:dict[tuple[str,type],Comparer.ComparerSection|None] = None
         self.check_types_final:dict[str,tuple[list[type],ComparerIntermediate|None]] = {}
         self.final:Comparer.DictComparerSection = None
 
@@ -561,7 +561,7 @@ class TypedDictIntermediate(ComparerIntermediate):
             }
 
     def create_final(self) -> None:
-        self.types_final = {key: {} for key in self.types.keys()}
+        self.types_final = {}
         self.final = Comparer.TypedDictComparerSection(
             name=self.field,
             types=self.types_final,
@@ -578,11 +578,14 @@ class TypedDictIntermediate(ComparerIntermediate):
         for types_key, types_value in self.types.items():
             comparer = types_value["comparer"]
             if isinstance(comparer, GroupIntermediate):
-                self.types_final[types_key] = comparer.final
+                for group_type, group_comparer_section in comparer.final.items():
+                    self.types_final[types_key, group_type] = group_comparer_section
                 self.check_types_final[types_key] = (self.expand_types(types_value["type"]), comparer)
             else:
                 key_types = self.expand_types(types_value["type"])
-                self.types_final[types_key] = {key_type: (comparer.final if comparer is not None else None) for key_type in key_types}
+                comparer_final = (comparer.final if comparer is not None else None)
+                for key_type in key_types:
+                    self.types_final[types_key, key_type] = comparer_final
                 self.check_types_final[types_key] = (self.expand_types(types_value["type"]), comparer)
 
     def check(self) -> None:
