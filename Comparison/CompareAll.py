@@ -1,6 +1,6 @@
 import threading
 import traceback
-from typing import Generator, Iterable, TypeVar, TYPE_CHECKING, Union
+from typing import Any, Generator, Iterable, TypeVar, TYPE_CHECKING, Union
 
 import DataMiners.DataMiners as DataMiners
 import Downloader.VersionsParser as VersionsParser
@@ -23,8 +23,8 @@ def pairs(_list:Iterable[Pairs]) -> Generator[tuple[Pairs,Pairs], None, None]:
             yield (previous_item, item)
         previous_item = item
 
-def compare(version1:Union["Version.Version",None], version2:"Version.Version", dataminer_collection:DataMiner.DataMinerCollection, undataminable_versions_between:list["Version.Version"]) -> None:
-    dataminer_collection.compare(version1, version2, undataminable_versions_between, DataMiners.dataminers)
+def compare(version1:Union["Version.Version",None], version2:"Version.Version", dataminer_collection:DataMiner.DataMinerCollection, undataminable_versions_between:list["Version.Version"], data_cache:dict["Version.Version",Any]) -> None:
+    dataminer_collection.compare(version1, version2, undataminable_versions_between, DataMiners.dataminers, data_cache=data_cache)
 
 def compare_all_of(dataminer_collection:DataMiner.DataMinerCollection, versions:list["Version.Version"], exception_holder:dict[str,bool|Exception]) -> None:
     version = None
@@ -36,13 +36,15 @@ def compare_all_of(dataminer_collection:DataMiner.DataMinerCollection, versions:
             comparison_parent.mkdir()
         for already_existing_comparison_file in comparison_parent.iterdir():
             already_existing_comparison_file.unlink()
+        data_cache:dict["Version.Version",Any] = {}
         for version in versions:
             can_be_datamined = version.download_link is not None and not isinstance(dataminer_collection.get_version(version), DataMiner.NullDataMiner)
             if can_be_datamined:
                 if previous_successful_version is not None:
-                    compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between)
+                    compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between, data_cache=data_cache)
+                    del data_cache[previous_successful_version]
                 else: # First version that has this file.
-                    compare(None, version, dataminer_collection, undataminable_versions_between)
+                    compare(None, version, dataminer_collection, undataminable_versions_between, data_cache=data_cache)
                 undataminable_versions_between = []
                 previous_successful_version = version
             else:
