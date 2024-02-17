@@ -1,6 +1,5 @@
-import threading
 import traceback
-from typing import Any, Generator, Iterable, TypeVar, TYPE_CHECKING, Union
+from typing import Generator, Iterable, TypeVar, TYPE_CHECKING, Union
 
 import Comparison.Normalizer as Normalizer
 import DataMiners.DataMiners as DataMiners
