@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # profile.run("main()")
     # with open(Path("./time_report.txt"), "wt") as stream:
     #     stats = pstats.Stats(profile, stream=stream)
-    #     stats.print_stats()
+    #     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
 
     FileManager.clear_temp()
 
