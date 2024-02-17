@@ -48,6 +48,7 @@ def compare_all_of(dataminer_collection:DataMiner.DataMinerCollection, versions:
             if can_be_datamined:
                 if previous_successful_version is not None:
                     compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between, normalizer_dependencies)
+                    normalizer_dependencies.forget(previous_successful_version)
                 else: # First version that has this file.
                     compare(None, version, dataminer_collection, undataminable_versions_between, normalizer_dependencies)
                 undataminable_versions_between = []
@@ -83,7 +84,6 @@ def main() -> None:
     
     sorted_versions = list(flatten(child_versions for child_versions in major_versions.values()))
     exception_holder:dict[str,bool|tuple[Exception,Union["Version.Version",None]]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
-    threads:list[threading.Thread] = []
     normalizer_dependencies = Normalizer.NormalizerDependencies({}, dataminers)
     for dataminer_collection in selected_dataminers:
         compare_all_of(dataminer_collection, sorted_versions, exception_holder, normalizer_dependencies)

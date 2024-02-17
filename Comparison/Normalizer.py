@@ -81,6 +81,15 @@ class NormalizerDependencies():
         if (version, dataminer_name) not in self.data:
             self.data[version, dataminer_name] = self.dataminer_collections[dataminer_name].get_data_file(version, non_exist_ok=True)
         return self.data[version, dataminer_name]
+    
+    def forget(self, version:Version.Version) -> None:
+        '''Removes everything related to the given version from the data.'''
+        items_to_delete:list[tuple[Version.Version,str]] = []
+        for data_version, data_miner in self.data.keys():
+            if data_version is version:
+                items_to_delete.append((data_version, data_miner))
+        for item_to_delete in items_to_delete:
+            del self.data[item_to_delete]
 
 class LocalNormalizerDependencies():
     def __init__(self, normalizer_dependencies:NormalizerDependencies, version1:Version.Version, version2:Version.Version):
