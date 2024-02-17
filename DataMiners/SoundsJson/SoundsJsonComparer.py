@@ -1,23 +1,16 @@
-from typing import TYPE_CHECKING
-
-import Comparison.Comparer as Comparer
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 import Comparison.ComparerImporter as ComparerImporter
 
-if TYPE_CHECKING:
-    import Utilities.Version as Version
-    import DataMiners.DataMiner as DataMiner
-
-def normalize(data:DataMinerTyping.MySoundsJsonTypedDict, version:"Version.Version", dataminers:dict[str,"DataMiner.DataMinerCollection"]) -> DataMinerTyping.MySoundsJsonTypedDict:
+def normalize(data:DataMinerTyping.MySoundsJsonTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.MySoundsJsonTypedDict:
     def normalize_sound_collection(sound_collection_name:str, sound_collection:DataMinerTyping.ResourcePackSoundsJsonSoundCollectionTypedDict, is_interactive_entites:bool=False) -> dict[str, dict[str, DataMinerTyping.SoundsJsonSoundTypedDict]]:
         if not all(key in ("volume", "pitch", "events") for key in sound_collection.keys()):
             raise KeyError("A key in `sound_collection` (name \"%s\") is not equal to \"volume\", \"pitch\", or \"events\": %s" % (sound_collection_name, list(sound_collection.keys())))
         if "events" not in sound_collection:
             raise KeyError("Key \"events\" is not in `sound_collection` (name \"%s\"): %s" % (sound_collection_name, list(sound_collection.keys())))
         
-        if "volume" in sound_collection: sound_collection["volume"] = CollapseResourcePacks.collapse_resource_packs(sound_collection["volume"], resource_packs, version.name, False)
-        if "pitch" in sound_collection: sound_collection["pitch"] = CollapseResourcePacks.collapse_resource_packs(sound_collection["pitch"], resource_packs, version.name, False)
+        if "volume" in sound_collection: sound_collection["volume"] = CollapseResourcePacks.collapse_resource_packs(sound_collection["volume"], resource_packs, False)
+        if "pitch" in sound_collection: sound_collection["pitch"] = CollapseResourcePacks.collapse_resource_packs(sound_collection["pitch"], resource_packs, False)
 
         for sound_name, sound_properties in sound_collection["events"].items():
 
@@ -37,7 +30,7 @@ def normalize(data:DataMinerTyping.MySoundsJsonTypedDict, version:"Version.Versi
             for resource_pack_name in resource_packs_to_delete:
                 del sound_collection["events"][sound_name][resource_pack_name]
 
-            sound_collection["events"][sound_name] = CollapseResourcePacks.collapse_resource_packs(sound_properties, resource_packs, version.name, False)
+            sound_collection["events"][sound_name] = CollapseResourcePacks.collapse_resource_packs(sound_properties, resource_packs, False)
 
     def normalize_sound_collections(sound_collections:dict[str,DataMinerTyping.ResourcePackSoundsJsonSoundCollectionTypedDict], is_interactive_entites:bool=False) -> dict[str,DataMinerTyping.ResourcePackSoundsJsonSoundCollectionTypedDict]:
         if "defaults" in sound_collections and len(sound_collections["defaults"]) == 0:
@@ -48,7 +41,7 @@ def normalize(data:DataMinerTyping.MySoundsJsonTypedDict, version:"Version.Versi
             normalize_sound_collection(sound_collection_name, sound_collection_properties, is_interactive_entites)
 
     assert set(data.keys()) == {"individual_event_sounds", "block_sounds", "interactive_block_sounds", "entity_sounds", "interactive_entity_sounds"}
-    resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = dataminers["resource_packs"].get_data_file(version)
+    resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = dependencies["resource_packs"]
     normalize_sound_collection("individual_sound_events", data["individual_event_sounds"])
     normalize_sound_collections(data["block_sounds"])
     normalize_sound_collections(data["interactive_block_sounds"])

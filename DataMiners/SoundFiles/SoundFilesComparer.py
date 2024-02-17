@@ -1,13 +1,7 @@
-from typing import TYPE_CHECKING
-
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Comparison.ComparerImporter as ComparerImporter
 
-if TYPE_CHECKING:
-    import Utilities.Version as Version
-    import DataMiners.DataMiner as DataMiner
-
-def normalize(data:DataMinerTyping.SoundFiles, version:"Version.Version", dataminers:dict[str,"DataMiner.DataMinerCollection"]) -> DataMinerTyping.NormalizedSoundFilesTypedDict:
+def normalize(data:DataMinerTyping.SoundFiles, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedSoundFilesTypedDict:
     def remove_obj(internal_sound_files:dict[str,DataMinerTyping.SoundFilesTypedDict]) -> dict[str,DataMinerTyping.NormalizedSoundFilesTypedDict]:
         for internal_sound_file_name, internal_sound_file_properties in internal_sound_files.items():
             del internal_sound_file_properties["_obj"]

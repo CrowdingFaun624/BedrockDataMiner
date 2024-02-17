@@ -110,7 +110,7 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
                     raise KeyError("DataMiner \"%s\" failed to create child process of \"%s\"!" % (name, dependency))
                 if isinstance(data[dependency], Exception):
                     raise RuntimeError("DataMiner \"%s\" cannot run because \"%s\" has raised an exception!" % (name, dependency))
-            data[name] = dataminer.store(data)
+            data[name] = dataminer.store(data, dataminers)
         except Exception as e:
             data[name] = e
 

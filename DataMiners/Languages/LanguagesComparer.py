@@ -1,22 +1,16 @@
-from typing import TYPE_CHECKING
-
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 import Comparison.ComparerImporter as ComparerImporter
 
-if TYPE_CHECKING:
-    import Utilities.Version as Version
-    import DataMiners.DataMiner as DataMiner
-
-def normalize(data:DataMinerTyping.Languages, version:"Version.Version", dataminers:dict[str,"DataMiner.DataMinerCollection"]) -> DataMinerTyping.NormalizedLanguages:
+def normalize(data:DataMinerTyping.Languages, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedLanguages:
     def fix_properties(unfixed_data:DataMinerTyping.LanguagesTypedDict, resource_packs:DataMinerTyping.ResourcePacks) -> dict[str,DataMinerTyping.LanguagesPropertiesTypedDict]:
         output = unfixed_data["properties"]
         for resource_pack in unfixed_data["defined_in"]:
             if resource_pack not in output:
                 output[resource_pack] = {}
-        return CollapseResourcePacks.collapse_resource_packs(output, resource_packs, version.name)
+        return CollapseResourcePacks.collapse_resource_packs(output, resource_packs)
 
-    resource_packs:DataMinerTyping.ResourcePacks = dataminers["resource_packs"].get_data_file(version, non_exist_ok=True)
+    resource_packs:DataMinerTyping.ResourcePacks = dependencies["resource_packs"]
     if resource_packs is None:
         resource_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}]
 

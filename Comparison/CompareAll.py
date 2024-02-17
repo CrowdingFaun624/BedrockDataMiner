@@ -2,6 +2,7 @@ import threading
 import traceback
 from typing import Any, Generator, Iterable, TypeVar, TYPE_CHECKING, Union
 
+import Comparison.Normalizer as Normalizer
 import DataMiners.DataMiners as DataMiners
 import Downloader.VersionsParser as VersionsParser
 import Utilities.VersionTags as VersionTags
@@ -23,10 +24,16 @@ def pairs(_list:Iterable[Pairs]) -> Generator[tuple[Pairs,Pairs], None, None]:
             yield (previous_item, item)
         previous_item = item
 
-def compare(version1:Union["Version.Version",None], version2:"Version.Version", dataminer_collection:DataMiner.DataMinerCollection, undataminable_versions_between:list["Version.Version"], data_cache:dict["Version.Version",Any]) -> None:
-    dataminer_collection.compare(version1, version2, undataminable_versions_between, DataMiners.dataminers, data_cache=data_cache)
+def compare(
+        version1:Union["Version.Version",None],
+        version2:"Version.Version",
+        dataminer_collection:DataMiner.DataMinerCollection,
+        undataminable_versions_between:list["Version.Version"],
+        normalizer_dependencies:Normalizer.NormalizerDependencies,
+    ) -> None:
+    dataminer_collection.compare(version1, version2, undataminable_versions_between, normalizer_dependencies)
 
-def compare_all_of(dataminer_collection:DataMiner.DataMinerCollection, versions:list["Version.Version"], exception_holder:dict[str,bool|Exception]) -> None:
+def compare_all_of(dataminer_collection:DataMiner.DataMinerCollection, versions:list["Version.Version"], exception_holder:dict[str,bool|Exception], normalizer_dependencies:Normalizer.NormalizerDependencies) -> None:
     version = None
     try:
         previous_successful_version = None # The last Version that can be datamined for this file.
@@ -36,15 +43,13 @@ def compare_all_of(dataminer_collection:DataMiner.DataMinerCollection, versions:
             comparison_parent.mkdir()
         for already_existing_comparison_file in comparison_parent.iterdir():
             already_existing_comparison_file.unlink()
-        data_cache:dict["Version.Version",Any] = {}
         for version in versions:
             can_be_datamined = version.download_link is not None and not isinstance(dataminer_collection.get_version(version), DataMiner.NullDataMiner)
             if can_be_datamined:
                 if previous_successful_version is not None:
-                    compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between, data_cache=data_cache)
-                    del data_cache[previous_successful_version]
+                    compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between, normalizer_dependencies)
                 else: # First version that has this file.
-                    compare(None, version, dataminer_collection, undataminable_versions_between, data_cache=data_cache)
+                    compare(None, version, dataminer_collection, undataminable_versions_between, normalizer_dependencies)
                 undataminable_versions_between = []
                 previous_successful_version = version
             else:
@@ -79,8 +84,9 @@ def main() -> None:
     sorted_versions = list(flatten(child_versions for child_versions in major_versions.values()))
     exception_holder:dict[str,bool|tuple[Exception,Union["Version.Version",None]]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
     threads:list[threading.Thread] = []
+    normalizer_dependencies = Normalizer.NormalizerDependencies({}, dataminers)
     for dataminer_collection in selected_dataminers:
-        compare_all_of(dataminer_collection, sorted_versions, exception_holder)
+        compare_all_of(dataminer_collection, sorted_versions, exception_holder, normalizer_dependencies)
 
     excepted = False
     excepted_threads:list[tuple[str,Union["Version.Version",None]]] = []
@@ -88,6 +94,7 @@ def main() -> None:
         if isinstance(completion, tuple):
             excepted_threads.append((dataminer_name, completion[1]))
             excepted = True
+            print(dataminer_name)
             traceback.print_exception(completion[0])
             print()
     if excepted:

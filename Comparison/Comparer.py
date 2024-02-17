@@ -4,12 +4,13 @@ from typing import Any, Callable, Generator, Generic, Iterable, TypeVar, TYPE_CH
 from types import UnionType
 
 import Comparison.Difference as D
+import Comparison.Normalizer as Normalizer
+import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.FileManager as FileManager
 import Utilities.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
-    import DataMiners.DataMiner as DataMiner
 
 a = TypeVar("a")
 b = TypeVar("b")
@@ -45,6 +46,7 @@ class Trace():
 
     def give_key(self, current_key:str|int) -> "Trace":
         self.current_key = current_key
+        return self
 
     def __str__(self) -> str:
         if self.current_key is None:
@@ -149,10 +151,10 @@ class ComparerSection(Generic[a]):
     #         raise TypeError("An item of the return value of %s is not a str!" % (trace.give_key(self.name)))
     #     return output
 
-    def check_all_types(self, data:a, trace:Trace) -> list[tuple[Trace, Exception]]: ...
+    def check_all_types(self, data:a, trace:Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> list[tuple[Trace, Exception]]: ...
     def compare_text(self, data:a, trace:Trace) -> tuple[list[str],bool]: ...
     def print_text(self, data:a, trace:Trace) -> list[str]: ...
-    def compare(self, data1:a, data2:a, trace:Trace) -> a: ...
+    def compare(self, data1:a, data2:a, trace:Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> tuple[a,list[tuple[Trace,Exception]]]: ...
 
 class ComparerSet(Generic[d]):
     '''Contains one or two ComparerSections. Is used internally.
@@ -198,18 +200,18 @@ class ComparerSet(Generic[d]):
             raise RuntimeError("Attempted to compare (key %s) using a NoneType object at %s!" % (key, trace))
         else:
             return comparer.compare_text(data, trace)
-    def compare(self, data1:d, data2:d, trace:Trace) -> d:
+    def compare(self, data1:d, data2:d, trace:Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> tuple[d,list[tuple[Trace,Exception]]]:
         if (len(self) == 1) or (len(self) == 2 and self[0] == self[1]):
             # both items have the same ComparerSection.
             comparer = self[0]
             if comparer is None:
-                return D.Diff(data1, data2)
+                return D.Diff(data1, data2), []
             else:
                 # items must be not equal because then the D.Diff could not be created.
-                return comparer.compare(data1, data2, trace)
+                return comparer.compare(data1, data2, trace, normalizer_dependencies)
         else:
             # items have different data types.
-            return D.Diff(data1, data2)
+            return D.Diff(data1, data2), []
 
 class DictComparerSection(ComparerSection[dict[c, d]]):
     def __init__(
@@ -221,6 +223,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
             comparison_move_function:Callable[[c, d], b]|None=None,
             measure_length:bool=False,
             print_all:bool=False,
+            normalizer:Normalizer.Normalizer|None=None
         ) -> None:
         ''' * `name` is what the key of this dictionary is.
          * If `comparer` is a ComparerSection, then it will compare and print all values using that ComparerSection.
@@ -246,6 +249,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
         self.comparison_move_function = (lambda key, value: value) if comparison_move_function is None else comparison_move_function
         self.measure_length = measure_length
         self.print_all = print_all
+        self.normalizer = normalizer
         self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
@@ -271,15 +275,20 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
             raise TypeError("`measure_length` is not a bool!")
         if not isinstance(self.print_all, bool):
             raise TypeError("`print_all` is not a bool!")
+        if not (self.normalizer is None or isinstance(self.normalizer, Normalizer.Normalizer)):
+            raise TypeError("`normalizer` is not a Normalizer or None!")
 
     def check_type(self, key:c, value:d, trace:Trace) -> tuple[Trace,Exception]|None:
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):
             raise TypeError("`check_type` was given data containg Diffs!")
         if not isinstance(value, self.types):
-            return (trace.copy(self.name, key).give_key(self.name), TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (stringify(key), stringify(value), self.name, self.types)))
+            return (trace.copy(self.name, key), TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (stringify(key), stringify(value), self.name, self.types)))
 
-    def check_all_types(self, data:dict[c,d], trace:Trace) -> list[tuple[Trace,Exception]]:
+    def check_all_types(self, data:dict[c,d], trace:Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> list[tuple[Trace,Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
+        if self.normalizer is not None:
+            self.normalizer(data, normalizer_dependencies)
+
         output:list[tuple[Trace,Exception]] = []
         if not isinstance(data, dict):
             output.append((trace, TypeError("`data` has the wrong type, %s instead of dict!" % type(data))))
@@ -287,6 +296,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
         for key, value in data.items():
             check_type_output = self.check_type(key, value, trace)
             if check_type_output is not None:
+                assert check_type_output[0] is not None
                 output.append(check_type_output)
                 continue
 
@@ -295,17 +305,25 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
                 raise TypeError("`check_all_types` was given data containg Diffs!")
             comparer = comparer_set[D.DiffType.not_diff]
             if comparer is not None:
-                output.extend(comparer.check_all_types(value, trace.copy(self.name, key)))
+                output.extend(comparer.check_all_types(value, trace.copy(self.name, key), normalizer_dependencies))
         return output
 
-    def compare(self, data1: dict[c,d], data2: dict[c,d], trace:Trace) -> dict[c|D.Diff[c,c],d|D.Diff[d,d]]:
+    def compare(self, data1: dict[c,d], data2: dict[c,d], trace:Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> tuple[dict[c|D.Diff[c,c],d|D.Diff[d,d]],list[tuple[Trace,Exception]]]:
         key_occurences:dict[c,list[D.DiffType]] = {}
+        exceptions:list[tuple[Trace,Exception]] = []
+
+        # normalize data
+        if self.normalizer is not None:
+            self.normalizer(data1, normalizer_dependencies, 1)
+        if self.normalizer is not None:
+            self.normalizer(data2, normalizer_dependencies, 2)
 
         # get occurence counts
         data1_iterator = zip(infinite_generator(D.DiffType.old), data1.items()) # since zip stops at the shortest iterator, this will not run forever.
         data2_iterator = zip(infinite_generator(D.DiffType.new), data2.items())
         for diff_type, (key, value) in glue_iterables(data1_iterator, data2_iterator):
-            self.check_type(key, value, trace)
+            if (check_type_exception := self.check_type(key, value, trace)) is not None:
+                exceptions.append(check_type_exception)
             if key in key_occurences:
                 key_occurences[key].append(diff_type)
             else:
@@ -364,7 +382,8 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
                     output[key] = value1
                 else:
                     comparer_set = self.choose_comparer(key, D.Diff(value1, value2))
-                    output[key] = comparer_set.compare(value1, value2, trace.copy(self.name, key))
+                    output[key], new_exceptions = comparer_set.compare(value1, value2, trace.copy(self.name, key), normalizer_dependencies)
+                    exceptions.extend(new_exceptions)
                     continue
             elif len(occurences) == 1:
                 # since there's now only one value, there's no more comparing to do.
@@ -377,7 +396,7 @@ class DictComparerSection(ComparerSection[dict[c, d]]):
             else:
                 print(key, occurences)
                 raise RuntimeError("Illegal state!")
-        return {key: value for key, value in sorted(output.items())}
+        return {key: value for key, value in sorted(output.items())}, exceptions
 
     def choose_comparer(self, key:c, value:d) -> ComparerSet:
         output:dict[D.DiffType,ComparerSection] = {}
@@ -467,7 +486,8 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
             print_flat:bool=False,
             ordered:bool=True,
             measure_length:bool=False,
-            print_all:bool=False
+            print_all:bool=False,
+            normalizer:Normalizer.Normalizer|None=None
         ) -> None:
         ''' * `name` is what the key of this dictionary is.
          * If `comparer` is a ComparerSection, then it will compare and print all items using that ComparerSection.
@@ -490,6 +510,7 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
         self.ordered = ordered
         self.measure_length = measure_length
         self.print_all = print_all
+        self.normalizer = normalizer
         self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
@@ -513,19 +534,25 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
             raise TypeError("`measure_length` is not a bool!")
         if not isinstance(self.print_all, bool):
             raise TypeError("`print_all` is not a bool!")
+        if not (self.normalizer is None or isinstance(self.normalizer, Normalizer.Normalizer)):
+            raise TypeError("`normalizer` is not a Normalizer or None!")
 
     def check_type(self, index:int, item:d, trace:Trace) -> tuple[Trace,Exception]|None:
         if isinstance(item, D.Diff):
             raise TypeError("`check_all_types` was given data containg Diffs!")
         if not isinstance(item, self.types):
-            return (trace.copy(self.name, index).give_key(self.name), TypeError("Index, item %i: %s in %s excepted because item is not %s!" % (index, stringify(item), self.name, self.types)))
+            return (trace.copy(self.name, index), TypeError("Index, item %i: %s in %s excepted because item is not %s!" % (index, stringify(item), self.name, self.types)))
 
-    def check_all_types(self, data:list[d], trace:Trace) -> list[tuple[Trace,Exception]]:
+    def check_all_types(self, data:list[d], trace:Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> list[tuple[Trace,Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
+        if self.normalizer is not None:
+            self.normalizer(data, normalizer_dependencies)
+
         output:list[list[tuple[int,d]]] = []
         for index, item in enumerate(data):
             check_type_output = self.check_type(index, item, trace)
             if check_type_output is not None:
+                assert check_type_output[0] is not None
                 output.append(check_type_output)
                 continue
 
@@ -534,21 +561,35 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
                 raise TypeError("`check_all_types` was given data containg Diffs!")
             comparer = comparer_set[D.DiffType.not_diff]
             if comparer is not None:
-                output.extend(comparer.check_all_types(item, trace.copy(self.name, index)))
+                output.extend(comparer.check_all_types(item, trace.copy(self.name, index), normalizer_dependencies))
         return output
 
-    def compare(self, data1:Iterable[d], data2:Iterable[d], trace:Trace) -> Iterable[d]:
+    def compare(self, data1:Iterable[d], data2:Iterable[d], trace:Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> tuple[Iterable[d],list[tuple[Trace,Exception]]]:
+        exceptions:list[tuple[Trace,Exception]] = []
+
+        # normalize data
+        if self.normalizer is not None:
+            self.normalizer(data1, normalizer_dependencies, 1)
+        if self.normalizer is not None:
+            self.normalizer(data2, normalizer_dependencies, 2)
+
         output:list[d|D.Diff[d]] = []
         if self.ordered:
             index = -1
             for index, (item1, item2) in enumerate(zip(data1, data2)):
-                self.check_type(index, item1, trace)
-                self.check_type(index, item2, trace)
+                # type exception handling
+                if (check_type_exception := self.check_type(index, item1, trace)) is not None:
+                    exceptions.append(check_type_exception)
+                if (check_type_exception := self.check_type(index, item2, trace)) is not None:
+                    exceptions.append(check_type_exception)
+
                 if item1 == item2:
                     output.append(item1)
                 else:
                     comparer_set = self.choose_comparer(index, D.Diff(item1, item2))
-                    output.append(comparer_set.compare(item1, item2, trace.copy(self.name, index)))
+                    compare_output, new_exceptions = comparer_set.compare(item1, item2, trace.copy(self.name, index), normalizer_dependencies)
+                    output.append(compare_output)
+                    exceptions.extend(new_exceptions)
             # now, only the shortest iterable has been consumed.
             if len(data1) != len(data2):
                 if len(data1) > len(data2):
@@ -559,22 +600,27 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
                     data1_is_bigger = False
                 for i, item in enumerate(iterator):
                     # index is end of shortest; i is the offset from that.
-                    self.check_type(index + i + 1, item, trace)
+                    if (check_type_exception := self.check_type(index + i + 1, item, trace)) is not None:
+                        exceptions.append(check_type_exception)
                     output.append((D.Diff(old=item) if data1_is_bigger else D.Diff(new=item)))
             else: pass
-            return output
+            return output, exceptions
         else: # unordered can only have additions or removals, no changes.
-            for item in data1:
+            for index, item in enumerate(data1):
+                if (check_type_exception := self.check_type(index, item, trace)) is not None:
+                    exceptions.append(check_type_exception)
                 if item in data2:
                     output.append(item) # item in both
                 else:
                     output.append(D.Diff(old=item))
-            for item in data2:
+            for index, item in enumerate(data2):
+                if (check_type_exception := self.check_type(index, item, trace)) is not None:
+                    exceptions.append(check_type_exception)
                 if item in data1:
                     pass # ignore; already added.
                 else:
                     output.append(D.Diff(new=item))
-            return output
+            return output, exceptions
 
     def choose_comparer(self, index:int, item:d) -> ComparerSet:
         output:dict[D.DiffType,ComparerSection] = {}
@@ -671,12 +717,20 @@ class ListComparerSection(ComparerSection[Iterable[d]]):
         return output, any_changes
 
 class TypedDictComparerSection(DictComparerSection[str,d]):
-    def __init__(self, name:str, types:dict[str,dict[type,ComparerSection[d]|None]], measure_length:bool=False, print_all:bool=False) -> None:
+    def __init__(
+            self,
+            name:str,
+            types:dict[tuple[str,type],ComparerSection[d]|None],
+            measure_length:bool=False,
+            print_all:bool=False,
+            normalizer:Normalizer.Normalizer|None=None
+        ) -> None:
         self.name = name
         self.types = types
         self.detect_key_moves = False
         self.measure_length = measure_length
         self.print_all = print_all
+        self.normalizer = normalizer
         self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
@@ -695,21 +749,24 @@ class TypedDictComparerSection(DictComparerSection[str,d]):
                 raise TypeError("Item 1 of key \"%s\" of `types` is not a type, but instead %s!" % (key[0], key[1].__class__.__name__))
             if not (value is None or isinstance(value, ComparerSection)):
                 raise TypeError("Value of key \"%s\" of `types` is not a ComparerSection, but instead %s!" % (key, value.__class__.__name__))
+            if not (self.normalizer is None or isinstance(self.normalizer, Normalizer.Normalizer)):
+                raise TypeError("`normalizer` is not a Normalizer or None!")
 
     def check_type(self, key:str, value:d, trace:Trace) -> tuple[Trace,Exception]|None:
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):
             raise TypeError("`check_all_types` was given data containg Diffs!")
         key_types:dict[str,list[type]] = {}
-        for key, key_type in self.types:
-            if key not in key_types:
-                key_types[key] = [key_type]
+        # TODO: why is this code (below) in here
+        for allowed_key, key_type in self.types:
+            if allowed_key not in key_types:
+                key_types[allowed_key] = [key_type]
             else:
-                key_types[key].append(key_type)
+                key_types[allowed_key].append(key_type)
         if key not in key_types:
-            return (trace.copy(self.name, key).give_key(self.name), TypeError("Key, value %s: %s in %s excepted because key is not recognized!" % (stringify(key), stringify(value), self.name)))
+            return (trace.copy(self.name, key), TypeError("Key, value %s: %s in %s excepted because key is not recognized!" % (stringify(key), stringify(value), self.name)))
         if type(value) not in key_types[key]:
             value_types_string = ", ".join(type_key.__name__ for type_key in key_types[key])
-            return (trace.copy(self.name, key).give_key(self.name), TypeError("Key, value %s: %s in %s excepted because value is %s instead of [%s]!" % (stringify(key), stringify(value), self.name, value.__class__.__name__, value_types_string)))
+            return (trace.copy(self.name, key), TypeError("Key, value %s: %s in %s excepted because value is %s instead of [%s]!" % (stringify(key), stringify(value), self.name, value.__class__.__name__, value_types_string)))
 
     def choose_comparer(self, key:str, value:d) -> ComparerSet:
         output:dict[D.DiffType,ComparerSection] = {}
@@ -724,7 +781,7 @@ class TypedDictComparerSection(DictComparerSection[str,d]):
 
 class Comparer():
     '''Can be created by a DataMinerCollection to compare the output of the DataMiners with each other.'''
-    def __init__(self, name:str, normalizer:Callable[[a, "Version.Version", dict[str,"DataMiner.DataMinerCollection"]], b]|None, dependencies:list[str]|None, base_comparer_section:ComparerSection[b], post_normalizer:Callable[[a],b]|None=None) -> None:
+    def __init__(self, name:str, normalizer:Callable[[a, DataMinerTyping.DependenciesTypedDict], b]|None, dependencies:list[str]|None, base_comparer_section:ComparerSection[b], post_normalizer:Callable[[a],b]|None=None) -> None:
         if not isinstance(name, str):
             raise TypeError("`name` is not a str!")
         if not isinstance(normalizer, (Callable, type(None))):
@@ -740,19 +797,19 @@ class Comparer():
 
         self.name = name
         self.dependencies = [] if dependencies is None else dependencies
-        if normalizer is None:
-            self.normalizer = lambda data, version, dataminers: data
-        else:
-            self.normalizer = normalizer
+        self.normalizer = Normalizer.BaseNormalizer(normalizer, self.dependencies) if normalizer is not None else None
         if post_normalizer is None:
             self.post_normalizer = lambda data: data
         else:
             self.post_normalizer = post_normalizer
         self.base_comparer_section = base_comparer_section
 
-    def normalize(self, data:a, version:"Version.Version", dataminers:dict[str,"DataMiner.DataMinerCollection"]) -> b:
+    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int=1) -> b:
         '''Manipulates the data before comparison.'''
-        return self.normalizer(data, version, dataminers)
+        if self.normalizer is None:
+            return data
+        else:
+            return self.normalizer(data, normalizer_dependencies, version_number)
 
     def store(self, report:str) -> None:
         if self.name is None:
@@ -768,7 +825,15 @@ class Comparer():
         with open(comparison_path, "wt") as f:
             f.write(report)
 
-    def comparison_report(self, data1, data2:b, version1:Union["Version.Version",None], version2:"Version.Version", versions_between:list["Version.Version"], all_dataminers:dict[str,"DataMiner.DataMinerCollection"]) -> tuple[str,bool]:
+    def comparison_report(
+            self,
+            data1:b,
+            data2:b,
+            version1:Union["Version.Version",None],
+            version2:"Version.Version",
+            versions_between:list["Version.Version"],
+            normalizer_dependencies:Normalizer.NormalizerDependencies
+        ) -> tuple[str,bool]:
         '''Returns a final string of the comparison report and a boolean if there were any changes.'''
         if self.name is None:
             raise RuntimeError("Attempted to create comparison report using Comparer with uninitialized `name`!")
@@ -790,14 +855,15 @@ class Comparer():
                 header.append("Unable to create data files for %i %s %s: %s" % (len(versions_between), files_word, between_word, ", ".join("\"%s\"" % version.name for version in versions_between)))
         header.append("")
 
+        local_normalizer_dependencies = Normalizer.LocalNormalizerDependencies(normalizer_dependencies, version1, version2)
         if version1 is None:
-            normalized_data2 = self.normalize(data2, version2, all_dataminers)
+            normalized_data2 = self.normalize(data2, local_normalizer_dependencies, 2)
             normalized_data1 = type(normalized_data2)() # create new empty.
         else:
-            normalized_data1 = self.normalize(data1, version1, all_dataminers)
-            normalized_data2 = self.normalize(data2, version2, all_dataminers)
+            normalized_data1 = self.normalize(data1, local_normalizer_dependencies, 1)
+            normalized_data2 = self.normalize(data2, local_normalizer_dependencies, 2)
 
-        data_comparison = self.compare(normalized_data1, normalized_data2)
+        data_comparison = self.compare(normalized_data1, normalized_data2, local_normalizer_dependencies)
 
         comparer_output = self.compare_text(data_comparison)
         if not isinstance(comparer_output, tuple):
@@ -809,24 +875,30 @@ class Comparer():
 
         return "\n".join(final), any_changes
 
-    def check_types(self, data:b) -> None:
+    def check_types(self, data:b, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> None:
         '''Raises an exception with data about what went wrong if an error occurs.'''
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
-        traces = self.base_comparer_section.check_all_types(data, Trace())
+        traces = self.base_comparer_section.check_all_types(data, Trace(), normalizer_dependencies)
         if isinstance(self, DefaultComparer): return
+        self.print_exception_list(traces)
+
+    def print_exception_list(self, traces:list[tuple[Trace,Exception]]) -> None:
+        '''Prints all exceptions and traces in list and raises an exception at the end if the list has any items.'''
         for trace, exception in traces:
             print("Exception in %s:" % trace)
             traceback.print_exception(exception)
-            # raise exception
+            raise exception
             print()
         if len(traces) > 0:
             raise TypeError("Type checking on %s failed!" % (self.name))
 
-    def compare(self, data1:b, data2:b) -> b:
+    def compare(self, data1:b, data2:b, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> b:
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
-        return self.base_comparer_section.compare(data1, data2, Trace())
+        output, traces = self.base_comparer_section.compare(data1, data2, Trace(), normalizer_dependencies)
+        self.print_exception_list(traces)
+        return output
 
     def compare_text(self, data:b) -> tuple[list[str],bool]:
         '''Returns a list of lines and if there were any changes'''
@@ -844,4 +916,4 @@ class DefaultComparer(Comparer):
         super().__init__("default", None, None, ComparerSection(""))
 
 default_comparer = DefaultComparer()
-#TODO: change check_types to a generator.
+# TODO: change check_all_types to a generator.

@@ -1,16 +1,12 @@
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
 import Comparison.ComparerImporter as ComparerImporter
 
-if TYPE_CHECKING:
-    import Utilities.Version as Version
-    import DataMiners.DataMiner as DataMiner
-
-def normalize(data:DataMinerTyping.Entities, version:"Version.Version", dataminers:dict[str,"DataMiner.DataMinerCollection"]) -> DataMinerTyping.Entities:
-    behavior_packs:DataMinerTyping.BehaviorPacks = dataminers["behavior_packs"].get_data_file(version, non_exist_ok=True)
+def normalize(data:DataMinerTyping.Entities, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Entities:
+    behavior_packs:DataMinerTyping.BehaviorPacks = dependencies["behavior_packs"]
     if behavior_packs is None:
         behavior_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}]
     def fix_weird_components(entity_name:str, entity_behavior_packs:dict[str,Any]) -> dict[str,Any]:
@@ -25,7 +21,7 @@ def normalize(data:DataMinerTyping.Entities, version:"Version.Version", datamine
                     for key_to_delete in [key for key in entity_data["minecraft:entity"]["events"][event]["remove"].keys() if key.startswith("minecraft:")]:
                         del entity_data["minecraft:entity"]["events"][event]["remove"][key_to_delete]
         return entity_behavior_packs
-    return {entity_name: fix_weird_components(entity_name, CollapseResourcePacks.collapse_resource_packs(entity_behavior_packs, behavior_packs, version.name)) for entity_name, entity_behavior_packs in data.items()}
+    return {entity_name: fix_weird_components(entity_name, CollapseResourcePacks.collapse_resource_packs(entity_behavior_packs, behavior_packs)) for entity_name, entity_behavior_packs in data.items()}
 
 def behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()
