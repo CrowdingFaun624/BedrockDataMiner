@@ -78,11 +78,7 @@ def main() -> None:
     exception_holder:dict[str,bool|tuple[Exception,Union["Version.Version",None]]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
     threads:list[threading.Thread] = []
     for dataminer_collection in selected_dataminers:
-        thread = threading.Thread(target=compare_all_of, args=[dataminer_collection, sorted_versions, exception_holder])
-        thread.start()
-        threads.append(thread)
-    for thread in threads:
-        thread.join()
+        compare_all_of(dataminer_collection, sorted_versions, exception_holder)
 
     excepted = False
     excepted_threads:list[tuple[str,Union["Version.Version",None]]] = []
