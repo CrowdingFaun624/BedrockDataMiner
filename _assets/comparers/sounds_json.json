@@ -2,9 +2,27 @@
     "main": {
         "type": "Main",
         "name": "sounds_json",
-        "normalizer": "normalize",
-        "dependencies": ["resource_packs"],
         "base_comparer_section": "categories"
+    },
+    "collapse_resource_packs_flat": {
+        "type": "NormalizerFunction",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_flat"
+    },
+    "remove_bad_events": {
+        "type": "NormalizerFunction",
+        "dependencies": ["resource_packs"],
+        "function_name": "remove_bad_events"
+    },
+    "remove_bad_interactive_entity_events": {
+        "type": "NormalizerFunction",
+        "dependencies": ["resource_packs"],
+        "function_name": "remove_bad_interactive_entity_events"
+    },
+    "fix_sounds": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "fix_sounds"
     },
     "categories": {
         "type": "TypedDict",
@@ -87,14 +105,16 @@
         "field": "resource pack",
         "key_types": ["str"],
         "value_types": ["float", "int", "list"],
-        "comparer": "pitch_group"
+        "comparer": "pitch_group",
+        "normalizer": "collapse_resource_packs_flat"
     },
     "volume_resource_packs": {
         "type": "Dict",
         "field": "resource pack",
         "key_types": ["str"],
         "value_types": ["float", "int", "list"],
-        "comparer": "volume_group"
+        "comparer": "volume_group",
+        "normalizer": "collapse_resource_packs_flat"
     },
     "pitch_group": {
         "type": "Group",
@@ -155,7 +175,8 @@
         "value_types": ["str", "dict"],
         "detect_key_moves": true,
         "comparer": "sound_group",
-        "measure_length": true
+        "measure_length": true,
+        "normalizer": "remove_bad_events"
     },
     "interactive_entity_events_resource_packs": {
         "type": "Dict",
@@ -164,7 +185,8 @@
         "value_types": ["dict"],
         "detect_key_moves": true,
         "comparer": "sound_case",
-        "measure_length": true
+        "measure_length": true,
+        "normalizer": "remove_bad_interactive_entity_events"
     },
     "sound_case": {
         "type": "Dict",
@@ -185,6 +207,7 @@
     "sound": {
         "type": "TypedDict",
         "field": "sound",
+        "normalizer": "fix_sounds",
         "types": {
             "pitch": {"type": ["float", "int", "list"], "comparer": "pitch_group"},
             "sound": {"type": "str"},

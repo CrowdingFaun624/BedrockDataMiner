@@ -2,9 +2,22 @@
     "main": {
         "type": "Main",
         "name": "entities",
-        "normalizer": "normalize",
-        "dependencies": ["behavior_packs"],
         "base_comparer_section": "entities"
+    },
+    "collapse_resource_packs": {
+        "type": "NormalizerFunction",
+        "dependencies": ["behavior_packs"],
+        "function_name": "collapse_resource_packs"
+    },
+    "fix_out_of_bounds_components": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "fix_out_of_bounds_components"
+    },
+    "fix_MCPE_178417": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "fix_MCPE_178417"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -38,6 +51,7 @@
         "value_types": ["dict"],
         "detect_key_moves": true,
         "comparison_move_function": "behavior_pack_comparison_move_function",
+        "normalizer": "collapse_resource_packs",
         "comparer": "entity"
     },
     "entity": {
@@ -58,6 +72,7 @@
     },
     "minecraft:entity": {
         "type": "TypedDict",
+        "normalizer": "fix_out_of_bounds_components",
         "types": {
             "description": {"type": "dict", "comparer": "description"},
             "component_groups": {"type": "dict", "comparer": "component_groups"},
@@ -125,6 +140,7 @@
     },
     "component_groups_add_remove": {
         "type": "TypedDict",
+        "normalizer": "fix_MCPE_178417",
         "types": {
             "component_groups": {"type": "list", "comparer": "component_group_list"}
         }

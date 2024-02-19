@@ -8,8 +8,8 @@ if TYPE_CHECKING:
 IN = TypeVar("IN")
 OUT = TypeVar("OUT")
 
-class Normalizer(Generic[IN]):
-    def __init__(self, function:Callable[[IN, dict[str,Any]], None], dependencies:list[str]):
+class Normalizer(Generic[IN, OUT]):
+    def __init__(self, function:Callable[[IN, dict[str,Any]], OUT], dependencies:list[str]):
         '''`function` is a Callable that modifies the original object and returns nothing.
         `dependencies` is a list of DataMinerCollection names.'''
         if not isinstance(function, Callable):
@@ -22,39 +22,23 @@ class Normalizer(Generic[IN]):
         self.function = function
         self.dependencies = dependencies
 
-    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", version_number:int=1) -> Any:
+    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", version_number:int=1) -> OUT:
         if version_number not in (1, 2):
             raise ValueError("`version_number` is not 1 or 2!")
         version = normalizer_dependencies.get_version(version_number)
         if version is None:
-            raise RuntimeError("Attempting to get data file from None version!")
+            return
+            # raise RuntimeError("Attempting to get data file from None version (versions are %s)!" % (str(normalizer_dependencies)))
         this_data:DataMinerTyping.DependenciesTypedDict = {dependency: normalizer_dependencies.get_data(version, dependency) for dependency in self.dependencies}
         # `this_data` is only the dataminer data that is needed for this normalizer function.
-        return self.function(data, this_data)
-
-class BaseNormalizer(Generic[IN, OUT]):
-    def __init__(self, function:Callable[[IN, dict[str,Any]], OUT], dependencies:list[str]):
-        '''`function` is a Callable that modifies the original object and returns the modified data.
-        `dependencies` is a list of DataMinerCollection names.'''
-        if not isinstance(function, Callable):
-            raise TypeError("`function` is not a Callable, but instead %s!" % (function.__class__.__name__))
-        if not isinstance(dependencies, list):
-            raise TypeError("`dependencies` is not a list, but instead %s!" % (dependencies.__class__.__name__))
-        if not all(isinstance(item, str) for item in dependencies):
-            raise TypeError("An item of `dependencies` is not a str!")
-
-        self.function = function
-        self.dependencies = dependencies
-    
-    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", version_number:int=1) -> Any:
-        if version_number not in (1, 2):
-            raise ValueError("`version_number` is not 1 or 2!")
-        version = normalizer_dependencies.get_version(version_number)
-        if version is None:
-            raise RuntimeError("Attempting to get data file from None version!")
-        this_data:DataMinerTyping.DependenciesTypedDict = {dependency: normalizer_dependencies.get_data(version, dependency) for dependency in self.dependencies}
-        # `this_data` is only the dataminer data that is needed for this normalizer function.
-        return self.function(data, this_data)
+        exception = None
+        try:
+            return self.function(data, this_data)
+        except Exception as e:
+            exception = e
+            exception.args = tuple(list(exception.args) + ["Normalizer function excepted on data: %s" % data])
+        if exception is not None:
+            raise exception
 
 class NormalizerDependencies():
     def __init__(self, data:dict[tuple[Version.Version, str], Any], dataminer_collections:list["DataMiner.DataMinerCollection"]):
@@ -114,6 +98,9 @@ class LocalNormalizerDependencies():
 
     def get_data(self, version:Version.Version, dataminer_name:str) -> Any:
         return self.parent.get_data(version, dataminer_name)
+    
+    def __repr__(self) -> str:
+        return "<LocalNormalizerDependencies (%s, %s)>" % (str(self.version1), str(self.version2))
 
 class SimpleNormalizerDependencies(LocalNormalizerDependencies):
     def __init__(self, data:"DataMinerTyping.DependenciesTypedDict", version:Version.Version):

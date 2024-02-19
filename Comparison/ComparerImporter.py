@@ -1,9 +1,10 @@
 import json
-from typing import Any, Callable, Generator, Iterable, Literal, TypedDict, TypeVar, Union
+from typing import Callable, Generator, Iterable, Literal, TypedDict, TypeVar, Union
 
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
 import Comparison.Comparer as Comparer
+import Comparison.Normalizer as Normalizer
 
 class DictComparerTypedDict(TypedDict):
     comparer: str|None
@@ -11,6 +12,7 @@ class DictComparerTypedDict(TypedDict):
     detect_key_moves: bool
     field: str
     measure_length: bool
+    normalizer: str
     type: Literal["Dict"]
     print_all: bool
     value_types: list[str]
@@ -23,6 +25,7 @@ class ListComparerTypedDict(TypedDict):
     comparer: str|None
     field: str
     measure_length: bool
+    normalizer: str
     ordered: bool
     print_all: bool
     print_flat: bool
@@ -31,10 +34,14 @@ class ListComparerTypedDict(TypedDict):
 
 class MainTypedDict(TypedDict):
     base_comparer_section: str
-    dependencies: list[str]
     normalizer: str
     post_normalizer: str
     type: Literal["Main"]
+
+class NormalizerFunctionTypedDict(TypedDict):
+    dependencies: list[str]
+    function_name: str
+    type: Literal["NormalizerFunction"]
 
 class TypeAliasTypedDict(TypedDict):
     type: Literal["TypeAlias"]
@@ -53,6 +60,7 @@ class TypedDictTypeFilledTypedDict(TypedDict):
 class TypedDictComparerTypedDict(TypedDict):
     field: str
     measure_length: bool
+    normalizer: str
     type: Literal["TypedDict"]
     types: dict[str,TypedDictTypeTypedDict]
 
@@ -67,6 +75,8 @@ class Intermediate():
     def __init__(self, data:a, name:str, index:int) -> None:
         self.name = name
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.parents:list[Intermediate] = []
+        self.children_has_normalizer = False
     def check_types(self, data:a, name:str, index:int, allowed_types:list[tuple[str, type|tuple[type], str, bool]]) -> None:
         for parameter, parameter_name, allowed_parameter_types, types_str in (
             (data, "data", dict, "a dict"),
@@ -98,6 +108,19 @@ class Intermediate():
         pass
     def check(self) -> None:
         '''Make sure that this Intermediate's types are all in order; no error could occur.'''
+        pass
+
+    def propagate_variables(self, child:Union["Intermediate",None]=None) -> None:
+        '''Calls `propagates_variables` on the parents of this intermediate with the child.'''
+        has_changed = False
+        if child is not None:
+            if child.children_has_normalizer and not self.children_has_normalizer:
+                self.children_has_normalizer = True
+                has_changed = True
+        if has_changed or child is None:
+            for parent in self.parents:
+                parent.propagate_variables(self)
+    
     def choose_intermediate(self, name:str, required_type:type[b], required_type_str:str, intermediate_comparers:dict[str,"Intermediate"], keys:list[str]) -> b:
         get_keys_strs:Callable[[bool],str] = lambda is_capital: "".join(
             ("%sey \"%s\" of " % ("K" if index == 0 and is_capital else "k", key)) if isinstance(key, str)
@@ -129,6 +152,7 @@ class DictComparerIntermediate(ComparerIntermediate):
             ("field", str, "a str", False),
             ("key_types", list, "a list", False),
             ("measure_length", bool, "a bool", False),
+            ("normalizer", str, "a str", False),
             ("print_all", bool, "a bool", False),
             ("type", str, "a str", True),
             ("value_types", list, "a list", True),
@@ -148,15 +172,20 @@ class DictComparerIntermediate(ComparerIntermediate):
         self.detect_key_moves = False if "detect_key_moves" not in data else data["detect_key_moves"]
         self.field = "field" if "field" not in data else data["field"]
         self.measure_length = False if "measure_length" not in data else data["measure_length"]
+        self.normalizer_str = None if "normalizer" not in data else data["normalizer"]
         self.print_all = False if "print_all" not in data else data["print_all"]
         self.value_types_strs = data["value_types"]
 
         self.comparer:ComparerIntermediate|GroupIntermediate|None = None
         self.comparison_move_function:Callable|None = None
+        self.normalizer:NormalizerFunctionIntermediate|None = None
         self.value_types:list[type|TypeAliasIntermediate] = []
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.parents:list[Intermediate] = []
         self.value_types_final:list[type] = None
         self.final:Comparer.DictComparerSection = None
+        
+        self.children_has_normalizer = False
 
     def choose_types(self, key:str, types_strs:list[str], intermediate_comparers:dict[str,Intermediate]) -> list[Union[type,"TypeAliasIntermediate"]]:
         types:list[type|TypeAliasIntermediate] = []
@@ -177,8 +206,9 @@ class DictComparerIntermediate(ComparerIntermediate):
         if self.comparer_str is None:
             self.comparer = None
         else:
-            comparer = self.choose_intermediate(self.comparer_str, ComparerIntermediate|GroupIntermediate, "a Comparer or Group", intermediate_comparers, ["comparer"])
+            comparer:ComparerIntermediate|GroupIntermediate = self.choose_intermediate(self.comparer_str, ComparerIntermediate|GroupIntermediate, "a Comparer or Group", intermediate_comparers, ["comparer"])
             self.links_to_other_intermediates.append(comparer)
+            comparer.parents.append(self)
             self.comparer = comparer
         if self.comparison_move_function_str is None:
             self.comparison_move_function = None
@@ -186,6 +216,12 @@ class DictComparerIntermediate(ComparerIntermediate):
             if self.comparison_move_function_str not in functions:
                 raise KeyError("Function \"%s\", referenced in key \"comparison_move_function\" of Dict \"%s\", does not exist!" % (self.comparison_move_function_str, self.name))
             self.comparison_move_function = functions[self.comparison_move_function_str]
+        if self.normalizer_str is None:
+            self.normalizer = None
+        else:
+            self.normalizer = self.choose_intermediate(self.normalizer_str, NormalizerFunctionIntermediate, "a NormalizerFunction", intermediate_comparers, ["normalizer"])
+            self.links_to_other_intermediates.append(self.normalizer)
+            self.normalizer.parents.append(self)
         self.value_types = self.choose_types("value_types", self.value_types_strs, intermediate_comparers)
 
     def get_types_final(self, types:list[Union[type,"TypeAliasIntermediate"]]) -> tuple[type]:
@@ -200,6 +236,7 @@ class DictComparerIntermediate(ComparerIntermediate):
 
     def create_final(self) -> None:
         self.value_types_final = self.get_types_final(self.value_types)
+        normalizer_final = None if self.normalizer is None else self.normalizer.final
         self.final = Comparer.DictComparerSection(
             name=self.field,
             comparer=None,
@@ -207,7 +244,9 @@ class DictComparerIntermediate(ComparerIntermediate):
             detect_key_moves=self.detect_key_moves,
             comparison_move_function=self.comparison_move_function,
             measure_length=self.measure_length,
-            print_all=self.print_all
+            normalizer=normalizer_final,
+            print_all=self.print_all,
+            children_has_normalizer=self.children_has_normalizer,
         )
     def link_finals(self) -> None:
         if self.comparer is None:
@@ -246,9 +285,12 @@ class GroupIntermediate(Intermediate):
 
         self.types:list[tuple[type|TypeAliasIntermediate,ComparerIntermediate|None]] = None
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.parents:list[Intermediate] = []
         self.my_type:set[type] = set()
         self.check_types_final:list[tuple[list[type], ComparerIntermediate]] = None
         self.final:dict[type,Comparer.ComparerSection] = None
+
+        self.children_has_normalizer = False
 
     def set(self, intermediate_comparers:dict[str,Intermediate], functions:dict[str,Callable]) -> None:
         self.types = []
@@ -263,14 +305,16 @@ class GroupIntermediate(Intermediate):
             else:
                 comparer_type = self.choose_intermediate(type_str, TypeAliasIntermediate, "a TypeAlias", intermediate_comparers, ["types", type_str])
                 self.links_to_other_intermediates.append(comparer_type)
+                comparer_type.parents.append(self)
                 self.my_type.update(comparer_type.types)
             if comparer_str is None:
                 comparer = None
             else:
                 comparer = self.choose_intermediate(comparer_str, ComparerIntermediate, "a Comparer", intermediate_comparers, ["types", type_str])
                 self.links_to_other_intermediates.append(comparer)
+                comparer.parents.append(self)
             self.types.append((comparer_type, comparer))
-
+    
     def create_final(self) -> None:
         self.final = {}
 
@@ -308,6 +352,7 @@ class ListComparerIntermediate(ComparerIntermediate):
             ("comparer", (str, type(None)), "a str or None", True),
             ("field", str, "a str", False),
             ("measure_length", bool, "a bool", False),
+            ("normalizer", str, "a str", False),
             ("ordered", bool, "a bool", False),
             ("print_all", bool, "a bool", False),
             ("print_flat", bool, "a bool", False),
@@ -325,6 +370,7 @@ class ListComparerIntermediate(ComparerIntermediate):
         self.comparer_str = data["comparer"]
         self.field = "item" if "field" not in data else data["field"]
         self.measure_length = False if "measure_length" not in data else data["measure_length"]
+        self.normalizer_str = None if "normalizer" not in data else data["normalizer"]
         self.ordered = True if "ordered" not in data else data["ordered"]
         self.print_all = False if "print_all" not in data else data["print_all"]
         self.print_flat = False if "print_flat" not in data else data["print_flat"]
@@ -333,15 +379,20 @@ class ListComparerIntermediate(ComparerIntermediate):
         self.comparer:ComparerIntermediate|GroupIntermediate|None = None
         self.types:list[type|TypeAliasIntermediate] = None
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.parents:list[Intermediate] = []
+        self.normalizer:NormalizerFunctionIntermediate|None = None
         self.types_final:list[type] = []
         self.final:Comparer.ListComparerSection = None
+        
+        self.children_has_normalizer = False
 
     def set(self, intermediate_comparers:dict[str,Intermediate], functions:dict[str,Callable]) -> None:
         if self.comparer_str is None:
             self.comparer = None
         else:
-            comparer = self.choose_intermediate(self.comparer_str, ComparerIntermediate|GroupIntermediate, "a Comparer or Group", intermediate_comparers, ["comparer"])
+            comparer:ComparerIntermediate|GroupIntermediate = self.choose_intermediate(self.comparer_str, ComparerIntermediate|GroupIntermediate, "a Comparer or Group", intermediate_comparers, ["comparer"])
             self.links_to_other_intermediates.append(comparer)
+            comparer.parents.append(self)
             self.comparer = comparer
         self.types = []
         for index, type_str in enumerate(self.types_strs):
@@ -350,7 +401,15 @@ class ListComparerIntermediate(ComparerIntermediate):
             else:
                 type_intermediate = self.choose_intermediate(type_str, TypeAliasIntermediate, "A TypeAlias", intermediate_comparers, ["types", index])
                 self.links_to_other_intermediates.append(type_intermediate)
+                type_intermediate.parents.append(self)
                 self.types.append(type_intermediate)
+        if self.normalizer_str is None:
+            self.normalizer = None
+        else:
+            self.normalizer = self.choose_intermediate(self.normalizer_str, NormalizerFunctionIntermediate, "a NormalizerFunction", intermediate_comparers, ["normalizer"])
+            self.links_to_other_intermediates.append(self.normalizer)
+            self.normalizer.parents.append(self)
+    
     def create_final(self) -> None:
         self.types_final:list[type] = []
         for types_item in self.types:
@@ -358,6 +417,7 @@ class ListComparerIntermediate(ComparerIntermediate):
                 self.types_final.append(types_item)
             else:
                 self.types_final.extend(types_item.types)
+        normalizer_final = None if self.normalizer is None else self.normalizer.final
         self.final = Comparer.ListComparerSection(
             name=self.field,
             comparer=None,
@@ -365,7 +425,9 @@ class ListComparerIntermediate(ComparerIntermediate):
             print_flat=self.print_flat,
             print_all=self.print_all,
             measure_length=self.measure_length,
+            normalizer=normalizer_final,
             ordered=self.ordered,
+            children_has_normalizer=self.children_has_normalizer,
         )
     def link_finals(self) -> None:
         if self.comparer is None:
@@ -388,7 +450,6 @@ class MainIntermediate(Intermediate):
     def __init__(self, data:MainTypedDict, name:str, index:int) -> None:
         self.check_types(data, name, index, [
             ("base_comparer_section", str, "a str", True),
-            ("dependencies", list, "a list", False),
             ("name", str, "a str", True),
             ("normalizer", str, "a str", False),
             ("post_normalizer", str, "a str", False),
@@ -402,42 +463,73 @@ class MainIntermediate(Intermediate):
         self.name = name
         self.comparer_name = data["name"]
         self.base_comparer_section_str = data["base_comparer_section"]
-        self.dependencies = [] if "dependencies" not in data else data["dependencies"]
         self.normalizer_str = None if "normalizer" not in data else data["normalizer"]
         self.post_normalizer_str = None if "post_normalizer" not in data else data["post_normalizer"]
 
         self.base_comparer_section:ComparerIntermediate = None
-        self.normalizer:Callable|None = None
-        self.post_normalizer:Callable|None = None
+        self.normalizer:NormalizerFunctionIntermediate|None = None
+        self.post_normalizer:NormalizerFunctionIntermediate|None = None
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.parents:list[Intermediate] = []
         self.final:Comparer.Comparer = None
+
+        self.children_has_normalizer = False
 
     def set(self, intermediate_comparers:dict[str,Intermediate], functions:dict[str,Callable]) -> None:
         self.base_comparer_section = self.choose_intermediate(self.base_comparer_section_str, ComparerIntermediate, "a Comparer", intermediate_comparers, ["base_comparer_section"])
         self.links_to_other_intermediates.append(self.base_comparer_section)
+        self.base_comparer_section.parents.append(self)
         if self.normalizer_str is None:
             self.normalizer = None
         else:
-            if self.normalizer_str not in functions:
-                raise KeyError("Function \"%s\", referenced in key \"normalizer\" of Main \"%s\", does not exist!" % (self.normalizer_str, self.name))
-            self.normalizer = functions[self.normalizer_str]
+            self.normalizer = self.choose_intermediate(self.normalizer_str, NormalizerFunctionIntermediate, "a NormalizerFunction", intermediate_comparers, ["normalizer"])
+            self.links_to_other_intermediates.append(self.normalizer)
+            self.normalizer.parents.append(self)
         if self.post_normalizer_str is None:
             self.post_normalizer = None
         else:
-            if self.post_normalizer_str not in functions:
-                raise KeyError("Function \"%s\", referenced in key \"post_normalizer\" of Main \"%s\", does not exist!" % (self.normalizer_str, self.name))
-            self.post_normalizer = functions[self.post_normalizer_str]
-
+            self.post_normalizer = self.choose_intermediate(self.post_normalizer_str, NormalizerFunctionIntermediate, "a NormalizerFunction", intermediate_comparers, ["post_normalizer"])
+            self.links_to_other_intermediates.append(self.post_normalizer)
+            self.post_normalizer.parents.append(self)
+    
     def create_final(self) -> None:
+        normalizer_final = None if self.normalizer is None else self.normalizer.final
+        post_normalizer_final = None if self.post_normalizer is None else self.post_normalizer.final
         self.final = Comparer.Comparer(
             name=self.comparer_name,
-            normalizer=self.normalizer,
-            post_normalizer=self.post_normalizer,
-            dependencies=self.dependencies,
+            normalizer=normalizer_final,
+            post_normalizer=post_normalizer_final,
             base_comparer_section=None,
         )
     def link_finals(self) -> None:
         self.final.base_comparer_section = self.base_comparer_section.final
+
+class NormalizerFunctionIntermediate(Intermediate):
+    def __init__(self, data:NormalizerFunctionTypedDict, name:str, index:int) -> None:
+        self.check_types(data, name, index, [
+            ("dependencies", list, "a list", True),
+            ("function_name", str, "a str", True),
+            ("type", str, "a str", True),
+        ])
+        if data["type"] != "NormalizerFunction":
+            raise ValueError("Key \"type\" of Main \"%s\" is not \"Main\"!" % (name))
+        if not all(isinstance(item, str) for item in data["dependencies"]):
+            raise TypeError("An item of key \"dependencies\" of NormalizerFunction \"%s\" is not a str!" % (name))
+        
+        self.name = name
+        self.dependencies = data["dependencies"]
+        self.function_name = data["function_name"]
+
+        self.final:Normalizer.Normalizer = None
+        self.links_to_other_intermediates:list[Intermediate] = []
+        self.parents:list[Intermediate] = []
+
+        self.children_has_normalizer = True
+    
+    def set(self, intermediate_comparers: dict[str, Intermediate], functions: dict[str, Callable]) -> None:
+        if self.function_name not in functions:
+            raise KeyError("Function \"%s\", referenced in key \"function_name\" of NormalizerFunction \"%s\", does not exist!" % (self.function_name, self.name))
+        self.final = Normalizer.Normalizer(functions[self.function_name], self.dependencies)
 
 class TypeAliasIntermediate(Intermediate):
     def __init__(self, data:TypeAliasTypedDict, name:str, index:int) -> None:
@@ -457,6 +549,9 @@ class TypeAliasIntermediate(Intermediate):
 
         self.types:list[type] = None
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.parents:list[Intermediate] = []
+
+        self.children_has_normalizer = False
 
     def set(self, intermediate_comparers:dict[str,Intermediate], functions:dict[str,Callable]) -> None:
         self.types = []
@@ -476,6 +571,7 @@ class TypedDictIntermediate(ComparerIntermediate):
         self.check_types(data, name, index, [
             ("field", str, "a str", False),
             ("measure_length", bool, "a bool", False),
+            ("normalizer", str, "a str", False),
             ("print_all", bool, "a bool", False),
             ("type", str, "a str", True),
             ("types", dict, "a dict", True),
@@ -514,13 +610,18 @@ class TypedDictIntermediate(ComparerIntermediate):
         self.types_strs = data["types"]
         self.types:dict[str,TypedDictTypeFilledTypedDict] = None
         self.measure_length = False if "measure_length" not in data else data["measure_length"]
+        self.normalizer_str = None if "normalizer" not in data else data["normalizer"]
         self.print_all = False if "print_all" not in data else data["print_all"]
         self.tags = {key: (value["tags"] if "tags" in value else []) for key, value in self.types_strs.items()}
 
         self.links_to_other_intermediates:list[Intermediate] = []
+        self.parents:list[Intermediate] = []
+        self.normalizer:NormalizerFunctionIntermediate|None = None
         self.types_final:dict[tuple[str,type],Comparer.ComparerSection|None] = None
         self.check_types_final:dict[str,tuple[list[type],ComparerIntermediate|None]] = {}
         self.final:Comparer.DictComparerSection = None
+
+        self.children_has_normalizer = False
 
     def choose_types_type_iterator(self, data:TypedDictTypeTypedDict) -> Generator[tuple[int|None, str], None, None]:
         '''Yields the index of the type_str and the type_str, or None and the type_str if it is not a list'''
@@ -543,13 +644,15 @@ class TypedDictIntermediate(ComparerIntermediate):
                 choose_comparer_keys = ["types", key, "type"] if index is None else ["types", key, "type", index]
                 type_intermediate = self.choose_intermediate(type_str, TypeAliasIntermediate, "a TypeAlias", intermediate_comparers, choose_comparer_keys)
                 self.links_to_other_intermediates.append(type_intermediate)
+                type_intermediate.parents.append(self)
                 types.append(type_intermediate)
         return types
 
     def set_comparer(self, key:str, data:TypedDictTypeTypedDict, intermediate_comparers:dict[str,Intermediate]) -> ComparerIntermediate|None:
         if "comparer" not in data or data["comparer"] is None: return None
-        comparer = self.choose_intermediate(data["comparer"], ComparerIntermediate|GroupIntermediate, "a Comparer or Group", intermediate_comparers, ["types", key, "comparer"])
+        comparer:ComparerIntermediate|GroupIntermediate = self.choose_intermediate(data["comparer"], ComparerIntermediate|GroupIntermediate, "a Comparer or Group", intermediate_comparers, ["types", key, "comparer"])
         self.links_to_other_intermediates.append(comparer)
+        comparer.parents.append(self)
         return comparer
 
     def set(self, intermediate_comparers:dict[str,Intermediate], functions:dict[str,Callable]) -> None:
@@ -559,14 +662,23 @@ class TypedDictIntermediate(ComparerIntermediate):
                 "comparer": self.set_comparer(key, data, intermediate_comparers),
                 "type": self.choose_types(key, data, intermediate_comparers),
             }
+        if self.normalizer_str is None:
+            self.normalizer = None
+        else:
+            self.normalizer = self.choose_intermediate(self.normalizer_str, NormalizerFunctionIntermediate, "a NormalizerFunction", intermediate_comparers, ["normalizer"])
+            self.links_to_other_intermediates.append(self.normalizer)
+            self.normalizer.parents.append(self)
 
     def create_final(self) -> None:
         self.types_final = {}
+        normalizer_final = None if self.normalizer is None else self.normalizer.final
         self.final = Comparer.TypedDictComparerSection(
             name=self.field,
             types=self.types_final,
             measure_length=self.measure_length,
+            normalizer=normalizer_final,
             print_all=self.print_all,
+            children_has_normalizer=self.children_has_normalizer,
         )
 
     def expand_types(self, types:Iterable[type|TypeAliasIntermediate]) -> Generator[type,None,None]:
@@ -625,6 +737,7 @@ def get_link_final_order(intermediate_comparers:Iterable[Intermediate]) -> Gener
         DictComparerIntermediate: [],
         ListComparerIntermediate: [],
         MainIntermediate: [],
+        NormalizerFunctionIntermediate: [],
         TypeAliasIntermediate: [],
         TypedDictIntermediate: [],
     }
@@ -669,6 +782,8 @@ def parse_comparer_file(name:str, data:dict[str,dict], functions:dict[str,Callab
                 comparer = MainIntermediate(comparer_data, comparer_name, index)
                 intermediate_comparers[comparer_name] = comparer
                 main_comparers.append((comparer_name, comparer))
+            case "NormalizerFunction":
+                intermediate_comparers[comparer_name] = NormalizerFunctionIntermediate(comparer_data, comparer_name, index)
             case "TypeAlias":
                 intermediate_comparers[comparer_name] = TypeAliasIntermediate(comparer_data, comparer_name, index)
             case "TypedDict":
@@ -689,6 +804,8 @@ def parse_comparer_file(name:str, data:dict[str,dict], functions:dict[str,Callab
     if len(unused_intermediates) > 0:
         print("Warning: Comparer file \"%s\" has %i unused comparers: %s" % (name, len(unused_intermediates), [intermediate.name for intermediate in unused_intermediates]))
 
+    for comparer_intermediate in intermediate_comparers.values():
+        comparer_intermediate.propagate_variables()
     for comparer_intermediate in intermediate_comparers.values():
         comparer_intermediate.create_final()
     for comparer_intermediate in get_link_final_order(intermediate_comparers.values()):

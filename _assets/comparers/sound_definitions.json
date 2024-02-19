@@ -2,9 +2,22 @@
     "main": {
         "type": "Main",
         "name": "sound_definitions",
-        "normalizer": "normalize",
-        "dependencies": ["resource_packs"],
         "base_comparer_section": "sound_event"
+    },
+    "collapse_resource_packs": {
+        "type": "NormalizerFunction",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs"
+    },
+    "fix_MCPE_153558_and_MCPE_178265_and_make_sounds_dict": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "fix_MCPE_153558_and_MCPE_178265_and_make_sounds_dict"
+    },
+    "fix_MCPE_153561": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "fix_MCPE_153561"
     },
     "sound_event": {
         "type": "Dict",
@@ -22,12 +35,14 @@
         "value_types": ["dict"],
         "detect_key_moves": true,
         "comparison_move_function": "resource_pack_comparison_move_function",
+        "normalizer": "collapse_resource_packs",
         "measure_length": true,
         "comparer": "sound_event_property"
     },
     "sound_event_property": {
         "type": "TypedDict",
         "field": "property",
+        "normalizer": "fix_MCPE_153558_and_MCPE_178265_and_make_sounds_dict",
         "types": {
             "category": {"type": "str"},
             "defined_in": {"type": "list", "comparer": "defined_in"},
@@ -51,6 +66,7 @@
     "sound_properties": {
         "type": "TypedDict",
         "field": "property",
+        "normalizer": "fix_MCPE_153561",
         "types": {
             "exclude_from_pocket_platforms": {"type": "bool"},
             "is3D": {"type": "bool"},

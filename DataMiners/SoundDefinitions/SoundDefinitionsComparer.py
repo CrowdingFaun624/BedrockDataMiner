@@ -2,31 +2,28 @@ import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 import Comparison.ComparerImporter as ComparerImporter
 
-def normalize(data:DataMinerTyping.MySoundDefinitionsJson, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedSoundDefinitionsJson:
-    def fix_properties(properties:dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]) -> dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]:
-        '''Removes illegal created by bugs.'''
-        for resource_pack_name, resource_pack_properties in properties.items():
-            if "pitch" in resource_pack_properties: del resource_pack_properties["pitch"] # MCPE-153558
-            if "volume" in resource_pack_properties: del resource_pack_properties["volume"] # MCPE-178265
-            for sound in resource_pack_properties["sounds"]:
-                if isinstance(sound, dict):
-                    if "pitch:" in sound: del sound["pitch:"] # MCPE-153561
-        return properties
-    def make_sounds_dict(properties:dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]) -> dict[str,DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict]:
-        for resource_pack_name, resource_pack_properties in properties.items():
-            sounds:dict[str,DataMinerTyping.NormalizedSoundDefinitionsJsonSoundTypedDict] = {}
-            for sound in resource_pack_properties["sounds"]:
-                if isinstance(sound, str):
-                    sounds[sound] = {}
-                else:
-                    sounds[sound["name"]] = sound
-                    del sounds[sound["name"]]["name"]
-            resource_pack_properties["sounds"] = sounds
-        return properties
-    resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = dependencies["resource_packs"]
-    if resource_packs is None:
-        resource_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}] # hardcoded in sound definitions dataminer if there are no resource packs
-    return {sound_event_name: CollapseResourcePacks.collapse_resource_packs(make_sounds_dict(fix_properties(sound_event_properties)), resource_packs) for sound_event_name, sound_event_properties in data.items()}
+# TODO: fix this when support for multiple normalizers is added
+def fix_MCPE_153558_and_MCPE_178265_and_make_sounds_dict(data:DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    # https://bugs.mojang.com/browse/MCPE-153558
+    if "pitch" in data:
+        del data["pitch"]
+    # https://bugs.mojang.com/browse/MCPE-178265
+    if "volume" in data:
+        del data["volume"]
+    if "sounds" in data:
+        sounds:dict[str,DataMinerTyping.NormalizedSoundDefinitionsJsonSoundTypedDict] = {}
+        for sound in data["sounds"]:
+            if isinstance(sound, str):
+                sounds[sound] = {}
+            else:
+                sounds[sound["name"]] = sound
+                del sound["name"]
+        data["sounds"] = sounds
+
+def fix_MCPE_153561(data:DataMinerTyping.SoundDefinitionsJsonSoundTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    # https://bugs.mojang.com/browse/MCPE-153561
+    if "pitch:" in data:
+        del data["pitch:"]
 
 def resource_pack_comparison_move_function(key:str, value:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict) -> DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict:
     output = value.copy()
@@ -37,7 +34,9 @@ def sound_comparison_move_function(key:str, value:DataMinerTyping.NormalizedSoun
     return key.split("/")[-1]
 
 comparer = ComparerImporter.load_from_file("sound_definitions", {
-    "normalize": normalize,
+    "collapse_resource_packs": CollapseResourcePacks.make_interface(),
+    "fix_MCPE_153561": fix_MCPE_153561,
+    "fix_MCPE_153558_and_MCPE_178265_and_make_sounds_dict": fix_MCPE_153558_and_MCPE_178265_and_make_sounds_dict,
     "resource_pack_comparison_move_function": resource_pack_comparison_move_function,
     "sound_comparison_move_function": sound_comparison_move_function,
 })

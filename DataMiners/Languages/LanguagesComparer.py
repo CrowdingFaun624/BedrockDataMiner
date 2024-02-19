@@ -14,10 +14,14 @@ def normalize(data:DataMinerTyping.Languages, dependencies:DataMinerTyping.Depen
     if resource_packs is None:
         resource_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}]
 
-    return {language["code"]: fix_properties(language, resource_packs) for language in data}
+    a = {language["code"]: fix_properties(language, resource_packs) for language in data}
+    return a
 
 def languages_comparison_move_function(key:str, value:DataMinerTyping.LanguagesTypedDict) -> dict[str,str]|None:
     output = {resource_pack_name: resource_pack_properties["name"] for resource_pack_name, resource_pack_properties in value.items() if "name" in resource_pack_properties}
     return None if len(output) == 0 else output
 
-comparer = ComparerImporter.load_from_file("languages", {"normalize": normalize, "languages_comparison_move_function": languages_comparison_move_function})
+comparer = ComparerImporter.load_from_file("languages", {
+    "normalize": normalize,
+    "languages_comparison_move_function": languages_comparison_move_function
+})
