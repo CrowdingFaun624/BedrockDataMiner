@@ -9,7 +9,7 @@ IN = TypeVar("IN")
 OUT = TypeVar("OUT")
 
 class Normalizer(Generic[IN, OUT]):
-    def __init__(self, function:Callable[[IN, dict[str,Any]], OUT], dependencies:list[str]):
+    def __init__(self, function:Callable[[IN, "DataMinerTyping.DependenciesTypedDict"], OUT], dependencies:list[str]):
         '''`function` is a Callable that modifies the original object and returns nothing.
         `dependencies` is a list of DataMinerCollection names.'''
         if not isinstance(function, Callable):
@@ -22,7 +22,7 @@ class Normalizer(Generic[IN, OUT]):
         self.function = function
         self.dependencies = dependencies
 
-    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", version_number:int=1) -> OUT:
+    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", version_number:int=1) -> OUT|None:
         if version_number not in (1, 2):
             raise ValueError("`version_number` is not 1 or 2!")
         version = normalizer_dependencies.get_version(version_number)
