@@ -59,5 +59,6 @@ def get_music_definitions_sound_events(music_definitions:DataMinerTyping.MyMusic
     return output
 
 class UnusedSoundEventsDataMiner(DataMiner.DataMiner):
+
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.UnusedSoundEvents:
         return super().activate(dependency_data)

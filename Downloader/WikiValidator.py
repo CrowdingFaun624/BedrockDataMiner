@@ -1,6 +1,6 @@
 import datetime
-import time
 import threading
+import time
 from typing import Any
 
 import Downloader.VersionsParser as VersionsParser
@@ -25,13 +25,13 @@ def get_wikitext(page:mediawikiapi.WikipediaPage) -> str:
             "titles": page.title
         }
         request = page.request(query_params)
-        try:    
+        try:
             page_data = request["query"]["pages"][0]
         except KeyError:
             raise KeyError("Weird json from \"%s\": \"%s\"!" % (page.title, str(request)))
         if "missing" in page_data and page_data["missing"] is True:
             raise FileNotFoundError("Page \"%s\" does not exist on the Minecraft Wiki!" % page.title)
-        page._wikitext:str = page_data["revisions"][0]["slots"]["main"]["content"]
+        page._wikitext = page_data["revisions"][0]["slots"]["main"]["content"]
     if page._wikitext == "":
         raise RuntimeError("Page \"%s\" is empty!" % page.title)
     return page._wikitext
@@ -84,7 +84,7 @@ def get_infobox_data(wikitext:str, version:Version.Version) -> dict[str,str]:
         if is_recording_version_nav:
             if this_parameter is None: this_parameter = ""
             this_parameter += char
-    
+
     version_nav_data:dict[str,str] = {}
     if version_nav_parameters[0].lower().strip().replace("_", "") != "version nav":
         raise ValueError("Version nav parameters \"%s\" does not start with \"version nav\" on \"%s\"!" % (str(version_nav_parameters), version.wiki_page))
@@ -182,7 +182,7 @@ def parse_client_downloads(client_dl_string:str, version:Version.Version) -> lis
     for link in links:
         if not (link.startswith("http://") or link.startswith("https://")):
             warning_messages.append("Link \"%s\" on \"%s\" is invalid!" % (link, version.wiki_page))
-    if version.download_method is Version.DOWNLOAD_URL:
+    if version.download_method is Version.DownloadMethod.DOWNLOAD_URL:
         if version.download_link not in links:
             warning_messages.append("Link \"%s\" on \"%s\" is not in the page's links!" % (version.download_link, version.wiki_page))
     return warning_messages
@@ -295,4 +295,3 @@ def main() -> None:
         thread_statuses[version.name] = None
         new_thread = threading.Thread(target=validate, args=[version, thread_statuses])
         new_thread.start()
-    

@@ -1,6 +1,7 @@
 from typing import Any, Callable, Generic, TYPE_CHECKING, TypeVar
 
 import Utilities.Version as Version
+
 if TYPE_CHECKING:
     import DataMiners.DataMiner as DataMiner
     import DataMiners.DataMinerTyping as DataMinerTyping
@@ -9,6 +10,7 @@ IN = TypeVar("IN")
 OUT = TypeVar("OUT")
 
 class Normalizer(Generic[IN, OUT]):
+
     def __init__(self, function:Callable[[IN, "DataMinerTyping.DependenciesTypedDict"], OUT], dependencies:list[str]):
         '''`function` is a Callable that modifies the original object and returns nothing.
         `dependencies` is a list of DataMinerCollection names.'''
@@ -41,6 +43,7 @@ class Normalizer(Generic[IN, OUT]):
             raise exception
 
 class NormalizerDependencies():
+
     def __init__(self, data:dict[tuple[Version.Version, str], Any], dataminer_collections:list["DataMiner.DataMinerCollection"]):
         '''There should only be one data object that is shared between all NormalizerDependencies, or only one NormalizerDependencies object.
         The data is a dictionary of tuples of a version and a dataminer name, and the corresponding data.'''
@@ -65,7 +68,7 @@ class NormalizerDependencies():
         if (version, dataminer_name) not in self.data:
             self.data[version, dataminer_name] = self.dataminer_collections[dataminer_name].get_data_file(version, non_exist_ok=True)
         return self.data[version, dataminer_name]
-    
+
     def forget(self, version:Version.Version) -> None:
         '''Removes everything related to the given version from the data.'''
         items_to_delete:list[tuple[Version.Version,str]] = []
@@ -76,6 +79,7 @@ class NormalizerDependencies():
             del self.data[item_to_delete]
 
 class LocalNormalizerDependencies():
+
     def __init__(self, normalizer_dependencies:NormalizerDependencies, version1:Version.Version, version2:Version.Version):
         if not isinstance(normalizer_dependencies, NormalizerDependencies):
             raise TypeError("`normalizer_dependencies` is not a NormalizerDependencies, but instead a %s!" % (normalizer_dependencies.__class__.__name__))
@@ -98,11 +102,12 @@ class LocalNormalizerDependencies():
 
     def get_data(self, version:Version.Version, dataminer_name:str) -> Any:
         return self.parent.get_data(version, dataminer_name)
-    
+
     def __repr__(self) -> str:
         return "<LocalNormalizerDependencies (%s, %s)>" % (str(self.version1), str(self.version2))
 
 class SimpleNormalizerDependencies(LocalNormalizerDependencies):
+
     def __init__(self, data:"DataMinerTyping.DependenciesTypedDict", version:Version.Version):
         if not isinstance(data, dict):
             raise TypeError("`data` is not a dict, but instead %s!" % (data.__class__.__name__))

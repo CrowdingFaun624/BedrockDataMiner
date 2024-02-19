@@ -1,10 +1,9 @@
-from itertools import islice
-from typing import Iterable
-from pathlib2 import Path
-
-import shutil
-import zipfile
 import gzip
+from itertools import islice
+from pathlib2 import Path
+import shutil
+from typing import Iterable
+import zipfile
 
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller
@@ -171,7 +170,7 @@ def archive(path:Path, hashes:dict[str,bytes], version_name:str|None=None) -> di
             completed = True # evil debug code
         finally:
             if not completed: print("Failed to find hash in \"%s\"!" % version_name)
-        
+
         hex_hash = FileManager.stringify_sha1_hash(file_hash)
         zip_info.filename = get_hash_file_path(hex_hash, True) # slightly evil code that makes it not spit thousands of directories everywhere
         str_hash = FileManager.stringify_sha1_hash(file_hash)

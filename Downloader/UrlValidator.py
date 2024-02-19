@@ -5,8 +5,8 @@ import Utilities.FileManager as FileManager
 import Utilities.Version as Version
 import Utilities.VersionTags as VersionTags
 
-
 def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version],list[str]]:
+
     def matches_mcpedl(version:Version.Version) -> list[str]:
         VALID_ID_STARTS = ["minecraft-pe-", "minecraft-", "Minecraft-pe-", "Minecraft-PE-", "Minecraft-"] # make sure the more specific ones are first (e.g. "minecraft-pe-" before "minecraft-").
         url = version.download_link
@@ -24,7 +24,7 @@ def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version],list[s
             date = datetime.date(int(year), int(month), int(day))
         except ValueError:
             return ["%s date string \"%s\" is invalid!" % (matcher_name, date_string)]
-        
+
         for valid_id_start in VALID_ID_STARTS:
             if id_string.startswith(valid_id_start):
                 stripped_id_string = id_string.replace(valid_id_start, "").replace(".apk", "")
@@ -34,7 +34,7 @@ def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version],list[s
         id = stripped_id_string.replace("-", ".")
         if VersionTags.VersionTag.alpha in version.tags:
             id = "a" + id
-        
+
         return_values:list[str] = []
         if date != version.time:
             return_values.append("Version \"%s\"'s date \"%s\" does not match its url's (%s) date of \"%s\"!" % (version.name, version.time, matcher_name, date))
@@ -54,7 +54,7 @@ def matches_mcpealpha(version:Version.Version) -> list[str]:
     if not stripped_url.endswith(".apk"):
         return ["%s stripped url \"%s\" does not end with \".apk\"" % (matcher_name, stripped_url)]
     id = stripped_url.replace("PE-", "").replace(".apk", "").replace("-", "_")
-    
+
     return_values:list[str] = []
     if id != version.name.replace("-", "_"):
         return_values.append("Version \"%s\"'s id does not match its url's (%s) id of \"%s\"!" % (version.name, matcher_name, id))

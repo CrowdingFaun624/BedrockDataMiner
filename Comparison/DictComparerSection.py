@@ -1,11 +1,11 @@
 from typing import Callable, Generator, Iterable, TypeVar
 
+import Comparison.ComparerSection as ComparerSection
+import Comparison.ComparerSet as ComparerSet
+import Comparison.ComparisonUtilities as CU
 import Comparison.Difference as D
 import Comparison.Normalizer as Normalizer
-import Comparison.ComparerSection as ComparerSection
 import Comparison.Trace as Trace
-import Comparison.ComparisonUtilities as CU
-import Comparison.ComparerSet as ComparerSet
 
 b = TypeVar("b")
 c = TypeVar("c")
@@ -21,6 +21,7 @@ def glue_iterables(iter1:Iterable[c], iter2:Iterable[d]) -> Generator[c|d,None,N
     yield from iter2
 
 class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
+
     def __init__(
             self,
             name:str,
@@ -97,9 +98,6 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
 
     def check_all_types(self, data:dict[c,d], trace:Trace.Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> list[tuple[Trace.Trace,Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
-        # if self.normalizer is not None:
-        #     self.normalizer(data, normalizer_dependencies)
-
         output:list[tuple[Trace.Trace,Exception]] = []
         if not isinstance(data, dict):
             output.append((trace, TypeError("`data` has the wrong type, %s instead of dict!" % type(data))))
@@ -135,7 +133,13 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
             if comparer is not None:
                 comparer.normalize(value, normalizer_dependencies, version_number, trace.copy(self.name, key))
 
-    def compare(self, data1: dict[c,d], data2: dict[c,d], trace:Trace.Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> tuple[dict[c|D.Diff[c,c],d|D.Diff[d,d]],list[tuple[Trace.Trace,Exception]]]:
+    def compare(
+            self,
+            data1:dict[c,d],
+            data2:dict[c,d],
+            trace:Trace.Trace,
+            normalizer_dependencies:Normalizer.LocalNormalizerDependencies
+        ) -> tuple[dict[c|D.Diff[c,c],d|D.Diff[d,d]],list[tuple[Trace.Trace,Exception]]]:
         key_occurences:dict[c,list[D.DiffType]] = {}
         exceptions:list[tuple[Trace.Trace,Exception]] = []
 

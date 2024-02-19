@@ -1,8 +1,8 @@
 from typing import Generic, TYPE_CHECKING, TypeVar, Union
 
+import Comparison.ComparisonUtilities as CU
 import Comparison.Difference as D
 import Comparison.Normalizer as Normalizer
-import Comparison.ComparisonUtilities as CU
 import Comparison.Trace as Trace
 
 if TYPE_CHECKING:
@@ -13,6 +13,7 @@ d = TypeVar("d")
 class ComparerSet(Generic[d]):
     '''Contains one or two ComparerSections. Is used internally.
     Is used for when a value is a Diff and must use two different printers.'''
+
     def __init__(self, comparers:dict[D.DiffType,"ComparerSection.ComparerSection"]) -> None:
         self.comparers = comparers
 
@@ -21,8 +22,10 @@ class ComparerSet(Generic[d]):
 
     def __len__(self) -> int:
         return len(self.comparers)
+
     def __contains__(self, item:D.DiffType) -> bool:
         return item in self.comparers
+
     def __getitem__(self, key:D.DiffType|int) -> Union["ComparerSection.ComparerSection",None]:
         if isinstance(key, D.DiffType):
             return self.comparers[key]
@@ -30,18 +33,21 @@ class ComparerSet(Generic[d]):
             return list(self.comparers.values())[key]
         else:
             raise KeyError("Attempted to index a ComparerSet using a %s rather than a D.DiffType!" % type(key))
+
     def print_text(self, key:D.DiffType|int, data:d, trace:Trace.Trace) -> list[str]:
         comparer = self[key]
         if comparer is None:
             return [CU.stringify(data)]
         else:
             return comparer.print_text(data, trace)
+
     def compare_text(self, key:D.DiffType|int, data:d, trace:Trace.Trace) -> tuple[list[str],bool]:
         comparer = self[key]
         if comparer is None:
             raise RuntimeError("Attempted to compare (key %s) using a NoneType object at %s!" % (key, trace))
         else:
             return comparer.compare_text(data, trace)
+
     def compare(self, data1:d, data2:d, trace:Trace.Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> tuple[d,list[tuple[Trace.Trace,Exception]]]:
         if (len(self) == 1) or (len(self) == 2 and self[0] == self[1]):
             # both items have the same ComparerSection.

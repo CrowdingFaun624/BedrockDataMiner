@@ -30,13 +30,13 @@ def cache_new_item(fsb_hash:str, data:dict[str,str]) -> None:
     if not isinstance(data, dict):
         raise TypeError("`data` is not a dict!")
     for key, value in data.items():
-        if not isinstance(key, str): 
+        if not isinstance(key, str):
             raise TypeError("A key in `data` is not a str: \"%s\"" % key)
         if not isinstance(value, str):
             raise TypeError("A value in `data` is not a str: \"%s\": \"%s\"!" % (key, value))
         if len(value) != 40:
             raise ValueError("A value in `data` is len %i isntead of 40: \"%s\": \"%s\"!" % (len(value), key, value))
-    
+
     cache = fsb_cache.get()
     with cache_file_lock:
         cache[fsb_hash] = data
@@ -66,7 +66,7 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
     with input_file.open() as f:
         fsb_file_hash = FileManager.stringify_sha1_hash(FileManager.get_hash(f))
     cache_data = cache_read_item(fsb_file_hash)
-    
+
     if cache_data is None:
         temp_directory = FileManager.get_temp_file_path()
         temp_directory.mkdir()
@@ -95,7 +95,7 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
         temp_file.unlink()
         input_file_releases = {result_file_path.name: False for result_file_path in result_file_paths} # the all_done function will set its thing to True, and then delete the folder if all are True.
         return {result_file_path.name: FileManager.FilePromise(FunctionCaller(open, [result_file_path, "rb"]), "%s %s" % (input_file.name, result_file_path.name), "b", FunctionCaller(__output_file_all_done, [input_file_releases, result_file_path])) for result_file_path in result_file_paths}
-    
+
     else: # If the fsb has been seen before, then it returns its wav files from FileStorage
         input_file.all_done()
         return {cached_file_path: FileStorageManager.open_archived(cached_file_hash, "b") for cached_file_path, cached_file_hash in cache_data.items()}

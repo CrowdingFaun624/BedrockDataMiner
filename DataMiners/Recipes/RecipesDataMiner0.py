@@ -5,12 +5,13 @@ import DataMiners.Recipes.RecipesDataMiner as RecipesDataMiner
 import Utilities.Sorting as Sorting
 
 class RecipesDataMiner0(RecipesDataMiner.RecipesDataMiner):
+
     def initialize(self, **kwargs) -> None:
         if "behavior_packs_location" in kwargs:
             self.behavior_packs_location:str|None = kwargs["behavior_packs_location"]
         else:
             raise ValueError("`RecipesDataMiner0` was initialized without kwarg \"behavior_packs_location\"!")
-    
+
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Recipes:
         behavior_packs = dependency_data["behavior_packs"]
         recipe_files:dict[tuple[str,str],str] = {}

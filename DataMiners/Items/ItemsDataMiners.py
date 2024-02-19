@@ -1,4 +1,3 @@
-
 import DataMiners.DataMiner as DataMiner
 import DataMiners.Items.ItemsComparer as ItemsComparer
 import DataMiners.Items.ItemsDataMiner0 as ItemsDataMiner0

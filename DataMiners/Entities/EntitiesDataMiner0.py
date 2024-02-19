@@ -5,12 +5,13 @@ import DataMiners.Entities.EntitiesDataMiner as EntitiesDataMiner
 import Utilities.Sorting as Sorting
 
 class EntitiesDataMiner0(EntitiesDataMiner.EntitiesDataMiner):
+
     def initialize(self, **kwargs) -> None:
         if "behavior_packs_location" in kwargs:
             self.behavior_packs_location:str|None = kwargs["behavior_packs_location"]
         else:
             raise ValueError("`EntitiesDataMiner0` was initialized without kwarg \"behavior_packs_location\"!")
-    
+
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Entities:
         behavior_packs = dependency_data["behavior_packs"]
         entity_files:dict[tuple[str,str],str] = {}

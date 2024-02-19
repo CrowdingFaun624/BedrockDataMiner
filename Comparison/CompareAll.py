@@ -1,22 +1,22 @@
 import traceback
-from typing import Generator, Iterable, TypeVar, TYPE_CHECKING, Union
+from typing import Generator, Iterable, TYPE_CHECKING, TypeVar, Union
 
 import Comparison.Normalizer as Normalizer
+import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMiners as DataMiners
 import Downloader.VersionsParser as VersionsParser
-import Utilities.VersionTags as VersionTags
-import DataMiners.DataMiner as DataMiner
 import Utilities.FileManager as FileManager
+import Utilities.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
 
-Flatten = TypeVar("Flatten")
-def flatten(matrix:Iterable[Iterable[Flatten]]) -> Generator[Flatten, None, None]:
+FlattenType = TypeVar("FlattenType")
+def flatten(matrix:Iterable[Iterable[FlattenType]]) -> Generator[FlattenType, None, None]:
     yield from (item for row in matrix for item in row)
 
-Pairs = TypeVar("Pairs")
-def pairs(_list:Iterable[Pairs]) -> Generator[tuple[Pairs,Pairs], None, None]:
+PairsType = TypeVar("PairsType")
+def pairs(_list:Iterable[PairsType]) -> Generator[tuple[PairsType,PairsType], None, None]:
     previous_item = None
     for index, item in enumerate(_list):
         if index != 0:
@@ -32,7 +32,12 @@ def compare(
     ) -> None:
     dataminer_collection.compare(version1, version2, undataminable_versions_between, normalizer_dependencies)
 
-def compare_all_of(dataminer_collection:DataMiner.DataMinerCollection, versions:list["Version.Version"], exception_holder:dict[str,bool|Exception], normalizer_dependencies:Normalizer.NormalizerDependencies) -> None:
+def compare_all_of(
+        dataminer_collection:DataMiner.DataMinerCollection,
+        versions:list["Version.Version"],
+        exception_holder:dict[str,bool|Exception],
+        normalizer_dependencies:Normalizer.NormalizerDependencies,
+    ) -> None:
     version = None
     try:
         previous_successful_version = None # The last Version that can be datamined for this file.
@@ -80,7 +85,7 @@ def main() -> None:
         child_versions.extend([child for child in major_version.children if child.ordering_tag == VersionTags.VersionTag.beta])
         child_versions.append(major_version)
         child_versions.extend([child for child in major_version.children if child.ordering_tag == VersionTags.VersionTag.reupload])
-    
+
     sorted_versions = list(flatten(child_versions for child_versions in major_versions.values()))
     exception_holder:dict[str,bool|tuple[Exception,Union["Version.Version",None]]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
     normalizer_dependencies = Normalizer.NormalizerDependencies({}, dataminers)

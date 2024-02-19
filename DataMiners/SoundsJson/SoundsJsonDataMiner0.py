@@ -1,7 +1,7 @@
 import pyjson5 # supports comments
 
-import DataMiners.SoundsJson.SoundsJsonDataMiner as SoundsJsonDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.SoundsJson.SoundsJsonDataMiner as SoundsJsonDataMiner
 import Utilities.Sorting as Sorting
 
 class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
@@ -50,7 +50,7 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
         files:dict[str,DataMinerTyping.SoundsJsonTypedDict] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"sounds.json\" files found in \"%s\"" % self.version)
-        
+
         sounds_json:DataMinerTyping.MySoundsJsonTypedDict = {
             "individual_event_sounds": {},
             "block_sounds": {},
@@ -64,7 +64,7 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
             # individual_event_sounds
             if "individual_event_sounds" in resource_pack_sounds_json:
                 self.parse_flat_sound_collection(resource_pack_sounds_json["individual_event_sounds"], sounds_json["individual_event_sounds"], resource_pack_name)
-            
+
             # block_sounds
             if "block_sounds" in resource_pack_sounds_json:
                 for block_sound_type_name, block_sound_type_properties in resource_pack_sounds_json["block_sounds"].items():
@@ -78,7 +78,7 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
                     if block_sound_type_name not in sounds_json["interactive_block_sounds"]:
                         sounds_json["interactive_block_sounds"][block_sound_type_name] = {}
                     self.parse_sound_collection(block_sound_type_properties, sounds_json["interactive_block_sounds"][block_sound_type_name], resource_pack_name)
-            
+
             # entity_sounds
             if "entity_sounds" in resource_pack_sounds_json:
                 if "defaults" in resource_pack_sounds_json["entity_sounds"]:
@@ -91,7 +91,7 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
                         if entity_name not in sounds_json["entity_sounds"]:
                             sounds_json["entity_sounds"][entity_name] = {}
                         self.parse_sound_collection(entity_sounds, sounds_json["entity_sounds"][entity_name], resource_pack_name)
-            
+
             # interactive_entity_sounds
             if "interactive_sounds" in resource_pack_sounds_json and "entity_sounds" in resource_pack_sounds_json["interactive_sounds"]:
                 if "defaults" in resource_pack_sounds_json["interactive_sounds"]["entity_sounds"]:
@@ -104,5 +104,5 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
                         if entity_name not in sounds_json["interactive_entity_sounds"]:
                             sounds_json["interactive_entity_sounds"][entity_name] = {}
                         self.parse_sound_collection(entity_sounds, sounds_json["interactive_entity_sounds"][entity_name], resource_pack_name)
-        
+
         return Sorting.sort_everything(sounds_json)

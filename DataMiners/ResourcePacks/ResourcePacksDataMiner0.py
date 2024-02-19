@@ -1,5 +1,5 @@
-import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
 
 class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
 

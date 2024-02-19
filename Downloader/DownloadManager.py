@@ -1,21 +1,22 @@
-from typing import Iterable
 from pathlib2 import Path
 import requests
 import shutil
 import threading
 import time
+from typing import Iterable
 from urllib.parse import urlparse
 import zipfile
 
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
-import Utilities.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller
+import Utilities.VersionTags as VersionTags
 
 CONNECTION_LIMITS:dict[str,int] = {}
 CONNECTION_LIMITS_DEFAULT = 1
 
 class DownloadManager(InstallManager.InstallManager):
+
     current_open_connections:dict[str,list[requests.Request]] = {}
 
     def prepare_for_install(self) -> None:
@@ -63,7 +64,7 @@ class DownloadManager(InstallManager.InstallManager):
             raise TypeError("Parameter `file_name` is not a `str`!")
         if destination is not None and not isinstance(destination, Path):
             raise TypeError("Parameter `destination` is not a `Path`!")
-        
+
         if not self.installed:
             self.install_all()
         file_name = self.get_full_file_name(file_name)
@@ -117,7 +118,7 @@ class DownloadManager(InstallManager.InstallManager):
             return data.decode("utf-8")
         else:
             return data
-    
+
     def get_file(self, file_name:str, mode:str="b") -> FileManager.FilePromise:
 
         def clear_temp_file(temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
@@ -140,7 +141,7 @@ class DownloadManager(InstallManager.InstallManager):
             raise TypeError("Parameter `mode` is not a `str`!")
         if mode not in ("t", "b"):
             raise ValueError("Parameter `mode` is not \"b\" or \"t\"!")
-    
+
         if not self.installed:
             self.install_all()
         file_name = self.get_full_file_name(file_name)
@@ -154,7 +155,6 @@ class DownloadManager(InstallManager.InstallManager):
             return FileManager.FilePromise(FunctionCaller(open, [path_that_zipfile_puts_it_in, "rt"]), file_name.split("/")[-1], mode, FunctionCaller(clear_temp_file, [temp_path, path_that_zipfile_puts_it_in]))
 
     def install_all(self, destination:Path|None=None) -> None:
-
         if destination is not None and not isinstance(destination, Path):
             raise TypeError("Parameter `destination` is not a `Path`!")
 
@@ -170,7 +170,7 @@ class DownloadManager(InstallManager.InstallManager):
             self.installed = True
             self.open_zip_file()
         self.installation_lock.release()
-    
+
     def all_done(self) -> None:
         self.installation_lock.acquire() # So it doesn't do anything under my nose
         self.installed = False

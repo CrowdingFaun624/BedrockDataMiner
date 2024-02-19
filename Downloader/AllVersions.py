@@ -2,8 +2,8 @@ import threading
 import time
 import traceback
 
-import Downloader.VersionsParser as VersionsParser
 import DataMiners.DataMiners as DataMiners
+import Downloader.VersionsParser as VersionsParser
 import Utilities.Version as Version
 
 LIMIT = 4
@@ -56,9 +56,9 @@ def main() -> None:
             # Waiting
             active_threads = trim_inactive_threads(active_threads)
             time.sleep(0.05)
-        
+
         has_encountered_exception = do_exception_stuff(active_threads, exceptions, exception_versions)
-        
+
         # New threads
         if version_index < len(versions) and not has_encountered_exception:
             if version.download_method is Version.DownloadMethod.DOWNLOAD_NONE:

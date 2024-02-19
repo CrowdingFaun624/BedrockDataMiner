@@ -1,6 +1,6 @@
+import Comparison.ComparerImporter as ComparerImporter
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
-import Comparison.ComparerImporter as ComparerImporter
 
 # TODO: fix this when support for multiple normalizers is added
 def fix_MCPE_153558_and_MCPE_178265_and_make_sounds_dict(data:DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:

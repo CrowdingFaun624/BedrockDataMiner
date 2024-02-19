@@ -3,6 +3,7 @@ import traceback
 
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Downloader.VersionsParser as VersionsParser
 import Utilities.Version as Version
 
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
@@ -87,7 +88,7 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
 
             if isinstance(dataminer, DataMiner.NullDataMiner):
                 return # If it is a null dataminer, then there is nothing else to do.
-            
+
             if not recalculate and dataminer.get_data_file_path().exists(): # get the data file if it already exists.
                 data[name] = dataminer.get_data_file()
                 return # Return so it doesn't try to datamine the data file anyways.
@@ -121,8 +122,6 @@ def test_comparers() -> None:
     print("All comparers successfully parsed.")
 
 def user_interface() -> None:
-    import Downloader.VersionsParser as VersionsParser
-
     version_names = VersionsParser.versions_dict.get()
     version = None
     while version not in version_names:

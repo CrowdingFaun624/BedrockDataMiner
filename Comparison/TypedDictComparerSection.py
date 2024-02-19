@@ -1,16 +1,17 @@
 from typing import TypeVar
 
+import Comparison.ComparerSection as ComparerSection
+import Comparison.ComparerSet as ComparerSet
+import Comparison.ComparisonUtilities as CU
+import Comparison.DictComparerSection as DictComparerSection
 import Comparison.Difference as D
 import Comparison.Normalizer as Normalizer
-import Comparison.DictComparerSection as DictComparerSection
-import Comparison.ComparerSection as ComparerSection
 import Comparison.Trace as Trace
-import Comparison.ComparisonUtilities as CU
-import Comparison.ComparerSet as ComparerSet
 
 d = TypeVar("d")
 
 class TypedDictComparerSection(DictComparerSection.DictComparerSection[str,d]):
+
     def __init__(
             self,
             name:str,

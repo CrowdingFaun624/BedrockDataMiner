@@ -1,13 +1,14 @@
 from typing import Generic, TypeVar, Union
 
-import Comparison.Normalizer as Normalizer
-import Comparison.ComparisonUtilities as CU
 import Comparison.ComparerSet as ComparerSet
+import Comparison.ComparisonUtilities as CU
+import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
 
 a = TypeVar("a")
 
 class ComparerSection(Generic[a]):
+
     def __init__(self, name:str) -> None:
         self.name = name
         self.normalizer:Normalizer.Normalizer
@@ -80,7 +81,13 @@ class ComparerSection(Generic[a]):
                 output.extend("\t" + line for line in subcomparer_output2)
 
     def check_all_types(self, data:a, trace:Trace.Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> list[tuple[Trace.Trace, Exception]]: ...
+
     def compare_text(self, data:a, trace:Trace.Trace) -> tuple[list[str],bool]: ...
+
     def print_text(self, data:a, trace:Trace.Trace) -> list[str]: ...
-    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> None: raise NotImplementedError()
+
+    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> None:
+        raise NotImplementedError()
+
     def compare(self, data1:a, data2:a, trace:Trace.Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> tuple[a,list[tuple[Trace.Trace,Exception]]]: ...
+

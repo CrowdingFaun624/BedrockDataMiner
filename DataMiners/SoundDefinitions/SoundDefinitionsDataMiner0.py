@@ -1,11 +1,12 @@
-from typing import IO
 import pyjson5 # supports comments
+from typing import IO
 
-import DataMiners.SoundDefinitions.SoundDefinitionsDataMiner as SoundDefinitionsDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.SoundDefinitions.SoundDefinitionsDataMiner as SoundDefinitionsDataMiner
 import Utilities.Sorting as Sorting
 
 class SoundDefinitionsDataMiner0(SoundDefinitionsDataMiner.SoundDefinitionsDataMiner):
+
     def normalize(self, file:IO) -> dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]:
         data = pyjson5.load(file)
         if "sound_definitions" in data:
@@ -20,7 +21,7 @@ class SoundDefinitionsDataMiner0(SoundDefinitionsDataMiner.SoundDefinitionsDataM
         files:dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"sound_definitions.json\" files found in \"%s\"" % self.version)
-        
+
         sound_definitions:dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]] = {}
         for resource_pack_file, resource_pack_sound_definitions in files.items():
             resource_pack_name = resource_pack_files[resource_pack_file]

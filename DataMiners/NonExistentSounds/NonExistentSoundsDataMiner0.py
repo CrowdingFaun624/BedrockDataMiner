@@ -32,19 +32,20 @@ def get_sounds(sound_definitions:DataMinerTyping.SoundDefinitionsJson) -> Genera
                     yield (sound_event_name, resource_pack_name, sound["name"])
 
 class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDataMiner):
+
     def initialize(self, **kwargs) -> None:
         if "resource_packs_location" in kwargs:
             self.resource_packs_location:str|None = kwargs["resource_packs_location"]
         else:
             raise ValueError("`NonExistentSoundsDataMiner0` was initialized without kwarg \"resource_packs_location\"!")
-    
+
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NonExistentSounds:
         sound_files_data = dependency_data["sound_files"]
         sound_files = {strip_file_name(sound_file, self.resource_packs_location) for sound_file in sound_files_data.keys()}
         sound_files.discard(None)
         if len(sound_files) == 0:
             raise RuntimeError("There are no sound files in a resource pack folder!")
-        
+
         non_existent_sounds:dict[str,dict[str,list[str]]] = {}
         sound_definitions = dependency_data["sound_definitions"]
         total_sound_locations = 0
@@ -60,8 +61,8 @@ class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDa
                     non_existent_sounds[sound_event][resource_pack] = [sound_location]
             else:
                 non_existent_sounds[sound_event] = {resource_pack: [sound_location]}
-        
+
         if total_sound_locations == total_non_existent_sound_locations:
             raise RuntimeError("Every sound appears to be non-existent!")
-        
+
         return {key: value for key, value in sorted(non_existent_sounds.items())}

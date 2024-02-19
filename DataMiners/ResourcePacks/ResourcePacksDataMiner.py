@@ -1,8 +1,8 @@
 import json
 
-import Utilities.FileManager as FileManager
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.FileManager as FileManager
 
 CORE = "core"
 EDUCATION = "education"
@@ -58,5 +58,6 @@ def get_resource_pack_order(message:str="resource pack") -> list[str]:
     return data
 
 class ResourcePacksDataMiner(DataMiner.DataMiner):
+    
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.ResourcePackTypedDict]:
         return super().activate()

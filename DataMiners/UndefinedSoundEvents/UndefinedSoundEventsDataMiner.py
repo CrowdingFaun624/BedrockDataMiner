@@ -7,5 +7,6 @@ get_music_definitions_sound_events = UnusedSoundEventsDataMiner.get_music_defini
 add_items_to_output = UnusedSoundEventsDataMiner.add_items_to_output
 
 class UndefinedSoundEventsDataMiner(DataMiner.DataMiner):
+
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.UndefinedSoundEvents:
         return super().activate(dependency_data)

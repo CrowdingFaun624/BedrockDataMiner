@@ -1,7 +1,7 @@
 from typing import Any
 
-import Utilities.CollapseResourcePacks as CollapseResourcePacks
 import Comparison.ComparerImporter as ComparerImporter
+import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
 def behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()

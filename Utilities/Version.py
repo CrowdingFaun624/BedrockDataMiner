@@ -18,6 +18,7 @@ class DownloadMethod(enum.Enum):
     DOWNLOAD_LOCAL = "local"
 
 class Version():
+
     def __init__(self, name:str, download_link:str|None, parent_str:str|None, time_str:str|None, tags_str:list[VersionTags.VersionTag], index:int, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
         self.name = name
         self.download_link = download_link
@@ -64,7 +65,7 @@ class Version():
             elif self.ordering_tag is VersionTags.VersionTag.beta:
                 alpha = " beta"
             development_category_suffix = " builds"
-            
+
         if "_build" in self.name:
             build = " build " + self.name.split("_build")[1]
         else: build = ""
@@ -76,7 +77,7 @@ class Version():
         if self.wiki_page is None: self.wiki_page = page_name
         development_category_name = "Category:" + self.wiki_page + development_category_suffix
         if self.development_category_names is None: self.development_category_names = [development_category_name]
-    
+
     def add_tag(self, tag:VersionTags.VersionTag) -> None:
         '''Adds a tag to the Version.'''
         if not isinstance(tag, VersionTags.VersionTag):
@@ -138,7 +139,7 @@ class Version():
         if VersionTags.VersionTag.unreleased in self.tags:
             if self.download_method is not DownloadMethod.DOWNLOAD_NONE:
                 raise ValueError("Version \"%s\" has the \"%s\" tag but has a download method!" % (self.name, VersionTags.VersionTag.unreleased))
-    
+
     def get_children_recursive(self) -> list["Version"]:
         children = self.children[:]
         for child in self.children:
@@ -161,24 +162,28 @@ class Version():
 
     def __str__(self) -> str:
         return self.name
+
     def __repr__(self) -> str:
         return "<Version %s>" % self.name
-    
+
     def __hash__(self) -> int:
         return hash((self.index, self.name, self.download_link, self.parent_str, self.time_str))
-    
+
     def __lt__(self, other:"Version") -> bool:
         if not isinstance(other, Version):
             raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
         return self.index < other.index
+
     def __gt__(self, other:"Version") -> bool:
         if not isinstance(other, Version):
             raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
         return self.index > other.index
+
     def __le__(self, other:"Version") -> bool:
         if not isinstance(other, Version):
             raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
         return self.index <= other.index
+
     def __ge__(self, other:"Version") -> bool:
         if not isinstance(other, Version):
             raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))

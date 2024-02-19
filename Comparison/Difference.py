@@ -2,8 +2,10 @@ import enum
 from typing import Any, Generic, TypeVar
 
 class NoExist(): # class that is different from None
+
     def __hash__(self) -> int:
         return hash(None)
+
     def __str__(self) -> str:
         raise NotImplementedError("Attempted to stringify NoExist object!")
 
@@ -27,7 +29,9 @@ Dt1 = TypeVar("Dt1")
 Dt2 = TypeVar("Dt2")
 Dt3 = TypeVar("Dt3")
 Dt4 = TypeVar("Dt4")
+
 class Diff(Generic[Dt1,Dt2]):
+
     def __init__(self, old:Dt1=NoExist(), new:Dt2=NoExist()) -> None:
         if old == new:
             raise ValueError("`old` is equal to `new`!")
@@ -37,21 +41,21 @@ class Diff(Generic[Dt1,Dt2]):
             raise TypeError("`new` is a Diff!")
         if isinstance(old, NoExist) and isinstance(new, NoExist):
             raise ValueError("Neither `old` nor `new` exist!")
-        
+
         self.old:Dt1 = old
         self.new:Dt2 = new
         self.change_type = exist_change_type[not isinstance(old, NoExist), not isinstance(new, NoExist)]
         self.is_addition = self.change_type == ChangeType.addition
         self.is_change = self.change_type == ChangeType.change
         self.is_removal = self.change_type == ChangeType.removal
-    
+
     def first_existing_property(self) -> Dt1|Dt2:
         '''Returns `self.new` if `self.new` is not NoExist, otherwise `self.old`.'''
         if self.is_removal:
             return self.old
         else:
             return self.new
-    
+
     def iter(self) -> list[tuple[Dt1|Dt2,DiffType]]:
         if self.is_addition: return [(self.new, DiffType.new)]
         elif self.is_change: return [(self.old, DiffType.old), (self.new, DiffType.new)]
@@ -78,6 +82,7 @@ class Diff(Generic[Dt1,Dt2]):
             return "<Diff change %s -> %s>" % (self.old, self.new)
         elif self.is_removal:
             return "<Diff remove %s>" % (self.old)
+
     def __str__(self) -> str:
         if self.is_addition:
             return "Addition of %s" % (self.new)
@@ -85,8 +90,10 @@ class Diff(Generic[Dt1,Dt2]):
             return "%s -> %s" % (self.old, self.new)
         elif self.is_removal:
             return "Removal of %s" % (self.old)
+
     def __hash__(self) -> int:
         return hash((self.old, self.new))
+
     def __lt__(self, other:Any) -> bool:
         if self.is_removal:
             return self.old < other
@@ -100,6 +107,7 @@ class Diff(Generic[Dt1,Dt2]):
 
 a = TypeVar("a")
 b = TypeVar("b")
+
 def iter_diff(thing:a|Diff[Dt1,Dt2]) -> list[tuple[a|Dt1|Dt2,DiffType]]:
     if isinstance(thing, Diff):
         return thing.iter()

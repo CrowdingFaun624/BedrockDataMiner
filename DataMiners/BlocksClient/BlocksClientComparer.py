@@ -1,6 +1,6 @@
+import Comparison.ComparerImporter as ComparerImporter
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
-import Comparison.ComparerImporter as ComparerImporter
 
 def fix_MCPE_76182(data:DataMinerTyping.BlocksJsonClientBlockTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-76182

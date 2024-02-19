@@ -1,14 +1,15 @@
 import json
 from typing import Any, BinaryIO
 
-import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 
 def decode(io:BinaryIO) -> Any:
     # for decoding json files with foreign characters
     return json.loads(io.read().decode())
 
 class LanguagesDataMiner0(LanguagesDataMiner.LanguagesDataMiner):
+
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
         resource_packs = dependency_data["resource_packs"]
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
@@ -17,7 +18,7 @@ class LanguagesDataMiner0(LanguagesDataMiner.LanguagesDataMiner):
         files:dict[str,list[str]] = {key: value for key, value in self.read_files(languages_files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"languages.json\" files found in \"%s\"" % self.version)
-        
+
         languages:dict[str,DataMinerTyping.LanguagesTypedDict] = {}
         for resource_pack_file, resource_pack_languages in files.items():
             resource_pack_name = languages_files[resource_pack_file]
@@ -36,12 +37,12 @@ class LanguagesDataMiner0(LanguagesDataMiner.LanguagesDataMiner):
         files:dict[str,list[list[str,str]]] = {key: value for key, value in self.read_files(language_names_files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"language_names.json\" files found in \"%s\"" % self.version)
-        
+
         for resource_pack_file, resource_pack_language_names in files.items():
             resource_pack_name = language_names_files[resource_pack_file]
             for language_code, language_name in resource_pack_language_names:
                 if language_code not in languages:
                     raise KeyError("Resource pack \"%s\" of \"%s\" specifies language code \"%s\" (name \"%s\") in language_names.json, but that code is never defined in \"languages.json\"!" % (resource_pack_name, self.version.name, language_code, language_name))
                 languages[language_code]["properties"][resource_pack_name] = {"name": language_name}
-        
+
         return sorted(list(languages.values()), key=lambda x: x["code"])

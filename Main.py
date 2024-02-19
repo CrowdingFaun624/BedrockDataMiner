@@ -8,30 +8,30 @@ if __name__ == "__main__":
 # import pstats
 # profile = cProfile.Profile()
 # profile.run('''
-# import Utilities.FileManager as FileManager
+# import Comparison.CompareAll as CompareAll
 # import DataMiners.DataMiners as DataMiners
 # import Downloader.AllVersions as AllVersions
-# import Comparison.CompareAll as CompareAll
+# import Downloader.VersionsParser as VersionsParser
+# import Downloader.WikiValidator as WikiValidator
 # import Programs.Cleaner as Cleaner
 # import Programs.FileSummary as FileSummary
 # import Programs.GetFile as GetFile
-# import Utilities.StoredVersionsManager as StoredVersionsManager
-# import Downloader.VersionsParser as VersionsParser
-# import Downloader.WikiValidator as WikiValidator''')
+# import Utilities.FileManager as FileManager
+# import Utilities.StoredVersionsManager as StoredVersionsManager''')
 # with open(Path("./time_report.txt"), "wt") as stream:
 #     stats = pstats.Stats(profile, stream=stream)
 #     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
 
-import Utilities.FileManager as FileManager
+import Comparison.CompareAll as CompareAll
 import DataMiners.DataMiners as DataMiners
 import Downloader.AllVersions as AllVersions
-import Comparison.CompareAll as CompareAll
+import Downloader.VersionsParser as VersionsParser
+import Downloader.WikiValidator as WikiValidator
 import Programs.Cleaner as Cleaner
 import Programs.FileSummary as FileSummary
 import Programs.GetFile as GetFile
+import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
-import Downloader.VersionsParser as VersionsParser
-import Downloader.WikiValidator as WikiValidator
 
 PROGRAM_NAMES = {
     "AllVersions": AllVersions.main,

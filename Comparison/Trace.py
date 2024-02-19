@@ -1,4 +1,5 @@
 class Trace():
+
     def __init__(self, data:list[tuple[str,str|int]]=None, current_key:str=None) -> None:
         self.data = [] if data is None else data
         self.current_key = current_key

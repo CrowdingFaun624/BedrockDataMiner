@@ -41,7 +41,7 @@ def get_metadata(file:FileManager.FilePromise) -> dict[str,Any]:
                 print("audio_metadata failed to extract file \"%s\"!" % file.name)
                 raise exception
             info = serialize(metadata)
-            
+
         del info["filepath"]
         sha1_hash = FileManager.stringify_sha1_hash(FileManager.get_hash(file_io))
         info["sha1_hash"] = sha1_hash
@@ -66,5 +66,6 @@ def serialize(data:Any) -> Any:
             return "Unencodable object \"%s\"" % data.__class__.__name__
 
 class SoundFilesDataMiner(DataMiner.DataMiner):
+
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
         return super().activate(dependency_data)

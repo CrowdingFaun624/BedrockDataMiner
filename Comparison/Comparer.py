@@ -1,9 +1,9 @@
 import traceback
-from typing import Generator, Iterable, TypeVar, TYPE_CHECKING, Union
+from typing import TypeVar, TYPE_CHECKING, Union
 
+import Comparison.ComparerSection as ComparerSection
 import Comparison.Difference as D
 import Comparison.Normalizer as Normalizer
-import Comparison.ComparerSection as ComparerSection
 import Comparison.Trace as Trace
 import Utilities.FileManager as FileManager
 import Utilities.VersionTags as VersionTags
@@ -20,7 +20,14 @@ file_counts:dict[str,int] = {}
 
 class Comparer():
     '''Can be created by a DataMinerCollection to compare the output of the DataMiners with each other.'''
-    def __init__(self, name:str, normalizer:Normalizer.Normalizer|None, base_comparer_section:ComparerSection.ComparerSection[b], post_normalizer:Normalizer.Normalizer|None=None) -> None:
+
+    def __init__(
+            self,
+            name:str,
+            normalizer:Normalizer.Normalizer|None,
+            base_comparer_section:ComparerSection.ComparerSection[b],
+            post_normalizer:Normalizer.Normalizer|None=None,
+        ) -> None:
         if not isinstance(name, str):
             raise TypeError("`name` is not a str, but instead %s!" % (name.__class__.__name__))
         if not (normalizer is None or isinstance(normalizer, Normalizer.Normalizer)):
@@ -44,7 +51,7 @@ class Comparer():
             output = self.normalizer(data, normalizer_dependencies, version_number)
             if output is None:
                 raise RuntimeError("Normalizer for \"%s\" returned None!" % (self.name))
-        
+
         # other normalizers
         self.base_comparer_section.normalize(output, normalizer_dependencies, version_number, Trace.Trace())
 
@@ -71,7 +78,7 @@ class Comparer():
             version1:Union["Version.Version",None],
             version2:"Version.Version",
             versions_between:list["Version.Version"],
-            normalizer_dependencies:Normalizer.NormalizerDependencies
+            normalizer_dependencies:Normalizer.NormalizerDependencies,
         ) -> tuple[str,bool]:
         '''Returns a final string of the comparison report and a boolean if there were any changes.'''
         if self.name is None:

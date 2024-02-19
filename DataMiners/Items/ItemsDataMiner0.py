@@ -5,12 +5,13 @@ import DataMiners.Items.ItemsDataMiner as ItemsDataMiner
 import Utilities.Sorting as Sorting
 
 class ItemsDataMiner0(ItemsDataMiner.ItemsDataMiner):
+
     def initialize(self, **kwargs) -> None:
         if "behavior_packs_location" in kwargs:
             self.behavior_packs_location:str|None = kwargs["behavior_packs_location"]
         else:
             raise ValueError("`ItemsDataMiner0` was initialized without kwarg \"behavior_packs_location\"!")
-    
+
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Items:
         behavior_packs = dependency_data["behavior_packs"]
         item_files:dict[tuple[str,str],str] = {}

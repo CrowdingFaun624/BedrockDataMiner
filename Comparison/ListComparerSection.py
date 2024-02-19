@@ -1,16 +1,17 @@
-from typing import Iterable, TypeVar
 from types import UnionType
+from typing import Iterable, TypeVar
 
+import Comparison.ComparerSection as ComparerSection
+import Comparison.ComparerSet as ComparerSet
+import Comparison.ComparisonUtilities as CU
 import Comparison.Difference as D
 import Comparison.Normalizer as Normalizer
-import Comparison.ComparerSection as ComparerSection
 import Comparison.Trace as Trace
-import Comparison.ComparisonUtilities as CU
-import Comparison.ComparerSet as ComparerSet
 
 d = TypeVar("d")
 
 class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
+
     def __init__(
             self,
             name:str,
@@ -116,8 +117,14 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
             comparer = comparer_set[D.DiffType.not_diff]
             if comparer is not None:
                 comparer.normalize(item, normalizer_dependencies, version_number, trace.copy(self.name, index))
-    
-    def compare(self, data1:Iterable[d], data2:Iterable[d], trace:Trace.Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> tuple[Iterable[d],list[tuple[Trace.Trace,Exception]]]:
+
+    def compare(
+            self,
+            data1:Iterable[d],
+            data2:Iterable[d],
+            trace:Trace.Trace,
+            normalizer_dependencies:Normalizer.LocalNormalizerDependencies
+        ) -> tuple[Iterable[d],list[tuple[Trace.Trace,Exception]]]:
         exceptions:list[tuple[Trace.Trace,Exception]] = []
 
         # normalize data

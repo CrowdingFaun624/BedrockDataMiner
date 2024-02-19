@@ -1,9 +1,8 @@
 from typing import Any
 
+import Comparison.ComparerImporter as ComparerImporter
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
-
-import Comparison.ComparerImporter as ComparerImporter
 
 def behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()

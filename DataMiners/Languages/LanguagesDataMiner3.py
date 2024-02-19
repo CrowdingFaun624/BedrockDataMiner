@@ -1,7 +1,8 @@
-import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 
 class LanguagesDataMiner3(LanguagesDataMiner.LanguagesDataMiner):
+
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
         language_files = [file.split("/")[-1] for file in self.get_file_list() if file.startswith("lang")]
         if len(language_files) == 0:

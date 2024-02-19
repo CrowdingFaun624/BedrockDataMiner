@@ -1,7 +1,7 @@
 import json
 
-import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 
 class LanguagesDataMiner1(LanguagesDataMiner.LanguagesDataMiner):
 
@@ -19,7 +19,7 @@ class LanguagesDataMiner1(LanguagesDataMiner.LanguagesDataMiner):
         files:dict[str,list[str]] = {key: value for key, value in self.read_files(languages_files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"languages.json\" files found in \"%s\"" % self.version)
-        
+
         languages:dict[str,DataMinerTyping.LanguagesTypedDict] = {}
         for resource_pack_file, resource_pack_languages in files.items():
             resource_pack_name = languages_files[resource_pack_file]
@@ -34,5 +34,5 @@ class LanguagesDataMiner1(LanguagesDataMiner.LanguagesDataMiner):
                     # `properties` is empty on purpose, so it can remain supportable by whatever uses this data.
                 this_resource_pack_codes.add(language_code)
 
-        
+
         return sorted(list(languages.values()), key=lambda x: x["code"])

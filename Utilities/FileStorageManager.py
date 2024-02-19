@@ -1,7 +1,6 @@
 import gzip
 from pathlib2 import Path
 import threading
-import hashlib
 from typing import IO, Literal
 
 import Utilities.FileManager as FileManager
@@ -21,7 +20,6 @@ def read_index() -> dict[str, tuple[bool, str]]:
     return {line[:40]: (bool(int(line[41])), line[43:].rstrip()) for line in index_lines}
 
 index = read_index()
-
 
 def reopen_in_binary(file:FileManager.FilePromise) -> FileManager.FilePromise:
     '''Returns a new FilePromise in binary mode if the current one is in text mode.'''

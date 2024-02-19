@@ -1,15 +1,15 @@
 import json
 from typing import Any, Iterable, TYPE_CHECKING
 
-import Downloader.UrlValidator as UrlValidator
 import Downloader.DownloadManager as DownloadManager
-import Downloader.StoredManager as StoredManager
 import Downloader.LocalManager as LocalManager
+import Downloader.StoredManager as StoredManager
+import Downloader.UrlValidator as UrlValidator
 import Utilities.FileManager as FileManager
+from Utilities.FunctionCaller import FunctionCaller, WaitValue
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
 import Utilities.VersionTags as VersionTags
-from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
 if TYPE_CHECKING:
     import Downloader.InstallManager as InstallManager
@@ -26,7 +26,7 @@ def read_versions_file() -> Any:
     path = FileManager.VERSIONS_FILE
     with open(path, "rt") as f:
         return json.load(f)
-    
+
 def is_valid_keys(keys:Iterable[str], possible_keys:Iterable[str], optional_keys:Iterable[str], strict_ordering:bool) -> bool:
     '''Checks the validity and order of the keys based off of the possible keys and the optional keys.'''
     for key in keys:
@@ -62,7 +62,7 @@ def verify_data_types(data:list[dict[str,str|list[str]]]) -> None:
         version_name = version_dict["id"]
         if not is_valid_keys(keys, VALID_KEYS, OPTIONAL_KEYS, True):
             raise TypeError("Keys \"%s\" are not in order in version %s of `data`!" % (str(keys), version_name))
-        
+
         for key, key_type in KEY_TYPES.items():
             if key not in keys: continue
             if isinstance(key_type, Iterable):
@@ -107,7 +107,7 @@ def verify_ordering(versions:list[Version.Version]) -> None:
         if (order_tag_count := sum(order_tag in version.tags for order_tag in ORDERING_TAGS)) != 1:
             if order_tag_count < 1: raise ValueError("Version %s has no ordering tags!" % version.name)
             else: raise ValueError("Version %s has too many ordering tags (>1)!" % version.name)
-    
+
     top_level_versions = [version for version in versions if version.parent is None] # versions with no parents
     top_level_childrens:list[Version.Version] = []
     for version in top_level_versions:
@@ -118,7 +118,7 @@ def verify_ordering(versions:list[Version.Version]) -> None:
             if version in already_seen_versions: raise ValueError("Version \"%s\" is a child of multiple top-level versions!")
             else: already_seen_versions.add(version)
         else: raise ValueError("A duplicate version exists, but unable to find it!")
-    
+
     for version in top_level_versions:
         if TOP_LEVEL_TAG not in version.tags:
             raise ValueError("Version \"%s\" is a top-level version but is not %s!" % (version.name, TOP_LEVEL_TAG))
@@ -128,8 +128,10 @@ def verify_ordering(versions:list[Version.Version]) -> None:
             child_order_tag = child.ordering_tag
             if child_order_tag not in ALLOWED_CHILDREN[version_order_tag]:
                 raise ValueError("Version \"%s\" (type \"%s\"), child of \"%s\" (type \"%s\") is not a valid child type of a \"%s\"!"% (child.name, child_order_tag, version.name, version_order_tag, version_order_tag))
+
     def order_contains_at_index(ordering_tag:VersionTags.VersionTag) -> bool:
         return (not isinstance(ORDER[order_index], Iterable) and ordering_tag == ORDER[order_index]) or (isinstance(ORDER[order_index], Iterable) and ordering_tag in ORDER[order_index])
+
     for version in versions:
         order_index = 0
         for child in version.children:

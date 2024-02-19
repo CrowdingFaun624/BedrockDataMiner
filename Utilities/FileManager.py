@@ -1,13 +1,13 @@
 import errno
 import hashlib
 import os
+from pathlib2 import Path
 import shutil
 import sys
 import threading
 from typing import Any, Callable, IO, Literal
 import uuid
 
-from pathlib2 import Path
 from Utilities.FunctionCaller import FunctionCaller
 
 PARENT_FOLDER          = Path("./").absolute()
@@ -141,6 +141,7 @@ def clear_temp() -> None:
 
 class FilePromise():
     '''An abstraction for a file that can return an IO object multiple times with FilePromise.open()'''
+
     def __init__(self, open_callable:FunctionCaller[IO], name:str, mode:Literal["b", "t"], all_done_callable:FunctionCaller|Callable[[],Any]|None=None) -> None:
         if not isinstance(name, str):
             raise TypeError("`name` is not a str!")
@@ -152,23 +153,23 @@ class FilePromise():
             raise TypeError("`mode` is not a str!")
         if mode not in ("t", "b"):
             raise ValueError("`mode` is not \"t\" or \"b\"!")
-        
+
         self.open_callable = open_callable
         self.all_done_callable = all_done_callable
         self.name = name
         self.mode = mode
         self.is_all_done = False
-    
+
     def open(self) -> IO:
         if self.is_all_done:
             raise RuntimeError("Attempted to open FilePromise \"%s\" that has been marked as all done!" % self.name)
         return self.open_callable()
-    
+
     def all_done(self) -> None:
         self.is_all_done = True
         if self.all_done_callable is not None:
             self.all_done_callable()
-    
+
     def __repr__(self) -> str:
         return "<FilePromise %s in %s>" % (self.name, self.mode)
 

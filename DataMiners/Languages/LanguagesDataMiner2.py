@@ -1,7 +1,7 @@
 import json
 
-import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 
 class LanguagesDataMiner2(LanguagesDataMiner.LanguagesDataMiner):
 

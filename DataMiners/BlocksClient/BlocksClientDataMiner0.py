@@ -22,7 +22,7 @@ class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
         files:dict[str,dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"blocks.json\" files found in \"%s\"" % self.version)
-        
+
         blocks:dict[str,DataMinerTyping.MyBlocksJsonClientBlockTypedDict] = {} # temporarily in dict so it can be easily created.
         for resource_pack_file, resource_pack_blocks in files.items():
             resource_pack_name = resource_pack_files[resource_pack_file]

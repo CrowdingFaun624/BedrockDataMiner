@@ -1,15 +1,16 @@
-import DataMiners.SoundFiles.SoundFilesDataMiner as SoundFilesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.SoundFiles.SoundFilesDataMiner as SoundFilesDataMiner
 import Programs.EvilFSBExtractor as EvilFSBExtractor
 import Utilities.Sorting as Sorting
 
 class SoundFilesDataMiner0(SoundFilesDataMiner.SoundFilesDataMiner):
+
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
         file_list = self.get_file_list()
         assert not any("\\" in file for file in file_list) # can't trust it, you see.
         if len(file_list) == 0:
             raise FileNotFoundError("No files found for `sound_files` in version \"%s\"!" % self.version.name)
-        
+
         output:dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]] = {}
         for file_path in file_list:
             if "." + file_path.split(".")[-1].lower() in SoundFilesDataMiner.ALL_SOUND_FILE_FORMATS and not file_path.endswith(".fsb"):
@@ -21,5 +22,5 @@ class SoundFilesDataMiner0(SoundFilesDataMiner.SoundFilesDataMiner):
             output[file_name] = {}
             for wav_file_name, wav_file_promise in wav_files.items():
                 output[file_name][wav_file_name] = SoundFilesDataMiner.get_metadata(wav_file_promise)
-        
+
         return Sorting.sort_everything(output)

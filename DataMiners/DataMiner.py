@@ -1,17 +1,17 @@
 import json
 from pathlib2 import Path
 import threading
-from typing import Any, Callable, IO, Iterable, Literal
 import traceback
+from typing import Any, Callable, IO, Iterable, Literal
 
+import Comparison.Comparer as Comparer
+import Comparison.Normalizer as Normalizer
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Downloader.VersionsParser as VersionsParser
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import WaitValue
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
-import Downloader.VersionsParser as VersionsParser
-import Comparison.Comparer as Comparer
-import Comparison.Normalizer as Normalizer
 
 EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
 
@@ -25,6 +25,7 @@ def str_to_version(version_str:str) -> Version.Version|Literal["-"]:
             raise KeyError("Version \"%s\" does not exist!" % version_str)
 
 class DataMinerSettings():
+
     def __init__(self, start_version_str:str|Literal["-"], end_version_str:str|Literal["-"], dataminer_class:type["DataMiner"], dependencies:list[str]|None=None, **kwargs) -> None:
         if not isinstance(start_version_str, str):
             raise TypeError("`start_version_str` is not a str, but instead \"%s\"!" % start_version_str)
@@ -44,7 +45,7 @@ class DataMinerSettings():
         self.dataminer_class = dataminer_class
         self.dependencies = dependencies if dependencies is not None else []
         self.kwargs = kwargs
-    
+
     def __repr__(self) -> str:
         if self.name is None:
             return "<DataMinerSettings \"%s\"–\"%s\">" % (str(self.version_range.start), str(self.version_range.stop))
@@ -52,6 +53,7 @@ class DataMinerSettings():
             return "<DataMinerSettings %s \"%s\"–\"%s\">" % (self.name, str(self.version_range.start), str(self.version_range.stop))
 
 class DataMiner():
+
     def __init__(self, version:Version.Version, settings:DataMinerSettings) -> None:
         if not isinstance(version, Version.Version):
             raise TypeError("`version` is not a Version!")
@@ -65,9 +67,9 @@ class DataMiner():
         self.dependencies = self.settings.dependencies
         if not isinstance(self, NullDataMiner) and self.version not in self.settings.version_range:
             raise ValueError("Version \"%s\" is not a valid version for this dataminer!" % self.version.name)
-        
+
         self.initialize(**settings.kwargs)
-        
+
     def __repr__(self) -> str:
         return "<%s %s on %s>" % (self.__class__.__name__, self.name, self.version.name)
 
@@ -75,7 +77,7 @@ class DataMiner():
         '''`DataMinerSettings.__init__(**kwargs)` -> `DataMiner.initialize(**kwargs)`.'''
         if len(kwargs) > 0:
             raise NotImplementedError("`initialize` was called with %i non-empty parameters by %s without being defined by a subclass:\n%s" % (len(kwargs), repr(self), kwargs))
-    
+
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         '''Makes the dataminer get the file. Returns the output.'''
         raise NotImplementedError("`activate` was called by %s without being defined by a subclass." % repr(self))
@@ -99,7 +101,7 @@ class DataMiner():
         self.settings.comparer.get().check_types(normalized_data, normalizer_dependencies)
 
         return data
-    
+
     def get_data_file(self) -> Any:
         with open(self.get_data_file_path(), "rt") as f:
             return json.load(f)
@@ -118,7 +120,7 @@ class DataMiner():
         if self.version.install_manager is None:
             raise RuntimeError("Attempted to call `read_file` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.read(file_name, mode)
-    
+
     def read_files(self, files:list[str|tuple[str,str,None|Callable[[IO],Any]]], non_exist_ok:bool=False) -> dict[str,str|bytes|Any]:
         '''Asynchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
@@ -142,7 +144,7 @@ class DataMiner():
                     lock.release()
                     return
             lock.release()
-        
+
         if self.version.install_manager is None:
             raise RuntimeError("Attempted to call `read_files` on version (\"%s\") with no download available!" % self.version.name)
 
@@ -154,14 +156,14 @@ class DataMiner():
         if any(count >= 2 for count in (file_names.count(file_name) for file_name in file_names)): # duplicate item tester
             duplicate_files = [file for file in file_names if file_names.count(file) >= 2]
             raise ValueError("Duplicated files: %s" % str(duplicate_files))
-        
+
         thread_count = len(files) if len(files) < LIMIT else LIMIT
         thread_responsibilities:list[list[tuple[str,str,None|Callable[[IO],Any]]]] = [[] for index in range(thread_count)] # keeps track of what each thread will do.
         file_results:dict[str,str|bytes|Any] = {}
         for index, (file_name, mode, callable) in enumerate(files):
             file_results[file_name] = None
             thread_responsibilities[index % thread_count].append((file_name, mode, callable))
-        
+
         locks = [threading.Lock() for index in range(LIMIT)]
         for lock, thread_responsibility in zip(locks, thread_responsibilities):
             thread = threading.Thread(target=read_async, args=[thread_responsibility, file_results, non_exist_ok, lock])
@@ -201,18 +203,25 @@ class DataMiner():
 
 class NullDataMiner(DataMiner):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
+
     def get_file(self, file_name:str, mode:str="t") -> FileManager.FilePromise:
         raise RuntimeError("Attempted to use `get_file` from a NullDataMiner!")
+
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         raise RuntimeError("Attempted to use `activate` from a NullDataMiner!")
+
     def store(self, dependency_data:DataMinerTyping.DependenciesTypedDict, dataminer_collections:list["DataMinerCollection"]) -> Any:
         raise RuntimeError("Attempted to use `store` from a NullDataMiner!")
+
     def get_file_list(self) -> Iterable[str]:
         raise RuntimeError("Attempted to use `get_file_list` from a NullDataMiner!")
+
     def read_file(self, file_name: str, mode: str = "t") -> str | bytes:
         raise RuntimeError("Attempted to use `read_file` from a NullDataMiner!")
+
     def read_files(self, files:list[str|tuple[str,str,Callable[[IO],Any]|None]]) -> dict[str,str|bytes|Any]:
         raise RuntimeError("Attempted to use `read_files` from a NullDataMiner!")
+
 
 class DataMinerCollection():
     def __init__(self, file_name:str, name:str, comparer:WaitValue[Comparer.Comparer]|Comparer.Comparer, dataminers:list[DataMinerSettings]) -> None:
@@ -226,7 +235,7 @@ class DataMinerCollection():
             raise TypeError("`dataminers` is not a list!")
         if not all(isinstance(setting, DataMinerSettings) for setting in dataminers):
             raise TypeError("An item of `dataminers` is not a DataMinerSettings!")
-        
+
         self.dataminer_settings = dataminers
         self.name = name
         self.comparer = comparer if isinstance(comparer, WaitValue) else WaitValue(lambda: comparer)
@@ -235,7 +244,7 @@ class DataMinerCollection():
             dataminer.file_name = self.file_name
             dataminer.name = self.name
             dataminer.comparer = self.comparer
-    
+
     def get_data_file(self, version:Version.Version, non_exist_ok:bool=False) -> Any:
         '''Opens the data file if it exists, and raises an error if it doesn't, or returns None if `non_exist_ok` is True'''
         if version is None:
@@ -272,7 +281,7 @@ class DataMinerCollection():
 
     def __repr__(self) -> str:
         return "<DataMinerCollection %s>" % self.name
-    
+
     def get_null_dataminer_settings(self) -> DataMinerSettings:
         '''Returns an instance of DataMinerSettings that is usable on a NullDataMiner.'''
         return DataMinerSettings("-", "-", NullDataMiner)
