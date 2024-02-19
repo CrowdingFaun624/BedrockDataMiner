@@ -116,6 +116,7 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
 
 def test_comparers() -> None:
     for dataminer in dataminers:
+        print("%s:" % (dataminer.name))
         print(dataminer.comparer.get())
     print("All comparers successfully parsed.")
 
