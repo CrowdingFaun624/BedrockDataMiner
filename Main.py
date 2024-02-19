@@ -66,7 +66,10 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
-# TODO: make comparer normalizers better
+# TODO: split comparer python files
+# TODO: add support for multiple normalizers per thing.
+# TODO: add special key for Comparers that makes it check types (for debugging)
+# TODO: remove key_types; change value_types to types in comparer jsons
 # TODO: rewrite comparer documentation
 # TODO: make more dataminers
 # TODO: make more domains
