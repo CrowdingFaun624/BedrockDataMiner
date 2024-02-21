@@ -38,8 +38,8 @@ def compare_all_of(
         exception_holder:dict[str,bool|Exception],
         normalizer_dependencies:Normalizer.NormalizerDependencies,
     ) -> None:
-    version = None
     try:
+        version = None
         previous_successful_version = None # The last Version that can be datamined for this file.
         undataminable_versions_between:list["Version.Version"] = []
         comparison_parent = FileManager.get_comparison_file_path(dataminer_collection.name)
@@ -60,6 +60,7 @@ def compare_all_of(
             else:
                 undataminable_versions_between.append(version)
     except Exception as e:
+        print("%s failed at version %s." % (dataminer_collection.name, version.name))
         exception_holder[dataminer_collection.name] = (e, version)
     else:
         print("Compared all of %s." % dataminer_collection.name)
