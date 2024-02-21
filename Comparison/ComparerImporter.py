@@ -22,7 +22,7 @@ class DictComparerTypedDict(TypedDict):
     normalizer: str|list[str]
     type: Literal["Dict"]
     print_all: bool
-    value_types: list[str]
+    types: list[str]
 
 class GroupTypedDict(TypedDict):
     type: Literal["Group"]
@@ -179,21 +179,18 @@ class DictComparerIntermediate(ComparerIntermediate):
             ("comparison_move_function", str, "a str", False),
             ("detect_key_moves", bool, "a bool", False),
             ("field", str, "a str", False),
-            ("key_types", list, "a list", False),
             ("measure_length", bool, "a bool", False),
             ("normalizer", (str, list), "a str or list", False),
             ("print_all", bool, "a bool", False),
             ("type", str, "a str", True),
-            ("value_types", list, "a list", True),
+            ("types", list, "a list", True),
         ])
         if data["type"] != "Dict":
             raise ValueError("Key \"type\" of DictComparer \"%s\" is not \"Dict\"!" % (name))
-        for key in ("key_types", "value_types"):
-            if key not in data: continue
-            if len(data[key]) == 0:
-                raise ValueError("Key \"%s\" of DictComparer \"%s\" is empty!" % (key, name))
-            if not all(isinstance(item, str) for item in data[key]):
-                raise TypeError("An item of key \"%s\" of DictComparer \"%s\" is not a str!" % (key, name))
+        if len(data["types"]) == 0:
+            raise ValueError("Key \"types\" of DictComparer \"%s\" is empty!" % (name))
+        if not all(isinstance(item, str) for item in data["types"]):
+            raise TypeError("An item of key \"types\" of DictComparer \"%s\" is not a str!" % (name))
         if "normalizer" in data and isinstance(data["normalizer"], list):
             if not all(isinstance(item, str) for item in data["normalizer"]):
                 raise TypeError("An item of key \"normalizer\" of DictComparer \"%s\" is not a str!" % (name))
@@ -206,15 +203,15 @@ class DictComparerIntermediate(ComparerIntermediate):
         self.measure_length = False if "measure_length" not in data else data["measure_length"]
         self.normalizer_strs = None if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"])
         self.print_all = False if "print_all" not in data else data["print_all"]
-        self.value_types_strs = data["value_types"]
+        self.types_strs = data["types"]
 
         self.comparer:ComparerIntermediate|GroupIntermediate|None = None
         self.comparison_move_function:Callable|None = None
         self.normalizers:list[NormalizerFunctionIntermediate]|None = None
-        self.value_types:list[type|TypeAliasIntermediate] = []
+        self.types:list[type|TypeAliasIntermediate] = []
         self.links_to_other_intermediates:list[Intermediate] = []
         self.parents:list[Intermediate] = []
-        self.value_types_final:list[type] = None
+        self.types_final:list[type] = None
         self.final:DictComparerSection.DictComparerSection = None
         
         self.children_has_normalizer = False
@@ -255,7 +252,7 @@ class DictComparerIntermediate(ComparerIntermediate):
             self.links_to_other_intermediates.extend(self.normalizers)
             for normalizer in self.normalizers:
                 normalizer.parents.append(self)
-        self.value_types = self.choose_types("value_types", self.value_types_strs, intermediate_comparers)
+        self.types = self.choose_types("types", self.types_strs, intermediate_comparers)
 
     def get_types_final(self, types:list[Union[type,"TypeAliasIntermediate"]]) -> tuple[type,...]:
         '''Expands a list of types an TypeAliases into just a tuple of types.'''
@@ -268,12 +265,12 @@ class DictComparerIntermediate(ComparerIntermediate):
         return tuple(output)
 
     def create_final(self) -> None:
-        self.value_types_final = self.get_types_final(self.value_types)
+        self.types_final = self.get_types_final(self.types)
         normalizer_final = None if self.normalizers is None else [normalizer.final for normalizer in self.normalizers]
         self.final = DictComparerSection.DictComparerSection(
             name=self.field,
             comparer=None,
-            types=self.value_types_final,
+            types=self.types_final,
             detect_key_moves=self.detect_key_moves,
             comparison_move_function=self.comparison_move_function,
             measure_length=self.measure_length,
@@ -291,11 +288,11 @@ class DictComparerIntermediate(ComparerIntermediate):
     def check(self) -> None:
         self.final.check_initialization_parameters()
         if self.comparer is None:
-            for value_type in self.value_types_final:
+            for value_type in self.types_final:
                 if value_type in REQUIRES_COMPARER_TYPES:
                     raise TypeError("DictComparer \"%s\" accepts type %s, but has a null comparer!" % (self.name, value_type.__name__))
         else:
-            for value_type in self.value_types_final:
+            for value_type in self.types_final:
                 if value_type not in self.comparer.my_type:
                     its_types = ", ".join(type_item.__name__ for type_item in self.comparer.my_type)
                     raise TypeError("DictComparer \"%s\" accepts type %s, but its comparer, \"%s\", only accepts type [%s]!" % (self.name, value_type.__name__, self.comparer.name, its_types))

@@ -74,9 +74,9 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
                 if not (comparer_value is None or isinstance(comparer_value, ComparerSection.ComparerSection)):
                     raise TypeError("Key \"%s\" of `comparer` is not a ComparerSection or None!" % (comparer_key.__name__))
         if not isinstance(self.types, tuple) and self.types is not None:
-            raise TypeError("`value_types` is not a tuple or None!")
+            raise TypeError("`types` is not a tuple or None!")
         if isinstance(self.types, tuple) and not all(isinstance(item, (type)) for item in self.types):
-            raise TypeError("An item of `value_types` is not a type!")
+            raise TypeError("An item of `types` is not a type!")
         if not isinstance(self.detect_key_moves, bool):
             raise TypeError("`detect_key_moves` is not a bool!")
         if not isinstance(self.comparison_move_function, Callable) and self.comparison_move_function is not None:
