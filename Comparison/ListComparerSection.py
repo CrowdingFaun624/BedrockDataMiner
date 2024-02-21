@@ -16,7 +16,7 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
             self,
             name:str,
             comparer:ComparerSection.ComparerSection[d]|None|dict[type,ComparerSection.ComparerSection[d]|None],
-            types:tuple[type]|None,
+            types:tuple[type,...]|None,
             print_flat:bool=False,
             ordered:bool=True,
             measure_length:bool=False,
@@ -24,19 +24,16 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
             normalizer:list[Normalizer.Normalizer]|None=None,
             children_has_normalizer:bool=False,
         ) -> None:
-        ''' * `name` is what the key of this dictionary is.
+        ''' * `name` is what the key of this list is.
          * If `comparer` is a ComparerSection, then it will compare and print all items using that ComparerSection.
          * If `comparer` is None, then it will use `stringify` in place of a printer and not compare.
-         * If `comparer` is a list of tuples of Callables and ComparerSections, then each index and item will be fed into the Callables until one returns True, and the corresponding ComparerSection will be used for that one.
-         * If `comparer` is a list and a match cannot be found, then a KeyError is raised.
-         * If `types` is an Iterable of types, then it will check if the item is an instance of at least one type in the list (if not, raise TypeError).
-         * If `types` is a Callable, then it will call the Callable with the index and item. If the Callable returns False, then it will raise a TypeError.
-         * If `types` is None, then the type of the key/value will not be checked.
-         * `types` is never given a D.Diff; Diffs are split into old and new and compared separately.
+         * If `comparer` is a dictionary with keys of tuples of types and values of ComparerSections or Nones, then it will use the type of each item to choose the comparer section.
+         * `types` is a tuple of types. All items of this list must be one of those types.
          * If `print_flat` is True, then lists are printed such as [item1, item2, item3].
          * If `print_flat` is False: then lists are printed such as 0: item1\\n1: item2\\n2: item3
          * If `measure_length` is True, then it will show how the length of the data changed when comparing.
-         * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.'''
+         * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.
+         * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
 
         self.name = name
         self.comparer = comparer

@@ -67,6 +67,5 @@ if __name__ == "__main__":
 
 pass
 # TODO: add special key for Comparers that makes it check types (for debugging)
-# TODO: rewrite comparer documentation
 # TODO: make more dataminers
 # TODO: make more domains

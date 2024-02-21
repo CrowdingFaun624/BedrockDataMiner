@@ -37,19 +37,14 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
         ''' * `name` is what the key of this dictionary is.
          * If `comparer` is a ComparerSection, then it will compare and print all values using that ComparerSection.
          * If `comparer` is None, then it will use `stringify` in place of a printer and not compare.
-         * If `comparer` is a list of tuples of Callables and ComparerSections, then each key and value will be fed into the Callables until one returns True, and the corresponding ComparerSection will be used for that one.
-         * If `comparer` is a list of tuples of strs and ComparerSections, then each key will be searched in the list, and the corresponding ComparerSection will be used.
-         * If `comparer` is a list and a match cannot be found, then a KeyError is raised.
-         * `comparer` can contain both strs and Callables when a list.
-         * If `key_types` or `value_types` is an Iterable of types, then it will check if the key/value is an instance of at least one type in the list (if not, raise TypeError).
-         * If `key_types` or `value_types` is a Callable, then it will call the Callable with the key and value. If the Callable returns False, then it will raise a TypeError.
-         * If `key_types` or `value_types` is None, then the type of the key/value will not be checked.
-         * `key_types`, `value_types`, and `comparer` are never given a D.Diff; Diffs are split into old and new and compared separately.
+         * If `comparer` is a dictionary with keys of tuples of types and values of ComparerSections or Nones, then it will use the type of each value to choose the comparer section.
+         * `types` is a tuple of types. All values of this dictionary must be one of those types.
          * `detect_key_moves` controls whether it will look for changes in keys.
          * `comparison_move_function` is called with a key and value, and returns a piece of the value. It is used to compare the change in keys between two data.
          * If `comparison_move_function` returns None, then it will not attempt to detect moves for that value.
          * If `measure_length` is True, then it will show how the length of the data changed when comparing.
-         * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.'''
+         * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.
+         * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
 
         self.name = name
         self.comparer = comparer
