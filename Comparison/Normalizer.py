@@ -1,5 +1,6 @@
 from typing import Any, Callable, Generic, TYPE_CHECKING, TypeVar
 
+import Comparison.Trace as Trace
 import Utilities.Version as Version
 
 if TYPE_CHECKING:
@@ -24,7 +25,7 @@ class Normalizer(Generic[IN, OUT]):
         self.function = function
         self.dependencies = dependencies
 
-    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", version_number:int=1) -> OUT|None:
+    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", trace:Trace.Trace, version_number:int=1) -> OUT|None:
         if version_number not in (1, 2):
             raise ValueError("`version_number` is not 1 or 2!")
         version = normalizer_dependencies.get_version(version_number)
@@ -38,7 +39,7 @@ class Normalizer(Generic[IN, OUT]):
             return self.function(data, this_data)
         except Exception as e:
             exception = e
-            exception.args = tuple(list(exception.args) + ["Normalizer function excepted on data: %s" % data])
+            exception.args = tuple(list(exception.args) + ["Normalizer function excepted at %s on data: %s" % (trace, data)])
         if exception is not None:
             raise exception
 

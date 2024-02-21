@@ -31,7 +31,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
             comparison_move_function:Callable[[c, d], b]|None=None,
             measure_length:bool=False,
             print_all:bool=False,
-            normalizer:Normalizer.Normalizer|None=None,
+            normalizer:list[Normalizer.Normalizer]|None=None,
             children_has_normalizer:bool=False,
         ) -> None:
         ''' * `name` is what the key of this dictionary is.
@@ -85,8 +85,12 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
             raise TypeError("`measure_length` is not a bool!")
         if not isinstance(self.print_all, bool):
             raise TypeError("`print_all` is not a bool!")
-        if not (self.normalizer is None or isinstance(self.normalizer, Normalizer.Normalizer)):
-            raise TypeError("`normalizer` is not a Normalizer or None!")
+        if not (self.normalizer is None or isinstance(self.normalizer, list)):
+            raise TypeError("`normalizer` is not a list or None!")
+        if isinstance(self.normalizer, list) and len(self.normalizer) == 0:
+            raise TypeError("`normalizer` is empty!")
+        if isinstance(self.normalizer, list) and not all(isinstance(item, Normalizer.Normalizer) for item in self.normalizer):
+            raise TypeError("An item of `normalizer` is not a Normalizer!")
         if not isinstance(self.children_has_normalizer, bool):
             raise TypeError("`children_has_normalizer` is not a bool!")
 
@@ -120,7 +124,8 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
     def normalize(self, data:dict[c,d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> None:
         if not self.children_has_normalizer: return
         if self.normalizer is not None:
-            self.normalizer(data, normalizer_dependencies, version_number)
+            for normalizer in self.normalizer:
+                normalizer(data, normalizer_dependencies, trace, version_number)
         for key, value in data.items():
             try:
                 comparer_set = self.choose_comparer(key, value, trace)
@@ -229,8 +234,15 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
         output:dict[D.DiffType,ComparerSection.ComparerSection] = {}
         for value_iter, value_diff_type in D.iter_diff(value):
             if isinstance(self.comparer, dict):
-                output[value_diff_type] = self.comparer[type(value_iter)]
-                # errors should be caught by the type checker.
+                exception = None
+                try:
+                    output[value_diff_type] = self.comparer[type(value_iter)]
+                except Exception as e:
+                    exception = e
+                    exception.args = tuple(list(exception.args) + ["Failed to get comparer at %s of key, value: %s: %s" % (trace, key, value_iter)])
+                if exception is not None:
+                    raise exception
+                # errors might not be caught by the type checker.
             else:
                 output[value_diff_type] = self.comparer
         return ComparerSet.ComparerSet(output)

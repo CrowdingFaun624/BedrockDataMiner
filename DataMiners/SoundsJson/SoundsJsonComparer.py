@@ -2,10 +2,7 @@ import Comparison.ComparerImporter as ComparerImporter
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
-collapse_resource_packs_flat = CollapseResourcePacks.make_interface(has_defined_in_key=False)
-
 def remove_bad_events(data:dict[str,str|DataMinerTyping.SoundsJsonSoundTypedDict], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
-    collapse_resource_packs_flat(data, dependencies)
     events_to_delete:list[str] = []
     for event_name, event_properties in data.items():
         if isinstance(event_properties, str): continue
@@ -15,7 +12,6 @@ def remove_bad_events(data:dict[str,str|DataMinerTyping.SoundsJsonSoundTypedDict
         del data[event_to_delete]
 
 def remove_bad_interactive_entity_events(data:dict[str,dict[str,str]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
-    collapse_resource_packs_flat(data, dependencies) # TODO: split this into a different function
     events_to_delete:list[str] = []
     for event_name, event_properties in data.items():
         if isinstance(event_properties, str): continue
@@ -34,10 +30,17 @@ def fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict, dependencies:DataM
         data["sound"] = data["sounds"]
         del data["sounds"]
 
+def make_dict(data:dict[str,str|dict], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    '''Turns, for example, "default": { "vanilla": "" } into "default": { "vanilla": { "sound": "" } }.'''
+    for resource_pack, value in data.items():
+        if isinstance(value, str):
+            data[resource_pack] = {"sound": value}
+
 comparer = ComparerImporter.load_from_file("sounds_json", {
     "collapse_resource_packs": CollapseResourcePacks.make_interface(has_defined_in_key=True),
     "collapse_resource_packs_flat": CollapseResourcePacks.make_interface(has_defined_in_key=False),
     "fix_sounds": fix_sounds,
+    "make_dict": make_dict,
     "remove_bad_events": remove_bad_events,
     "remove_bad_interactive_entity_events": remove_bad_interactive_entity_events,
     "sound_collections_comparison_move_function": lambda key, value: None if len(value) == 0 else value,

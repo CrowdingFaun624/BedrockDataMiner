@@ -46,8 +46,12 @@ class TypedDictComparerSection(DictComparerSection.DictComparerSection[str,d]):
                 raise TypeError("Item 1 of key \"%s\" of `types` is not a type, but instead %s!" % (key[0], key[1].__class__.__name__))
             if not (value is None or isinstance(value, ComparerSection.ComparerSection)):
                 raise TypeError("Value of key \"%s\" of `types` is not a ComparerSection, but instead %s!" % (key, value.__class__.__name__))
-            if not (self.normalizer is None or isinstance(self.normalizer, Normalizer.Normalizer)):
-                raise TypeError("`normalizer` is not a Normalizer or None!")
+        if not (self.normalizer is None or isinstance(self.normalizer, list)):
+            raise TypeError("`normalizer` is not a list or None!")
+        if isinstance(self.normalizer, list) and len(self.normalizer) == 0:
+            raise TypeError("`normalizer` is empty!")
+        if isinstance(self.normalizer, list) and not all(isinstance(item, Normalizer.Normalizer) for item in self.normalizer):
+            raise TypeError("An item of `normalizer` is not a Normalizer!")
         if not isinstance(self.children_has_normalizer, bool):
             raise TypeError("`children_has_normalizer` is not a bool!")
 

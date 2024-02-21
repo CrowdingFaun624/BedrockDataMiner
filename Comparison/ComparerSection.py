@@ -11,7 +11,7 @@ class ComparerSection(Generic[a]):
 
     def __init__(self, name:str) -> None:
         self.name = name
-        self.normalizer:Normalizer.Normalizer
+        self.normalizer:list[Normalizer.Normalizer]|None
         self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
