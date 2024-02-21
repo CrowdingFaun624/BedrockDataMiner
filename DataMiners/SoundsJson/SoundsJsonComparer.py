@@ -30,17 +30,10 @@ def fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict, dependencies:DataM
         data["sound"] = data["sounds"]
         del data["sounds"]
 
-def make_dict(data:dict[str,str|dict], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
-    '''Turns, for example, "default": { "vanilla": "" } into "default": { "vanilla": { "sound": "" } }.'''
-    for resource_pack, value in data.items():
-        if isinstance(value, str):
-            data[resource_pack] = {"sound": value}
-
 comparer = ComparerImporter.load_from_file("sounds_json", {
     "collapse_resource_packs": CollapseResourcePacks.make_interface(has_defined_in_key=True),
     "collapse_resource_packs_flat": CollapseResourcePacks.make_interface(has_defined_in_key=False),
     "fix_sounds": fix_sounds,
-    "make_dict": make_dict,
     "remove_bad_events": remove_bad_events,
     "remove_bad_interactive_entity_events": remove_bad_interactive_entity_events,
     "sound_collections_comparison_move_function": lambda key, value: None if len(value) == 0 else value,
