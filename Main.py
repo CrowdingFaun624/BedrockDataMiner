@@ -66,7 +66,6 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
-# TODO: remove key_types; change value_types to types in comparer jsons
 # TODO: add special key for Comparers that makes it check types (for debugging)
 # TODO: rewrite comparer documentation
 # TODO: make more dataminers
