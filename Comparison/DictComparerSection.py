@@ -100,7 +100,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
         if not isinstance(value, self.types):
             return (trace.copy(self.name, key), TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (CU.stringify(key), CU.stringify(value), self.name, self.types)))
 
-    def check_all_types(self, data:dict[c,d], trace:Trace.Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> list[tuple[Trace.Trace,Exception]]:
+    def check_all_types(self, data:dict[c,d], trace:Trace.Trace) -> list[tuple[Trace.Trace,Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[tuple[Trace.Trace,Exception]] = []
         if not isinstance(data, dict):
@@ -118,7 +118,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
                 raise TypeError("`check_all_types` was given data containing Diffs!")
             comparer = comparer_set[D.DiffType.not_diff]
             if comparer is not None:
-                output.extend(comparer.check_all_types(value, trace.copy(self.name, key), normalizer_dependencies))
+                output.extend(comparer.check_all_types(value, trace.copy(self.name, key)))
         return output
 
     def normalize(self, data:dict[c,d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> None:
@@ -143,7 +143,6 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
             data1:dict[c,d],
             data2:dict[c,d],
             trace:Trace.Trace,
-            normalizer_dependencies:Normalizer.LocalNormalizerDependencies
         ) -> tuple[dict[c|D.Diff[c,c],d|D.Diff[d,d]],list[tuple[Trace.Trace,Exception]]]:
         key_occurences:dict[c,list[D.DiffType]] = {}
         exceptions:list[tuple[Trace.Trace,Exception]] = []
@@ -214,7 +213,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
                     output[key] = value1
                 else:
                     comparer_set = self.choose_comparer(key, D.Diff(value1, value2), trace)
-                    output[key], new_exceptions = comparer_set.compare(value1, value2, trace.copy(self.name, key), normalizer_dependencies)
+                    output[key], new_exceptions = comparer_set.compare(value1, value2, trace.copy(self.name, key))
                     exceptions.extend(new_exceptions)
                     continue
             elif len(occurences) == 1:

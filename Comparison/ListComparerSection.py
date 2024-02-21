@@ -85,7 +85,7 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
         if not isinstance(item, self.types):
             return (trace.copy(self.name, index), TypeError("Index, item %i: %s in %s excepted because item is not %s!" % (index, CU.stringify(item), self.name, self.types)))
 
-    def check_all_types(self, data:list[d], trace:Trace.Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> list[tuple[Trace.Trace,Exception]]:
+    def check_all_types(self, data:list[d], trace:Trace.Trace) -> list[tuple[Trace.Trace,Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[list[tuple[int,d]]] = []
         for index, item in enumerate(data):
@@ -100,7 +100,7 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
                 raise TypeError("`check_all_types` was given data containing Diffs!")
             comparer = comparer_set[D.DiffType.not_diff]
             if comparer is not None:
-                output.extend(comparer.check_all_types(item, trace.copy(self.name, index), normalizer_dependencies))
+                output.extend(comparer.check_all_types(item, trace.copy(self.name, index)))
         return output
 
     def normalize(self, data:Iterable[d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> None:
@@ -125,14 +125,8 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
             data1:Iterable[d],
             data2:Iterable[d],
             trace:Trace.Trace,
-            normalizer_dependencies:Normalizer.LocalNormalizerDependencies
         ) -> tuple[Iterable[d],list[tuple[Trace.Trace,Exception]]]:
         exceptions:list[tuple[Trace.Trace,Exception]] = []
-
-        # normalize data
-        if self.normalizer is not None:
-            self.normalizer(data1, normalizer_dependencies, 1)
-            self.normalizer(data2, normalizer_dependencies, 2)
 
         output:list[d|D.Diff[d]] = []
         if self.ordered:
@@ -148,7 +142,7 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
                     output.append(item1)
                 else:
                     comparer_set = self.choose_comparer(index, D.Diff(item1, item2), trace)
-                    compare_output, new_exceptions = comparer_set.compare(item1, item2, trace.copy(self.name, index), normalizer_dependencies)
+                    compare_output, new_exceptions = comparer_set.compare(item1, item2, trace.copy(self.name, index))
                     output.append(compare_output)
                     exceptions.extend(new_exceptions)
             # now, only the shortest iterable has been consumed.

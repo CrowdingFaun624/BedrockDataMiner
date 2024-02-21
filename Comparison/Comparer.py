@@ -109,7 +109,7 @@ class Comparer():
             normalized_data1 = self.normalize(data1, local_normalizer_dependencies, 1)
             normalized_data2 = self.normalize(data2, local_normalizer_dependencies, 2)
 
-        data_comparison = self.compare(normalized_data1, normalized_data2, local_normalizer_dependencies)
+        data_comparison = self.compare(normalized_data1, normalized_data2)
 
         comparer_output = self.compare_text(data_comparison)
         if not isinstance(comparer_output, tuple):
@@ -121,11 +121,11 @@ class Comparer():
 
         return "\n".join(final), any_changes
 
-    def check_types(self, data:b, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> None:
+    def check_types(self, data:b) -> None:
         '''Raises an exception with data about what went wrong if an error occurs.'''
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
-        traces = self.base_comparer_section.check_all_types(data, Trace.Trace(), normalizer_dependencies)
+        traces = self.base_comparer_section.check_all_types(data, Trace.Trace())
         if isinstance(self, DefaultComparer): return
         self.print_exception_list(traces)
 
@@ -139,10 +139,10 @@ class Comparer():
         if len(traces) > 0:
             raise TypeError("Type checking on %s failed!" % (self.name))
 
-    def compare(self, data1:b, data2:b, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> b:
+    def compare(self, data1:b, data2:b) -> b:
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
-        output, traces = self.base_comparer_section.compare(data1, data2, Trace.Trace(), normalizer_dependencies)
+        output, traces = self.base_comparer_section.compare(data1, data2, Trace.Trace())
         self.print_exception_list(traces)
         return output
 
