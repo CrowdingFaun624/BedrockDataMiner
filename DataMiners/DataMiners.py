@@ -8,6 +8,7 @@ import Utilities.Version as Version
 
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
 import DataMiners.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
+import DataMiners.Credits.CreditsDataMiners as CreditsDataMiners
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
 import DataMiners.Entities.EntitiesDataMiners as EntitiesDataMiners
 import DataMiners.Items.ItemsDataMiners as ItemsDataMiners
@@ -25,6 +26,7 @@ import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEv
 dataminers:list[DataMiner.DataMinerCollection] = [
     BehaviorPacksDataMiners.dataminers,
     BlocksClientDataMiners.dataminers,
+    CreditsDataMiners.dataminers,
     DuplicateSoundsDataMiners.dataminers,
     EntitiesDataMiners.dataminers,
     ItemsDataMiners.dataminers,

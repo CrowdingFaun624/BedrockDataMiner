@@ -5,6 +5,7 @@ import Comparison.Difference as D
 class DependenciesTypedDict(TypedDict):
     behavior_packs: "BehaviorPacks"
     blocks: "MyBlocksClient"
+    credits: "Credits"
     duplicate_sounds: "DuplicateSounds"
     entities: "Entities"
     items: "Items"
@@ -90,6 +91,22 @@ BlocksClient = dict[str,BlocksJsonClientBlockTypedDict]
 MyBlocksClient = list[MyBlocksJsonClientBlockTypedDict]
 NormalizedBlocksClient = dict[str,dict[str,NormalizedBlocksJsonClientBlockTypedDict]]
 DiffBlocksClient = dict[str|D.Diff[str,str],dict[str|D.Diff[str,str],DiffBlocksJsonClientBlockTypedDict|D.Diff[DiffBlocksJsonClientBlockTypedDict,DiffBlocksJsonClientBlockTypedDict]]]
+
+# credits
+
+class CreditsTitleTypedDict(TypedDict):
+    title: str
+    names: list[str]
+
+class CreditsDisciplineTypedDict(TypedDict):
+    disciplines: str
+    titles: list[CreditsTitleTypedDict]
+
+class CreditsSectionTypedDict(TypedDict):
+    section: str
+    disciplines: list[CreditsDisciplineTypedDict]
+
+Credits = list[CreditsSectionTypedDict]
 
 # duplicate sounds
 
