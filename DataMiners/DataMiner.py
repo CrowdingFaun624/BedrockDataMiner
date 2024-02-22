@@ -98,7 +98,7 @@ class DataMiner():
 
         normalizer_dependencies = Normalizer.LocalNormalizerDependencies(Normalizer.NormalizerDependencies({}, dataminer_collections), self.version, None)
         normalized_data = self.settings.comparer.get().normalize(data, normalizer_dependencies)
-        self.settings.comparer.get().check_types(normalized_data, normalizer_dependencies)
+        self.settings.comparer.get().check_types(normalized_data)
 
         return data
 
