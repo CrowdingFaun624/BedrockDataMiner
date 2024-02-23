@@ -112,7 +112,7 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
                 # it hasn't been type checked yet, so something could except
                 continue
             if len(comparer_set) != 1 or D.DiffType.not_diff not in comparer_set:
-                raise TypeError("`normalize` was given data containing Diffs in %s in %s: %s. comparer set is %s; excepted on item %i: %s" % (self.name, trace, data, comparer_set, index, item))
+                continue
             comparer = comparer_set[D.DiffType.not_diff]
             if comparer is not None:
                 comparer.normalize(item, normalizer_dependencies, version_number, trace.copy(self.name, index))

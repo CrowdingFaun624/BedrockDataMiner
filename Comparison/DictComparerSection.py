@@ -128,7 +128,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
                 # it hasn't been type checked yet, so something could except
                 continue
             if len(comparer_set) != 1 or D.DiffType.not_diff not in comparer_set:
-                raise TypeError("`normalize` was given data containing Diffs in %s in %s: %s. comparer set is %s; excepted on key: value %s: %s" % (self.name, trace, data, comparer_set, key, value))
+                continue
             comparer = comparer_set[D.DiffType.not_diff]
             if comparer is not None:
                 comparer.normalize(value, normalizer_dependencies, version_number, trace.copy(self.name, key))
