@@ -22,6 +22,8 @@ class ItemsDataMiner0(ItemsDataMiner.ItemsDataMiner):
                 item_name = item_path.replace(behavior_path_items_path, "", 1).replace(".json", "", 1)
                 assert not item_name.endswith(".json")
                 item_files[item_name, behavior_pack["name"]] = item_path
+        if len(item_files) == 0:
+            raise FileNotFoundError("No item files found in \"%s\"" % self.version)
         output:DataMinerTyping.Items = {}
         for (item_name, behavior_pack_name), item_path in item_files.items():
             item_data = pyjson5.loads(self.read_file(item_path))
