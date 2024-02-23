@@ -13,6 +13,7 @@ import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDa
 import DataMiners.Entities.EntitiesDataMiners as EntitiesDataMiners
 import DataMiners.Items.ItemsDataMiners as ItemsDataMiners
 import DataMiners.Languages.LanguagesDataMiners as LanguagesDataMiners
+import DataMiners.LootTables.LootTablesDataMiners as LootTablesDataMiners
 import DataMiners.MusicDefinitions.MusicDefinitionsDataMiners as MusicDefinitionsDataMiners
 import DataMiners.NonExistentSounds.NonExistentSoundsDataMiners as NonExistentSoundsDataMiners
 import DataMiners.Recipes.RecipesDataMiners as RecipesDataMiners
@@ -31,6 +32,7 @@ dataminers:list[DataMiner.DataMinerCollection] = [
     EntitiesDataMiners.dataminers,
     ItemsDataMiners.dataminers,
     LanguagesDataMiners.dataminers,
+    LootTablesDataMiners.dataminers,
     MusicDefinitionsDataMiners.dataminers,
     NonExistentSoundsDataMiners.dataminers,
     RecipesDataMiners.dataminers,

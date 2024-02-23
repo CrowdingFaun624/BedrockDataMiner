@@ -10,6 +10,7 @@ class DependenciesTypedDict(TypedDict):
     entities: "Entities"
     items: "Items"
     languages: "Languages"
+    loot_tables: "LootTables"
     music_definitions: "MyMusicDefinitions"
     non_existent_sounds: "NonExistentSounds"
     recipes: "Recipes"
@@ -137,6 +138,10 @@ class LanguagesTypedDict(TypedDict):
 
 Languages = list[LanguagesTypedDict]
 NormalizedLanguages = dict[str,dict[str,LanguagesPropertiesTypedDict]]
+
+# loot_tables
+
+LootTables = dict[str,dict[str,object]] # TODO: fill this out
 
 # music_definitions.json
 
