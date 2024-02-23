@@ -743,13 +743,13 @@ class TypedDictIntermediate(ComparerIntermediate):
             if isinstance(comparer, GroupIntermediate):
                 for group_type, group_comparer_section in comparer.final.items():
                     self.types_final[types_key, group_type] = group_comparer_section
-                self.check_types_final[types_key] = (self.expand_types(types_value["type"]), comparer)
+                self.check_types_final[types_key] = (list(self.expand_types(types_value["type"])), comparer)
             else:
-                key_types = self.expand_types(types_value["type"])
+                key_types = list(self.expand_types(types_value["type"]))
                 comparer_final = (comparer.final if comparer is not None else None)
                 for key_type in key_types:
                     self.types_final[types_key, key_type] = comparer_final
-                self.check_types_final[types_key] = (self.expand_types(types_value["type"]), comparer)
+                self.check_types_final[types_key] = (list(self.expand_types(types_value["type"])), comparer)
 
     def check(self) -> None:
         self.final.check_initialization_parameters()
