@@ -1,3 +1,4 @@
+import copy
 import json
 from pathlib2 import Path
 import threading
@@ -15,8 +16,9 @@ import Utilities.VersionRange as VersionRange
 
 EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
 
-def str_to_version(version_str:str) -> Version.Version|Literal["-"]:
-    if version_str == "-": return version_str
+def str_to_version(version_str:str|None) -> Version.Version|Literal["-"]:
+    if version_str is None: return version_str
+    if version_str == "-": raise RuntimeError("Version range \"-\" is not supported!")
     else:
         versions_dict = VersionsParser.versions_dict.get()
         if version_str in versions_dict:
@@ -26,11 +28,11 @@ def str_to_version(version_str:str) -> Version.Version|Literal["-"]:
 
 class DataMinerSettings():
 
-    def __init__(self, start_version_str:str|Literal["-"], end_version_str:str|Literal["-"], dataminer_class:type["DataMiner"], dependencies:list[str]|None=None, **kwargs) -> None:
-        if not isinstance(start_version_str, str):
-            raise TypeError("`start_version_str` is not a str, but instead \"%s\"!" % start_version_str)
-        if not isinstance(end_version_str, str):
-            raise TypeError("`end_version_str` is not a str, but instead \"%s\"!" % end_version_str)
+    def __init__(self, start_version_str:str|None, end_version_str:str|None, dataminer_class:type["DataMiner"], dependencies:list[str]|None=None, **kwargs) -> None:
+        if not (start_version_str is None or isinstance(start_version_str, str)):
+            raise TypeError("`start_version_str` is not a str or None, but instead \"%s\"!" % start_version_str)
+        if not (end_version_str is None or isinstance(end_version_str, str)):
+            raise TypeError("`end_version_str` is not a str or None, but instead \"%s\"!" % end_version_str)
         if not isinstance(dataminer_class, type):
             raise TypeError("`dataminer_class` is not a type!")
         if dependencies is not None and not isinstance(dependencies, list):
@@ -97,7 +99,7 @@ class DataMiner():
             json.dump(data, f)
 
         normalizer_dependencies = Normalizer.LocalNormalizerDependencies(Normalizer.NormalizerDependencies({}, dataminer_collections), self.version, None)
-        normalized_data = self.settings.comparer.get().normalize(data, normalizer_dependencies)
+        normalized_data = self.settings.comparer.get().normalize(copy.deepcopy(data), normalizer_dependencies)
         self.settings.comparer.get().check_types(normalized_data)
 
         return data
