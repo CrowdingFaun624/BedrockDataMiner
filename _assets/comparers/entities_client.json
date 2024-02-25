@@ -1,0 +1,214 @@
+{
+    "main": {
+        "type": "Main",
+        "name": "entities_client",
+        "base_comparer_section": "entities"
+    },
+    "collapse_resource_packs": {
+        "type": "NormalizerFunction",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "entities": {
+        "type": "Dict",
+        "field": "entity",
+        "types": ["dict"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "entities_behavior_pack_comparison_move_function",
+        "measure_length": true,
+        "normalizer": "collapse_resource_packs",
+        "comparer": "entity"
+    },
+    "entity": {
+        "type": "TypedDict",
+        "types": {
+            "defined_in": {"type": "list", "comparer": "defined_in"},
+            "format_version": {"type": "str"},
+            "minecraft:client_entity": {"type": "dict", "comparer": "minecraft:client_entity"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
+    "minecraft:client_entity": {
+        "type": "TypedDict",
+        "types": {
+            "description": {"type": "dict", "comparer": "description"}
+        }
+    },
+    "description": {
+        "type": "TypedDict",
+        "types": {
+            "animation_controllers": {"type": "list", "comparer": "animation_controllers"},
+            "animations": {"type": "dict", "comparer": "animations"},
+            "enable_attachables": {"type": "bool"},
+            "geometry": {"type": "dict", "comparer": "geometry"},
+            "held_item_ignores_lighting": {"type": "bool"},
+            "hide_armor": {"type": "bool"},
+            "identifier": {"type": "str"},
+            "materials": {"type": "dict", "comparer": "materials"},
+            "min_engine_version": {"type": "str"},
+            "particle_effects": {"type": "dict", "comparer": "particle_effects"},
+            "particle_emitters": {"type": "dict", "comparer": "particle_emitters"},
+            "render_controllers": {"type": "list", "comparer": "render_controllers"},
+            "scripts": {"type": "dict", "comparer": "scripts"},
+            "sound_effects": {"type": "dict", "comparer": "sound_effects"},
+            "spawn_egg": {"type": "dict", "comparer": "spawn_egg"},
+            "textures": {"type": "dict", "comparer": "textures"}
+        }
+    },
+    "animation_controllers": {
+        "type": "List",
+        "field": "animation controller group",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "animation_controllers.item"
+    },
+    "animation_controllers.item": {
+        "type": "Dict",
+        "field": "animation controller",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": null
+    },
+    "animations": {
+        "type": "Dict",
+        "field": "animation",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": null
+    },
+    "geometry": {
+        "type": "Dict",
+        "field": "geometry",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": null
+    },
+    "materials": {
+        "type": "Dict",
+        "field": "materials",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": null
+    },
+    "particle_effects": {
+        "type": "Dict",
+        "field": "particle effect",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": null
+    },
+    "particle_emitters": {
+        "type": "Dict",
+        "field": "particle emitter",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": null
+    },
+    "render_controllers": {
+        "type": "List",
+        "field": "render controller",
+        "types": ["dict", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "render_controllers:item_group"
+    },
+    "render_controllers:item_group": {
+        "type": "Group",
+        "types": {
+            "dict": "render_controllers:item",
+            "str": null
+        }
+    },
+    "render_controllers:item": {
+        "type": "Dict",
+        "field": "render controller item",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": null
+    },
+    "scripts": {
+        "type": "TypedDict",
+        "types": {
+            "animate": {"type": "list", "comparer": "scripts:item"},
+            "initialize": {"type": "list", "comparer": "scripts:item"},
+            "pre_animation": {"type": "list", "comparer": "scripts:item"},
+            "scale": {"type": "str"},
+            "scaleX": {"type": "str"},
+            "scaleY": {"type": "str"},
+            "scaleZ": {"type": "str"},
+            "should_update_bones_and_effects_offscreen": {"type": "str"},
+            "should_update_effects_offscreen": {"type": "str"}
+        }
+    },
+    "scripts:item": {
+        "type": "List",
+        "field": "script",
+        "types": ["dict", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "scripts:item_group"
+    },
+    "scripts:item_group": {
+        "type": "Group",
+        "types": {
+            "dict": "scripts:item_dict",
+            "str": null
+        }
+    },
+    "scripts:item_dict": {
+        "type": "Dict",
+        "field": "script item",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": null
+    },
+    "sound_effects": {
+        "type": "Dict",
+        "field": "sound effect",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": null
+    },
+    "spawn_egg": {
+        "type": "TypedDict",
+        "types": {
+            "base_color": {"type": "str"},
+            "overlay_color": {"type": "str"},
+            "texture": {"type": "str"},
+            "texture_index": {"type": "int"}
+        }
+    },
+    "textures": {
+        "type": "Dict",
+        "field": "texture",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "comparer": null
+    }
+}

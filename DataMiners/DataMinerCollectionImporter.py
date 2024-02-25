@@ -16,6 +16,7 @@ import DataMiners.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
 import DataMiners.Credits.CreditsDataMiners as CreditsDataMiners
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
 import DataMiners.Entities.EntitiesDataMiners as EntitiesDataMiners
+import DataMiners.EntitiesClient.EntitiesClientDataMiners as EntitiesClientDataMiners
 import DataMiners.Items.ItemsDataMiners as ItemsDataMiners
 import DataMiners.Languages.LanguagesDataMiners as LanguagesDataMiners
 import DataMiners.LootTables.LootTablesDataMiners as LootTablesDataMiners
@@ -31,7 +32,7 @@ import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as Undefin
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
 
 all_dataminers:Sequence[type[DataMiner.DataMiner]] = BehaviorPacksDataMiners.dataminers + BlocksClientDataMiners.dataminers + CreditsDataMiners.dataminers + DuplicateSoundsDataMiners.dataminers +\
-    EntitiesDataMiners.dataminers + ItemsDataMiners.dataminers + LanguagesDataMiners.dataminers + LootTablesDataMiners.dataminers + MusicDefinitionsDataMiners.dataminers +\
+    EntitiesDataMiners.dataminers + EntitiesClientDataMiners.dataminers + ItemsDataMiners.dataminers + LanguagesDataMiners.dataminers + LootTablesDataMiners.dataminers + MusicDefinitionsDataMiners.dataminers +\
     NonExistentSoundsDataMiners.dataminers + RecipesDataMiners.dataminers + ResourcePacksDataMiners.dataminers + SoundDefinitionsDataMiners.dataminers +\
     SoundFilesDataMiners.dataminers + SoundsJsonDataMiners.dataminers + TradeTablesDataMiners.dataminers  +UndefinedSoundEventsDataMiners.dataminers +\
     UnusedSoundEventsDataMiners.dataminers

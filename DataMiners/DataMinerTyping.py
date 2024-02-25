@@ -8,6 +8,7 @@ class DependenciesTypedDict(TypedDict):
     credits: "Credits"
     duplicate_sounds: "DuplicateSounds"
     entities: "Entities"
+    entities_client: "EntitiesClient"
     items: "Items"
     languages: "Languages"
     loot_tables: "LootTables"
@@ -122,6 +123,10 @@ NormalizedDuplicateSounds = dict[str,list[DuplicateSoundsTypedDict]]
 # entities
 
 Entities = dict[str,dict[str,Any]] # TODO: fill this out
+
+# entities_client
+
+EntitiesClient = dict[str,dict[str,Any]]  #TODO: fill this out
 
 # items
 
