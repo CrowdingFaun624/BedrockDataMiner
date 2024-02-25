@@ -18,6 +18,7 @@ class DependenciesTypedDict(TypedDict):
     sound_definitions: "MySoundDefinitionsJson"
     sound_files: "SoundFiles"
     sounds_json: "MySoundsJson"
+    trade_tables: "TradeTables"
     undefined_sound_events: "UndefinedSoundEvents"
     unused_sound_events: "UnusedSoundEvents"
 
@@ -300,6 +301,10 @@ class MySoundsJsonTypedDict(TypedDict):
     interactive_entity_sounds: dict[str, ResourcePackSoundsJsonSoundCollectionTypedDict]
 
 MySoundsJson = MySoundsJsonTypedDict
+
+# TradeTables
+
+TradeTables = dict[str,dict[str,dict[Any]]] # TODO: fill this out
 
 # undefined_sound_events
 
