@@ -3,6 +3,7 @@ from types import UnionType
 from typing import Callable, Generator, Generic, Iterable, Literal, TypedDict, TypeVar, Union
 
 import Comparison.Comparer as Comparer
+import Comparison.ComparerFunctions as ComparerFunctions
 import Comparison.ComparerSection as ComparerSection
 import Comparison.DictComparerSection as DictComparerSection
 import Comparison.ListComparerSection as ListComparerSection
@@ -874,3 +875,17 @@ def load(name:str, functions:dict[str,Callable]|None=None) -> Comparer.Comparer:
 
 def load_from_file(name:str, functions:dict[str,Callable]|None=None) -> WaitValue[Comparer.Comparer]:
     return WaitValue(FunctionCaller(load, args=[name, functions]))
+
+def open_index_file() -> dict[str,dict]:
+    with open(FileManager.COMPARERS_FILE, "rt") as f:
+        return json.load(f)
+
+def parse_comparers_index() -> dict[str,WaitValue[Comparer.Comparer]]:
+    index = open_index_file()
+    for comparer_file_name in index:
+        comparer_file_path = FileManager.get_comparer_path(comparer_file_name)
+        if not comparer_file_path.exists():
+            raise FileNotFoundError("Comparer file \"%s\" is referred to by comparers.json, but does not exist!" % (comparer_file_name))
+    return {comparer_file_name: load_from_file(comparer_file_name, ComparerFunctions.functions) for comparer_file_name in index}
+
+comparers = parse_comparers_index()

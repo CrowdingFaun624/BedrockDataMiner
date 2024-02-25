@@ -286,7 +286,7 @@ class DataMinerCollection():
 
     def get_null_dataminer_settings(self) -> DataMinerSettings:
         '''Returns an instance of DataMinerSettings that is usable on a NullDataMiner.'''
-        return DataMinerSettings("-", "-", NullDataMiner)
+        return DataMinerSettings(None, None, NullDataMiner)
 
     def get_version(self, version:Version.Version) -> DataMiner:
         '''Returns a DataMiner such that `version` is in the dataminer's VersionRange.'''

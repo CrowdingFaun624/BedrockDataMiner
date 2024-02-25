@@ -1,8 +1,8 @@
 import json
-from typing import Any, Generator, Iterable, TYPE_CHECKING, TypedDict, TypeVar
+from typing import Any, Generator, TYPE_CHECKING, TypedDict, TypeVar
 
 import Comparison.Comparer as Comparer
-import Comparison.Comparers as Comparers
+import Comparison.ComparerImporter as ComparerImporter
 import DataMiners.DataMiner as DataMiner
 import Downloader.VersionsParser as VersionsParser
 import Utilities.FileManager as FileManager
@@ -156,7 +156,7 @@ def load_dataminers() -> list[DataMiner.DataMinerCollection]:
     if not isinstance(data, dict):
         raise TypeError("dataminer_collections.json is not a dict!")
     
-    comparers:dict[str,Comparer.Comparer] = Comparers.comparers
+    comparers:dict[str,Comparer.Comparer] = ComparerImporter.comparers
     all_dataminers_dict = {dataminer.__name__: dataminer for dataminer in all_dataminers}
     dataminer_collection_intermediates:dict[str,DataMinerCollectionIntermediate] = {}
     for name, dataminer_collection_data in data.items():
