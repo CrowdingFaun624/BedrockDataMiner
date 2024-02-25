@@ -25,14 +25,14 @@ class Normalizer(Generic[IN, OUT]):
         self.function = function
         self.dependencies = dependencies
 
-    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", trace:Trace.Trace, version_number:int=1) -> OUT|None:
+    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", trace:Trace.Trace, version_number:int) -> OUT|None:
         if version_number not in (1, 2):
             raise ValueError("`version_number` is not 1 or 2!")
         version = normalizer_dependencies.get_version(version_number)
         if version is None:
-            return
-            # raise RuntimeError("Attempting to get data file from None version (versions are %s)!" % (str(normalizer_dependencies)))
-        this_data:DataMinerTyping.DependenciesTypedDict = {dependency: normalizer_dependencies.get_data(version, dependency) for dependency in self.dependencies}
+            this_data = {dependency: None for dependency in self.dependencies}
+        else:
+            this_data:DataMinerTyping.DependenciesTypedDict = {dependency: normalizer_dependencies.get_data(version, dependency) for dependency in self.dependencies}
         # `this_data` is only the dataminer data that is needed for this normalizer function.
         exception = None
         try:

@@ -48,7 +48,7 @@ class Comparer():
         if self.normalizer is None:
             output = data
         else:
-            output = self.normalizer(data, normalizer_dependencies, version_number)
+            output = self.normalizer(data, normalizer_dependencies, Trace.Trace(), version_number)
             if output is None:
                 raise RuntimeError("Normalizer for \"%s\" returned None!" % (self.name))
 
