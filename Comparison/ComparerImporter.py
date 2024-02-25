@@ -40,8 +40,13 @@ class ListComparerTypedDict(TypedDict):
     type: Literal["List"]
     types: list[str]
 
+ComponentTypedDict = TypedDict("ComponentTypedDict", {"as": str, "component": str})
+
+ImportTypedDict = TypedDict("ImportTypedDict", {"from": str, "components": list[ComponentTypedDict]})
+
 class MainTypedDict(TypedDict):
     base_comparer_section: str
+    imports: list[ImportTypedDict]
     normalizer: str
     post_normalizer: str
     type: Literal["Main"]
@@ -493,6 +498,7 @@ class MainIntermediate(Intermediate):
     def __init__(self, data:MainTypedDict, name:str, index:int) -> None:
         self.check_types(data, name, index, [
             ("base_comparer_section", str, "a str", True),
+            ("imports", list, "a list", False),
             ("name", str, "a str", True),
             ("normalizer", str, "a str", False),
             ("post_normalizer", str, "a str", False),
@@ -502,12 +508,17 @@ class MainIntermediate(Intermediate):
             raise ValueError("Key \"type\" of Main \"%s\" is not \"Main\"!" % (name))
         if "dependencies" in data and not all(isinstance(item, str) for item in data["dependencies"]):
             raise TypeError("An item of key \"dependencies\" of Main \"%s\" is not a str!" % (name))
+        if "imports" in data:
+            if not isinstance(data["imports"], list):
+                raise TypeError("Key \"imports\" is not a list!")
+            self.check_imports_type(data["imports"], name)
 
         self.name = name
         self.comparer_name = data["name"]
         self.base_comparer_section_str = data["base_comparer_section"]
         self.normalizer_str = None if "normalizer" not in data else data["normalizer"]
         self.post_normalizer_str = None if "post_normalizer" not in data else data["post_normalizer"]
+        self.imports = None if "imports" not in data else data["imports"]
 
         self.base_comparer_section:ComparerIntermediate = None
         self.normalizer:NormalizerFunctionIntermediate|None = None
@@ -517,6 +528,34 @@ class MainIntermediate(Intermediate):
         self.final:Comparer.Comparer = None
 
         self.children_has_normalizer = False
+
+    def check_imports_type(self, imports:list[ImportTypedDict], name:str) -> None:
+        for index, imported_comparer in enumerate(imports):
+            if not isinstance(imported_comparer, dict):
+                raise TypeError("Item %i of key \"imports\" of Main \"%s\" is not a dict!" % (index, name))
+            unrecognized_keys = [key for key in imported_comparer.keys() if key not in ("from", "components")]
+            if len(unrecognized_keys) > 0:
+                raise KeyError("Unrecognized key(s) in item %i of key \"imports\" of Main \"%s\": [%s]" % (index, name, ", ".join(unrecognized_keys)))
+            if "from" not in imported_comparer:
+                raise KeyError("Key \"from\" is not in item %i of key \"imports\" of Main \"%s\"!" % (index, name))
+            if "components" not in imported_comparer:
+                raise KeyError("Key \"components\" is not in item %i of key \"imports\" of Main \"%s\"!" % (index, name))
+            if not isinstance(imported_comparer["from"], str):
+                raise TypeError("Key \"from\" of item %i of key \"imports\" of Main \"%s\" is not a str!" % (index, name))
+            if not isinstance(imported_comparer["components"], list):
+                raise TypeError("Key \"components\" of item %i of key \"imports\" of Main \"%s\" is not a list!" % (index, name))
+            for component_index, imported_component in enumerate(imported_comparer["components"]):
+                if not isinstance(imported_component, dict):
+                    raise TypeError("Item %i of key \"components\" of item %i of key \"imports\" of Main \"%s\" is not a dict!" % (component_index, index, name))
+                unrecognized_keys = [key for key in imported_component.keys() if key not in ("component", "as")]
+                if len(unrecognized_keys) > 0:
+                    raise KeyError("Unrecognized key(s) in item %i of key \"components\" of item %i of key \"imports\" of Main \"%s\": [%s]" % (component_index, index, name, ", ".join(unrecognized_keys)))
+                if "component" not in imported_component:
+                    raise KeyError("Key \"component\" is not in item %i of key \"components\" of item %i of key \"imports\" of Main \"%s\"!" % (component_index, index, name))
+                if not isinstance(imported_component["component"], str):
+                    raise TypeError("Key \"component\" of item %i of key \"components\" of item %i of key \"imports\" of Main \"%s\" is not a str!" % (component_index, index, name))
+                if "as" in imported_component and not isinstance(imported_component["as"], str):
+                    raise TypeError("Key \"as\" of item %i of key \"components\" of item %i of key \"imports\" of Main \"%s\" is not a str!" % (component_index, index, name))
 
     def set(self, intermediate_comparers:dict[str,Intermediate], functions:dict[str,Callable]) -> None:
         self.base_comparer_section:ComparerIntermediate = self.choose_intermediate(self.base_comparer_section_str, ComparerIntermediate, "a Comparer", intermediate_comparers, ["base_comparer_section"])
@@ -798,20 +837,8 @@ def get_link_final_order(intermediate_comparers:Iterable[Intermediate]) -> Gener
     for intermediates in intermediate_types.values():
         yield from intermediates
 
-def parse_comparer_file(name:str, data:ComparerType, functions:dict[str,Callable]|None=None) -> Comparer.Comparer:
-    if functions is None: functions = {}
-    if not isinstance(name, str):
-        raise TypeError("`name` is not a str!")
-    if not isinstance(functions, dict):
-        raise TypeError("`functions` of `load_from_file` \"%s\" is not a dict!" % (name))
-    for index, (key, value) in enumerate(functions.items()):
-        if not isinstance(key, str):
-            raise TypeError("Key of index %i of `functions` of `load_from_file` \"%s\" is not a str!" % (index, name))
-        if isinstance(value, type) or not isinstance(value, Callable):
-            raise TypeError("Value of key \"%s\" of `functions` of `load_from_file` \"%s\" is not a Callable!" % (key, name))
-
-    if not isinstance(data, dict):
-        raise TypeError("Comparer file \"%s\" is not a dict!" % (name))
+def create_intermediates(name:str, data:ComparerType) -> tuple[list[tuple[str,MainIntermediate]], dict[str,Intermediate]]:
+    '''Returns a list of MainIntermediates and a dict of all Intermediates.'''
     intermediate_comparers:dict[str,Intermediate] = {}
     main_comparers:list[tuple[str,MainIntermediate]] = []
     for index, (comparer_name, comparer_data) in enumerate(data.items()):
@@ -842,38 +869,123 @@ def parse_comparer_file(name:str, data:ComparerType, functions:dict[str,Callable
                 intermediate_comparers[comparer_name] = TypedDictIntermediate(comparer_data, comparer_name, index)
             case _:
                 raise ValueError("Comparer \"%s\" has an invalid \"type\" key: %s" % (comparer_name, comparer_data["type"]))
+    return main_comparers, intermediate_comparers
+
+def set_comparers(intermediate_comparers:dict[str,Intermediate], do_not_set_intermediates:set[str], functions:dict[str,Callable]) -> None:
+    for comparer_name, comparer_intermediate in intermediate_comparers.items():
+        if comparer_name in do_not_set_intermediates:
+            continue
+        comparer_intermediate.set(intermediate_comparers, functions)
+
+def do_imports(main_comparer:MainIntermediate, partially_imported:set[str]) -> dict[str,Intermediate]:
+    if main_comparer.imports is None: return {}
+    all_intermediates:dict[str,tuple[Intermediate,str]] = {}
+    for imported_comparer in main_comparer.imports:
+        import_from = imported_comparer["from"]
+        imported_intermediates = import_comparer(import_from, ComparerFunctions.functions, partially_imported)
+        # check for circular import
+        if import_from in partially_imported:
+            raise RuntimeError("Circular import: %s" % partially_imported)
+
+        for component in imported_comparer["components"]:
+            # check for existence
+            if component["component"] not in imported_intermediates:
+                raise KeyError("Attempted to import component \"%s\" from \"%s\", which does not exist!" % (component["component"], import_from))
+            intermediate = imported_intermediates[component["component"]]
+            # set the name
+            if "as" in component:
+                intermediate.name = component["as"]
+                name = component["as"]
+            else:
+                name = component["component"]
+            # checking for name duplication
+            if name in all_intermediates:
+                duplicated_library = all_intermediates[name][1]
+                raise RuntimeError("Attempted to import comparers with the same name, \"%s\" and \"%s\"!" % (duplicated_library, import_from))
+            all_intermediates[name] = (intermediate, import_from)
+    output = {name: intermediate for name, (intermediate, library) in all_intermediates.items()}
+    return output
+
+def propagate_comparer_variables(intermediate_comparers:dict[str,Intermediate]) -> None:
+    for comparer_intermediate in intermediate_comparers.values():
+        comparer_intermediate.propagate_variables()
+
+def create_final_comparers(intermediate_comparers:dict[str,Intermediate]) -> None:
+    for comparer_intermediate in intermediate_comparers.values():
+        comparer_intermediate.create_final()
+
+def link_final_comparers(intermediate_comparers:dict[str,Intermediate]) -> None:
+    for comparer_intermediate in get_link_final_order(intermediate_comparers.values()):
+        comparer_intermediate.link_finals()
+
+def check_comparers(intermediate_comparers:dict[str,Intermediate]) -> None:
+    for comparer_intermediate in intermediate_comparers.values():
+        comparer_intermediate.check()
+
+def parse_comparer_file(name:str, data:ComparerType, functions:dict[str,Callable]) -> Comparer.Comparer:
+    if not isinstance(data, dict):
+        raise TypeError("Comparer file \"%s\" is not a dict!" % (name))
+    
+    main_comparers, intermediate_comparers = create_intermediates(name, data)
     if len(main_comparers) == 0:
         raise ValueError("There is not a Main comparer in Comparer file \"%s\"!" % name)
     if len(main_comparers) > 1:
         raise ValueError("There are more than one Main comparer in Comparer file \"%s\": [%s]" % (", ".join(comparer_name for comparer_name, comparer_intermediate in main_comparers)))
-
     main_comparer = main_comparers[0][1]
-    for comparer_name, comparer_intermediate in intermediate_comparers.items():
-        comparer_intermediate.set(intermediate_comparers, functions)
 
+    imported_intermediates = do_imports(main_comparer, set())
+    for imported_intermediate in imported_intermediates:
+        if imported_intermediate in intermediate_comparers:
+            raise KeyError("Duplicate key \"%s\" between \"%s\" and an imported comparer!" % (imported_intermediate, name))
+    intermediate_comparers.update(imported_intermediates)
+    
+    set_comparers(intermediate_comparers, imported_intermediates.keys(), functions)
     used_intermediates = get_used_intermediates(main_comparer)
     unused_intermediates = [intermediate for intermediate in intermediate_comparers.values() if intermediate not in used_intermediates]
     if len(unused_intermediates) > 0:
         print("Warning: Comparer file \"%s\" has %i unused comparers: %s" % (name, len(unused_intermediates), [intermediate.name for intermediate in unused_intermediates]))
 
-    for comparer_intermediate in intermediate_comparers.values():
-        comparer_intermediate.propagate_variables()
-    for comparer_intermediate in intermediate_comparers.values():
-        comparer_intermediate.create_final()
-    for comparer_intermediate in get_link_final_order(intermediate_comparers.values()):
-        comparer_intermediate.link_finals()
-    for comparer_intermediate in intermediate_comparers.values():
-        comparer_intermediate.check()
+    propagate_comparer_variables(intermediate_comparers)
+    create_final_comparers(intermediate_comparers)
+    link_final_comparers(intermediate_comparers)
+    check_comparers(intermediate_comparers)
 
     return main_comparer.final
 
-def load(name:str, functions:dict[str,Callable]|None=None) -> Comparer.Comparer:
+def parse_comparer_file_for_import(name:str, data:ComparerType, functions:dict[str,Callable], partially_imported:set[str]) -> dict[str,Intermediate]:
+    if not isinstance(data, dict):
+        raise TypeError("Comparer file \"%s\" is not a dict!" % (name))
+    main_comparers, intermediate_comparers = create_intermediates(name, data)
+    if len(main_comparers) == 0:
+        raise ValueError("There is not a Main comparer in Comparer file \"%s\"!" % name)
+    if len(main_comparers) > 1:
+        raise ValueError("There are more than one Main comparer in Comparer file \"%s\": [%s]" % (", ".join(comparer_name for comparer_name, comparer_intermediate in main_comparers)))
+    main_comparer = main_comparers[0][1]
+    partially_imported.add(name)
+    imported_intermediates = do_imports(main_comparer, partially_imported)
+    for imported_intermediate in imported_intermediates:
+        if imported_intermediate in intermediate_comparers:
+            raise KeyError("Duplicate key \"%s\" between \"%s\" and an imported comparer!" % (imported_intermediate, name))
+    intermediate_comparers.update(imported_intermediates)
+
+    set_comparers(intermediate_comparers, imported_intermediates.keys(), functions)
+    propagate_comparer_variables(intermediate_comparers)
+    partially_imported.remove(name)
+    return intermediate_comparers
+
+def import_comparer(name:str, functions:dict[str,Callable], partially_imported:set[str]) -> dict[str,Intermediate]:
+    if not isinstance(name, str):
+        raise TypeError("`name` is not a str!")
+    data = get_file(name)
+    return parse_comparer_file_for_import(name, data, functions, partially_imported)
+
+def load(name:str, functions:dict[str,Callable]) -> Comparer.Comparer:
     if not isinstance(name, str):
         raise TypeError("`name` is not a str!")
     data = get_file(name)
     return parse_comparer_file(name, data, functions)
 
-def load_from_file(name:str, functions:dict[str,Callable]|None=None) -> WaitValue[Comparer.Comparer]:
+def load_from_file(name:str, functions:dict[str,Callable]) -> WaitValue[Comparer.Comparer]:
     return WaitValue(FunctionCaller(load, args=[name, functions]))
 
 def open_index_file() -> dict[str,dict]:
