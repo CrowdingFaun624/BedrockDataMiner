@@ -61,7 +61,7 @@ def compare_all_of(
                 undataminable_versions_between.append(version)
     except Exception as e:
         print("%s failed at version %s." % (dataminer_collection.name, version.name))
-        exception_holder[dataminer_collection.name] = (e, version)
+        exception_holder[dataminer_collection.name] = (e, previous_successful_version, version)
     else:
         print("Compared all of %s." % dataminer_collection.name)
         exception_holder[dataminer_collection.name] = True
@@ -88,23 +88,23 @@ def main() -> None:
         child_versions.extend([child for child in major_version.children if child.ordering_tag == VersionTags.VersionTag.reupload])
 
     sorted_versions = list(flatten(child_versions for child_versions in major_versions.values()))
-    exception_holder:dict[str,bool|tuple[Exception,Union["Version.Version",None]]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
+    exception_holder:dict[str,bool|tuple[Exception,Union["Version.Version",None],Union["Version.Version",None]]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
     normalizer_dependencies = Normalizer.NormalizerDependencies({}, dataminers)
     for dataminer_collection in selected_dataminers:
         compare_all_of(dataminer_collection, sorted_versions, exception_holder, normalizer_dependencies)
 
     excepted = False
-    excepted_threads:list[tuple[str,Union["Version.Version",None]]] = []
+    excepted_threads:list[tuple[str,Union["Version.Version",None],Union["Version.Version",None]]] = []
     for dataminer_name, completion in exception_holder.items():
         if isinstance(completion, tuple):
-            excepted_threads.append((dataminer_name, completion[1]))
+            excepted_threads.append((dataminer_name, completion[1], completion[2]))
             excepted = True
             print(dataminer_name)
             traceback.print_exception(completion[0])
             print()
     if excepted:
-        for comparer_name, version in excepted_threads:
-            print("\"%s\" excepted on Version \"%s\"" % (comparer_name, version.name))
-        raise RuntimeError("CompareAll threads excepted: %s" % [comparer_name for comparer_name, version in excepted_threads])
+        for comparer_name, previous_version, version in excepted_threads:
+            print("\"%s\" excepted between Versions \"%s\" and \"%s\"" % (comparer_name, previous_version, version))
+        raise RuntimeError("CompareAll threads excepted: %s" % [comparer_name for comparer_name, previous_version, version in excepted_threads])
     else:
         print("Compared all versions.")
