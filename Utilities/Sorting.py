@@ -4,8 +4,8 @@ a = TypeVar("a")
 b = TypeVar("b")
 
 def sort_everything(data:a) -> a:
-        '''Sorts the parent dictionary and all subdictionaries (recursive).'''
-        if isinstance(data, list):
+    '''Sorts the parent dictionary and all subdictionaries (recursive).'''
+    if isinstance(data, list):
             output = []
             for item in data:
                 output.append(sort_everything(item))
