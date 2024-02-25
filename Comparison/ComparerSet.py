@@ -48,7 +48,7 @@ class ComparerSet(Generic[d]):
         else:
             return comparer.compare_text(data, trace)
 
-    def compare(self, data1:d, data2:d, trace:Trace.Trace, normalizer_dependencies:Normalizer.LocalNormalizerDependencies) -> tuple[d,list[tuple[Trace.Trace,Exception]]]:
+    def compare(self, data1:d, data2:d, trace:Trace.Trace) -> tuple[d,list[tuple[Trace.Trace,Exception]]]:
         if (len(self) == 1) or (len(self) == 2 and self[0] == self[1]):
             # both items have the same ComparerSection.
             comparer = self[0]
@@ -56,7 +56,7 @@ class ComparerSet(Generic[d]):
                 return D.Diff(data1, data2), []
             else:
                 # items must be not equal because then the D.Diff could not be created.
-                return comparer.compare(data1, data2, trace, normalizer_dependencies)
+                return comparer.compare(data1, data2, trace)
         else:
             # items have different data types.
             return D.Diff(data1, data2), []
