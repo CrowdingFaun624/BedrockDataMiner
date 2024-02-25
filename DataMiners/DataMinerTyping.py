@@ -260,12 +260,12 @@ NormalizedSoundFiles=dict[str,dict[str,NormalizedSoundFilesTypedDict]]
 class SoundsJsonSoundTypedDict(TypedDict):
     sound:str
     sounds: str
-    volume: float|int|list[float|int,float|int]
-    pitch: float|int|list[float|int,float|int]
+    volume: float|int|list[float|int]
+    pitch: float|int|list[float|int]
 
 class SoundsJsonSoundCollectionTypedDict(TypedDict):
-    volume: float|list[float,float]
-    pitch: float|list[float,float]
+    volume: float|list[float]
+    pitch: float|list[float]
     events:dict[str, str|SoundsJsonSoundTypedDict]|dict[str,dict[str,str]]
 
 class SoundsJsonFlatCollectionTypedDict(TypedDict): # "flat" means that it doesn't have volume or pitch defined right here.
@@ -289,8 +289,8 @@ class ResourcePackSoundsJsonFlatCollectionTypedDict(TypedDict):
     events: dict[str, dict[str, SoundsJsonSoundTypedDict]]|dict[str,dict[str,dict[str,str]]]
 
 class ResourcePackSoundsJsonSoundCollectionTypedDict(TypedDict):
-    volume: dict[str, float|list[float, float]]
-    pitch: dict[str, float|list[float, float]]
+    volume: dict[str, float|list[float]]
+    pitch: dict[str, float|list[float]]
     events: dict[str, dict[str, SoundsJsonSoundTypedDict]]|dict[str,dict[str,dict[str,str]]]
 
 class MySoundsJsonTypedDict(TypedDict):
@@ -304,7 +304,7 @@ MySoundsJson = MySoundsJsonTypedDict
 
 # TradeTables
 
-TradeTables = dict[str,dict[str,dict[Any]]] # TODO: fill this out
+TradeTables = dict[str,dict[str,dict[str,Any]]] # TODO: fill this out
 
 # undefined_sound_events
 

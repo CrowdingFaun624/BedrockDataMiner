@@ -1,5 +1,5 @@
 import json
-from typing import Any, Generator, TYPE_CHECKING, TypedDict, TypeVar
+from typing import Any, Generator, Mapping, Sequence, TYPE_CHECKING, TypedDict, TypeVar
 
 import Comparison.Comparer as Comparer
 import Comparison.ComparerImporter as ComparerImporter
@@ -26,13 +26,14 @@ import DataMiners.ResourcePacks.ResourcePacksDataMiners as ResourcePacksDataMine
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinitionsDataMiners
 import DataMiners.SoundFiles.SoundFilesDataMiners as SoundFilesDataMiners
 import DataMiners.SoundsJson.SoundsJsonDataMiners as SoundsJsonDataMiners
+import DataMiners.TradeTables.TradeTablesDataMiners as TradeTablesDataMiners
 import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as UndefinedSoundEventsDataMiners
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
 
-all_dataminers:list[type[DataMiner.DataMiner]] = BehaviorPacksDataMiners.dataminers + BlocksClientDataMiners.dataminers + CreditsDataMiners.dataminers + DuplicateSoundsDataMiners.dataminers +\
+all_dataminers:Sequence[type[DataMiner.DataMiner]] = BehaviorPacksDataMiners.dataminers + BlocksClientDataMiners.dataminers + CreditsDataMiners.dataminers + DuplicateSoundsDataMiners.dataminers +\
     EntitiesDataMiners.dataminers + ItemsDataMiners.dataminers + LanguagesDataMiners.dataminers + LootTablesDataMiners.dataminers + MusicDefinitionsDataMiners.dataminers +\
     NonExistentSoundsDataMiners.dataminers + RecipesDataMiners.dataminers + ResourcePacksDataMiners.dataminers + SoundDefinitionsDataMiners.dataminers +\
-    SoundFilesDataMiners.dataminers + SoundsJsonDataMiners.dataminers + UndefinedSoundEventsDataMiners.dataminers +\
+    SoundFilesDataMiners.dataminers + SoundsJsonDataMiners.dataminers + TradeTablesDataMiners.dataminers  +UndefinedSoundEventsDataMiners.dataminers +\
     UnusedSoundEventsDataMiners.dataminers
 
 class DataMinerSettingsTypedDict(TypedDict):
@@ -95,7 +96,7 @@ class DataMinerCollectionIntermediate():
     def __repr__(self) -> str:
         return "<DataMinerCollectionIntermediate %s>" % self.name
     
-    def create_final(self, all_dataminers:dict[str,DataMiner.DataMiner]) -> DataMiner.DataMinerCollection:
+    def create_final(self, all_dataminers:Mapping[str,type[DataMiner.DataMiner]]) -> DataMiner.DataMinerCollection:
         for index, dataminer_settings_str in enumerate(self.dataminer_settings_strs):
             if dataminer_settings_str["name"] is not None and dataminer_settings_str["name"] not in all_dataminers:
                 raise KeyError("DataMiner \"%s\", referenced by DataMinerSettings %i of DataMinerCollection \"%s\", does not exist!" % (dataminer_settings_str["name"], index, self.name))
@@ -131,14 +132,14 @@ class DataMinerCollectionIntermediate():
             else:
                 if dataminer_settings["new"] is None:
                     raise ValueError("The new version of DataMinerSettings %i of DataMinerCollection \"%s\" is None!" % (index, self.name))
-                used_versions.append(dataminer_settings["new"])
+                used_versions.append(versions[dataminer_settings["new"]])
             if index == len(self.dataminer_settings_strs) - 1:
                 if dataminer_settings["old"] is not None:
                     raise ValueError("The old version of the last DataMinerSettings of DataMinerCollection \"%s\" is not None, but instead \"%s\"!" % (self.name, dataminer_settings["old"]))
             else:
                 if dataminer_settings["old"] is None:
                     raise ValueError("The old version of DataMinerSettings %i of DataMinerCollection \"%s\" is None!" % (index, self.name))
-                used_versions.append(dataminer_settings["old"])
+                used_versions.append(versions[dataminer_settings["old"]])
         
         # checking that there are no gaps in the ranges by checking for equality
         for new_version, old_version in glue_adjacent(used_versions):
@@ -156,7 +157,7 @@ def load_dataminers() -> list[DataMiner.DataMinerCollection]:
     if not isinstance(data, dict):
         raise TypeError("dataminer_collections.json is not a dict!")
     
-    comparers:dict[str,Comparer.Comparer] = ComparerImporter.comparers
+    comparers:dict[str,WaitValue[Comparer.Comparer]] = ComparerImporter.comparers
     all_dataminers_dict = {dataminer.__name__: dataminer for dataminer in all_dataminers}
     dataminer_collection_intermediates:dict[str,DataMinerCollectionIntermediate] = {}
     for name, dataminer_collection_data in data.items():
