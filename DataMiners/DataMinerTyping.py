@@ -11,6 +11,7 @@ class DependenciesTypedDict(TypedDict):
     entities_client: "EntitiesClient"
     items: "Items"
     languages: "Languages"
+    loading_tips: "LoadingTips"
     loot_tables: "LootTables"
     music_definitions: "MyMusicDefinitions"
     non_existent_sounds: "NonExistentSounds"
@@ -144,6 +145,10 @@ class LanguagesTypedDict(TypedDict):
 
 Languages = list[LanguagesTypedDict]
 NormalizedLanguages = dict[str,dict[str,LanguagesPropertiesTypedDict]]
+
+# loading_tips
+
+LoadingTips = dict[str,dict[str,list[str]]]
 
 # loot_tables
 

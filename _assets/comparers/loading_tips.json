@@ -1,0 +1,33 @@
+{
+    "main": {
+        "type": "Main",
+        "name": "loading_tips",
+        "base_comparer_section": "resource_packs"
+    },
+    "collapse_resource_packs": {
+        "type": "NormalizerFunction",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_without_defined_in"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "normalizer": "collapse_resource_packs",
+        "comparer": "categories"
+    },
+    "categories": {
+        "type": "Dict",
+        "field": "category",
+        "types": ["list"],
+        "detect_key_moves": true,
+        "comparer": "tips"
+    },
+    "tips": {
+        "type": "List",
+        "field": "tip",
+        "types": ["str"],
+        "ordered": false,
+        "comparer": null
+    }
+}
