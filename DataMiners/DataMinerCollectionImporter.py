@@ -28,6 +28,7 @@ import DataMiners.ResourcePacks.ResourcePacksDataMiners as ResourcePacksDataMine
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinitionsDataMiners
 import DataMiners.SoundFiles.SoundFilesDataMiners as SoundFilesDataMiners
 import DataMiners.SoundsJson.SoundsJsonDataMiners as SoundsJsonDataMiners
+import DataMiners.Splashes.SplashesDataMiners as SplashesDataMiners
 import DataMiners.TradeTables.TradeTablesDataMiners as TradeTablesDataMiners
 import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as UndefinedSoundEventsDataMiners
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
@@ -35,7 +36,7 @@ import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEv
 all_dataminers:Sequence[type[DataMiner.DataMiner]] = BehaviorPacksDataMiners.dataminers + BlocksClientDataMiners.dataminers + CreditsDataMiners.dataminers + DuplicateSoundsDataMiners.dataminers +\
     EntitiesDataMiners.dataminers + EntitiesClientDataMiners.dataminers + ItemsDataMiners.dataminers + LanguagesDataMiners.dataminers + LoadingTipsDataMiners.dataminers + LootTablesDataMiners.dataminers + MusicDefinitionsDataMiners.dataminers +\
     NonExistentSoundsDataMiners.dataminers + RecipesDataMiners.dataminers + ResourcePacksDataMiners.dataminers + SoundDefinitionsDataMiners.dataminers +\
-    SoundFilesDataMiners.dataminers + SoundsJsonDataMiners.dataminers + TradeTablesDataMiners.dataminers  +UndefinedSoundEventsDataMiners.dataminers +\
+    SoundFilesDataMiners.dataminers + SoundsJsonDataMiners.dataminers + TradeTablesDataMiners.dataminers + SplashesDataMiners.dataminers + UndefinedSoundEventsDataMiners.dataminers +\
     UnusedSoundEventsDataMiners.dataminers
 
 class DataMinerSettingsTypedDict(TypedDict):
