@@ -50,6 +50,7 @@
         "type": "TypedDict",
         "types": {
             "defined_in": {"type": "list", "comparer": "defined_in"},
+            "format_version": {"type": "str"},
             "tiers": {"type": "list", "comparer": "tiers"}
         }
     },
@@ -73,6 +74,7 @@
         "types": {
             "groups": {"type": "list", "comparer": "groups"},
             "num_to_select": {"type": "int"},
+            "total_exp_required": {"type": "int"},
             "trades": {"type": "list", "comparer": "trades"}
         }
     },
@@ -100,7 +102,8 @@
             "reward_exp": {"type": "bool"},
             "total_exp_required": {"type": "int"},
             "trader_exp": {"type": "int"},
-            "wants": {"type": "list", "comparer": "trade:wants"}
+            "wants": {"type": "list", "comparer": "trade:wants"},
+            "weight": {"type": "int"}
         }
     },
     "trade:gives": {
@@ -123,12 +126,21 @@
         "type": "TypedDict",
         "normalizer": "normalize_functions",
         "types": {
+            "biomes": {"type": "list", "comparer": "trade:gives.item.biomes"},
             "choice": {"type": "list", "comparer": "trade:gives.item.choice"},
             "filters": {"type": "dict", "comparer": "filter"},
             "functions": {"type": "dict", "comparer": "functions"},
             "item": {"type": "str"},
             "quantity": {"type": ["dict", "int"], "comparer": "range_int_or_int"}
         }
+    },
+    "trade:gives.item.biomes": {
+        "type": "List",
+        "field": "biome",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
     },
     "trade:gives.item.choice": {
         "type": "List",
@@ -141,9 +153,19 @@
     "trade:wants.item": {
         "type": "TypedDict",
         "types": {
+            "choice": {"type": "list", "comparer": "trade:wants.item.choice"},
+            "filters": {"type": "dict", "comparer": "filter"},
             "item": {"type": "str"},
             "price_multiplier": {"type": "decimal"},
             "quantity": {"type": ["dict", "int"], "comparer": "range_int_or_int"}
         }
+    },
+    "trade:wants.item.choice": {
+        "type": "List",
+        "field": "choice",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "trade:wants.item"
     }
 }
