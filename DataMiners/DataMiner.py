@@ -17,7 +17,7 @@ import Utilities.VersionRange as VersionRange
 EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
 
 def str_to_version(version_str:str|None) -> Version.Version|Literal["-"]:
-    if version_str is None: return version_str
+    if version_str is None: return "-"
     if version_str == "-": raise RuntimeError("Version range \"-\" is not supported!")
     else:
         versions_dict = VersionsParser.versions_dict.get()
@@ -41,9 +41,9 @@ class DataMinerSettings():
             raise TypeError("An item in `dependencies` is not a str!")
 
         self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
-        self.file_name:str = None
-        self.name:str = None
-        self.comparer:WaitValue[Comparer.Comparer] = None
+        self.file_name:str|None = None
+        self.name:str|None = None
+        self.comparer:WaitValue[Comparer.Comparer]|None = None
         self.dataminer_class = dataminer_class
         self.dependencies = dependencies if dependencies is not None else []
         self.kwargs = kwargs
@@ -99,8 +99,9 @@ class DataMiner():
             json.dump(data, f)
 
         normalizer_dependencies = Normalizer.LocalNormalizerDependencies(Normalizer.NormalizerDependencies({}, dataminer_collections), self.version, None)
-        normalized_data = self.settings.comparer.get().normalize(copy.deepcopy(data), normalizer_dependencies)
-        self.settings.comparer.get().check_types(normalized_data)
+        if self.settings.comparer is not None:
+            normalized_data = self.settings.comparer.get().normalize(copy.deepcopy(data), normalizer_dependencies)
+            self.settings.comparer.get().check_types(normalized_data)
 
         return data
 
@@ -127,42 +128,40 @@ class DataMiner():
         '''Asynchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
 
-        def read_async(files:Iterable[tuple[str,str,None|Callable[[IO],Any]]], file_results:dict[str,str|bytes|Any], non_exist_ok:bool, lock:threading.Lock) -> str:
-            lock.acquire()
-            for file_name, mode, callable in files:
-                try:
-                    if not non_exist_ok or self.file_exists(file_name):
-                        if callable is None:
-                            file_results[file_name] = self.read_file(file_name, mode)
-                        else:
-                            file = self.get_file(file_name, mode)
-                            with file.open() as f:
-                                file_results[file_name] = callable(f)
-                            file.all_done()
-                    else: # file does not exist
-                        file_results[file_name] = EMPTY_FILE
-                except Exception as e:
-                    file_results[file_name] = e
-                    lock.release()
-                    return
-            lock.release()
+        def read_async(files:Iterable[tuple[str,str,None|Callable[[IO],Any]]], file_results:dict[str,str|bytes|Any], non_exist_ok:bool, lock:threading.Lock) -> None:
+            with lock:
+                for file_name, mode, callable in files:
+                    try:
+                        if not non_exist_ok or self.file_exists(file_name):
+                            if callable is None:
+                                file_results[file_name] = self.read_file(file_name, mode)
+                            else:
+                                file = self.get_file(file_name, mode)
+                                with file.open() as f:
+                                    file_results[file_name] = callable(f)
+                                file.all_done()
+                        else: # file does not exist
+                            file_results[file_name] = EMPTY_FILE
+                    except Exception as e:
+                        file_results[file_name] = e
+                        return
 
         if self.version.install_manager is None:
             raise RuntimeError("Attempted to call `read_files` on version (\"%s\") with no download available!" % self.version.name)
 
         DEFAULT_MODE = "t"
         LIMIT = 16 # how many threads can be created.
-        files:list[tuple[str,str,None|Callable[[IO],Any]]] = [(file, DEFAULT_MODE, None) if isinstance(file, str) else file for file in files]
-        file_names = [file[0] for file in files]
+        normalized_files:list[tuple[str,str,None|Callable[[IO],Any]]] = [(file, DEFAULT_MODE, None) if isinstance(file, str) else file for file in files]
+        file_names = [file[0] for file in normalized_files]
 
         if any(count >= 2 for count in (file_names.count(file_name) for file_name in file_names)): # duplicate item tester
             duplicate_files = [file for file in file_names if file_names.count(file) >= 2]
             raise ValueError("Duplicated files: %s" % str(duplicate_files))
 
-        thread_count = len(files) if len(files) < LIMIT else LIMIT
+        thread_count = len(normalized_files) if len(normalized_files) < LIMIT else LIMIT
         thread_responsibilities:list[list[tuple[str,str,None|Callable[[IO],Any]]]] = [[] for index in range(thread_count)] # keeps track of what each thread will do.
         file_results:dict[str,str|bytes|Any] = {}
-        for index, (file_name, mode, callable) in enumerate(files):
+        for index, (file_name, mode, callable) in enumerate(normalized_files):
             file_results[file_name] = None
             thread_responsibilities[index % thread_count].append((file_name, mode, callable))
 

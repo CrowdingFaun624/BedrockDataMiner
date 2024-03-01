@@ -85,7 +85,7 @@ class NormalizerDependencies():
 
 class LocalNormalizerDependencies():
 
-    def __init__(self, normalizer_dependencies:NormalizerDependencies, version1:Version.Version, version2:Version.Version):
+    def __init__(self, normalizer_dependencies:NormalizerDependencies, version1:Version.Version|None, version2:Version.Version|None):
         if not isinstance(normalizer_dependencies, NormalizerDependencies):
             raise TypeError("`normalizer_dependencies` is not a NormalizerDependencies, but instead a %s!" % (normalizer_dependencies.__class__.__name__))
         if not (version1 is None or isinstance(version1, Version.Version)):
@@ -96,7 +96,7 @@ class LocalNormalizerDependencies():
         self.version1 = version1
         self.version2 = version2
 
-    def get_version(self, index:int) -> Version.Version:
+    def get_version(self, index:int) -> Version.Version|None:
         match index:
             case 1:
                 return self.version1

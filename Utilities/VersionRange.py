@@ -1,3 +1,5 @@
+from typing import Literal
+
 import Utilities.Version as Version
 
 class VersionRange():
@@ -5,7 +7,7 @@ class VersionRange():
     Use "-" to represent not stopping, or continuing on to the end of the list.
     By default, checks if the version is in [start, stop). If start and stop are the same, it checks for equality.'''
 
-    def __init__(self, start:Version.Version, stop:Version.Version) -> None:
+    def __init__(self, start:Version.Version|Literal["-"], stop:Version.Version|Literal["-"]) -> None:
         if isinstance(start, Version.Version) and isinstance(stop, Version.Version) and start > stop:
             raise ValueError("Start Version (\"%s\")in `VersionRange` occurs after stop Version (\"%s\")!" % (start.name, stop.name))
         self.start = start if start != "-" else None
