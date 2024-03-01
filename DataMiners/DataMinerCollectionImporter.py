@@ -13,10 +13,10 @@ if TYPE_CHECKING:
 
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
 import DataMiners.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
-import DataMiners.Credits.CreditsDataMiners as CreditsDataMiners
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
 import DataMiners.GrabPackFile.GrabPackFileDataMiners as GrabPackFileDataMiners
 import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiners as GrabMultiplePackFilesDataMiners
+import DataMiners.GrabSingleFile.GrabSingleFileDataMiners as GrabSingleFileDataMiners
 import DataMiners.Languages.LanguagesDataMiners as LanguagesDataMiners
 import DataMiners.MusicDefinitions.MusicDefinitionsDataMiners as MusicDefinitionsDataMiners
 import DataMiners.NonExistentSounds.NonExistentSoundsDataMiners as NonExistentSoundsDataMiners
@@ -28,8 +28,8 @@ import DataMiners.Splashes.SplashesDataMiners as SplashesDataMiners
 import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as UndefinedSoundEventsDataMiners
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
 
-all_dataminers:Sequence[type[DataMiner.DataMiner]] = BehaviorPacksDataMiners.dataminers + BlocksClientDataMiners.dataminers + CreditsDataMiners.dataminers + DuplicateSoundsDataMiners.dataminers +\
-    GrabMultiplePackFilesDataMiners.dataminers + GrabPackFileDataMiners.dataminers + LanguagesDataMiners.dataminers + MusicDefinitionsDataMiners.dataminers +\
+all_dataminers:Sequence[type[DataMiner.DataMiner]] = BehaviorPacksDataMiners.dataminers + BlocksClientDataMiners.dataminers + DuplicateSoundsDataMiners.dataminers +\
+    GrabMultiplePackFilesDataMiners.dataminers + GrabPackFileDataMiners.dataminers + GrabSingleFileDataMiners.dataminers + LanguagesDataMiners.dataminers + MusicDefinitionsDataMiners.dataminers +\
     NonExistentSoundsDataMiners.dataminers + ResourcePacksDataMiners.dataminers + SoundDefinitionsDataMiners.dataminers +\
     SoundFilesDataMiners.dataminers + SoundsJsonDataMiners.dataminers + SplashesDataMiners.dataminers + UndefinedSoundEventsDataMiners.dataminers +\
     UnusedSoundEventsDataMiners.dataminers
