@@ -13,6 +13,7 @@ class DependenciesTypedDict(TypedDict):
     languages: "Languages"
     loading_tips: "LoadingTips"
     loot_tables: "LootTables"
+    models: "Models"
     music_definitions: "MyMusicDefinitions"
     non_existent_sounds: "NonExistentSounds"
     recipes: "Recipes"
@@ -154,6 +155,10 @@ LoadingTips = dict[str,dict[str,list[str]]]
 # loot_tables
 
 LootTables = dict[str,dict[str,object]] # TODO: fill this out
+
+# models
+
+Models = dict[str,dict[str,Any]] # TODO: fill this out
 
 # music_definitions.json
 

@@ -83,6 +83,52 @@ def loot_tables_normalize_functions(data:dict[str,list[dict[str,Any]]], dependen
         del function["function"]
     data["functions"] = output
 
+def models_model_normalize(data:dict[str,dict[str,dict[str,Any]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
+    output:dict[str,Any] = {}
+    for model_file_name, resource_packs in data.items():
+        for resource_pack_name, model_file_data in resource_packs.items():
+            if "minecraft:geometry" in model_file_data:
+                format_version:str = model_file_data["format_version"]
+                assert isinstance(model_file_data["minecraft:geometry"], list)
+                for geometry_item in model_file_data["minecraft:geometry"]:
+                    name = geometry_item["description"]["identifier"]
+                    model_output_name = "%s %s" % (model_file_name, name)
+                    output_data = {"format_version": format_version, "minecraft:geometry": geometry_item}
+                    if model_output_name in output:
+                        if resource_pack_name in output[model_output_name]:
+                            raise KeyError("Multiple models using name \"%s\" and resource pack \"%s\"!" % (model_output_name, resource_pack_name))
+                        output[model_output_name][resource_pack_name] = output_data
+                    else:
+                        output[model_output_name] = {resource_pack_name: output_data}
+            else:
+                format_version:str|None = model_file_data["format_version"] if "format_version" in model_file_data else None
+                for name, model_data in model_file_data.items():
+                    if name == "format_version": continue
+                    description_dict = {"identifier": name}
+                    model_output_name = "%s %s" % (model_file_name, name)
+                    for description_key in list(model_data.keys()):
+                        if description_key in ("bones",): continue
+                        description_dict[description_key] = model_data[description_key]
+                        del model_data[description_key]
+                    model_data["description"] = description_dict
+                    output_data = {"format_version": format_version, "minecraft:geometry": model_data}
+                    if model_output_name in output:
+                        if resource_pack_name in output[model_output_name]:
+                            raise KeyError("Multiple models using name \"%s\" and resource pack \"%s\"!" % (model_output_name, resource_pack_name))
+                        output[model_output_name][resource_pack_name] = output_data
+                    else:
+                        output[model_output_name] = {resource_pack_name: output_data}
+    return output
+
+def models_normalize_bones(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "bones" in data:
+        output:dict[str,Any] = {}
+        for bone in data["bones"]:
+            name = bone["name"]
+            del bone["name"]
+            output[name] = bone
+        data["bones"] = output
+
 def recipes_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()
     del output["defined_in"]
@@ -183,6 +229,8 @@ functions:dict[str,Callable] = {
     "loot_tables_behavior_pack_comparison_move_function": loot_tables_behavior_pack_comparison_move_function,
     "loot_tables_normalize_conditions": loot_tables_normalize_conditions,
     "loot_tables_normalize_functions": loot_tables_normalize_functions,
+    "models_model_normalize": models_model_normalize,
+    "models_normalize_bones": models_normalize_bones,
     "recipes_behavior_pack_comparison_move_function": recipes_behavior_pack_comparison_move_function,
     "resource_packs_normalize": resource_packs_normalize,
     "sound_definitions_fix_MCPE_153558": sound_definitions_fix_MCPE_153558,

@@ -1,0 +1,203 @@
+{
+    "main": {
+        "type": "Main",
+        "name": "models",
+        "base_comparer_section": "files",
+        "normalizer": "model_normalize"
+    },
+    "collapse_resource_packs": {
+        "type": "NormalizerFunction",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_without_defined_in"
+    },
+    "model_normalize": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "models_model_normalize"
+    },
+    "normalize_bones": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "models_normalize_bones"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "vector_decimal": {
+        "type": "List",
+        "field": "vector item",
+        "types": ["decimal"],
+        "ordered": true,
+        "print_flat": true,
+        "print_all": true,
+        "comparer": null
+    },
+    "files": {
+        "type": "Dict",
+        "field": "file",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparer": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "normalizer": "collapse_resource_packs",
+        "detect_key_moves": true,
+        "comparison_move_function": "entities_behavior_pack_comparison_move_function",
+        "comparer": "model"
+    },
+    "model": {
+        "type": "TypedDict",
+        "types": {
+            "defined_in": {"type": "list", "comparer": "defined_in"},
+            "format_version": {"type": ["null", "str"]},
+            "minecraft:geometry": {"type": "dict", "comparer": "minecraft:geometry"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "measure_length": true,
+        "ordered": false,
+        "comparer": null
+    },
+    "minecraft:geometry": {
+        "type": "TypedDict",
+        "normalizer": "normalize_bones",
+        "types": {
+            "bones": {"type": "dict", "comparer": "bones"},
+            "description": {"type": "dict", "comparer": "description"}
+        }
+    },
+    "description": {
+        "type": "TypedDict",
+        "types": {
+            "identifier": {"type": "str"},
+            "texture_height": {"type": "decimal"},
+            "texture_width": {"type": "decimal"},
+            "textureheight": {"type": "decimal"},
+            "texturewidth": {"type": "decimal"},
+            "visible_bounds_height": {"type": "decimal"},
+            "visible_bounds_offset": {"type": "list", "comparer": "vector_decimal"},
+            "visible_bounds_width": {"type": "decimal"}
+        }
+    },
+    "bones": {
+        "type": "Dict",
+        "field": "bone",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparer": "bone"
+    },
+    "bone": {
+        "type": "TypedDict",
+        "types": {
+            "bind_pose_rotation": {"type": "list", "comparer": "vector_decimal"},
+            "binding": {"type": "str"},
+            "cubes": {"type": "list", "comparer": "cubes"},
+            "inflate": {"type": "decimal"},
+            "locators": {"type": "dict", "comparer": "locators"},
+            "mirror": {"type": "bool"},
+            "neverRender": {"type": "bool"},
+            "parent": {"type": "str"},
+            "pivot": {"type": "list", "comparer": "vector_decimal"},
+            "reset": {"type": "bool"},
+            "rotation": {"type": "list", "comparer": "vector_decimal"},
+            "texture_meshes": {"type": "list", "comparer": "texture_meshes"}
+        }
+    },
+    "cubes": {
+        "type": "List",
+        "field": "cube",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "cube"
+    },
+    "cube": {
+        "type": "TypedDict",
+        "types": {
+            "inflate": {"type": "decimal"},
+            "mirror": {"type": "bool"},
+            "origin": {"type": "list", "comparer": "vector_decimal"},
+            "rotation": {"type": "list", "comparer": "vector_decimal"},
+            "pivot": {"type": "list", "comparer": "vector_decimal"},
+            "size": {"type": "list", "comparer": "vector_decimal"},
+            "uv": {"type": ["dict", "list"], "comparer": "uv_group"}
+        }
+    },
+    "uv_group": {
+        "type": "Group",
+        "types": {
+            "dict": "uv_dict",
+            "list": "uv_list"
+        }
+    },
+    "uv_dict": {
+        "type": "TypedDict",
+        "types": {
+            "down": {"type": "dict", "comparer": "uv_dict.item"},
+            "east": {"type": "dict", "comparer": "uv_dict.item"},
+            "north": {"type": "dict", "comparer": "uv_dict.item"},
+            "south": {"type": "dict", "comparer": "uv_dict.item"},
+            "up": {"type": "dict", "comparer": "uv_dict.item"},
+            "west": {"type": "dict", "comparer": "uv_dict.item"}
+        }
+    },
+    "uv_dict.item": {
+        "type": "TypedDict",
+        "types": {
+            "uv": {"type": "list", "comparer": "uv_list"},
+            "uv_size": {"type": "list", "comparer": "uv_size"}
+        }
+    },
+    "uv_size": {
+        "type": "List",
+        "field": "uv size item",
+        "types": ["int"],
+        "ordered": true,
+        "print_flat": true,
+        "print_all": true,
+        "comparer": null
+    },
+    "uv_list": {
+        "type": "List",
+        "field": "uv item",
+        "types": ["decimal"],
+        "ordered": true,
+        "print_flat": true,
+        "print_all": true,
+        "comparer": null
+    },
+    "locators": {
+        "type": "Dict",
+        "field": "locator",
+        "types": ["list"],
+        "measure_length": true,
+        "comparer": "vector_decimal"
+    },
+    "texture_meshes": {
+        "type": "List",
+        "field": "texture mesh",
+        "types": ["dict"],
+        "measure_length": true,
+        "ordered": false,
+        "comparer": "texture_mesh"
+    },
+    "texture_mesh": {
+        "type": "TypedDict",
+        "types": {
+            "local_pivot": {"type": "list", "comparer": "vector_decimal"},
+            "position": {"type": "list", "comparer": "vector_decimal"},
+            "rotation": {"type": "list", "comparer": "vector_decimal"},
+            "texture": {"type": "str"}
+        }
+    }
+}
