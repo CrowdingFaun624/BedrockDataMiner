@@ -15,29 +15,23 @@ import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMine
 import DataMiners.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
 import DataMiners.Credits.CreditsDataMiners as CreditsDataMiners
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
-import DataMiners.Entities.EntitiesDataMiners as EntitiesDataMiners
-import DataMiners.EntitiesClient.EntitiesClientDataMiners as EntitiesClientDataMiners
-import DataMiners.Items.ItemsDataMiners as ItemsDataMiners
+import DataMiners.GrabPackFile.GrabPackFileDataMiners as GrabPackFileDataMiners
+import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiners as GrabMultiplePackFilesDataMiners
 import DataMiners.Languages.LanguagesDataMiners as LanguagesDataMiners
-import DataMiners.LoadingTips.LoadingTipsDataMiners as LoadingTipsDataMiners
-import DataMiners.LootTables.LootTablesDataMiners as LootTablesDataMiners
-import DataMiners.Models.ModelsDataMiners as ModelsDataMiners
 import DataMiners.MusicDefinitions.MusicDefinitionsDataMiners as MusicDefinitionsDataMiners
 import DataMiners.NonExistentSounds.NonExistentSoundsDataMiners as NonExistentSoundsDataMiners
-import DataMiners.Recipes.RecipesDataMiners as RecipesDataMiners
 import DataMiners.ResourcePacks.ResourcePacksDataMiners as ResourcePacksDataMiners
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinitionsDataMiners
 import DataMiners.SoundFiles.SoundFilesDataMiners as SoundFilesDataMiners
 import DataMiners.SoundsJson.SoundsJsonDataMiners as SoundsJsonDataMiners
 import DataMiners.Splashes.SplashesDataMiners as SplashesDataMiners
-import DataMiners.TradeTables.TradeTablesDataMiners as TradeTablesDataMiners
 import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as UndefinedSoundEventsDataMiners
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
 
 all_dataminers:Sequence[type[DataMiner.DataMiner]] = BehaviorPacksDataMiners.dataminers + BlocksClientDataMiners.dataminers + CreditsDataMiners.dataminers + DuplicateSoundsDataMiners.dataminers +\
-    EntitiesDataMiners.dataminers + EntitiesClientDataMiners.dataminers + ItemsDataMiners.dataminers + LanguagesDataMiners.dataminers + LoadingTipsDataMiners.dataminers + LootTablesDataMiners.dataminers + MusicDefinitionsDataMiners.dataminers +\
-    ModelsDataMiners.dataminers + NonExistentSoundsDataMiners.dataminers + RecipesDataMiners.dataminers + ResourcePacksDataMiners.dataminers + SoundDefinitionsDataMiners.dataminers +\
-    SoundFilesDataMiners.dataminers + SoundsJsonDataMiners.dataminers + TradeTablesDataMiners.dataminers + SplashesDataMiners.dataminers + UndefinedSoundEventsDataMiners.dataminers +\
+    GrabMultiplePackFilesDataMiners.dataminers + GrabPackFileDataMiners.dataminers + LanguagesDataMiners.dataminers + MusicDefinitionsDataMiners.dataminers +\
+    NonExistentSoundsDataMiners.dataminers + ResourcePacksDataMiners.dataminers + SoundDefinitionsDataMiners.dataminers +\
+    SoundFilesDataMiners.dataminers + SoundsJsonDataMiners.dataminers + SplashesDataMiners.dataminers + UndefinedSoundEventsDataMiners.dataminers +\
     UnusedSoundEventsDataMiners.dataminers
 
 class DataMinerSettingsTypedDict(TypedDict):
