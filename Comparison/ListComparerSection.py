@@ -80,7 +80,8 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
         if isinstance(item, D.Diff):
             raise TypeError("`check_all_types` was given data containing Diffs!")
         if not isinstance(item, self.types):
-            return (trace.copy(self.name, index), TypeError("Index, item %i: %s in %s excepted because item is not %s!" % (index, CU.stringify(item), self.name, self.types)))
+            item_types_string = ", ".join(type_key.__name__ for type_key in self.types)
+            return (trace.copy(self.name, index), TypeError("Index, item %i: %s in %s excepted is %s instead of [%s]!" % (index, CU.stringify(item), self.name, item.__class__.__name__, item_types_string)))
 
     def check_all_types(self, data:list[d], trace:Trace.Trace) -> list[tuple[Trace.Trace,Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''

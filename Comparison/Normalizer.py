@@ -39,7 +39,11 @@ class Normalizer(Generic[IN, OUT]):
             return self.function(data, this_data)
         except Exception as e:
             exception = e
-            exception.args = tuple(list(exception.args) + ["Normalizer function excepted at %s on data: %s" % (trace, data)])
+            data_string = str(data)
+            if len(data_string) > 500:
+                exception.args = tuple(list(exception.args) + ["Normalizer function excepted at %s!" % (trace)])
+            else:
+                exception.args = tuple(list(exception.args) + ["Normalizer function excepted at %s on data: %s" % (trace, data_string)])
         if exception is not None:
             raise exception
 

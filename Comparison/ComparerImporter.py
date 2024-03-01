@@ -1,4 +1,5 @@
 import json
+import traceback
 from types import UnionType
 from typing import Callable, Generator, Generic, Iterable, Literal, TypedDict, TypeVar, Union
 
@@ -130,7 +131,7 @@ class Intermediate(Generic[IntermediateType]):
         '''Links this Intermediate's final object to other final objects.'''
         pass
 
-    def check(self) -> None:
+    def check(self) -> list[Exception]|None:
         '''Make sure that this Intermediate's types are all in order; no error could occur.'''
         pass
 
@@ -291,17 +292,17 @@ class DictComparerIntermediate(ComparerIntermediate):
         else:
             self.final.comparer = self.comparer.final
     
-    def check(self) -> None:
+    def check(self) -> list[Exception]|None:
         self.final.check_initialization_parameters()
         if self.comparer is None:
             for value_type in self.types_final:
                 if value_type in REQUIRES_COMPARER_TYPES:
-                    raise TypeError("DictComparer \"%s\" accepts type %s, but has a null comparer!" % (self.name, value_type.__name__))
+                    return [TypeError("DictComparer \"%s\" accepts type %s, but has a null comparer!" % (self.name, value_type.__name__))]
         else:
             for value_type in self.types_final:
                 if value_type not in self.comparer.my_type:
                     its_types = ", ".join(type_item.__name__ for type_item in self.comparer.my_type)
-                    raise TypeError("DictComparer \"%s\" accepts type %s, but its comparer, \"%s\", only accepts type [%s]!" % (self.name, value_type.__name__, self.comparer.name, its_types))
+                    return [TypeError("DictComparer \"%s\" accepts type %s, but its comparer, \"%s\", only accepts type [%s]!" % (self.name, value_type.__name__, self.comparer.name, its_types))]
 
 class GroupIntermediate(Intermediate):
 
@@ -372,17 +373,17 @@ class GroupIntermediate(Intermediate):
                 self.final[valid_type] = comparer_final
             self.check_types_final.append((valid_types, comparer_intermediate))
 
-    def check(self) -> None:
+    def check(self) -> list[Exception]|None:
         for index, (types, comparer) in enumerate(self.check_types_final):
             if comparer is None:
                 for type_item in types:
                     if type_item in REQUIRES_COMPARER_TYPES:
-                        raise TypeError("Item %i of Group \"%s\" accepts type %s, but has a null comparer!" % (index, self.name, type_item.__name__))
+                        return [TypeError("Item %i of Group \"%s\" accepts type %s, but has a null comparer!" % (index, self.name, type_item.__name__))]
             else:
                 for type_item in types:
                     if type_item not in comparer.my_type:
                         its_types = ", ".join(its_type.__name__ for its_type in comparer.my_type)
-                        raise TypeError("Item %i of Group \"%s\" accepts type %s, but its comparer, \"%s\", only accepts type [%s]!" % (index, self.name, type_item.__name__, comparer.name, its_types))
+                        return [TypeError("Item %i of Group \"%s\" accepts type %s, but its comparer, \"%s\", only accepts type [%s]!" % (index, self.name, type_item.__name__, comparer.name, its_types))]
 
 class ListComparerIntermediate(ComparerIntermediate):
 
@@ -481,17 +482,17 @@ class ListComparerIntermediate(ComparerIntermediate):
         else:
             self.final.comparer = self.comparer.final
 
-    def check(self) -> None:
+    def check(self) -> list[Exception]|None:
         self.final.check_initialization_parameters()
         if self.comparer is None:
             for value_type in self.types_final:
                 if value_type in REQUIRES_COMPARER_TYPES:
-                    raise TypeError("ListComparer \"%s\" accepts type %s, but has a null comparer!" % (self.name, value_type.__name__))
+                    return [TypeError("ListComparer \"%s\" accepts type %s, but has a null comparer!" % (self.name, value_type.__name__))]
         else:
             for value_type in self.types_final:
                 if value_type not in self.comparer.my_type:
                     its_types = ", ".join(type_item.__name__ for type_item in self.comparer.my_type)
-                    raise TypeError("ListComparer \"%s\" accepts type %s, but its comparer, \"%s\", only accepts type [%s]!" % (self.name, value_type.__name__, self.comparer.name, its_types))
+                    return [TypeError("ListComparer \"%s\" accepts type %s, but its comparer, \"%s\", only accepts type [%s]!" % (self.name, value_type.__name__, self.comparer.name, its_types))]
 
 class MainIntermediate(Intermediate):
 
@@ -791,18 +792,20 @@ class TypedDictIntermediate(ComparerIntermediate):
                     self.types_final[types_key, key_type] = comparer_final
                 self.check_types_final[types_key] = (list(self.expand_types(types_value["type"])), comparer)
 
-    def check(self) -> None:
+    def check(self) -> list[Exception]|None:
         self.final.check_initialization_parameters()
+        exceptions:list[Exception] = []
         for key, (key_types, comparer) in self.check_types_final.items():
             if comparer is None:
                 for type_item in key_types:
                     if type_item in REQUIRES_COMPARER_TYPES:
-                        raise TypeError("Key \"%s\" of TypedDictComparer \"%s\" accepts type %s, but has a null comparer!" % (key, self.name, type_item.__name__))
+                        exceptions.append(TypeError("Key \"%s\" of TypedDictComparer \"%s\" accepts type %s, but has a null comparer!" % (key, self.name, type_item.__name__)))
             else:
                 if set(key_types) != set(comparer.my_type):
                     my_types = ", ".join(type_item.__name__ for type_item in sorted(key_types, key=lambda x: x.__name__))
                     its_types = ", ".join(type_item.__name__ for type_item in sorted(comparer.my_type, key=lambda x: x.__name__))
-                    raise TypeError("Key \"%s\" of TypedDictComparer \"%s\" accepts types [%s], but its comparer, \"%s\", only accepts type [%s]!" % (key, self.name, my_types, comparer.name, its_types))
+                    exceptions.append(TypeError("Key \"%s\" of TypedDictComparer \"%s\" accepts types [%s], but its comparer, \"%s\", only accepts type [%s]!" % (key, self.name, my_types, comparer.name, its_types)))
+        return exceptions
 
 def get_file(name:str) -> ComparerType:
     with open(FileManager.get_comparer_path(name), "rt") as f:
@@ -919,8 +922,16 @@ def link_final_comparers(intermediate_comparers:dict[str,Intermediate]) -> None:
         comparer_intermediate.link_finals()
 
 def check_comparers(intermediate_comparers:dict[str,Intermediate]) -> None:
+    exceptions:list[Exception] = []
     for comparer_intermediate in intermediate_comparers.values():
-        comparer_intermediate.check()
+        new_exceptions = comparer_intermediate.check()
+        if new_exceptions is not None:
+            exceptions.extend(new_exceptions)
+    for exception in exceptions:
+        traceback.print_exception(exception)
+        print()
+    if len(exceptions) > 0:
+        raise RuntimeError("Failed to parse comparer!")
 
 def parse_comparer_file(name:str, data:ComparerType, functions:dict[str,Callable]) -> Comparer.Comparer:
     if not isinstance(data, dict):
