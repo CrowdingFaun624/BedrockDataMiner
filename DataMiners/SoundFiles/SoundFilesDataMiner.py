@@ -58,7 +58,7 @@ def serialize(data:Any) -> Any:
     elif isinstance(data, enum.Enum):
         return str(data)
     elif type(data) == bytes:
-        return hex(data)
+        return hex(int.from_bytes(data, "big"))
     else:
         try:
             return serialize(dict(data))

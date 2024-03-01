@@ -1,4 +1,5 @@
 import json
+from typing import TypedDict
 
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
@@ -11,9 +12,13 @@ EXTRA = "extra"
 VANITY = "vanity"
 RESOUCE_PACK_TAGS = [CORE, EDUCATION, EXPERIMENTAL, EXTRA, VANITY]
 
-def get_resource_pack_order(message:str="resource pack") -> list[str]:
+class ResourcePackDataTypedDict(TypedDict):
+    order: list[str]
+    types: dict[str, list[str]]
+
+def get_resource_pack_order(message:str="resource pack") -> ResourcePackDataTypedDict:
     with FileManager.open_shared_file(FileManager.RESOUCE_PACK_DATA_FILE, "rt") as f:
-        data = json.load(f)
+        data:ResourcePackDataTypedDict = json.load(f)
     file_name = FileManager.RESOUCE_PACK_DATA_FILE.name
     if not isinstance(data, dict):
         raise TypeError("File \"%s\" is not a dict!" % file_name)
@@ -60,4 +65,4 @@ def get_resource_pack_order(message:str="resource pack") -> list[str]:
 class ResourcePacksDataMiner(DataMiner.DataMiner):
     
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.ResourcePackTypedDict]:
-        return super().activate()
+        return super().activate(dependency_data)

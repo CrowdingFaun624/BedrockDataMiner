@@ -1,7 +1,10 @@
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiner as BehaviorPacksDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.DataMinerParameters as DataMinerParameters
 
 class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
+
+    parameters = DataMinerParameters.TypedDictParameters({"behavior_packs_folder": str})
 
     def initialize(self, **kwargs) -> None:
         if "behavior_packs_folder" in kwargs:

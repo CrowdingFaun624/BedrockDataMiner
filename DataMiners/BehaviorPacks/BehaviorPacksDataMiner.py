@@ -8,4 +8,4 @@ get_behavior_pack_order = FunctionCaller(ResourcePackDataMiner.get_resource_pack
 class BehaviorPacksDataMiner(DataMiner.DataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.ResourcePackTypedDict]:
-        return super().activate()
+        return super().activate(dependency_data)
