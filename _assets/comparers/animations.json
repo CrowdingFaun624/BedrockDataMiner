@@ -1,0 +1,186 @@
+{
+    "main": {
+        "type": "Main",
+        "name": "render_controllers",
+        "base_comparer_section": "files"
+    },
+    "collapse_resource_packs": {
+        "type": "NormalizerFunction",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "files": {
+        "type": "Dict",
+        "field": "file",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparer": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "normalizer": "collapse_resource_packs",
+        "comparison_move_function": "entities_behavior_pack_comparison_move_function",
+        "comparer": "animations_file"
+    },
+    "animations_file": {
+        "type": "TypedDict",
+        "types": {
+            "animations": {"type": "dict", "comparer": "animations"},
+            "defined_in": {"type": "list", "comparer": "defined_in"},
+            "format_version": {"type": "str"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
+    "animations": {
+        "type": "Dict",
+        "field": "animation",
+        "types": ["dict"],
+        "measure_length": true,
+        "comparer": "animation"
+    },
+    "timestamps_and_vectors_or_vector_or_lerp": {
+        "type": "Group",
+        "types": {
+            "dict": "timestamps_and_vectors_or_lerp",
+            "list": "vector_special"
+        }
+    },
+    "timestamps_and_vectors_or_lerp": {
+        "type": "Dict",
+        "field": "timestamp",
+        "types": ["dict", "list"],
+        "detect_key_moves": false,
+        "measure_length": true,
+        "comparer": "vector_or_lerp"
+    },
+    "vector_or_lerp": {
+        "type": "Group",
+        "types": {
+            "dict": "lerp",
+            "list": "vector_special"
+        }
+    },
+    "lerp": {
+        "type": "TypedDict",
+        "types": {
+            "lerp_mode": {"type": "str"},
+            "pre": {"type": "list", "comparer": "vector_special"},
+            "post": {"type": "list", "comparer": "vector_special"}
+        }
+    },
+    "vector_special": {
+        "type": "List",
+        "field": "vector item",
+        "types": ["decimal", "dict", "str"],
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "measure_length": false,
+        "comparer": "vector_special_group"
+    },
+    "vector_special_group": {
+        "type": "Group",
+        "types": {
+            "decimal": null,
+            "dict": "vector_dict",
+            "str": null
+        }
+    },
+    "vector_dict": {
+        "type": "TypedDict",
+        "types": {
+            "x": {"type": "str"},
+            "y": {"type": "str"},
+            "z": {"type": "str"}
+        }
+    },
+    "animation": {
+        "type": "TypedDict",
+        "types": {
+            "anim_time_update": {"type": "str"},
+            "animation_length": {"type": "decimal"},
+            "bones": {"type": "dict", "comparer": "bones"},
+            "loop": {"type": ["bool", "str"]},
+            "override_previous_animation": {"type": "bool"},
+            "particle_effects": {"type": "dict", "comparer": "particle_effects"},
+            "sound_effects": {"type": "dict", "comparer": "sound_effects"},
+            "start_delay": {"type": "str"}
+        }
+    },
+    "bones": {
+        "type": "Dict",
+        "field": "bone",
+        "types": ["dict"],
+        "measure_length": true,
+        "comparer": "bone"
+    },
+    "bone": {
+        "type": "TypedDict",
+        "types": {
+            "relative_to": {"type": "dict", "comparer": "bone.relative_to"},
+            "rotation": {"type": ["list", "dict"], "comparer": "timestamps_and_vectors_or_vector_or_lerp"},
+            "position": {"type": ["list", "dict"], "comparer": "timestamps_and_vectors_or_vector_or_lerp"},
+            "scale": {"type": ["decimal", "dict", "list", "str"], "comparer": "bone.scale"}
+        }
+    },
+    "bone.relative_to": {
+        "type": "TypedDict",
+        "types": {
+            "rotation": {"type": "str"}
+        }
+    },
+    "bone.scale": {
+        "type": "Group",
+        "types": {
+            "decimal": null,
+            "dict": "timestamps_and_vectors_or_lerp",
+            "list": "vector_special",
+            "str": null
+        }
+    },
+    "particle_effects": {
+        "type": "Dict",
+        "field": "timestamp",
+        "types": ["dict"],
+        "detect_key_moves": false,
+        "measure_length": true,
+        "comparer": "particle_effects.item"
+    },
+    "particle_effects.item": {
+        "type": "TypedDict",
+        "types": {
+            "effect": {"type": "str"},
+            "pre_effect_script": {"type": "str"}
+        }
+    },
+    "sound_effects": {
+        "type": "Dict",
+        "field": "timestamp",
+        "types": ["dict"],
+        "detect_key_moves": false,
+        "measure_length": true,
+        "comparer": "sound_effects.item"
+    },
+    "sound_effects.item": {
+        "type": "TypedDict",
+        "types": {
+            "effect": {"type": "str"}
+        }
+    }
+}
