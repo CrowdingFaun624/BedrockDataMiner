@@ -8,5 +8,5 @@ class LanguagesDataMiner3(LanguagesDataMiner.LanguagesDataMiner):
         if len(language_files) == 0:
             raise FileNotFoundError("No language files found in \"%s\"!" % self.version.name)
         language_codes = [language_file.split(".")[0] for language_file in language_files]
-        languages = [{"code": language_code, "defined_in": [], "properties": {}} for language_code in language_codes]
+        languages:list[DataMinerTyping.LanguagesTypedDict] = [{"code": language_code, "defined_in": [], "properties": {}} for language_code in language_codes]
         return sorted(languages, key=lambda x: x["code"])
