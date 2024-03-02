@@ -1,0 +1,170 @@
+{
+    "main": {
+        "type": "Main",
+        "name": "render_controllers",
+        "base_comparer_section": "files"
+    },
+    "collapse_resource_packs": {
+        "type": "NormalizerFunction",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "files": {
+        "type": "Dict",
+        "field": "file",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparer": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "normalizer": "collapse_resource_packs",
+        "comparison_move_function": "entities_behavior_pack_comparison_move_function",
+        "comparer": "render_controllers_file"
+    },
+    "render_controllers_file": {
+        "type": "TypedDict",
+        "types": {
+            "defined_in": {"type": "list", "comparer": "defined_in"},
+            "format_version": {"type": "str"},
+            "render_controllers": {"type": "dict", "comparer": "render_controllers"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
+    "render_controllers": {
+        "type": "Dict",
+        "field": "render controller",
+        "types": ["dict"],
+        "measure_length": true,
+        "comparer": "render_controller"
+    },
+    "color": {
+        "type": "TypedDict",
+        "field": "channel",
+        "types": {
+            "a": {"type": ["decimal", "str"]},
+            "r": {"type": ["decimal", "str"]},
+            "g": {"type": ["decimal", "str"]},
+            "b": {"type": ["decimal", "str"]}
+        }
+    },
+    "render_controller": {
+        "type": "TypedDict",
+        "types": {
+            "arrays": {"type": "dict", "comparer": "arrays"},
+            "color": {"type": "dict", "comparer": "color"},
+            "filter_lighting": {"type": "bool"},
+            "geometry": {"type": "str"},
+            "ignore_lighting": {"type": "bool"},
+            "is_hurt_color": {"type": "dict", "comparer": "color"},
+            "light_color_multiplier": {"type": "decimal"},
+            "materials": {"type": "list", "comparer": "materials"},
+            "on_fire_color": {"type": "dict", "comparer": "color"},
+            "overlay_color": {"type": "dict", "comparer": "color"},
+            "part_visibility": {"type": "list", "comparer": "part_visibility"},
+            "rebuild_animation_matrices": {"type": "bool"},
+            "textures": {"type": "list", "comparer": "textures"},
+            "uv_anim": {"type": "dict", "comparer": "uv_anim"}
+        }
+    },
+    "arrays": {
+        "type": "TypedDict",
+        "types": {
+            "geometries": {"type": "dict", "comparer": "array"},
+            "materials": {"type": "dict", "comparer": "array"},
+            "textures": {"type": "dict", "comparer": "array"}
+        }
+    },
+    "array": {
+        "type": "Dict",
+        "field": "array",
+        "types": ["list"],
+        "measure_length": true,
+        "comparer": "array_list"
+    },
+    "array_list": {
+        "type": "List",
+        "field": "array item",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
+    "materials": {
+        "type": "List",
+        "field": "material dict",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "material_dict"
+    },
+    "material_dict": {
+        "type": "Dict",
+        "field": "material",
+        "types": ["str"],
+        "measure_length": true,
+        "comparer": null
+    },
+    "part_visibility": {
+        "type": "List",
+        "field": "part visibility dict",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "part_visibility_dict"
+    },
+    "part_visibility_dict": {
+        "type": "Dict",
+        "field": "part visibility",
+        "types": ["bool", "str"],
+        "measure_length": true,
+        "comparer": null
+    },
+    "textures": {
+        "type": "List",
+        "field": "texture",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
+    "uv_anim": {
+        "type": "TypedDict",
+        "types": {
+            "offset": {"type": "list", "comparer": "uv_anim.offsets"},
+            "scale": {"type": "list", "comparer": "uv_anim.scale"}
+        }
+    },
+    "uv_anim.offsets": {
+        "type": "List",
+        "field": "expression",
+        "types": ["decimal", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
+    "uv_anim.scale": {
+        "type": "List",
+        "field": "range item",
+        "types": ["decimal"],
+        "ordered": true,
+        "measure_length": false,
+        "comparer": null
+    }
+}
