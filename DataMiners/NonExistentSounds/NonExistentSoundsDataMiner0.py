@@ -1,5 +1,6 @@
 from typing import Generator
 
+import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.NonExistentSounds.NonExistentSoundsDataMiner as NonExistentSoundsDataMiner
 
@@ -33,11 +34,12 @@ def get_sounds(sound_definitions:DataMinerTyping.SoundDefinitionsJson) -> Genera
 
 class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDataMiner):
 
+    parameters = DataMinerParameters.TypedDictParameters({
+        "resource_packs_location": ((str, type(None)), True),
+    })
+
     def initialize(self, **kwargs) -> None:
-        if "resource_packs_location" in kwargs:
-            self.resource_packs_location:str|None = kwargs["resource_packs_location"]
-        else:
-            raise ValueError("`NonExistentSoundsDataMiner0` was initialized without kwarg \"resource_packs_location\"!")
+        self.resource_packs_location:str|None = kwargs["resource_packs_location"]
 
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NonExistentSounds:
         sound_files_data = dependency_data["sound_files"]

@@ -1,27 +1,23 @@
 import pyjson5 # supports comments
 from typing import Any
 
-import DataMiners.GrabPackFile.GrabPackFileDataMiner as GrabPackFileDataMiner
+import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.GrabPackFile.GrabPackFileDataMiner as GrabPackFileDataMiner
 import Utilities.Sorting as Sorting
 
 class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
 
+    parameters = DataMinerParameters.TypedDictParameters({
+        "locations": (DataMinerParameters.ListParameters(str), True),
+        "pack_type": (DataMinerParameters.LiteralParameters({"resource_packs", "behavior_packs"}), True),
+        "file_display_name": (str, True),
+    })
+
     def initialize(self, **kwargs) -> None:
-        if "locations" in kwargs:
-            self.locations:list[str] = kwargs["locations"]
-        else:
-            raise ValueError("`GrabPackFileDataMiner0` was initialized without kwarg \"locations\"!")
-        if "pack_type" in kwargs:
-            if kwargs["pack_type"] not in ("resource_packs", "behavior_packs"):
-                raise ValueError("`pack_type` must be \"resource_packs\" or \"behavior_packs\"!")
-            self.pack_type:str = kwargs["pack_type"]
-        else:
-            raise ValueError("`GrabPackFileDataMiner0` was initialized without kwarg \"pack_type\"!")
-        if "file_display_name" in kwargs:
-            self.file_display_name:str|None = kwargs["file_display_name"]
-        else:
-            raise ValueError("`GrabPackFileDataMiner0` was initialized without kwarg \"file_display_name\"!")
+        self.locations:list[str] = kwargs["locations"]
+        self.pack_type:str = kwargs["pack_type"]
+        self.file_display_name:str|None = kwargs["file_display_name"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         packs = dependency_data[self.pack_type]

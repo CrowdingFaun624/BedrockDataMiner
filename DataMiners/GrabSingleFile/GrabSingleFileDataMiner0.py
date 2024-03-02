@@ -1,21 +1,21 @@
 import json
 from typing import Any
 
+import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.GrabSingleFile.GrabSingleFileDataMiner as GrabSingleFileDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Sorting as Sorting
 
 class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
+
+    parameters = DataMinerParameters.TypedDictParameters({
+        "location": (str, True),
+        "file_display_name": (str, True),
+    })
     
     def initialize(self, **kwargs) -> None:
-        if "location" in kwargs:
-            self.location:str = kwargs["location"]
-        else:
-            raise ValueError("`GrabSingleFileDataMiner0` was initialized without kwarg \"location\"!")
-        if "file_display_name" in kwargs:
-            self.file_display_name:str|None = kwargs["file_display_name"]
-        else:
-            raise ValueError("`GrabSingleFileDataMiner0` was initialized without kwarg \"file_display_name\"!")
+        self.location:str = kwargs["location"]
+        self.file_display_name:str|None = kwargs["file_display_name"]
     
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> Any:
 

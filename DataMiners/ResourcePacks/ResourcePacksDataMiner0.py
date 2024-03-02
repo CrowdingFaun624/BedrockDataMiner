@@ -1,13 +1,15 @@
+import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
 
 class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
 
+    parameters = DataMinerParameters.TypedDictParameters({
+        "resource_packs_folder": (str, True),
+    })
+
     def initialize(self, **kwargs) -> None:
-        if "resource_packs_folder" in kwargs:
-            self.resource_packs_folder:str = kwargs["resource_packs_folder"]
-        else:
-            raise ValueError("`ResourcePacksDataMiner0` was initialized without kwarg \"resource_packs_folder\"!")
+        self.resource_packs_folder:str = kwargs["resource_packs_folder"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.ResourcePackTypedDict]:
         resource_pack_data = ResourcePacksDataMiner.get_resource_pack_order()

@@ -1,15 +1,17 @@
 import json
 
+import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 
 class LanguagesDataMiner2(LanguagesDataMiner.LanguagesDataMiner):
 
+    parameters = DataMinerParameters.TypedDictParameters({
+        "languages_location": (str, True),
+    })
+
     def initialize(self, **kwargs) -> None:
-        if "languages_location" in kwargs:
-            self.languages_location = kwargs["languages_location"]
-        else:
-            raise ValueError("`LanguagesDataMiner1` was initialized without kwarg \"languages_location\"!")
+        self.languages_location = kwargs["languages_location"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
         if not self.file_exists(self.languages_location):

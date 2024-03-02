@@ -1,31 +1,31 @@
 import pyjson5 # supports comments
 from typing import Any
 
+import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiner as GrabMultiplePackFilesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Sorting as Sorting
 
+def a(aa:tuple[type,...]) -> None: pass
+a((str, type(None)))
+
 class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultiplePackFilesDataMiner):
 
+    parameters = DataMinerParameters.TypedDictParameters({
+        "location": (str, True),
+        "pack_type": (DataMinerParameters.LiteralParameters({"resource_packs", "behavior_packs"}), True),
+        "suffixes": (DataMinerParameters.ListParameters(str), False),
+        "file_display_name": ((str, type(None)), True),
+    })
+
     def initialize(self, **kwargs) -> None:
-        if "location" in kwargs:
-            self.location:str = kwargs["location"]
-        else:
-            raise ValueError("`GrabMultiplePackFilesDataMiner0` was initialized without kwarg \"location\"!")
-        if "pack_type" in kwargs:
-            if kwargs["pack_type"] not in ("resource_packs", "behavior_packs"):
-                raise ValueError("`pack_type` must be \"resource_packs\" or \"behavior_packs\"!")
-            self.pack_type:str = kwargs["pack_type"]
-        else:
-            raise ValueError("`GrabMultiplePackFilesDataMiner0` was initialized without kwarg \"pack_type\"!")
+        self.location:str = kwargs["location"]
+        self.pack_type:str = kwargs["pack_type"]
         if "suffixes" in kwargs:
             self.suffixes:list[str]|None = kwargs["suffixes"]
         else:
-            raise ValueError("`GrabMultiplePackFilesDataMiner0` was initialized without kwarg \"suffixes\"!")
-        if "file_display_name" in kwargs:
-            self.file_display_name:str|None = kwargs["file_display_name"]
-        else:
-            raise ValueError("`GrabMultiplePackFilesDataMiner0` was initialized without kwarg \"file_display_name\"!")
+            self.suffixes = None
+        self.file_display_name:str|None = kwargs["file_display_name"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         packs = dependency_data[self.pack_type]

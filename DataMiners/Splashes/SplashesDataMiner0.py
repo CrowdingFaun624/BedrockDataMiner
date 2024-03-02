@@ -1,16 +1,18 @@
 import pyjson5 # supports comments
 
+import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Sorting as Sorting
 
 class SplashesDataMiner0(SplashesDataMiner.SplashesDataMiner):
 
+    parameters = DataMinerParameters.TypedDictParameters({
+        "splashes_locations": (DataMinerParameters.ListParameters(str), True),
+    })
+
     def initialize(self, **kwargs) -> None:
-        if "splashes_locations" in kwargs:
-            self.splashes_locations = kwargs["splashes_locations"]
-        else:
-            raise ValueError("`SplashesDataMiner0` was initialized without kwarg \"splashes_locations\"!")
+        self.splashes_locations = kwargs["splashes_locations"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Splashes:
         resource_packs = dependency_data["resource_packs"]

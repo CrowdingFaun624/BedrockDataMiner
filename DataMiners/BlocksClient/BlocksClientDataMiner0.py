@@ -1,16 +1,16 @@
 import pyjson5 # supports comments
 
 import DataMiners.BlocksClient.BlocksClientDataMiner as BlocksDataMiner
+import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Sorting as Sorting
 
 class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
 
+    parameters = DataMinerParameters.TypedDictParameters({"blocks_locations": (DataMinerParameters.ListParameters(str), True)})
+
     def initialize(self, **kwargs) -> None:
-        if "blocks_locations" in kwargs:
-            self.blocks_locations = kwargs["blocks_locations"]
-        else:
-            raise ValueError("`BlocksDataMiner0` was initialized without kwarg \"blocks_locations\"!")
+        self.blocks_locations:list[str] = kwargs["blocks_locations"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,DataMinerTyping.MyBlocksJsonClientBlockTypedDict]:
         resource_packs = dependency_data["resource_packs"]

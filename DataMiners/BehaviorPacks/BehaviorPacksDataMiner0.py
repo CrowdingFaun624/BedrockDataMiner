@@ -1,16 +1,13 @@
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiner as BehaviorPacksDataMiner
-import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.DataMinerParameters as DataMinerParameters
+import DataMiners.DataMinerTyping as DataMinerTyping
 
 class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({"behavior_packs_folder": str})
+    parameters = DataMinerParameters.TypedDictParameters({"behavior_packs_folder": (str, True)})
 
     def initialize(self, **kwargs) -> None:
-        if "behavior_packs_folder" in kwargs:
-            self.behavior_packs_folder:str = kwargs["behavior_packs_folder"]
-        else:
-            raise ValueError("`BehaviorPacksDataMiner0` was initialized without kwarg \"behavior_packs_folder\"!")
+        self.behavior_packs_folder:str = kwargs["behavior_packs_folder"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.BehaviorPackTypedDict]:
         behavior_pack_data = BehaviorPacksDataMiner.get_behavior_pack_order()

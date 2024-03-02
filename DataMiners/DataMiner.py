@@ -8,6 +8,7 @@ from typing import Any, Callable, IO, Iterable, Literal
 import Comparison.Comparer as Comparer
 import Comparison.Normalizer as Normalizer
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.DataMinerParameters as DataMinerParameters
 import Downloader.VersionsParser as VersionsParser
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import WaitValue
@@ -55,6 +56,8 @@ class DataMinerSettings():
             return "<DataMinerSettings %s \"%s\"–\"%s\">" % (self.name, str(self.version_range.start), str(self.version_range.stop))
 
 class DataMiner():
+
+    parameters:DataMinerParameters.Parameters|None = None
 
     def __init__(self, version:Version.Version, settings:DataMinerSettings) -> None:
         if not isinstance(version, Version.Version):

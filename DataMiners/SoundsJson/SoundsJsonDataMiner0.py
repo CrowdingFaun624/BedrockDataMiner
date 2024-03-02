@@ -1,16 +1,18 @@
 import pyjson5 # supports comments
 
+import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.SoundsJson.SoundsJsonDataMiner as SoundsJsonDataMiner
 import Utilities.Sorting as Sorting
 
 class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
 
+    parameters = DataMinerParameters.TypedDictParameters({
+        "sounds_json_locations": (DataMinerParameters.ListParameters(str), True),
+    })
+
     def initialize(self, **kwargs) -> None:
-        if "sounds_json_locations" in kwargs:
-            self.sounds_json_locations = kwargs["sounds_json_locations"]
-        else:
-            raise ValueError("`SoundsJsonDataMiner0` was initialized without kwarg \"sounds_json_locations\"!")
+        self.sounds_json_locations:list[str] = kwargs["sounds_json_locations"]
 
     def parse_flat_sound_collection(self, source:DataMinerTyping.SoundsJsonFlatCollectionTypedDict, destination:DataMinerTyping.ResourcePackSoundsJsonFlatCollectionTypedDict, resource_pack_name:str) -> None:
         if list(source.keys()) != ["events"]:
