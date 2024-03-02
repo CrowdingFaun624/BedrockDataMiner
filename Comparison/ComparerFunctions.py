@@ -36,6 +36,16 @@ def entities_fix_MCPE_178417(data:dict[str,Any], dependencies:DataMinerTyping.De
     for key_to_delete in [key for key in data if key.startswith("minecraft:")]:
         del data[key_to_delete]
 
+def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
+    output:dict[str,dict[str,Any]] = {}
+    for resource_pack_name, item_textures_data in data.items():
+        for item, item_data in item_textures_data["texture_data"].items():
+            if item in output:
+                output[item][resource_pack_name] = item_data
+            else:
+                output[item] = {resource_pack_name: item_data}
+    return output
+
 def items_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()
     del output["defined_in"]
@@ -237,6 +247,7 @@ functions:dict[str,Callable] = {
     "entities_behavior_pack_comparison_move_function": entities_behavior_pack_comparison_move_function,
     "entities_fix_out_of_bounds_components": entities_fix_out_of_bounds_components,
     "entities_fix_MCPE_178417": entities_fix_MCPE_178417,
+    "item_textures_normalize": item_textures_normalize,
     "items_behavior_pack_comparison_move_function": items_behavior_pack_comparison_move_function,
     "languages_normalize": languages_normalize,
     "languages_languages_comparison_move_function": languages_languages_comparison_move_function,
