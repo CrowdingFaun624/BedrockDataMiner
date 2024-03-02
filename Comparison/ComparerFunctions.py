@@ -210,7 +210,21 @@ def sounds_json_fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict, depend
 
 sounds_json_sound_collections_comparison_move_function = lambda key, value: None if len(value) == 0 else value
 
+texture_list_comparison_move_function = lambda key, value: key
+
+def texture_list_normalize(data:dict[str,list[str]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,list[str]]:
+    output:dict[str,list[str]] = {}
+    for resource_pack, textures in data.items():
+        for texture in textures:
+            if texture in output:
+                output[texture].append(resource_pack)
+            else:
+                output[texture] = [resource_pack]
+    return output
+
 functions:dict[str,Callable] = {
+    "collapse_behavior_pack_list": CollapseResourcePacks.make_interface_list(pack_key="behavior_packs"),
+    "collapse_resource_pack_list": CollapseResourcePacks.make_interface_list(pack_key="resource_packs"),
     "collapse_behavior_packs_with_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=True, pack_key="behavior_packs"),
     "collapse_behavior_packs_without_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=False, pack_key="behavior_packs"),
     "collapse_resource_packs_with_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=True, pack_key="resource_packs"),
@@ -246,4 +260,6 @@ functions:dict[str,Callable] = {
     "sounds_json_remove_bad_interactive_entity_events": sounds_json_remove_bad_interactive_entity_events,
     "sounds_json_fix_sounds": sounds_json_fix_sounds,
     "sounds_json_sound_collections_comparison_move_function": sounds_json_sound_collections_comparison_move_function,
+    "texture_list_comparison_move_function": texture_list_comparison_move_function,
+    "texture_list_normalize": texture_list_normalize,
 }
