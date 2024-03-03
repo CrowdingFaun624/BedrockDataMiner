@@ -19,7 +19,7 @@ class DownloadMethod(enum.Enum):
 
 class Version():
 
-    def __init__(self, name:str, download_link:str|None, parent_str:str|None, time_str:str|None, tags_str:list[VersionTags.VersionTag], index:int, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
+    def __init__(self, name:str, download_link:str|None, parent_str:str|None, time_str:str|None, tags_str:list[str], index:int, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
         self.name = name
         self.download_link = download_link
         self.parent_str = parent_str
@@ -30,7 +30,7 @@ class Version():
         self.development_category_names = development_categories
 
         # attributes set in this __init__ function.
-        self.download_method:str = None
+        self.download_method:DownloadMethod = None
         self.version_folder:Path = None
 
         # attributes to be set after finished creating version list.
@@ -39,7 +39,7 @@ class Version():
         self.siblings:list[Version]|None = None
         self.parent:"Version"|None = None
         self.time:datetime.date|None = None
-        self.ordering_tag:str = None
+        self.ordering_tag:VersionTags.VersionTag = None
         self.install_manager:InstallManager.InstallManager|None = None
 
         self.validate_name()

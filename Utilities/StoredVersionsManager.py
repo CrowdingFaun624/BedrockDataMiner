@@ -2,7 +2,7 @@ import gzip
 from itertools import islice
 from pathlib2 import Path
 import shutil
-from typing import Iterable
+from typing import Iterable, Literal
 import zipfile
 
 import Utilities.FileManager as FileManager
@@ -37,7 +37,7 @@ def get_sizes(version_name:str) -> dict[str,int]:
     '''Returns a dictionary of file names to file sizes.'''
     index = read_index(version_name)
     sizes:dict[str,int] = {}
-    for file_name, hash in index.items():
+    for file_name, (hash, is_zipped) in index.items():
         path = get_hash_file_path(hash)
         file_size = path.stat().st_size
         sizes[file_name] = file_size
@@ -63,7 +63,7 @@ def read_index(version_name:str) -> dict[str,tuple[str,bool]]:
     if file_name not in (file.filename for file in index_zip.filelist):
         raise FileNotFoundError("Hash index named \"%s\" does not exist!" % file_name)
     index_content = index_zip.read(file_name).decode()
-    index:dict[str,str] = {}
+    index:dict[str,tuple[str,bool]] = {}
     for line in index_content.split("\n"):
         file_hash = line[:40]
         file_compressed = bool(int(line[41]))
@@ -100,7 +100,7 @@ def extract(name:str, output_path:Path|None=None, index:dict[str,tuple[str,bool]
     assert output_path.exists()
 
 def extract_file(version_name:str, file_name:str, destination:Path, index:dict[str,tuple[str,bool]]|None=None) -> None:
-    if index is None: index = read_index()
+    if index is None: index = read_index(version_name)
     if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
     file_hash, file_compressed = index[file_name]
     for parent in reversed(destination.parents):
@@ -114,7 +114,7 @@ def extract_file(version_name:str, file_name:str, destination:Path, index:dict[s
         shutil.copy(get_hash_file_path(file_hash), destination)
 
 def read_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tuple[str,bool]]|None=None) -> bytes|str:
-    if index is None: index = read_index()
+    if index is None: index = read_index(version_name)
     if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
     file_hash, file_compressed = index[file_name]
     with open(get_hash_file_path(file_hash), "rb") as f:
@@ -125,9 +125,9 @@ def read_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tupl
         else:
             return data
 
-def get_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tuple[str,bool]]|None=None) -> FileManager.FilePromise:
+def get_file(version_name:str, file_name:str, mode:Literal["b", "t"]="b", index:dict[str,tuple[str,bool]]|None=None) -> FileManager.FilePromise:
     '''Returns a FilePromise of the object.'''
-    if index is None: index = read_index()
+    if index is None: index = read_index(version_name)
     if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
     file_hash, file_compressed = index[file_name]
     if file_compressed:
@@ -152,7 +152,7 @@ def archive_all() -> None:
         archive(file, hashes)
         print("archived \"%s\"." % file.name)
 
-def archive(path:Path, hashes:dict[str,bytes], version_name:str|None=None) -> dict[str,bytes]:
+def archive(path:Path, hashes:dict[str,bytes], version_name:str|None=None) -> dict[str,tuple[str,bool]]:
     '''Places the contents of the zip file into the objects folder, and places an index file into the indexes folder.'''
     if version_name is None: version_name = path.stem
     zip_file = open_zip_file(path)
@@ -209,7 +209,7 @@ def get_hash_file_path(str_hash:str, return_string:bool=False) -> Path:
     '''Converts a string hash into a Path object.'''
     first_two = str_hash[:2]
     if return_string:
-        return str(Path(first_two, str_hash))
+        return Path(first_two, str_hash)
     else:
         return Path(FileManager.STORED_VERSIONS_OBJECTS_FOLDER.joinpath(first_two, str_hash))
 
@@ -257,7 +257,7 @@ def main() -> None:
         "extract": extract_user,
         "stats": stats_user,
     }
-    user_input = None
+    user_input = ""
     while user_input not in PROGRAMS.keys():
         user_input = input("Select a StoredVersions program from %s: " % list(PROGRAMS.keys()))
     PROGRAMS[user_input]()

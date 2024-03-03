@@ -6,7 +6,10 @@ def main():
     while selected_version_name not in version_names:
         selected_version_name = input("Select a version to analyze: ")
     selected_version = version_names[selected_version_name]
-    files = selected_version.install_manager.get_file_list()
+    if selected_version.install_manager is None:
+        print("That version has no install manager.")
+        return
+    files = selected_version.install_manager.get_full_file_list()
     file_extensions:dict[str,int] = {}
     for file in files:
         file_name = file.split("/")[-1]

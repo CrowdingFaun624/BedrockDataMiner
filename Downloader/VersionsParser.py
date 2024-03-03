@@ -14,7 +14,7 @@ import Utilities.VersionTags as VersionTags
 if TYPE_CHECKING:
     import Downloader.InstallManager as InstallManager
 
-INSTALL_MANAGERS:dict[str,type["InstallManager.InstallManager"]|None] = {
+INSTALL_MANAGERS:dict[Version.DownloadMethod,type["InstallManager.InstallManager"]|None] = {
     Version.DownloadMethod.DOWNLOAD_FILE: StoredManager.StoredManager,
     Version.DownloadMethod.DOWNLOAD_LOCAL: LocalManager.LocalManager,
     Version.DownloadMethod.DOWNLOAD_NONE: None,
@@ -41,7 +41,7 @@ def is_valid_keys(keys:Iterable[str], possible_keys:Iterable[str], optional_keys
     if used_keys == keys: return True
     else: return False
 
-def is_sorted(data:Iterable[Any]) -> bool:
+def is_sorted(data:list[Any]) -> bool:
     return all(a <= b for a, b in zip(data, data[1:]))
 
 def verify_data_types(data:list[dict[str,str|list[str]]]) -> None:

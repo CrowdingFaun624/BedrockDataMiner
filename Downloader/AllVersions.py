@@ -16,15 +16,16 @@ def datamine_version(version:Version.Version, dataminer_names:list[str], excepti
         exceptions[version.name] = e
     else:
         exceptions[version.name] = None
-        version.install_manager.all_done() # remove all of the installed client files from the version folder so I don't have to clog my storage
+        if version.install_manager is not None:
+            version.install_manager.all_done() # remove all of the installed client files from the version folder so I don't have to clog my storage
 
-def trim_inactive_threads(threads:list[tuple[threading.Thread,Version.Version]]) -> list[threading.Thread]:
+def trim_inactive_threads(threads:list[tuple[threading.Thread,Version.Version]]) -> list[tuple[threading.Thread,Version.Version]]:
     '''Returns a new list containing the Threads from `threads` that are still alive.'''
     return [(thread, version) for thread, version in threads if thread.is_alive()]
 
 def get_exceptions(threads:list[tuple[threading.Thread,Version.Version]], exceptions:dict[str,None|Exception]) -> dict[Version.Version,Exception]:
     '''Returns a list of Exceptions.'''
-    return {version: exceptions[version.name] for thread, version in threads if (version.name in exceptions and exceptions[version.name] is not None)}
+    return {version: exception for thread, version in threads if (version.name in exceptions and (exception := exceptions[version.name]) is not None)}
 
 def do_exception_stuff(active_threads:list[tuple[threading.Thread,Version.Version]], exceptions:dict[str,None|Exception], exception_versions:list[Version.Version]) -> bool:
     local_exceptions = get_exceptions(active_threads, exceptions)
