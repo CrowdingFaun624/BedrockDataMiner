@@ -17,6 +17,7 @@ FILE_STORAGE_FOLDER    = Path(ASSETS_FOLDER.joinpath("file_storage"))
 FILE_STORAGE_OBJECTS_FOLDER = Path(FILE_STORAGE_FOLDER.joinpath("objects"))
 FILE_STORAGE_INDEX_FILE = Path(FILE_STORAGE_FOLDER.joinpath("index.txt"))
 LOGS_FOLDER            = Path(ASSETS_FOLDER.joinpath("logs"))
+INSTALL_ALL_LOGS_FILE  = Path(LOGS_FOLDER.joinpath("install_all_logs.jsonl"))
 VERSION_PARSER_WARNINGS_FILE = Path(LOGS_FOLDER.joinpath("version_parser_warnings.txt"))
 WIKI_VALIDATOR_WARNINGS_FILE = Path(LOGS_FOLDER.joinpath("wiki_validator_warnings.txt"))
 STORED_VERSIONS_FOLDER = Path(ASSETS_FOLDER.joinpath("stored_versions"))
@@ -24,6 +25,9 @@ STORED_VERSIONS_OBJECTS_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("objects")
 STORED_VERSIONS_INDEXES_FILE = Path(STORED_VERSIONS_FOLDER.joinpath("indexes.zip"))
 STORED_VERSIONS_INPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("input"))
 STORED_VERSIONS_OUTPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("output"))
+STORED_VERSIONS2_FOLDER = Path(ASSETS_FOLDER.joinpath("stored_versions2"))
+STORED_VERSIONS2_OBJECTS_FOLDER = Path(STORED_VERSIONS2_FOLDER.joinpath("objects"))
+STORED_VERSIONS2_INDEX_FILE = Path(STORED_VERSIONS2_FOLDER.joinpath("zippedness_index.txt"))
 COMPARERS_FILE         = Path(ASSETS_FOLDER.joinpath("comparers.json"))
 DATAMINER_COLLECTIONS_FILE = Path(ASSETS_FOLDER.joinpath("dataminer_collections.json"))
 VERSIONS_FILE          = Path(ASSETS_FOLDER.joinpath("versions.json"))
@@ -80,6 +84,9 @@ def get_version_data_path(version_folder:Path, file_name:str|None) -> Path:
     if VERSIONS_FOLDER != version_folder.parent:
         raise FileNotFoundError("Version folder \"%s\" has an invalid location!" % version_folder)
     return data_path
+
+def get_version_index_path(version_folder:Path) -> Path:
+    return Path(version_folder.joinpath("index.json"))
 
 def get_temp_file_path() -> Path:
     '''Returns a path such as `./_temp/a6f780a3-83d0-4afd-a654-dc28df0b9831`.'''
