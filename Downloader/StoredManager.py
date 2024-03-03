@@ -59,6 +59,10 @@ class StoredManager(InstallManager.InstallManager):
             self.file_list = [index.replace(strip_string, "", 1) for index in self.index.keys() if index.startswith(strip_string)]
         return self.file_list
 
+    def get_full_file_list(self) -> list[str]:
+        self.read_index()
+        return list(self.index.keys())
+
     def file_exists(self, name:str) -> bool:
         self.read_index()
         return self.get_full_file_name(name) in self.index
@@ -79,7 +83,7 @@ class StoredManager(InstallManager.InstallManager):
     def get_full_file_name(self, asset_name:str) -> str:
         return "assets/" + asset_name
 
-    def get_file(self, file_name:str, mode:str="b") -> FileManager.FilePromise:
+    def get_file(self, file_name:str, mode:str="b", is_in_assets:bool=True) -> FileManager.FilePromise:
 
         if not isinstance(file_name, str):
             raise TypeError("Parameter `file_name` is not a `str`!")
@@ -88,7 +92,8 @@ class StoredManager(InstallManager.InstallManager):
         if mode not in ("t", "b"):
             raise ValueError("Parameter `mode` is not \"b\" or \"t\"!")
 
-        file_name = self.get_full_file_name(file_name)
+        if is_in_assets:
+            file_name = self.get_full_file_name(file_name)
         self.read_index()
         return StoredVersionsManager.get_file(self.name, file_name, mode, self.index)
 

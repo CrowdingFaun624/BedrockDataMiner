@@ -40,6 +40,8 @@ class DownloadManager(InstallManager.InstallManager):
     def open_zip_file(self) -> None:
         '''Opens the zip file if it hasn't already.'''
         if not self.has_zip_file_opened:
+            if not self.installed:
+                self.install_all()
             self.zip_file = zipfile.ZipFile(self.apk_location)
             self.members = {member.filename: member for member in self.zip_file.filelist}
             self.has_zip_file_opened = True
@@ -84,9 +86,9 @@ class DownloadManager(InstallManager.InstallManager):
         return [file for file in self.get_file_list() if file.startswith(parent)]
 
     def get_file_list(self) -> Iterable[str]:
-        self.open_zip_file()
         if not self.installed:
             self.install_all()
+        self.open_zip_file()
         if self.file_list is None:
             with self.get_file_list_lock:
                 if self.file_list is not None:
@@ -94,6 +96,13 @@ class DownloadManager(InstallManager.InstallManager):
                 strip_string = self.get_full_file_name("")
                 self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string)]
         return self.file_list
+
+    def get_full_file_list(self) -> list[str]:
+        if not self.installed:
+            self.install_all()
+        self.open_zip_file()
+        assert self.zip_file is not None
+        return [file.filename for file in self.zip_file.filelist]
 
     def file_exists(self, name:str) -> bool:
         if not self.installed:
@@ -119,7 +128,7 @@ class DownloadManager(InstallManager.InstallManager):
         else:
             return data
 
-    def get_file(self, file_name:str, mode:str="b") -> FileManager.FilePromise:
+    def get_file(self, file_name:str, mode:str="b", is_in_assets:bool=True) -> FileManager.FilePromise:
 
         def clear_temp_file(temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
             path_that_zipfile_puts_it_in.unlink()
@@ -144,7 +153,8 @@ class DownloadManager(InstallManager.InstallManager):
 
         if not self.installed:
             self.install_all()
-        file_name = self.get_full_file_name(file_name)
+        if is_in_assets:
+            file_name = self.get_full_file_name(file_name)
         self.open_zip_file()
         if mode == "b":
             return FileManager.FilePromise(FunctionCaller(self.zip_file.open, [file_name]), file_name.split("/")[-1], mode)

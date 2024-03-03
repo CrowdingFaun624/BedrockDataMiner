@@ -47,11 +47,15 @@ class InstallManager():
         '''Returns a list of all files in the archive.'''
         raise NotImplementedError("`get_file_list` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
+    def get_full_file_list(self) -> list[str]:
+        '''Returns a list of every file in the archive, including those not in the assets folder.'''
+        raise NotImplementedError("`get_file_list` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
+
     def read(self, file_name:str, mode:str="b") -> bytes|str:
         '''Returns the contents of the given file name from the Version'''
         raise NotImplementedError("`read` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
-    def get_file(self, file_name:str, mode:str="b") -> "FileManager.FilePromise":
+    def get_file(self, file_name:str, mode:str="b", is_in_assets:bool=True) -> "FileManager.FilePromise":
         '''Returns a FilePromise object of the file.'''
         raise NotImplementedError("`get_file` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
