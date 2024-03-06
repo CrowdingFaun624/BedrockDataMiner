@@ -105,14 +105,25 @@ class CreditsTitleTypedDict(TypedDict):
     names: list[str]
 
 class CreditsDisciplineTypedDict(TypedDict):
-    disciplines: str
+    discipline: str
     titles: list[CreditsTitleTypedDict]
 
 class CreditsSectionTypedDict(TypedDict):
     section: str
     disciplines: list[CreditsDisciplineTypedDict]
+    titles: list[CreditsTitleTypedDict] # outdated
+
+class NormalizedCreditsDisciplineTypedDict(TypedDict):
+    discipline: str
+    titles: dict[str, CreditsTitleTypedDict]
+
+class NormalizedCreditsSectionTypedDict(TypedDict):
+    section: str
+    disciplines: dict[str, CreditsDisciplineTypedDict]
+    titles: dict[str, CreditsTitleTypedDict] # outdated
 
 Credits = list[CreditsSectionTypedDict]
+NormalizedCredits = dict[str,CreditsSectionTypedDict]
 
 # duplicate sounds
 

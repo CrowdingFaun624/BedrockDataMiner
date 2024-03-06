@@ -2,34 +2,68 @@
     "main": {
         "type": "Main",
         "name": "credits",
-        "normalizer": "convert",
+        "normalizer": "normalize_sections",
         "base_comparer_section": "sections"
     },
-    "convert": {
+    "normalize_sections": {
         "type": "NormalizerFunction",
         "dependencies": [],
-        "function_name": "credits_convert"
+        "function_name": "credits_normalize_sections"
+    },
+    "normalize_disciplines": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "credits_normalize_disciplines"
+    },
+    "normalize_titles": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "credits_normalize_titles"
     },
     "sections": {
         "type": "Dict",
         "field": "section",
         "types": ["dict"],
         "measure_length": true,
-        "comparer": "disciplines"
+        "comparer": "section"
+    },
+    "section": {
+        "type": "TypedDict",
+        "normalizer": ["normalize_disciplines", "normalize_titles"],
+        "types": {
+            "disciplines": {"type": "dict", "comparer": "disciplines"},
+            "section": {"type": "str"},
+            "titles": {"type": "dict", "comparer": "titles"}
+        }
     },
     "disciplines": {
         "type": "Dict",
         "field": "discipline",
         "types": ["dict"],
         "measure_length": true,
-        "comparer": "titles"
+        "comparer": "discipline"
+    },
+    "discipline": {
+        "type": "TypedDict",
+        "normalizer": "normalize_titles",
+        "types": {
+            "discipline": {"type": "str"},
+            "titles": {"type": "dict", "comparer": "titles"}
+        }
     },
     "titles": {
         "type": "Dict",
         "field": "title",
-        "types": ["list"],
+        "types": ["dict"],
         "measure_length": true,
-        "comparer": "names"
+        "comparer": "title"
+    },
+    "title": {
+        "type": "TypedDict",
+        "types": {
+            "names": {"type": "list", "comparer": "names"},
+            "title": {"type": "str"}
+        }
     },
     "names": {
         "type": "List",

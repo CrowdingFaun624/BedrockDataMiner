@@ -19,13 +19,25 @@ def blocks_client_resource_pack_comparison_move_function(key:str, value:DataMine
     del output["defined_in"]
     return output
 
-def credits_convert(data:DataMinerTyping.Credits, dependencies:DataMinerTyping.DependenciesTypedDict) -> dict:
-    return {section["section"]: {discipline["discipline"]: {title["title"]: title["names"] for title in discipline["titles"]} for discipline in section["disciplines"]} for section in data}
+def credits_normalize_sections(data:DataMinerTyping.Credits, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedCredits:
+    return {section["section"]: section for section in data}
+
+def credits_normalize_disciplines(data:Any, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "disciplines" not in data: return
+    data["disciplines"] = {discipline["discipline"]: discipline for discipline in data["disciplines"]}
+
+def credits_normalize_titles(data:Any, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "titles" not in data: return
+    data["titles"] = {title["title"]: title for title in data["titles"]}
 
 def entities_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()
     del output["defined_in"]
     return output
+
+def entities_fix_event_bug(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "minecraft:transformation" in data:
+        del data["minecraft:transformation"]
 
 def entities_fix_out_of_bounds_components(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     for key_to_delete in [key for key in data if key.startswith("minecraft:")]:
@@ -243,8 +255,11 @@ functions:dict[str,Callable] = {
     "blocks_client_fix_MCPE_76182": blocks_client_fix_MCPE_76182,
     "blocks_client_normalize": blocks_client_normalize,
     "blocks_client_resource_pack_comparison_move_function": blocks_client_resource_pack_comparison_move_function,
-    "credits_convert": credits_convert,
+    "credits_normalize_sections": credits_normalize_sections,
+    "credits_normalize_disciplines": credits_normalize_disciplines,
+    "credits_normalize_titles": credits_normalize_titles,
     "entities_behavior_pack_comparison_move_function": entities_behavior_pack_comparison_move_function,
+    "entities_fix_event_bug": entities_fix_event_bug,
     "entities_fix_out_of_bounds_components": entities_fix_out_of_bounds_components,
     "entities_fix_MCPE_178417": entities_fix_MCPE_178417,
     "item_textures_normalize": item_textures_normalize,

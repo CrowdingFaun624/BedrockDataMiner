@@ -74,6 +74,7 @@
             "animations": {"type": "list", "comparer": "animations"},
             "blend_transition": {"type": "decimal"},
             "blend_via_shortest_path": {"type": "bool"},
+            "parameters": {"type": "list", "comparer": "parameters", "tags": ["outdated"]},
             "particle_effects": {"type": "list", "comparer": "particle_effects"},
             "sound_effects": {"type": "list", "comparer": "sound_effects"},
             "transitions": {"type": "list", "comparer": "transitions"}
@@ -85,9 +86,9 @@
         "types": ["dict", "str"],
         "ordered": false,
         "measure_length": true,
-        "comparer": "animation_group"
+        "comparer": "animations_group"
     },
-    "animation_group": {
+    "animations_group": {
         "type": "Group",
         "types": {
             "dict": "animation",
@@ -97,7 +98,36 @@
     "animation": {
         "type": "Dict",
         "field": "animation",
+        "types": ["list", "str"],
+        "measure_length": true,
+        "comparer": "animation_group"
+    },
+    "animation_group": {
+        "type": "Group",
+        "types": {
+            "list": "animation:list",
+            "str": null
+        }
+    },
+    "animation:list": {
+        "type": "List",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "animation:list.dict"
+    },
+    "animation:list.dict": {
+        "type": "Dict",
+        "field": "timestamp",
+        "types": ["decimal"],
+        "measure_length": true,
+        "comparer": null
+    },
+    "parameters": {
+        "type": "List",
+        "field": "parameter",
         "types": ["str"],
+        "ordered": false,
         "measure_length": true,
         "comparer": null
     },

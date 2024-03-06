@@ -94,6 +94,14 @@
         "measure_length": true,
         "comparer": "trade"
     },
+    "biome_list": {
+        "type": "List",
+        "field": "biome",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
     "trade": {
         "type": "TypedDict",
         "types": {
@@ -126,21 +134,13 @@
         "type": "TypedDict",
         "normalizer": "normalize_functions",
         "types": {
-            "biomes": {"type": "list", "comparer": "trade:gives.item.biomes"},
+            "biomes": {"type": "list", "comparer": "biome_list"},
             "choice": {"type": "list", "comparer": "trade:gives.item.choice"},
             "filters": {"type": "dict", "comparer": "filter"},
             "functions": {"type": "dict", "comparer": "functions"},
             "item": {"type": "str"},
             "quantity": {"type": ["dict", "int"], "comparer": "range_int_or_int"}
         }
-    },
-    "trade:gives.item.biomes": {
-        "type": "List",
-        "field": "biome",
-        "types": ["str"],
-        "ordered": false,
-        "measure_length": true,
-        "comparer": null
     },
     "trade:gives.item.choice": {
         "type": "List",
@@ -152,9 +152,12 @@
     },
     "trade:wants.item": {
         "type": "TypedDict",
+        "normalizer": "normalize_functions",
         "types": {
             "choice": {"type": "list", "comparer": "trade:wants.item.choice"},
+            "biomes": {"type": "list", "comparer": "biome_list", "tags": ["outdated"]},
             "filters": {"type": "dict", "comparer": "filter"},
+            "functions": {"type": "dict", "comparer": "functions", "tags": ["outdated"]},
             "item": {"type": "str"},
             "price_multiplier": {"type": "decimal"},
             "quantity": {"type": ["dict", "int"], "comparer": "range_int_or_int"}

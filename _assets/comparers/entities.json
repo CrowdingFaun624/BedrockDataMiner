@@ -9,6 +9,11 @@
         "dependencies": ["behavior_packs"],
         "function_name": "collapse_behavior_packs_with_defined_in"
     },
+    "fix_event_bug": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "entities_fix_event_bug"
+    },
     "fix_out_of_bounds_components": {
         "type": "NormalizerFunction",
         "dependencies": [],
@@ -122,6 +127,7 @@
     },
     "events_event": {
         "type": "TypedDict",
+        "normalizer": ["fix_event_bug"],
         "types": {
             "add": {"type": "dict", "comparer": "component_groups_add_remove"},
             "emit_vibration": {"type": "dict", "comparer": "event:emit_vibration"},
@@ -216,7 +222,7 @@
             "minecraft:buoyant": {"type": "dict", "comparer": "component.buoyant"},
             "minecraft:burns_in_daylight": {"type": ["bool", "dict"], "comparer": "component.burns_in_daylight"},
             "minecraft:can_climb": {"type": "dict", "comparer": "empty"},
-            "minecraft:can_fly": {"type": "dict", "comparer": "empty"},
+            "minecraft:can_fly": {"type": "dict", "comparer": "component.can_fly"},
             "minecraft:can_join_raid": {"type": "dict", "comparer": "empty"},
             "minecraft:can_power_jump": {"type": "dict", "comparer": "empty"},
             "minecraft:celebrate_hunt": {"type": "dict", "comparer": "component.celebrate_hunt"},
@@ -227,7 +233,7 @@
             "minecraft:conditional_bandwidth_optimization": {"type": "dict", "comparer": "component.conditional_bandwidth_optimization"},
             "minecraft:custom_hit_test": {"type": "dict", "comparer": "component.custom_hit_test"},
             "minecraft:damage_over_time": {"type": "dict", "comparer": "component.damage_over_time"},
-            "minecraft:damage_sensor": {"type": "dict", "comparer": "component.damage_sensor"},
+            "minecraft:damage_sensor": {"type": ["dict", "list"], "comparer": "component.damage_sensor:group"},
             "minecraft:dash": {"type": "dict", "comparer": "component.dash"},
             "minecraft:default_look_angle": {"type": "dict", "comparer": "component.default_look_angle"},
             "minecraft:despawn": {"type": "dict", "comparer": "component.despawn"},
@@ -235,13 +241,14 @@
             "minecraft:dweller": {"type": "dict", "comparer": "component.dweller"},
             "minecraft:economy_trade_table": {"type": "dict", "comparer": "component.economy_trade_table"},
             "minecraft:entity_sensor": {"type": "dict", "comparer": "component.entity_sensor"},
-            "minecraft:environment_sensor": {"type": "dict", "comparer": "component.environment_sensor"},
+            "minecraft:environment_sensor": {"type": ["dict", "list"], "comparer": "component.environment_sensor:group"},
             "minecraft:equip_item": {"type": "dict", "comparer": "component.equip_item"},
             "minecraft:equipment": {"type": "dict", "comparer": "component.equipment"},
             "minecraft:equippable": {"type": "dict", "comparer": "component.equippable"},
             "minecraft:exhaustion_values": {"type": "dict", "comparer": "component.exhaustion_values"},
             "minecraft:experience_reward": {"type": "dict", "comparer": "component.experience_reward"},
             "minecraft:explode": {"type": "dict", "comparer": "component.explode"},
+            "minecraft:fall_damage": {"type": "dict", "comparer": "component.fall_damage", "tags": ["outdated"]},
             "minecraft:fire_immune": {"type": ["bool", "dict"], "comparer": "component.fire_immune"},
             "minecraft:floats_in_liquid": {"type": "dict", "comparer": "empty"},
             "minecraft:flocking": {"type": "dict", "comparer": "component.flocking"},
@@ -261,11 +268,12 @@
             "minecraft:home": {"type": "dict", "comparer": "component.home"},
             "minecraft:horse.jump_strength": {"type": "dict", "comparer": "component.horse.jump_strength"},
             "minecraft:hurt_on_condition": {"type": "dict", "comparer": "component.hurt_on_condition"},
+            "minecraft:hurt_when_wet": {"type": "dict", "comparer": "component.hurt_when_wet", "tags": ["outdated"]},
             "minecraft:input_ground_controlled": {"type": "dict", "comparer": "empty"},
             "minecraft:inside_block_notifier": {"type": "dict", "comparer": "component.inside_block_notifier"},
             "minecraft:insomnia": {"type": "dict", "comparer": "component.insomnia"},
             "minecraft:instant_despawn": {"type": "dict", "comparer": "component.instant_despawn"},
-            "minecraft:interact": {"type": "dict", "comparer": "component.interact"},
+            "minecraft:interact": {"type": ["dict", "list"], "comparer": "component.interact:group"},
             "minecraft:inventory": {"type": "dict", "comparer": "component.inventory"},
             "minecraft:is_baby": {"type": "dict", "comparer": "empty"},
             "minecraft:is_charged": {"type": "dict", "comparer": "empty"},
@@ -325,6 +333,7 @@
             "minecraft:on_wake_with_owner": {"type": "dict", "comparer": "event_target", "tags": ["not_in_documentation"]},
             "minecraft:out_of_control": {"type": "dict", "comparer": "empty"},
             "minecraft:peek": {"type": "dict", "comparer": "component.peek"},
+            "minecraft:persist_sit": {"type": "dict", "comparer": "empty", "tags": ["outdated"]},
             "minecraft:persistent": {"type": "dict", "comparer": "empty"},
             "minecraft:physics": {"type": "dict", "comparer": "component.physics"},
             "minecraft:player.exhaustion": {"type": "dict", "comparer": "component.player.exhaustion"},
@@ -350,7 +359,7 @@
             "minecraft:sittable": {"type": "dict", "comparer": "component.sittable"},
             "minecraft:skin_id": {"type": "dict", "comparer": "component.skin_id"},
             "minecraft:sound_volume": {"type": "dict", "comparer": "component.sound_volume"},
-            "minecraft:spawn_entity": {"type": "dict", "comparer": "component.spawn_entity"},
+            "minecraft:spawn_entity": {"type": ["dict", "list"], "comparer": "component.spawn_entity:group"},
             "minecraft:spell_effects": {"type": "dict", "comparer": "component.spell_effects"},
             "minecraft:strength": {"type": "dict", "comparer": "component.strength"},
             "minecraft:suspect_tracking": {"type": "dict", "comparer": "empty", "tags": ["not_in_documentation"]},
@@ -414,6 +423,7 @@
             "minecraft:behavior.enderman_take_block": {"type": "dict", "comparer": "behavior.enderman_take_block"},
             "minecraft:behavior.equip_item": {"type": "dict", "comparer": "behavior.equip_item"},
             "minecraft:behavior.explore_outskirts": {"type": "dict", "comparer": "behavior.explore_outskirts"},
+            "minecraft:behavior.feeling_happy": {"type": "dict", "comparer": "behavior.feeling_happy", "tags": ["outdated"]},
             "minecraft:behavior.fertilize_farm_block": {"type": "dict", "comparer": "behavior.fertilize_farm_block"},
             "minecraft:behavior.find_cover": {"type": "dict", "comparer": "behavior.find_cover"},
             "minecraft:behavior.find_mount": {"type": "dict", "comparer": "behavior.find_mount"},
@@ -465,6 +475,7 @@
             "minecraft:behavior.move_to_water": {"type": "dict", "comparer": "behavior.move_to_water"},
             "minecraft:behavior.move_towards_dwelling_restriction": {"type": "dict", "comparer": "behavior.move_towards_dwelling_restriction"},
             "minecraft:behavior.move_towards_home_restriction": {"type": "dict", "comparer": "behavior.move_towards_home_restriction"},
+            "minecraft:behavior.move_towards_restriction": {"type": "dict", "comparer": "behavior.move_towards_restriction", "tags": ["outdated"]},
             "minecraft:behavior.move_towards_target": {"type": "dict", "comparer": "behavior.move_towards_target"},
             "minecraft:behavior.nap": {"type": "dict", "comparer": "behavior.nap"},
             "minecraft:behavior.nearest_attackable_target": {"type": "dict", "comparer": "behavior.nearest_attackable_target"},
@@ -498,10 +509,12 @@
             "minecraft:behavior.restrict_open_door": {"type": "dict", "comparer": "behavior.restrict_open_door", "tags": ["not_in_documentation"]},
             "minecraft:behavior.restrict_sun": {"type": "dict", "comparer": "behavior.restrict_sun"},
             "minecraft:behavior.rise_to_liquid_level": {"type": "dict", "comparer": "behavior.rise_to_liquid_level"},
+            "minecraft:behavior.rising": {"type": "dict", "comparer": "behavior.rising", "tags": ["outdated"]},
             "minecraft:behavior.roar": {"type": "dict", "comparer": "behavior.roar"},
             "minecraft:behavior.roll": {"type": "dict", "comparer": "behavior.roll"},
             "minecraft:behavior.run_around_like_crazy": {"type": "dict", "comparer": "behavior.run_around_like_crazy"},
             "minecraft:behavior.scared": {"type": "dict", "comparer": "behavior.scared"},
+            "minecraft:behavior.scenting": {"type": "dict", "comparer": "behavior.scenting", "tags": ["outdated"]},
             "minecraft:behavior.send_event": {"type": "dict", "comparer": "behavior.send_event"},
             "minecraft:behavior.share_items": {"type": "dict", "comparer": "behavior.share_items"},
             "minecraft:behavior.silverfish_merge_with_stone": {"type": "dict", "comparer": "behavior.silverfish_merge_with_stone"},
@@ -609,6 +622,7 @@
     "entity_types.item": {
         "type": "TypedDict",
         "types": {
+            "attack_interval": {"type": "int", "tags": ["outdated"]},
             "check_if_outnumbered": {"type": "bool"},
             "filters": {"type": "dict", "comparer": "filter"},
             "max_dist": {"type": "decimal"},
@@ -679,10 +693,10 @@
         "type": "TypedDict",
         "field": "filter property",
         "types": {
-            "all_of": {"type": "list", "comparer": "filter_list"},
-            "any_of": {"type": "list", "comparer": "filter_list"},
+            "all_of": {"type": ["dict", "list"], "comparer": "filter_or_filter_list"},
+            "any_of": {"type": ["dict", "list"], "comparer": "filter_or_filter_list"},
             "domain": {"type": "str"},
-            "none_of": {"type": "list", "comparer": "filter_list"},
+            "none_of": {"type": ["dict", "list"], "comparer": "filter_or_filter_list"},
             "operator": {"type": "str"},
             "other_with_families": {"type": "str"},
             "subject": {"type": "str"},
@@ -837,8 +851,10 @@
             "drop_items": {"type": ["list", "str"], "comparer": "item_list_or_item"},
             "duration": {"type": "decimal"},
             "feed_items": {"type": ["list", "str"], "comparer": "component.ageable:feed_items_group"},
+            "feedItems": {"type": ["list", "str"], "comparer": "component.ageable:feed_items_group", "tags": ["outdated"]},
             "grow_up": {"type": "dict", "comparer": "event_target"},
             "interact_filters": {"type": "dict", "comparer": "filter"},
+            "threshold": {"type": "int", "tags": ["outdated"]},
             "transform_to_item": {"type": "str", "tags": ["not_in_documentation"]}
         }
     },
@@ -1045,7 +1061,7 @@
     },
     "component.boostable:boost_items": {
         "type": "List",
-        "field": "block",
+        "field": "item",
         "ordered": false,
         "measure_length": true,
         "types": ["dict"],
@@ -1056,7 +1072,9 @@
         "types": {
             "damage": {"type": "int"},
             "item": {"type": "str"},
-            "replace_item": {"type": "str"}
+            "item_damage": {"type": "int", "tags": ["outdated"]},
+            "replace_item": {"type": "str"},
+            "replaceItem": {"type": "str", "tags": ["outdated"]}
         }
     },
     "component.boss": {
@@ -1081,8 +1099,13 @@
             "breathes_lava": {"type": "bool"},
             "breathes_solids": {"type": "bool"},
             "breathes_water": {"type": "bool"},
+            "breathesAir": {"type": "bool", "tags": ["outdated"]},
+            "breathesLava": {"type": "bool", "tags": ["outdated"]},
+            "breathesWater": {"type": "bool", "tags": ["outdated"]},
             "generates_bubbles": {"type": "bool"},
+            "generatesBubbles": {"type": "bool", "tags": ["outdated"]},
             "inhale_time": {"type": "decimal"},
+            "inhaleTime": {"type": "decimal", "tags": ["outdated"]},
             "non_breathe_blocks": {"type": "list", "comparer": "block_list"},
             "suffocate_time": {"type": "int"},
             "suffocateTime": {"type": "int"},
@@ -1094,16 +1117,22 @@
         "type": "TypedDict",
         "types": {
             "allow_sitting": {"type": "bool"},
+            "allowSitting": {"type": "bool", "tags": ["outdated"]},
             "blend_attributes": {"type": "bool"},
             "breed_cooldown": {"type": "decimal"},
             "breed_items": {"type": ["list", "str"], "comparer": "item_list_or_item"},
+            "breedItems": {"type": ["list", "str"], "comparer": "item_list_or_item", "tags": ["outdated"]},
             "breeds_with": {"type": ["dict", "list"], "comparer": "component.breedable:breeds_with_group"},
+            "breedsWith": {"type": ["dict", "list"], "comparer": "component.breedable:breeds_with_group", "tags": ["outdated"]},
             "causes_pregnancy": {"type": "bool"},
             "deny_parents_variant": {"type": "dict", "comparer": "component.breedable:deny_parents_variant"},
             "environment_requirements": {"type": "dict", "comparer": "component.breedable:environment_requirements"},
             "extra_baby_chance": {"type": "decimal"},
             "inherit_tamed": {"type": "bool"},
+            "inheritTamed": {"type": "bool", "tags": ["outdated"]},
             "love_filters": {"type": "dict", "comparer": "filter"},
+            "max_number_of_children": {"type": "int", "tags": ["outdated"]},
+            "min_number_of_children": {"type": "int", "tags": ["outdated"]},
             "mutation_factor": {"type": "dict", "comparer": "component.breedable:mutation_factor"},
             "mutation_strategy": {"type": "str"},
             "parent_centric_attribute_blending": {"type": "list", "comparer": "component.breedable:parent_centric_attribute_blending"},
@@ -1111,6 +1140,7 @@
             "random_variant_mutation_interval": {"type": "range", "comparer": "range_group_int"},
             "require_full_health": {"type": "bool"},
             "require_tame": {"type": "bool"},
+            "requireTame": {"type": "bool", "tags": ["outdated"]},
             "transform_to_item": {"type": "str", "tags": ["not_in_documentation"]}
         }
     },
@@ -1133,7 +1163,9 @@
         "type": "TypedDict",
         "types": {
             "baby_type": {"type": "str"},
+            "babyType": {"type": "str", "tags": ["outdated"]},
             "breed_event": {"type": ["dict", "str"], "comparer": "event_target_or_str"},
+            "mateType": {"type": "str", "tags": ["outdated"]},
             "mate_type": {"type": "str"}
         }
     },
@@ -1195,6 +1227,12 @@
         "types": {
             "bool": null,
             "dict": "empty"
+        }
+    },
+    "component.can_fly": {
+        "type": "TypedDict",
+        "types": {
+            "value": {"type": "bool", "tags": ["outdated"]}
         }
     },
     "component.celebrate_hunt": {
@@ -1293,11 +1331,21 @@
         "type": "TypedDict",
         "types": {
             "damage_per_hurt": {"type": "int"},
-            "time_between_hurt": {"type": "decimal"}
+            "damagePerHurt": {"type": "decimal", "tags": ["outdated"]},
+            "time_between_hurt": {"type": "decimal"},
+            "timeBetweenHurt": {"type": "decimal", "tags": ["outdated"]}
+        }
+    },
+    "component.damage_sensor:group": {
+        "type": "Group",
+        "types": {
+            "dict": "component.damage_sensor",
+            "list": "component.damage_sensor:trigger_list"
         }
     },
     "component.damage_sensor": {
         "type": "TypedDict",
+        "imports": "component.damage_sensor:trigger",
         "types": {
             "triggers": {"type": ["dict", "list"], "comparer": "component.damage_sensor:triggers_group"}
         }
@@ -1425,9 +1473,19 @@
         "comparer": "component.entity_sensor",
         "measure_length": true
     },
+    "component.environment_sensor:group": {
+        "type": "Group",
+        "types": {
+            "dict": "component.environment_sensor",
+            "list": "component.environment_sensor:trigger_list"
+        }
+    },
     "component.environment_sensor": {
         "type": "TypedDict",
         "types": {
+            "event": {"type": "str", "tags": ["outdated"]},
+            "filters": {"type": "dict", "comparer": "filter", "tags": ["outdated"]},
+            "on_environment": {"type": "dict", "comparer": "event_target_filters", "tags": ["outdated"]},
             "triggers": {"type": ["dict", "list"], "comparer": "component.environment_sensor:triggers_group"}
         }
     },
@@ -1537,14 +1595,28 @@
     "component.explode": {
         "type": "TypedDict",
         "types": {
+            "allow_damage_underwater": {"type": "bool", "tags": ["outdated"]},
             "breaks_blocks": {"type": "bool"},
             "causes_fire": {"type": "bool"},
+            "causesFire": {"type": "bool", "tags": ["outdated"]},
             "destroy_affected_by_griefing": {"type": "bool"},
+            "destroyAffectedByGriefing": {"type": "bool", "tags": ["outdated"]},
             "fire_affected_by_griefing": {"type": "bool"},
+            "fireAffectedByGriefing": {"type": "bool", "tags": ["outdated"]},
             "fuse_length": {"type": ["decimal", "range"], "comparer": "range_decimal_or_decimal"},
+            "fuseLength": {"type": ["decimal", "range"], "comparer": "range_decimal_or_decimal", "tags": ["outdated"]},
             "fuse_lit": {"type": "bool"},
+            "fuseLit": {"type": "bool", "tags": ["outdated"]},
             "max_resistance": {"type": "decimal"},
+            "maxResistance": {"type": "decimal", "tags": ["outdated"]},
+            "on_activate": {"type": "dict", "comparer": "empty", "tags": ["outdated"]},
             "power": {"type": "decimal"}
+        }
+    },
+    "component.fall_damage": {
+        "type": "TypedDict",
+        "types": {
+            "value": {"type": "decimal"}
         }
     },
     "component.fire_immune": {
@@ -1657,6 +1729,9 @@
     "component.giveable": {
         "type": "TypedDict",
         "types": {
+            "cooldown": {"type": "decimal", "tags": ["outdated"]},
+            "items": {"type": "list", "comparer": "item_list", "tags": ["outdated"]},
+            "on_give": {"type": "dict", "comparer": "event_target", "tags": ["outdated"]},
             "triggers": {"type": "dict", "comparer": "component.giveable:triggers"}
         }
     },
@@ -1733,6 +1808,7 @@
         "type": "TypedDict",
         "types": {
             "max": {"type": "int"},
+            "min": {"type": "int", "tags": ["outdated"]},
             "value": {"type": ["dict", "int", "list"], "comparer": "range_int_or_int"}
         }
     },
@@ -1776,6 +1852,12 @@
             "filters": {"type": "dict", "comparer": "filter"},
             "cause": {"type": "str"},
             "damage_per_tick": {"type": "int"}
+        }
+    },
+    "component.hurt_when_wet": {
+        "type": "TypedDict",
+        "types": {
+            "value": {"type": "bool"}
         }
     },
     "component.inside_block_notifier": {
@@ -1825,8 +1907,16 @@
             "remove_child_entities": {"type": "bool"}
         }
     },
+    "component.interact:group": {
+        "type": "Group",
+        "types": {
+            "dict": "component.interact",
+            "list": "component.interact:interactions"
+        }
+    },
     "component.interact": {
         "type": "TypedDict",
+        "imports": "component.interact:interactions.item",
         "types": {
             "interactions": {"type": ["dict", "list"], "comparer": "component.interact:interactions_group"}
         }
@@ -1856,6 +1946,8 @@
             "cooldown_after_being_attacked": {"type": "decimal"},
             "drop_item_slot": {"type": ["int", "str"]},
             "equip_item_slot": {"type": ["int", "str"]},
+            "event": {"type": "str", "tags": ["outdated"]},
+            "filters": {"type": "dict", "comparer": "filter", "tags": ["outdated"]},
             "give_item": {"type": "bool"},
             "health_amount": {"type": "int"},
             "hurt_item": {"type": "int"},
@@ -1868,6 +1960,7 @@
             "spawn_items": {"type": "dict", "comparer": "component.interact:spawn_items"},
             "swing": {"type": "bool"},
             "take_item": {"type": "bool"},
+            "target": {"type": "str", "tags": ["outdated"]},
             "transform_to_item": {"type": "str"},
             "use_item": {"type": "bool"},
             "vibration": {"type": "str"}
@@ -1967,7 +2060,9 @@
             "look_cooldown": {"type": ["decimal", "dict", "list"], "comparer": "range_decimal_or_decimal"},
             "look_event": {"type": "str"},
             "search_radius": {"type": "decimal"},
-            "set_target": {"type": "bool"}
+            "searchRadius": {"type": "decimal", "tags": ["outdated"]},
+            "set_target": {"type": "bool"},
+            "setTarget": {"type": "bool", "tags": ["outdated"]}
         }
     },
     "component.loot": {
@@ -2068,7 +2163,9 @@
         "type": "TypedDict",
         "types": {
             "allow_name_tag_renaming": {"type": "bool"},
+            "allowNameTagRenaming": {"type": "bool", "tags": ["outdated"]},
             "always_show": {"type": "bool"},
+            "alwaysShow": {"type": "bool", "tags": ["outdated"]},
             "default_trigger": {"type": ["dict", "str"], "comparer": "event_target_or_str"},
             "name_actions": {"type": "list", "comparer": "component.nameable:name_actions"}
         }
@@ -2093,6 +2190,7 @@
         "types": {
             "avoid_damage_blocks": {"type": "bool"},
             "avoid_portals": {"type": "bool"},
+            "avoid_powder_snow": {"type": "bool", "tags": ["outdated"]},
             "avoid_sun": {"type": "bool"},
             "avoid_water": {"type": "bool"},
             "blocks_to_avoid": {"type": "list", "comparer": "component.navigation:blocks_to_avoid"},
@@ -2243,37 +2341,54 @@
         "types": {
             "anchor": {"type": "int"},
             "angle_offset": {"type": "decimal"},
+            "angleoffset": {"type": "decimal", "tags": ["outdated"]},
             "catch_fire": {"type": "bool"},
+            "catchFire": {"type": "bool", "tags": ["outdated"]},
             "crit_particle_on_hurt": {"type": "bool"},
+            "critParticleOnHurt": {"type": "bool", "tags": ["outdated"]},
             "destroyOnHurt": {"type": "bool"},
             "filter": {"type": "dict", "comparer": "filter"},
             "fire_affected_by_griefing": {"type": "bool"},
             "gravity": {"type": "decimal"},
             "hit_ground_sound": {"type": "str"},
+            "hitGroundSound": {"type": "str", "tags": ["outdated"]},
             "hit_sound": {"type": "str"},
+            "hitSound": {"type": "str", "tags": ["outdated"]},
             "hit_water": {"type": "bool"},
+            "hitWater": {"type": "bool", "tags": ["outdated"]},
             "homing": {"type": "bool"},
             "inertia": {"type": "decimal"},
             "is_dangerous": {"type": "bool"},
+            "isdangerous": {"type": "bool", "tags": ["outdated"]},
             "knockback": {"type": "bool"},
             "lightning": {"type": "bool"},
             "liquid_inertia": {"type": "decimal"},
             "multiple_targets": {"type": "bool"},
+            "multipletargets": {"type": "bool", "tags": ["outdated"]},
             "offset": {"type": "list", "comparer": "vector_decimal"},
             "on_fire_time": {"type": "decimal"},
             "on_hit": {"type": "dict", "comparer": "component.projectile:on_hit"},
+            "onHit": {"type": "dict", "comparer": "component.projectile:on_hit", "tags": ["outdated"]},
             "particle": {"type": "str"},
             "power": {"type": "decimal"},
             "reflect_on_hurt": {"type": "bool"},
+            "reflectOnHurt": {"type": "bool", "tags": ["outdated"]},
             "semi_random_diff_damage": {"type": "bool", "tags": ["not_in_documentation"]},
+            "semirandomdiffdamage": {"type": "bool", "tags": ["not_in_documentation", "outdated"]},
             "shoot_sound": {"type": "str"},
+            "shootSound": {"type": "str", "tags": ["outdated"]},
             "shoot_target": {"type": "bool"},
+            "shoottarget": {"type": "bool", "tags": ["outdated"]},
             "should_bounce": {"type": "bool"},
+            "shouldbounce": {"type": "bool", "tags": ["outdated"]},
             "splash_potion": {"type": "bool"},
             "splash_range": {"type": "decimal"},
             "stop_on_hurt": {"type": "bool"},
+            "stopOnHurt": {"type": "bool", "tags": ["outdated"]},
             "uncertainty_base": {"type": "decimal"},
-            "uncertainty_multiplier": {"type": "decimal"}
+            "uncertaintyBase": {"type": "decimal", "tags": ["outdated"]},
+            "uncertainty_multiplier": {"type": "decimal"},
+            "uncertaintyMultiplier": {"type": "decimal", "tags": ["outdated"]}
         }
     },
     "component.projectile:on_hit": {
@@ -2316,18 +2431,21 @@
     "component.projectiles:on_hit.catch_fire": {
         "type": "TypedDict",
         "types": {
-            "fire_affected_by_griefing": {"type": "bool"}
+            "fire_affected_by_griefing": {"type": "bool"},
+            "fireAffectedByGriefing": {"type": "bool", "tags": ["outdated"]}
         }
     },
     "component.projectile:on_hit.definition_event": {
         "type": "TypedDict",
         "types": {
             "affect_projectile": {"type": "bool"},
+            "affectProjectile": {"type": "bool", "tags": ["outdated"]},
             "affect_shooter": {"type": "bool"},
             "affect_splash_area": {"type": "bool"},
             "splash_area": {"type": "decimal"},
             "affect_target": {"type": "bool"},
-            "event_trigger": {"type": "dict", "comparer": "event_target_filters"}
+            "event_trigger": {"type": "dict", "comparer": "event_target_filters"},
+            "eventTrigger": {"type": "dict", "comparer": "event_target_filters", "tags": ["outdated"]}
         }
     },
     "component.projectiles:on_hit.douse_fire": {
@@ -2364,18 +2482,25 @@
         "type": "TypedDict",
         "types": {
             "catch_fire": {"type": "bool"},
+            "catchFire": {"type": "bool", "tags": ["outdated"]},
             "channeling": {"type": "bool"},
             "damage": {"type": ["decimal", "range"], "comparer": "range_decimal_or_decimal"},
             "destroy_on_hit": {"type": "bool"},
             "destroy_on_hit_requires_damage": {"type": "bool"},
+            "destroyonhit": {"type": "bool", "tags": ["outdated"]},
             "filter": {"type": ["dict", "str"], "comparer": "component:projectile:on_hit.impact_damage.filter"},
             "knockback": {"type": "bool"},
             "max_critical_damage": {"type": "int"},
+            "maxcriticaldamage": {"type": "int", "tags": ["outdated"]},
             "min_critical_damage": {"type": "int"},
+            "mincriticaldamage": {"type": "int", "tags": ["outdated"]},
             "power_multiplier": {"type": "decimal"},
+            "powermultiplier": {"type": "decimal", "tags": ["outdated"]},
             "semi_random_diff_damage": {"type": "bool"},
+            "semirandomdiffdamage": {"type": "bool", "tags": ["outdated"]},
             "set_last_hurt_requires_damage": {"type": "bool"},
-            "should_bounce": {"type": "bool"}
+            "should_bounce": {"type": "bool"},
+            "shouldbounce": {"type": "bool", "tags": ["outdated"]}
         }
     },
     "component:projectile:on_hit.impact_damage.filter": {
@@ -2433,10 +2558,18 @@
             "first_spawn_chance": {"type": "int", "tags": ["not_in_documentation"]},
             "first_spawn_count": {"type": "int"},
             "first_spawn_percent_chance": {"type": "decimal"},
+            "firstSpawnChance": {"type": "int", "tags": ["outdated"]},
+            "firstSpawnCount": {"type": "int", "tags": ["outdated"]},
+            "firstSpawnPercentChance": {"type": "decimal", "tags": ["outdated"]},
             "second_spawn_chance": {"type": "decimal"},
             "second_spawn_count": {"type": "int"},
+            "secondSpawnChance": {"type": "int", "tags": ["outdated"]},
+            "secondSpawnCount": {"type": "int", "tags": ["outdated"]},
+            "spawn_baby": {"type": "bool"},
             "spawn_definition": {"type": "str"},
-            "spawn_baby": {"type": "bool"}
+            "spawnBaby": {"type": "bool", "tags": ["outdated"]},
+            "spawnDefinition": {"type": "str", "tags": ["outdated"]},
+            "spawnMob": {"type": "str", "tags": ["outdated"]}
         }
     },
     "component.projectile:on_hit.stick_in_ground": {
@@ -2592,7 +2725,8 @@
         "type": "TypedDict",
         "types": {
             "event": {"type": "str"},
-            "filters": {"type": ["dict", "list"], "comparer": "filter_or_filter_list"}
+            "filters": {"type": ["dict", "list"], "comparer": "filter_or_filter_list"},
+            "scheduled_event": {"type": "dict", "comparer": "component.scheduler:scheduled_events.item", "tags": ["outdated"]}
         }
     },
     "component.shareables": {
@@ -2622,6 +2756,7 @@
             "consume_item": {"type": "bool"},
             "craft_into": {"type": "str"},
             "item": {"type": "str"},
+            "item_aux": {"type": "int", "tags": ["outdated"]},
             "max_amount": {"type": "int"},
             "pickup_limit": {"type": "int"},
             "pickup_only": {"type": "bool"},
@@ -2636,6 +2771,7 @@
         "type": "TypedDict",
         "types": {
             "aux_val": {"type": "int"},
+            "auxVal": {"type": "int", "tags": ["outdated"]},
             "def": {"type": "str"},
             "magic": {"type": "bool"},
             "power": {"type": "decimal"},
@@ -2681,8 +2817,16 @@
             "value": {"type": "decimal"}
         }
     },
+    "component.spawn_entity:group": {
+        "type": "Group",
+        "types": {
+            "dict": "component.spawn_entity",
+            "list": "component.spawn_entity:entities"
+        }
+    },
     "component.spawn_entity": {
         "type": "TypedDict",
+        "imports": "component.spawn_entity:entities.item",
         "types": {
             "entities": {"type": ["dict", "list"], "comparer": "component.spawn_entity:entities_group"}
         }
@@ -2773,7 +2917,8 @@
         "types": {
             "probability": {"type": "decimal"},
             "tame_event": {"type": "dict", "comparer": "event_target"},
-            "tame_items": {"type": ["list", "str"], "comparer": "item_list_or_item"}
+            "tame_items": {"type": ["list", "str"], "comparer": "item_list_or_item"},
+            "tameItems": {"type": ["list", "str"], "comparer": "item_list_or_item", "tags": ["outdated"]}
         }
     },
     "component.tamemount": {
@@ -2781,10 +2926,14 @@
         "types": {
             "attempt_temper_mod": {"type": "int"},
             "auto_reject_items": {"type": "list", "comparer": "component.tamemount:auto_reject_items"},
+            "autoRejectItems": {"type": "list", "comparer": "component.tamemount:auto_reject_items", "tags": ["outdated"]},
             "feed_items": {"type": "list", "comparer": "component.tamemount:feed_items"},
+            "feedItems": {"type": "list", "comparer": "component.tamemount:feed_items", "tags": ["outdated"]},
             "feed_text": {"type": "str"},
             "max_temper": {"type": "int"},
+            "maxTemper": {"type": "int", "tags": ["outdated"]},
             "min_temper": {"type": "int"},
+            "minTemper": {"type": "int", "tags": ["outdated"]},
             "ride_text": {"type": "str"},
             "tame_event": {"type": "dict", "comparer": "event_target"}
         }
@@ -2815,7 +2964,8 @@
         "type": "TypedDict",
         "types": {
             "item": {"type": "str"},
-            "temper_mod": {"type": "int"}
+            "temper_mod": {"type": "int"},
+            "temperMod": {"type": "int", "tags": ["outdated"]}
         }
     },
     "component.target_nearby_sensor": {
@@ -2834,11 +2984,16 @@
         "types": {
             "dark_teleport_chance": {"type": "decimal"},
             "light_teleport_chance": {"type": "decimal"},
+            "lightTeleportChance": {"type": "decimal", "tags": ["outdated"]},
             "max_random_teleport_time": {"type": "decimal"},
+            "maxRandomTeleportTime": {"type": "decimal", "tags": ["outdated"]},
             "min_random_teleport_time": {"type": "decimal"},
             "random_teleport_cube": {"type": "list", "comparer": "vector_int"},
+            "randomTeleportCube": {"type": "list", "comparer": "vector_int", "tags": ["outdated"]},
             "random_teleports": {"type": "bool"},
+            "randomTeleports": {"type": "bool", "tags": ["outdated"]},
             "target_distance": {"type": "decimal"},
+            "targetDistance": {"type": "decimal", "tags": ["outdated"]},
             "target_teleport_chance": {"type": "decimal"}
         }
     },
@@ -2947,7 +3102,14 @@
     "component.type_family": {
         "type": "TypedDict",
         "types": {
-            "family": {"type": "list", "comparer": "component.type_family:family"}
+            "family": {"type": ["list", "str"], "comparer": "component.type_family:family_group"}
+        }
+    },
+    "component.type_family:family_group": {
+        "type": "Group",
+        "types": {
+            "list": "component.type_family:family",
+            "str": null
         }
     },
     "component.type_family:family": {
@@ -3048,7 +3210,10 @@
     "behavior.barter": {
         "type": "TypedDict",
         "types": {
-            "priority": {"type": "int"}
+            "goal_radius": {"type": "int", "tags": ["outdated"]},
+            "max_dist": {"type": "int", "tags": ["outdated"]},
+            "priority": {"type": "int"},
+            "speed_multiplier": {"type": "decimal", "tags": ["outdated"]}
         }
     },
     "behavior.beg": {
@@ -3196,6 +3361,7 @@
             "reach_multiplier": {"type": "decimal"},
             "require_complete_path": {"type": "bool"},
             "set_persistent": {"type": "bool"},
+            "sound_event": {"type": "str", "tags": ["outdated"]},
             "speed_multiplier": {"type": "decimal"},
             "target_dist": {"type": "decimal", "tags": ["unused"]},
             "track_target": {"type": "bool"},
@@ -3327,6 +3493,7 @@
             "entity_types": {"type": "entity_types_type", "comparer": "entity_types"},
             "goal_radius": {"type": "decimal"},
             "loot_table": {"type": "str"},
+            "max_dist": {"type": "int", "tags": ["outdated"]},
             "max_head_look_at_height": {"type": "decimal"},
             "minimum_teleport_distance": {"type": "decimal"},
             "offering_distance": {"type": "decimal"},
@@ -3379,11 +3546,28 @@
         "types": {
             "eat_animation_time": {"type": "decimal"},
             "eat_mob_sound": {"type": "str"},
+            "item_drop": {"type": "str", "tags": ["outdated"]},
             "loot_table": {"type": "str"},
+            "mob_loot": {"type": "list", "comparer": "behavior.eat_mob:mob_loot", "tags": ["outdated"]},
             "priority": {"type": "int"},
             "pull_in_force": {"type": "decimal"},
             "reach_mob_distance": {"type": "decimal"},
             "run_speed": {"type": "decimal"}
+        }
+    },
+    "behavior.eat_mob:mob_loot": {
+        "type": "List",
+        "field": "mob",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "behavior.eat_mob:mob_loot.item"
+    },
+    "behavior.eat_mob:mob_loot.item": {
+        "type": "TypedDict",
+        "types": {
+            "loot": {"type": "str"},
+            "mob": {"type": "str"}
         }
     },
     "behavior.emerge": {
@@ -3427,7 +3611,17 @@
             "next_y": {"type": "int"},
             "priority": {"type": "int"},
             "speed_multiplier": {"type": "decimal"},
-            "timer_ratio": {"type": "decimal"}
+            "timer_ratio": {"type": "decimal"},
+            "wait_time": {"type": "int", "tags": ["outdated"]}
+        }
+    },
+    "behavior.feeling_happy": {
+        "type": "TypedDict",
+        "types": {
+            "cooldown_range": {"type": "decimal"},
+            "duration_range": {"type": "range", "comparer": "range_group_decimal"},
+            "on_end": {"type": "dict", "comparer": "event_target"},
+            "priority": {"type": "int"}
         }
     },
     "behavior.fertilize_farm_block": {
@@ -3647,6 +3841,7 @@
         "types": {
             "broadcast": {"type": "bool"},
             "broadcast_range": {"type": "decimal"},
+            "hurt_by_target_event": {"type": "dict", "comparer": "event_target", "tags": ["outdated"]},
             "min_radius": {"type": "decimal"},
             "priority": {"type": "int"},
             "within_radius_event": {"type": "dict", "comparer": "event_target"}
@@ -3745,6 +3940,7 @@
             "knockback_height_cap": {"type": "decimal"},
             "knockback_horizontal_strength": {"type": "int"},
             "knockback_range": {"type": "int"},
+            "knockback_strength": {"type": "int", "tags": ["outdated"]},
             "knockback_vertical_strength": {"type": "int"},
             "on_roar_end": {"type": "trigger_type", "comparer": "trigger"},
             "priority": {"type": "int"}
@@ -3845,8 +4041,10 @@
         "types": {
             "attack_once": {"type": "bool"},
             "attack_types": {"type": "str"},
+            "can_spread_on_fire": {"type": "bool", "tags": ["outdated"]},
             "cooldown_time": {"type": "decimal"},
             "inner_boundary_time_increase": {"type": "decimal"},
+            "look_distance": {"type": "int", "tags": ["outdated"]},
             "max_dist": {"type": "decimal", "tags": ["unused"]},
             "max_path_time": {"type": "decimal"},
             "melee_fov": {"type": "decimal"},
@@ -3858,15 +4056,40 @@
             "path_inner_boundary": {"type": "decimal"},
             "path_outer_boundary": {"type": "decimal"},
             "priority": {"type": "int"},
-            "random_stop_interval": {"type": "int"},
+            "random_stop_interval": {"type": "decimal"},
             "reach_multiplier": {"type": "decimal"},
             "require_complete_path": {"type": "bool"},
             "set_persistent": {"type": "bool"},
             "speed_multiplier": {"type": "decimal"},
             "target_dist": {"type": "decimal", "tags": ["unused"]},
+            "target_tracking": {"type": "dict", "comparer": "behavior.melee_attack:target_tracking", "tags": ["outdated"]},
             "track_target": {"type": "bool"},
+            "untrackable_cooldown_delay": {"type": "int", "tags": ["outdated"]},
             "x_max_rotation": {"type": "decimal"},
             "y_max_head_rotation": {"type": "decimal"}
+        }
+    },
+    "behavior.melee_attack:target_tracking": {
+        "type": "TypedDict",
+        "types": {
+            "backoff": {"type": "list", "comparer": "behavior.melee_attack:target_tracking.backoff"},
+            "refresh_period_max": {"type": "int"},
+            "refresh_period_min": {"type": "int"}
+        }
+    },
+    "behavior.melee_attack:target_tracking.backoff": {
+        "type": "List",
+        "field": "backoff",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "behavior.melee_attack:target_tracking.backoff.item"
+    },
+    "behavior.melee_attack:target_tracking.backoff.item": {
+        "type": "TypedDict",
+        "types": {
+            "distance_squared_gt": {"type": "int"},
+            "refresh_period_delta": {"type": "int"}
         }
     },
     "behavior.melee_box_attack": {
@@ -3962,9 +4185,11 @@
         "type": "TypedDict",
         "types": {
             "goal_radius": {"type": "decimal"},
+            "interval": {"type": "int", "tags": ["outdated"]},
             "on_reach": {"type": "trigger_type", "comparer": "trigger"},
             "on_stay_completed": {"type": "trigger_type", "comparer": "trigger"},
             "priority": {"type": "int"},
+            "search_count": {"type": "int", "tags": ["outdated"]},
             "search_height": {"type": "int"},
             "search_range": {"type": "int"},
             "speed_multiplier": {"type": "decimal"},
@@ -4054,6 +4279,24 @@
             "priority": {"type": "int"},
             "speed_multiplier": {"type": "decimal"}
         }
+    },
+    "behavior.move_towards_restriction": {
+        "type": "TypedDict",
+        "types": {
+            "control_flags": {"type": "list", "comparer": "behavior.move_towards_restriction:control_flags"},
+            "priority": {"type": "int"},
+            "speed_multiplier": {"type": "decimal"}
+        }
+    },
+    "behavior.move_towards_restriction:control_flags": {
+        "type": "List",
+        "field": "control flag",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "print_flat": true,
+        "print_all": true,
+        "comparer": null
     },
     "behavior.move_towards_target": {
         "type": "TypedDict",
@@ -4366,6 +4609,8 @@
             "find_valid_position_retries": {"type": "decimal"},
             "goal_radius": {"type": "decimal"},
             "item_table": {"type": "str"},
+            "item": {"type": "str", "tags": ["outdated"]},
+            "items": {"type": "list", "comparer": "behavior.random_search_and_dig:items", "tags": ["outdated"]},
             "on_digging_start": {"type": "trigger_type", "comparer": "trigger"},
             "on_fail_during_digging": {"type": "trigger_type", "comparer": "trigger"},
             "on_fail_during_searching": {"type": "trigger_type", "comparer": "trigger"},
@@ -4380,6 +4625,21 @@
             "speed_multiplier": {"type": "decimal"},
             "target_blocks": {"type": "list", "comparer": "block_list"},
             "target_dig_position_offset": {"type": "decimal"}
+        }
+    },
+    "behavior.random_search_and_dig:items": {
+        "type": "List",
+        "field": "item",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "behavior.random_search_and_dig:items.item"
+    },
+    "behavior.random_search_and_dig:items.item": {
+        "type": "TypedDict",
+        "types": {
+            "item": {"type": "str"},
+            "weight": {"type": "int"}
         }
     },
     "behavior.random_sitting": {
@@ -4462,6 +4722,15 @@
             "sink_delta": {"type": "decimal"}
         }
     },
+    "behavior.rising": {
+        "type": "TypedDict",
+        "types": {
+            "cooldown_range": {"type": "decimal"},
+            "duration_range": {"type": "range", "comparer": "range_group_decimal"},
+            "on_end": {"type": "dict", "comparer": "event_target"},
+            "priority": {"type": "int"}
+        }
+    },
     "behavior.roar": {
         "type": "TypedDict",
         "types": {
@@ -4487,6 +4756,15 @@
         "type": "TypedDict",
         "types": {
             "sound_interval": {"type": "int"},
+            "priority": {"type": "int"}
+        }
+    },
+    "behavior.scenting": {
+        "type": "TypedDict",
+        "types": {
+            "cooldown_range": {"type": "range", "comparer": "range_group_decimal"},
+            "duration_range": {"type": "decimal"},
+            "on_end": {"type": "dict", "comparer": "event_target"},
             "priority": {"type": "int"}
         }
     },
@@ -4648,6 +4926,7 @@
             "duration": {"type": "decimal"},
             "priority": {"type": "int"},
             "sniffing_radius": {"type": "decimal"},
+            "suspicion_radius": {"type": "decimal", "tags": ["outdated"]},
             "suspicion_radius_horizontal": {"type": "decimal"},
             "suspicion_radius_vertical": {"type": "decimal"}
         }
@@ -4768,6 +5047,7 @@
             "goal_radius": {"type": "decimal"},
             "interval": {"type": "int"},
             "priority": {"type": "int"},
+            "search_count": {"type": "int", "tags": ["outdated"]},
             "search_height": {"type": "int"},
             "search_range": {"type": "int"},
             "speed_multiplier": {"type": "decimal"}

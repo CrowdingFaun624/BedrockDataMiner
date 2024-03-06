@@ -95,6 +95,7 @@
         "types": {
             "defined_in": {"type": "list", "comparer": "defined_in"},
             "pools": {"type": "list", "comparer": "pools"},
+            "random_sequence": {"type": "str", "tags": ["outdated"]},
             "type": {"type": "str"}
         }
     },
@@ -116,11 +117,12 @@
     },
     "pool": {
         "type": "TypedDict",
-        "normalizer": "normalize_conditions",
+        "normalizer": ["normalize_conditions", "normalize_functions"],
         "types": {
             "bonus_rolls": {"type": "decimal"},
             "conditions": {"type": "dict", "comparer": "conditions"},
             "entries": {"type": "list", "comparer": "entries"},
+            "functions": {"type": "dict", "comparer": "functions"},
             "rolls": {"type": ["decimal", "dict"], "comparer": "range_decimal_or_decimal"},
             "tiers": {"type": "dict", "comparer": "tiers"}
         }
@@ -170,6 +172,7 @@
             "furnace_smelt": {"type": "dict", "comparer": "function.furnace_smelt"},
             "looting_enchant": {"type": "dict", "comparer": "function.looting_enchant"},
             "minecraft:enchant_randomly": {"type": "dict", "comparer": "function.enchant_randomly"},
+            "minecraft:enchant_with_levels": {"type": "dict", "comparer": "function.enchant_with_levels", "tags": ["outdated"]},
             "minecraft:set_count": {"type": "dict", "comparer": "function.set_count"},
             "minecraft:set_damage": {"type": "dict", "comparer": "function.set_damage"},
             "minecraft:set_data": {"type": "dict", "comparer": "function.set_data"},
@@ -193,7 +196,11 @@
     "function.enchant_book_for_trading": {
         "type": "TypedDict",
         "types": {
-            "enchantments": {"type": "list", "comparer": "function.enchant_book_for_trading:enchantments"}
+            "base_cost": {"type": "int"},
+            "base_random_cost": {"type": "int"},
+            "enchantments": {"type": "list", "comparer": "function.enchant_book_for_trading:enchantments"},
+            "per_level_cost": {"type": "int"},
+            "per_level_random_cost": {"type": "int"}
         }
     },
     "function.enchant_book_for_trading:enchantments": {
@@ -360,7 +367,15 @@
     "function.specific_enchants": {
         "type": "TypedDict",
         "types": {
-            "enchants": {"type": "list", "comparer": "function.specific_enchants:enchants"}
+            "enchants": {"type": ["dict", "list", "str"], "comparer": "function.specific_enchants:enchants_group"}
+        }
+    },
+    "function.specific_enchants:enchants_group": {
+        "type": "Group",
+        "types": {
+            "dict": "function.specific_enchants:enchants.item",
+            "list": "function.specific_enchants:enchants",
+            "str": null
         }
     },
     "function.specific_enchants:enchants": {
