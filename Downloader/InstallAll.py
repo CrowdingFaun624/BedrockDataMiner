@@ -25,10 +25,14 @@ def write_to_log(data:JsonableType) -> None:
         f.write(stringified_data + "\n")
 
 def store_index(index:dict[str,IndexTypedDict], version:Version.Version) -> None:
+    if version.version_folder is None:
+        raise FileNotFoundError("Version \"%s\" has no version folder!" % (version))
     with open(FileManager.get_version_index_path(version.version_folder), "wt") as f:
         json.dump(index, f, separators=(",", ":"))
 
 def read_index(version:Version.Version) -> dict[str,IndexTypedDict]:
+    if version.version_folder is None:
+        raise FileNotFoundError("Version \"%s\" has no version folder!" % (version))
     index_path = FileManager.get_version_index_path(version.version_folder)
     if not index_path.exists():
         raise FileNotFoundError("Version \"%s\" does not have an index!" % (version.name))
@@ -43,6 +47,8 @@ def all_versions() -> None:
         if version.install_manager is None:
             write_to_log({"timestamp": datetime.datetime.now().isoformat(), "version": version.name, "message": "Skipped due to no archived version available"})
             continue
+        if version.version_folder is None:
+            raise FileNotFoundError("Version \"%s\" has no version folder!" % (version))
         index_path = FileManager.get_version_index_path(version.version_folder)
         if index_path.exists():
             write_to_log({"timestamp": datetime.datetime.now().isoformat(), "version": version.name, "message": "Skipped due to already being archived"})
@@ -68,6 +74,8 @@ def all_versions() -> None:
         version.install_manager.all_done()
 
 def extract_version(version:Version.Version) -> None:
+    if version.version_folder is None:
+        raise FileNotFoundError("Version \"%s\" has no version folder!" % (version))
     destination = Path(version.version_folder.joinpath("client_extracted.zip"))
     index = read_index(version)
     StoredVersionsManager.extract(index, destination)
@@ -115,6 +123,18 @@ def select_version_user_interface() -> Version.Version:
         user_input = input("Select a version to extract: ")
     return versions[user_input]
 
+def clear_all():
+    for folder in FileManager.STORED_VERSIONS2_OBJECTS_FOLDER.iterdir():
+        for file in folder.iterdir():
+            file.unlink()
+        folder.rmdir()
+
+def clear_all_user_interface() -> None:
+    required_message = "I wish to clear all files"
+    user_input = input("Enter: \"%s\"" % required_message)
+    if user_input == required_message:
+        clear_all()
+
 def extract_user_interface() -> None:
     version = select_version_user_interface()
     extract_version(version)
@@ -134,6 +154,7 @@ def size_user_interface() -> None:
 def main() -> None:
     PROGRAMS = {
         "all_versions": all_versions,
+        "clear_all": clear_all_user_interface,
         "difference": difference_user_interface,
         "extract": extract_user_interface,
         "size": size_user_interface,
