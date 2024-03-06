@@ -56,7 +56,7 @@ class StoredManager(InstallManager.InstallManager):
         if self.file_list is None:
             strip_string = self.get_full_file_name("")
             self.read_index()
-            self.file_list = [index.replace(strip_string, "", 1) for index in self.index.keys() if index.startswith(strip_string)]
+            self.file_list = [index.replace(strip_string, "", 1) for index in self.index.keys() if index.startswith(strip_string) and not index.endswith("/")]
         return self.file_list
 
     def get_full_file_list(self) -> list[str]:

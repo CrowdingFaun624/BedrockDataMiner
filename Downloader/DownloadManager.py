@@ -94,7 +94,7 @@ class DownloadManager(InstallManager.InstallManager):
                 if self.file_list is not None:
                     return self.file_list # If it started waiting and then it's complete when it's done waiting.
                 strip_string = self.get_full_file_name("")
-                self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string)]
+                self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string) and not file.filename.endswith("/")]
         return self.file_list
 
     def get_full_file_list(self) -> list[str]:
