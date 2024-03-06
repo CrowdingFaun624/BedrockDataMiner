@@ -1,5 +1,5 @@
 import json
-from typing import Any, Iterable, TYPE_CHECKING
+from typing import Any, Iterable, TYPE_CHECKING, TypedDict
 
 import Downloader.DownloadManager as DownloadManager
 import Downloader.LocalManager as LocalManager
@@ -44,7 +44,16 @@ def is_valid_keys(keys:Iterable[str], possible_keys:Iterable[str], optional_keys
 def is_sorted(data:list[Any]) -> bool:
     return all(a <= b for a, b in zip(data, data[1:]))
 
-def verify_data_types(data:list[dict[str,str|list[str]]]) -> None:
+class VersionTypedDict(TypedDict):
+    id: str
+    download: str|None
+    parent: str|None
+    time: str|None
+    tags: list[str]
+    development_categories: list[str]
+    wiki_page: str
+
+def verify_data_types(data:list[VersionTypedDict]) -> None:
     '''Raises a TypeError if the structure of `versions.json` is invalid.'''
     VALID_KEYS = ["id", "download", "parent", "time", "tags", "wiki_page", "development_categories"]
     OPTIONAL_KEYS = ["wiki_page", "development_categories"]
@@ -124,6 +133,7 @@ def verify_ordering(versions:list[Version.Version]) -> None:
             raise ValueError("Version \"%s\" is a top-level version but is not %s!" % (version.name, TOP_LEVEL_TAG))
     for version in versions:
         version_order_tag = version.ordering_tag
+        assert version_order_tag is not None
         for child in version.children:
             child_order_tag = child.ordering_tag
             if child_order_tag not in ALLOWED_CHILDREN[version_order_tag]:
@@ -135,6 +145,7 @@ def verify_ordering(versions:list[Version.Version]) -> None:
     for version in versions:
         order_index = 0
         for child in version.children:
+            assert child.ordering_tag is not None
             while not order_contains_at_index(child.ordering_tag):
                 order_index += 1
                 if order_index >= len(ORDER):
@@ -152,7 +163,8 @@ def verify_ordering(versions:list[Version.Version]) -> None:
                     raise ValueError("Child \"%s\" (type \"%s\") of \"%s\" (type \"%s\") comes before the latter!" % (child.name, child.ordering_tag, version.name, version.ordering_tag))
             if previous_time is not None:
                 if child.time is not None and child.time < previous_time:
-                    raise ValueError("Child \"%s\"'s date (\"%s\") comes after child \"%s\"'s date (\"%s\") despite being before it in the children of \"%s\"!" % (previous_child.name, previous_time, child.name, child.time, version.name))
+                    previous_child_name = None if previous_child is None else previous_child.name
+                    raise ValueError("Child \"%s\"'s date (\"%s\") comes after child \"%s\"'s date (\"%s\") despite being before it in the children of \"%s\"!" % (previous_child_name, previous_time, child.name, child.time, version.name))
             previous_time = child.time
             previous_child = child
 
@@ -164,11 +176,25 @@ def assign_wiki_pages(versions:list[Version.Version]) -> None:
 def assign_install_managers(versions:list[Version.Version]) -> None:
     '''Sets the `install_manager` attribute to its corresponding InstallManager.'''
     for version in versions:
+        assert version.download_method is not None
         install_manager_type = INSTALL_MANAGERS[version.download_method]
         if install_manager_type is None:
             version.install_manager = None
         else:
+            assert version.version_folder is not None
             version.install_manager = install_manager_type(version, FileManager.get_version_install_path(version.version_folder))
+
+def assign_latest(versions:list[Version.Version]) -> None:
+    for version in reversed(versions):
+        if version.ordering_tag is VersionTags.VersionTag.beta and version.download_link is not Version.DownloadMethod.DOWNLOAD_NONE:
+            version.latest = True
+            if version.parent is not None:
+                version.parent.latest = True
+            break
+    for version in reversed(versions):
+        if version.ordering_tag in (VersionTags.VersionTag.major, VersionTags.VersionTag.minor, VersionTags.VersionTag.patch) and version.download_link is not Version.DownloadMethod.DOWNLOAD_NONE:
+            version.latest = True
+            break
 
 def assign_additional_tags(versions:list[Version.Version]) -> None:
     '''Assigns tags that are assigned by the VersionsParser'''
@@ -203,15 +229,17 @@ def parse() -> list[Version.Version]:
         if id in already_names:
             raise KeyError("Version named \"%s\" already exists!" % id)
         if download is not None and download in already_downloads:
-            raise KeyError("Version with download \"%s\" already exists!" % download)
+            already_downloads.add(download)
+            if download in already_downloads:
+                raise KeyError("Version with download \"%s\" already exists!" % download)
         already_names.add(id)
-        already_downloads.add(download)
 
     assign_parents(versions)
     verify_ordering(versions)
     assign_additional_tags(versions)
     assign_wiki_pages(versions)
     assign_install_managers(versions)
+    assign_latest(versions)
     UrlValidator.validate_url_data(versions)
     fix_folders(versions)
     return versions

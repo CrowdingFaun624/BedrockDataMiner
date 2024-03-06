@@ -30,17 +30,18 @@ class Version():
         self.development_category_names = development_categories
 
         # attributes set in this __init__ function.
-        self.download_method:DownloadMethod = None
-        self.version_folder:Path = None
+        self.download_method:DownloadMethod|None = None
+        self.version_folder:Path|None = None
 
         # attributes to be set after finished creating version list.
 
         self.children:list[Version] = []
         self.siblings:list[Version]|None = None
-        self.parent:"Version"|None = None
+        self.parent:"Version|None" = None
         self.time:datetime.date|None = None
-        self.ordering_tag:VersionTags.VersionTag = None
+        self.ordering_tag:VersionTags.VersionTag|None = None
         self.install_manager:InstallManager.InstallManager|None = None
+        self.latest = False
 
         self.validate_name()
         self.validate_download_link()

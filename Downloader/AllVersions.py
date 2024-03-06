@@ -16,7 +16,7 @@ def datamine_version(version:Version.Version, dataminer_names:list[str], excepti
         exceptions[version.name] = e
     else:
         exceptions[version.name] = None
-        if version.install_manager is not None:
+        if version.install_manager is not None and not version.latest:
             version.install_manager.all_done() # remove all of the installed client files from the version folder so I don't have to clog my storage
 
 def trim_inactive_threads(threads:list[tuple[threading.Thread,Version.Version]]) -> list[tuple[threading.Thread,Version.Version]]:
@@ -52,16 +52,18 @@ def main() -> None:
             version_index += 1
         while len(active_threads) >= LIMIT:
 
-            do_exception_stuff(active_threads, exceptions, exception_versions)
+            has_encountered_exception = do_exception_stuff(active_threads, exceptions, exception_versions) or has_encountered_exception
+            if has_encountered_exception: break
 
             # Waiting
             active_threads = trim_inactive_threads(active_threads)
             time.sleep(0.05)
 
-        has_encountered_exception = do_exception_stuff(active_threads, exceptions, exception_versions)
+        has_encountered_exception = do_exception_stuff(active_threads, exceptions, exception_versions) or has_encountered_exception
 
         # New threads
         if version_index < len(versions) and not has_encountered_exception:
+            assert not has_encountered_exception
             if version.download_method is Version.DownloadMethod.DOWNLOAD_NONE:
                 print("Skipped \"%s\" due to being unarchived." % version.name)
             else:
