@@ -1,0 +1,29 @@
+Difference of "entities_client" between "1.20.70.21" (beta of "1.20.70") and "1.20.70.22" (beta of "1.20.70").
+
+Changed entity "armadillo.entity":
+	Changed resource pack "experimental":
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Changed field "animations":
+					Total animation: 9 (+2, -0)
+					Added animation "peek" of "animation.armadillo.peek".
+					Added animation "unroll_fast" of "animation.armadillo.unroll_fast".
+				Changed field "scripts":
+					Changed field "pre_animation":
+						Total script: 10 (+6, -4)
+						Removed script "variable.is_rolled_up = query.property('minecraft:is_rolled_up');".
+						Removed script "variable.rolled_up_time = variable.is_rolled_up ? ((variable.last_rolled_up_time ?? 0.0) + query.delta_time) : 0.0;".
+						Removed script "variable.last_rolled_up_time = variable.rolled_up_time;".
+						Removed script "variable.use_rolled_up_model = variable.rolled_up_time >= 0.2083;".
+						Added script "variable.is_rolled_up = query.property('minecraft:armadillo_state') != 'unrolled';".
+						Added script "variable.rolled_up_time = variable.is_rolled_up ? ((variable.rolled_up_time ?? 0.0) + query.delta_time) : 0.0;".
+						Added script "variable.is_peeking = query.property('minecraft:armadillo_state') == 'rolled_up_peeking';".
+						Added script "variable.is_unrolling = query.property('minecraft:armadillo_state') == 'rolled_up_unrolling';".
+						Added script "variable.unrolling_time = variable.is_unrolling ? ((variable.unrolling_time ?? 0.0) + query.delta_time) : 0.0;".
+						Added script "variable.use_rolled_up_model = variable.rolled_up_time >= 0.2083 && (variable.unrolling_time == 0.0 || variable.unrolling_time <= 1.25 );".
+				Changed field "sound_effects":
+					Total sound effect: 5 (+3, -1)
+					Added sound effect "peek" of "mob.armadillo.peek".
+					Removed sound effect "unroll" of "mob.armadillo.unroll".
+					Added sound effect "unroll_finish" of "mob.armadillo.unroll_finish".
+					Added sound effect "unroll_start" of "mob.armadillo.unroll_start".
