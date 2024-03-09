@@ -1,0 +1,121 @@
+Difference of "animations" between "1.16.210.57" (beta of "1.16.210") and "1.16.210.58" (beta of "1.16.210").
+
+Total file: 119 (+4, -0)
+Added file "bow.animation":
+	resource pack "core":
+		field "animations":
+			animation "animation.bow.wield":
+				field "bones":
+					bone "rightitem":
+						field "position": ["c.is_first_person ? -4.0 : 0.0", "c.is_first_person ? -2.0 : 0.0", "c.is_first_person ? -2.0 : 0.0"]
+						field "rotation": ["c.is_first_person ? -15.0 : 0.0", "c.is_first_person ? 55.0 : 0.0", "c.is_first_person ? -35.0 : 0.0"]
+				field "loop": true
+			animation "animation.bow.wield_first_person_pull":
+				field "bones":
+					bone "rightitem":
+						field "position": [-4.0, "math.sin(q.life_time * 800.0) * 0.05", -6.0]
+						field "rotation": [10.0, 5.0, -5.0]
+				field "loop": true
+		field "format_version": "1.10.0"
+		field "defined_in": resource pack: "vanilla"
+Added file "crossbow.animation":
+	resource pack "core":
+		field "animations":
+			animation "animation.crossbow.wield":
+				field "bones":
+					bone "rightitem":
+						field "position": ["c.is_first_person ? 18.0 : 0.0", "c.is_first_person ? 10.0 : 0.0", "c.is_first_person ? 2.0 : 0.0"]
+						field "rotation": ["c.is_first_person ? -5.0 : 0.0", "c.is_first_person ? 60.0 : 0.0", "c.is_first_person ? -50.0 : 0.0"]
+				field "loop": true
+		field "format_version": "1.10.0"
+		field "defined_in": resource pack: "vanilla"
+Changed file "player_firstperson.animation":
+	Changed resource pack "core":
+		Changed field "animations":
+			Total animation: 14 (+3, -0)
+			Added animation "animation.player.first_person.attack_rotation_item":
+				field "bones":
+					bone "rightitem":
+						field "position": ["math.sin(math.sqrt(variable.attack_time) * 75.0) * 10.0", "math.sin(math.sqrt(variable.attack_time) * 65.0) * 5.0", "-math.sin(math.sqrt(variable.attack_time) * 115.0) * 5.0"]
+						field "rotation": ["-math.sin(math.sqrt(variable.attack_time) * 25.0) * 70.0", "-math.sin(math.sqrt(variable.attack_time) * 75.0) * 15.0", "-math.sin(math.sqrt(variable.attack_time) * 80.0) * 35.0"]
+				field "loop": true
+				field "override_previous_animation": true
+			Added animation "animation.player.first_person.breathing_bob":
+				field "bones": bone "rightitem": field "position": [0.0, "math.sin(q.life_time * 45.0) * 0.5", 0.0]
+				field "loop": true
+			Changed animation "animation.player.first_person.crossbow_equipped":
+				Changed field "bones":
+					Total bone: 2 (+1, -0)
+					Added bone "rightitem":
+						field "position": [0.0, 3.0, 0.0]
+						field "rotation": [-25.0, -5.0, -10.0]
+			Added animation "animation.player.first_person.crossbow_hold":
+				field "bones": bone "rightitem": field "position": ["query.get_equipped_item_name('off_hand') == 'shield' ? -4.0 : 1.0", "query.get_equipped_item_name('off_hand') == 'shield' ? 0.0 : 5.0", "query.get_equipped_item_name('off_hand') == 'shield' ? 0.0 : -13.0"]
+				field "loop": true
+Added file "shield.animation":
+	resource pack "core":
+		field "animations":
+			animation "animation.shield.wield_first_person_blocking":
+				field "bones":
+					bone "shield":
+						field "position": [3.0, "c.item_slot != 'main_hand' ? 1.0 + q.shield_blocking_bob : 2.0", 2.0]
+						field "rotation": [0.0, 0.0, 10.0]
+				field "loop": true
+			animation "animation.shield.wield_main_hand_first_person":
+				field "bones":
+					bone "shield":
+						field "position": [-12.0, 10.5, -12.0]
+						field "rotation": [76.0, -119.0, -34.0]
+				field "loop": true
+			animation "animation.shield.wield_off_hand_first_person":
+				field "bones":
+					bone "shield":
+						field "position": [-14.0, 20.0, "(query.get_equipped_item_name == 'bow') && (query.main_hand_item_use_duration > 0.0f) ? -25.0 : 2.0"]
+						field "rotation": [0.0, 185.0, 178.0]
+						field "scale": [-1.0, 1.0, 1.0]
+				field "loop": true
+			animation "animation.shield.wield_third_person":
+				field "bones":
+					bone "shield":
+						field "position": [-1.0, 9.0, "c.item_slot == 'main_hand' ? 8.5 : -16.5"]
+						field "rotation": [-90.0, 0.0, 90.0]
+						field "scale": [1.0, "c.item_slot == 'main_hand' ? -1.0 : 1.0", "c.item_slot == 'main_hand' ? -1.0 : 1.0"]
+				field "loop": true
+		field "format_version": "1.10.0"
+		field "defined_in": resource pack: "vanilla"
+Added file "trident.animation":
+	resource pack "core":
+		field "animations":
+			animation "animation.trident.wield_first_person":
+				field "bones":
+					bone "pole":
+						field "position": [-4.0, -10.0, -2.0]
+						field "rotation": [155.0, -15.0, 15.0]
+				field "loop": true
+			animation "animation.trident.wield_first_person_raise":
+				field "bones":
+					bone "pole":
+						field "position": ["math.lerp(4.0, -7.0, variable.charge_amount)", 0.0, "math.lerp(-2.0, -6.0, variable.charge_amount)"]
+						field "rotation": [40.0, -12.0, -60.0]
+				field "loop": true
+			animation "animation.trident.wield_first_person_riptide":
+				field "bones":
+					bone "pole":
+						field "position": [-2.0, -7.0, -10.0]
+						field "rotation": [180.0, 60.0, -36.0]
+				field "loop": true
+				field "override_previous_animation": true
+			animation "animation.trident.wield_third_person":
+				field "bones":
+					bone "pole":
+						field "position": [0.0, 0.0, -12.0]
+						field "rotation": [90.0, 0.0, 0.0]
+				field "loop": true
+			animation "animation.trident.wield_third_person_raise":
+				field "bones":
+					bone "pole":
+						field "position": [0.0, 0.0, 23.0]
+						field "rotation": [0.0, 180.0, 0.0]
+				field "loop": true
+		field "format_version": "1.10.0"
+		field "defined_in": resource pack: "vanilla"

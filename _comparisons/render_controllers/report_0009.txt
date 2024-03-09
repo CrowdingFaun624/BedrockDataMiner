@@ -1,0 +1,463 @@
+Difference of "render_controllers" between "1.9.0" and "1.10.0.3" (beta of "1.10.0").
+
+Total file: 64 (+17, -2)
+Moved file "agent" to "agent.render_controllers".
+Moved file "armor.leather" to "armor.leather.render_controllers".
+Moved file "armor" to "armor.render_controllers".
+Moved file "armor.v1.0" to "armor.render_controllers.v1.0".
+Moved file "armor_stand" to "armor_stand.render_controllers".
+Moved file "bat" to "bat.render_controllers".
+Moved file "blaze" to "blaze.render_controllers".
+Added file "bow.render_controllers":
+	resource pack "core":
+		field "format_version": "1.10"
+		field "render_controllers":
+			render controller "controller.render.bow":
+				field "arrays":
+					field "geometries":
+						array "Array.geo":
+							array item: "geometry.default"
+							array item: "geometry.bow_pulling_0"
+							array item: "geometry.bow_pulling_1"
+							array item: "geometry.bow_pulling_2"
+					field "textures":
+						array "Array.icons":
+							array item: "texture.default"
+							array item: "texture.bow_pulling_0"
+							array item: "texture.bow_pulling_1"
+							array item: "texture.bow_pulling_2"
+							array item: "texture.enchanted"
+				field "geometry": "Array.geo[query.anim_time]"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures":
+					texture: "Texture.default"
+					texture: "Texture.enchanted"
+		field "defined_in": resource pack: "vanilla"
+Removed file "cat":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.cat":
+				field "arrays":
+					field "textures":
+						array "Array.skins":
+							array item: "Texture.white"
+							array item: "Texture.black"
+							array item: "Texture.red"
+							array item: "Texture.siamese"
+							array item: "Texture.british"
+							array item: "Texture.calico"
+							array item: "Texture.persian"
+							array item: "Texture.ragdoll"
+							array item: "Texture.tabby"
+							array item: "Texture.all_black"
+						array "Array.tame":
+							array item: "Texture.white_tame"
+							array item: "Texture.black_tame"
+							array item: "Texture.red_tame"
+							array item: "Texture.siamese_tame"
+							array item: "Texture.british_tame"
+							array item: "Texture.calico_tame"
+							array item: "Texture.persian_tame"
+							array item: "Texture.ragdoll_tame"
+							array item: "Texture.tabby_tame"
+							array item: "Texture.all_black_tame"
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "query.is_tamed ? Array.tame[query.variant] : Array.skins[query.variant]"
+		field "defined_in": resource pack: "vanilla"
+Added file "cat.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.cat":
+				field "arrays":
+					field "textures":
+						array "Array.skins":
+							array item: "Texture.white"
+							array item: "Texture.black"
+							array item: "Texture.red"
+							array item: "Texture.siamese"
+							array item: "Texture.british"
+							array item: "Texture.calico"
+							array item: "Texture.persian"
+							array item: "Texture.ragdoll"
+							array item: "Texture.tabby"
+							array item: "Texture.all_black"
+							array item: "Texture.jellie"
+						array "Array.tame":
+							array item: "Texture.white_tame"
+							array item: "Texture.black_tame"
+							array item: "Texture.red_tame"
+							array item: "Texture.siamese_tame"
+							array item: "Texture.british_tame"
+							array item: "Texture.calico_tame"
+							array item: "Texture.persian_tame"
+							array item: "Texture.ragdoll_tame"
+							array item: "Texture.tabby_tame"
+							array item: "Texture.all_black_tame"
+							array item: "Texture.jellie_tame"
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "query.is_tamed ? Array.tame[query.variant] : Array.skins[query.variant]"
+		field "defined_in": resource pack: "vanilla"
+Moved file "chicken" to "chicken.render_controllers".
+Moved file "cod" to "cod.render_controllers".
+Moved file "cow" to "cow.render_controllers".
+Added file "creeper.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.creeper":
+				field "color":
+					channel "a": "((variable.flash == 0.0) || (query.swelling_dir < 0.0)) ? this : 1.0"
+					channel "b": "((variable.flash == 0.0) || (query.swelling_dir < 0.0)) ? this : 1.0"
+					channel "g": "((variable.flash == 0.0) || (query.swelling_dir < 0.0)) ? this : 1.0"
+					channel "r": "((variable.flash == 0.0) || (query.swelling_dir < 0.0)) ? this : 1.0"
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Texture.default"
+		field "defined_in": resource pack: "vanilla"
+Added file "creeper_armor.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.creeper_armor":
+				field "color":
+					channel "a": 1.0
+					channel "b": 1.0
+					channel "g": 1.0
+					channel "r": 1.0
+				field "geometry": "Geometry.charged"
+				field "ignore_lighting": true
+				field "light_color_multiplier": 0.5
+				field "materials": material dict: material "*": "Material.charged"
+				field "part_visibility": part visibility dict: part visibility "*": "query.is_powered"
+				field "textures": texture: "Texture.charged"
+				field "uv_anim":
+					field "offset":
+						expression: "(query.is_powered) ? (Math.floor(query.life_time * 20.0) + query.frame_alpha) * 0.01 : 0.0"
+						expression: "(query.is_powered) ? (Math.floor(query.life_time * 20.0) + query.frame_alpha) * 0.01 : 0.0"
+					field "scale": [1.0, 1.0]
+		field "defined_in": resource pack: "vanilla"
+Moved file "default" to "default.render_controllers".
+Moved file "dolphin" to "dolphin.render_controllers".
+Added file "enderman.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.enderman":
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Texture.default"
+		field "defined_in": resource pack: "vanilla"
+Moved file "endermite" to "endermite.render_controllers".
+Moved file "evoker" to "evoker.render_controllers".
+Moved file "ghast" to "ghast.render_controllers".
+Moved file "horse" to "horse.render_controllers".
+Moved file "husk" to "husk.render_controllers".
+Added file "illager_beast.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.illager_beast":
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Texture.default"
+		field "defined_in": resource pack: "vanilla"
+Moved file "iron_golem" to "iron_golem.render_controllers".
+Removed file "llama":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.llama":
+				field "arrays":
+					field "textures":
+						array "Array.base":
+							array item: "Texture.creamy"
+							array item: "Texture.white"
+							array item: "Texture.brown"
+							array item: "Texture.gray"
+						array "Array.decor":
+							array item: "Texture.decor_none"
+							array item: "Texture.decor_white"
+							array item: "Texture.decor_orange"
+							array item: "Texture.decor_magenta"
+							array item: "Texture.decor_light_blue"
+							array item: "Texture.decor_yellow"
+							array item: "Texture.decor_lime"
+							array item: "Texture.decor_pink"
+							array item: "Texture.decor_gray"
+							array item: "Texture.decor_silver"
+							array item: "Texture.decor_cyan"
+							array item: "Texture.decor_purple"
+							array item: "Texture.decor_blue"
+							array item: "Texture.decor_brown"
+							array item: "Texture.decor_green"
+							array item: "Texture.decor_red"
+							array item: "Texture.decor_black"
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "part_visibility": part visibility dict: part visibility "chest*": "query.is_chested"
+				field "textures":
+					texture: "Array.base[query.variant]"
+					texture: "Array.decor[variable.DecorTextureIndex]"
+					texture: "Texture.decor_none"
+		field "defined_in": resource pack: "vanilla"
+Added file "llama.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.llama":
+				field "arrays":
+					field "textures":
+						array "Array.base":
+							array item: "Texture.creamy"
+							array item: "Texture.white"
+							array item: "Texture.brown"
+							array item: "Texture.gray"
+						array "Array.decor":
+							array item: "Texture.decor_none"
+							array item: "Texture.decor_white"
+							array item: "Texture.decor_orange"
+							array item: "Texture.decor_magenta"
+							array item: "Texture.decor_light_blue"
+							array item: "Texture.decor_yellow"
+							array item: "Texture.decor_lime"
+							array item: "Texture.decor_pink"
+							array item: "Texture.decor_gray"
+							array item: "Texture.decor_silver"
+							array item: "Texture.decor_cyan"
+							array item: "Texture.decor_purple"
+							array item: "Texture.decor_blue"
+							array item: "Texture.decor_brown"
+							array item: "Texture.decor_green"
+							array item: "Texture.decor_red"
+							array item: "Texture.decor_black"
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "part_visibility": part visibility dict: part visibility "chest*": "query.is_chested"
+				field "textures":
+					texture: "Array.base[query.variant]"
+					texture: "(query.mark_variant == 1 && variable.DecorTextureIndex == 0) ? Texture.decor_wandering_trader : Array.decor[variable.DecorTextureIndex]"
+					texture: "Texture.decor_none"
+		field "defined_in": resource pack: "vanilla"
+Added file "magma_cube.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.magma_cube":
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Texture.default"
+		field "defined_in": resource pack: "vanilla"
+Moved file "mooshroom" to "mooshroom.render_controllers".
+Moved file "ocelot" to "ocelot.render_controllers".
+Moved file "panda" to "panda.render_controllers".
+Added file "parrot.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.parrot":
+				field "arrays":
+					field "textures":
+						array "Array.skins":
+							array item: "Texture.red_blue"
+							array item: "Texture.blue"
+							array item: "Texture.green"
+							array item: "Texture.yellow_blue"
+							array item: "Texture.grey"
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Array.skins[query.variant]"
+		field "defined_in": resource pack: "vanilla"
+Moved file "phantom" to "phantom.render_controllers".
+Moved file "pig" to "pig.render_controllers".
+Moved file "pillager" to "pillager.render_controllers".
+Added file "polar_bear.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.polarbear":
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Texture.default"
+		field "defined_in": resource pack: "vanilla"
+Moved file "pufferfish" to "pufferfish.render_controllers".
+Moved file "rabbit" to "rabbit.render_controllers".
+Moved file "salmon" to "salmon.render_controllers".
+Moved file "sheep" to "sheep.render_controllers".
+Moved file "shulker" to "shulker.render_controllers".
+Moved file "silverfish" to "silverfish.render_controllers".
+Moved file "skeleton" to "skeleton.render_controllers".
+Added file "slime.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.slime":
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Texture.default"
+		field "defined_in": resource pack: "vanilla"
+Added file "slime_armor.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.slime_armor":
+				field "geometry": "Geometry.armor"
+				field "materials": material dict: material "*": "Material.outer"
+				field "textures": texture: "Texture.default"
+		field "defined_in": resource pack: "vanilla"
+Moved file "snow_golem" to "snow_golem.render_controllers".
+Moved file "spider" to "spider.render_controllers".
+Moved file "squid" to "squid.render_controllers".
+Moved file "stray" to "stray.render_controllers".
+Moved file "stray_clothes" to "stray_clothes.render_controllers".
+Moved file "tripod_camera" to "tripod_camera.render_controllers".
+Moved file "tropicalfish" to "tropicalfish.render_controllers".
+Moved file "turtle" to "turtle.render_controllers".
+Moved file "vex" to "vex.render_controllers".
+Moved file "villager" to "villager.render_controllers".
+Added file "villager_v2.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.villager_v2_base":
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Texture.unskilled"
+			render controller "controller.render.villager_v2_level":
+				field "arrays":
+					field "textures":
+						array "Array.levels":
+							array item: "Texture.level_iron"
+							array item: "Texture.level_gold"
+							array item: "Texture.level_diamond"
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "part_visibility": part visibility dict: part visibility "*": "!query.is_baby"
+				field "rebuild_animation_matrices": true
+				field "textures": texture: "Array.levels[variable.level_index]"
+			render controller "controller.render.villager_v2_masked":
+				field "arrays":
+					field "textures":
+						array "Array.biomes":
+							array item: "Texture.plains"
+							array item: "Texture.desert"
+							array item: "Texture.jungle"
+							array item: "Texture.savanna"
+							array item: "Texture.snow"
+							array item: "Texture.swamp"
+							array item: "Texture.taiga"
+						array "Array.professions":
+							array item: "Texture.unskilled"
+							array item: "Texture.farmer"
+							array item: "Texture.fisherman"
+							array item: "Texture.shepherd"
+							array item: "Texture.fletcher"
+							array item: "Texture.librarian"
+							array item: "Texture.cartographer"
+							array item: "Texture.cleric"
+							array item: "Texture.armorer"
+							array item: "Texture.weapon_smith"
+							array item: "Texture.tool_smith"
+							array item: "Texture.butcher"
+							array item: "Texture.leatherworker"
+							array item: "Texture.stonemason"
+							array item: "Texture.nitwit"
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "(query.is_baby || variable.profession_index == 0) ? Material.default : Material.masked"
+				field "textures":
+					texture: "Array.biomes[query.mark_variant]"
+					texture: "Array.professions[variable.profession_index]"
+		field "defined_in": resource pack: "vanilla"
+Moved file "vindicator" to "vindicator.render_controllers".
+Added file "wandering_trader.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.wandering_trader":
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Texture.default"
+		field "defined_in": resource pack: "vanilla"
+Moved file "witch" to "witch.render_controllers".
+Added file "wither_boss.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.wither_boss":
+				field "arrays":
+					field "textures":
+						array "Array.wither_state":
+							array item: "Texture.invulnerable"
+							array item: "Texture.default"
+				field "color":
+					channel "a": "variable.is_invulnerable ? query.overlay_alpha : this"
+					channel "b": "variable.is_invulnerable ? 1.0 : this"
+					channel "g": "variable.is_invulnerable ? 1.0 : this"
+					channel "r": "variable.is_invulnerable ? 1.0 : this"
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Array.wither_state[variable.display_normal_skin]"
+		field "defined_in": resource pack: "vanilla"
+Added file "wither_boss_armor.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.wither_boss_armor":
+				field "geometry": "Geometry.armor"
+				field "ignore_lighting": true
+				field "materials": material dict: material "*": "Material.armor"
+				field "part_visibility": part visibility dict: part visibility "*": "query.is_shield_powered"
+				field "textures": texture: "Texture.armor"
+				field "uv_anim":
+					field "offset":
+						expression: "(query.is_shield_powered ? (Math.cos(query.life_time * 22.92) * 3) : 0.0)"
+						expression: "(query.is_shield_powered ? (query.life_time * 0.2) : 0.0)"
+					field "scale": [1.0, 1.0]
+		field "defined_in": resource pack: "vanilla"
+Moved file "wither_skeleton" to "wither_skeleton.render_controllers".
+Moved file "zombie" to "zombie.render_controllers".
+Moved file "zombie_pigman" to "zombie_pigman.render_controllers".
+Moved file "zombie_villager" to "zombie_villager.render_controllers".
+Added file "zombie_villager_v2.render_controllers":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.zombie_villager_v2_base":
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "Material.default"
+				field "textures": texture: "Texture.default"
+			render controller "controller.render.zombie_villager_v2_masked":
+				field "arrays":
+					field "textures":
+						array "Array.biomes":
+							array item: "Texture.plains"
+							array item: "Texture.desert"
+							array item: "Texture.jungle"
+							array item: "Texture.savanna"
+							array item: "Texture.snow"
+							array item: "Texture.swamp"
+							array item: "Texture.taiga"
+						array "Array.professions":
+							array item: "Texture.farmer"
+							array item: "Texture.fisherman"
+							array item: "Texture.shepherd"
+							array item: "Texture.fletcher"
+							array item: "Texture.librarian"
+							array item: "Texture.cartographer"
+							array item: "Texture.cleric"
+							array item: "Texture.armorer"
+							array item: "Texture.weapon_smith"
+							array item: "Texture.tool_smith"
+							array item: "Texture.butcher"
+							array item: "Texture.leatherworker"
+							array item: "Texture.stonemason"
+							array item: "Texture.nitwit"
+				field "geometry": "Geometry.default"
+				field "materials": material dict: material "*": "query.is_baby ? Material.default : Material.masked"
+				field "textures":
+					texture: "Array.biomes[query.mark_variant]"
+					texture: "Array.professions[variable.profession_index]"
+		field "defined_in": resource pack: "vanilla"
