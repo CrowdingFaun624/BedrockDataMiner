@@ -10,11 +10,11 @@ import Utilities.Version as Version
 class LocalManager(InstallManager.InstallManager):
 
     def prepare_for_install(self) -> None:
-        self.file_list:list[str] = None
+        self.file_list:list[str]|None = None
         if not self.version.download_method is Version.DownloadMethod.DOWNLOAD_LOCAL:
             raise ValueError("Version \"%s\" is using a LocalManager while having a \"%s\" download type!" % (self.version.name, self.version.download_method))
         if os.name == "nt": # TODO: Make this part less sucky
-            windows_apps = Path("C:\Program Files\WindowsApps")
+            windows_apps = Path("C:\\Program Files\\WindowsApps")
             if self.version.download_link == "beta_local":
                 search_file = "Microsoft.MinecraftWindowsBeta"
             elif self.version.download_link == "release_local":

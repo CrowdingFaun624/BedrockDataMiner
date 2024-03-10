@@ -1,5 +1,5 @@
 import enum
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, Sequence, TypeVar
 
 class NoExist(): # class that is different from None
 
@@ -19,7 +19,7 @@ class DiffType(enum.Enum):
     old = "old"
     not_diff = "not_diff"
 
-exist_change_type = {
+exist_change_type:dict[tuple[bool,bool],ChangeType] = {
     (False, True): ChangeType.addition,
     (True, False): ChangeType.removal,
     (True, True): ChangeType.change,
@@ -57,9 +57,13 @@ class Diff(Generic[Dt1,Dt2]):
             return self.new
 
     def iter(self) -> list[tuple[Dt1|Dt2,DiffType]]:
-        if self.is_addition: return [(self.new, DiffType.new)]
-        elif self.is_change: return [(self.old, DiffType.old), (self.new, DiffType.new)]
-        elif self.is_removal: return [(self.old, DiffType.old)]
+        match self.change_type:
+            case ChangeType.addition:
+                return [(self.new, DiffType.new)]
+            case ChangeType.change:
+                return [(self.old, DiffType.old), (self.new, DiffType.new)]
+            case ChangeType.removal:
+                return [(self.old, DiffType.old)]
 
     def __getitem__(self, index:ChangeType) -> Dt1|Dt2:
         if index is DiffType.new:
@@ -76,20 +80,22 @@ class Diff(Generic[Dt1,Dt2]):
             raise KeyError("Attempted to get an item of %s using a non-DiffType key!" % repr(self))
 
     def __repr__(self) -> str:
-        if self.is_addition:
-            return "<Diff add %s>" % (self.new)
-        elif self.is_change:
-            return "<Diff change %s -> %s>" % (self.old, self.new)
-        elif self.is_removal:
-            return "<Diff remove %s>" % (self.old)
+        match self.change_type:
+            case ChangeType.addition:
+                return "<Diff add %s>" % (self.new)
+            case ChangeType.change:
+                return "<Diff change %s -> %s>" % (self.old, self.new)
+            case ChangeType.removal:
+                return "<Diff remove %s>" % (self.old)
 
     def __str__(self) -> str:
-        if self.is_addition:
-            return "Addition of %s" % (self.new)
-        elif self.is_change:
-            return "%s -> %s" % (self.old, self.new)
-        elif self.is_removal:
-            return "Removal of %s" % (self.old)
+        match self.change_type:
+            case ChangeType.addition:
+                return "Addition of %s" % (self.new)
+            case ChangeType.change:
+                return "%s -> %s" % (self.old, self.new)
+            case ChangeType.removal:
+                return "Removal of %s" % (self.old)
 
     def __hash__(self) -> int:
         return hash((self.old, self.new))
@@ -108,7 +114,7 @@ class Diff(Generic[Dt1,Dt2]):
 a = TypeVar("a")
 b = TypeVar("b")
 
-def iter_diff(thing:a|Diff[Dt1,Dt2]) -> list[tuple[a|Dt1|Dt2,DiffType]]:
+def iter_diff(thing:a|Diff[Dt1,Dt2]) -> Sequence[tuple[a|Dt1|Dt2,DiffType]]:
     if isinstance(thing, Diff):
         return thing.iter()
     else:
@@ -124,8 +130,12 @@ def double_iter_diff(thing1:a|Diff[Dt1,Dt2], thing2:b|Diff[Dt3,Dt4]) -> list[tup
 
 def get_diff_types(thing:object|Diff) -> tuple[DiffType,...]:
     if isinstance(thing, Diff):
-        if thing.is_addition: return (DiffType.new,)
-        elif thing.is_change: return (DiffType.old, DiffType.new)
-        elif thing.is_removal: return (DiffType.old,)
+        match thing.change_type:
+            case ChangeType.addition:
+                return (DiffType.new,)
+            case ChangeType.change:
+                return (DiffType.old, DiffType.new)
+            case ChangeType.removal:
+                return (DiffType.old,)
     else:
         return (DiffType.not_diff,)

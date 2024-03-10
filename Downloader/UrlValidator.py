@@ -9,6 +9,7 @@ def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version],list[s
 
     def matches_mcpedl(version:Version.Version) -> list[str]:
         VALID_ID_STARTS = ["minecraft-pe-", "minecraft-", "Minecraft-pe-", "Minecraft-PE-", "Minecraft-"] # make sure the more specific ones are first (e.g. "minecraft-pe-" before "minecraft-").
+        assert version.download_link is not None
         url = version.download_link
         if not url.startswith(KNOWN_URLS[matcher_name][0]):
             return ["%s url \"%s\" does not start with \"%s\"!" % (matcher_name, url, KNOWN_URLS[matcher_name][0])]
@@ -45,6 +46,7 @@ def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version],list[s
 
 def matches_mcpealpha(version:Version.Version) -> list[str]:
     matcher_name = "mcpealpha"
+    assert version.download_link is not None
     url = version.download_link
     if not url.startswith(KNOWN_URLS[matcher_name][0]):
         return ["%s url \"%s\" does not start with \"%s\"!" % (matcher_name, url, KNOWN_URLS[matcher_name][0])]
@@ -63,6 +65,7 @@ def matches_mcpealpha(version:Version.Version) -> list[str]:
 def matches_minecraft_ios(version:Version.Version) -> list[str]:
     matcher_name = "Minecraft-iOS"
     VALID_STARTS = ["Bedrock%20Edition%20-%20iOS/Minecraft%20", "Pocket%20Edition%20-%20iOS/Minecraft%20PE%20"]
+    assert version.download_link is not None
     url = version.download_link
     if not url.startswith(KNOWN_URLS[matcher_name][0]):
         return ["%s url \"%s\" does not start with \"%s\"!" % (matcher_name, url, KNOWN_URLS[matcher_name][0])]
@@ -90,6 +93,7 @@ KNOWN_URLS:dict[str,tuple[str,Callable[[Version.Version],list[str]]]] = {
 def validate(version:Version.Version) -> list[str]:
     '''Returns a list of warning strings about the given version.'''
     if version.download_method is not Version.DownloadMethod.DOWNLOAD_URL: return []
+    assert version.download_link is not None
     url = version.download_link
     for url_id, url_data in KNOWN_URLS.items():
         url_start, url_function = url_data

@@ -21,7 +21,7 @@ class ComparerSection(Generic[a]):
     def __repr__(self) -> str:
         return "<ComparerSection %s>" % self.name
 
-    def print_single(self, key_str:str|None, data:a, message:str, output:list[str], printer:Union["ComparerSection[a]",None], trace:Trace.Trace) -> None:
+    def print_single(self, key_str:str|int|None, data:a, message:str, output:list[str], printer:Union["ComparerSection[a]",None], trace:Trace.Trace) -> None:
         if printer is None:
             stringified_data = CU.stringify(data)
             if key_str is None:
@@ -46,7 +46,7 @@ class ComparerSection(Generic[a]):
                     output.append("%s %s %s:" % (message, self.name, CU.stringify(key_str)))
                     output.extend("\t" + line for line in subcomparer_output)
 
-    def print_double(self, key_str:str|None, data1:a, data2:a, message:str, output:list[str], printers:"ComparerSet.ComparerSet", trace:Trace.Trace) -> None:
+    def print_double(self, key_str:str|int|None, data1:a, data2:a, message:str, output:list[str], printers:"ComparerSet.ComparerSet", trace:Trace.Trace) -> None:
         new_trace = trace.copy(self.name, key_str)
         subcomparer_output1 = printers.print_text(0, data1, new_trace)
         subcomparer_output2 = printers.print_text(-1, data2, new_trace) # [-1] because it must be the last item anyways.

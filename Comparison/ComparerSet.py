@@ -14,7 +14,7 @@ class ComparerSet(Generic[d]):
     '''Contains one or two ComparerSections. Is used internally.
     Is used for when a value is a Diff and must use two different printers.'''
 
-    def __init__(self, comparers:dict[D.DiffType,"ComparerSection.ComparerSection"]) -> None:
+    def __init__(self, comparers:dict[D.DiffType,Union["ComparerSection.ComparerSection",None]]) -> None:
         self.comparers = comparers
 
     def __repr__(self) -> str:
@@ -35,6 +35,8 @@ class ComparerSet(Generic[d]):
             raise KeyError("Attempted to index a ComparerSet using a %s rather than a D.DiffType!" % type(key))
 
     def print_text(self, key:D.DiffType|int, data:d, trace:Trace.Trace) -> list[str]:
+        if  isinstance(key, D.DiffType) and key not in self:
+            raise RuntimeError("KeyError on \"%s\" in %s for data %s!" % (key, trace, data))
         comparer = self[key]
         if comparer is None:
             return [CU.stringify(data)]
@@ -48,7 +50,7 @@ class ComparerSet(Generic[d]):
         else:
             return comparer.compare_text(data, trace)
 
-    def compare(self, data1:d, data2:d, trace:Trace.Trace) -> tuple[d,list[tuple[Trace.Trace,Exception]]]:
+    def compare(self, data1:d, data2:d, trace:Trace.Trace) -> tuple[d|D.Diff[d,d],list[tuple[Trace.Trace,Exception]]]:
         if (len(self) == 1) or (len(self) == 2 and self[0] == self[1]):
             # both items have the same ComparerSection.
             comparer = self[0]

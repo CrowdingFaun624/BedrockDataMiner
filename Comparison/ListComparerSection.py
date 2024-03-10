@@ -37,7 +37,7 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
 
         self.name = name
         self.comparer = comparer
-        self.types = [object] if types is None else types
+        self.types = (object,) if types is None else types
         self.print_flat = print_flat
         self.ordered = ordered
         self.measure_length = measure_length
@@ -85,7 +85,7 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
 
     def check_all_types(self, data:list[d], trace:Trace.Trace) -> list[tuple[Trace.Trace,Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
-        output:list[list[tuple[int,d]]] = []
+        output:list[tuple[Trace.Trace,Exception]] = []
         for index, item in enumerate(data):
             check_type_output = self.check_type(index, item, trace)
             if check_type_output is not None:
@@ -120,13 +120,13 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
 
     def compare(
             self,
-            data1:Iterable[d],
-            data2:Iterable[d],
+            data1:list[d],
+            data2:list[d],
             trace:Trace.Trace,
-        ) -> tuple[Iterable[d],list[tuple[Trace.Trace,Exception]]]:
+        ) -> tuple[list[d|D.Diff[d|D.NoExist,d|D.NoExist]],list[tuple[Trace.Trace,Exception]]]:
         exceptions:list[tuple[Trace.Trace,Exception]] = []
 
-        output:list[d|D.Diff[d]] = []
+        output:list[d|D.Diff[d|D.NoExist,d|D.NoExist]] = []
         if self.ordered:
             index = -1
             for index, (item1, item2) in enumerate(zip(data1, data2)):
@@ -175,8 +175,8 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
                     output.append(D.Diff(new=item))
             return output, exceptions
 
-    def choose_comparer(self, index:int, item:d, trace:Trace.Trace) -> ComparerSet.ComparerSet:
-        output:dict[D.DiffType,ComparerSection.ComparerSection] = {}
+    def choose_comparer(self, index:int, item:d|D.Diff[d,d], trace:Trace.Trace) -> ComparerSet.ComparerSet:
+        output:dict[D.DiffType,ComparerSection.ComparerSection|None] = {}
         for item_iter, diff_type in D.iter_diff(item):
             if isinstance(self.comparer, dict):
                 exception = None

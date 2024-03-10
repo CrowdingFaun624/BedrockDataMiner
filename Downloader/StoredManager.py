@@ -12,6 +12,7 @@ class StoredManager(InstallManager.InstallManager):
 
     def prepare_for_install(self) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
+        assert self.version.download_link is not None
         self.name = self.version.download_link[1:]
         self.index_read_lock = threading.Lock()
         self.file_list:list[str]|None = None
@@ -56,15 +57,18 @@ class StoredManager(InstallManager.InstallManager):
         if self.file_list is None:
             strip_string = self.get_full_file_name("")
             self.read_index()
+            assert self.index is not None
             self.file_list = [index.replace(strip_string, "", 1) for index in self.index.keys() if index.startswith(strip_string) and not index.endswith("/")]
         return self.file_list
 
     def get_full_file_list(self) -> list[str]:
         self.read_index()
+        assert self.index is not None
         return list(self.index.keys())
 
     def file_exists(self, name:str) -> bool:
         self.read_index()
+        assert self.index is not None
         return self.get_full_file_name(name) in self.index
 
     def read(self, file_name:str, mode:str="b") -> bytes|str:

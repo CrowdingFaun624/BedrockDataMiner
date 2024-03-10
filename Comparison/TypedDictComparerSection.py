@@ -10,7 +10,7 @@ import Comparison.Trace as Trace
 
 d = TypeVar("d")
 
-class TypedDictComparerSection(DictComparerSection.DictComparerSection[str,d]):
+class TypedDictComparerSection(DictComparerSection.DictComparerSection[d]):
 
     def __init__(
             self,
@@ -81,17 +81,19 @@ class TypedDictComparerSection(DictComparerSection.DictComparerSection[str,d]):
             return (trace.copy(self.name, key), TypeError("Key, value %s: %s in %s excepted because value is %s instead of [%s]!" % (CU.stringify(key), CU.stringify(value), self.name, value.__class__.__name__, value_types_string)))
 
     def choose_comparer(self, key:str, value:d, trace:Trace.Trace) -> ComparerSet.ComparerSet:
-        output:dict[D.DiffType,ComparerSection.ComparerSection] = {}
+        output:dict[D.DiffType,ComparerSection.ComparerSection|None] = {}
         if self.detect_key_moves:
             iterator = D.double_iter_diff(key, value)
         else:
             key_iter = key.first_existing_property() if isinstance(key, D.Diff) else key
             iterator = ((key_iter, iter_diff_item[0], None, iter_diff_item[1]) for iter_diff_item in D.iter_diff(value))
         for key_iter, value_iter, key_diff_type, value_diff_type in iterator:
-            exception:Exception = None
+            exception:Exception|None = None
             try:
                 output[value_diff_type] = self.types[key_iter, type(value_iter)]
             except Exception as e:
                 exception = e
                 exception.args = tuple(list(exception.args) + ["Failed to get comparer in %s in %s for key, value %s: %s" % (self.name, trace, key_iter, value_iter)])
+            if exception is not None:
+                raise exception
         return ComparerSet.ComparerSet(output)

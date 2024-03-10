@@ -1,4 +1,4 @@
-from typing import Callable, Generator, Iterable, TypeVar
+from typing import Any, Callable, Generator, Iterable, TypeVar
 
 import Comparison.ComparerSection as ComparerSection
 import Comparison.ComparerSet as ComparerSet
@@ -8,19 +8,18 @@ import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
 
 b = TypeVar("b")
-c = TypeVar("c")
 d = TypeVar("d")
 
-def infinite_generator(item:c) -> Generator[c,None,None]:
+def infinite_generator(item:d) -> Generator[d,None,None]:
     '''A generator that returns the same value forever.'''
     while True:
         yield item
 
-def glue_iterables(iter1:Iterable[c], iter2:Iterable[d]) -> Generator[c|d,None,None]:
+def glue_iterables(iter1:Iterable[b], iter2:Iterable[d]) -> Generator[b|d,None,None]:
     yield from iter1
     yield from iter2
 
-class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
+class DictComparerSection(ComparerSection.ComparerSection[dict[str, d]]):
 
     def __init__(
             self,
@@ -28,7 +27,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
             comparer:ComparerSection.ComparerSection[d]|None|dict[type,ComparerSection.ComparerSection[d]|None],
             types:tuple[type,...]|None,
             detect_key_moves:bool=False,
-            comparison_move_function:Callable[[c, d], b]|None=None,
+            comparison_move_function:Callable[[str, d], Any]|None=None,
             measure_length:bool=False,
             print_all:bool=False,
             normalizer:list[Normalizer.Normalizer]|None=None,
@@ -89,13 +88,13 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
         if not isinstance(self.children_has_normalizer, bool):
             raise TypeError("`children_has_normalizer` is not a bool!")
 
-    def check_type(self, key:c, value:d, trace:Trace.Trace) -> tuple[Trace.Trace,Exception]|None:
+    def check_type(self, key:str, value:d, trace:Trace.Trace) -> tuple[Trace.Trace,Exception]|None:
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):
             raise TypeError("`check_type` was given data containing Diffs!")
         if not isinstance(value, self.types):
             return (trace.copy(self.name, key), TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (CU.stringify(key), CU.stringify(value), self.name, self.types)))
 
-    def check_all_types(self, data:dict[c,d], trace:Trace.Trace) -> list[tuple[Trace.Trace,Exception]]:
+    def check_all_types(self, data:dict[str,d], trace:Trace.Trace) -> list[tuple[Trace.Trace,Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[tuple[Trace.Trace,Exception]] = []
         if not isinstance(data, dict):
@@ -116,7 +115,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
                 output.extend(comparer.check_all_types(value, trace.copy(self.name, key)))
         return output
 
-    def normalize(self, data:dict[c,d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> None:
+    def normalize(self, data:dict[str,d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> None:
         if not self.children_has_normalizer: return
         if self.normalizer is not None:
             for normalizer in self.normalizer:
@@ -135,11 +134,11 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
 
     def compare(
             self,
-            data1:dict[c,d],
-            data2:dict[c,d],
+            data1:dict[str,d],
+            data2:dict[str,d],
             trace:Trace.Trace,
-        ) -> tuple[dict[c|D.Diff[c,c],d|D.Diff[d,d]],list[tuple[Trace.Trace,Exception]]]:
-        key_occurences:dict[c,list[D.DiffType]] = {}
+        ) -> tuple[dict[str|D.Diff[str,str],d|D.Diff[d,d]],list[tuple[Trace.Trace,Exception]]]:
+        key_occurences:dict[str,list[D.DiffType]] = {}
         exceptions:list[tuple[Trace.Trace,Exception]] = []
 
         # get occurence counts
@@ -153,11 +152,10 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
             else:
                 key_occurences[key] = [diff_type]
 
-        data_for_add_remove_change_compare:dict[c|D.Diff[c,c],tuple[tuple[D.DiffType, d],...]] = {}
+        data_for_add_remove_change_compare:dict[str|D.Diff[str,str],tuple[tuple[D.DiffType, d],...]] = {}
         # assemble key change dicts.
-        if self.detect_key_moves:
-            old_comparison_values:list[tuple[c,b]] = []
-            new_comparison_values:list[tuple[c,b]] = []
+        old_comparison_values:list[tuple[str,d]] = []
+        new_comparison_values:list[tuple[str,d]] = []
         for key, occurences in key_occurences.items():
             if len(occurences) == 1:
                 match self.detect_key_moves, occurences[0]:
@@ -181,7 +179,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
 
         if self.detect_key_moves: # if False, then additions and removals are added to data_for_add_remove_change_compare above.
             # find matching values.
-            new_keys_involved_in_key_change:set[c] = set()
+            new_keys_involved_in_key_change:set[str] = set()
             for old_key, old_comparison_value in old_comparison_values:
                 for new_key, new_comparison_value in new_comparison_values:
                     if new_key in new_keys_involved_in_key_change: continue # to prevent multiple things moving to the same place.
@@ -198,7 +196,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
                 if new_key in new_keys_involved_in_key_change: continue
                 data_for_add_remove_change_compare[new_key] = ((D.DiffType.new, data2[new_key]),)
 
-        output:dict[c|D.Diff[c,c],d|D.Diff[d,d]] = {}
+        output:dict[str|D.Diff,d|D.Diff] = {}
         for key, occurences in data_for_add_remove_change_compare.items():
             if len(occurences) == 2:
                 value1, value2 = occurences[0][1], occurences[1][1]
@@ -214,6 +212,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
             elif len(occurences) == 1:
                 # since there's now only one value, there's no more comparing to do.
                 # key can only be a D.Diff when len(occurences) == 2
+                assert not isinstance(key, D.Diff)
                 if occurences[0][0] == D.DiffType.old: diff_key, diff_value = D.Diff(old=key), D.Diff(old=occurences[0][1])
                 elif occurences[0][0] == D.DiffType.new: diff_key, diff_value = D.Diff(new=key), D.Diff(new=occurences[0][1])
                 else: raise RuntimeError("Illegal state!")
@@ -224,8 +223,8 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
 
         return {key: value for key, value in sorted(output.items())}, exceptions
 
-    def choose_comparer(self, key:c, value:d, trace:Trace.Trace) -> ComparerSet.ComparerSet:
-        output:dict[D.DiffType,ComparerSection.ComparerSection] = {}
+    def choose_comparer(self, key:str|D.Diff[str,str], value:d|D.Diff[d,d], trace:Trace.Trace) -> ComparerSet.ComparerSet:
+        output:dict[D.DiffType,ComparerSection.ComparerSection|None] = {}
         for value_iter, value_diff_type in D.iter_diff(value):
             if isinstance(self.comparer, dict):
                 exception = None
@@ -241,7 +240,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
                 output[value_diff_type] = self.comparer
         return ComparerSet.ComparerSet(output)
 
-    def print_item(self, key:c, value:d, comparer_set:ComparerSet.ComparerSet[d], trace:Trace.Trace, message:str="") -> list[str]:
+    def print_item(self, key:str, value:d, comparer_set:ComparerSet.ComparerSet[d], trace:Trace.Trace, message:str="") -> list[str]:
         subcomparer_output = comparer_set.print_text(D.DiffType.not_diff, value, trace.copy(self.name, key))
         match len(subcomparer_output):
             case 0:
@@ -254,16 +253,18 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[c, d]]):
                 output.extend("\t" + line for line in subcomparer_output)
                 return output
 
-    def print_text(self, data:dict[c, d], trace:Trace.Trace) -> list[str]:
+    def print_text(self, data:dict[str, d], trace:Trace.Trace) -> list[str]:
         output:list[str] = []
         if not isinstance(data, dict):
             raise TypeError("`data` is not a dict at %s, but instead type %s!" % (trace.give_key(self.name), type(data)))
         for key, value in data.items():
             comparer_set = self.choose_comparer(key, value, trace)
+            assert len(comparer_set) != 0
+            # print(key, value, comparer_set)
             output.extend(self.print_item(key, value, comparer_set, trace))
         return output
 
-    def compare_text(self, data:dict[c, d], trace:Trace.Trace) -> tuple[list[str],bool]:
+    def compare_text(self, data:dict[str, d], trace:Trace.Trace) -> tuple[list[str],bool]:
         output:list[str] = []
         any_changes = False
         if not isinstance(data, dict):

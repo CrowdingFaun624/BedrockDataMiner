@@ -1,10 +1,12 @@
+import Comparison.Difference as D
+
 class Trace():
 
-    def __init__(self, data:list[tuple[str,str|int]]=None, current_key:str=None) -> None:
+    def __init__(self, data:list[tuple[str,str|int|D.Diff|None]]|None=None, current_key:str|None=None) -> None:
         self.data = [] if data is None else data
         self.current_key = current_key
 
-    def copy(self, name:str|None=None, key:str|int|None=None) -> "Trace":
+    def copy(self, name:str|None=None, key:str|int|D.Diff|None=None) -> "Trace":
         if name is None:
             return Trace(self.data.copy())
         else:
@@ -21,6 +23,6 @@ class Trace():
             return ".".join("%s[%s]" % (name, index) for name, index in self.data)
         else:
             if len(self.data) == 0:
-                return self.current_key
+                return str(self.current_key)
             else:
                 return ".".join("%s[%s]" % (name, index) for name, index in self.data) + ".%s" % (self.current_key)

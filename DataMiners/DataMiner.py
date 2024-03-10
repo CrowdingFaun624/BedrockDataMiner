@@ -88,6 +88,8 @@ class DataMiner():
         raise NotImplementedError("`activate` was called by %s without being defined by a subclass." % repr(self))
 
     def get_data_file_path(self) -> Path:
+        if self.version.version_folder is None:
+            raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % self.version.name)
         return FileManager.get_version_data_path(self.version.version_folder, self.file_name)
 
     def store(self, dependency_data:DataMinerTyping.DependenciesTypedDict, dataminer_collections:list["DataMinerCollection"]) -> Any:
@@ -95,6 +97,8 @@ class DataMiner():
         data = self.activate(dependency_data)
         if data is None:
             raise RuntimeError("DataMiner %s returned None!" % self)
+        if self.version.version_folder is None:
+            raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % self.version.name)
         data_path = FileManager.get_version_data_path(self.version.version_folder, None)
         if not data_path.exists():
             data_path.mkdir()
@@ -146,6 +150,7 @@ class DataMiner():
                         else: # file does not exist
                             file_results[file_name] = EMPTY_FILE
                     except Exception as e:
+                        e.args = tuple(list(e.args) + ["Failed to get file \"%s\"!" % (file_name)])
                         file_results[file_name] = e
                         return
 
@@ -253,6 +258,8 @@ class DataMinerCollection():
         '''Opens the data file if it exists, and raises an error if it doesn't, or returns None if `non_exist_ok` is True'''
         if version is None:
             raise TypeError("Attempted to get the data file of None!")
+        if version.version_folder is None:
+            raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % version.name)
         data_path = FileManager.get_version_data_path(version.version_folder, self.file_name)
         if not data_path.exists():
             if non_exist_ok:

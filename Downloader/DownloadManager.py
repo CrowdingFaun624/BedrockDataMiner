@@ -17,11 +17,10 @@ CONNECTION_LIMITS_DEFAULT = 1
 
 class DownloadManager(InstallManager.InstallManager):
 
-    current_open_connections:dict[str,list[requests.Request]] = {}
+    current_open_connections:dict[str|bytes,int] = {}
 
     def prepare_for_install(self) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
-        self.url = None
         self.installed = self.apk_location.exists()
 
         self.has_zip_file_opened = False
@@ -30,6 +29,7 @@ class DownloadManager(InstallManager.InstallManager):
         self.installation_lock = threading.Lock()
         self.get_file_list_lock = threading.Lock()
 
+        assert self.version.download_link is not None
         self.url = self.version.download_link
         self.domain = urlparse(self.url).netloc
         if self.domain not in self.current_open_connections:
@@ -70,6 +70,8 @@ class DownloadManager(InstallManager.InstallManager):
         if not self.installed:
             self.install_all()
         file_name = self.get_full_file_name(file_name)
+        assert self.members is not None
+        assert self.zip_file is not None
         member = self.members[file_name]
         self.open_zip_file()
         if destination is not None:
@@ -94,6 +96,7 @@ class DownloadManager(InstallManager.InstallManager):
                 if self.file_list is not None:
                     return self.file_list # If it started waiting and then it's complete when it's done waiting.
                 strip_string = self.get_full_file_name("")
+                assert self.zip_file is not None
                 self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string) and not file.filename.endswith("/")]
         return self.file_list
 
@@ -122,6 +125,7 @@ class DownloadManager(InstallManager.InstallManager):
             self.install_all()
         file_name = self.get_full_file_name(file_name)
         self.open_zip_file()
+        assert self.zip_file is not None
         data = self.zip_file.read(file_name)
         if mode == "t":
             return data.decode("utf-8")
@@ -156,6 +160,7 @@ class DownloadManager(InstallManager.InstallManager):
         if is_in_assets:
             file_name = self.get_full_file_name(file_name)
         self.open_zip_file()
+        assert self.zip_file is not None
         if mode == "b":
             return FileManager.FilePromise(FunctionCaller(self.zip_file.open, [file_name]), file_name.split("/")[-1], mode)
         else:
