@@ -20,6 +20,7 @@ import DataMiners.GrabMultipleFiles.GrabMultipleFilesDataMiners as GrabMultipleF
 import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiners as GrabMultiplePackFilesDataMiners
 import DataMiners.Items.ItemsDataMiners as ItemsDataMiners
 import DataMiners.GrabSingleFile.GrabSingleFileDataMiners as GrabSingleFileDataMiners
+import DataMiners.Language.LanguageDataMiners as LanguageDataMiners
 import DataMiners.Languages.LanguagesDataMiners as LanguagesDataMiners
 import DataMiners.Models.ModelsDataMiners as ModelsDataMiners
 import DataMiners.MusicDefinitions.MusicDefinitionsDataMiners as MusicDefinitionsDataMiners
@@ -43,6 +44,7 @@ dataminer_collections:list[Sequence[type[DataMiner.DataMiner]]] = [
     GrabPackFileDataMiners.dataminers,
     GrabSingleFileDataMiners.dataminers,
     ItemsDataMiners.dataminers,
+    LanguageDataMiners.dataminers,
     LanguagesDataMiners.dataminers,
     ModelsDataMiners.dataminers,
     MusicDefinitionsDataMiners.dataminers,

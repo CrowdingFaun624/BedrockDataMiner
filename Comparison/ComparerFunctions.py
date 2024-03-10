@@ -123,6 +123,8 @@ def items_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesT
         del data[key]
     data[new_recipe_type] = output
 
+language_comparison_move_function:Callable[[str, DataMinerTyping.LanguageTypedDict], str] = lambda key, value: value["value"]
+
 def languages_normalize(data:DataMinerTyping.Languages, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedLanguages:
 
     def fix_properties(unfixed_data:DataMinerTyping.LanguagesTypedDict, resource_packs:DataMinerTyping.ResourcePacks) -> dict[str,DataMinerTyping.LanguagesPropertiesTypedDict]:
@@ -344,6 +346,7 @@ functions:dict[str,Callable] = {
     "item_textures_normalize": item_textures_normalize,
     "items_behavior_pack_comparison_move_function": items_behavior_pack_comparison_move_function,
     "items_fix_old": items_fix_old,
+    "language_comparison_move_function": language_comparison_move_function,
     "languages_normalize": languages_normalize,
     "languages_languages_comparison_move_function": languages_languages_comparison_move_function,
     "loot_tables_behavior_pack_comparison_move_function": loot_tables_behavior_pack_comparison_move_function,

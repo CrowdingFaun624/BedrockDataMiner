@@ -10,6 +10,7 @@ class DependenciesTypedDict(TypedDict):
     entities: "Entities"
     entities_client: "EntitiesClient"
     items: "Items"
+    language: "Language"
     languages: "Languages"
     loading_tips: "LoadingTips"
     loot_tables: "LootTables"
@@ -122,6 +123,14 @@ EntitiesClient = dict[str,dict[str,Any]]  #TODO: fill this out
 # items
 
 Items = dict[str,dict[str,Any]] # TODO: fill this out
+
+# language
+
+class LanguageTypedDict(TypedDict):
+    comment: str
+    value: str
+
+Language = dict[str,dict[str,LanguageTypedDict]]
 
 # languages
 
