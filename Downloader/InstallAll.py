@@ -2,7 +2,7 @@ import datetime
 import json
 from pathlib2 import Path
 import traceback
-from typing import Literal, TypedDict, Union
+from typing import TypedDict, Union
 
 import Downloader.VersionsParser as VersionsParser
 import Utilities.FileManager as FileManager
