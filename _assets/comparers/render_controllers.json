@@ -9,6 +9,16 @@
         "dependencies": ["resource_packs"],
         "function_name": "collapse_resource_packs_with_defined_in"
     },
+    "fix_old": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "render_controllers_fix_old"
+    },
+    "remove_texures": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "render_controllers_remove_texures"
+    },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
@@ -33,6 +43,7 @@
     },
     "render_controllers_file": {
         "type": "TypedDict",
+        "normalizer": "fix_old",
         "types": {
             "defined_in": {"type": "list", "comparer": "defined_in"},
             "format_version": {"type": "str"},
@@ -66,6 +77,7 @@
     },
     "render_controller": {
         "type": "TypedDict",
+        "normalizer": "remove_texures",
         "types": {
             "arrays": {"type": "dict", "comparer": "arrays"},
             "color": {"type": "dict", "comparer": "color"},
@@ -77,7 +89,7 @@
             "materials": {"type": "list", "comparer": "materials"},
             "on_fire_color": {"type": "dict", "comparer": "color"},
             "overlay_color": {"type": "dict", "comparer": "color"},
-            "part_visibility": {"type": "list", "comparer": "part_visibility"},
+            "part_visibility": {"type": ["dict", "list"], "comparer": "part_visibility.group"},
             "rebuild_animation_matrices": {"type": "bool"},
             "textures": {"type": "list", "comparer": "textures"},
             "uv_anim": {"type": "dict", "comparer": "uv_anim"}
@@ -120,6 +132,13 @@
         "types": ["str"],
         "measure_length": true,
         "comparer": null
+    },
+    "part_visibility.group": {
+        "type": "Group",
+        "types": {
+            "dict": "part_visibility_dict",
+            "list": "part_visibility"
+        }
     },
     "part_visibility": {
         "type": "List",

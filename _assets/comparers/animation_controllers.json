@@ -9,9 +9,18 @@
         "dependencies": ["resource_packs"],
         "function_name": "collapse_resource_packs_with_defined_in"
     },
+    "fix_old": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "animation_controllers_fix_old"
+    },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
+    },
+    "empty": {
+        "type": "TypedDict",
+        "types": {}
     },
     "files": {
         "type": "Dict",
@@ -33,6 +42,7 @@
     },
     "animation_controllers_file": {
         "type": "TypedDict",
+        "normalizer": "fix_old",
         "types": {
             "defined_in": {"type": "list", "comparer": "defined_in"},
             "format_version": {"type": "str"},
@@ -71,13 +81,20 @@
     "state": {
         "type": "TypedDict",
         "types": {
-            "animations": {"type": "list", "comparer": "animations"},
+            "animations": {"type": ["dict", "list"], "comparer": "animations:group"},
             "blend_transition": {"type": "decimal"},
             "blend_via_shortest_path": {"type": "bool"},
             "parameters": {"type": "list", "comparer": "parameters", "tags": ["outdated"]},
             "particle_effects": {"type": "list", "comparer": "particle_effects"},
             "sound_effects": {"type": "list", "comparer": "sound_effects"},
             "transitions": {"type": "list", "comparer": "transitions"}
+        }
+    },
+    "animations:group": {
+        "type": "Group",
+        "types": {
+            "dict": "animations:dict",
+            "list": "animations"
         }
     },
     "animations": {
@@ -87,6 +104,20 @@
         "ordered": false,
         "measure_length": true,
         "comparer": "animations_group"
+    },
+    "animations:dict": {
+        "type": "Dict",
+        "field": "animation",
+        "types": ["dict", "list"],
+        "measure_length": true,
+        "comparer": "animations:dict.group"
+    },
+    "animations:dict.group": {
+        "type": "Group",
+        "types": {
+            "dict": "empty",
+            "list": "animation:list"
+        }
     },
     "animations_group": {
         "type": "Group",

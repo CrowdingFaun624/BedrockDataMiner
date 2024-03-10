@@ -6,8 +6,8 @@
     },
     "collapse_resource_packs": {
         "type": "NormalizerFunction",
-        "dependencies": ["behavior_packs"],
-        "function_name": "collapse_behavior_packs_with_defined_in"
+        "dependencies": ["behavior_packs", "resource_packs"],
+        "function_name": "collapse_behavior_packs_or_resource_packs_with_defined_in"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -32,6 +32,7 @@
     },
     "item": {
         "type": "TypedDict",
+        "imports": ["minecraft:item.old"],
         "types": {
             "defined_in": {"type": "list", "comparer": "defined_in"},
             "format_version": {"type": "str"},
@@ -51,6 +52,27 @@
         "types": {
             "description": {"type": "dict", "comparer": "description"},
             "components": {"type": "dict", "comparer": "components"}
+        }
+    },
+    "minecraft:item.old": {
+        "type": "TypedDict",
+        "types": {
+            "block": {"type": "str"},
+            "camera": {"type": "dict", "comparer": "component.camera"},
+            "category": {"type": "str"},
+            "foil": {"type": "bool"},
+            "food": {"type": "dict", "comparer": "component.food"},
+            "hand_equipped": {"type": "bool"},
+            "hover_text_color": {"type": "str"},
+            "icon": {"type": "str"},
+            "id": {"type": "int"},
+            "max_damage": {"type": "int"},
+            "max_stack_size": {"type": "int"},
+            "seed": {"type": "dict", "comparer": "component.seed"},
+            "stack_by_data": {"type": "bool"},
+            "stacked_by_data": {"type": "bool"},
+            "use_animation": {"type": "str"},
+            "use_duration": {"type": "int"}
         }
     },
     "description": {
@@ -231,7 +253,9 @@
             "can_always_eat": {"type": "bool"},
             "cooldown_time": {"type": "int", "tags": ["not_in_documentation"]},
             "cooldown_type": {"type": "str", "tags": ["not_in_documentation"]},
+            "eat_sound": {"type": "str", "tags": ["outdated"]},
             "effects": {"type": "list", "comparer": "component.food:effects", "tags": ["not_in_documentation"]},
+            "enchanted_effects": {"type": "list", "comparer": "component.food:effects", "tags": ["outdated"]},
             "is_meat": {"type": "bool", "tags": ["not_in_documentation"]},
             "nutrition": {"type": "int"},
             "on_use_action": {"type": "str", "tags": ["not_in_documentation"]},
@@ -255,6 +279,7 @@
             "amplifier": {"type": "int"},
             "chance": {"type": "decimal"},
             "duration": {"type": "int"},
+            "hide_particles": {"type": "bool", "tags": ["outdated"]},
             "name": {"type": "str"}
         }
     },

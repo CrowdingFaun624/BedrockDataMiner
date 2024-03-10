@@ -1,13 +1,18 @@
 {
     "main": {
         "type": "Main",
-        "name": "render_controllers",
+        "name": "animations",
         "base_comparer_section": "files"
     },
     "collapse_resource_packs": {
         "type": "NormalizerFunction",
         "dependencies": ["resource_packs"],
         "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "fix_old": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "animations_fix_old"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -33,6 +38,7 @@
     },
     "animations_file": {
         "type": "TypedDict",
+        "normalizer": "fix_old",
         "types": {
             "animations": {"type": "dict", "comparer": "animations"},
             "defined_in": {"type": "list", "comparer": "defined_in"},

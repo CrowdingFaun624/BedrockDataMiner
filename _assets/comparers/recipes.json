@@ -4,10 +4,15 @@
         "name": "recipes",
         "base_comparer_section": "recipes"
     },
-    "collapse_resource_packs": {
+    "collapse_behavior_packs": {
         "type": "NormalizerFunction",
         "dependencies": ["behavior_packs"],
         "function_name": "collapse_behavior_packs_with_defined_in"
+    },
+    "fix_old": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "items_fix_old"
     },
     "recipes": {
         "type": "Dict",
@@ -24,7 +29,7 @@
         "measure_length": true,
         "detect_key_moves": true,
         "comparison_move_function": "recipes_behavior_pack_comparison_move_function",
-        "normalizer": "collapse_resource_packs",
+        "normalizer": "collapse_behavior_packs",
         "comparer": "recipe"
     },
     "defined_in": {
@@ -89,6 +94,7 @@
     },
     "recipe": {
         "type": "TypedDict",
+        "normalizer": "fix_old",
         "types": {
             "defined_in": {"type": "list", "comparer": "defined_in"},
             "format_version": {"type": "str"},
@@ -155,6 +161,25 @@
             "unlock": {"type": ["dict", "list"], "comparer": "recipe:unlock_group"}
         }
     },
+    "recipe.shaped:keys": {
+        "type": "Dict",
+        "field": "key",
+        "types": ["dict"],
+        "measure_length": true,
+        "print_all": true,
+        "detect_key_moves": true,
+        "comparer": "item"
+    },
+    "recipe.shaped:pattern": {
+        "type": "List",
+        "field": "line",
+        "measure_length": false,
+        "print_all": true,
+        "print_flat": false,
+        "types": ["str"],
+        "ordered": true,
+        "comparer": null
+    },
     "recipe.shapeless": {
         "type": "TypedDict",
         "types": {
@@ -166,6 +191,15 @@
             "tags": {"type": ["list", "str"], "comparer": "tag_list_or_tag"},
             "unlock": {"type": ["dict", "list"], "comparer": "recipe:unlock_group"}
         }
+    },
+    "recipe.shapeless:ingredients": {
+        "type": "List",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "print_all": true,
+        "comparer": "item",
+        "field": "ingredient"
     },
     "recipe.smithing_transform": {
         "type": "TypedDict",
@@ -188,25 +222,6 @@
             "template": {"type": "dict", "comparer": "item"}
         }
     },
-    "recipe.shaped:keys": {
-        "type": "Dict",
-        "field": "key",
-        "types": ["dict"],
-        "measure_length": true,
-        "print_all": true,
-        "detect_key_moves": true,
-        "comparer": "item"
-    },
-    "recipe.shaped:pattern": {
-        "type": "List",
-        "field": "line",
-        "measure_length": false,
-        "print_all": true,
-        "print_flat": false,
-        "types": ["str"],
-        "ordered": true,
-        "comparer": null
-    },
     "recipe:unlock_group": {
         "type": "Group",
         "types": {
@@ -227,14 +242,5 @@
         "types": ["dict"],
         "measure_length": true,
         "comparer": "item"
-    },
-    "recipe.shapeless:ingredients": {
-        "type": "List",
-        "types": ["dict"],
-        "ordered": false,
-        "measure_length": true,
-        "print_all": true,
-        "comparer": "item",
-        "field": "ingredient"
     }
 }

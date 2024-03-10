@@ -3,6 +3,28 @@ from typing import Any, Callable
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
+def animation_controllers_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "animation_controllers" in data: return
+    if "defined_in" in data:
+        del data["defined_in"]
+    output = data.copy()
+    for key in list(data.keys()):
+        if not key.startswith("controller.animation"):
+            raise RuntimeError("Weird animation controller key \"%s\" does not start with \"controller.animation\"!" % key)
+        del data[key]
+    data["animation_controllers"] = output
+
+def animations_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "animations" in data: return
+    if "defined_in" in data:
+        del data["defined_in"]
+    output = data.copy()
+    for key in list(data.keys()):
+        if not key.startswith("animation"):
+            raise RuntimeError("Weird animation key \"%s\" does not start with \"animation\"!" % key)
+        del data[key]
+    data["animations"] = output
+
 def behavior_packs_normalize(data:DataMinerTyping.BehaviorPacks, dependencies:DataMinerTyping.DependenciesTypedDict) -> list[str]:
     return [behavior_pack["name"] for behavior_pack in data]
 
@@ -11,7 +33,7 @@ def blocks_client_fix_MCPE_76182(data:DataMinerTyping.BlocksJsonClientBlockTyped
     if "sounds" in data:
         del data["sounds"]
 
-def blocks_client_normalize(data:DataMinerTyping.MyBlocksClient, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedBlocksClient:
+def blocks_client_normalize(data:DataMinerTyping.MyBlocksClient, dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]:
     return {block["name"]: block["properties"] for block in data}
 
 def blocks_client_resource_pack_comparison_move_function(key:str, value:DataMinerTyping.NormalizedBlocksJsonClientBlockTypedDict) -> DataMinerTyping.NormalizedBlocksJsonClientBlockTypedDict:
@@ -32,7 +54,8 @@ def credits_normalize_titles(data:Any, dependencies:DataMinerTyping.Dependencies
 
 def entities_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()
-    del output["defined_in"]
+    if "defined_in" in output:
+        del output["defined_in"]
     return output
 
 def entities_fix_event_bug(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
@@ -48,6 +71,25 @@ def entities_fix_MCPE_178417(data:dict[str,Any], dependencies:DataMinerTyping.De
     for key_to_delete in [key for key in data if key.startswith("minecraft:")]:
         del data[key_to_delete]
 
+def entities_fix_invalid_components(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "minecart:on_hurt_by_player" in data:
+        del data["minecart:on_hurt_by_player"]
+
+def entities_fix_priotiry(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "priotiry" in data:
+        del data["priotiry"]
+
+def entities_client_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "minecraft:client_entity" in data: return
+    if "defined_in" in data:
+        del data["defined_in"]
+    if len(data) != 1:
+        raise ValueError("Data has too many entity clients: [%s]!" % (", ".join(data.keys())))
+    entity_client_name = list(data.keys())[0]
+    output = data[entity_client_name]
+    del data[entity_client_name]
+    data["minecraft:client_entity"] = {"description": output}
+
 def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
     output:dict[str,dict[str,Any]] = {}
     for resource_pack_name, item_textures_data in data.items():
@@ -62,6 +104,24 @@ def items_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -
     output = value.copy()
     del output["defined_in"]
     return output
+
+def items_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "type" not in data: return
+    old_recipe_type = data["type"]
+    del data["type"]
+    del data["defined_in"]
+    new_recipe_types = {
+        "crafting_shaped": "minecraft:recipe_shaped",
+        "crafting_shapeless": "minecraft:recipe_shapeless",
+        "furnace_recipe": "minecraft:recipe_furnace",
+    }
+    if old_recipe_type not in new_recipe_types:
+        raise KeyError("Recipe type \"%s\" not recognized!" % old_recipe_type)
+    new_recipe_type = new_recipe_types[old_recipe_type]
+    output = data.copy()
+    for key in list(data.keys()):
+        del data[key]
+    data[new_recipe_type] = output
 
 def languages_normalize(data:DataMinerTyping.Languages, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedLanguages:
 
@@ -232,6 +292,19 @@ def sounds_json_fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict, depend
 
 sounds_json_sound_collections_comparison_move_function = lambda key, value: None if len(value) == 0 else value
 
+def render_controllers_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "render_controllers" in data: return
+    if "defined_in" in data:
+        del data["defined_in"]
+    output = data.copy()
+    for key in list(data.keys()):
+        del data[key]
+    data["render_controllers"] = output
+
+def render_controllers_remove_texures(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "texures" in data:
+        del data["texures"]
+
 texture_list_comparison_move_function = lambda key, value: key
 
 def texture_list_normalize(data:dict[str,list[str]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,list[str]]:
@@ -247,10 +320,13 @@ def texture_list_normalize(data:dict[str,list[str]], dependencies:DataMinerTypin
 functions:dict[str,Callable] = {
     "collapse_behavior_pack_list": CollapseResourcePacks.make_interface_list(pack_key="behavior_packs"),
     "collapse_resource_pack_list": CollapseResourcePacks.make_interface_list(pack_key="resource_packs"),
+    "collapse_behavior_packs_or_resource_packs_with_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=True, pack_key=["behavior_packs", "resource_packs"]),
     "collapse_behavior_packs_with_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=True, pack_key="behavior_packs"),
     "collapse_behavior_packs_without_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=False, pack_key="behavior_packs"),
     "collapse_resource_packs_with_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=True, pack_key="resource_packs"),
     "collapse_resource_packs_without_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=False, pack_key="resource_packs"),
+    "animation_controllers_fix_old": animation_controllers_fix_old,
+    "animations_fix_old": animations_fix_old,
     "behavior_packs_normalize": behavior_packs_normalize,
     "blocks_client_fix_MCPE_76182": blocks_client_fix_MCPE_76182,
     "blocks_client_normalize": blocks_client_normalize,
@@ -262,8 +338,12 @@ functions:dict[str,Callable] = {
     "entities_fix_event_bug": entities_fix_event_bug,
     "entities_fix_out_of_bounds_components": entities_fix_out_of_bounds_components,
     "entities_fix_MCPE_178417": entities_fix_MCPE_178417,
+    "entities_fix_invalid_components": entities_fix_invalid_components,
+    "entities_fix_priotiry": entities_fix_priotiry,
+    "entities_client_fix_old": entities_client_fix_old,
     "item_textures_normalize": item_textures_normalize,
     "items_behavior_pack_comparison_move_function": items_behavior_pack_comparison_move_function,
+    "items_fix_old": items_fix_old,
     "languages_normalize": languages_normalize,
     "languages_languages_comparison_move_function": languages_languages_comparison_move_function,
     "loot_tables_behavior_pack_comparison_move_function": loot_tables_behavior_pack_comparison_move_function,
@@ -286,6 +366,8 @@ functions:dict[str,Callable] = {
     "sounds_json_remove_bad_interactive_entity_events": sounds_json_remove_bad_interactive_entity_events,
     "sounds_json_fix_sounds": sounds_json_fix_sounds,
     "sounds_json_sound_collections_comparison_move_function": sounds_json_sound_collections_comparison_move_function,
+    "render_controllers_fix_old": render_controllers_fix_old,
+    "render_controllers_remove_texures": render_controllers_remove_texures,
     "texture_list_comparison_move_function": texture_list_comparison_move_function,
     "texture_list_normalize": texture_list_normalize,
 }

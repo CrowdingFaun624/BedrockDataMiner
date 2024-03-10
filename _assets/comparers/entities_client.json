@@ -9,6 +9,15 @@
         "dependencies": ["resource_packs"],
         "function_name": "collapse_resource_packs_with_defined_in"
     },
+    "fix_old": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "entities_client_fix_old"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
     "entities": {
         "type": "Dict",
         "field": "entity",
@@ -29,6 +38,7 @@
     },
     "entity": {
         "type": "TypedDict",
+        "normalizer": "fix_old",
         "types": {
             "defined_in": {"type": "list", "comparer": "defined_in"},
             "format_version": {"type": "str"},
@@ -41,6 +51,15 @@
         "types": ["str"],
         "ordered": false,
         "measure_length": true,
+        "comparer": null
+    },
+    "vector_decimal": {
+        "type": "List",
+        "field": "vector item",
+        "types": ["decimal"],
+        "ordered": true,
+        "print_flat": true,
+        "print_all": true,
         "comparer": null
     },
     "minecraft:client_entity": {
@@ -59,6 +78,7 @@
             "held_item_ignores_lighting": {"type": "bool"},
             "hide_armor": {"type": "bool"},
             "identifier": {"type": "str"},
+            "locators": {"type": "dict", "comparer": "locators", "tags": ["outdated"]},
             "materials": {"type": "dict", "comparer": "materials"},
             "min_engine_version": {"type": "str"},
             "particle_effects": {"type": "dict", "comparer": "particle_effects"},
@@ -101,6 +121,20 @@
         "detect_key_moves": true,
         "measure_length": true,
         "comparer": null
+    },
+    "locators": {
+        "type": "Dict",
+        "field": "locator set",
+        "types": ["dict"],
+        "measure_length": true,
+        "comparer": "locator"
+    },
+    "locator": {
+        "type": "Dict",
+        "field": "locator",
+        "types": ["list"],
+        "measure_length": true,
+        "comparer": "vector_decimal"
     },
     "materials": {
         "type": "Dict",

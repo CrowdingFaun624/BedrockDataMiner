@@ -16,9 +16,12 @@ import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMine
 import DataMiners.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
 import DataMiners.GrabPackFile.GrabPackFileDataMiners as GrabPackFileDataMiners
+import DataMiners.GrabMultipleFiles.GrabMultipleFilesDataMiners as GrabMultipleFilesDataMiners
 import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiners as GrabMultiplePackFilesDataMiners
+import DataMiners.Items.ItemsDataMiners as ItemsDataMiners
 import DataMiners.GrabSingleFile.GrabSingleFileDataMiners as GrabSingleFileDataMiners
 import DataMiners.Languages.LanguagesDataMiners as LanguagesDataMiners
+import DataMiners.Models.ModelsDataMiners as ModelsDataMiners
 import DataMiners.MusicDefinitions.MusicDefinitionsDataMiners as MusicDefinitionsDataMiners
 import DataMiners.NonExistentSounds.NonExistentSoundsDataMiners as NonExistentSoundsDataMiners
 import DataMiners.ResourcePacks.ResourcePacksDataMiners as ResourcePacksDataMiners
@@ -26,14 +29,35 @@ import DataMiners.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinition
 import DataMiners.SoundFiles.SoundFilesDataMiners as SoundFilesDataMiners
 import DataMiners.SoundsJson.SoundsJsonDataMiners as SoundsJsonDataMiners
 import DataMiners.Splashes.SplashesDataMiners as SplashesDataMiners
+import DataMiners.TextureList.TextureListDataMiners as TextureListDataMiners
 import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as UndefinedSoundEventsDataMiners
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
 
-all_dataminers:Sequence[type[DataMiner.DataMiner]] = BehaviorPacksDataMiners.dataminers + BlocksClientDataMiners.dataminers + DuplicateSoundsDataMiners.dataminers +\
-    GrabMultiplePackFilesDataMiners.dataminers + GrabPackFileDataMiners.dataminers + GrabSingleFileDataMiners.dataminers + LanguagesDataMiners.dataminers + MusicDefinitionsDataMiners.dataminers +\
-    NonExistentSoundsDataMiners.dataminers + ResourcePacksDataMiners.dataminers + SoundDefinitionsDataMiners.dataminers +\
-    SoundFilesDataMiners.dataminers + SoundsJsonDataMiners.dataminers + SplashesDataMiners.dataminers + UndefinedSoundEventsDataMiners.dataminers +\
+all_dataminers:Sequence[type[DataMiner.DataMiner]] = []
+dataminer_collections:list[Sequence[type[DataMiner.DataMiner]]] = [
+    BehaviorPacksDataMiners.dataminers,
+    BlocksClientDataMiners.dataminers,
+    DuplicateSoundsDataMiners.dataminers,
+    GrabMultipleFilesDataMiners.dataminers,
+    GrabMultiplePackFilesDataMiners.dataminers,
+    GrabPackFileDataMiners.dataminers,
+    GrabSingleFileDataMiners.dataminers,
+    ItemsDataMiners.dataminers,
+    LanguagesDataMiners.dataminers,
+    ModelsDataMiners.dataminers,
+    MusicDefinitionsDataMiners.dataminers,
+    NonExistentSoundsDataMiners.dataminers,
+    ResourcePacksDataMiners.dataminers,
+    SoundDefinitionsDataMiners.dataminers,
+    SoundFilesDataMiners.dataminers,
+    SoundsJsonDataMiners.dataminers,
+    SplashesDataMiners.dataminers,
+    TextureListDataMiners.dataminers,
+    UndefinedSoundEventsDataMiners.dataminers,
     UnusedSoundEventsDataMiners.dataminers
+]
+for dataminer_collection in dataminer_collections:
+    all_dataminers.extend(dataminer_collection)
 
 class DataMinerSettingsTypedDict(TypedDict):
     new: str|None

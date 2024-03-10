@@ -5,11 +5,19 @@ if TYPE_CHECKING:
 
 a = TypeVar("a")
 
-def make_interface(has_defined_in_key:bool=True, pack_key:str="resource_packs") -> Callable[[dict[str,a],"DataMinerTyping.DependenciesTypedDict"],None]:
+def make_interface(has_defined_in_key:bool=True, pack_key:str|list[str]="resource_packs") -> Callable[[dict[str,a],"DataMinerTyping.DependenciesTypedDict"],None]:
     def collapse_resource_packs_interface(data:dict[str,a], dependencies:"DataMinerTyping.DependenciesTypedDict") -> None:
-        resource_packs = dependencies[pack_key]
+        resource_packs:DataMinerTyping.ResourcePacks|None = None
+        if isinstance(pack_key, str):
+            resource_packs = dependencies[pack_key]
+        else:
+            resource_packs = None
+            for key in pack_key:
+                if key not in dependencies or dependencies[key] is None: continue
+                resource_packs = dependencies[key]
+                break
         if resource_packs is None:
-            resource_packs:DataMinerTyping.ResourcePacks = [{"name": "vanilla", "tags": ["core"], "id": 1}]
+            resource_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}]
         collapse_resource_packs(data, resource_packs, has_defined_in_key)
     return collapse_resource_packs_interface
 
