@@ -1,0 +1,407 @@
+Difference of "animation_controllers" between "1.7.0" and "1.8.0.8" (beta of "1.8.0").
+Unable to create data files for 1 file between: "1.7.1"
+
+Total file: 27 (+19, -0)
+Added file "agent":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.agent.move":
+				field "states":
+					state "moving":
+						field "animations":
+							animation "look_at_target": empty
+							animation "move": empty
+						field "transitions": transition list: transition "swinging_arms": "entity.agent.swinganimationtick > 0"
+					state "swinging_arms":
+						field "animations":
+							animation "look_at_target": empty
+							animation "swing_arms": empty
+						field "transitions": transition list: transition "moving": "entity.agent.swinganimationtick <= 0"
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Changed file "bat":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 1 (+0, -1)
+			Removed animation controller "controller.animation.bat.general" of field "states": state "default": field "animations": animation "scale": empty.
+		Added field "defined_in" of resource pack: "vanilla".
+		Added field "format_version" of "1.8.0-beta.1".
+Changed file "blaze":
+	Changed resource pack "core":
+		Added field "defined_in" of resource pack: "vanilla".
+		Added field "format_version" of "1.8.0-beta.1".
+Added file "cat":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.cat.move":
+				field "states":
+					state "lie_down":
+						field "animations": animation "lie_down": empty
+						field "parameters": parameter: "Entity.WalkBlendAmount"
+						field "transitions":
+							transition list: transition "sneaking": "Entity.State == 0"
+							transition list: transition "sprinting": "Entity.State == 1"
+							transition list: transition "sitting": "Entity.State == 2"
+							transition list: transition "walking": "Entity.State == 3"
+					state "sitting":
+						field "animations": animation "sit": empty
+						field "parameters": parameter: "Entity.WalkBlendAmount"
+						field "transitions":
+							transition list: transition "sneaking": "Entity.State == 0"
+							transition list: transition "sprinting": "Entity.State == 1"
+							transition list: transition "walking": "Entity.State == 3"
+							transition list: transition "lie_down": "Entity.State == 4"
+					state "sneaking":
+						field "animations": animation "sneak": empty
+						field "transitions":
+							transition list: transition "sprinting": "Entity.State == 1"
+							transition list: transition "sitting": "Entity.State == 2"
+							transition list: transition "walking": "Entity.State == 3"
+							transition list: transition "lie_down": "Entity.State == 4"
+					state "sprinting":
+						field "animations": animation "sprint": empty
+						field "parameters": parameter: "Entity.WalkBlendAmount"
+						field "transitions":
+							transition list: transition "sneaking": "Entity.State == 0"
+							transition list: transition "sitting": "Entity.State == 2"
+							transition list: transition "walking": "Entity.State == 3"
+							transition list: transition "lie_down": "Entity.State == 4"
+					state "walking":
+						field "animations": animation "walk": empty
+						field "parameters": parameter: "Entity.WalkBlendAmount"
+						field "transitions":
+							transition list: transition "sneaking": "Entity.State == 0"
+							transition list: transition "sprinting": "Entity.State == 1"
+							transition list: transition "sitting": "Entity.State == 2"
+							transition list: transition "lie_down": "Entity.State == 4"
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Changed file "chicken":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.chicken.move":
+				Changed field "states":
+					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.WalkBlendAmount".
+							Added parameter "Entity.Member.WalkSpeed".
+		Added field "defined_in" of resource pack: "vanilla".
+		Added field "format_version" of "1.8.0-beta.1".
+Changed file "cow":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 3 (+1, -0)
+			Changed animation controller "controller.animation.cow.move":
+				Changed field "states":
+					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.WalkBlendAmount".
+							Added parameter "Entity.Member.WalkSpeed".
+			Added animation controller "controller.animation.cow.setup" of field "states": state "default": field "animations": animation "setup": empty.
+		Added field "defined_in" of resource pack: "vanilla".
+		Added field "format_version" of "1.8.0-beta.1".
+Added file "dolphin":
+	resource pack "core":
+		field "animation_controllers": animation controller "controller.animation.dolphin.general": field "states": state "default": field "animations": animation "move": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "endermite":
+	resource pack "core":
+		field "animation_controllers": animation controller "controller.animation.endermite.move": field "states": state "default": field "animations": animation "move": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "evoker":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.evoker.general":
+				field "states":
+					state "default":
+						field "animations":
+							animation "general": empty
+							animation "look_at_target": empty
+							animation "villager_general": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "fish":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.fish.general":
+				field "states":
+					state "flopping":
+						field "animations": animation "flop": empty
+						field "transitions": transition list: transition "swimming": "Entity.IsInWater"
+					state "swimming":
+						field "animations": animation "swim": empty
+						field "transitions": transition list: transition "flopping": "!Entity.IsInWater"
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "ghast":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.ghast.move": field "states": state "default": field "animations": animation "move": empty
+			animation controller "controller.animation.ghast.scale": field "states": state "default": field "animations": animation "scale": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "llama":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.llama.baby":
+				field "states":
+					state "baby":
+						field "animations":
+							animation "baby_transform":
+								item:
+									timestamp "0.0": 0.0
+									timestamp "1.0": 1.0
+						field "parameters": parameter: "Entity.Flags.BABY"
+			animation controller "controller.animation.llama.move":
+				field "states":
+					state "default":
+						field "animations":
+							animation "look_at_target": empty
+							animation "setup": empty
+							animation "walk":
+								item:
+									timestamp "0.0": 0.0
+									timestamp "1.0": 1.0
+						field "parameters": parameter: "Entity.Member.WalkSpeed"
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "mooshroom":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.mooshroom.baby":
+				field "states":
+					state "baby":
+						field "animations":
+							animation "baby_transform":
+								item:
+									timestamp "0.0": 0.0
+									timestamp "1.0": 1.0
+						field "parameters": parameter: "Entity.Flags.BABY"
+			animation controller "controller.animation.mooshroom.move":
+				field "states":
+					state "default":
+						field "animations":
+							animation "look_at_target": empty
+							animation "walk":
+								item:
+									timestamp "0.0": 0.0
+									timestamp "1.0": 1.0
+						field "parameters": parameter: "Entity.Member.WalkSpeed"
+			animation controller "controller.animation.mooshroom.setup": field "states": state "default": field "animations": animation "setup": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "ocelot":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.ocelot.baby":
+				field "states":
+					state "baby":
+						field "animations":
+							animation "baby_transform":
+								item:
+									timestamp "0.0": 0.0
+									timestamp "1.0": 1.0
+						field "parameters": parameter: "Entity.Flags.BABY"
+			animation controller "controller.animation.ocelot.look_at_target": field "states": state "default": field "animations": animation "look_at_target": empty
+			animation controller "controller.animation.ocelot.move":
+				field "states":
+					state "sitting":
+						field "animations": animation "sit": empty
+						field "parameters": parameter: "Entity.Member.WalkSpeed"
+						field "transitions":
+							transition list: transition "sneaking": "Entity.State == 0"
+							transition list: transition "sprinting": "Entity.State == 1"
+							transition list: transition "walking": "Entity.State == 3"
+					state "sneaking":
+						field "animations": animation "sneak": empty
+						field "transitions":
+							transition list: transition "sprinting": "Entity.State == 1"
+							transition list: transition "sitting": "Entity.State == 2"
+							transition list: transition "walking": "Entity.State == 3"
+					state "sprinting":
+						field "animations": animation "sprint": empty
+						field "parameters": parameter: "Entity.Member.WalkSpeed"
+						field "transitions":
+							transition list: transition "sneaking": "Entity.State == 0"
+							transition list: transition "sitting": "Entity.State == 2"
+							transition list: transition "walking": "Entity.State == 3"
+					state "walking":
+						field "animations": animation "walk": empty
+						field "parameters": parameter: "Entity.Member.WalkSpeed"
+						field "transitions":
+							transition list: transition "sneaking": "Entity.State == 0"
+							transition list: transition "sprinting": "Entity.State == 1"
+							transition list: transition "sitting": "Entity.State == 2"
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "phantom":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.phantom.base_pose": field "states": state "default": field "animations": animation "phantom_base_pose": empty
+			animation controller "controller.animation.phantom.move": field "states": state "default": field "animations": animation "move": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Changed file "pig":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 3 (+1, -0)
+			Changed animation controller "controller.animation.pig.move":
+				Changed field "states":
+					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.WalkBlendAmount".
+							Added parameter "Entity.Member.WalkSpeed".
+			Added animation controller "controller.animation.pig.setup" of field "states": state "default": field "animations": animation "setup": empty.
+		Added field "defined_in" of resource pack: "vanilla".
+		Added field "format_version" of "1.8.0-beta.1".
+Changed file "sheep":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 3 (+1, -0)
+			Changed animation controller "controller.animation.sheep.move":
+				Changed field "states":
+					Changed state "default":
+						Changed field "animations":
+							Total animation: 1 (+0, -1)
+							Removed empty animation "look_at_target".
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.WalkBlendAmount".
+							Added parameter "Entity.Member.WalkSpeed".
+			Added animation controller "controller.animation.sheep.setup" of field "states": state "baby": field "animations": animation "setup": empty.
+		Added field "defined_in" of resource pack: "vanilla".
+		Added field "format_version" of "1.8.0-beta.1".
+Added file "shulker":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.shulker.facing": field "states": state "default": field "animations": animation "facing": empty
+			animation controller "controller.animation.shulker.move":
+				field "states":
+					state "default":
+						field "animations":
+							animation "look_at_target": empty
+							animation "move": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "silverfish":
+	resource pack "core":
+		field "animation_controllers": animation controller "controller.animation.silverfish.move": field "states": state "default": field "animations": animation "move": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Changed file "skeleton":
+	Changed resource pack "core":
+		Added field "defined_in" of resource pack: "vanilla".
+		Added field "format_version" of "1.8.0-beta.1".
+Changed file "spider":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 1 (+0, -1)
+			Removed animation controller "controller.animation.cave_spider.scale" of field "states": state "default": field "animations": animation "scale_spider": empty.
+			Changed animation controller "controller.animation.spider.move":
+				Changed field "states":
+					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.WalkBlendAmount".
+							Added parameter "Entity.Member.WalkSpeed".
+		Added field "defined_in" of resource pack: "vanilla".
+		Added field "format_version" of "1.8.0-beta.1".
+Added file "squid":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.squid.move":
+				field "states":
+					state "default":
+						field "animations":
+							animation "move": empty
+							animation "squid_rotate": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "turtle":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.turtle.general": field "states": state "default": field "animations": animation "general": empty
+			animation controller "controller.animation.turtle.move":
+				field "states":
+					state "default":
+						field "animations": animation "look_at_target": empty
+						field "transitions":
+							transition list: transition "swimming": "Entity.IsInWater && !Entity.IsOnGround"
+							transition list: transition "walking": "!Entity.IsInWater && Entity.IsOnGround"
+					state "swimming":
+						field "animations":
+							animation "look_at_target": empty
+							animation "move": empty
+						field "parameters": parameter: "Entity.Member.WalkSpeed"
+						field "transitions": transition list: transition "walking": "!Entity.IsInWater && Entity.IsOnGround"
+					state "walking":
+						field "animations":
+							animation "ground_move": empty
+							animation "look_at_target": empty
+						field "parameters": parameter: "Entity.Member.WalkSpeed"
+						field "transitions": transition list: transition "swimming": "Entity.IsInWater && !Entity.IsOnGround"
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "vex":
+	resource pack "core":
+		field "animation_controllers": animation controller "controller.animation.vex.move": field "states": state "default": field "animations": animation "move": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "villager":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.villager.baby":
+				field "states":
+					state "baby":
+						field "animations":
+							animation "baby_transform":
+								item:
+									timestamp "0.0": 0.0
+									timestamp "1.0": 1.0
+						field "parameters": parameter: "Entity.Flags.BABY"
+			animation controller "controller.animation.villager.general":
+				field "states":
+					state "default":
+						field "animations":
+							animation "general": empty
+							animation "look_at_target": empty
+			animation controller "controller.animation.villager.move":
+				field "states":
+					state "default":
+						field "animations":
+							animation "move":
+								item:
+									timestamp "0.0": 0.0
+									timestamp "1.0": 1.0
+						field "parameters": parameter: "Entity.Member.WalkSpeed"
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "vindicator":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.vindicator.base":
+				field "states":
+					state "default":
+						field "animations":
+							animation "vindicator_attack": empty
+							animation "vindicator_base": empty
+							animation "vindicator_walk": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"
+Added file "witch":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.witch.general":
+				field "states":
+					state "default":
+						field "animations":
+							animation "general": empty
+							animation "look_at_target": empty
+							animation "villager_general": empty
+		field "format_version": "1.8.0-beta.1"
+		field "defined_in": resource pack: "vanilla"

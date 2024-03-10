@@ -1,0 +1,55 @@
+Difference of "animation_controllers" between "1.16.0.60" (beta of "1.16.0") and "1.16.0.61" (beta of "1.16.0").
+
+Total file: 53 (+1, -0)
+Added file "elytra.animation_controllers":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.elytra.default":
+				field "initial_state": "default"
+				field "states":
+					state "default":
+						field "animations": animation dict: "default"
+						field "blend_transition": 0.1
+						field "blend_via_shortest_path": true
+						field "transitions":
+							transition list: transition "gliding": "query.is_gliding"
+							transition list: transition "sneaking": "query.is_sneaking"
+							transition list: transition "sleeping": "query.is_sleeping"
+							transition list: transition "swimming": "query.is_swimming"
+					state "gliding":
+						field "animations": animation dict: "gliding"
+						field "blend_transition": 0.1
+						field "blend_via_shortest_path": true
+						field "transitions":
+							transition list: transition "sleeping": "query.is_sleeping"
+							transition list: transition "swimming": "query.is_swimming"
+							transition list: transition "default": "!query.is_gliding"
+					state "sleeping":
+						field "animations": animation dict: "sleeping"
+						field "blend_transition": 0.1
+						field "blend_via_shortest_path": true
+						field "transitions":
+							transition list: transition "gliding": "query.is_gliding"
+							transition list: transition "sneaking": "query.is_sneaking"
+							transition list: transition "swimming": "query.is_swimming"
+							transition list: transition "default": "!query.is_sleeping"
+					state "sneaking":
+						field "animations": animation dict: "sneaking"
+						field "blend_transition": 0.1
+						field "blend_via_shortest_path": true
+						field "transitions":
+							transition list: transition "gliding": "query.is_gliding"
+							transition list: transition "sleeping": "query.is_sleeping"
+							transition list: transition "swimming": "query.is_swimming"
+							transition list: transition "default": "!query.is_sneaking"
+					state "swimming":
+						field "animations": animation dict: "swimming"
+						field "blend_transition": 0.1
+						field "blend_via_shortest_path": true
+						field "transitions":
+							transition list: transition "gliding": "query.is_gliding"
+							transition list: transition "sneaking": "query.is_sneaking"
+							transition list: transition "sleeping": "query.is_sleeping"
+							transition list: transition "default": "!query.is_swimming"
+		field "format_version": "1.10.0"
+		field "defined_in": resource pack: "vanilla"

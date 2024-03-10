@@ -1,0 +1,39 @@
+Difference of "animation_controllers" between "1.20.70.21" (beta of "1.20.70") and "1.20.70.22" (beta of "1.20.70").
+
+Changed file "armadillo.animation_controllers":
+	Changed resource pack "experimental":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.armadillo.roll_up":
+				Changed field "states":
+					Total state: 6 (+2, -0)
+					Added state "peek":
+						field "animations": animation dict: "peek"
+						field "blend_transition": 0.2
+						field "transitions":
+							transition list: transition "rolled_up": "variable.is_rolled_up && !variable.is_peeking && query.all_animations_finished"
+							transition list: transition "unroll": "variable.is_rolled_up && variable.is_unrolling && query.all_animations_finished"
+							transition list: transition "unroll_fast": "!variable.is_rolled_up"
+					Changed state "roll_up":
+						Added field "blend_transition" of 0.2.
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "unroll": "!variable.is_rolled_up".
+							Added transition list transition "unroll_fast": "!variable.is_rolled_up".
+					Changed state "rolled_up":
+						Added field "blend_transition" of 0.2.
+						Changed field "transitions":
+							Total transition list: 3 (+3, -1)
+							Removed transition list transition "unroll": "!variable.is_rolled_up".
+							Added transition list transition "peek": "variable.is_rolled_up && variable.is_peeking".
+							Added transition list transition "unroll": "variable.is_rolled_up && variable.is_unrolling".
+							Added transition list transition "unroll_fast": "!variable.is_rolled_up".
+					Changed state "unroll":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -1)
+							Removed transition list transition "default": "query.all_animations_finished".
+							Added transition list transition "rolled_up": "variable.is_rolled_up && !variable.is_unrolling".
+							Added transition list transition "default": "!variable.is_rolled_up && query.all_animations_finished".
+					Added state "unroll_fast":
+						field "animations": animation dict: "unroll_fast"
+						field "blend_transition": 0.2
+						field "transitions": transition list: transition "default": "query.all_animations_finished"

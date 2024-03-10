@@ -1,0 +1,58 @@
+Difference of "animation_controllers" between "1.10.0" and "1.11.0.1" (beta of "1.11.0").
+Unable to create data files for 1 file between: "1.10.1"
+
+Total file: 44 (+1, -1)
+Removed file "illager_beast.animation_controllers":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.illager_beast.head_movement": field "states": state "default": field "animations": animation dict: animation "idle_mouth": empty
+			animation controller "controller.animation.illager_beast.move":
+				field "states":
+					state "default":
+						field "animations":
+							animation dict:
+								animation "walk":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+							animation dict: animation "look_at_target": empty
+						field "parameters": parameter: "query.modified_move_speed"
+		field "format_version": "1.8.0"
+		field "defined_in": resource pack: "vanilla"
+Added file "ravager.animation_controllers":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.ravager.head_movement":
+				field "states":
+					state "biting":
+						field "animations": animation dict: animation "biting": empty
+						field "transitions": transition list: transition "default": "query.is_delayed_attacking == 0"
+					state "default":
+						field "animations": animation dict: animation "idle_mouth": empty
+						field "transitions":
+							transition list: transition "roaring": "query.is_roaring == 1"
+							transition list: transition "biting": "query.is_delayed_attacking == 1"
+					state "roaring":
+						field "animations": animation dict: animation "roaring": empty
+						field "transitions": transition list: transition "default": "query.is_roaring == 0"
+			animation controller "controller.animation.ravager.move":
+				field "states":
+					state "default":
+						field "animations":
+							animation dict:
+								animation "walk":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+							animation dict: animation "look_at_target": empty
+						field "parameters": parameter: "query.modified_move_speed"
+						field "transitions": transition list: transition "stunned": "query.is_stunned == 1"
+					state "stunned":
+						field "animations": animation dict: animation "stunned": empty
+						field "particle_effects":
+							particle effect:
+								field "effect": "stun_particles"
+								field "locator": "stun"
+						field "transitions": transition list: transition "default": "query.is_stunned == 0"
+		field "format_version": "1.8.0"
+		field "defined_in": resource pack: "vanilla"

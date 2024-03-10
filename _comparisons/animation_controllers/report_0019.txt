@@ -1,0 +1,130 @@
+Difference of "animation_controllers" between "1.13.0.6" (beta of "1.13.0") and "1.13.0.9" (beta of "1.13.0").
+
+Total file: 48 (+1, -0)
+Changed file "evoker.animation_controllers":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 2 (+1, -0)
+			Changed animation controller "controller.animation.evoker.general":
+				Changed field "states":
+					Total state: 3 (+1, -0)
+					Added state "celebrating":
+						field "animations": animation dict: "celebrating"
+						field "blend_transition": 0.2
+						field "blend_via_shortest_path": true
+						field "transitions": transition list: transition "default": "!query.is_celebrating"
+					Changed state "default":
+						Added field "blend_transition" of 0.2.
+						Added field "blend_via_shortest_path" of true.
+						Changed field "transitions":
+							Total transition list: 2 (+1, -0)
+							Added transition list transition "celebrating": "query.is_celebrating".
+			Added animation controller "controller.animation.evoker.general.v1.0":
+				field "initial_state": "default"
+				field "states":
+					state "casting":
+						field "animations":
+							animation dict: "look_at_target"
+							animation dict: "casting"
+						field "particle_effects":
+							particle effect:
+								field "effect": "spell"
+								field "locator": "left_hand"
+							particle effect:
+								field "effect": "spell"
+								field "locator": "right_hand"
+						field "transitions": transition list: transition "default": "!query.is_casting"
+					state "default":
+						field "animations":
+							animation dict: "look_at_target"
+							animation dict: "general"
+						field "transitions": transition list: transition "casting": "query.is_casting"
+Changed file "fish.animation_controllers":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.fish.general":
+				Changed field "states":
+					Changed state "flopping":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "swimming": "query.is_in_water".
+							Added transition list transition "swimming": "query.is_in_water || query.is_levitating".
+					Changed state "swimming":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "flopping": "!query.is_in_water".
+							Added transition list transition "flopping": "!query.is_in_water && !query.is_levitating".
+Added file "persona.animation_controllers":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.persona.blink":
+				field "initial_state": "default"
+				field "states":
+					state "blink": field "transitions": transition list: transition "open": "variable.is_blinking = 1; variable.last_blink_time = query.life_time; return query.all_animations_finished && (query.life_time > variable.return_from_blink);"
+					state "default": field "transitions": transition list: transition "open": "variable.is_blinking = 0; variable.last_blink_time = query.life_time; return variable.last_blink_time != 0;"
+					state "open": field "transitions": transition list: transition "blink": "variable.is_blinking = 0; variable.return_from_blink = query.life_time + math.random(0, 0.2); return query.life_time > (variable.last_blink_time + math.random(3, 40));"
+		field "format_version": "1.10.0"
+		field "defined_in": resource pack: "vanilla"
+Changed file "pillager.animation_controllers":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 2 (+1, -0)
+			Added animation controller "controller.animation.pillager.root":
+				field "initial_state": "default"
+				field "states":
+					state "celebrating":
+						field "animations": animation dict: "celebrating"
+						field "blend_transition": 0.2
+						field "blend_via_shortest_path": true
+						field "transitions": transition list: transition "default": "!query.is_celebrating"
+					state "default":
+						field "animations":
+							animation dict: "controller_humanoid_base_pose"
+							animation dict: "controller_look_at_target"
+							animation dict: "controller_move"
+							animation dict: "controller_riding"
+							animation dict: "controller_attack"
+							animation dict: "controller_bob"
+							animation dict: "controller_pillager_attack"
+						field "blend_transition": 0.2
+						field "blend_via_shortest_path": true
+						field "transitions": transition list: transition "celebrating": "query.is_celebrating"
+Changed file "player.animation_controllers":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.player.root":
+				Changed field "states":
+					Changed state "first_person":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "third_person": "!variable.is_first_person".
+							Added transition list transition "third_person": "variable.is_third_person".
+					Changed state "paperdoll":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "third_person": "!variable.is_paperdoll && !variable.is_first_person".
+							Added transition list transition "third_person": "!variable.is_paperdoll && variable.is_third_person".
+Changed file "vindicator.animation_controllers":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 2 (+1, -0)
+			Changed animation controller "controller.animation.vindicator.base":
+				Changed field "states":
+					Total state: 2 (+1, -0)
+					Added state "celebrating":
+						field "animations": animation dict: "celebrating"
+						field "blend_transition": 0.2
+						field "blend_via_shortest_path": true
+						field "transitions": transition list: transition "default": "!query.is_celebrating"
+					Changed state "default":
+						Added field "blend_transition" of 0.2.
+						Added field "blend_via_shortest_path" of true.
+						Added field "transitions" of transition list: transition "celebrating": "query.is_celebrating".
+			Added animation controller "controller.animation.vindicator.base.v1.0":
+				field "initial_state": "default"
+				field "states":
+					state "default":
+						field "animations":
+							animation dict: "vindicator_base"
+							animation dict: "vindicator_attack"
+							animation dict: "vindicator_walk"

@@ -1,0 +1,22 @@
+Difference of "animation_controllers" between "1.18.30.20" (beta of "1.18.30") and "1.18.30.22" (beta of "1.18.30").
+
+Total file: 59 (+1, -0)
+Added file "allay.animation_controllers":
+	resource pack "experimental":
+		field "animation_controllers":
+			animation controller "controller.animation.allay.general":
+				field "initial_state": "idling"
+				field "states":
+					state "flying":
+						field "animations": animation dict: "fly"
+						field "blend_transition": 0.2
+						field "transitions": transition list: transition "idling": "query.modified_move_speed < 0.2"
+					state "idling":
+						field "animations": animation dict: "idle"
+						field "blend_transition": 0.2
+						field "transitions": transition list: transition "flying": "query.modified_move_speed > 0.2"
+			animation controller "controller.animation.allay.holding":
+				field "initial_state": "holding"
+				field "states": state "holding": field "animations": animation dict: animation "hold_item": "variable.is_holding_left || variable.is_holding_right"
+		field "format_version": "1.10.0"
+		field "defined_in": resource pack: "experimental_wild_update"

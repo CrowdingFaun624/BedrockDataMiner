@@ -1,0 +1,64 @@
+Difference of "animation_controllers" between "1.16.210.57" (beta of "1.16.210") and "1.16.210.58" (beta of "1.16.210").
+
+Total file: 55 (+2, -0)
+Changed file "player.animation_controllers":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.player.first_person_attack":
+				Changed field "states":
+					Changed state "default":
+						Changed field "animations":
+							Total animation dict: 2 (+2, -1)
+							Removed animation dict "first_person_attack_rotation".
+							Added animation dict animation "first_person_attack_rotation": "variable.is_holding_right <= 0.0".
+							Added animation dict animation "first_person_attack_rotation_item": "variable.is_holding_right > 0.0".
+					Changed state "vr_attack":
+						Changed field "animations":
+							Total animation dict: 2 (+2, -1)
+							Removed animation dict "first_person_vr_attack_rotation".
+							Added animation dict animation "first_person_vr_attack_rotation": "variable.is_holding_right <= 0.0".
+							Added animation dict animation "first_person_attack_rotation_item": "variable.is_holding_right > 0.0".
+			Changed animation controller "controller.animation.player.root":
+				Changed field "states":
+					Changed state "first_person":
+						Changed field "animations":
+							Total animation dict: 9 (+3, -0)
+							Added animation dict animation "first_person_walk": "!variable.bob_animation".
+							Added animation dict animation "first_person_crossbow_hold": "query.get_equipped_item_name == 'crossbow' && query.item_is_charged".
+							Added animation dict animation "first_person_breathing_bob": "variable.attack_time <= 0.0".
+Added file "shield.animation_controllers":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.shield.wield":
+				field "initial_state": "first_person"
+				field "states":
+					state "first_person":
+						field "animations":
+							animation dict: animation "wield_main_hand_first_person": "c.item_slot == 'main_hand'"
+							animation dict: animation "wield_off_hand_first_person": "c.item_slot != 'main_hand'"
+							animation dict: animation "wield_first_person_block": "c.item_slot != 'main_hand' && query.blocking"
+						field "transitions": transition list: transition "third_person": "!c.is_first_person"
+					state "third_person":
+						field "animations": animation dict: "wield_third_person"
+						field "transitions": transition list: transition "first_person": "c.is_first_person"
+		field "format_version": "1.10.0"
+		field "defined_in": resource pack: "vanilla"
+Added file "trident.animation_controllers":
+	resource pack "core":
+		field "animation_controllers":
+			animation controller "controller.animation.trident.wield":
+				field "initial_state": "first_person"
+				field "states":
+					state "first_person":
+						field "animations":
+							animation dict: "wield_first_person"
+							animation dict: animation "wield_first_person_raise": "query.main_hand_item_use_duration > 0.0f"
+							animation dict: animation "wield_first_person_riptide": "query.can_damage_nearby_mobs > 0.0"
+						field "transitions": transition list: transition "third_person": "!c.is_first_person"
+					state "third_person":
+						field "animations":
+							animation dict: "wield_third_person"
+							animation dict: animation "wield_third_person_raise": "query.main_hand_item_use_duration > 0.0f"
+						field "transitions": transition list: transition "first_person": "c.is_first_person"
+		field "format_version": "1.10.0"
+		field "defined_in": resource pack: "vanilla"

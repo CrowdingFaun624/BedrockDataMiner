@@ -1,0 +1,53 @@
+Difference of "animation_controllers" between "1.9.0.0" (beta of "1.9.0") and "1.9.0.2" (beta of "1.9.0").
+
+Changed file "humanoid":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 15 (+1, -0)
+			Added animation controller "controller.animation.humanoid.baby_big_head":
+				field "states":
+					state "baby":
+						field "animations": animation dict: animation "humanoid_big_head": empty
+						field "transitions": transition list: transition "default": "!query.is_baby"
+					state "default": field "transitions": transition list: transition "baby": "query.is_baby"
+Changed file "iron_golem":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.iron_golem.arm_movement":
+				Changed field "states":
+					Changed state "attack":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "default": "variable.AttackAnimationTick <= 0.0".
+							Added transition list transition "default": "variable.attack_animation_tick <= 0.0".
+					Changed state "default":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "attack": "variable.AttackAnimationTick > 0.0".
+							Removed transition list transition "flower": "variable.OfferFlowerTick".
+							Added transition list transition "attack": "variable.attack_animation_tick > 0.0".
+							Added transition list transition "flower": "variable.offer_flower_tick".
+					Changed state "flower":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "attack": "variable.AttackAnimationTick > 0.0".
+							Removed transition list transition "default": "variable.OfferFlowerTick <= 0.0".
+							Added transition list transition "attack": "variable.attack_animation_tick > 0.0".
+							Added transition list transition "default": "variable.offer_flower_tick <= 0.0".
+			Changed animation controller "controller.animation.iron_golem.move":
+				Changed field "states":
+					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "variable.WalkBlendAmount".
+							Added parameter "query.walk_speed".
+Changed file "snow_golem":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.snowgolem.move":
+				Changed field "states":
+					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "variable.WalkBlendAmount".
+							Added parameter "query.walk_speed".

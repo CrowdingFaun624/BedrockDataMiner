@@ -1,0 +1,28 @@
+Difference of "animation_controllers" between "1.20.60.21" (beta of "1.20.60") and "1.20.60.22" (beta of "1.20.60").
+
+Changed file "breeze.animation_controllers":
+	Changed resource pack "experimental":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.breeze.ground_particles":
+				Changed field "states":
+					Changed state "default":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "idling": "!query.is_moving && query.is_on_ground && query.vertical_speed > -2".
+							Removed transition list transition "moving": "query.is_moving && query.is_on_ground && query.vertical_speed > -2".
+							Added transition list transition "idling": "!query.is_moving && query.is_on_ground && query.vertical_speed > -2 && !query.is_riding".
+							Added transition list transition "moving": "query.is_moving && query.is_on_ground && query.vertical_speed > -2 && !query.is_riding".
+					Changed state "idling":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "default": "!query.is_on_ground".
+							Removed transition list transition "moving": "query.is_moving && query.is_on_ground".
+							Added transition list transition "default": "!query.is_on_ground || query.is_riding".
+							Added transition list transition "moving": "query.is_moving && query.is_on_ground && !query.is_riding".
+					Changed state "moving":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "default": "!query.is_on_ground".
+							Removed transition list transition "idling": "!query.is_moving && query.is_on_ground".
+							Added transition list transition "default": "!query.is_on_ground || query.is_riding".
+							Added transition list transition "idling": "!query.is_moving && query.is_on_ground && !query.is_riding".

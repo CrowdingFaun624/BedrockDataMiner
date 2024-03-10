@@ -1,0 +1,26 @@
+Difference of "animation_controllers" between "1.19.20.20" (beta of "1.19.20") and "1.19.20.22" (beta of "1.19.20").
+
+Changed file "allay.animation_controllers":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 4 (+1, -0)
+			Changed animation controller "controller.animation.allay.holding":
+				Changed field "states":
+					Total state: 2 (+1, -0)
+					Added state "fly_holding":
+						field "animations": animation dict: animation "hold_item_fly": "variable.is_holding_left || variable.is_holding_right"
+						field "blend_transition": 0.2
+						field "transitions": transition list: transition "holding": "query.modified_move_speed < 0.2"
+					Changed state "holding":
+						Added field "blend_transition" of 0.2.
+						Added field "transitions" of transition list: transition "fly_holding": "query.modified_move_speed > 0.2".
+			Added animation controller "controller.animation.allay.look_at_target":
+				field "initial_state": "default"
+				field "states":
+					state "default": field "transitions": transition list: transition "looking_at_target": "!query.is_dancing"
+					state "looking_at_target":
+						field "animations": animation dict: "look_at_target_default"
+						field "transitions": transition list: transition "default": "query.is_dancing"
+		Changed field "defined_in":
+			Total resource pack: 3 (+1, -0)
+			Added resource pack "vanilla_1.19.20".
