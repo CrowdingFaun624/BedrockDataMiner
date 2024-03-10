@@ -62,28 +62,6 @@ class MyBlocksJsonClientBlockTypedDict(TypedDict):
     name: str
     properties: BlocksJsonClientBlockTypedDict
 
-class DiffBlocksJsonClientBlockTexturesTypedDict(TypedDict):
-    down: str|D.Diff[str,str]
-    east: str|D.Diff[str,str]
-    north: str|D.Diff[str,str]
-    side: str|D.Diff[str,str]
-    south: str|D.Diff[str,str]
-    up: str|D.Diff[str,str]
-    west: str|D.Diff[str,str]
-
-class DiffBlocksJsonClientBlockIsotropicTypedDict(TypedDict):
-    down: bool|D.Diff[bool,bool]
-    up: bool|D.Diff[bool,bool]
-
-class DiffBlocksJsonClientBlockTypedDict(TypedDict):
-    blockshape: str|D.Diff[str,str]
-    brightness_gamma: float|D.Diff[float,float]
-    carried_textures: str|DiffBlocksJsonClientBlockTexturesTypedDict|D.Diff[str|DiffBlocksJsonClientBlockTexturesTypedDict,str|DiffBlocksJsonClientBlockTexturesTypedDict]
-    defined_in: list[str|D.Diff[str,str]]
-    isotropic: bool|DiffBlocksJsonClientBlockIsotropicTypedDict|D.Diff[bool|DiffBlocksJsonClientBlockIsotropicTypedDict,bool|DiffBlocksJsonClientBlockIsotropicTypedDict]
-    sound: str|D.Diff[str,str]
-    textures: str|DiffBlocksJsonClientBlockTexturesTypedDict|D.Diff[str|DiffBlocksJsonClientBlockTexturesTypedDict,str|DiffBlocksJsonClientBlockTexturesTypedDict]
-
 class NormalizedBlocksJsonClientBlockTypedDict(TypedDict):
     blockshape: str
     brightness_gamma: float
@@ -96,7 +74,6 @@ class NormalizedBlocksJsonClientBlockTypedDict(TypedDict):
 BlocksClient = dict[str,BlocksJsonClientBlockTypedDict]
 MyBlocksClient = list[MyBlocksJsonClientBlockTypedDict]
 NormalizedBlocksClient = dict[str,dict[str,NormalizedBlocksJsonClientBlockTypedDict]]
-DiffBlocksClient = dict[str|D.Diff[str,str],dict[str|D.Diff[str,str],DiffBlocksJsonClientBlockTypedDict|D.Diff[DiffBlocksJsonClientBlockTypedDict,DiffBlocksJsonClientBlockTypedDict]]]
 
 # credits
 
