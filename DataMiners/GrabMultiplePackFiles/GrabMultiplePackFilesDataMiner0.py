@@ -6,9 +6,6 @@ import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiner as GrabMu
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Sorting as Sorting
 
-def a(aa:tuple[type,...]) -> None: pass
-a((str, type(None)))
-
 class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultiplePackFilesDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
@@ -20,6 +17,8 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
 
     def initialize(self, **kwargs) -> None:
         self.location:str = kwargs["location"]
+        if not self.location.endswith("/"):
+            raise ValueError("\"location\" \"%s\" does not end in \"/\"!" % (self.location))
         self.pack_type:str = kwargs["pack_type"]
         if "suffixes" in kwargs:
             self.suffixes:list[str]|None = kwargs["suffixes"]
@@ -44,17 +43,21 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
                     file_name = path.replace(path_base, "", 1).replace(suffix, "", 1)
                     assert not file_name.endswith(suffix)
                     files[file_name, pack["name"]] = path
-        if len(files) == 0:
+
+        output:dict[str,dict[str,Any]] = {}
+        for (file_name, pack_name), path in files.items():
+            file_bits = self.read_file(path)
+            if len(file_bits) <= 1: continue
+            file_data = pyjson5.loads(file_bits)
+            if file_name not in output:
+                output[file_name] = {pack_name: file_data}
+            else:
+                output[file_name][pack_name] = file_data
+
+        if len(output) == 0:
             if self.file_display_name is None:
                 raise FileNotFoundError("No files found in \"%s\"" % self.version)
             else:
                 raise FileNotFoundError("No %s files found in \"%s\"" % (self.file_display_name, self.version))
 
-        output:dict[str,dict[str,Any]] = {}
-        for (file_name, pack_name), path in files.items():
-            file_data = pyjson5.loads(self.read_file(path))
-            if file_name not in output:
-                output[file_name] = {pack_name: file_data}
-            else:
-                output[file_name][pack_name] = file_data
         return Sorting.sort_everything(output)

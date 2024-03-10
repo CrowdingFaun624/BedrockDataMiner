@@ -33,5 +33,5 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
             else:
                 raise FileNotFoundError("No %s files found in \"%s\"" % (self.file_display_name, self.version))
 
-        output = {pack_files[pack_file]: loading_tips for pack_file, loading_tips in files.items()}
+        output = {pack_files[pack_file]: data for pack_file, data in files.items()}
         return Sorting.sort_everything(output)
