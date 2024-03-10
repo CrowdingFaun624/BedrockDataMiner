@@ -1,0 +1,344 @@
+Difference of "entities" between "1.16.210.50" (beta of "1.16.210") and "1.16.210.51" (beta of "1.16.210").
+
+Changed entity "creeper":
+	Added behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "minecraft:charged_creeper": component "minecraft:is_charged": empty
+				component group "minecraft:charged_exploding":
+					component "minecraft:explode":
+						field "causes_fire": false
+						field "destroy_affected_by_griefing": true
+						field "fuse_length": 1.5
+						field "fuse_lit": true
+						field "power": 6
+				component group "minecraft:exploding":
+					component "minecraft:explode":
+						field "causes_fire": false
+						field "destroy_affected_by_griefing": true
+						field "fuse_length": 1.5
+						field "fuse_lit": true
+						field "power": 3
+				component group "minecraft:forced_charged_exploding":
+					component "minecraft:explode":
+						field "causes_fire": false
+						field "destroy_affected_by_griefing": true
+						field "fuse_length": 1.5
+						field "fuse_lit": true
+						field "power": 6
+					component "minecraft:on_target_escape": empty
+					component "minecraft:target_nearby_sensor": empty
+				component group "minecraft:forced_exploding":
+					component "minecraft:explode":
+						field "causes_fire": false
+						field "destroy_affected_by_griefing": true
+						field "fuse_length": 1.5
+						field "fuse_lit": true
+						field "power": 3
+					component "minecraft:on_target_escape": empty
+					component "minecraft:target_nearby_sensor": empty
+			field "components":
+				component "minecraft:attack": field "damage": 3
+				component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "ocelot"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "cat"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+					field "priority": 3
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target":
+					field "entity_types":
+						field "filters":
+							filter property "operator": "!="
+							filter property "subject": "other"
+							filter property "test": "is_family"
+							filter property "value": "goat"
+					field "priority": 2
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8
+					field "priority": 6
+				component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "reach_multiplier": 0.0
+					field "speed_multiplier": 1.25
+					field "track_target": false
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "player"
+							field "max_dist": 16
+					field "must_see": true
+					field "must_see_forget_duration": 3.0
+					field "priority": 1
+				component "minecraft:behavior.random_look_around": field "priority": 6
+				component "minecraft:behavior.random_stroll":
+					field "priority": 5
+					field "speed_multiplier": 1
+				component "minecraft:behavior.swell":
+					field "priority": 2
+					field "start_distance": 2.5
+					field "stop_distance": 6.0
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 1.8
+					field "width": 0.6
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "deals_damage": false
+						field "on_damage":
+							field "event": "minecraft:become_charged"
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "lightning"
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 : 0"
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:interact":
+					field "interactions":
+						field "hurt_item": 1
+						field "interact_text": "action.interact.creeper"
+						field "on_interact":
+							field "event": "minecraft:start_exploding_forced"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "domain": "hand"
+										filter property "subject": "other"
+										filter property "test": "has_equipment"
+										filter property "value": "flint_and_steel"
+									filter:
+										filter property "operator": "!="
+										filter property "test": "has_component"
+										filter property "value": "minecraft:explode"
+							field "target": "self"
+						field "play_sounds": "ignite"
+						field "swing": true
+				component "minecraft:jump.static": empty
+				component "minecraft:loot": field "table": "loot_tables/entities/creeper.json"
+				component "minecraft:movement": field "value": 0.2
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk": field "can_path_over_water": true
+				component "minecraft:on_target_escape":
+					field "event": "minecraft:stop_exploding"
+					field "target": "self"
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:target_nearby_sensor":
+					field "inside_range": 2.5
+					field "must_see": true
+					field "on_inside_range":
+						field "event": "minecraft:start_exploding"
+						field "target": "self"
+					field "on_outside_range":
+						field "event": "minecraft:stop_exploding"
+						field "target": "self"
+					field "on_vision_lost_inside_range":
+						field "event": "minecraft:stop_exploding"
+						field "target": "self"
+					field "outside_range": 6.0
+				component "minecraft:type_family":
+					field "family":
+						family: "creeper"
+						family: "monster"
+						family: "mob"
+			field "description":
+				description "identifier": "minecraft:creeper"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "minecraft:become_charged":
+					field "add": field "component_groups": component group: "minecraft:charged_creeper"
+					field "remove": field "component_groups": component group: "minecraft:exploding"
+				event "minecraft:start_exploding":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:exploding"
+							field "filters":
+								filter property "operator": "!="
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:charged_exploding"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+				event "minecraft:start_exploding_forced":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:forced_exploding"
+							field "filters":
+								filter property "operator": "!="
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:forced_charged_exploding"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+				event "minecraft:stop_exploding": field "remove": field "component_groups": component group: "minecraft:exploding"
+		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
+Changed entity "goat":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "attack_cooldown":
+					Changed component "minecraft:attack_cooldown":
+						Changed field "attack_cooldown_time":
+							Changed range item 0 from 10.0 to 30.0.
+							Changed range item 1 from 15.0 to 40.0.
+				Changed component group "minecraft:goat_adult":
+					Total component: 7 (+2, -0)
+					Changed component "minecraft:behavior.breed":
+						Changed field "speed_multiplier" from 1.0 to 0.6.
+					Added component "minecraft:behavior.jump_to_block":
+						field "cooldown_range": [5.0, 10.0]
+						field "minimum_distance": 1
+						field "minimum_path_length": 7
+						field "priority": 8
+						field "scale_factor": 0.6
+						field "search_height": 10
+						field "search_width": 8
+					Added component "minecraft:behavior.ram_attack":
+						field "knockback_force": 5.0
+						field "knockback_height": 0.03
+						field "on_start":
+							event:
+								field "event": "start_event"
+								field "target": "self"
+						field "priority": 5
+						field "ram_distance": 9.0
+						field "ram_speed": 1.8
+						field "run_speed": 0.7
+					Changed component "minecraft:breedable":
+						Removed field "max_number_of_children" of 8.
+						Removed field "min_number_of_children" of 3.
+				Changed component group "minecraft:goat_baby":
+					Total component: 6 (+2, -0)
+					Changed component "minecraft:behavior.follow_parent":
+						Changed field "speed_multiplier" from 1.1 to 1.0.
+					Added component "minecraft:behavior.jump_to_block":
+						field "cooldown_range": [5.0, 10.0]
+						field "minimum_distance": 1
+						field "minimum_path_length": 7
+						field "priority": 8
+						field "scale_factor": 0.6
+						field "search_height": 9
+						field "search_width": 7
+					Added component "minecraft:behavior.ram_attack":
+						field "knockback_force": 2.5
+						field "knockback_height": 0.04
+						field "on_start":
+							event:
+								field "event": "start_event"
+								field "target": "self"
+						field "priority": 5
+						field "ram_distance": 9.0
+						field "ram_speed": 1.8
+						field "run_speed": 0.7
+			Changed field "components":
+				Total component: 24 (+0, -3)
+				Changed component "minecraft:attack":
+					Changed field "damage" from 5 to 1.
+				Removed component "minecraft:behavior.follow_parent":
+					field "priority": 7
+					field "speed_multiplier": 1.1
+				Removed component "minecraft:behavior.jump_to_block":
+					field "cooldown_range": [5.0, 10.0]
+					field "minimum_path_length": 7
+					field "priority": 8
+					field "scale_factor": 0.6
+					field "search_height": 10
+					field "search_width": 8
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 1 (+1, -1)
+						Removed entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "goat"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "shulker"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "self"
+										filter property "test": "has_component"
+										filter property "value": "minecraft:attack_cooldown"
+							field "max_dist": 16
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "goat"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "armor_stand"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "self"
+										filter property "test": "has_component"
+										filter property "value": "minecraft:attack_cooldown"
+							field "max_dist": 16
+				Changed component "minecraft:behavior.panic":
+					Changed field "speed_multiplier" from 1.25 to 1.0.
+				Removed component "minecraft:behavior.ram_attack":
+					field "on_start":
+						event:
+							field "event": "start_event"
+							field "target": "self"
+					field "priority": 5
+					field "ram_distance": 9.0
+					field "ram_speed": 1.7
+					field "run_speed": 0.7
+				Changed component "minecraft:behavior.tempt":
+					Changed field "speed_multiplier" from 1.25 to 1.0.

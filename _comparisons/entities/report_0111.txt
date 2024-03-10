@@ -1,0 +1,256 @@
+Difference of "entities" between "1.16.100.53" (beta of "1.16.100") and "1.16.100.54" (beta of "1.16.100").
+
+Changed entity "hoglin":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:hoglin_adult":
+					Total component: 11 (+0, -1)
+					Removed component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+				Changed component group "minecraft:hoglin_baby":
+					Changed component "minecraft:attack":
+						Changed field "damage" from 0.5 to 1.0.
+			Changed field "components":
+				Total component: 20 (+1, -0)
+				Changed component "minecraft:behavior.avoid_block":
+					Changed field "target_blocks":
+						Total block: 3 (+1, -0)
+						Added block "minecraft:respawn_anchor".
+				Added component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? 5 : 0"
+Changed entity "iron_golem":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 3 (+2, -0)
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "hoglin"
+									filter:
+										filter property "operator": "!="
+										filter property "test": "is_difficulty"
+										filter property "value": "peaceful"
+							field "max_dist": 16
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "zoglin"
+									filter:
+										filter property "operator": "!="
+										filter property "test": "is_difficulty"
+										filter property "value": "peaceful"
+							field "max_dist": 16
+Changed entity "piglin":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "become_zombie":
+					Changed component "minecraft:transformation":
+						Added field "drop_inventory" of true.
+						Added field "preserve_equipment" of true.
+			Changed field "components":
+				Changed component "minecraft:shareables":
+					Changed field "items":
+						Total item: 62 (+7, -0)
+						Added item:
+							field "item": "minecraft:skull:2"
+							field "priority": 8
+							field "surplus_amount": 1
+							field "want_amount": 1
+						Added item:
+							field "item": "minecraft:skull:3"
+							field "priority": 8
+							field "surplus_amount": 1
+							field "want_amount": 1
+						Added item:
+							field "item": "minecraft:skull:4"
+							field "priority": 8
+							field "surplus_amount": 1
+							field "want_amount": 1
+						Added item:
+							field "item": "minecraft:skull:5"
+							field "priority": 8
+							field "surplus_amount": 1
+							field "want_amount": 1
+						Added item:
+							field "item": "minecraft:turtle_helmet"
+							field "priority": 8
+							field "surplus_amount": 1
+							field "want_amount": 1
+						Added item:
+							field "item": "minecraft:elytra"
+							field "priority": 7
+						Added item:
+							field "item": "minecraft:shield"
+							field "priority": 7
+Changed entity "piglin_brute":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 7 (+0, -1)
+				Removed component group "take_target_as_response_to_block_break":
+					component "minecraft:behavior.nearest_attackable_target":
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "player"
+								field "max_dist": 16
+						field "priority": 3
+			Changed field "components":
+				Total component: 23 (+0, -1)
+				Removed component "minecraft:block_sensor":
+					field "on_break":
+						event:
+							field "block_list":
+								block: "minecraft:gold_block"
+								block: "minecraft:chest"
+								block: "minecraft:ender_chest"
+								block: "minecraft:barrel"
+								block: "minecraft:shulker_box"
+								block: "minecraft:undyed_shulker_box"
+							field "on_block_broken": "important_block_destroyed_event"
+					field "sensor_radius": 16
+				Changed component "minecraft:experience_reward":
+					Changed field "on_death" from "query.last_hit_by_player ? 10 : 0" to "query.last_hit_by_player ? 20 : 0".
+			Changed field "events":
+				Total event: 7 (+0, -1)
+				Changed event "become_calm_event":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 1 (+0, -1)
+							Removed component group "take_target_as_response_to_block_break".
+				Removed event "important_block_destroyed_event":
+					field "add": field "component_groups": component group: "take_target_as_response_to_block_break"
+					field "remove": field "component_groups": component group: "alert_for_attack_targets"
+Changed entity "strider":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 8 (+0, -1)
+				Changed component group "minecraft:strider_piglin_jockey":
+					Changed component "minecraft:addrider":
+						Changed field "spawn_event" from "spawn_zombified_piglin_rider" to "minecraft:spawn_as_strider_jockey".
+					Changed component "minecraft:rideable":
+						Changed field "seats":
+							Changed field "position":
+								Unchanged vector item 0: 0.0
+								Changed vector item 1 from 1.8 to 1.65.
+								Unchanged vector item 2: -0.2
+				Removed component group "minecraft:zombified_piglin_rider" of component "minecraft:equipment": field "table": "loot_tables/entities/zombified_piglin_rider_gear.json".
+			Changed field "components":
+				Total component: 22 (+1, -1)
+				Removed component "minecraft:behavior.move_to_lava":
+					field "goal_radius": 1.0
+					field "priority": 7
+					field "search_height": 10
+					field "search_range": 16
+				Added component "minecraft:behavior.move_to_liquid":
+					field "goal_radius": 0.9
+					field "material_type": "Lava"
+					field "priority": 7
+					field "search_count": 30
+					field "search_height": 10
+					field "search_range": 16
+				Changed component "minecraft:behavior.tempt":
+					Added field "can_tempt_while_ridden" of true.
+				Changed component "minecraft:health":
+					Changed field "max" from 15 to 20.
+					Changed field "value" from 15 to 20.
+			Changed field "events":
+				Total event: 10 (+0, -1)
+				Removed event "spawn_zombified_piglin_rider" of field "add": field "component_groups": component group: "minecraft:zombified_piglin_rider".
+Changed entity "villager_v2":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "wander_schedule_villager":
+					Changed component "minecraft:behavior.explore_outskirts":
+						Added field "dist_from_boundary" of [5.0, 0.0, 5.0].
+						Added field "max_travel_time" of 60.0.
+						Added field "max_wait_time" of 10.0.
+						Added field "min_dist_from_target" of 2.5.
+						Added field "min_perimeter" of 1.0.
+						Added field "min_wait_time" of 3.0.
+						Added field "next_xz" of 5.
+						Added field "next_y" of 3.
+						Added field "timer_ratio" of 2.0.
+						Removed field "wait_time" of 200.
+Changed entity "wither_skeleton":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 4 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 4 (+1, -0)
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "piglin"
+									filter:
+										filter property "operator": "!="
+										filter property "test": "is_difficulty"
+										filter property "value": "peaceful"
+							field "max_dist": 16
+Changed entity "zoglin":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "zoglin_adult":
+					Total component: 5 (+0, -2)
+					Removed component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					Removed component "minecraft:loot" of field "table": "loot_tables/entities/zoglin.json".
+			Changed field "components":
+				Total component: 21 (+2, -0)
+				Added component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? 5 : 0"
+				Added component "minecraft:loot" of field "table": "loot_tables/entities/zoglin.json".
+Changed entity "zombie_pigman":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 4 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 5 (+1, -0)
+				Added component group "minecraft:strider_jockey" of component "minecraft:equipment": field "table": "loot_tables/entities/zombified_piglin_rider_gear.json".
+			Changed field "events":
+				Total event: 5 (+1, -0)
+				Added event "minecraft:spawn_as_strider_jockey" of field "add": field "component_groups": component group: "minecraft:strider_jockey".

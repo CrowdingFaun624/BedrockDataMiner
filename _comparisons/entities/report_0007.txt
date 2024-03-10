@@ -1,0 +1,148 @@
+Difference of "entities" between "1.0.0" and "1.0.2".
+Unable to create data files for 1 file between: "1.0.1"
+
+Total entity: 69 (+0, -1)
+Removed entity "agent":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "component_groups": empty
+			field "components":
+				component "minecraft:agent_command": empty
+				component "minecraft:behavior.execute_command": field "priority": 1
+				component "minecraft:behavior.look_at_entity":
+					field "angle_of_view_horizontal": 170
+					field "angle_of_view_vertical": 135
+					field "filters":
+						filter property "other_is_owner": true
+						filter property "other_with_families": "player"
+					field "look_distance": 6.0
+					field "priority": 2
+					field "probability": 1.0
+				component "minecraft:collision_box":
+					field "height": 0.93
+					field "width": 0.6
+				component "minecraft:damage_sensor":
+					trigger:
+						field "cause": "all"
+						field "deals_damage": false
+				component "minecraft:identifier": field "id": "minecraft:agent"
+				component "minecraft:inventory":
+					field "container_type": "container"
+					field "inventory_size": 27
+					field "restrict_to_owner": true
+				component "minecraft:movement":
+					field "max": 0.5
+					field "value": 0.25
+				component "minecraft:nameable":
+					field "allowNameTagRenaming": false
+					field "alwaysShow": true
+				component "minecraft:scale": field "value": 1.0
+			field "version": 1
+		field "defined_in": behavior pack: "vanilla"
+Changed entity "arrow":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Added field "component_groups":
+				component group "minecraft:hard_arrow":
+					component "minecraft:projectile":
+						field "anchor": 1
+						field "gravity": 0.05
+						field "hitSound": "bow.hit"
+						field "offset": [0, -0.1, 0]
+						field "onHit":
+							field "arrow_effect": empty
+							field "impact_damage":
+								field "damage": [1, 5]
+								field "destroyonhit": true
+								field "knockback": true
+								field "semirandomdiffdamage": false
+							field "stick_in_ground": empty
+						field "power": 1.6
+						field "shouldbounce": true
+						field "uncertaintyBase": 16
+						field "uncertaintyMultiplier": 4
+				component group "minecraft:player_arrow":
+					component "minecraft:projectile":
+						field "anchor": 1
+						field "gravity": 0.05
+						field "hitSound": "bow.hit"
+						field "offset": [0, -0.1, 0]
+						field "onHit":
+							field "arrow_effect": empty
+							field "impact_damage":
+								field "damage": 1
+								field "destroyonhit": true
+								field "knockback": true
+								field "semirandomdiffdamage": true
+							field "stick_in_ground": empty
+						field "power": 1.6
+						field "shouldbounce": true
+						field "uncertaintyBase": 16
+						field "uncertaintyMultiplier": 4
+			Changed field "components":
+				Changed component "minecraft:projectile":
+					Changed field "onHit":
+						Changed field "impact_damage":
+							Changed field "damage" from 1 to [1, 4].
+							Changed field "semirandomdiffdamage" from true to false.
+			Added field "events":
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:hard_arrow"
+							field "filters": filter property "is_world_difficulty": "hard"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:player_arrow"
+							field "filters": filter property "other_with_families": "player"
+Changed entity "endermite":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 1 (+1, -1)
+						Removed entity type:
+							field "filters":
+								filter property "other_with_families":
+									family: "player"
+									family: "enderman"
+							field "max_dist": 8
+						Added entity type:
+							field "filters":
+								filter property "other_with_families":
+									family: "player"
+									family: "enderman"
+							field "max_dist": 16
+					Changed field "within_radius" from 8 to 16.
+Changed entity "skeleton":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 21 (+1, -0)
+				Added component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters": filter property "other_with_families": "wolf"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+							field "walk_speed_multiplier": 1.2
+					field "priority": 4
+Changed entity "stray":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 21 (+1, -0)
+				Added component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters": filter property "other_with_families": "wolf"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+							field "walk_speed_multiplier": 1.2
+					field "priority": 4
+Changed entity "wither_skull_dangerous":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:projectile":
+					Added field "reflectOnHurt" of true.

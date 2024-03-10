@@ -1,0 +1,111 @@
+Difference of "entities" between "1.19.0.26" (beta of "1.19.0") and "1.19.0.28" (beta of "1.19.0").
+
+Changed entity "allay":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.go_and_give_items_to_noteblock":
+					Added field "throw_sound" of "item_thrown".
+				Changed component "minecraft:behavior.go_and_give_items_to_owner":
+					Added field "throw_sound" of "item_thrown".
+Changed entity "llama":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 21 (+1, -0)
+				Changed component group "minecraft:llama_adult":
+					Changed component "minecraft:breedable":
+						Removed field "love_filters":
+							filter property "operator": "!="
+							filter property "subject": "self"
+							filter property "test": "is_mark_variant"
+							filter property "value": 1
+				Added component group "minecraft:llama_persistence" of component "minecraft:persistent": empty.
+				Changed component group "minecraft:llama_wandering_trader":
+					Total component: 3 (+0, -1)
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers" from:
+							field "event": "minecraft:on_tame"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "self"
+										filter property "test": "is_leashed"
+										filter property "value": false
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "self"
+										filter property "test": "has_component"
+										filter property "value": "minecraft:is_tamed"
+						to:
+							trigger:
+								field "event": "minecraft:on_tame"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "subject": "self"
+											filter property "test": "is_leashed"
+											filter property "value": false
+										filter:
+											filter property "operator": "!="
+											filter property "subject": "self"
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_tamed"
+							trigger:
+								field "event": "minecraft:remove_persistence"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "subject": "self"
+											filter property "test": "is_leashed"
+											filter property "value": false
+										filter:
+											filter property "operator": "=="
+											filter property "subject": "self"
+											filter property "test": "has_component"
+											filter property "value": "minecraft:persistent"
+					Removed empty component "minecraft:persistent".
+			Changed field "events":
+				Total event: 16 (+1, -0)
+				Changed event "minecraft:from_wandering_trader":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 3 (+1, -0)
+									Added component group "minecraft:llama_persistence".
+				Added event "minecraft:remove_persistence" of field "remove": field "component_groups": component group: "minecraft:llama_persistence".
+Changed entity "shulker":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 6 (+1, -0)
+			Added behavior pack "vanilla_1.19.0".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 21 (+1, -1)
+				Changed component "minecraft:breathable":
+					Added field "breathes_lava" of false.
+					Added field "breathes_water" of false.
+				Added component "minecraft:fire_immune" of true.
+				Removed component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+Changed entity "warden":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 36 (+2, -0)
+				Changed component "minecraft:anger_level":
+					Changed field "default_projectile_annoyingness" from 20 to 10.
+				Changed component "minecraft:behavior.sonic_boom":
+					Changed field "attack_cooldown" from 5 to 2.
+					Changed field "attack_damage" from 30 to 10.
+				Added component "minecraft:loot" of field "table": "loot_tables/entities/warden.json".
+				Added empty component "minecraft:vibration_damper".

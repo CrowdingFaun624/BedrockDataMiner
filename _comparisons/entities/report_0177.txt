@@ -1,0 +1,851 @@
+Difference of "entities" between "1.19.40.21" (beta of "1.19.40") and "1.19.40.22" (beta of "1.19.40").
+
+Changed entity "drowned":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 10 (+1, -0)
+			Added behavior pack "vanilla_1.19.40".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 10 (+2, -0)
+				Added component group "minecraft:melee_equipment":
+					component "minecraft:equipment":
+						field "slot_drop_chance":
+							slot:
+								field "drop_chance": 1.0
+								field "slot": "slot.weapon.offhand"
+						field "table": "loot_tables/entities/drowned_equipment.json"
+				Changed component group "minecraft:melee_mode":
+					Total component: 2 (+0, -1)
+					Removed component "minecraft:equipment":
+						field "slot_drop_chance":
+							slot:
+								field "drop_chance": 1.0
+								field "slot": "slot.weapon.offhand"
+						field "table": "loot_tables/entities/drowned_equipment.json"
+				Changed component group "minecraft:mode_switcher":
+					Total component: 1 (+0, -1)
+					Removed component "minecraft:equipment":
+						field "slot_drop_chance":
+							slot:
+								field "drop_chance": 1.0
+								field "slot": "slot.weapon.offhand"
+						field "table": "loot_tables/entities/drowned_ranged_equipment.json"
+				Added component group "minecraft:ranged_equipment":
+					component "minecraft:equipment":
+						field "slot_drop_chance":
+							slot:
+								field "drop_chance": 1.0
+								field "slot": "slot.weapon.offhand"
+						field "table": "loot_tables/entities/drowned_ranged_equipment.json"
+			Changed field "events":
+				Changed event "minecraft:as_adult":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 3 (+1, -0)
+							Added component group "minecraft:melee_equipment".
+				Changed event "minecraft:as_baby":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 3 (+1, -0)
+							Added component group "minecraft:melee_equipment".
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "randomize":
+								Total randomize item: 2 (+2, -2)
+								Removed randomize item:
+									field "add":
+										field "component_groups":
+											component group: "minecraft:mode_switcher"
+											component group: "minecraft:ranged_mode"
+											component group: "minecraft:adult_drowned"
+									field "remove": empty
+									field "weight": 15
+								Removed randomize item:
+									field "randomize":
+										randomize item:
+											field "add":
+												field "component_groups":
+													component group: "minecraft:melee_mode"
+													component group: "minecraft:adult_drowned"
+											field "remove": empty
+											field "weight": 95
+										randomize item:
+											field "add":
+												field "component_groups":
+													component group: "minecraft:melee_mode"
+													component group: "minecraft:baby_drowned"
+											field "remove": empty
+											field "weight": 5
+									field "weight": 85
+								Added randomize item:
+									field "add":
+										field "component_groups":
+											component group: "minecraft:mode_switcher"
+											component group: "minecraft:ranged_equipment"
+											component group: "minecraft:ranged_mode"
+											component group: "minecraft:adult_drowned"
+									field "remove": empty
+									field "weight": 15
+								Added randomize item:
+									field "randomize":
+										randomize item:
+											field "add":
+												field "component_groups":
+													component group: "minecraft:melee_equipment"
+													component group: "minecraft:melee_mode"
+													component group: "minecraft:adult_drowned"
+											field "remove": empty
+											field "weight": 95
+										randomize item:
+											field "add":
+												field "component_groups":
+													component group: "minecraft:melee_equipment"
+													component group: "minecraft:melee_mode"
+													component group: "minecraft:baby_drowned"
+											field "remove": empty
+											field "weight": 5
+									field "weight": 85
+Changed entity "villager_v2":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 54 (+1, -0)
+				Changed component group "adult":
+					Total component: 1 (+0, -2)
+					Removed component "minecraft:behavior.make_love" of field "priority": 5.
+					Removed component "minecraft:behavior.receive_love" of field "priority": 6.
+				Added component group "make_and_receive_love":
+					component "minecraft:behavior.make_love": field "priority": 5
+					component "minecraft:behavior.receive_love": field "priority": 6
+			Changed field "events":
+				Changed event "minecraft:ageable_grow_up":
+					Changed field "randomize":
+						Total randomize item: 2 (+2, -2)
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "adult"
+									component group: "nitwit"
+									component group: "behavior_peasant"
+									component group: "jobless_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 10
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "adult"
+									component group: "unskilled"
+									component group: "behavior_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 90
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "nitwit"
+									component group: "behavior_peasant"
+									component group: "jobless_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 10
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "unskilled"
+									component group: "behavior_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 90
+				Changed event "minecraft:become_armorer":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_butcher":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_cartographer":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_cleric":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_farmer":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_fisherman":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_fletcher":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_leatherworker":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_librarian":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_mason":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_sheperd":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_toolsmith":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_unskilled":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_weaponsmith":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Changed sequence item 1:
+							Changed field "randomize":
+								Total randomize item: 2 (+1, -1)
+								Removed randomize item:
+									field "sequence":
+										sequence item 0: field "add": field "component_groups": component group: "adult"
+										sequence item 1:
+											field "randomize":
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "farmer"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "fisherman"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "shepherd"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "fletcher"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "librarian"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "cartographer"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "cleric"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "armorer"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "weaponsmith"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "toolsmith"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "butcher"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "leatherworker"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "mason"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "nitwit"
+															component group: "behavior_peasant"
+															component group: "jobless_schedule"
+													field "weight": 1
+									field "weight": 95
+								Added randomize item:
+									field "sequence":
+										sequence item 0:
+											field "add":
+												field "component_groups":
+													component group: "adult"
+													component group: "make_and_receive_love"
+										sequence item 1:
+											field "randomize":
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "farmer"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "fisherman"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "shepherd"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "fletcher"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "librarian"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "cartographer"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "cleric"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "armorer"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "weaponsmith"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "toolsmith"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "butcher"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "leatherworker"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "mason"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+													field "weight": 1
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "nitwit"
+															component group: "behavior_peasant"
+															component group: "jobless_schedule"
+													field "weight": 1
+									field "weight": 95
+				Changed event "minecraft:entity_transformed":
+					Changed field "sequence":
+						Changed sequence item 1:
+							Changed field "sequence":
+								Changed sequence item 0:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 2 (+1, -0)
+											Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_bed_villager":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 7 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_gather_villager":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_home_villager":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_wander_villager":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_work_farmer":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_work_fisher":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_work_librarian":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_work_pro_villager":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:spawn_armorer":
+					Changed field "randomize":
+						Total randomize item: 3 (+3, -3)
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "armorer"
+									component group: "adult"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 6
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "weaponsmith"
+									component group: "adult"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 6
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "toolsmith"
+									component group: "adult"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 6
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "armorer"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 6
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "weaponsmith"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 6
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "toolsmith"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 6
+				Changed event "minecraft:spawn_butcher":
+					Changed field "randomize":
+						Total randomize item: 2 (+2, -2)
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "butcher"
+									component group: "adult"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 10
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "leatherworker"
+									component group: "adult"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 10
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "butcher"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 10
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "leatherworker"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 10
+				Changed event "minecraft:spawn_cleric":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:spawn_farmer":
+					Changed field "randomize":
+						Total randomize item: 5 (+5, -5)
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "farmer"
+									component group: "adult"
+									component group: "behavior_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 5
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "fisherman"
+									component group: "adult"
+									component group: "behavior_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 5
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "shepherd"
+									component group: "adult"
+									component group: "behavior_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 5
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "fletcher"
+									component group: "adult"
+									component group: "behavior_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 5
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "mason"
+									component group: "adult"
+									component group: "behavior_non_peasant"
+									component group: "work_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 5
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "farmer"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 5
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "fisherman"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 5
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "shepherd"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 5
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "fletcher"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 5
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "mason"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_non_peasant"
+									component group: "work_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 5
+				Changed event "minecraft:spawn_from_village":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "randomize":
+								Total randomize item: 2 (+1, -1)
+								Removed randomize item:
+									field "add": field "component_groups": component group: "adult"
+									field "sequence":
+										sequence item 0:
+											field "randomize":
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "unskilled"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+													field "weight": 90
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "nitwit"
+															component group: "behavior_peasant"
+															component group: "jobless_schedule"
+													field "weight": 10
+									field "weight": 95
+								Added randomize item:
+									field "add":
+										field "component_groups":
+											component group: "adult"
+											component group: "make_and_receive_love"
+									field "sequence":
+										sequence item 0:
+											field "randomize":
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "unskilled"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+													field "weight": 90
+												randomize item:
+													field "add":
+														field "component_groups":
+															component group: "nitwit"
+															component group: "behavior_peasant"
+															component group: "jobless_schedule"
+													field "weight": 10
+									field "weight": 95
+				Changed event "minecraft:spawn_librarian":
+					Changed field "randomize":
+						Total randomize item: 2 (+1, -1)
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "librarian"
+									component group: "adult"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 20
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "librarian"
+									component group: "adult"
+									component group: "make_and_receive_love"
+									component group: "behavior_non_peasant"
+									component group: "basic_schedule"
+							field "remove":
+								field "component_groups":
+									component group: "baby"
+									component group: "child_schedule"
+							field "weight": 20

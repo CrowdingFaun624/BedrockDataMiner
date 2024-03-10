@@ -1,0 +1,63 @@
+Difference of "entities" between "1.2.0.22" (beta of "1.2.0") and "1.2.0.25" (beta of "1.2.0").
+
+Changed entity "cave_spider":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:spider_hostile":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "attack_interval" from 10 to 5.
+Changed entity "creeper":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 5 (+1, -0)
+				Added component group "minecraft:forced_charged_exploding":
+					component "minecraft:explode":
+						field "causesFire": false
+						field "destroyAffectedByGriefing": true
+						field "fuseLength": 1.5
+						field "fuseLit": true
+						field "power": 6
+					component "minecraft:on_target_escape": empty
+					component "minecraft:target_nearby_sensor": empty
+				Changed component group "minecraft:forced_exploding":
+					Total component: 3 (+2, -1)
+					Added component "minecraft:explode":
+						field "causesFire": false
+						field "destroyAffectedByGriefing": true
+						field "fuseLength": 1.5
+						field "fuseLit": true
+						field "power": 3
+					Added empty component "minecraft:on_target_escape".
+					Removed component "minecraft:timer":
+						field "looping": false
+						field "time": [0, 0]
+						field "time_down_event":
+							field "event": "minecraft:start_exploding"
+							field "target": "self"
+			Changed field "components":
+				Changed component "minecraft:on_target_escape":
+					Added field "event" of "minecraft:stop_exploding".
+			Changed field "events":
+				Changed event "minecraft:start_exploding_forced":
+					Removed field "add" of field "component_groups": component group: "minecraft:forced_exploding".
+					Added field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:forced_exploding"
+							field "filters":
+								filter property "operator": "!="
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:forced_charged_exploding"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+Changed entity "spider":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:spider_hostile":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "attack_interval" from 10 to 5.

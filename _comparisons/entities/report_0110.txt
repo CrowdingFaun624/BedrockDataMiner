@@ -1,0 +1,177 @@
+Difference of "entities" between "1.16.100.51" (beta of "1.16.100") and "1.16.100.52" (beta of "1.16.100").
+
+Changed entity "boat":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "format_version" from "1.13.0" to "1.16.100".
+		Changed field "minecraft:entity":
+			Added field "component_groups":
+				component group "minecraft:above_bubble_column_down":
+					component "minecraft:buoyant":
+						field "apply_gravity": true
+						field "base_buoyancy": 1.0
+						field "drag_down_on_buoyancy_removed": 0.7
+						field "liquid_blocks":
+							block: "minecraft:water"
+							block: "minecraft:flowing_water"
+						field "simulate_waves": false
+					component "minecraft:out_of_control": empty
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 3
+						field "time_down_event":
+							field "event": "minecraft:sink"
+							field "target": "self"
+				component group "minecraft:above_bubble_column_up":
+					component "minecraft:buoyant":
+						field "apply_gravity": true
+						field "base_buoyancy": 1.0
+						field "drag_down_on_buoyancy_removed": 0.7
+						field "liquid_blocks":
+							block: "minecraft:water"
+							block: "minecraft:flowing_water"
+						field "simulate_waves": false
+					component "minecraft:out_of_control": empty
+				component group "minecraft:can_ride":
+					component "minecraft:rideable":
+						field "interact_text": "action.interact.ride.boat"
+						field "pull_in_entities": true
+						field "seat_count": 2
+						field "seats":
+							seat:
+								field "lock_rider_rotation": 90
+								field "max_rider_count": 1
+								field "min_rider_count": 0
+								field "position": [0.0, -0.2, 0.0]
+								field "rotate_rider_by": -90
+							seat:
+								field "lock_rider_rotation": 90
+								field "max_rider_count": 2
+								field "min_rider_count": 2
+								field "position": [0.2, -0.2, 0.0]
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+							seat:
+								field "lock_rider_rotation": 90
+								field "max_rider_count": 2
+								field "min_rider_count": 2
+								field "position": [-0.6, -0.2, 0.0]
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+				component group "minecraft:floating":
+					component "minecraft:buoyant":
+						field "apply_gravity": true
+						field "base_buoyancy": 1.0
+						field "big_wave_probability": 0.03
+						field "big_wave_speed": 10.0
+						field "liquid_blocks":
+							block: "minecraft:water"
+							block: "minecraft:flowing_water"
+						field "simulate_waves": true
+			Changed field "components":
+				Total component: 9 (+1, -1)
+				Added component "minecraft:inside_block_notifier":
+					field "block_list":
+						block:
+							field "block":
+								field "name": "minecraft:bubble_column"
+								field "states": state "drag_down": true
+							field "entered_block_event":
+								field "event": "minecraft:entered_bubble_column_down"
+								field "target": "self"
+							field "exited_block_event":
+								field "event": "minecraft:exited_bubble_column"
+								field "target": "self"
+						block:
+							field "block":
+								field "name": "minecraft:bubble_column"
+								field "states": state "drag_down": false
+							field "entered_block_event":
+								field "event": "minecraft:entered_bubble_column_up"
+								field "target": "self"
+							field "exited_block_event":
+								field "event": "minecraft:exited_bubble_column"
+								field "target": "self"
+				Removed component "minecraft:rideable":
+					field "interact_text": "action.interact.ride.boat"
+					field "pull_in_entities": true
+					field "seat_count": 2
+					field "seats":
+						seat:
+							field "lock_rider_rotation": 90
+							field "max_rider_count": 1
+							field "min_rider_count": 0
+							field "position": [0.0, -0.2, 0.0]
+							field "rotate_rider_by": -90
+						seat:
+							field "lock_rider_rotation": 90
+							field "max_rider_count": 2
+							field "min_rider_count": 2
+							field "position": [0.2, -0.2, 0.0]
+							field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+						seat:
+							field "lock_rider_rotation": 90
+							field "max_rider_count": 2
+							field "min_rider_count": 2
+							field "position": [-0.6, -0.2, 0.0]
+							field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+			Added field "events":
+				event "minecraft:entered_bubble_column_down":
+					field "add": field "component_groups": component group: "minecraft:above_bubble_column_down"
+					field "remove": field "component_groups": component group: "minecraft:floating"
+				event "minecraft:entered_bubble_column_up":
+					field "add": field "component_groups": component group: "minecraft:above_bubble_column_up"
+					field "remove": field "component_groups": component group: "minecraft:floating"
+				event "minecraft:entity_spawned":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:floating"
+							component group: "minecraft:can_ride"
+				event "minecraft:exited_bubble_column":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:floating"
+							component group: "minecraft:can_ride"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:above_bubble_column_down"
+							component group: "minecraft:above_bubble_column_up"
+				event "minecraft:sink":
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:floating"
+							component group: "minecraft:can_ride"
+							component group: "minecraft:above_bubble_column_down"
+							component group: "minecraft:above_bubble_column_up"
+Changed entity "cat":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 4 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "format_version" from "1.16.0" to "1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:cat_gift_for_owner":
+					Changed component "minecraft:behavior.drop_item_for":
+						Added field "cooldown" of 0.25.
+						Removed field "max_dist" of 5.
+						Added field "max_head_look_at_height" of 10.0.
+						Added field "minimum_teleport_distance" of 2.0.
+						Added field "seconds_before_pickup" of 0.0.
+						Added field "target_range" of [5.0, 5.0, 5.0].
+						Added field "teleport_offset" of [0.0, 1.0, 0.0].
+Changed entity "parrot":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:can_fly":
+					Removed field "value" of true.
+Changed entity "villager_v2":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "work_schedule_farmer":
+					Changed component "minecraft:behavior.harvest_farm_block":
+						Added field "max_seconds_before_search" of 1.0.
+						Added field "search_cooldown_max_seconds" of 5.0.
+						Added field "seconds_until_new_task" of 0.5.

@@ -1,0 +1,75 @@
+Difference of "entities" between "1.20.0.21" (beta of "1.20.0") and "1.20.0.22" (beta of "1.20.0").
+
+Changed entity "mooshroom":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 6 (+1, -0)
+			Added behavior pack "vanilla_1.20.0".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 17 (+1, -0)
+				Changed component group "minecraft:cow_adult":
+					Changed component "minecraft:interact":
+						Changed field "interactions":
+							Total interaction: 15 (+1, -0)
+							Added interaction:
+								field "interact_text": "action.interact.feed"
+								field "on_interact":
+									field "event": "minecraft:ate_torchflower"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "domain": "hand"
+												filter property "subject": "other"
+												filter property "test": "has_equipment"
+												filter property "value": "torchflower"
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "player"
+											filter:
+												filter property "operator": "=="
+												filter property "subject": "self"
+												filter property "test": "is_variant"
+												filter property "value": 1
+											filter:
+												filter property "operator": "!="
+												filter property "subject": "self"
+												filter property "test": "is_mark_variant"
+												filter property "value": 10
+									field "target": "self"
+								field "particle_on_start":
+									field "particle_offset_towards_interactor": true
+									field "particle_type": "smoke"
+									field "particle_y_offset": 0.25
+								field "play_sounds": "eat"
+								field "use_item": true
+				Added component group "minecraft:mooshroom_brown_fed_torchflower" of component "minecraft:mark_variant": field "value": 10.
+			Changed field "events":
+				Total event: 20 (+1, -0)
+				Added event "minecraft:ate_torchflower" of field "add": field "component_groups": component group: "minecraft:mooshroom_brown_fed_torchflower".
+Changed entity "sniffer":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "feeling_happy":
+					Changed component "minecraft:behavior.feeling_happy":
+						Changed field "priority" from 4 to 5.
+				Changed component group "sniffer_search_and_dig":
+					Changed component "minecraft:behavior.random_search_and_dig":
+						Changed field "priority" from 2 to 5.
+						Changed field "spawn_item_pos_offset" from 3.0 to 2.25.
+			Changed field "components":
+				Total component: 25 (+1, -0)
+				Changed component "minecraft:behavior.look_at_player":
+					Changed field "priority" from 7 to 8.
+				Changed component "minecraft:behavior.random_look_around":
+					Changed field "priority" from 8 to 9.
+				Changed component "minecraft:behavior.random_stroll":
+					Changed field "priority" from 6 to 7.
+				Changed component "minecraft:behavior.scenting":
+					Changed field "priority" from 5 to 6.
+				Added component "minecraft:behavior.tempt":
+					field "items": item: "torchflower_seeds"
+					field "priority": 4
+					field "speed_multiplier": 1.25

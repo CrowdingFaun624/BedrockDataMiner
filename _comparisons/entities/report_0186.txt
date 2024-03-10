@@ -1,0 +1,161 @@
+Difference of "entities" between "1.19.63" and "1.19.70.20" (beta of "1.19.70").
+
+Changed entity "ender_crystal":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -0)
+			Added behavior pack "vanilla_1.19.70".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:collision_box":
+					Changed field "height" from 0.98 to 2.
+					Changed field "width" from 0.98 to 2.
+Changed entity "horse":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 7 (+1, -0)
+			Added behavior pack "vanilla_1.19.70".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:horse_tamed":
+					Changed component "minecraft:breedable":
+						Added field "mutation_factor":
+							field "extra_variant": 0.2
+							field "variant": 0.111
+						Added field "mutation_strategy" of "random".
+						Added field "random_extra_variant_mutation_interval" of [0, 5].
+						Added field "random_variant_mutation_interval" of [0, 7].
+Changed entity "witch":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 8 (+1, -0)
+			Added behavior pack "vanilla_1.19.70".
+		Changed field "format_version" from "1.16.0" to "1.19.60".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 28 (+2, -0)
+				Added component "minecraft:behavior.drink_potion":
+					field "potions":
+						potion:
+							field "chance": 0.15
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "self"
+										filter property "test": "is_underwater"
+										filter property "value": true
+									filter:
+										filter property "none_of":
+											filter:
+												filter property "subject": "self"
+												filter property "test": "has_mob_effect"
+												filter property "value": "water_breathing"
+							field "id": 19
+						potion:
+							field "chance": 0.15
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "subject": "self"
+												filter property "test": "on_fire"
+												filter property "value": true
+											filter:
+												filter property "subject": "self"
+												filter property "test": "on_hot_block"
+												filter property "value": true
+									filter:
+										filter property "none_of":
+											filter:
+												filter property "subject": "self"
+												filter property "test": "has_mob_effect"
+												filter property "value": "fire_resistance"
+							field "id": 12
+						potion:
+							field "chance": 0.05
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "self"
+										filter property "test": "is_missing_health"
+										filter property "value": true
+							field "id": 21
+						potion:
+							field "chance": 0.25
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "self"
+										filter property "test": "has_target"
+										filter property "value": true
+									filter:
+										filter property "none_of":
+											filter:
+												filter property "subject": "self"
+												filter property "test": "has_mob_effect"
+												filter property "value": "speed"
+									filter:
+										filter property "operator": ">="
+										filter property "subject": "self"
+										filter property "test": "target_distance"
+										filter property "value": 11.0
+							field "id": 14
+					field "priority": 1
+					field "speed_modifier": -0.25
+				Added component "minecraft:shooter":
+					field "aux_val": 23
+					field "def": "minecraft:splash_potion"
+					field "magic": true
+					field "power": 0.75
+					field "projectiles":
+						projectile:
+							field "aux_val": 17
+							field "def": "minecraft:splash_potion"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "operator": ">="
+										filter property "subject": "self"
+										filter property "test": "target_distance"
+										filter property "value": 8.0
+									filter:
+										filter property "none_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "has_mob_effect"
+												filter property "value": "slowness"
+						projectile:
+							field "aux_val": 25
+							field "def": "minecraft:splash_potion"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "operator": ">="
+										filter property "subject": "other"
+										filter property "test": "actor_health"
+										filter property "value": 8
+									filter:
+										filter property "none_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "has_mob_effect"
+												filter property "value": "poison"
+						projectile:
+							field "aux_val": 34
+							field "chance": 0.25
+							field "def": "minecraft:splash_potion"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "operator": "<="
+										filter property "subject": "self"
+										filter property "test": "target_distance"
+										filter property "value": 3
+									filter:
+										filter property "none_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "has_mob_effect"
+												filter property "value": "weakness"
+					field "sound": "throw"

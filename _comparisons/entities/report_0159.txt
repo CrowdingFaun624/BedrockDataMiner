@@ -1,0 +1,1403 @@
+Difference of "entities" between "1.18.32" and "1.19.0.20" (beta of "1.19.0").
+Unable to create data files for 1 file between: "1.18.33"
+
+Changed entity "allay":
+	Added behavior pack "core":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "pickup_item":
+					component "minecraft:behavior.pickup_items":
+						field "can_pickup_any_item": false
+						field "can_pickup_to_hand_or_equipment": false
+						field "goal_radius": 2.2
+						field "max_dist": 60
+						field "pickup_based_on_chance": false
+						field "pickup_same_items_as_in_hand": true
+						field "priority": 2
+						field "search_height": 30
+						field "speed_multiplier": 1.0
+				component group "pickup_item_delay":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 5
+						field "time_down_event": field "event": "pickup_item_delay_complete"
+			field "components":
+				component "minecraft:ambient_sound_interval":
+					field "event_name": "ambient"
+					field "event_names":
+						event 0:
+							field "condition": "query.is_using_item"
+							field "event_name": "ambient.tame"
+						event 1:
+							field "condition": "!query.is_using_item"
+							field "event_name": "ambient"
+					field "range": 5.0
+					field "value": 5.0
+				component "minecraft:balloonable": field "mass": 0.5
+				component "minecraft:behavior.float": field "priority": 7
+				component "minecraft:behavior.follow_owner":
+					field "can_teleport": false
+					field "ignore_vibration": false
+					field "priority": 6
+					field "speed_multiplier": 2.5
+					field "start_distance": 20
+					field "stop_distance": 5
+				component "minecraft:behavior.go_and_give_items_to_noteblock":
+					field "on_item_throw":
+						event:
+							field "event": "pickup_item_delay"
+							field "target": "self"
+					field "priority": 3
+				component "minecraft:behavior.go_and_give_items_to_owner":
+					field "on_item_throw":
+						event:
+							field "event": "pickup_item_delay"
+							field "target": "self"
+					field "priority": 4
+				component "minecraft:behavior.look_at_player":
+					field "priority": 8
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 2.0
+				component "minecraft:behavior.random_hover":
+					field "hover_height": [1, 4]
+					field "interval": 1
+					field "priority": 9
+					field "xz_dist": 8
+					field "y_dist": 8
+					field "y_offset": -1
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.stay_near_noteblock":
+					field "priority": 5
+					field "speed": 1.0
+					field "start_distance": 15
+					field "stop_distance": 5
+				component "minecraft:breathable":
+					field "suffocateTime": 0
+					field "totalSupply": 15
+				component "minecraft:can_fly": empty
+				component "minecraft:collision_box":
+					field "height": 0.6
+					field "width": 0.6
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						trigger:
+							field "deals_damage": false
+							field "on_damage":
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_owner"
+											filter property "value": true
+				component "minecraft:flying_speed": field "value": 0.15
+				component "minecraft:follow_range": field "value": 1024
+				component "minecraft:health": field "value": 16
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:interact":
+					field "interactions":
+						interaction:
+							field "give_item": true
+							field "interact_text": "action.interact.allay"
+							field "on_interact":
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+							field "take_item": true
+				component "minecraft:inventory": field "inventory_size": 1
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "soft_distance": 4.0
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:movement.hover": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.hover":
+					field "avoid_damage_blocks": true
+					field "avoid_sun": false
+					field "avoid_water": true
+					field "can_pass_doors": false
+					field "can_path_from_air": true
+					field "can_path_over_water": true
+					field "can_sink": false
+				component "minecraft:physics": field "has_gravity": false
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "allay"
+						family: "mob"
+				component "minecraft:vibration_listener": empty
+			field "description":
+				description "identifier": "minecraft:allay"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "pickup_item"
+				event "pickup_item_delay":
+					field "add": field "component_groups": component group: "pickup_item_delay"
+					field "remove": field "component_groups": component group: "pickup_item"
+				event "pickup_item_delay_complete":
+					field "add": field "component_groups": component group: "pickup_item"
+					field "remove": field "component_groups": component group: "pickup_item_delay"
+		field "defined_in": behavior pack: "vanilla_1.19.0"
+	Removed behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "pickup_item":
+					component "minecraft:behavior.pickup_items":
+						field "can_pickup_any_item": false
+						field "can_pickup_to_hand_or_equipment": false
+						field "goal_radius": 2.2
+						field "max_dist": 60
+						field "pickup_based_on_chance": false
+						field "pickup_same_items_as_in_hand": true
+						field "priority": 2
+						field "search_height": 30
+						field "speed_multiplier": 0.8
+				component group "pickup_item_delay":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 5
+						field "time_down_event": field "event": "pickup_item_delay_complete"
+			field "components":
+				component "minecraft:balloonable": field "mass": 0.5
+				component "minecraft:behavior.float": field "priority": 7
+				component "minecraft:behavior.follow_owner":
+					field "can_teleport": false
+					field "ignore_vibration": false
+					field "priority": 6
+					field "speed_multiplier": 2.0
+					field "start_distance": 10
+					field "stop_distance": 2
+				component "minecraft:behavior.go_and_give_items_to_noteblock":
+					field "on_item_throw":
+						event:
+							field "event": "pickup_item_delay"
+							field "target": "self"
+					field "priority": 3
+				component "minecraft:behavior.go_and_give_items_to_owner":
+					field "on_item_throw":
+						event:
+							field "event": "pickup_item_delay"
+							field "target": "self"
+					field "priority": 4
+				component "minecraft:behavior.look_at_player":
+					field "priority": 8
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 2.0
+				component "minecraft:behavior.random_hover":
+					field "hover_height": [1, 4]
+					field "interval": 1
+					field "priority": 9
+					field "xz_dist": 8
+					field "y_dist": 8
+					field "y_offset": -1
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.stay_near_noteblock":
+					field "priority": 5
+					field "speed": 2.0
+					field "start_distance": 10
+					field "stop_distance": 2
+				component "minecraft:breathable":
+					field "suffocateTime": 0
+					field "totalSupply": 15
+				component "minecraft:can_fly": empty
+				component "minecraft:collision_box":
+					field "height": 0.6
+					field "width": 0.6
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						trigger:
+							field "deals_damage": false
+							field "on_damage":
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_owner"
+											filter property "value": true
+				component "minecraft:flying_speed": field "value": 0.2
+				component "minecraft:follow_range": field "value": 1024
+				component "minecraft:health": field "value": 16
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:interact":
+					field "interactions":
+						interaction:
+							field "give_item": true
+							field "interact_text": "action.interact.allay"
+							field "on_interact":
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+							field "take_item": true
+				component "minecraft:inventory": field "inventory_size": 1
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.hover": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.hover":
+					field "avoid_damage_blocks": true
+					field "avoid_sun": false
+					field "avoid_water": true
+					field "can_pass_doors": false
+					field "can_path_from_air": true
+					field "can_path_over_water": true
+					field "can_sink": false
+				component "minecraft:physics": field "has_gravity": false
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "allay"
+						family: "mob"
+				component "minecraft:vibration_listener": empty
+			field "description":
+				description "identifier": "minecraft:allay"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "pickup_item"
+				event "pickup_item_delay":
+					field "add": field "component_groups": component group: "pickup_item_delay"
+					field "remove": field "component_groups": component group: "pickup_item"
+				event "pickup_item_delay_complete":
+					field "add": field "component_groups": component group: "pickup_item"
+					field "remove": field "component_groups": component group: "pickup_item_delay"
+		field "defined_in": behavior pack: "experimental_wild_update"
+Changed entity "axolotl":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 4 (+1, -0)
+			Added behavior pack "vanilla_1.19.0".
+		Changed field "format_version" from "1.18.10" to "1.16.0".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 28 (+0, -1)
+				Removed component "minecraft:balloonable" of field "mass": 0.5.
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 2 (+1, -1)
+						Removed entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "in_water"
+										filter property "value": true
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "self"
+										filter property "test": "has_component"
+										filter property "value": "minecraft:attack_cooldown"
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "squid"
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "fish"
+							field "max_dist": 8
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "in_water"
+										filter property "value": true
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "self"
+										filter property "test": "has_component"
+										filter property "value": "minecraft:attack_cooldown"
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "squid"
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "fish"
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "tadpole"
+							field "max_dist": 8
+	Removed behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "attack_cooldown":
+					component "minecraft:attack_cooldown":
+						field "attack_cooldown_complete_event":
+							field "event": "attack_cooldown_complete_event"
+							field "target": "self"
+						field "attack_cooldown_time": 120.0
+				component group "axolotl_adult":
+					component "minecraft:behavior.breed":
+						field "priority": 1
+						field "speed_multiplier": 1.0
+					component "minecraft:breedable":
+						field "breed_items": "tropical_fish_bucket"
+						field "breeds_with":
+							field "baby_type": "minecraft:axolotl"
+							field "breed_event":
+								field "event": "minecraft:entity_born"
+								field "target": "baby"
+							field "mate_type": "minecraft:axolotl"
+						field "mutation_factor": field "variant": 0.00083
+						field "require_tame": false
+						field "transform_to_item": "water_bucket:0"
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+				component group "axolotl_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items": "tropical_fish_bucket"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+						field "transform_to_item": "water_bucket:0"
+					component "minecraft:behavior.follow_parent":
+						field "priority": 5
+						field "speed_multiplier": 1.1
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+				component group "axolotl_blue": component "minecraft:variant": field "value": 4
+				component group "axolotl_cyan": component "minecraft:variant": field "value": 1
+				component group "axolotl_dried":
+					component "minecraft:damage_over_time":
+						field "damage_per_hurt": 1
+						field "time_between_hurt": 0
+				component group "axolotl_gold": component "minecraft:variant": field "value": 2
+				component group "axolotl_in_water":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "start_drying_out"
+								field "filters":
+									filter property "operator": "!="
+									filter property "test": "in_water"
+									filter property "value": true
+				component group "axolotl_lucy": component "minecraft:variant": field "value": 0
+				component group "axolotl_on_land":
+					component "minecraft:drying_out_timer":
+						field "dried_out_event": field "event": "dried_out"
+						field "recover_after_dried_out_event": field "event": "recover_after_dried_out"
+						field "stopped_drying_out_event": field "event": "stop_drying_out"
+						field "total_time": 300
+						field "water_bottle_refill_time": 90
+				component group "axolotl_on_land_in_rain":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "start_drying_out"
+								field "filters":
+									filter property "operator": "!="
+									filter property "test": "in_water_or_rain"
+									filter property "value": true
+							trigger:
+								field "event": "enter_water"
+								field "filters":
+									filter property "operator": "=="
+									filter property "test": "in_water"
+									filter property "value": true
+				component group "axolotl_wild": component "minecraft:variant": field "value": 3
+			field "components":
+				component "minecraft:attack": field "damage": 2
+				component "minecraft:behavior.look_at_player":
+					field "priority": 10
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.melee_attack":
+					field "on_kill":
+						field "event": "killed_enemy_event"
+						field "target": "self"
+					field "priority": 4
+				component "minecraft:behavior.move_to_water":
+					field "goal_radius": 0.1
+					field "priority": 6
+					field "search_count": 1
+					field "search_height": 5
+					field "search_range": 16
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "in_water"
+										filter property "value": true
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "self"
+										filter property "test": "has_component"
+										filter property "value": "minecraft:attack_cooldown"
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "squid"
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "fish"
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "tadpole"
+							field "max_dist": 8
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "in_water"
+										filter property "value": true
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "drowned"
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "guardian"
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "guardian_elder"
+							field "max_dist": 8
+					field "must_see": true
+					field "must_see_forget_duration": 17.0
+					field "priority": 3
+					field "reselect_targets": true
+					field "within_radius": 20.0
+				component "minecraft:behavior.play_dead":
+					field "apply_regeneration": true
+					field "damage_sources":
+						damage source: "contact"
+						damage source: "entity_attack"
+						damage source: "entity_explosion"
+						damage source: "magic"
+						damage source: "projectile"
+						damage source: "thorns"
+						damage source: "wither"
+					field "duration": 10
+					field "filters":
+						filter property "operator": "=="
+						filter property "test": "in_water"
+						filter property "value": true
+					field "force_below_health": 8
+					field "priority": 0
+					field "random_damage_range": [0, 2]
+					field "random_start_chance": 0.33
+				component "minecraft:behavior.random_stroll":
+					field "interval": 100
+					field "priority": 9
+				component "minecraft:behavior.random_swim":
+					field "interval": 0
+					field "priority": 8
+					field "xz_dist": 30
+					field "y_dist": 15
+				component "minecraft:behavior.swim_idle":
+					field "idle_time": 5.0
+					field "priority": 7
+					field "success_rate": 0.05
+				component "minecraft:behavior.tempt":
+					field "can_tempt_vertically": true
+					field "items": item: "tropical_fish_bucket"
+					field "priority": 2
+					field "speed_multiplier": 1.1
+				component "minecraft:breathable":
+					field "breathes_air": true
+					field "breathes_water": true
+					field "generates_bubbles": false
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:collision_box":
+					field "height": 0.42
+					field "width": 0.75
+				component "minecraft:combat_regeneration": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "lightning"
+						field "damage_multiplier": 2000.0
+						field "deals_damage": true
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health": field "value": 14
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "soft_distance": 4.0
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:movement.amphibious": field "max_turn": 15.0
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
+					field "avoid_damage_blocks": true
+					field "can_path_over_water": true
+					field "can_sink": false
+					field "can_swim": true
+					field "can_walk": true
+					field "is_amphibious": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "axolotl"
+						family: "mob"
+				component "minecraft:underwater_movement": field "value": 0.2
+			field "description":
+				description "identifier": "minecraft:axolotl"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group: "attack_cooldown"
+				event "dried_out": field "add": field "component_groups": component group: "axolotl_dried"
+				event "enter_water":
+					field "add": field "component_groups": component group: "axolotl_in_water"
+					field "remove":
+						field "component_groups":
+							component group: "axolotl_on_land"
+							component group: "axolotl_on_land_in_rain"
+							component group: "axolotl_dried"
+				event "killed_enemy_event": field "add": field "component_groups": component group: "attack_cooldown"
+				event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group: "axolotl_adult"
+					field "remove": field "component_groups": component group: "axolotl_baby"
+				event "minecraft:entity_born":
+					field "sequence":
+						sequence item 0:
+							field "add":
+								field "component_groups":
+									component group: "axolotl_baby"
+									component group: "axolotl_in_water"
+							field "remove": field "component_groups": component group: "axolotl_adult"
+						sequence item 1:
+							field "add": field "component_groups": component group: "axolotl_blue"
+							field "filters":
+								filter property "operator": "!="
+								filter property "test": "has_component"
+								filter property "value": "minecraft:variant"
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0:
+							field "add":
+								field "component_groups":
+									component group: "axolotl_adult"
+									component group: "axolotl_in_water"
+						sequence item 1:
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "axolotl_cyan"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "axolotl_gold"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "axolotl_lucy"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "axolotl_wild"
+									field "weight": 25
+				event "recover_after_dried_out": field "remove": field "component_groups": component group: "axolotl_dried"
+				event "start_drying_out":
+					field "add": field "component_groups": component group: "axolotl_on_land"
+					field "remove":
+						field "component_groups":
+							component group: "axolotl_on_land_in_rain"
+							component group: "axolotl_in_water"
+				event "stop_drying_out":
+					field "add": field "component_groups": component group: "axolotl_on_land_in_rain"
+					field "remove":
+						field "component_groups":
+							component group: "axolotl_on_land"
+							component group: "axolotl_dried"
+		field "defined_in": behavior pack: "experimental_wild_update"
+Changed entity "chest_boat":
+	Moved behavior pack "experimental" to "core".
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 1 (+1, -1)
+			Removed behavior pack "experimental_wild_update".
+			Added behavior pack "vanilla_1.19.0".
+Changed entity "frog":
+	Moved behavior pack "experimental" to "core".
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 1 (+1, -1)
+			Removed behavior pack "experimental_wild_update".
+			Added behavior pack "vanilla_1.19.0".
+Changed entity "llama":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 7 (+1, -0)
+			Added behavior pack "vanilla_1.19.0".
+		Changed field "format_version" from "1.16.0" to "1.19.0".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:llama_adult":
+					Total component: 4 (+0, -1)
+					Removed component "minecraft:collision_box":
+						field "height": 1.87
+						field "width": 0.9
+			Changed field "components":
+				Total component: 34 (+1, -0)
+				Added component "minecraft:collision_box":
+					field "height": 1.87
+					field "width": 0.9
+Changed entity "mooshroom":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 5 (+1, -0)
+			Added behavior pack "vanilla_1.19.0".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:cow_adult":
+					Changed component "minecraft:interact":
+						Changed field "interactions":
+							Total interaction: 14 (+2, -2)
+							Removed interaction:
+								field "hurt_item": 1
+								field "interact_text": "action.interact.mooshear"
+								field "on_interact":
+									field "event": "become_cow"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "domain": "hand"
+												filter property "subject": "other"
+												filter property "test": "has_equipment"
+												filter property "value": "shears"
+											filter:
+												filter property "operator": "!="
+												filter property "test": "has_component"
+												filter property "value": "minecraft:transformation"
+											filter:
+												filter property "operator": "=="
+												filter property "subject": "self"
+												filter property "test": "is_variant"
+												filter property "value": 0
+									field "target": "self"
+								field "particle_on_start":
+									field "particle_offset_towards_interactor": true
+									field "particle_type": "largeexplode"
+									field "particle_y_offset": 0.25
+								field "play_sounds": "shear"
+								field "spawn_items": field "table": "loot_tables/entities/mooshroom_shear.json"
+								field "use_item": false
+							Removed interaction:
+								field "hurt_item": 1
+								field "interact_text": "action.interact.mooshear"
+								field "on_interact":
+									field "event": "become_cow"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "domain": "hand"
+												filter property "subject": "other"
+												filter property "test": "has_equipment"
+												filter property "value": "shears"
+											filter:
+												filter property "operator": "!="
+												filter property "test": "has_component"
+												filter property "value": "minecraft:transformation"
+											filter:
+												filter property "operator": "=="
+												filter property "subject": "self"
+												filter property "test": "is_variant"
+												filter property "value": 1
+									field "target": "self"
+								field "particle_on_start":
+									field "particle_offset_towards_interactor": true
+									field "particle_type": "largeexplode"
+									field "particle_y_offset": 0.25
+								field "play_sounds": "shear"
+								field "spawn_items": field "table": "loot_tables/entities/brown_mooshroom_shear.json"
+								field "use_item": false
+							Added interaction:
+								field "hurt_item": 1
+								field "interact_text": "action.interact.mooshear"
+								field "on_interact":
+									field "event": "become_cow"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "domain": "hand"
+												filter property "subject": "other"
+												filter property "test": "has_equipment"
+												filter property "value": "shears"
+											filter:
+												filter property "operator": "!="
+												filter property "test": "has_component"
+												filter property "value": "minecraft:transformation"
+											filter:
+												filter property "operator": "=="
+												filter property "subject": "self"
+												filter property "test": "is_variant"
+												filter property "value": 0
+									field "target": "self"
+								field "particle_on_start":
+									field "particle_offset_towards_interactor": true
+									field "particle_type": "largeexplode"
+									field "particle_y_offset": 0.25
+								field "play_sounds": "shear"
+								field "spawn_items": field "table": "loot_tables/entities/mooshroom_shear.json"
+								field "use_item": false
+								field "vibration": "shear"
+							Added interaction:
+								field "hurt_item": 1
+								field "interact_text": "action.interact.mooshear"
+								field "on_interact":
+									field "event": "become_cow"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "domain": "hand"
+												filter property "subject": "other"
+												filter property "test": "has_equipment"
+												filter property "value": "shears"
+											filter:
+												filter property "operator": "!="
+												filter property "test": "has_component"
+												filter property "value": "minecraft:transformation"
+											filter:
+												filter property "operator": "=="
+												filter property "subject": "self"
+												filter property "test": "is_variant"
+												filter property "value": 1
+									field "target": "self"
+								field "particle_on_start":
+									field "particle_offset_towards_interactor": true
+									field "particle_type": "largeexplode"
+									field "particle_y_offset": 0.25
+								field "play_sounds": "shear"
+								field "spawn_items": field "table": "loot_tables/entities/brown_mooshroom_shear.json"
+								field "use_item": false
+								field "vibration": "shear"
+Changed entity "parrot":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 7 (+1, -0)
+			Added behavior pack "vanilla_1.19.0".
+		Changed field "format_version" from "1.18.10" to "1.19.0".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 10 (+2, -0)
+				Added component group "minecraft:parrot_not_riding_player":
+					component "minecraft:behavior.look_at_player":
+						field "look_distance": 8.0
+						field "priority": 1
+					component "minecraft:entity_sensor":
+						field "event": "minecraft:on_riding_player"
+						field "event_filters":
+							filter property "all_of":
+								filter:
+									filter property "operator": "equals"
+									filter property "subject": "self"
+									filter property "test": "is_riding"
+									filter property "value": true
+								filter:
+									filter property "operator": "equals"
+									filter property "subject": "self"
+									filter property "test": "has_component"
+									filter property "value": "minecraft:behavior.look_at_player"
+						field "relative_range": false
+						field "sensor_range": 2.0
+				Added component group "minecraft:parrot_riding_player":
+					component "minecraft:entity_sensor":
+						field "event": "minecraft:on_not_riding_player"
+						field "event_filters":
+							filter property "all_of":
+								filter:
+									filter property "operator": "equals"
+									filter property "subject": "self"
+									filter property "test": "is_riding"
+									filter property "value": false
+								filter:
+									filter property "operator": "not"
+									filter property "subject": "self"
+									filter property "test": "has_component"
+									filter property "value": "minecraft:behavior.look_at_player"
+						field "relative_range": false
+						field "sensor_range": 2.0
+			Changed field "components":
+				Total component: 21 (+0, -1)
+				Removed component "minecraft:behavior.look_at_player":
+					field "look_distance": 8.0
+					field "priority": 1
+			Changed field "events":
+				Total event: 4 (+2, -0)
+				Changed event "minecraft:entity_spawned":
+					Changed field "randomize":
+						Total randomize item: 5 (+5, -5)
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:parrot_red"
+									component group: "minecraft:parrot_adult"
+									component group: "minecraft:parrot_wild"
+							field "weight": 20
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:parrot_blue"
+									component group: "minecraft:parrot_adult"
+									component group: "minecraft:parrot_wild"
+							field "weight": 20
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:parrot_green"
+									component group: "minecraft:parrot_adult"
+									component group: "minecraft:parrot_wild"
+							field "weight": 20
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:parrot_cyan"
+									component group: "minecraft:parrot_adult"
+									component group: "minecraft:parrot_wild"
+							field "weight": 20
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:parrot_silver"
+									component group: "minecraft:parrot_adult"
+									component group: "minecraft:parrot_wild"
+							field "weight": 20
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:parrot_red"
+									component group: "minecraft:parrot_adult"
+									component group: "minecraft:parrot_wild"
+									component group: "minecraft:parrot_not_riding_player"
+							field "weight": 20
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:parrot_blue"
+									component group: "minecraft:parrot_adult"
+									component group: "minecraft:parrot_wild"
+									component group: "minecraft:parrot_not_riding_player"
+							field "weight": 20
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:parrot_green"
+									component group: "minecraft:parrot_adult"
+									component group: "minecraft:parrot_wild"
+									component group: "minecraft:parrot_not_riding_player"
+							field "weight": 20
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:parrot_cyan"
+									component group: "minecraft:parrot_adult"
+									component group: "minecraft:parrot_wild"
+									component group: "minecraft:parrot_not_riding_player"
+							field "weight": 20
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:parrot_silver"
+									component group: "minecraft:parrot_adult"
+									component group: "minecraft:parrot_wild"
+									component group: "minecraft:parrot_not_riding_player"
+							field "weight": 20
+				Added event "minecraft:on_not_riding_player":
+					field "add": field "component_groups": component group: "minecraft:parrot_not_riding_player"
+					field "remove": field "component_groups": component group: "minecraft:parrot_riding_player"
+				Added event "minecraft:on_riding_player":
+					field "add": field "component_groups": component group: "minecraft:parrot_riding_player"
+					field "remove": field "component_groups": component group: "minecraft:parrot_not_riding_player"
+Changed entity "sheep":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 6 (+1, -0)
+			Added behavior pack "vanilla_1.19.0".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:interact":
+					Changed field "interactions":
+						Total interaction: 1 (+1, -1)
+						Removed interaction:
+							field "cooldown": 2.5
+							field "hurt_item": 1
+							field "interact_text": "action.interact.shear"
+							field "on_interact":
+								field "event": "minecraft:on_sheared"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "domain": "hand"
+											filter property "subject": "other"
+											filter property "test": "has_equipment"
+											filter property "value": "shears"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+										filter:
+											filter property "operator": "!="
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_baby"
+										filter:
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_dyeable"
+								field "target": "self"
+							field "play_sounds": "shear"
+							field "spawn_items": field "table": "loot_tables/entities/sheep_shear.json"
+							field "use_item": false
+						Added interaction:
+							field "cooldown": 2.5
+							field "hurt_item": 1
+							field "interact_text": "action.interact.shear"
+							field "on_interact":
+								field "event": "minecraft:on_sheared"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "domain": "hand"
+											filter property "subject": "other"
+											filter property "test": "has_equipment"
+											filter property "value": "shears"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+										filter:
+											filter property "operator": "!="
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_baby"
+										filter:
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_dyeable"
+								field "target": "self"
+							field "play_sounds": "shear"
+							field "spawn_items": field "table": "loot_tables/entities/sheep_shear.json"
+							field "use_item": false
+							field "vibration": "shear"
+Changed entity "snow_golem":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 6 (+1, -0)
+			Added behavior pack "vanilla_1.19.0".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:interact":
+					Changed field "interactions":
+						Total interaction: 1 (+1, -1)
+						Removed interaction:
+							field "cooldown": 2.5
+							field "hurt_item": 1
+							field "interact_text": "action.interact.shear"
+							field "on_interact":
+								field "event": "minecraft:on_sheared"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "domain": "hand"
+											filter property "subject": "other"
+											filter property "test": "has_equipment"
+											filter property "value": "shears"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+										filter:
+											filter property "operator": "!="
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_sheared"
+								field "target": "self"
+							field "play_sounds": "shear"
+							field "spawn_items": field "table": "loot_tables/entities/snow_golem_shear.json"
+							field "use_item": false
+						Added interaction:
+							field "cooldown": 2.5
+							field "hurt_item": 1
+							field "interact_text": "action.interact.shear"
+							field "on_interact":
+								field "event": "minecraft:on_sheared"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "domain": "hand"
+											filter property "subject": "other"
+											filter property "test": "has_equipment"
+											filter property "value": "shears"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+										filter:
+											filter property "operator": "!="
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_sheared"
+								field "target": "self"
+							field "play_sounds": "shear"
+							field "spawn_items": field "table": "loot_tables/entities/snow_golem_shear.json"
+							field "use_item": false
+							field "vibration": "shear"
+Changed entity "tadpole":
+	Moved behavior pack "experimental" to "core".
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 1 (+1, -1)
+			Removed behavior pack "experimental_wild_update".
+			Added behavior pack "vanilla_1.19.0".
+Changed entity "villager_v2":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 9 (+1, -0)
+			Added behavior pack "vanilla_1.19.0".
+		Changed field "format_version" from "1.18.10" to "1.19.0".
+Changed entity "wandering_trader":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 5 (+1, -0)
+			Added behavior pack "vanilla_1.19.0".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 32 (+4, -2)
+				Added component "minecraft:behavior.move_towards_home_restriction":
+					field "priority": 6
+					field "speed_multiplier": 0.6
+				Removed component "minecraft:behavior.open_door":
+					field "close_door_after": true
+					field "priority": 6
+				Added component "minecraft:behavior.random_stroll":
+					field "priority": 7
+					field "speed_multiplier": 0.6
+				Removed component "minecraft:behavior.restrict_open_door" of field "priority": 5.
+				Added component "minecraft:home" of field "restriction_radius": 16.
+				Added empty component "minecraft:nameable".
+				Changed component "minecraft:navigation.walk":
+					Changed field "can_open_doors" from true to false.
+Changed entity "warden":
+	Added behavior pack "core":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "emerging":
+					component "minecraft:behavior.emerge":
+						field "duration": 7.0
+						field "on_done":
+							field "event": "minecraft:emerged"
+							field "target": "self"
+			field "components":
+				component "minecraft:ambient_sound_interval":
+					field "event_name": "ambient"
+					field "event_names":
+						event 0:
+							field "condition": "query.anger_level(this) >= 80"
+							field "event_name": "angry"
+						event 1:
+							field "condition": "query.anger_level(this) >= 40"
+							field "event_name": "agitated"
+					field "range": 4.0
+					field "value": 2.0
+				component "minecraft:anger_level":
+					field "anger_decrement_interval": 1.0
+					field "angry_boost": 20
+					field "angry_threshold": 80
+					field "default_annoyingness": 35
+					field "default_projectile_annoyingness": 20
+					field "max_anger": 150
+					field "nuisance_filter":
+						filter property "all_of":
+							filter:
+								filter property "operator": "not"
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "warden"
+							filter:
+								filter property "operator": "not"
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "inanimate"
+					field "on_increase_sounds":
+						sound 0:
+							field "condition": "query.anger_level(this) >= 40"
+							field "sound": "listening_angry"
+						sound 1:
+							field "condition": "query.anger_level(this) >= 0"
+							field "sound": "listening"
+					field "remove_targets_below_angry_threshold": true
+				component "minecraft:attack": field "damage": 30
+				component "minecraft:behavior.dig":
+					field "digs_in_daylight": false
+					field "duration": 5.5
+					field "idle_time": 60.0
+					field "priority": 1
+					field "suspicion_is_disturbance": true
+					field "vibration_is_disturbance": true
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.investigate_suspicious_location":
+					field "priority": 4
+					field "speed_multiplier": 0.7
+				component "minecraft:behavior.melee_attack":
+					field "melee_fov": 360
+					field "priority": 3
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.random_look_around": field "priority": 11
+				component "minecraft:behavior.random_stroll":
+					field "priority": 9
+					field "speed_multiplier": 0.5
+				component "minecraft:behavior.roar":
+					field "duration": 4.2
+					field "priority": 2
+				component "minecraft:behavior.sniff":
+					field "cooldown_range": [5.0, 10.0]
+					field "duration": 4.16
+					field "priority": 5
+					field "sniffing_radius": 16.0
+					field "suspicion_radius": 6.0
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 2.9
+					field "width": 0.9
+				component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+				component "minecraft:fire_immune": empty
+				component "minecraft:follow_range": 30
+				component "minecraft:health":
+					field "max": 500
+					field "value": 500
+				component "minecraft:heartbeat": field "interval": "2.0 - math.clamp(query.anger_level / 80 * 1.5, 0, 1.5)"
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:knockback_resistance": field "value": 1.0
+				component "minecraft:mob_effect":
+					field "effect_range": 20
+					field "effect_time": 13
+					field "entity_filter":
+						filter property "subject": "other"
+						filter property "test": "is_family"
+						filter property "value": "player"
+					field "mob_effect": "darkness"
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.basic": empty
+				component "minecraft:movement_sound_distance_offset": field "value": 0.55
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "avoid_damage_blocks": true
+					field "avoid_water": true
+					field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:suspect_tracking": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "warden"
+						family: "monster"
+						family: "mob"
+				component "minecraft:vibration_listener": empty
+			field "description":
+				description "identifier": "minecraft:warden"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "minecraft:emerged": field "remove": field "component_groups": component group: "emerging"
+				event "minecraft:entity_spawned": empty
+				event "minecraft:spawn_emerging": field "add": field "component_groups": component group: "emerging"
+		field "defined_in": behavior pack: "vanilla_1.19.0"
+	Removed behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "emerging":
+					component "minecraft:behavior.emerge":
+						field "duration": 7.0
+						field "on_done":
+							field "event": "minecraft:emerged"
+							field "target": "self"
+			field "components":
+				component "minecraft:ambient_sound_interval":
+					field "event_name": "ambient"
+					field "event_names":
+						event 0:
+							field "condition": "query.anger_level(this) >= 80"
+							field "event_name": "angry"
+						event 1:
+							field "condition": "query.anger_level(this) >= 40"
+							field "event_name": "agitated"
+					field "range": 4.0
+					field "value": 2.0
+				component "minecraft:anger_level":
+					field "anger_decrement_interval": 1.0
+					field "angry_boost": 20
+					field "angry_threshold": 80
+					field "default_annoyingness": 35
+					field "default_projectile_annoyingness": 20
+					field "max_anger": 150
+					field "on_increase_sounds":
+						sound 0:
+							field "condition": "query.anger_level(this) >= 80"
+							field "sound": "angry"
+						sound 1:
+							field "condition": "query.anger_level(this) >= 40"
+							field "sound": "agitated"
+						sound 2:
+							field "condition": "query.anger_level(this) >= 0"
+							field "sound": "listening"
+					field "remove_targets_below_angry_threshold": true
+				component "minecraft:attack": field "damage": 30
+				component "minecraft:behavior.dig":
+					field "digs_in_daylight": true
+					field "duration": 5.5
+					field "idle_time": 60.0
+					field "priority": 1
+					field "suspicion_is_disturbance": true
+					field "vibration_is_disturbance": true
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.investigate_suspicious_location":
+					field "priority": 4
+					field "speed_multiplier": 0.7
+				component "minecraft:behavior.melee_attack":
+					field "melee_fov": 360
+					field "priority": 3
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.random_look_around": field "priority": 11
+				component "minecraft:behavior.random_stroll":
+					field "priority": 9
+					field "speed_multiplier": 0.5
+				component "minecraft:behavior.roar":
+					field "duration": 4.2
+					field "priority": 2
+				component "minecraft:behavior.sniff":
+					field "cooldown_range": [5.0, 10.0]
+					field "duration": 4.16
+					field "priority": 5
+					field "sniffing_radius": 30.0
+					field "suspicion_radius": 6.0
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 2.9
+					field "width": 0.9
+				component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+				component "minecraft:fire_immune": empty
+				component "minecraft:follow_range": 30
+				component "minecraft:health":
+					field "max": 500
+					field "value": 500
+				component "minecraft:heartbeat": field "interval": "2.0 - math.clamp(query.anger_level / 80 * 1.5, 0, 1.5)"
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:knockback_resistance": field "value": 1.0
+				component "minecraft:mob_effect":
+					field "effect_range": 20
+					field "effect_time": 13
+					field "entity_filter":
+						filter property "subject": "other"
+						filter property "test": "is_family"
+						filter property "value": "player"
+					field "mob_effect": "darkness"
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.basic": empty
+				component "minecraft:movement_sound_distance_offset": field "value": 0.55
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "avoid_damage_blocks": true
+					field "avoid_water": true
+					field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:suspect_tracking": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "warden"
+						family: "monster"
+						family: "mob"
+				component "minecraft:vibration_listener": empty
+			field "description":
+				description "identifier": "minecraft:warden"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "minecraft:emerged": field "remove": field "component_groups": component group: "emerging"
+				event "minecraft:entity_spawned": empty
+				event "minecraft:spawn_emerging": field "add": field "component_groups": component group: "emerging"
+		field "defined_in": behavior pack: "experimental_wild_update"

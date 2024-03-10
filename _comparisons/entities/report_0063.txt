@@ -1,0 +1,83 @@
+Difference of "entities" between "1.9.0.0" (beta of "1.9.0") and "1.9.0.2" (beta of "1.9.0").
+
+Changed entity "arrow":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 3 (+1, -0)
+				Added component group "minecraft:pillager_arrow":
+					component "minecraft:projectile":
+						field "anchor": 1
+						field "gravity": 0.05
+						field "hitSound": "bow.hit"
+						field "offset": [0, -0.1, 0]
+						field "onHit":
+							field "arrow_effect": empty
+							field "impact_damage":
+								field "damage": [3, 6]
+								field "destroyonhit": true
+								field "knockback": true
+								field "semirandomdiffdamage": false
+							field "stick_in_ground": field "shake_time": 0.35
+						field "power": 1.6
+						field "shouldbounce": true
+						field "uncertaintyBase": 16
+						field "uncertaintyMultiplier": 4
+			Changed field "events":
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Total sequence item: 3 (+1, -0)
+						Added sequence item 2:
+							field "add": field "component_groups": component group: "minecraft:pillager_arrow"
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "pillager"
+Changed entity "panda":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 11 (+0, -1)
+				Changed component group "minecraft:panda_aggressive":
+					Total component: 6 (+1, -0)
+					Added component "minecraft:behavior.panic":
+						field "ignore_mob_damage": true
+						field "priority": 1
+						field "speed_multiplier": 1.25
+				Changed component group "minecraft:panda_lazy":
+					Total component: 6 (+1, -0)
+					Added component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 2.5
+				Removed component group "minecraft:panda_panic":
+					component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 1.25
+			Changed field "components":
+				Total component: 29 (+1, -0)
+				Added component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+				Changed component "minecraft:behavior.snacking":
+					Changed field "priority" from 1 to 2.
+			Changed field "events":
+				Changed event "minecraft:panda_aggressive":
+					Removed field "remove" of field "component_groups": component group: "minecraft:panda_panic".
+Changed entity "pillager":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:ranged_attack":
+					Changed component "minecraft:behavior.ranged_attack":
+						Changed field "attack_interval_max" from 0 to 1.
+						Changed field "attack_interval_min" from 0 to 1.
+						Removed field "charge_charged_trigger" of 1.25.
+						Removed field "charge_shoot_trigger" of 1.5.
+						Added field "priority" of 4.
+			Changed field "description":
+				Added description "is_experimental" of true.
+				Added description "is_spawnable" of true.
+				Added description "is_summonable" of true.
+				Removed description "minecraft:is_experimental" of field "value": true.
+				Removed description "minecraft:is_summonable" of field "value": true.
+				Removed description "minecraft:spawn_egg" of field "value": true.

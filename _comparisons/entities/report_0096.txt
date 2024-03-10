@@ -1,0 +1,1083 @@
+Difference of "entities" between "1.14.60" and "1.15.0.51" (beta of "1.16.0").
+
+Changed entity "bee":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "abort_shelter_detection":
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers":
+							Total trigger: 1 (+1, -1)
+							Removed trigger:
+								field "event": "abort_sheltering"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_weather"
+											filter property "value": "clear"
+										filter:
+											filter property "test": "is_daytime"
+											filter property "value": true
+							Added trigger:
+								field "event": "abort_sheltering"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": "=="
+											filter property "test": "weather"
+											filter property "value": "clear"
+										filter:
+											filter property "test": "is_daytime"
+											filter property "value": true
+				Changed component group "angry_bee":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "look_distance" of 30.
+						Changed field "priority" from 3 to 2.
+						Removed field "reach_multiplier" of 2.0.
+						Removed field "target_dist" of 1.2.
+						Removed field "target_tracking":
+							field "backoff":
+								backoff:
+									field "distance_squared_gt": 256
+									field "refresh_period_delta": 50
+								backoff:
+									field "distance_squared_gt": 1024
+									field "refresh_period_delta": 100
+							field "refresh_period_max": 11
+							field "refresh_period_min": 4
+						Removed field "track_target" of false.
+						Removed field "untrackable_cooldown_delay" of 17.
+				Changed component group "bee_adult":
+					Changed component "minecraft:behavior.breed":
+						Changed field "priority" from 6 to 4.
+				Changed component group "bee_baby":
+					Changed component "minecraft:behavior.follow_parent":
+						Changed field "priority" from 8 to 11.
+				Changed component group "escape_fire":
+					Changed component "minecraft:behavior.panic":
+						Changed field "priority" from 4 to 1.
+				Changed component group "find_hive":
+					Changed component "minecraft:behavior.move_to_block":
+						Changed field "priority" from 11 to 10.
+				Changed component group "look_for_food":
+					Changed component "minecraft:behavior.move_to_block":
+						Changed field "priority" from 11 to 10.
+				Changed component group "return_to_home":
+					Changed component "minecraft:behavior.go_home":
+						Changed field "priority" from 5 to 4.
+				Changed component group "shelter_detection":
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers":
+							Total trigger: 1 (+1, -1)
+							Removed trigger:
+								field "event": "seek_shelter"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "any_of":
+												filter:
+													filter property "test": "is_daytime"
+													filter property "value": false
+												filter:
+													filter property "operator": "!="
+													filter property "test": "is_weather"
+													filter property "value": "clear"
+										filter:
+											filter property "operator": "!="
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_charged"
+										filter:
+											filter property "test": "has_biome_tag"
+											filter property "value": "overworld"
+							Added trigger:
+								field "event": "seek_shelter"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "any_of":
+												filter:
+													filter property "test": "is_daytime"
+													filter property "value": false
+												filter:
+													filter property "operator": "=="
+													filter property "test": "weather"
+													filter property "value": "precipitation"
+										filter:
+											filter property "operator": "!="
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_charged"
+										filter:
+											filter property "test": "has_biome_tag"
+											filter property "value": "overworld"
+				Changed component group "take_nearest_target":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "priority" from 3 to 2.
+				Changed component group "track_attacker":
+					Changed component "minecraft:behavior.hurt_by_target":
+						Changed field "priority" from 2 to 1.
+			Changed field "components":
+				Changed component "minecraft:behavior.float":
+					Changed field "priority" from 20 to 19.
+				Changed component "minecraft:behavior.tempt":
+					Changed field "priority" from 7 to 5.
+				Changed component "minecraft:navigation.hover":
+					Added field "can_pass_doors" of false.
+Changed entity "blaze":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 26 (+0, -1)
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "max_dist" of 3.
+					Removed field "speed_multiplier" of 1.
+				Removed component "minecraft:can_fly" of field "value": true.
+				Changed component "minecraft:navigation.walk":
+					Added field "avoid_damage_blocks" of true.
+					Added field "avoid_water" of true.
+Changed entity "cat":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:cat_wild":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Removed field "attack_interval" of 10.
+			Changed field "components":
+				Changed component "minecraft:behavior.ocelotattack":
+					Added field "cooldown_time" of 1.0.
+					Added field "max_distance" of 15.0.
+					Added field "max_sneak_range" of 15.0.
+					Added field "max_sprint_range" of 4.0.
+					Added field "reach_multiplier" of 2.0.
+					Added field "x_max_rotation" of 30.0.
+					Added field "y_max_head_rotation" of 30.0.
+Changed entity "cave_spider":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:spider_angry":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "speed_multiplier" of 1.0.
+				Changed component group "minecraft:spider_hostile":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "speed_multiplier" of 1.0.
+Changed entity "chicken":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:balloonable":
+					Changed field "mass" from 0.6 to 0.5.
+Changed entity "creeper":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:charged_exploding":
+					Changed component "minecraft:explode":
+						Added field "allow_damage_underwater" of true.
+				Changed component group "minecraft:exploding":
+					Changed component "minecraft:explode":
+						Added field "allow_damage_underwater" of true.
+				Changed component group "minecraft:forced_charged_exploding":
+					Changed component "minecraft:explode":
+						Added field "allow_damage_underwater" of true.
+				Changed component group "minecraft:forced_exploding":
+					Changed component "minecraft:explode":
+						Added field "allow_damage_underwater" of true.
+Changed entity "dolphin":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "format_version" from "1.14.0" to "1.13.0".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:dolphin_adult":
+					Changed component "minecraft:experience_reward":
+						Changed field "on_death" from "query.last_hit_by_player ? Math.Random(1,3) : 0" to "query.last_hit_by_player ? Math.Random(1,4) : 0".
+			Changed field "components":
+				Total component: 26 (+1, -1)
+				Added component "minecraft:behavior.swim_with_entity":
+					field "catch_up_multiplier": 2.5
+					field "catch_up_threshold": 12.0
+					field "chance_to_stop": 0.0333
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "player"
+					field "match_direction_threshold": 2.0
+					field "priority": 4
+					field "search_range": 20.0
+					field "speed_multiplier": 1.5
+					field "state_check_interval": 0.5
+					field "stop_distance": 5.0
+					field "success_rate": 0.1
+				Removed component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "soft_distance": 4.0
+Changed entity "drowned":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:melee_mode":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "require_complete_path" of true.
+						Removed field "speed_multiplier" of 1.
+						Removed field "track_target" of false.
+Changed entity "elder_guardian":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 23 (+1, -1)
+				Removed component "minecraft:behavior.random_stroll":
+					field "priority": 7
+					field "speed_multiplier": 0.5
+				Added component "minecraft:behavior.random_swim":
+					field "avoid_surface": false
+					field "priority": 7
+					field "speed_multiplier": 0.5
+Changed entity "ender_crystal":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "crystal_exploding":
+					Changed component "minecraft:explode":
+						Added field "allow_damage_underwater" of true.
+Changed entity "enderman":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:enderman_angry":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "speed_multiplier" of 1.0.
+						Removed field "track_target" of false.
+Changed entity "endermite":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "speed_multiplier" of 1.
+Changed entity "fireball":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:exploding":
+					Changed component "minecraft:explode":
+						Added field "allow_damage_underwater" of true.
+Changed entity "fish":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.swim_idle":
+					Added field "idle_time" of 5.0.
+					Added field "success_rate" of 0.1.
+				Changed component "minecraft:behavior.swim_wander":
+					Changed field "interval" from 10 to 0.1.
+					Added field "wander_time" of 5.0.
+Changed entity "fox":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:defending_fox":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "target_dist" of 1.2.
+				Changed component group "minecraft:docile_fox":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "target_dist" of 1.2.
+				Changed component group "minecraft:fox_day":
+					Changed component "minecraft:behavior.nap":
+						Changed field "can_nap_filters":
+							Changed filter property "all_of":
+								Total filter: 4 (+1, -1)
+								Removed filter:
+									filter property "operator": "!="
+									filter property "subject": "self"
+									filter property "test": "is_weather"
+									filter property "value": "thunderstorm"
+								Added filter:
+									filter property "operator": "!="
+									filter property "subject": "self"
+									filter property "test": "weather_at_position"
+									filter property "value": "thunderstorm"
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers":
+							Total trigger: 2 (+1, -1)
+							Removed trigger:
+								field "event": "minecraft:fox_configure_thunderstorm"
+								field "filters":
+									filter property "test": "is_weather"
+									filter property "value": "thunderstorm"
+							Added trigger:
+								field "event": "minecraft:fox_configure_thunderstorm"
+								field "filters":
+									filter property "test": "weather_at_position"
+									filter property "value": "thunderstorm"
+				Changed component group "minecraft:fox_night":
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers":
+							Total trigger: 2 (+1, -1)
+							Removed trigger:
+								field "event": "minecraft:fox_configure_thunderstorm"
+								field "filters":
+									filter property "test": "is_weather"
+									filter property "value": "thunderstorm"
+							Added trigger:
+								field "event": "minecraft:fox_configure_thunderstorm"
+								field "filters":
+									filter property "test": "weather_at_position"
+									filter property "value": "thunderstorm"
+				Changed component group "minecraft:fox_thunderstorm":
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers":
+							Total trigger: 2 (+2, -2)
+							Removed trigger:
+								field "event": "minecraft:fox_configure_day"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": "!="
+											filter property "test": "is_weather"
+											filter property "value": "thunderstorm"
+										filter:
+											filter property "test": "is_daytime"
+											filter property "value": true
+							Removed trigger:
+								field "event": "minecraft:fox_configure_night"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": "!="
+											filter property "test": "is_weather"
+											filter property "value": "thunderstorm"
+										filter:
+											filter property "test": "is_daytime"
+											filter property "value": false
+							Added trigger:
+								field "event": "minecraft:fox_configure_day"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": "!="
+											filter property "test": "weather_at_position"
+											filter property "value": "thunderstorm"
+										filter:
+											filter property "test": "is_daytime"
+											filter property "value": true
+							Added trigger:
+								field "event": "minecraft:fox_configure_night"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": "!="
+											filter property "test": "weather_at_position"
+											filter property "value": "thunderstorm"
+										filter:
+											filter property "test": "is_daytime"
+											filter property "value": false
+			Changed field "components":
+				Changed component "minecraft:balloonable":
+					Added field "mass" of 0.6.
+Changed entity "guardian":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 24 (+1, -1)
+				Removed component "minecraft:behavior.random_stroll":
+					field "interval": 80
+					field "priority": 7
+					field "speed_multiplier": 1.0
+				Added component "minecraft:behavior.random_swim":
+					field "avoid_surface": false
+					field "interval": 80
+					field "priority": 7
+					field "speed_multiplier": 1.0
+Changed entity "horse":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:horse_tamed":
+					Changed component "minecraft:behavior.tempt":
+						Changed field "items":
+							Total item: 3 (+0, -6)
+							Removed item "apple".
+							Removed item "carrot".
+							Removed item "hay_block".
+							Removed item "sugar".
+							Removed item "bread".
+							Removed item "wheat".
+Changed entity "husk":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "speed_multiplier" of 1.
+					Removed field "track_target" of false.
+Changed entity "iron_golem":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:village_created":
+					Changed component "minecraft:behavior.defend_village_target":
+						Added field "must_reach" of true.
+			Changed field "components":
+				Changed component "minecraft:balloonable":
+					Added field "mass" of 2.0.
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "target_dist" of 1.0.
+Changed entity "magma_cube":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.slime_float":
+					Added field "jump_chance_percentage" of 0.8.
+					Added field "speed_multiplier" of 1.2.
+				Changed component "minecraft:behavior.slime_keep_on_jumping":
+					Added field "speed_multiplier" of 1.0.
+				Changed component "minecraft:behavior.slime_random_direction":
+					Added field "add_random_time_range" of 3.
+					Added field "min_change_direction_time" of 2.0.
+					Added field "turn_range" of 360.
+Changed entity "ocelot":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "format_version" from "1.14.0" to "1.13.0".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:ocelot_tame":
+					Total component: 7 (+1, -0)
+					Added component "minecraft:leashable":
+						field "hard_distance": 6.0
+						field "max_distance": 10.0
+						field "on_leash":
+							field "event": "minecraft:on_leash"
+							field "target": "self"
+						field "on_unleash":
+							field "event": "minecraft:on_unleash"
+							field "target": "self"
+						field "soft_distance": 4.0
+			Changed field "components":
+				Total component: 23 (+0, -1)
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Removed field "attack_interval" of 10.
+				Changed component "minecraft:behavior.ocelotattack":
+					Added field "cooldown_time" of 1.0.
+					Added field "max_distance" of 15.0.
+					Added field "max_sneak_range" of 15.0.
+					Added field "max_sprint_range" of 4.0.
+					Added field "reach_multiplier" of 2.0.
+					Added field "x_max_rotation" of 30.0.
+					Added field "y_max_head_rotation" of 30.0.
+				Removed component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "minecraft:on_leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "minecraft:on_unleash"
+						field "target": "self"
+					field "soft_distance": 4.0
+Changed entity "panda":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:panda_adult":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "target_dist" of 1.2.
+					Changed component "minecraft:experience_reward":
+						Changed field "on_death" from "query.last_hit_by_player ? Math.Random(1,3) : 0" to "query.last_hit_by_player ? Math.Random(1,4) : 0".
+				Changed component group "minecraft:panda_aggressive":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "target_dist" of 1.2.
+			Changed field "components":
+				Changed component "minecraft:balloonable":
+					Added field "mass" of 1.5.
+Changed entity "phantom":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Removed field "must_see" of false.
+				Changed component "minecraft:behavior.swoop_attack":
+					Added field "damage_reach" of 0.2.
+					Added field "speed_multiplier" of 1.0.
+Changed entity "pillager":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 7 (+0, -1)
+				Changed component group "minecraft:illager_squad_captain":
+					Total component: 6 (+2, -0)
+					Added component "minecraft:on_hurt":
+						field "event": "minecraft:ranged_mode"
+						field "target": "self"
+					Added component "minecraft:on_hurt_by_player":
+						field "event": "minecraft:ranged_mode"
+						field "target": "self"
+				Changed component group "minecraft:melee_attack":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "speed_multiplier" of 1.
+						Removed field "target_dist" of 1.2.
+				Changed component group "minecraft:patrol_captain":
+					Total component: 9 (+0, -1)
+					Changed component "minecraft:behavior.hold_ground":
+						Removed field "hurt_by_target_event":
+							field "event": "minecraft:synchronized_ranged_mode"
+							field "target": "self"
+						Changed field "within_radius_event":
+							Changed field "event" from "minecraft:synchronized_ranged_mode" to "minecraft:ranged_mode".
+					Removed component "minecraft:on_friendly_anger":
+						field "event": "minecraft:synchronized_ranged_mode"
+						field "target": "self"
+					Changed component "minecraft:on_hurt":
+						Changed field "event" from "minecraft:synchronized_ranged_mode" to "minecraft:ranged_mode".
+					Changed component "minecraft:on_hurt_by_player":
+						Changed field "event" from "minecraft:synchronized_ranged_mode" to "minecraft:ranged_mode".
+				Changed component group "minecraft:patrol_follower":
+					Total component: 5 (+0, -1)
+					Changed component "minecraft:behavior.hold_ground":
+						Removed field "hurt_by_target_event":
+							field "event": "minecraft:synchronized_ranged_mode"
+							field "target": "self"
+						Changed field "within_radius_event":
+							Changed field "event" from "minecraft:synchronized_ranged_mode" to "minecraft:ranged_mode".
+					Removed component "minecraft:on_friendly_anger":
+						field "event": "minecraft:synchronized_ranged_mode"
+						field "target": "self"
+					Changed component "minecraft:on_hurt":
+						Changed field "event" from "minecraft:synchronized_ranged_mode" to "minecraft:ranged_mode".
+					Changed component "minecraft:on_hurt_by_player":
+						Changed field "event" from "minecraft:synchronized_ranged_mode" to "minecraft:ranged_mode".
+				Removed component group "minecraft:synchronized_ranged_attack":
+					component "minecraft:angry":
+						field "broadcast_anger": true
+						field "broadcast_range": 8
+						field "duration": -1
+			Changed field "events":
+				Total event: 11 (+0, -1)
+				Changed event "minecraft:calm":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 2 (+0, -1)
+							Removed component group "minecraft:synchronized_ranged_attack".
+				Changed event "minecraft:spawn_as_illager_captain":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:ranged_attack".
+				Removed event "minecraft:synchronized_ranged_mode":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:synchronized_ranged_attack"
+							component group: "minecraft:ranged_attack"
+Changed entity "polar_bear":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "format_version" from "1.14.0" to "1.13.0".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:adult":
+					Changed component "minecraft:experience_reward":
+						Changed field "on_death" from "query.last_hit_by_player ? Math.Random(1,3) : 0" to "query.last_hit_by_player ? Math.Random(1,4) : 0".
+				Changed component group "minecraft:adult_hostile":
+					Changed component "minecraft:behavior.stomp_attack":
+						Added field "no_damage_range_multiplier" of 2.0.
+						Added field "stomp_range_multiplier" of 2.0.
+				Changed component group "minecraft:baby_wild":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Removed field "must_see" of false.
+			Changed field "components":
+				Total component: 21 (+0, -1)
+				Removed component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "soft_distance": 4.0
+Changed entity "pufferfish":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 7 (+3, -2)
+				Changed component group "minecraft:deflate_sensor":
+					Changed component "minecraft:entity_sensor":
+						Changed field "event_filters":
+							Added filter property "operator" of ">".
+							Added filter property "test" of "distance_to_nearest_player".
+							Added filter property "value" of 2.9.
+						Added field "relative_range" of false.
+						Changed field "sensor_range" from 10 to 2.9.
+				Added component group "minecraft:deflate_sensor_buffer":
+					component "minecraft:timer":
+						field "looping": false
+						field "randomInterval": false
+						field "time": 0.01
+						field "time_down_event": field "event": "minecraft:on_full_puff"
+				Removed component group "minecraft:half_puff_deflate":
+					component "minecraft:timer":
+						field "looping": false
+						field "randomInterval": false
+						field "time": 1
+						field "time_down_event": field "event": "minecraft:on_normal_puff"
+					component "minecraft:variant": field "value": 1
+				Removed component group "minecraft:half_puff_inflate":
+					component "minecraft:timer":
+						field "looping": false
+						field "randomInterval": false
+						field "time": 0.05
+						field "time_down_event": field "event": "minecraft:on_full_puff"
+					component "minecraft:variant": field "value": 1
+				Added component group "minecraft:half_puff_primary":
+					component "minecraft:timer":
+						field "looping": false
+						field "randomInterval": false
+						field "time": 2
+						field "time_down_event": field "event": "minecraft:on_half_puff"
+					component "minecraft:variant": field "value": 1
+				Added component group "minecraft:half_puff_secondary":
+					component "minecraft:entity_sensor":
+						field "event": "minecraft:start_full_puff"
+						field "event_filters":
+							filter property "any_of":
+								filter:
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "mob"
+								filter:
+									filter property "all_of":
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+										filter:
+											filter property "none_of":
+												filter property "subject": "other"
+												filter property "test": "has_ability"
+												filter property "value": "instabuild"
+						field "minimum_count": 1
+						field "relative_range": false
+						field "sensor_range": 2.5
+					component "minecraft:timer":
+						field "looping": false
+						field "randomInterval": false
+						field "time": 2
+						field "time_down_event": field "event": "minecraft:on_normal_puff"
+					component "minecraft:variant": field "value": 1
+				Changed component group "minecraft:normal_puff":
+					Changed component "minecraft:entity_sensor":
+						Changed field "event" from "minecraft:to_full_puff" to "minecraft:start_half_puff".
+						Added field "relative_range" of false.
+						Changed field "sensor_range" from 1.5 to 2.5.
+				Changed component group "minecraft:start_deflate":
+					Changed component "minecraft:timer":
+						Changed field "time" from 10 to 3.
+			Changed field "components":
+				Changed component "minecraft:behavior.swim_wander":
+					Changed field "interval" from 0 to 1.0.
+					Added field "wander_time" of 5.0.
+			Changed field "events":
+				Total event: 9 (+3, -0)
+				Changed event "minecraft:on_deflate":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 1 (+1, -1)
+							Removed component group "minecraft:half_puff_deflate".
+							Added component group "minecraft:half_puff_secondary".
+				Changed event "minecraft:on_full_puff":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 1 (+0, -1)
+							Removed component group "minecraft:full_puff".
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 1 (+1, -1)
+							Removed component group "minecraft:half_puff_inflate".
+							Added component group "minecraft:deflate_sensor_buffer".
+				Added event "minecraft:on_half_puff":
+					field "add": field "component_groups": component group: "minecraft:half_puff_secondary"
+					field "remove": field "component_groups": component group: "minecraft:half_puff_primary"
+				Changed event "minecraft:on_normal_puff":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 1 (+1, -1)
+							Removed component group "minecraft:half_puff_deflate".
+							Added component group "minecraft:half_puff_secondary".
+				Added event "minecraft:start_full_puff":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:full_puff"
+							component group: "minecraft:deflate_sensor_buffer"
+					field "remove": field "component_groups": component group: "minecraft:half_puff_secondary"
+				Added event "minecraft:start_half_puff":
+					field "add": field "component_groups": component group: "minecraft:half_puff_primary"
+					field "remove": field "component_groups": component group: "minecraft:normal_puff"
+				Changed event "minecraft:to_full_puff":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+2, -1)
+							Removed component group "minecraft:half_puff_inflate".
+							Added component group "minecraft:full_puff".
+							Added component group "minecraft:deflate_sensor_buffer".
+Changed entity "rabbit":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:balloonable":
+					Changed field "mass" from 0.75 to 0.4.
+Changed entity "ravager":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:hostile":
+					Changed component "minecraft:behavior.delayed_attack":
+						Added field "attack_once" of false.
+						Added field "random_stop_interval" of 0.
+						Added field "require_complete_path" of false.
+						Removed field "sound_event" of "attack.strong".
+						Added field "speed_multiplier" of 1.0.
+Changed entity "salmon":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.swim_idle":
+					Added field "idle_time" of 5.0.
+					Added field "success_rate" of 0.1.
+				Changed component "minecraft:behavior.swim_wander":
+					Changed field "interval" from 60 to 0.0166.
+					Added field "look_ahead" of 5.0.
+					Added field "wander_time" of 5.0.
+Changed entity "silverfish":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:silverfish_angry":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "speed_multiplier" of 1.0.
+			Changed field "components":
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Added field "attack_interval" of 10.
+					Changed field "entity_types":
+						Total entity type: 1 (+1, -1)
+						Removed entity type:
+							field "attack_interval": 10
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "snowgolem"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "irongolem"
+							field "max_dist": 8
+						Added entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "snowgolem"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "irongolem"
+							field "max_dist": 8
+Changed entity "skeleton":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:melee_attack":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "target_dist" of 1.2.
+				Changed component group "minecraft:ranged_attack":
+					Changed component "minecraft:behavior.ranged_attack":
+						Added field "priority" of 0.
+			Changed field "components":
+				Changed component "minecraft:behavior.ranged_attack":
+					Added field "priority" of 0.
+Changed entity "slime":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.slime_float":
+					Added field "jump_chance_percentage" of 0.8.
+					Added field "speed_multiplier" of 1.2.
+				Changed component "minecraft:behavior.slime_keep_on_jumping":
+					Added field "speed_multiplier" of 1.0.
+				Changed component "minecraft:behavior.slime_random_direction":
+					Added field "add_random_time_range" of 3.
+					Added field "min_change_direction_time" of 2.0.
+					Added field "turn_range" of 360.
+Changed entity "snow_golem":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Removed field "must_reach" of true.
+Changed entity "snowball":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:projectile":
+					Added field "anchor" of 1.
+Changed entity "spider":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:spider_angry":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "speed_multiplier" of 1.0.
+Changed entity "squid":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 21 (+0, -1)
+				Removed empty component "minecraft:balloonable".
+Changed entity "stray":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:melee_attack":
+					Changed component "minecraft:behavior.melee_attack":
+						Removed field "target_dist" of 1.2.
+				Changed component group "minecraft:ranged_attack":
+					Changed component "minecraft:behavior.ranged_attack":
+						Added field "priority" of 0.
+			Changed field "components":
+				Changed component "minecraft:behavior.ranged_attack":
+					Added field "priority" of 0.
+Changed entity "tropicalfish":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.swim_idle":
+					Added field "idle_time" of 5.0.
+					Added field "success_rate" of 0.1.
+				Changed component "minecraft:behavior.swim_wander":
+					Changed field "interval" from 10 to 0.1.
+					Added field "wander_time" of 5.0.
+Changed entity "vindicator":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "speed_multiplier" of 1.
+					Removed field "track_target" of false.
+Changed entity "wither_skeleton":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "target_dist" of 1.2.
+Changed entity "wither_skull":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:exploding":
+					Changed component "minecraft:explode":
+						Added field "allow_damage_underwater" of true.
+Changed entity "wither_skull_dangerous":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:exploding":
+					Changed component "minecraft:explode":
+						Added field "allow_damage_underwater" of true.
+Changed entity "wolf":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:wolf_angry":
+					Total component: 3 (+1, -0)
+					Added component "minecraft:rideable":
+						field "family_types": family: "zombie"
+						field "seat_count": 1
+						field "seats": field "position": [0.0, 0.675, -0.1]
+				Changed component group "minecraft:wolf_tame":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Removed field "attack_interval" of 10.
+				Changed component group "minecraft:wolf_wild":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Removed field "attack_interval" of 10.
+			Changed field "components":
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "reach_multiplier" of 1.0.
+					Removed field "target_dist" of 1.2.
+					Removed field "track_target" of true.
+Changed entity "zombie":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "speed_multiplier" of 1.
+					Removed field "track_target" of false.
+Changed entity "zombie_pigman":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "track_target" of false.
+Changed entity "zombie_villager":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "speed_multiplier" of 1.
+					Removed field "track_target" of false.
+Changed entity "zombie_villager_v2":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.15".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 24 (+1, -1)
+				Added empty component "minecraft:annotation.break_door".
+				Removed component "minecraft:behavior.break_door" of field "priority": 1.
+				Changed component "minecraft:behavior.melee_attack":
+					Removed field "speed_multiplier" of 1.
+					Removed field "track_target" of false.
+				Changed component "minecraft:navigation.walk":
+					Added field "can_break_doors" of true.
+					Removed field "can_open_doors" of true.

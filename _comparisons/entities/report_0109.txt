@@ -1,0 +1,538 @@
+Difference of "entities" between "1.16.100.50" (beta of "1.16.100") and "1.16.100.51" (beta of "1.16.100").
+
+Changed entity "blaze":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 4 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Added field "component_groups":
+				component group "melee_mode":
+					component "minecraft:attack": field "damage": 6
+					component "minecraft:behavior.melee_attack": field "priority": 3
+				component group "mode_switcher":
+					component "minecraft:target_nearby_sensor":
+						field "inside_range": 2.0
+						field "must_see": true
+						field "on_inside_range":
+							field "event": "switch_to_melee"
+							field "target": "self"
+						field "on_outside_range":
+							field "event": "switch_to_ranged"
+							field "target": "self"
+						field "outside_range": 3.0
+				component group "ranged_mode":
+					component "minecraft:behavior.ranged_attack":
+						field "attack_interval_max": 5.0
+						field "attack_interval_min": 3.0
+						field "attack_radius": 16.0
+						field "burst_interval": 0.3
+						field "burst_shots": 3
+						field "charge_charged_trigger": 0.0
+						field "charge_shoot_trigger": 4.0
+						field "priority": 3
+					component "minecraft:shooter": field "def": "minecraft:small_fireball"
+			Changed field "components":
+				Total component: 25 (+2, -4)
+				Removed component "minecraft:attack" of field "damage": 6.
+				Removed component "minecraft:behavior.melee_attack":
+					field "priority": 3
+					field "random_stop_interval": 2
+					field "track_target": true
+				Changed component "minecraft:behavior.random_look_around":
+					Changed field "priority" from 6 to 5.
+				Changed component "minecraft:behavior.random_stroll":
+					Changed field "priority" from 5 to 4.
+				Removed component "minecraft:behavior.ranged_attack":
+					field "attack_interval_max": 5.0
+					field "attack_interval_min": 3.0
+					field "attack_radius": 16.0
+					field "burst_interval": 0.3
+					field "burst_shots": 3
+					field "charge_charged_trigger": 0.0
+					field "charge_shoot_trigger": 4.0
+					field "priority": 4
+				Added component "minecraft:on_hurt":
+					field "event": "minecraft:on_hurt_event"
+					field "target": "self"
+				Added component "minecraft:on_hurt_by_player":
+					field "event": "minecraft:on_hurt_event"
+					field "target": "self"
+				Removed component "minecraft:shooter" of field "def": "minecraft:small_fireball".
+			Changed field "events":
+				Total event: 4 (+4, -0)
+				Added event "minecraft:entity_spawned" of field "add": field "component_groups": component group: "mode_switcher".
+				Added event "minecraft:on_hurt_event" of field "add": field "component_groups": component group: "mode_switcher".
+				Added event "switch_to_melee":
+					field "add": field "component_groups": component group: "melee_mode"
+					field "remove": field "component_groups": component group: "ranged_mode"
+				Added event "switch_to_ranged":
+					field "add": field "component_groups": component group: "ranged_mode"
+					field "remove": field "component_groups": component group: "melee_mode"
+Changed entity "dolphin":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 5 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 7 (+7, -7)
+				Added component group "dolphin_adult":
+					component "minecraft:behavior.melee_attack":
+						field "priority": 2
+						field "track_target": true
+					component "minecraft:bribeable":
+						field "bribe_items":
+							item: "fish"
+							item: "salmon"
+					component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:loot": field "table": "loot_tables/entities/dolphin.json"
+				Added component group "dolphin_angry":
+					component "minecraft:angry":
+						field "broadcast_anger": true
+						field "broadcast_range": 16
+						field "calm_event":
+							field "event": "on_calm"
+							field "target": "self"
+						field "duration": 25
+					component "minecraft:on_target_acquired": empty
+				Added component group "dolphin_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items":
+							item: "fish"
+							item: "salmon"
+						field "grow_up":
+							field "event": "ageable_grow_up"
+							field "target": "self"
+					component "minecraft:behavior.follow_parent":
+						field "priority": 4
+						field "speed_multiplier": 1.1
+					component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 1.25
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.65
+				Added component group "dolphin_dried":
+					component "minecraft:damage_over_time":
+						field "damage_per_hurt": 1
+						field "time_between_hurt": 0
+				Added component group "dolphin_on_land":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "stop_dryingout"
+								field "filters":
+									filter property "operator": "=="
+									filter property "test": "in_water_or_rain"
+									filter property "value": true
+					component "minecraft:navigation.generic":
+						field "can_breach": false
+						field "can_jump": false
+						field "can_path_over_water": true
+						field "can_swim": true
+						field "can_walk": true
+						field "is_amphibious": true
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 120
+						field "time_down_event": field "event": "dried_out"
+				Added component group "dolphin_on_land_in_rain":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "navigation_off_land"
+								field "filters":
+									filter property "operator": "=="
+									filter property "test": "in_water"
+									filter property "value": true
+							trigger:
+								field "event": "start_dryingout"
+								field "filters":
+									filter property "operator": "!="
+									filter property "test": "in_water_or_rain"
+									filter property "value": true
+					component "minecraft:navigation.generic":
+						field "can_breach": false
+						field "can_jump": false
+						field "can_path_over_water": true
+						field "can_swim": true
+						field "can_walk": true
+						field "is_amphibious": true
+				Added component group "dolphin_swimming_navigation":
+					component "minecraft:behavior.look_at_player":
+						field "look_distance": 6
+						field "priority": 8
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "navigation_on_land"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": "=="
+											filter property "test": "on_ground"
+											filter property "value": true
+										filter:
+											filter property "operator": "!="
+											filter property "test": "in_water"
+											filter property "value": true
+					component "minecraft:navigation.generic":
+						field "can_breach": true
+						field "can_path_over_water": false
+						field "can_sink": false
+						field "can_swim": true
+						field "can_walk": false
+						field "is_amphibious": true
+				Removed component group "minecraft:dolphin_adult":
+					component "minecraft:behavior.melee_attack":
+						field "priority": 2
+						field "track_target": true
+					component "minecraft:bribeable":
+						field "bribe_items":
+							item: "fish"
+							item: "salmon"
+					component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:loot": field "table": "loot_tables/entities/dolphin.json"
+				Removed component group "minecraft:dolphin_angry":
+					component "minecraft:angry":
+						field "broadcast_anger": true
+						field "broadcast_range": 16
+						field "calm_event":
+							field "event": "minecraft:on_calm"
+							field "target": "self"
+						field "duration": 25
+					component "minecraft:on_target_acquired": empty
+				Removed component group "minecraft:dolphin_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items":
+							item: "fish"
+							item: "salmon"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:behavior.follow_parent":
+						field "priority": 4
+						field "speed_multiplier": 1.1
+					component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 1.25
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.65
+				Removed component group "minecraft:dolphin_dried":
+					component "minecraft:damage_over_time":
+						field "damage_per_hurt": 1
+						field "time_between_hurt": 0
+				Removed component group "minecraft:dolphin_on_land":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "minecraft:stop_dryingout"
+								field "filters":
+									filter property "operator": "=="
+									filter property "test": "in_water_or_rain"
+									filter property "value": true
+					component "minecraft:navigation.generic":
+						field "can_breach": false
+						field "can_jump": false
+						field "can_path_over_water": true
+						field "can_swim": true
+						field "can_walk": true
+						field "is_amphibious": true
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 20
+						field "time_down_event": field "event": "minecraft:dried_out"
+				Removed component group "minecraft:dolphin_on_land_in_rain":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "minecraft:navigation_off_land"
+								field "filters":
+									filter property "operator": "=="
+									filter property "test": "in_water"
+									filter property "value": true
+							trigger:
+								field "event": "minecraft:start_dryingout"
+								field "filters":
+									filter property "operator": "!="
+									filter property "test": "in_water_or_rain"
+									filter property "value": true
+					component "minecraft:navigation.generic":
+						field "can_breach": false
+						field "can_jump": false
+						field "can_path_over_water": true
+						field "can_swim": true
+						field "can_walk": true
+						field "is_amphibious": true
+				Removed component group "minecraft:dolphin_swimming_navigation":
+					component "minecraft:behavior.look_at_player":
+						field "look_distance": 6
+						field "priority": 8
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "minecraft:navigation_on_land"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": "=="
+											filter property "test": "on_ground"
+											filter property "value": true
+										filter:
+											filter property "operator": "!="
+											filter property "test": "in_water"
+											filter property "value": true
+					component "minecraft:navigation.generic":
+						field "can_breach": true
+						field "can_path_over_water": false
+						field "can_sink": false
+						field "can_swim": true
+						field "can_walk": false
+						field "is_amphibious": true
+			Changed field "components":
+				Changed component "minecraft:on_target_acquired":
+					Changed field "event" from "minecraft:become_angry" to "become_angry".
+				Changed component "minecraft:on_target_escape":
+					Removed field "event" of "minecraft:on_calm".
+			Changed field "events":
+				Total event: 9 (+8, -8)
+				Added event "ageable_grow_up":
+					field "add": field "component_groups": component group: "dolphin_adult"
+					field "remove": field "component_groups": component group: "dolphin_baby"
+				Added event "become_angry" of field "add": field "component_groups": component group: "dolphin_angry".
+				Added event "dried_out" of field "add": field "component_groups": component group: "dolphin_dried".
+				Removed event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group: "minecraft:dolphin_adult"
+					field "remove": field "component_groups": component group: "minecraft:dolphin_baby"
+				Removed event "minecraft:become_angry" of field "add": field "component_groups": component group: "minecraft:dolphin_angry".
+				Removed event "minecraft:dried_out" of field "add": field "component_groups": component group: "minecraft:dolphin_dried".
+				Changed event "minecraft:entity_spawned":
+					Changed field "randomize":
+						Total randomize item: 2 (+2, -2)
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:dolphin_adult"
+									component group: "minecraft:dolphin_swimming_navigation"
+							field "weight": 90
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:dolphin_baby"
+									component group: "minecraft:dolphin_swimming_navigation"
+							field "weight": 10
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "dolphin_adult"
+									component group: "dolphin_swimming_navigation"
+							field "weight": 90
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "dolphin_baby"
+									component group: "dolphin_swimming_navigation"
+							field "weight": 10
+				Removed event "minecraft:navigation_off_land":
+					field "add": field "component_groups": component group: "minecraft:dolphin_swimming_navigation"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:dolphin_on_land_in_rain"
+							component group: "minecraft:dolphin_on_land"
+							component group: "minecraft:dolphin_dried"
+				Removed event "minecraft:navigation_on_land":
+					field "add": field "component_groups": component group: "minecraft:dolphin_on_land"
+					field "remove": field "component_groups": component group: "minecraft:dolphin_swimming_navigation"
+				Removed event "minecraft:on_calm" of field "remove": field "component_groups": component group: "minecraft:dolphin_angry".
+				Removed event "minecraft:start_dryingout":
+					field "add": field "component_groups": component group: "minecraft:dolphin_on_land"
+					field "remove": field "component_groups": component group: "minecraft:dolphin_on_land_in_rain"
+				Removed event "minecraft:stop_dryingout":
+					field "add": field "component_groups": component group: "minecraft:dolphin_on_land_in_rain"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:dolphin_on_land"
+							component group: "minecraft:dolphin_dried"
+				Added event "navigation_off_land":
+					field "add": field "component_groups": component group: "dolphin_swimming_navigation"
+					field "remove":
+						field "component_groups":
+							component group: "dolphin_on_land_in_rain"
+							component group: "dolphin_on_land"
+							component group: "dolphin_dried"
+				Added event "navigation_on_land":
+					field "add": field "component_groups": component group: "dolphin_on_land"
+					field "remove": field "component_groups": component group: "dolphin_swimming_navigation"
+				Added event "on_calm" of field "remove": field "component_groups": component group: "dolphin_angry".
+				Added event "start_dryingout":
+					field "add": field "component_groups": component group: "dolphin_on_land"
+					field "remove": field "component_groups": component group: "dolphin_on_land_in_rain"
+				Added event "stop_dryingout":
+					field "add": field "component_groups": component group: "dolphin_on_land_in_rain"
+					field "remove":
+						field "component_groups":
+							component group: "dolphin_on_land"
+							component group: "dolphin_dried"
+Changed entity "snow_golem":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 4 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:interact":
+					Changed field "interactions":
+						Total interaction: 1 (+1, -1)
+						Removed interaction:
+							field "cooldown": 2.5
+							field "hurt_item": 1
+							field "interact_text": "action.interact.shear"
+							field "on_interact":
+								field "event": "minecraft:on_sheared"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "domain": "hand"
+											filter property "subject": "other"
+											filter property "test": "has_equipment"
+											filter property "value": "shears"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+										filter:
+											filter property "operator": "!="
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_sheared"
+								field "target": "self"
+							field "play_sounds": "shear"
+							field "use_item": false
+						Added interaction:
+							field "cooldown": 2.5
+							field "hurt_item": 1
+							field "interact_text": "action.interact.shear"
+							field "on_interact":
+								field "event": "minecraft:on_sheared"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "domain": "hand"
+											filter property "subject": "other"
+											filter property "test": "has_equipment"
+											filter property "value": "shears"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+										filter:
+											filter property "operator": "!="
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_sheared"
+								field "target": "self"
+							field "play_sounds": "shear"
+							field "spawn_items": field "table": "loot_tables/entities/snow_golem_shear.json"
+							field "use_item": false
+Changed entity "strider":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.move_to_lava":
+					Changed field "goal_radius" from 0.9 to 1.0.
+					Removed field "search_count" of 30.
+Changed entity "turtle":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 5 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.move_to_water":
+					Changed field "goal_radius" from 0.1 to 1.5.
+					Removed field "search_count" of 1.
+Changed entity "vex":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.charge_attack":
+					Removed field "speed_multiplier" of 2.0.
+Changed entity "villager_v2":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 4 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "format_version" from "1.16.0" to "1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "armorer":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "butcher":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "cartographer":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "cleric":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "farmer":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "fisherman":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "fletcher":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "leatherworker":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "librarian":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "mason":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "shepherd":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "toolsmith":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+				Changed component group "weaponsmith":
+					Changed component "minecraft:economy_trade_table":
+						Added field "cured_discount" of [-100, -100].
+						Added field "max_cured_discount" of [-500, -500].
+Changed entity "xp_orb":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Added behavior pack "vanilla_1.16.100".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 5 (+1, -0)
+				Added component "minecraft:buoyant":
+					field "apply_gravity": false
+					field "liquid_blocks":
+						block: "minecraft:flowing_water"
+						block: "minecraft:water"

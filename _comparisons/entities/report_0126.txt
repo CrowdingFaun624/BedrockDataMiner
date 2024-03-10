@@ -1,0 +1,1133 @@
+Difference of "entities" between "1.16.210" and "1.16.220.50" (beta of "1.16.220").
+
+Total entity: 107 (+2, -0)
+Changed entity "armor_stand":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 3 (+1, -1)
+			Removed behavior pack "vanilla_1.16.210".
+			Added behavior pack "vanilla_1.16.220".
+Changed entity "chicken":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 5 (+1, -0)
+			Added behavior pack "vanilla_1.16.220".
+		Changed field "minecraft:entity":
+			Changed field "events":
+				Total event: 5 (+1, -0)
+				Changed event "minecraft:entity_spawned":
+					Changed field "randomize":
+						Total randomize item: 2 (+2, -2)
+						Removed randomize item:
+							field "add": field "component_groups": component group: "minecraft:chicken_adult"
+							field "remove": empty
+							field "weight": 95
+						Removed randomize item:
+							field "add": field "component_groups": component group: "minecraft:chicken_baby"
+							field "remove": empty
+							field "weight": 5
+						Added randomize item:
+							field "trigger": "minecraft:spawn_adult"
+							field "weight": 95
+						Added randomize item:
+							field "add": field "component_groups": component group: "minecraft:chicken_baby"
+							field "weight": 5
+				Added event "minecraft:spawn_adult" of field "add": field "component_groups": component group: "minecraft:chicken_adult".
+Changed entity "cow":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 4 (+1, -0)
+			Added behavior pack "vanilla_1.16.220".
+		Changed field "minecraft:entity":
+			Changed field "events":
+				Total event: 5 (+1, -0)
+				Changed event "minecraft:entity_spawned":
+					Changed field "randomize":
+						Total randomize item: 2 (+1, -1)
+						Removed randomize item:
+							field "add": field "component_groups": component group: "minecraft:cow_adult"
+							field "weight": 95
+						Added randomize item:
+							field "trigger": "minecraft:spawn_adult"
+							field "weight": 95
+				Added event "minecraft:spawn_adult" of field "add": field "component_groups": component group: "minecraft:cow_adult".
+Changed entity "creeper":
+	Added behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "minecraft:charged_creeper": component "minecraft:is_charged": empty
+				component group "minecraft:charged_exploding":
+					component "minecraft:explode":
+						field "causes_fire": false
+						field "destroy_affected_by_griefing": true
+						field "fuse_length": 1.5
+						field "fuse_lit": true
+						field "power": 6
+				component group "minecraft:exploding":
+					component "minecraft:explode":
+						field "causes_fire": false
+						field "destroy_affected_by_griefing": true
+						field "fuse_length": 1.5
+						field "fuse_lit": true
+						field "power": 3
+				component group "minecraft:forced_charged_exploding":
+					component "minecraft:explode":
+						field "causes_fire": false
+						field "destroy_affected_by_griefing": true
+						field "fuse_length": 1.5
+						field "fuse_lit": true
+						field "power": 6
+					component "minecraft:on_target_escape": empty
+					component "minecraft:target_nearby_sensor": empty
+				component group "minecraft:forced_exploding":
+					component "minecraft:explode":
+						field "causes_fire": false
+						field "destroy_affected_by_griefing": true
+						field "fuse_length": 1.5
+						field "fuse_lit": true
+						field "power": 3
+					component "minecraft:on_target_escape": empty
+					component "minecraft:target_nearby_sensor": empty
+			field "components":
+				component "minecraft:attack": field "damage": 3
+				component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "ocelot"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "cat"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+					field "priority": 3
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target":
+					field "entity_types":
+						field "filters":
+							filter property "operator": "!="
+							filter property "subject": "other"
+							filter property "test": "is_family"
+							filter property "value": "goat"
+					field "priority": 2
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8
+					field "priority": 6
+				component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "reach_multiplier": 0.0
+					field "speed_multiplier": 1.25
+					field "track_target": false
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "player"
+							field "max_dist": 16
+					field "must_see": true
+					field "must_see_forget_duration": 3.0
+					field "priority": 1
+				component "minecraft:behavior.random_look_around": field "priority": 6
+				component "minecraft:behavior.random_stroll":
+					field "priority": 5
+					field "speed_multiplier": 1
+				component "minecraft:behavior.swell":
+					field "priority": 2
+					field "start_distance": 2.5
+					field "stop_distance": 6.0
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 1.8
+					field "width": 0.6
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "deals_damage": false
+						field "on_damage":
+							field "event": "minecraft:become_charged"
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "lightning"
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 : 0"
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:interact":
+					field "interactions":
+						field "hurt_item": 1
+						field "interact_text": "action.interact.creeper"
+						field "on_interact":
+							field "event": "minecraft:start_exploding_forced"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "domain": "hand"
+										filter property "subject": "other"
+										filter property "test": "has_equipment"
+										filter property "value": "flint_and_steel"
+									filter:
+										filter property "operator": "!="
+										filter property "test": "has_component"
+										filter property "value": "minecraft:explode"
+							field "target": "self"
+						field "play_sounds": "ignite"
+						field "swing": true
+				component "minecraft:jump.static": empty
+				component "minecraft:loot": field "table": "loot_tables/entities/creeper.json"
+				component "minecraft:movement": field "value": 0.2
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk": field "can_path_over_water": true
+				component "minecraft:on_target_escape":
+					field "event": "minecraft:stop_exploding"
+					field "target": "self"
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:target_nearby_sensor":
+					field "inside_range": 2.5
+					field "must_see": true
+					field "on_inside_range":
+						field "event": "minecraft:start_exploding"
+						field "target": "self"
+					field "on_outside_range":
+						field "event": "minecraft:stop_exploding"
+						field "target": "self"
+					field "on_vision_lost_inside_range":
+						field "event": "minecraft:stop_exploding"
+						field "target": "self"
+					field "outside_range": 6.0
+				component "minecraft:type_family":
+					field "family":
+						family: "creeper"
+						family: "monster"
+						family: "mob"
+			field "description":
+				description "identifier": "minecraft:creeper"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "minecraft:become_charged":
+					field "add": field "component_groups": component group: "minecraft:charged_creeper"
+					field "remove": field "component_groups": component group: "minecraft:exploding"
+				event "minecraft:start_exploding":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:exploding"
+							field "filters":
+								filter property "operator": "!="
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:charged_exploding"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+				event "minecraft:start_exploding_forced":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:forced_exploding"
+							field "filters":
+								filter property "operator": "!="
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:forced_charged_exploding"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+				event "minecraft:stop_exploding": field "remove": field "component_groups": component group: "minecraft:exploding"
+		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
+Changed entity "endermite":
+	Added behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "components":
+				component "minecraft:attack": field "damage": 2
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.melee_attack":
+					field "priority": 3
+					field "track_target": true
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "enderman"
+							field "max_dist": 16
+					field "must_see": true
+					field "priority": 5
+					field "within_radius": 16.0
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 1
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 0.3
+					field "width": 0.4
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 3 : 0"
+				component "minecraft:health":
+					field "max": 8
+					field "value": 8
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:jump.static": empty
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk": field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "endermite"
+						family: "arthropod"
+						family: "monster"
+						family: "lightweight"
+						family: "mob"
+			field "description":
+				description "identifier": "minecraft:endermite"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
+Added entity "glow_squid":
+	behavior pack "experimental":
+		field "format_version": "1.13.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "minecraft:squid_baby":
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+			field "components":
+				component "minecraft:balloonable": empty
+				component "minecraft:behavior.squid_dive": field "priority": 2
+				component "minecraft:behavior.squid_flee": field "priority": 2
+				component "minecraft:behavior.squid_idle": field "priority": 2
+				component "minecraft:behavior.squid_move_away_from_ground": field "priority": 1
+				component "minecraft:behavior.squid_out_of_water": field "priority": 2
+				component "minecraft:breathable":
+					field "breathes_air": false
+					field "breathes_water": true
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 0.95
+					field "width": 0.95
+				component "minecraft:experience_reward": field "on_death": "!query.is_baby && query.last_hit_by_player ? Math.Random(1,3) : 0"
+				component "minecraft:health":
+					field "max": 10
+					field "value": 10
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "soft_distance": 4.0
+				component "minecraft:loot": field "table": "loot_tables/entities/glow_squid.json"
+				component "minecraft:movement": field "value": 0.2
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "can_sink": false
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "squid"
+						family: "mob"
+			field "description":
+				description "identifier": "minecraft:glow_squid"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "add": empty
+							field "remove": empty
+							field "weight": 95
+						randomize item:
+							field "add": field "component_groups": component group: "minecraft:squid_baby"
+							field "remove": empty
+							field "weight": 5
+		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
+Added entity "goat":
+	behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "attack_cooldown":
+					component "minecraft:attack_cooldown":
+						field "attack_cooldown_complete_event":
+							field "event": "attack_cooldown_complete_event"
+							field "target": "self"
+						field "attack_cooldown_time": [30.0, 40.0]
+				component group "minecraft:goat_adult":
+					component "minecraft:behavior.breed":
+						field "priority": 3
+						field "speed_multiplier": 0.6
+					component "minecraft:behavior.jump_to_block":
+						field "cooldown_range": [5.0, 10.0]
+						field "minimum_distance": 1
+						field "minimum_path_length": 7
+						field "priority": 8
+						field "scale_factor": 0.6
+						field "search_height": 10
+						field "search_width": 8
+					component "minecraft:behavior.ram_attack":
+						field "knockback_force": 5.0
+						field "knockback_height": 0.03
+						field "on_start":
+							event:
+								field "event": "start_event"
+								field "target": "self"
+						field "priority": 5
+						field "ram_distance": 9.0
+						field "ram_speed": 1.8
+						field "run_speed": 0.7
+					component "minecraft:breedable":
+						field "breed_items": "wheat"
+						field "breeds_with":
+							field "baby_type": "minecraft:goat"
+							field "breed_event":
+								field "event": "minecraft:entity_born"
+								field "target": "baby"
+							field "mate_type": "minecraft:goat"
+						field "require_tame": false
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:interact":
+						field "interactions":
+							interaction:
+								field "interact_text": "action.interact.milk"
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "player"
+											filter:
+												filter property "domain": "hand"
+												filter property "subject": "other"
+												filter property "test": "has_equipment"
+												filter property "value": "bucket:0"
+								field "play_sounds": "milk"
+								field "transform_to_item": "bucket:1"
+								field "use_item": true
+					component "minecraft:loot": field "table": "loot_tables/entities/goat.json"
+				component group "minecraft:goat_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items": "wheat"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:behavior.follow_parent":
+						field "priority": 6
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.jump_to_block":
+						field "cooldown_range": [5.0, 10.0]
+						field "minimum_distance": 1
+						field "minimum_path_length": 7
+						field "priority": 8
+						field "scale_factor": 0.6
+						field "search_height": 9
+						field "search_width": 7
+					component "minecraft:behavior.ram_attack":
+						field "knockback_force": 2.5
+						field "knockback_height": 0.04
+						field "on_start":
+							event:
+								field "event": "start_event"
+								field "target": "self"
+						field "priority": 5
+						field "ram_distance": 9.0
+						field "ram_speed": 1.8
+						field "run_speed": 0.7
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+			field "components":
+				component "minecraft:attack": field "damage": 1
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 6.0
+					field "priority": 10
+					field "probability": 0.02
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "goat"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "armor_stand"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "self"
+										filter property "test": "has_component"
+										filter property "value": "minecraft:attack_cooldown"
+							field "max_dist": 16
+					field "must_see": true
+					field "priority": 6
+					field "within_radius": 16.0
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.random_look_around": field "priority": 11
+				component "minecraft:behavior.random_stroll":
+					field "priority": 9
+					field "speed_multiplier": 0.6
+				component "minecraft:behavior.tempt":
+					field "items": item: "wheat"
+					field "priority": 4
+					field "speed_multiplier": 1.0
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 1.3
+					field "width": 0.9
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "fall"
+						field "damage_modifier": -20.0
+						field "deals_damage": true
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health":
+					field "max": 10
+					field "value": 10
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "soft_distance": 4.0
+				component "minecraft:movement": field "value": 0.4
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "avoid_damage_blocks": true
+					field "avoid_water": true
+					field "blocks_to_avoid": block: field "name": "minecraft:powder_snow"
+					field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "goat"
+						family: "animal"
+			field "description":
+				description "identifier": "minecraft:goat"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group: "attack_cooldown"
+				event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group: "minecraft:goat_adult"
+					field "remove": field "component_groups": component group: "minecraft:goat_baby"
+				event "minecraft:entity_born": field "add": field "component_groups": component group: "minecraft:goat_baby"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "add": field "component_groups": component group: "minecraft:goat_adult"
+							field "weight": 95
+						randomize item:
+							field "add": field "component_groups": component group: "minecraft:goat_baby"
+							field "weight": 5
+				event "minecraft:entity_transformed":
+					field "add": field "component_groups": component group: "minecraft:goat_adult"
+					field "remove": empty
+				event "start_event": field "add": field "component_groups": component group: "attack_cooldown"
+		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
+Changed entity "llama":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 4 (+1, -0)
+			Added behavior pack "vanilla_1.16.220".
+		Changed field "minecraft:entity":
+			Changed field "events":
+				Total event: 15 (+3, -0)
+				Added event "minecraft:add_attributes":
+					field "sequence":
+						sequence item 0:
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_1"
+									field "weight": 32
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_2"
+									field "weight": 32
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_3"
+									field "weight": 32
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_4"
+									field "weight": 2
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_5"
+									field "weight": 2
+						sequence item 1:
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_creamy"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_white"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_brown"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_gray"
+									field "weight": 25
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Total sequence item: 1 (+0, -2)
+						Changed sequence item 0:
+							Changed field "randomize":
+								Total randomize item: 2 (+2, -2)
+								Removed randomize item:
+									field "add":
+										field "component_groups":
+											component group: "minecraft:llama_adult"
+											component group: "minecraft:llama_wild"
+									field "remove": empty
+									field "weight": 90
+								Removed randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_baby"
+									field "remove": empty
+									field "weight": 10
+								Added randomize item:
+									field "trigger": "minecraft:spawn_adult"
+									field "weight": 90
+								Added randomize item:
+									field "trigger": "minecraft:spawn_baby"
+									field "weight": 10
+						Removed sequence item 1:
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_1"
+									field "weight": 32
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_2"
+									field "weight": 32
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_3"
+									field "weight": 32
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_4"
+									field "weight": 2
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_5"
+									field "weight": 2
+						Removed sequence item 2:
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_creamy"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_white"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_brown"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_gray"
+									field "weight": 25
+				Changed event "minecraft:from_wandering_trader":
+					Changed field "sequence":
+						Total sequence item: 2 (+0, -1)
+						Changed sequence item 1:
+							Removed field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_1"
+									field "weight": 32
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_2"
+									field "weight": 32
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_3"
+									field "weight": 32
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_4"
+									field "weight": 2
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:strength_5"
+									field "weight": 2
+							Added field "trigger" of "minecraft:add_attributes".
+						Removed sequence item 2:
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_creamy"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_white"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_brown"
+									field "weight": 25
+								randomize item:
+									field "add": field "component_groups": component group: "minecraft:llama_gray"
+									field "weight": 25
+				Added event "minecraft:spawn_adult":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:llama_adult"
+							component group: "minecraft:llama_wild"
+					field "trigger": "minecraft:add_attributes"
+				Added event "minecraft:spawn_baby":
+					field "add": field "component_groups": component group: "minecraft:llama_baby"
+					field "trigger": "minecraft:add_attributes"
+Changed entity "pig":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 4 (+1, -0)
+			Added behavior pack "vanilla_1.16.220".
+		Changed field "minecraft:entity":
+			Changed field "events":
+				Total event: 6 (+1, -0)
+				Changed event "minecraft:entity_spawned":
+					Changed field "randomize":
+						Total randomize item: 2 (+1, -1)
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:pig_adult"
+									component group: "minecraft:pig_unsaddled"
+							field "remove": empty
+							field "weight": 95
+						Added randomize item:
+							field "trigger": "minecraft:spawn_adult"
+							field "weight": 95
+				Added event "minecraft:spawn_adult":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:pig_adult"
+							component group: "minecraft:pig_unsaddled"
+Changed entity "rabbit":
+	Added behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "adult":
+					component "minecraft:behavior.breed":
+						field "priority": 2
+						field "speed_multiplier": 1.0
+					component "minecraft:breedable":
+						field "breed_items":
+							item: "golden_carrot"
+							item: "carrot"
+							item: "yellow_flower"
+						field "breeds_with":
+							field "baby_type": "minecraft:rabbit"
+							field "mate_type": "minecraft:rabbit"
+						field "mutation_factor": field "variant": 0.2
+						field "require_tame": false
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:loot": field "table": "loot_tables/entities/rabbit.json"
+					component "minecraft:scale": field "value": 0.6
+				component group "baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items":
+							item: "golden_carrot"
+							item: "carrot"
+							item: "yellow_flower"
+						field "grow_up":
+							field "event": "grow_up"
+							field "target": "self"
+					component "minecraft:behavior.follow_parent":
+						field "priority": 6
+						field "speed_multiplier": 1.1
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.4
+				component group "coat_black": component "minecraft:variant": field "value": 2
+				component group "coat_brown": component "minecraft:variant": field "value": 0
+				component group "coat_desert": component "minecraft:variant": field "value": 4
+				component group "coat_salt": component "minecraft:variant": field "value": 5
+				component group "coat_splotched": component "minecraft:variant": field "value": 3
+				component group "coat_white": component "minecraft:variant": field "value": 1
+			field "components":
+				component "minecraft:balloonable": field "mass": 0.4
+				component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "player"
+							field "max_dist": 8
+							field "sprint_speed_multiplier": 1.8
+							field "walk_speed_multiplier": 1.5
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "wolf"
+							field "max_dist": 4
+							field "sprint_speed_multiplier": 1.8
+							field "walk_speed_multiplier": 1.5
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "monster"
+							field "max_dist": 4
+							field "sprint_speed_multiplier": 1.5
+							field "walk_speed_multiplier": 1.5
+					field "priority": 4
+				component "minecraft:behavior.breed":
+					field "priority": 2
+					field "speed_multiplier": 0.8
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player": field "priority": 11
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 2.2
+				component "minecraft:behavior.raid_garden":
+					field "blocks": block: "carrots"
+					field "goal_radius": 0.8
+					field "priority": 5
+					field "search_range": 16
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.6
+					field "xz_dist": 2
+					field "y_dist": 1
+				component "minecraft:behavior.tempt":
+					field "items":
+						item: "golden_carrot"
+						item: "carrot"
+						item: "yellow_flower"
+					field "priority": 3
+					field "speed_multiplier": 1
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 0.67
+					field "width": 0.67
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health":
+					field "max": 3
+					field "value": 3
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:jump.dynamic": empty
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "soft_distance": 4.0
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.skip": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "avoid_water": true
+					field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "rabbit"
+						family: "lightweight"
+						family: "mob"
+			field "description":
+				description "identifier": "minecraft:rabbit"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "grow_up":
+					field "add": field "component_groups": component group: "adult"
+					field "remove": field "component_groups": component group: "baby"
+				event "in_desert": field "add": field "component_groups": component group: "coat_desert"
+				event "in_snow":
+					field "randomize":
+						randomize item:
+							field "add": field "component_groups": component group: "coat_white"
+							field "weight": 80
+						randomize item:
+							field "add": field "component_groups": component group: "coat_splotched"
+							field "weight": 20
+				event "minecraft:entity_born":
+					field "sequence":
+						sequence item 0: field "add": field "component_groups": component group: "baby"
+						sequence item 1:
+							field "filters":
+								filter property "operator": "!="
+								filter property "test": "has_component"
+								filter property "value": "minecraft:variant"
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "coat_brown"
+									field "weight": 50
+								randomize item:
+									field "add": field "component_groups": component group: "coat_black"
+									field "weight": 40
+								randomize item:
+									field "add": field "component_groups": component group: "coat_salt"
+									field "weight": 10
+						sequence item 2:
+							field "add": field "component_groups": component group: "coat_desert"
+							field "filters":
+								filter property "test": "is_biome"
+								filter property "value": "desert"
+						sequence item 3:
+							field "filters":
+								filter property "test": "is_snow_covered"
+								filter property "value": true
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "coat_white"
+									field "weight": 80
+								randomize item:
+									field "add": field "component_groups": component group: "coat_splotched"
+									field "weight": 20
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0:
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "adult"
+									field "weight": 3
+								randomize item:
+									field "add": field "component_groups": component group: "baby"
+									field "weight": 1
+						sequence item 1:
+							field "filters":
+								filter property "operator": "!="
+								filter property "test": "has_component"
+								filter property "value": "minecraft:variant"
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "coat_brown"
+									field "weight": 50
+								randomize item:
+									field "add": field "component_groups": component group: "coat_black"
+									field "weight": 40
+								randomize item:
+									field "add": field "component_groups": component group: "coat_salt"
+									field "weight": 10
+						sequence item 2:
+							field "add": field "component_groups": component group: "coat_desert"
+							field "filters":
+								filter property "test": "is_biome"
+								filter property "value": "desert"
+						sequence item 3:
+							field "filters":
+								filter property "test": "is_snow_covered"
+								filter property "value": true
+							field "randomize":
+								randomize item:
+									field "add": field "component_groups": component group: "coat_white"
+									field "weight": 80
+								randomize item:
+									field "add": field "component_groups": component group: "coat_splotched"
+									field "weight": 20
+		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
+Changed entity "silverfish":
+	Added behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "minecraft:silverfish_angry":
+					component "minecraft:angry":
+						field "broadcast_anger": true
+						field "broadcast_range": 20
+						field "calm_event":
+							field "event": "minecraft:on_calm"
+							field "target": "self"
+						field "duration": -1
+					component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "track_target": true
+					component "minecraft:behavior.silverfish_wake_up_friends": field "priority": 1
+				component group "minecraft:silverfish_calm":
+					component "minecraft:on_target_acquired":
+						field "event": "minecraft:become_angry"
+						field "target": "self"
+			field "components":
+				component "minecraft:attack": field "damage": 1
+				component "minecraft:behavior.float": field "priority": 1
+				component "minecraft:behavior.hurt_by_target":
+					field "alert_same_type": true
+					field "priority": 1
+				component "minecraft:behavior.nearest_attackable_target":
+					field "attack_interval": 10
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "snowgolem"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "irongolem"
+							field "max_dist": 8
+					field "priority": 2
+				component "minecraft:behavior.silverfish_merge_with_stone": field "priority": 5
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 0.3
+					field "width": 0.4
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 : 0"
+				component "minecraft:health":
+					field "max": 8
+					field "value": 8
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:jump.static": empty
+				component "minecraft:loot": field "table": "loot_tables/entities/silverfish.json"
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk": field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "silverfish"
+						family: "monster"
+						family: "lightweight"
+						family: "mob"
+						family: "arthropod"
+			field "description":
+				description "identifier": "minecraft:silverfish"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "minecraft:become_angry":
+					field "add": field "component_groups": component group: "minecraft:silverfish_angry"
+					field "remove": empty
+				event "minecraft:entity_spawned":
+					field "add": field "component_groups": component group: "minecraft:silverfish_calm"
+					field "remove": empty
+				event "minecraft:on_calm":
+					field "add": field "component_groups": component group: "minecraft:silverfish_calm"
+					field "remove": empty
+		field "defined_in": behavior pack: "experimental_caves_and_cliffs"

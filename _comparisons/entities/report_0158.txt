@@ -1,0 +1,148 @@
+Difference of "entities" between "1.18.30.30" (beta of "1.18.30") and "1.18.30.32" (beta of "1.18.30").
+
+Total entity: 113 (+1, -0)
+Changed entity "hoglin":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:knockback_resistance":
+					Changed field "value" from 0.5 to 0.6.
+Changed entity "ravager":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:knockback_resistance":
+					Changed field "value" from 0.5 to 0.75.
+Added entity "warden":
+	behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "emerging":
+					component "minecraft:behavior.emerge":
+						field "duration": 7.0
+						field "on_done":
+							field "event": "minecraft:emerged"
+							field "target": "self"
+			field "components":
+				component "minecraft:ambient_sound_interval":
+					field "event_name": "ambient"
+					field "event_names":
+						event 0:
+							field "condition": "query.anger_level(this) >= 80"
+							field "event_name": "angry"
+						event 1:
+							field "condition": "query.anger_level(this) >= 40"
+							field "event_name": "agitated"
+					field "range": 4.0
+					field "value": 2.0
+				component "minecraft:anger_level":
+					field "anger_decrement_interval": 1.0
+					field "angry_boost": 20
+					field "angry_threshold": 80
+					field "default_annoyingness": 35
+					field "default_projectile_annoyingness": 20
+					field "max_anger": 150
+					field "on_increase_sounds":
+						sound 0:
+							field "condition": "query.anger_level(this) >= 80"
+							field "sound": "angry"
+						sound 1:
+							field "condition": "query.anger_level(this) >= 40"
+							field "sound": "agitated"
+						sound 2:
+							field "condition": "query.anger_level(this) >= 0"
+							field "sound": "listening"
+					field "remove_targets_below_angry_threshold": true
+				component "minecraft:attack": field "damage": 30
+				component "minecraft:behavior.dig":
+					field "digs_in_daylight": true
+					field "duration": 5.5
+					field "idle_time": 60.0
+					field "priority": 1
+					field "suspicion_is_disturbance": true
+					field "vibration_is_disturbance": true
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.investigate_suspicious_location":
+					field "priority": 4
+					field "speed_multiplier": 0.7
+				component "minecraft:behavior.melee_attack":
+					field "melee_fov": 360
+					field "priority": 3
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.random_look_around": field "priority": 11
+				component "minecraft:behavior.random_stroll":
+					field "priority": 9
+					field "speed_multiplier": 0.5
+				component "minecraft:behavior.roar":
+					field "duration": 4.2
+					field "priority": 2
+				component "minecraft:behavior.sniff":
+					field "cooldown_range": [5.0, 10.0]
+					field "duration": 4.16
+					field "priority": 5
+					field "sniffing_radius": 30.0
+					field "suspicion_radius": 6.0
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 2.9
+					field "width": 0.9
+				component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+				component "minecraft:fire_immune": empty
+				component "minecraft:follow_range": 30
+				component "minecraft:health":
+					field "max": 500
+					field "value": 500
+				component "minecraft:heartbeat": field "interval": "2.0 - math.clamp(query.anger_level / 80 * 1.5, 0, 1.5)"
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:knockback_resistance": field "value": 1.0
+				component "minecraft:mob_effect":
+					field "effect_range": 20
+					field "effect_time": 13
+					field "entity_filter":
+						filter property "subject": "other"
+						filter property "test": "is_family"
+						filter property "value": "player"
+					field "mob_effect": "darkness"
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.basic": empty
+				component "minecraft:movement_sound_distance_offset": field "value": 0.55
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "avoid_damage_blocks": true
+					field "avoid_water": true
+					field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:suspect_tracking": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "warden"
+						family: "monster"
+						family: "mob"
+				component "minecraft:vibration_listener": empty
+			field "description":
+				description "identifier": "minecraft:warden"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "events":
+				event "minecraft:emerged": field "remove": field "component_groups": component group: "emerging"
+				event "minecraft:entity_spawned": empty
+				event "minecraft:spawn_emerging": field "add": field "component_groups": component group: "emerging"
+		field "defined_in": behavior pack: "experimental_wild_update"
+Changed entity "zoglin":
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 6 (+1, -0)
+			Added behavior pack "vanilla_1.18.30".
+		Changed field "format_version" from "1.18.20" to "1.18.30".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:knockback_resistance":
+					Changed field "value" from 0.5 to 0.6.
