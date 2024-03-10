@@ -3,7 +3,7 @@ import json
 from pathlib2 import Path
 import threading
 import traceback
-from typing import Any, Callable, IO, Iterable, Literal
+from typing import Any, Callable, IO, Iterable, Literal, Sequence
 
 import Comparison.Comparer as Comparer
 import Comparison.Normalizer as Normalizer
@@ -131,7 +131,7 @@ class DataMiner():
             raise RuntimeError("Attempted to call `read_file` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.read(file_name, mode)
 
-    def read_files(self, files:list[str|tuple[str,str,None|Callable[[IO],Any]]], non_exist_ok:bool=False) -> dict[str,str|bytes|Any]:
+    def read_files(self, files:Sequence[str|tuple[str,Literal["t", "b"],None|Callable[[IO],Any]]], non_exist_ok:bool=False) -> dict[str,str|bytes|Any]:
         '''Asynchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
 
