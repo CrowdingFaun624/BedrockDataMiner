@@ -12,11 +12,11 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
         "location": (str, True),
         "file_display_name": (str, True),
     })
-    
+
     def initialize(self, **kwargs) -> None:
         self.location:str = kwargs["location"]
         self.file_display_name:str|None = kwargs["file_display_name"]
-    
+
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> Any:
 
         exception = None
@@ -31,6 +31,6 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
             exception.args = tuple(list(exception.args) + [exception_message])
         if exception is not None:
             raise exception
-        
+
         file_data = json.loads(file)
         return Sorting.sort_everything(file_data)
