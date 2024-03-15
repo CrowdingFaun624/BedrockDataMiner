@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, cast
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
@@ -127,8 +127,8 @@ language_comparison_move_function:Callable[[str, DataMinerTyping.LanguageTypedDi
 
 def languages_normalize(data:DataMinerTyping.Languages, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedLanguages:
 
-    def fix_properties(unfixed_data:DataMinerTyping.LanguagesTypedDict, resource_packs:DataMinerTyping.ResourcePacks) -> dict[str,DataMinerTyping.LanguagesPropertiesTypedDict]:
-        output = unfixed_data["properties"]
+    def fix_properties(unfixed_data:DataMinerTyping.LanguagesTypedDict, resource_packs:DataMinerTyping.ResourcePacks) -> dict[str,Any]:
+        output:dict[str,DataMinerTyping.LanguagesPropertiesTypedDict] = unfixed_data["properties"]
         for resource_pack in unfixed_data["defined_in"]:
             if resource_pack not in output:
                 output[resource_pack] = {}
@@ -136,32 +136,32 @@ def languages_normalize(data:DataMinerTyping.Languages, dependencies:DataMinerTy
 
     resource_packs = dependencies["resource_packs"]
     if resource_packs is None:
-        resource_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}]
+        resource_packs:DataMinerTyping.ResourcePacks = [{"name": "vanilla", "tags": ["core"], "id": 1}]
 
     return {language["code"]: fix_properties(language, resource_packs) for language in data}
-
-def languages_languages_comparison_move_function(key:str, value:DataMinerTyping.LanguagesTypedDict) -> dict[str,str]|None:
-    output = {resource_pack_name: resource_pack_properties["name"] for resource_pack_name, resource_pack_properties in value.items() if "name" in resource_pack_properties}
-    return None if len(output) == 0 else output
 
 def loot_tables_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()
     del output["defined_in"]
     return output
 
-def loot_tables_normalize_conditions(data:dict[str,list[dict[str,Any]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def loot_tables_normalize_conditions(data:DataMinerTyping.LootTableHasConditions, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     if "conditions" not in data: return
-    output:dict[str[dict[str,Any]]] = {}
+    output:dict[str,DataMinerTyping.LootTableConditions] = {}
     for condition in data["conditions"]:
+        assert isinstance(condition, dict)
+        assert "condition" in condition
         condition_name = condition["condition"]
         output[condition_name] = condition
         del condition["condition"]
     data["conditions"] = output
 
-def loot_tables_normalize_functions(data:dict[str,list[dict[str,Any]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def loot_tables_normalize_functions(data:DataMinerTyping.LootTableHasFunctions, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     if "functions" not in data: return
-    output:dict[str,dict[str,Any]] = {}
+    output:dict[str,DataMinerTyping.LootTableFunctions] = {}
     for function in data["functions"]:
+        assert isinstance(function, dict)
+        assert "function" in function
         function_name = function["function"]
         output[function_name] = function
         del function["function"]
@@ -172,7 +172,7 @@ def models_model_normalize(data:dict[str,dict[str,dict[str,Any]]], dependencies:
     for model_file_name, resource_packs in data.items():
         for resource_pack_name, model_file_data in resource_packs.items():
             if "minecraft:geometry" in model_file_data:
-                format_version:str = model_file_data["format_version"]
+                format_version:str|None = model_file_data["format_version"]
                 assert isinstance(model_file_data["minecraft:geometry"], list)
                 for geometry_item in model_file_data["minecraft:geometry"]:
                     name = geometry_item["description"]["identifier"]
@@ -204,10 +204,12 @@ def models_model_normalize(data:dict[str,dict[str,dict[str,Any]]], dependencies:
                         output[model_output_name] = {resource_pack_name: output_data}
     return output
 
-def models_normalize_bones(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def models_normalize_bones(data:DataMinerTyping.ModelGeometryTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     if "bones" in data:
         output:dict[str,Any] = {}
         for bone in data["bones"]:
+            assert "name" in bone
+            assert isinstance(bone, dict)
             name = bone["name"]
             del bone["name"]
             output[name] = bone
@@ -231,15 +233,17 @@ def sound_definitions_fix_MCPE_178265(data:DataMinerTyping.SoundDefinitionsJsonS
     if "volume" in data:
         del data["volume"]
 
-def sound_definitions_make_sounds_dict(data:DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def sound_definitions_make_sounds_dict(data:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     if "sounds" in data:
         sounds:dict[str,DataMinerTyping.NormalizedSoundDefinitionsJsonSoundTypedDict] = {}
         for sound in data["sounds"]:
             if isinstance(sound, str):
                 sounds[sound] = {}
             else:
-                sounds[sound["name"]] = sound
+                name = sound["name"]
+                sound = cast(DataMinerTyping.NormalizedSoundDefinitionsJsonSoundTypedDict, sound)
                 del sound["name"]
+                sounds[name] = sound
         data["sounds"] = sounds
 
 def sound_definitions_fix_MCPE_153561(data:DataMinerTyping.SoundDefinitionsJsonSoundTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
@@ -247,7 +251,7 @@ def sound_definitions_fix_MCPE_153561(data:DataMinerTyping.SoundDefinitionsJsonS
     if "pitch:" in data:
         del data["pitch:"]
 
-def sound_definitions_resource_pack_comparison_move_function(key:str, value:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict) -> DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict:
+def sound_definitions_resource_pack_comparison_move_function(key:str, value:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict) -> DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict:
     output = value.copy()
     del value["defined_in"]
     return output
@@ -348,7 +352,6 @@ functions:dict[str,Callable] = {
     "items_fix_old": items_fix_old,
     "language_comparison_move_function": language_comparison_move_function,
     "languages_normalize": languages_normalize,
-    "languages_languages_comparison_move_function": languages_languages_comparison_move_function,
     "loot_tables_behavior_pack_comparison_move_function": loot_tables_behavior_pack_comparison_move_function,
     "loot_tables_normalize_conditions": loot_tables_normalize_conditions,
     "loot_tables_normalize_functions": loot_tables_normalize_functions,

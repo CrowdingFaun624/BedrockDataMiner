@@ -1,31 +1,32 @@
-from typing import Any, TypedDict
+from typing import Any, Literal, Optional, TypedDict
+from typing_extensions import NotRequired
 
-import Comparison.Difference as D
+DependenciesLiterals = Literal["behavior_packs", "blocks", "credits", "duplicate_sounds", "entities", "entities_client", "items", "language", "languages", "loading_tips", "loot_tables", "models", "music_definitions", "non_existent_sounds", "recipes", "resource_packs", "sound_definitions", "sound_files", "sounds_json", "splashes", "trade_tables", "undefined_sound_events", "unused_sound_events"]
 
 class DependenciesTypedDict(TypedDict):
-    behavior_packs: "BehaviorPacks"
-    blocks: "MyBlocksClient"
-    credits: "Credits"
-    duplicate_sounds: "DuplicateSounds"
-    entities: "Entities"
-    entities_client: "EntitiesClient"
-    items: "Items"
-    language: "Language"
-    languages: "Languages"
-    loading_tips: "LoadingTips"
-    loot_tables: "LootTables"
-    models: "Models"
-    music_definitions: "MyMusicDefinitions"
-    non_existent_sounds: "NonExistentSounds"
-    recipes: "Recipes"
-    resource_packs: "ResourcePacks"
-    sound_definitions: "MySoundDefinitionsJson"
-    sound_files: "SoundFiles"
-    sounds_json: "MySoundsJson"
-    splashes: "Splashes"
-    trade_tables: "TradeTables"
-    undefined_sound_events: "UndefinedSoundEvents"
-    unused_sound_events: "UnusedSoundEvents"
+    behavior_packs: Optional["BehaviorPacks"]
+    blocks: Optional["MyBlocksClient"]
+    credits: Optional["Credits"]
+    duplicate_sounds: Optional["DuplicateSounds"]
+    entities: Optional["Entities"]
+    entities_client: Optional["EntitiesClient"]
+    items: Optional["Items"]
+    language: Optional["Language"]
+    languages: Optional["Languages"]
+    loading_tips: Optional["LoadingTips"]
+    loot_tables: Optional["LootTables"]
+    models: Optional["Models"]
+    music_definitions: Optional["MyMusicDefinitions"]
+    non_existent_sounds: Optional["NonExistentSounds"]
+    recipes: Optional["Recipes"]
+    resource_packs: Optional["ResourcePacks"]
+    sound_definitions: Optional["MySoundDefinitionsJson"]
+    sound_files: Optional["SoundFiles"]
+    sounds_json: Optional["MySoundsJson"]
+    splashes: Optional["Splashes"]
+    trade_tables: Optional["TradeTables"]
+    undefined_sound_events: Optional["UndefinedSoundEvents"]
+    unused_sound_events: Optional["UnusedSoundEvents"]
 
 # behavior packs
 
@@ -64,13 +65,13 @@ class MyBlocksJsonClientBlockTypedDict(TypedDict):
     properties: BlocksJsonClientBlockTypedDict
 
 class NormalizedBlocksJsonClientBlockTypedDict(TypedDict):
-    blockshape: str
-    brightness_gamma: float
-    carried_textures: str|BlocksJsonBlockTexturesTypedDict
-    defined_in: list[str]
-    isotropic: bool|BlocksJsonBlockIsotropicTypedDict
-    sound: str
-    textures: str|BlocksJsonBlockTexturesTypedDict
+    blockshape: NotRequired[str]
+    brightness_gamma: NotRequired[float]
+    carried_textures: NotRequired[str|BlocksJsonBlockTexturesTypedDict]
+    defined_in: NotRequired[list[str]]
+    isotropic: NotRequired[bool|BlocksJsonBlockIsotropicTypedDict]
+    sound: NotRequired[str]
+    textures: NotRequired[str|BlocksJsonBlockTexturesTypedDict]
 
 BlocksClient = dict[str,BlocksJsonClientBlockTypedDict]
 MyBlocksClient = list[MyBlocksJsonClientBlockTypedDict]
@@ -134,8 +135,15 @@ Language = dict[str,dict[str,LanguageTypedDict]]
 
 # languages
 
+class NormalizedLanguagesPropertiesTypedDict():
+    defined_in: list[str]
+
 class LanguagesPropertiesTypedDict(TypedDict):
-    name: str
+    name: NotRequired[str]
+
+class NormalizedLanguagesTypedDict(TypedDict):
+    code: str
+    properties: dict[str,NormalizedLanguagesPropertiesTypedDict]
 
 class LanguagesTypedDict(TypedDict):
     code: str
@@ -149,11 +157,46 @@ NormalizedLanguages = dict[str,dict[str,LanguagesPropertiesTypedDict]]
 
 LoadingTips = dict[str,dict[str,list[str]]]
 
+class LootTableConditions(TypedDict):
+    condition: NotRequired[str]
+
+class LootTableHasConditions(TypedDict):
+    conditions: list[LootTableConditions]|dict[str,LootTableConditions]
+
+class LootTableFunctions(TypedDict):
+    function: NotRequired[str]
+
+class LootTableHasFunctions(TypedDict):
+    functions: list[LootTableFunctions]|dict[str,LootTableFunctions]
+
 # loot_tables
 
 LootTables = dict[str,dict[str,object]] # TODO: fill this out
 
 # models
+
+class ModelBoneTypedDict(TypedDict):
+    bind_pose_rotation: list
+    binding: str
+    cubes: list
+    inflate: float|int
+    locators: dict
+    material: str
+    META_BoneType: None
+    mirror: bool
+    name: NotRequired[str]
+    neverRender: bool
+    parent: None
+    pivot: list
+    pos: list
+    pre_rotation: list
+    reset: bool
+    rotation: list
+    texture_meshes: list
+
+class ModelGeometryTypedDict(TypedDict):
+    bones: list[ModelBoneTypedDict]|dict[str,ModelBoneTypedDict]
+    description: dict[str,Any]
 
 Models = dict[str,dict[str,Any]] # TODO: fill this out
 
@@ -199,14 +242,15 @@ class SoundDefinitionsJsonSoundTypedDict(TypedDict):
     weight: int
 
 class NormalizedSoundDefinitionsJsonSoundTypedDict(TypedDict):
-    exclude_from_pocket_platforms: bool
-    is3D: bool
-    load_on_low_memory: bool
-    pitch: float
-    stream: bool
-    type: str
-    volume: float
-    weight: int
+    exclude_from_pocket_platforms: NotRequired[bool]
+    is3D: NotRequired[bool]
+    load_on_low_memory: NotRequired[bool]
+    name: NotRequired[str]
+    pitch: NotRequired[float]
+    stream: NotRequired[bool]
+    type: NotRequired[str]
+    volume: NotRequired[float]
+    weight: NotRequired[int]
 
 class SoundDefinitionsJsonSoundEventTypedDict(TypedDict):
     category: str
@@ -217,10 +261,10 @@ class SoundDefinitionsJsonSoundEventTypedDict(TypedDict):
 
 class NormalizedSoundDefinitionsJsonSoundEventTypedDict(TypedDict):
     category: str
-    defined_in: list[str]
+    defined_in: NotRequired[list[str]]
     max_distance: int|float
     min_distance: int|float
-    sounds: dict[str,SoundDefinitionsJsonSoundTypedDict]
+    sounds: list[str|SoundDefinitionsJsonSoundTypedDict]|dict[str,NormalizedSoundDefinitionsJsonSoundTypedDict]
     subtitle: str # unused
 
 SoundDefinitionsJson = dict[str,SoundDefinitionsJsonSoundEventTypedDict]
@@ -254,7 +298,7 @@ class SoundFilesTypedDict(TypedDict):
     pictures: list
     tags: SoundFilesTagsTypedDict
     _subchunks: list
-    _obj: str
+    _obj: NotRequired[str]
     streaminfo: SoundFilesStreamInfoTypedDict
     sha1_hash: str # hexadecimal 40-digit string
 
@@ -272,7 +316,7 @@ NormalizedSoundFiles=dict[str,dict[str,NormalizedSoundFilesTypedDict]]
 
 class SoundsJsonSoundTypedDict(TypedDict):
     sound:str
-    sounds: str
+    sounds: NotRequired[str]
     volume: float|int|list[float|int]
     pitch: float|int|list[float|int]
 

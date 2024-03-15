@@ -1,18 +1,18 @@
-from typing import Any, Callable, Generic, TYPE_CHECKING, TypeVar
+from typing import Any, Callable, cast, Generic, TYPE_CHECKING, TypeVar
 
 import Comparison.Trace as Trace
+import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Version as Version
 
 if TYPE_CHECKING:
     import DataMiners.DataMiner as DataMiner
-    import DataMiners.DataMinerTyping as DataMinerTyping
 
 IN = TypeVar("IN")
 OUT = TypeVar("OUT")
 
 class Normalizer(Generic[IN, OUT]):
 
-    def __init__(self, function:Callable[[IN, "DataMinerTyping.DependenciesTypedDict"], OUT], dependencies:list[str]):
+    def __init__(self, function:Callable[[IN, DataMinerTyping.DependenciesTypedDict], OUT], dependencies:list[str]):
         '''`function` is a Callable that modifies the original object and returns nothing.
         `dependencies` is a list of DataMinerCollection names.'''
         if not isinstance(function, Callable):
@@ -23,16 +23,17 @@ class Normalizer(Generic[IN, OUT]):
             raise TypeError("An item of `dependencies` is not a str!")
 
         self.function = function
-        self.dependencies = dependencies
+        self.dependencies = cast(list[DataMinerTyping.DependenciesLiterals], dependencies)
 
     def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", trace:Trace.Trace, version_number:int) -> OUT|None:
         if version_number not in (1, 2):
             raise ValueError("`version_number` is not 1 or 2!")
         version = normalizer_dependencies.get_version(version_number)
+        this_data:DataMinerTyping.DependenciesTypedDict
         if version is None:
-            this_data = {dependency: None for dependency in self.dependencies}
+            this_data = cast(DataMinerTyping.DependenciesTypedDict, {dependency: None for dependency in self.dependencies})
         else:
-            this_data:DataMinerTyping.DependenciesTypedDict = {dependency: normalizer_dependencies.get_data(version, dependency) for dependency in self.dependencies}
+            this_data = cast(DataMinerTyping.DependenciesTypedDict, {dependency: normalizer_dependencies.get_data(version, dependency) for dependency in self.dependencies})
         # `this_data` is only the dataminer data that is needed for this normalizer function.
         exception = None
         try:
@@ -113,7 +114,7 @@ class LocalNormalizerDependencies():
 
 class SimpleNormalizerDependencies(LocalNormalizerDependencies):
 
-    def __init__(self, data:"DataMinerTyping.DependenciesTypedDict", version:Version.Version):
+    def __init__(self, data:DataMinerTyping.DependenciesTypedDict, version:Version.Version):
         if not isinstance(data, dict):
             raise TypeError("`data` is not a dict, but instead %s!" % (data.__class__.__name__))
         if not isinstance(version, Version.Version):

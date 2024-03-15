@@ -1,5 +1,5 @@
 import traceback
-from typing import TypeVar, TYPE_CHECKING, Union
+from typing import Any, TypeVar, TYPE_CHECKING, Union
 
 import Comparison.ComparerSection as ComparerSection
 import Comparison.Difference as D
@@ -25,7 +25,7 @@ class Comparer():
             self,
             name:str,
             normalizer:Normalizer.Normalizer|None,
-            base_comparer_section:ComparerSection.ComparerSection[b],
+            base_comparer_section:ComparerSection.ComparerSection[b]|None,
             post_normalizer:Normalizer.Normalizer|None=None,
         ) -> None:
         if not isinstance(name, str):
@@ -42,7 +42,7 @@ class Comparer():
         self.post_normalizer = post_normalizer
         self.base_comparer_section = base_comparer_section
 
-    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int=1) -> b:
+    def normalize(self, data:Any, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int=1) -> Any:
         '''Manipulates the data before comparison.'''
         # base normalizer
         if self.normalizer is None:
@@ -53,6 +53,7 @@ class Comparer():
                 raise RuntimeError("Normalizer for \"%s\" returned None!" % (self.name))
 
         # other normalizers
+        assert self.base_comparer_section is not None
         self.base_comparer_section.normalize(output, normalizer_dependencies, version_number, Trace.Trace())
 
         return output
@@ -65,8 +66,8 @@ class Comparer():
         else:
             store_number = 0
         comparison_path = FileManager.get_comparison_file_path(self.name, store_number)
-        if not comparison_path.parent.exists():
-            comparison_path.parent.mkdir()
+        if not comparison_path.parent.exists(): # type: ignore # >:(
+            comparison_path.parent.mkdir() # type: ignore
         file_counts[self.name] = store_number
         with open(comparison_path, "wt") as f:
             f.write(report)
@@ -86,7 +87,7 @@ class Comparer():
         header:list[str] = []
         beta_texts:list[str] = ["", ""]
         for index, version in enumerate((version1, version2)):
-            if version is not None and version.ordering_tag is VersionTags.VersionTag.beta:
+            if version is not None and version.ordering_tag is VersionTags.VersionTag.beta and version.parent is not None:
                 beta_texts[index] = " (beta of \"%s\")" % version.parent.name
         if version1 is None:
             header.append("Addition of \"%s\"%s at \"%s\"%s." % (self.name, beta_texts[0], version2.name, beta_texts[1]))
@@ -121,7 +122,7 @@ class Comparer():
 
         return "\n".join(final), any_changes
 
-    def check_types(self, data:b) -> None:
+    def check_types(self, data:Any) -> None:
         '''Raises an exception with data about what went wrong if an error occurs.'''
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
@@ -139,20 +140,20 @@ class Comparer():
         if len(traces) > 0:
             raise TypeError("Type checking on %s failed!" % (self.name))
 
-    def compare(self, data1:b, data2:b) -> b:
+    def compare(self, data1:Any, data2:Any) -> Any:
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
         output, traces = self.base_comparer_section.compare(data1, data2, Trace.Trace())
         self.print_exception_list(traces)
         return output
 
-    def compare_text(self, data:b) -> tuple[list[str],bool]:
+    def compare_text(self, data:Any) -> tuple[list[str],bool]:
         '''Returns a list of lines and if there were any changes'''
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
         return self.base_comparer_section.compare_text(data, Trace.Trace())
 
-    def print_text(self, data:b) -> list[str]:
+    def print_text(self, data:Any) -> list[str]:
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
         return self.base_comparer_section.print_text(data, Trace.Trace())
