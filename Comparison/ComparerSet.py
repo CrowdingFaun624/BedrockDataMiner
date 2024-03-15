@@ -2,7 +2,6 @@ from typing import Generic, TYPE_CHECKING, TypeVar, Union
 
 import Comparison.ComparisonUtilities as CU
 import Comparison.Difference as D
-import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
 
 if TYPE_CHECKING:
