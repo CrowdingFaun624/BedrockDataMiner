@@ -1,16 +1,14 @@
 import json
 import traceback
-from typing import Any, Generator, Mapping, Sequence, TYPE_CHECKING, TypedDict, TypeVar
+from typing import Any, Generator, Mapping, Sequence, TypedDict, TypeVar
 
 import Comparison.Comparer as Comparer
-import Comparison.ComparerImporter as ComparerImporter
+import Comparison.ComparerImporter.ComparerImporter as ComparerImporter
 import DataMiners.DataMiner as DataMiner
 import Downloader.VersionsParser as VersionsParser
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import WaitValue
-
-if TYPE_CHECKING:
-    import Utilities.Version as Version
+import Utilities.Version as Version
 
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
 import DataMiners.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
@@ -71,6 +69,7 @@ class DataMinerSettingsTypedDict(TypedDict):
 class DataMinerCollectionTypedDict(TypedDict):
     file_name: str
     comparer: str
+    disabled: bool
     dataminers: list[DataMinerSettingsTypedDict]
 
 DataMinersCollections = dict[str,DataMinerCollectionTypedDict]
@@ -88,7 +87,7 @@ class DataMinerCollectionIntermediate():
             raise TypeError("`data` is not a dict!")
         if not isinstance(name, str):
             raise TypeError("`name` is not a str!")
-        for key, key_type, key_type_str, is_required in (("file_name", str, "a str", True), ("comparer", str, "a str", True), ("dataminers", list, "a list", True)):
+        for key, key_type, key_type_str, is_required in (("file_name", str, "a str", True), ("comparer", str, "a str", True), ("dataminers", list, "a list", True), ("disabled", bool, "a bool", False)):
             if key not in data and is_required:
                 raise KeyError("Required key \"%s\" is not in DataMinerCollection \"%s\"!" % (key, name))
             if key not in data: continue
@@ -113,6 +112,7 @@ class DataMinerCollectionIntermediate():
         self.file_name = data["file_name"]
         self.comparer_name = data["comparer"]
         self.dataminer_settings_strs = data["dataminers"]
+        self.disabled = data["disabled"] if "disabled" in data else False
 
         if self.comparer_name not in comparers:
             raise KeyError("Comparer \"%s\", referenced by DataMinerCollection \"%s\", does not exist!" % (self.comparer_name, self.name))
@@ -137,6 +137,7 @@ class DataMinerCollectionIntermediate():
                 start_version_str = dataminer_settings_str["old"],
                 end_version_str = dataminer_settings_str["new"],
                 dataminer_class = dataminer_class,
+                name = self.name,
                 dependencies = None if "dependencies" not in dataminer_settings_str else dataminer_settings_str["dependencies"],
                 **{} if "parameters" not in dataminer_settings_str else dataminer_settings_str["parameters"],
             ))
@@ -199,6 +200,31 @@ def open_file() -> DataMinersCollections:
     with open(FileManager.DATAMINER_COLLECTIONS_FILE) as f:
         return json.load(f)
 
+def get_dependencies(dataminer_settings:DataMiner.DataMinerSettings, dataminer_settings_dict:dict[str, DataMiner.DataMinerSettings], already:set[str]|None=None) -> list[str]:
+    if already is None: already = set()
+    assert dataminer_settings.name is not None
+    if dataminer_settings.name in already:
+        return [dataminer_settings.name]
+    already.add(dataminer_settings.name)
+    duplicated_dataminer_settings:list[str] = []
+    for dependency in dataminer_settings.dependencies:
+        already_copy = already.copy()
+        duplicated_dataminer_settings.extend(get_dependencies(dataminer_settings_dict[dependency], dataminer_settings_dict, already_copy))
+    return duplicated_dataminer_settings
+
+def check_for_loops(used_versions:set[Version.Version], dataminers:list[DataMiner.DataMinerCollection]) -> None:
+    '''Raises an error if a loop exists in any part.'''
+    versions = sorted(used_versions)
+    for version in versions:
+        dataminer_settings_list = [dataminer.get_dataminer_settings(version) for dataminer in dataminers]
+        if any(dataminer_settings.name is None for dataminer_settings in dataminer_settings_list):
+            raise RuntimeError("A dataminer_settings has a None name!")
+        dataminer_settings_dict = {dataminer_settings.name: dataminer_settings for dataminer_settings in dataminer_settings_list if dataminer_settings.name is not None}
+        for dataminer_settings in dataminer_settings_list:
+            duplicated_datminer_settings = get_dependencies(dataminer_settings, dataminer_settings_dict)
+            if len(duplicated_datminer_settings) > 0:
+                raise RuntimeError("Dataminer %s has a import loop containing [%s]!" % (dataminer_settings, ", ".join(duplicated_datminer_settings)))
+
 def load_dataminers() -> list[DataMiner.DataMinerCollection]:
     data = open_file()
     if not isinstance(data, dict):
@@ -209,10 +235,11 @@ def load_dataminers() -> list[DataMiner.DataMinerCollection]:
     dataminer_collection_intermediates:dict[str,DataMinerCollectionIntermediate] = {}
     for name, dataminer_collection_data in data.items():
         dataminer_collection_intermediates[name] = DataMinerCollectionIntermediate(dataminer_collection_data, name, comparers)
-    finals = [dataminer_collection_intermediate.create_final(all_dataminers_dict) for dataminer_collection_intermediate in dataminer_collection_intermediates.values()]
+    finals = [dataminer_collection_intermediate.create_final(all_dataminers_dict) for dataminer_collection_intermediate in dataminer_collection_intermediates.values() if not dataminer_collection_intermediate.disabled]
     versions = VersionsParser.versions_dict.get()
     all_used_versions:set["Version.Version"] = set()
     for dataminer_collection_intermediate in dataminer_collection_intermediates.values():
         used_versions = dataminer_collection_intermediate.check(dataminer_collection_intermediates, versions)
         all_used_versions.update(used_versions)
+    check_for_loops(all_used_versions, finals)
     return finals
