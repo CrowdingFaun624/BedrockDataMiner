@@ -366,6 +366,7 @@
             "minecraft:managed_wandering_trader": {"type": "dict", "comparer": "empty"},
             "minecraft:mark_variant": {"type": "dict", "comparer": "component.mark_variant"},
             "minecraft:mob_effect": {"type": "dict", "comparer": "component.mob_effect"},
+            "minecraft:mob_effect_immunity": {"type": "dict", "comparer": "component.mob_effect_immunity"},
             "minecraft:monster": {"type": "dict", "comparer": "empty", "tags": ["outdated"]},
             "minecraft:movement": {"type": "dict", "comparer": "component.movement"},
             "minecraft:movement.amphibious": {"type": "dict", "comparer": "component.movement.amphibious"},
@@ -2299,6 +2300,20 @@
             "mob_effect": {"type": "str"}
         }
     },
+    "component.mob_effect_immunity": {
+        "type": "TypedDict",
+        "types": {
+            "mob_effects": {"type": "list", "comparer": "component.mob_effect_immunity:mob_effects"}
+        }
+    },
+    "component.mob_effect_immunity:mob_effects": {
+        "type": "List",
+        "field": "mob effect",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
     "component.movement": {
         "type": "TypedDict",
         "types": {
@@ -2571,6 +2586,7 @@
             "hit_water": {"type": "bool"},
             "hitWater": {"type": "bool", "tags": ["outdated"]},
             "homing": {"type": "bool"},
+            "ignored_entities": {"type": "list", "comparer": "entity_list"},
             "inertia": {"type": "decimal"},
             "is_dangerous": {"type": "bool"},
             "isdangerous": {"type": "bool", "tags": ["outdated"]},

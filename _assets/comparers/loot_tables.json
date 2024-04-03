@@ -145,10 +145,11 @@
     },
     "entry": {
         "type": "TypedDict",
-        "normalizer": "normalize_functions",
+        "normalizer": ["normalize_functions", "normalize_conditions"],
         "types": {
             "aux_val": {"type": "int"},
             "auxVal": {"type": "int"},
+            "conditions": {"type": "dict", "comparer": "conditions"},
             "count": {"type": "int"},
             "functions": {"type": "dict", "comparer": "functions"},
             "name": {"type": "str"},
@@ -182,6 +183,7 @@
             "random_block_state": {"type": "dict", "comparer": "function.random_block_state"},
             "random_dye": {"type": "dict", "comparer": "empty"},
             "set_actor_id": {"type": "dict", "comparer": "function.set_actor_id"},
+            "set_armor_trim": {"type": "dict", "comparer": "function.set_armor_trim"},
             "set_banner_details": {"type": "dict", "comparer": "function.set_banner_details"},
             "set_book_contents": {"type": "dict", "comparer": "function.set_book_contents"},
             "set_count": {"type": "dict", "comparer": "function.set_count"},
@@ -189,6 +191,7 @@
             "set_data": {"type": "dict", "comparer": "function.set_data"},
             "set_lore": {"type": "dict", "comparer": "function.set_lore"},
             "set_name": {"type": "dict", "comparer": "function.set_name"},
+            "set_ominous_bottle_amplifier": {"type": "dict", "comparer": "function.set_ominous_bottle_amplifier"},
             "specific_enchants": {"type": "dict", "comparer": "function.specific_enchants"},
             "trader_material_type": {"type": "dict", "comparer": "empty"}
         }
@@ -283,6 +286,13 @@
             "id": {"type": "str"}
         }
     },
+    "function.set_armor_trim": {
+        "type": "TypedDict",
+        "types": {
+            "material": {"type": "str"},
+            "pattern": {"type": "str"}
+        }
+    },
     "function.set_banner_details": {
         "type": "TypedDict",
         "types": {
@@ -343,6 +353,12 @@
         "type": "TypedDict",
         "types": {
             "name": {"type": "str"}
+        }
+    },
+    "function.set_ominous_bottle_amplifier": {
+        "type": "TypedDict",
+        "types": {
+            "amplifier": {"type": "dict", "comparer": "range_int"}
         }
     },
     "function.set_stew_effect": {

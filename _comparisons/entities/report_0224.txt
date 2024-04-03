@@ -1,0 +1,932 @@
+Difference of "entities" between "1.20.80.24" (beta of "1.20.80") and "1.21.0.20" (beta of "1.21.0").
+Unable to create data files for 1 file between: "1.20.80"
+
+Changed entity "breeze":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:reflect_projectiles":
+					Changed field "reflected_projectiles":
+						Total projectile: 17 (+5, -6)
+						Removed projectile "experience_bottle".
+						Removed projectile "thrownegg".
+						Removed projectile "thrownenderpearl".
+						Removed projectile "evocation_fang".
+						Removed projectile "ice_bomb".
+						Removed projectile "thrownicebomb".
+						Added projectile "xp_bottle".
+						Added projectile "egg".
+						Added projectile "wither_skull_dangerous".
+						Added projectile "fireworks_rocket".
+						Added projectile "fishing_hook".
+					Changed field "reflection_scale" from "0.25" to "0.5".
+Changed entity "breeze_wind_charge_projectile":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:projectile":
+					Added field "ignored_entities":
+						entity: "ender_crystal"
+						entity: "wind_charge_projectile"
+						entity: "breeze_wind_charge_projectile"
+Changed entity "pillager":
+	Added behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "minecraft:celebrate":
+					component "minecraft:behavior.celebrate":
+						field "celebration_sound": "celebrate"
+						field "duration": 30.0
+						field "jump_interval":
+							field "range_max": 3.5
+							field "range_min": 1.0
+						field "on_celebration_end_event":
+							field "event": "minecraft:stop_celebrating"
+							field "target": "self"
+						field "priority": 5
+						field "sound_interval":
+							field "range_max": 7.0
+							field "range_min": 2.0
+				component group "minecraft:illager_squad_captain":
+					component "minecraft:equipment":
+						field "slot_drop_chance":
+							slot:
+								field "drop_chance": 1.0
+								field "slot": "slot.armor.chest"
+						field "table": "loot_tables/entities/pillager_captain_equipment.json"
+					component "minecraft:is_illager_captain": empty
+					component "minecraft:loot": field "table": "loot_tables/entities/pillager_captain.json"
+					component "minecraft:on_hurt":
+						field "event": "minecraft:ranged_mode"
+						field "target": "self"
+					component "minecraft:on_hurt_by_player":
+						field "event": "minecraft:ranged_mode"
+						field "target": "self"
+					component "minecraft:variant": field "value": 1
+				component group "minecraft:melee_attack":
+					component "minecraft:attack": field "damage": 3
+					component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "track_target": true
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "event": "minecraft:ranged_mode"
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_water"
+								filter property "value": false
+				component group "minecraft:patrol_captain":
+					component "minecraft:behavior.hold_ground":
+						field "broadcast": true
+						field "broadcast_range": 8
+						field "min_radius": 10
+						field "priority": 5
+						field "within_radius_event":
+							field "event": "minecraft:ranged_mode"
+							field "target": "self"
+					component "minecraft:behavior.move_to_random_block":
+						field "block_distance": 512
+						field "priority": 6
+						field "speed_multiplier": 0.55
+						field "within_radius": 8
+					component "minecraft:equipment":
+						field "slot_drop_chance":
+							slot:
+								field "drop_chance": 1.0
+								field "slot": "slot.armor.chest"
+						field "table": "loot_tables/entities/pillager_captain_equipment.json"
+					component "minecraft:is_illager_captain": empty
+					component "minecraft:loot": field "table": "loot_tables/entities/pillager_captain.json"
+					component "minecraft:on_hurt":
+						field "event": "minecraft:ranged_mode"
+						field "target": "self"
+					component "minecraft:on_hurt_by_player":
+						field "event": "minecraft:ranged_mode"
+						field "target": "self"
+					component "minecraft:on_target_escape":
+						field "event": "minecraft:calm"
+						field "target": "self"
+					component "minecraft:variant": field "value": 1
+				component group "minecraft:patrol_follower":
+					component "minecraft:behavior.follow_target_captain":
+						field "follow_distance": 5
+						field "priority": 5
+						field "speed_multiplier": 0.8
+						field "within_radius": 64
+					component "minecraft:behavior.hold_ground":
+						field "broadcast": true
+						field "broadcast_range": 8
+						field "min_radius": 10
+						field "priority": 6
+						field "within_radius_event":
+							field "event": "minecraft:ranged_mode"
+							field "target": "self"
+					component "minecraft:on_hurt":
+						field "event": "minecraft:ranged_mode"
+						field "target": "self"
+					component "minecraft:on_hurt_by_player":
+						field "event": "minecraft:ranged_mode"
+						field "target": "self"
+					component "minecraft:on_target_escape":
+						field "event": "minecraft:calm"
+						field "target": "self"
+				component group "minecraft:raid_configuration":
+					component "minecraft:ambient_sound_interval":
+						field "event_name": "ambient.in.raid"
+						field "range": 4.0
+						field "value": 2.0
+					component "minecraft:behavior.move_to_village":
+						field "goal_radius": 2.0
+						field "priority": 5
+						field "speed_multiplier": 1.0
+					component "minecraft:dweller":
+						field "can_find_poi": false
+						field "can_migrate": true
+						field "dweller_role": "hostile"
+						field "dwelling_type": "village"
+						field "first_founding_reward": 0
+						field "update_interval_base": 60
+						field "update_interval_variant": 40
+					component "minecraft:loot": field "table": "loot_tables/entities/pillager_raid.json"
+				component group "minecraft:raid_persistence": component "minecraft:persistent": empty
+				component group "minecraft:ranged_attack":
+					component "minecraft:behavior.ranged_attack":
+						field "attack_interval_max": 1.0
+						field "attack_interval_min": 1.0
+						field "attack_radius": 8.0
+						field "priority": 4
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "event": "minecraft:melee_mode"
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "is_underwater"
+								filter property "value": true
+					component "minecraft:shooter": field "def": "minecraft:arrow"
+			field "components":
+				component "minecraft:behavior.charge_held_item":
+					field "items": item: "minecraft:arrow"
+					field "priority": 3
+				component "minecraft:behavior.equip_item": field "priority": 3
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target":
+					field "entity_types":
+						field "filters":
+							filter property "operator": "!="
+							filter property "subject": "other"
+							filter property "test": "is_family"
+							filter property "value": "illager"
+						field "max_dist": 64
+					field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8
+					field "priority": 9
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "irongolem"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "wandering_trader"
+							field "max_dist": 16
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "villager"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "has_component"
+										filter property "value": "minecraft:is_baby"
+							field "max_dist": 16
+					field "must_see": true
+					field "priority": 2
+					field "reselect_targets": true
+					field "within_radius": 16.0
+				component "minecraft:behavior.pickup_items":
+					field "goal_radius": 2
+					field "max_dist": 3
+					field "priority": 7
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.random_look_around": field "priority": 10
+				component "minecraft:behavior.random_stroll":
+					field "priority": 8
+					field "speed_multiplier": 1
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_join_raid": empty
+				component "minecraft:collision_box":
+					field "height": 1.9
+					field "width": 0.6
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:equip_item": empty
+				component "minecraft:equipment": field "table": "loot_tables/entities/pillager_gear.json"
+				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? (query.is_baby ? 12 : 5) + (Math.die_roll(query.equipment_count,1,3)) : 0"
+				component "minecraft:follow_range": field "value": 64
+				component "minecraft:health":
+					field "max": 24
+					field "value": 24
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:loot": field "table": "loot_tables/entities/pillager.json"
+				component "minecraft:movement": field "value": 0.35
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk": field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:shareables":
+					field "items":
+						item:
+							field "item": "minecraft:banner:15"
+							field "priority": 0
+							field "surplus_amount": 1
+							field "want_amount": 1
+				component "minecraft:type_family":
+					field "family":
+						family: "pillager"
+						family: "monster"
+						family: "illager"
+						family: "mob"
+				component "minecraft:variant": field "value": 0
+			field "description":
+				description "identifier": "minecraft:pillager"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "spawn_category": "monster"
+			field "events":
+				event "minecraft:calm":
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:melee_attack"
+							component group: "minecraft:ranged_attack"
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
+				event "minecraft:melee_mode":
+					field "add": field "component_groups": component group: "minecraft:melee_attack"
+					field "remove": field "component_groups": component group: "minecraft:ranged_attack"
+				event "minecraft:promote_to_illager_captain":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:ranged_attack"
+							component group: "minecraft:illager_squad_captain"
+					field "remove": field "component_groups": component group: "minecraft:patrol_follower"
+				event "minecraft:promote_to_patrol_captain":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:ranged_attack"
+							component group: "minecraft:patrol_captain"
+					field "remove": field "component_groups": component group: "minecraft:patrol_follower"
+				event "minecraft:raid_expired":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "has_nametag"
+								filter property "value": false
+							field "remove": field "component_groups": component group: "minecraft:raid_persistence"
+				event "minecraft:ranged_mode":
+					field "add": field "component_groups": component group: "minecraft:ranged_attack"
+					field "remove": field "component_groups": component group: "minecraft:melee_attack"
+				event "minecraft:spawn_as_illager_captain":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:ranged_attack"
+							component group: "minecraft:illager_squad_captain"
+				event "minecraft:spawn_as_patrol_follower":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:ranged_attack"
+							component group: "minecraft:patrol_follower"
+				event "minecraft:spawn_for_raid":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:ranged_attack"
+							component group: "minecraft:raid_configuration"
+							component group: "minecraft:raid_persistence"
+				event "minecraft:start_celebrating":
+					field "sequence":
+						sequence item 0: field "add": field "component_groups": component group: "minecraft:celebrate"
+						sequence item 1:
+							field "filters":
+								filter property "test": "has_nametag"
+								filter property "value": false
+							field "remove": field "component_groups": component group: "minecraft:raid_persistence"
+				event "minecraft:stop_celebrating": field "remove": field "component_groups": component group: "minecraft:celebrate"
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
+Changed entity "silverfish":
+	Added behavior pack "experimental":
+		field "format_version": "1.20.80"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "minecraft:silverfish_angry":
+					component "minecraft:angry":
+						field "broadcast_anger": true
+						field "broadcast_range": 20
+						field "calm_event":
+							field "event": "minecraft:on_calm"
+							field "target": "self"
+						field "duration": -1
+					component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "track_target": true
+					component "minecraft:behavior.silverfish_wake_up_friends": field "priority": 1
+				component group "minecraft:silverfish_calm":
+					component "minecraft:on_target_acquired":
+						field "event": "minecraft:become_angry"
+						field "target": "self"
+			field "components":
+				component "minecraft:attack": field "damage": 1
+				component "minecraft:behavior.float": field "priority": 1
+				component "minecraft:behavior.hurt_by_target":
+					field "alert_same_type": true
+					field "priority": 1
+				component "minecraft:behavior.nearest_attackable_target":
+					field "attack_interval": 10
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "snowgolem"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "irongolem"
+							field "max_dist": 8
+					field "priority": 2
+				component "minecraft:behavior.silverfish_merge_with_stone": field "priority": 5
+				component "minecraft:block_climber": empty
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 0.3
+					field "width": 0.4
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 : 0"
+				component "minecraft:health":
+					field "max": 8
+					field "value": 8
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:loot": field "table": "loot_tables/entities/silverfish.json"
+				component "minecraft:mob_effect_immunity": field "mob_effects": mob effect: "infested"
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk": field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "silverfish"
+						family: "monster"
+						family: "lightweight"
+						family: "mob"
+						family: "arthropod"
+			field "description":
+				description "identifier": "minecraft:silverfish"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "spawn_category": "monster"
+			field "events":
+				event "minecraft:become_angry":
+					field "add": field "component_groups": component group: "minecraft:silverfish_angry"
+					field "remove": empty
+				event "minecraft:entity_spawned":
+					field "add": field "component_groups": component group: "minecraft:silverfish_calm"
+					field "remove": empty
+				event "minecraft:on_calm":
+					field "add": field "component_groups": component group: "minecraft:silverfish_calm"
+					field "remove": empty
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
+Changed entity "slime":
+	Added behavior pack "experimental":
+		field "format_version": "1.20.80"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "minecraft:slime_aggressive": component "minecraft:movement.jump": field "jump_delay": [0.16, 0.5]
+				component group "minecraft:slime_calm": component "minecraft:movement.jump": field "jump_delay": [0.5, 1.5]
+				component group "minecraft:slime_large":
+					component "minecraft:area_attack":
+						field "cause": "entity_attack"
+						field "damage_cooldown": 0.5
+						field "damage_per_tick": 4
+						field "damage_range": 0.15
+						field "entity_filter":
+							filter property "any_of":
+								filter:
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "player"
+								filter:
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "irongolem"
+								filter:
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "snowgolem"
+					component "minecraft:attack": field "damage": 4
+					component "minecraft:collision_box":
+						field "height": 2.08
+						field "width": 2.08
+					component "minecraft:health":
+						field "max": 16
+						field "value": 16
+					component "minecraft:movement": field "value": 0.6
+					component "minecraft:variant": field "value": 4
+				component group "minecraft:slime_medium":
+					component "minecraft:area_attack":
+						field "cause": "entity_attack"
+						field "damage_cooldown": 0.5
+						field "damage_per_tick": 2
+						field "damage_range": 0.15
+						field "entity_filter":
+							filter property "any_of":
+								filter:
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "player"
+								filter:
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "irongolem"
+								filter:
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "snowgolem"
+					component "minecraft:attack": field "damage": 2
+					component "minecraft:collision_box":
+						field "height": 1.04
+						field "width": 1.04
+					component "minecraft:health":
+						field "max": 4
+						field "value": 4
+					component "minecraft:movement": field "value": 0.4
+					component "minecraft:variant": field "value": 2
+				component group "minecraft:slime_small":
+					component "minecraft:attack": field "damage": 0
+					component "minecraft:collision_box":
+						field "height": 0.52
+						field "width": 0.52
+					component "minecraft:health":
+						field "max": 1
+						field "value": 1
+					component "minecraft:loot": field "table": "loot_tables/entities/slime.json"
+					component "minecraft:movement": field "value": 0.3
+					component "minecraft:variant": field "value": 1
+			field "components":
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "snowgolem"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "irongolem"
+							field "max_dist": 16
+					field "must_see": true
+					field "priority": 2
+				component "minecraft:behavior.slime_attack": field "priority": 3
+				component "minecraft:behavior.slime_float":
+					field "jump_chance_percentage": 0.8
+					field "priority": 1
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.slime_keep_on_jumping":
+					field "priority": 5
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.slime_random_direction":
+					field "add_random_time_range": 3
+					field "min_change_direction_time": 2.0
+					field "priority": 4
+					field "turn_range": 360
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 2.08
+					field "width": 2.08
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? query.variant : 0"
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:mob_effect_immunity": field "mob_effects": mob effect: "oozing"
+				component "minecraft:movement.jump": field "jump_delay": [0.5, 1.5]
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "avoid_water": true
+					field "can_path_over_water": true
+				component "minecraft:on_target_acquired":
+					field "event": "minecraft:become_aggressive"
+					field "target": "self"
+				component "minecraft:on_target_escape":
+					field "event": "minecraft:become_calm"
+					field "target": "self"
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "slime"
+						family: "monster"
+						family: "mob"
+			field "description":
+				description "identifier": "minecraft:slime"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "spawn_category": "monster"
+			field "events":
+				event "minecraft:become_aggressive": field "add": field "component_groups": component group: "minecraft:slime_aggressive"
+				event "minecraft:become_calm": field "add": field "component_groups": component group: "minecraft:slime_calm"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "trigger": "spawn_small"
+							field "weight": 1
+						randomize item:
+							field "trigger": "spawn_medium"
+							field "weight": 1
+						randomize item:
+							field "trigger": "spawn_large"
+							field "weight": 1
+				event "spawn_large":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:slime_large"
+							component group: "minecraft:slime_calm"
+				event "spawn_medium":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:slime_medium"
+							component group: "minecraft:slime_calm"
+				event "spawn_small":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:slime_small"
+							component group: "minecraft:slime_calm"
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
+Changed entity "vindicator":
+	Added behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "minecraft:celebrate":
+					component "minecraft:behavior.celebrate":
+						field "celebration_sound": "celebrate"
+						field "duration": 30.0
+						field "jump_interval":
+							field "range_max": 3.5
+							field "range_min": 1.0
+						field "on_celebration_end_event":
+							field "event": "minecraft:stop_celebrating"
+							field "target": "self"
+						field "priority": 5
+						field "sound_interval":
+							field "range_max": 7.0
+							field "range_min": 2.0
+				component group "minecraft:default_targeting":
+					component "minecraft:behavior.nearest_attackable_target":
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "any_of":
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "snowgolem"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "irongolem"
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "wandering_trader"
+								field "max_dist": 12
+							entity type:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "villager"
+										filter:
+											filter property "operator": "!="
+											filter property "subject": "other"
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_baby"
+								field "max_dist": 12
+						field "must_see": true
+						field "must_see_forget_duration": 40.0
+						field "priority": 2
+						field "within_radius": 12.0
+				component group "minecraft:illager_squad_captain":
+					component "minecraft:equipment":
+						field "slot_drop_chance":
+							slot:
+								field "drop_chance": 1.0
+								field "slot": "slot.armor.chest"
+						field "table": "loot_tables/entities/vindicator_captain_equipment.json"
+					component "minecraft:is_illager_captain": empty
+					component "minecraft:loot": field "table": "loot_tables/entities/pillager_captain.json"
+					component "minecraft:variant": field "value": 1
+				component group "minecraft:patrol_captain":
+					component "minecraft:behavior.move_to_random_block":
+						field "block_distance": 512
+						field "priority": 5
+						field "speed_multiplier": 0.55
+						field "within_radius": 8
+					component "minecraft:equipment":
+						field "slot_drop_chance":
+							slot:
+								field "drop_chance": 1.0
+								field "slot": "slot.armor.chest"
+						field "table": "loot_tables/entities/vindicator_captain_equipment.json"
+					component "minecraft:is_illager_captain": empty
+					component "minecraft:loot": field "table": "loot_tables/entities/pillager_captain.json"
+					component "minecraft:variant": field "value": 1
+				component group "minecraft:patrol_follower":
+					component "minecraft:behavior.follow_target_captain":
+						field "follow_distance": 5
+						field "priority": 5
+						field "speed_multiplier": 0.8
+						field "within_radius": 64
+				component group "minecraft:raid_configuration":
+					component "minecraft:ambient_sound_interval":
+						field "event_name": "ambient.in.raid"
+						field "range": 4.0
+						field "value": 2.0
+					component "minecraft:annotation.break_door":
+						field "break_time": 30
+						field "min_difficulty": "normal"
+					component "minecraft:behavior.move_to_village":
+						field "goal_radius": 2.0
+						field "priority": 4
+						field "speed_multiplier": 1.0
+					component "minecraft:dweller":
+						field "can_find_poi": false
+						field "can_migrate": true
+						field "dweller_role": "hostile"
+						field "dwelling_type": "village"
+						field "first_founding_reward": 0
+						field "update_interval_base": 60
+						field "update_interval_variant": 40
+					component "minecraft:loot": field "table": "loot_tables/entities/vindicator_raid.json"
+					component "minecraft:navigation.walk":
+						field "can_break_doors": true
+						field "can_pass_doors": true
+						field "can_path_over_water": true
+				component group "minecraft:raid_despawn": component "minecraft:despawn": field "despawn_from_distance": empty
+				component group "minecraft:raid_persistence": component "minecraft:persistent": empty
+				component group "minecraft:vindicator_aggro":
+					component "minecraft:angry":
+						field "broadcast_anger": false
+						field "calm_event":
+							field "event": "minecraft:stop_aggro"
+							field "target": "self"
+						field "duration": -1
+				component group "minecraft:vindicator_johnny":
+					component "minecraft:behavior.nearest_attackable_target":
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": "!="
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "illager"
+								field "max_dist": 12
+						field "must_see": true
+						field "must_see_forget_duration": 40.0
+						field "priority": 2
+						field "within_radius": 12.0
+			field "components":
+				component "minecraft:attack": field "damage": 8
+				component "minecraft:behavior.equip_item": field "priority": 3
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8
+					field "priority": 10
+					field "probability": 0.02
+				component "minecraft:behavior.melee_box_attack": field "priority": 3
+				component "minecraft:behavior.pickup_items":
+					field "goal_radius": 2
+					field "max_dist": 3
+					field "priority": 7
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.random_stroll":
+					field "priority": 9
+					field "speed_multiplier": 1
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_join_raid": empty
+				component "minecraft:collision_box":
+					field "height": 1.9
+					field "width": 0.6
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:equip_item": empty
+				component "minecraft:equipment": field "table": "loot_tables/entities/vindicator_gear.json"
+				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? (query.is_baby ? 12 : 5) + (Math.die_roll(query.equipment_count,1,3)) : 0"
+				component "minecraft:follow_range": field "value": 64
+				component "minecraft:health":
+					field "max": 24
+					field "value": 24
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:loot": field "table": "loot_tables/entities/vindication_illager.json"
+				component "minecraft:movement": field "value": 0.35
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable":
+					field "default_trigger":
+						field "event": "minecraft:stop_johnny"
+						field "target": "self"
+					field "name_actions":
+						name action:
+							field "name_filter": "Johnny"
+							field "on_named":
+								field "event": "minecraft:start_johnny"
+								field "target": "self"
+				component "minecraft:navigation.walk": field "can_path_over_water": true
+				component "minecraft:on_target_acquired":
+					field "event": "minecraft:become_aggro"
+					field "target": "self"
+				component "minecraft:on_target_escape":
+					field "event": "minecraft:stop_aggro"
+					field "target": "self"
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:shareables":
+					field "items":
+						item:
+							field "item": "minecraft:banner:15"
+							field "priority": 0
+							field "surplus_amount": 1
+							field "want_amount": 1
+				component "minecraft:type_family":
+					field "family":
+						family: "vindicator"
+						family: "monster"
+						family: "illager"
+						family: "mob"
+				component "minecraft:variant": field "value": 0
+			field "description":
+				description "identifier": "minecraft:vindicator"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "spawn_category": "monster"
+			field "events":
+				event "minecraft:become_aggro": field "add": field "component_groups": component group: "minecraft:vindicator_aggro"
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:default_targeting"
+				event "minecraft:promote_to_illager_captain":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:default_targeting"
+							component group: "minecraft:illager_squad_captain"
+					field "remove": field "component_groups": component group: "minecraft:patrol_follower"
+				event "minecraft:promote_to_patrol_captain":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:default_targeting"
+							component group: "minecraft:patrol_captain"
+					field "remove": field "component_groups": component group: "minecraft:patrol_follower"
+				event "minecraft:raid_expired":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "has_nametag"
+								filter property "value": false
+							field "remove": field "component_groups": component group: "minecraft:raid_persistence"
+				event "minecraft:spawn_as_illager_captain":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:default_targeting"
+							component group: "minecraft:illager_squad_captain"
+				event "minecraft:spawn_as_patrol_follower":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:default_targeting"
+							component group: "minecraft:patrol_follower"
+				event "minecraft:spawn_for_raid":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:default_targeting"
+							component group: "minecraft:raid_configuration"
+							component group: "minecraft:raid_persistence"
+							component group: "minecraft:raid_despawn"
+				event "minecraft:start_celebrating":
+					field "sequence":
+						sequence item 0: field "add": field "component_groups": component group: "minecraft:celebrate"
+						sequence item 1:
+							field "filters":
+								filter property "test": "has_nametag"
+								filter property "value": false
+							field "remove": field "component_groups": component group: "minecraft:raid_persistence"
+				event "minecraft:start_johnny": field "add": field "component_groups": component group: "minecraft:vindicator_johnny"
+				event "minecraft:stop_aggro": field "remove": field "component_groups": component group: "minecraft:vindicator_aggro"
+				event "minecraft:stop_celebrating": field "remove": field "component_groups": component group: "minecraft:celebrate"
+				event "minecraft:stop_johnny":
+					field "add": field "component_groups": component group: "minecraft:default_targeting"
+					field "remove": field "component_groups": component group: "minecraft:vindicator_johnny"
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
+Changed entity "wind_charge_projectile":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:projectile":
+					Added field "ignored_entities":
+						entity: "ender_crystal"
+						entity: "wind_charge_projectile"
+						entity: "breeze_wind_charge_projectile"
