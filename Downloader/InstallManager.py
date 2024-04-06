@@ -1,5 +1,5 @@
 from pathlib2 import Path
-from typing import Iterable, TYPE_CHECKING
+from typing import Iterable, Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
     import Utilities.FileManager as FileManager
@@ -51,11 +51,11 @@ class InstallManager():
         '''Returns a list of every file in the archive, including those not in the assets folder.'''
         raise NotImplementedError("`get_file_list` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
-    def read(self, file_name:str, mode:str="b") -> bytes|str:
+    def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
         '''Returns the contents of the given file name from the Version'''
         raise NotImplementedError("`read` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
-    def get_file(self, file_name:str, mode:str="b", is_in_assets:bool=True) -> "FileManager.FilePromise":
+    def get_file(self, file_name:str, mode:Literal["b","t"]="b", is_in_assets:bool=True) -> "FileManager.FilePromise":
         '''Returns a FilePromise object of the file.'''
         raise NotImplementedError("`get_file` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 

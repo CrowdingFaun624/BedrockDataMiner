@@ -3,7 +3,7 @@ import requests
 import shutil
 import threading
 import time
-from typing import Iterable
+from typing import Iterable, Literal
 from urllib.parse import urlparse
 import zipfile
 
@@ -112,7 +112,7 @@ class DownloadManager(InstallManager.InstallManager):
             self.install_all()
         return name in self.get_file_list()
 
-    def read(self, file_name:str, mode:str="b") -> bytes|str:
+    def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
 
         if not isinstance(file_name, str):
             raise TypeError("Parameter `file_name` is not a `str`!")
@@ -132,7 +132,7 @@ class DownloadManager(InstallManager.InstallManager):
         else:
             return data
 
-    def get_file(self, file_name:str, mode:str="b", is_in_assets:bool=True) -> FileManager.FilePromise:
+    def get_file(self, file_name:str, mode:Literal["b","t"]="b", is_in_assets:bool=True) -> FileManager.FilePromise:
 
         def clear_temp_file(temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
             path_that_zipfile_puts_it_in.unlink()

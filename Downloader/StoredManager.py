@@ -1,7 +1,7 @@
 from pathlib2 import Path
 import shutil
 import threading
-from typing import Iterable
+from typing import Iterable, Literal
 
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
@@ -71,7 +71,7 @@ class StoredManager(InstallManager.InstallManager):
         assert self.index is not None
         return self.get_full_file_name(name) in self.index
 
-    def read(self, file_name:str, mode:str="b") -> bytes|str:
+    def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
 
         if not isinstance(file_name, str):
             raise TypeError("Parameter `file_name` is not a `str`!")
@@ -87,7 +87,7 @@ class StoredManager(InstallManager.InstallManager):
     def get_full_file_name(self, asset_name:str) -> str:
         return "assets/" + asset_name
 
-    def get_file(self, file_name:str, mode:str="b", is_in_assets:bool=True) -> FileManager.FilePromise:
+    def get_file(self, file_name:str, mode:Literal["b","t"]="b", is_in_assets:bool=True) -> FileManager.FilePromise:
 
         if not isinstance(file_name, str):
             raise TypeError("Parameter `file_name` is not a `str`!")

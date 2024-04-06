@@ -1,6 +1,6 @@
 import os
 from pathlib2 import Path
-from typing import Iterable
+from typing import Iterable, Literal
 
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
@@ -83,7 +83,7 @@ class LocalManager(InstallManager.InstallManager):
     def file_exists(self, name:str) -> bool:
         return Path(self.bedrock_local.joinpath(self.get_full_file_name(name))).exists()
 
-    def read(self, file_name:str, mode:str="b") -> bytes|str:
+    def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
 
         if not isinstance(file_name, str):
             raise TypeError("Parameter `file_name` is not a `str`!")
@@ -97,7 +97,7 @@ class LocalManager(InstallManager.InstallManager):
         with open(full_path, "r" + mode) as f:
             return f.read()
 
-    def get_file(self, file_name:str, mode:str="b", is_in_assets:bool=True) -> FileManager.FilePromise:
+    def get_file(self, file_name:str, mode:Literal["b","t"]="b", is_in_assets:bool=True) -> FileManager.FilePromise:
 
         if not isinstance(file_name, str):
             raise TypeError("Parameter `file_name` is not a `str`!")
