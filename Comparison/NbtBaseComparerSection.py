@@ -18,13 +18,13 @@ class NbtBaseComparerSection(ComparerSection.ComparerSection[NbtTypes.TAG]):
             comparer:ComparerSection.ComparerSection|dict[type,ComparerSection.ComparerSection|None]|None,
             types:tuple[type,...]|None,
             endianness:Endianness.End,
-            normalizers:list[Normalizer.Normalizer]|None=None,
-            children_has_normalizers:bool=False,
+            normalizer:list[Normalizer.Normalizer]|None,
+            children_has_normalizers:bool,
         ) -> None:
         self.name = name
         self.comparer = comparer
         self.types = (object,) if types is None else types
-        self.normalizers = normalizers
+        self.normalizer = normalizer
         self.children_has_normalizer = children_has_normalizers
         self.endianness=endianness
         self.check_initialization_parameters()
@@ -90,13 +90,10 @@ class NbtBaseComparerSection(ComparerSection.ComparerSection[NbtTypes.TAG]):
         return ComparerSet.ComparerSet(output)
 
     def normalize(self, data: NbtReader.NbtBytes, normalizer_dependencies: Normalizer.LocalNormalizerDependencies, version_number: int, trace: Trace.Trace) -> NbtTypes.TAG:
-        exception = None
         try:
             data_parsed = NbtReader.unpack_bytes(data.value, gzipped=False, endianness=self.endianness)[1]
-        except Exception as e:
+        except Exception:
             raise RuntimeError("Failed to parse nbt at %s!" % (trace))
-        if exception is not None:
-            raise exception # type: ignore
 
         if not self.children_has_normalizer: return data_parsed
         if self.normalizer is not None:
