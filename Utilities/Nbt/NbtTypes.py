@@ -1,7 +1,7 @@
 import enum
 import mutf8
 import re
-from typing import Generic, TypeVar
+from typing import Generic, Iterable, Mapping, TypeVar
 
 import Utilities.Nbt.DataReader as DataReader
 import Utilities.Nbt.Endianness as Endianness
@@ -31,19 +31,22 @@ class TAG(Generic[a]):
         self.value = value
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG": ...
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG": ...
 
     def __eq__(self, __value: object) -> bool:
         return isinstance(__value, self.__class__) and self.value == __value.value
 
     def __str__(self) -> str: ...
 
+    def __repr__(self) -> str:
+        return "<%s %s>" % (self.__class__.__name__, str(self))
+
 class TAG_End(TAG[None]):
 
     value = None
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_End":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_End":
         return cls(None)
 
     def __str__(self) -> str:
@@ -55,8 +58,8 @@ class TAG_End(TAG[None]):
 class TAG_Byte(TAG[int]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_Byte":
-        return cls(data_reader.unpack_tuple("b", 1, None))
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Byte":
+        return cls(data_reader.unpack_tuple("b", 1, endianness))
 
     def __str__(self) -> str:
         return "%ib" % self.value
@@ -64,8 +67,8 @@ class TAG_Byte(TAG[int]):
 class TAG_Short(TAG[int]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_Short":
-        return cls(data_reader.unpack_tuple("h", 2, endianness.short_char))
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Short":
+        return cls(data_reader.unpack_tuple("h", 2, endianness))
 
     def __str__(self) -> str:
         return "%is" % self.value
@@ -73,8 +76,8 @@ class TAG_Short(TAG[int]):
 class TAG_Int(TAG[int]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_Int":
-        return cls(data_reader.unpack_tuple("i", 4, endianness.int_char))
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Int":
+        return cls(data_reader.unpack_tuple("i", 4, endianness))
 
     def __str__(self) -> str:
         return "%i" % self.value
@@ -82,8 +85,8 @@ class TAG_Int(TAG[int]):
 class TAG_Long(TAG[int]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_Long":
-        return cls(data_reader.unpack_tuple("q", 8, endianness.long_char))
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Long":
+        return cls(data_reader.unpack_tuple("q", 8, endianness))
 
     def __str__(self) -> str:
         return "%il" % self.value
@@ -91,8 +94,8 @@ class TAG_Long(TAG[int]):
 class TAG_Float(TAG[float]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_Float":
-        return cls(data_reader.unpack_tuple("f", 4, endianness.float_char))
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Float":
+        return cls(data_reader.unpack_tuple("f", 4, endianness))
 
     def __str__(self) -> str:
         return "%ff" % self.value
@@ -100,8 +103,8 @@ class TAG_Float(TAG[float]):
 class TAG_Double(TAG[float]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_Double":
-        return cls(data_reader.unpack_tuple("d", 8, endianness.double_char))
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Double":
+        return cls(data_reader.unpack_tuple("d", 8, endianness))
 
     def __str__(self) -> str:
         return "%f" % self.value
@@ -109,19 +112,82 @@ class TAG_Double(TAG[float]):
 class TAG_Byte_Array(TAG[list[TAG_Byte]]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_Byte_Array":
-        size:int = data_reader.unpack_tuple("i", 4, endianness.int_char)
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Byte_Array":
+        size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls([TAG_Byte.from_bytes(data_reader, endianness) for i in range(size)])
 
     def __str__(self) -> str:
         return "[B;" + ", ".join(str(item) for item in self.value) + "]"
 
+    def __add__(self, __object:list[TAG_Byte]) -> "TAG_Byte_Array":
+        return TAG_Byte_Array(self.value + __object)
+
+    def __contains__(self, __object:object) -> bool:
+        return __object in self.value
+
+    def __delitem__(self, __index:int) -> None:
+        del self.value[__index]
+
+    def __getitem__(self, __index:int) -> TAG_Byte:
+        return self.value[__index]
+
+    def __iadd__(self, __object:list[TAG_Byte]) -> None:
+        self.value += __object
+
+    def __imul__(self, len:int) -> None:
+        self.value *= len
+
+    def __iter__(self) -> Iterable[TAG_Byte]:
+        return iter(self.value)
+
+    def __len__(self) -> int:
+        return len(self.value)
+
+    def __mul__(self, __len:int) -> "TAG_Byte_Array":
+        return TAG_Byte_Array(self.value * __len)
+
+    def __setitem__(self, __index:int, __object:TAG_Byte) -> None:
+        self.value[__index] = __object
+
+    def append(self, __object:TAG_Byte) -> None:
+        self.value.append(__object)
+
+    def clear(self) -> None:
+        self.clear()
+
+    def copy(self) -> "TAG_Byte_Array":
+        return TAG_Byte_Array(self.value.copy())
+
+    def count(self, __object:TAG_Byte) -> int:
+        return self.value.count(__object)
+
+    def extend(self, __object:list[TAG_Byte]) -> None:
+        self.value.extend(__object)
+
+    def index(self, __value:TAG_Byte) -> int:
+        return self.value.index(__value)
+
+    def insert(self, __index:int, __object:TAG_Byte) -> None:
+        self.value.insert(__index, __object)
+
+    def pop(self, __index:int=-1) -> TAG_Byte:
+        return self.value.pop(__index)
+
+    def remove(self, __object:TAG_Byte) -> None:
+        self.value.remove(__object)
+
+    def reverse(self) -> None:
+        self.value.reverse()
+
+    def sort(self) -> None:
+        self.value.sort(key=lambda item: item.value)
+
 class TAG_String(TAG[str]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_String":
-        size:int = data_reader.unpack_tuple("H", 2, endianness.short_char)
-        output2:tuple[bytes] = data_reader.unpack("c" * size, size, None)
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_String":
+        size:int = data_reader.unpack_tuple("H", 2, endianness)
+        output2:tuple[bytes] = data_reader.unpack("c" * size, size, endianness)
         return cls(mutf8.decode_modified_utf8(b"".join(output2)))
 
     def __str__(self) -> str:
@@ -130,18 +196,81 @@ class TAG_String(TAG[str]):
 class TAG_List(TAG[list[TAG]]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_List":
-        content_type:int = data_reader.unpack_tuple("b", 1, None)
-        size:int = data_reader.unpack_tuple("i", 4, endianness.int_char)
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_List":
+        content_type:int = data_reader.unpack_tuple("b", 1, endianness)
+        size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls([parse_object_from_bytes(data_reader, content_type, endianness) for i in range(size)])
 
     def __str__(self) -> str:
         return "[" + ", ".join(str(item) for item in self.value) + "]"
 
+    def __add__(self, __object:list[TAG]) -> "TAG_List":
+        return TAG_List(self.value + __object)
+
+    def __contains__(self, __object:object) -> bool:
+        return __object in self.value
+
+    def __delitem__(self, __index:int) -> None:
+        del self.value[__index]
+
+    def __getitem__(self, __index:int) -> TAG:
+        return self.value[__index]
+
+    def __iadd__(self, __object:list[TAG]) -> None:
+        self.value += __object
+
+    def __imul__(self, len:int) -> None:
+        self.value *= len
+
+    def __iter__(self) -> Iterable[TAG]:
+        return iter(self.value)
+
+    def __len__(self) -> int:
+        return len(self.value)
+
+    def __mul__(self, __len:int) -> "TAG_List":
+        return TAG_List(self.value * __len)
+
+    def __setitem__(self, __index:int, __object:TAG) -> None:
+        self.value[__index] = __object
+
+    def append(self, __object:TAG) -> None:
+        self.value.append(__object)
+
+    def clear(self) -> None:
+        self.clear()
+
+    def copy(self) -> "TAG_List":
+        return TAG_List(self.value.copy())
+
+    def count(self, __object:TAG) -> int:
+        return self.value.count(__object)
+
+    def extend(self, __object:list[TAG]) -> None:
+        self.value.extend(__object)
+
+    def index(self, __value:TAG) -> int:
+        return self.value.index(__value)
+
+    def insert(self, __index:int, __object:TAG) -> None:
+        self.value.insert(__index, __object)
+
+    def pop(self, __index:int=-1) -> TAG:
+        return self.value.pop(__index)
+
+    def remove(self, __object:TAG) -> None:
+        self.value.remove(__object)
+
+    def reverse(self) -> None:
+        self.value.reverse()
+
+    def sort(self) -> None:
+        self.value.sort(key=lambda item: item.value)
+
 class TAG_Compound(TAG[dict[str,TAG]]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_Compound":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Compound":
         output:dict[str,TAG] = {}
         while True:
             key_name, value = parse_compound_item_from_bytes(data_reader, endianness)
@@ -171,25 +300,203 @@ class TAG_Compound(TAG[dict[str,TAG]]):
         if len(key) == 0: return True
         return bool(pattern(key))
 
+    def __contains__(self, __value:object) -> bool:
+        return __value in self.value
+
+    def __delitem__(self, __key:str) -> None:
+        del self.value[__key]
+
+    def __getitem__(self, __key:str) -> TAG:
+        return self.value[__key]
+
+    def __iter__(self) -> Iterable[str]:
+        return iter(self.value)
+
+    def __len__(self) -> int:
+        return len(self.value)
+
+    def __setitem__(self, __key:str, __value:TAG[a]) -> None:
+        self.value[__key] = __value
+
+    def clear(self) -> None:
+        self.value.clear()
+
+    def copy(self) -> "TAG_Compound":
+        return TAG_Compound(self.value.copy())
+
+    @classmethod
+    def fromkeys(cls, __iterable: Iterable[str], __value:TAG[a]|None = None) -> "TAG_Compound":
+        return TAG_Compound(dict.fromkeys(__iterable, __value)) # type: ignore
+
+    def get(self, __key:str) -> TAG|None:
+        return self.value.get(__key)
+
+    def items(self) -> Iterable[tuple[str,TAG]]:
+        return self.value.items()
+
+    def keys(self) -> Iterable[str]:
+        return self.value.keys()
+
+    def pop(self, __key:str) -> TAG:
+        return self.value.pop(__key)
+
+    def popitem(self) -> tuple[str, TAG]:
+        return self.value.popitem()
+
+    def setdefault(self, __key:str, __value:TAG[a]) -> TAG[a]:
+        return self.value.setdefault(__key, __value)
+
+    def update(self, __value:Mapping[str,TAG[a]]) -> None:
+        self.value.update(__value)
+
+    def values(self) -> Iterable[TAG]:
+        return self.value.values()
+
 class TAG_Int_Array(TAG[list[TAG_Int]]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_Int_Array":
-        size:int = data_reader.unpack_tuple("i", 4, endianness.int_char)
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Int_Array":
+        size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls([TAG_Int.from_bytes(data_reader, endianness) for i in range(size)])
 
     def __str__(self) -> str:
         return "[I;" + ", ".join(str(item) for item in self.value) + "]"
 
+    def __add__(self, __object:list[TAG_Int]) -> "TAG_Int_Array":
+        return TAG_Int_Array(self.value + __object)
+
+    def __contains__(self, __object:object) -> bool:
+        return __object in self.value
+
+    def __delitem__(self, __index:int) -> None:
+        del self.value[__index]
+
+    def __getitem__(self, __index:int) -> TAG_Int:
+        return self.value[__index]
+
+    def __iadd__(self, __object:list[TAG_Int]) -> None:
+        self.value += __object
+
+    def __imul__(self, len:int) -> None:
+        self.value *= len
+
+    def __iter__(self) -> Iterable[TAG_Int]:
+        return iter(self.value)
+
+    def __len__(self) -> int:
+        return len(self.value)
+
+    def __mul__(self, __len:int) -> "TAG_Int_Array":
+        return TAG_Int_Array(self.value * __len)
+
+    def __setitem__(self, __index:int, __object:TAG_Int) -> None:
+        self.value[__index] = __object
+
+    def append(self, __object:TAG_Int) -> None:
+        self.value.append(__object)
+
+    def clear(self) -> None:
+        self.clear()
+
+    def copy(self) -> "TAG_Int_Array":
+        return TAG_Int_Array(self.value.copy())
+
+    def count(self, __object:TAG_Int) -> int:
+        return self.value.count(__object)
+
+    def extend(self, __object:list[TAG_Int]) -> None:
+        self.value.extend(__object)
+
+    def index(self, __value:TAG_Int) -> int:
+        return self.value.index(__value)
+
+    def insert(self, __index:int, __object:TAG_Int) -> None:
+        self.value.insert(__index, __object)
+
+    def pop(self, __index:int=-1) -> TAG:
+        return self.value.pop(__index)
+
+    def remove(self, __object:TAG_Int) -> None:
+        self.value.remove(__object)
+
+    def reverse(self) -> None:
+        self.value.reverse()
+
+    def sort(self) -> None:
+        self.value.sort(key=lambda item: item.value)
+
 class TAG_Long_Array(TAG[list[TAG_Long]]):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> "TAG_Long_Array":
-        size:int = data_reader.unpack_tuple("i", 4, endianness.int_char)
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Long_Array":
+        size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls([TAG_Long.from_bytes(data_reader, endianness) for i in range(size)])
 
     def __str__(self) -> str:
         return "[L;" + ", ".join(str(item) for item in self.value) + "]"
+
+    def __add__(self, __object:list[TAG_Long]) -> "TAG_Long_Array":
+        return TAG_Long_Array(self.value + __object)
+
+    def __contains__(self, __object:object) -> bool:
+        return __object in self.value
+
+    def __delitem__(self, __index:int) -> None:
+        del self.value[__index]
+
+    def __getitem__(self, __index:int) -> TAG_Long:
+        return self.value[__index]
+
+    def __iadd__(self, __object:list[TAG_Long]) -> None:
+        self.value += __object
+
+    def __imul__(self, len:int) -> None:
+        self.value *= len
+
+    def __iter__(self) -> Iterable[TAG_Long]:
+        return iter(self.value)
+
+    def __len__(self) -> int:
+        return len(self.value)
+
+    def __mul__(self, __len:int) -> "TAG_Long_Array":
+        return TAG_Long_Array(self.value * __len)
+
+    def __setitem__(self, __index:int, __object:TAG_Long) -> None:
+        self.value[__index] = __object
+
+    def append(self, __object:TAG_Long) -> None:
+        self.value.append(__object)
+
+    def clear(self) -> None:
+        self.clear()
+
+    def copy(self) -> "TAG_Long_Array":
+        return TAG_Long_Array(self.value.copy())
+
+    def count(self, __object:TAG_Long) -> int:
+        return self.value.count(__object)
+
+    def extend(self, __object:list[TAG_Long]) -> None:
+        self.value.extend(__object)
+
+    def index(self, __value:TAG_Long) -> int:
+        return self.value.index(__value)
+
+    def insert(self, __index:int, __object:TAG_Long) -> None:
+        self.value.insert(__index, __object)
+
+    def pop(self, __index:int=-1) -> TAG_Long:
+        return self.value.pop(__index)
+
+    def remove(self, __object:TAG_Long) -> None:
+        self.value.remove(__object)
+
+    def reverse(self) -> None:
+        self.value.reverse()
+
+    def sort(self) -> None:
+        self.value.sort(key=lambda item: item.value)
 
 def escape_string(string:str) -> str:
     output = ""
@@ -200,15 +507,15 @@ def escape_string(string:str) -> str:
             case _: output += char
     return output
 
-def parse_compound_item_from_bytes(data_reader:DataReader.DataReader, endianness:Endianness.Endianness) -> tuple[str|None,TAG]:
-    content_type:int = data_reader.unpack_tuple("b", 1, None)
+def parse_compound_item_from_bytes(data_reader:DataReader.DataReader, endianness:Endianness.End) -> tuple[str|None,TAG]:
+    content_type:int = data_reader.unpack_tuple("b", 1, endianness)
     if content_type == IdEnum.TAG_End:
         return None, TAG_End.from_bytes(data_reader, endianness) # TAG_End has no name
     key_name:str = parse_object_from_bytes(data_reader, IdEnum.TAG_String, endianness).value
     value = parse_object_from_bytes(data_reader, content_type, endianness)
     return key_name, value
 
-def parse_object_from_bytes(data_reader:DataReader.DataReader, content_type:int, endianness:Endianness.Endianness) -> TAG:
+def parse_object_from_bytes(data_reader:DataReader.DataReader, content_type:int, endianness:Endianness.End) -> TAG:
     match content_type:
         case IdEnum.TAG_End:        return TAG_End.from_bytes(data_reader, endianness)
         case IdEnum.TAG_Byte:       return TAG_Byte.from_bytes(data_reader, endianness)

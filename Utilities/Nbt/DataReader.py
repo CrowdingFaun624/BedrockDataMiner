@@ -1,13 +1,15 @@
 import struct
 from typing import Any, BinaryIO
 
+import Utilities.Nbt.Endianness as Endianness
+
 class DataReader():
     def read(self, amount:int=1) -> bytes: ...
-    def unpack(self, format:str, amount:int, endianness_char:str|None) -> tuple[Any,...]:
-        format = (endianness_char + format) if endianness_char is not None else format
+    def unpack(self, format:str, amount:int, endianness:Endianness.End) -> tuple[Any,...]:
+        format = (endianness.value + format) if endianness is not None else format
         return struct.unpack(format, self.read(amount))
-    def unpack_tuple(self, format:str, amount:int, endianness_char:str|None) -> Any:
-        return self.unpack(format, amount, endianness_char)[0]
+    def unpack_tuple(self, format:str, amount:int, endianness:Endianness.End) -> Any:
+        return self.unpack(format, amount, endianness)[0]
 
 class DataBytesReader(DataReader):
     def __init__(self, data:bytes) -> None:

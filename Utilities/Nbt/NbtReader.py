@@ -7,16 +7,20 @@ import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.Nbt.SnbtParser as SnbtParser
 
-def unpack_bytes(data:bytes, gzipped:bool=True, endianness:Endianness.Endianness|None=None) -> tuple[str|None,NbtTypes.TAG]:
-    if endianness is None: endianness = Endianness.DEFAULT_ENDIANNESS
+class NbtBytes():
+    def __init__(self, value:bytes) -> None:
+        self.value = value
+
+def unpack_bytes(data:bytes, gzipped:bool=True, endianness:Endianness.End|None=None) -> tuple[str|None,NbtTypes.TAG]:
+    if endianness is None: endianness = Endianness.End.BIG
     if gzipped:
         data = gzip.decompress(data)
     data_reader = DataReader.DataBytesReader(data)
     name, output = NbtTypes.parse_compound_item_from_bytes(data_reader, endianness)
     return name, output
 
-def unpack_file(data:BinaryIO, gzipped:bool=True, endianness:Endianness.Endianness|None=None) -> tuple[str|None,NbtTypes.TAG]:
-    if endianness is None: endianness = Endianness.DEFAULT_ENDIANNESS
+def unpack_file(data:BinaryIO, gzipped:bool=True, endianness:Endianness.End|None=None) -> tuple[str|None,NbtTypes.TAG]:
+    if endianness is None: endianness = Endianness.End.BIG
     if gzipped:
         return unpack_bytes(data.read(), gzipped=True, endianness=endianness)
     data_reader = DataReader.DataFileReader(data)
@@ -26,6 +30,13 @@ def unpack_file(data:BinaryIO, gzipped:bool=True, endianness:Endianness.Endianne
 def unpack_snbt(data:str) -> NbtTypes.TAG:
     return SnbtParser.parse(data)
 
+def get_nbt_bytes(data:bytes) -> NbtBytes:
+    '''Returns an NbtBytes of the data. The data inside will be un-gzipped'''
+    try:
+        return NbtBytes(gzip.decompress(data))
+    except gzip.BadGzipFile:
+        return NbtBytes(data)
+
 def main_read_file() -> None:
     from pathlib2 import Path
     user_input = None
@@ -33,8 +44,11 @@ def main_read_file() -> None:
     while path is None or not path.exists():
         user_input = input("Place nbt file in Programs directory and type its name: ")
         path = Path("./Programs/%s" % user_input)
+    while user_input not in ("yl", "yb", "nl", "nb"):
+        user_input = input("Specify g-zippedness and endianness (y/n, b/l eg. \"yl\")? ")
+    is_gzipped, endianness = {"yl": (True, Endianness.End.LITTLE), "yb": (True, Endianness.End.BIG), "nl": (False, Endianness.End.LITTLE), "nb": (False, Endianness.End.BIG)}[user_input]
     with open(path, "rb") as f:
-        data = unpack_file(f, gzipped=True)
+        data = unpack_file(f, gzipped=is_gzipped, endianness=endianness)
     print(*data)
 
 def string_test(data:NbtTypes.TAG|type[Exception], data_string:str|None=None) -> None:
@@ -117,6 +131,7 @@ def main_string_demo() -> None:
     string_test(SnbtParser.ParseException, "'Hi\"")
     string_test(SnbtParser.ParseException, "\"Hi'")
     string_test(SnbtParser.ParseException, "\"Hi")
+    string_test(SnbtParser.ParseException, "\"Hi\\")
     string_test(SnbtParser.ParseException, "\"")
     string_test(SnbtParser.ParseException, "bob") # quoteless strings are not supported to avoid silent errors
 
