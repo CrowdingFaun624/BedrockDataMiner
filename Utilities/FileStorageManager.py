@@ -41,6 +41,15 @@ def get_file_path(hex_string:str) -> Path:
     archived_path = Path(archived_folder.joinpath(hex_string))
     return archived_path
 
+def archive_data(data:bytes|str, file_name:str) -> str:
+    temp_file = FileManager.get_temp_file_path()
+    file_mode = "b" if isinstance(data, bytes) else "t"
+    with open(temp_file, "w" + file_mode) as f:
+        f.write(data) # copying it so I can read it multiple times.
+    return_value = archive(FileManager.FilePromise(FunctionCaller(open, [temp_file, "rb"]), file_name, "b"))
+    temp_file.unlink()
+    return return_value
+
 def archive(file:FileManager.FilePromise) -> str:
     '''Takes in a FilePromise object, and stores a file in the `./_assets/file_storage/objects` directory, and adds its data to the `./_assets/file_storage/index.txt` file.
     Returns the sha1 hash in a hexadecimal string format that the file is stored at.
@@ -97,10 +106,10 @@ def read_archived(hex_string:str, mode:Literal["t", "b"]) -> bytes|str:
     is_zipped, name = index[hex_string]
     if is_zipped and mode == "t":
         with open(archived_path, "rb") as f:
-            return gzip.decompress(f).decode()
+            return gzip.decompress(f.read()).decode()
     elif is_zipped and mode == "b":
         with open(archived_path, "rb") as f:
-            return gzip.decompress(f)
+            return gzip.decompress(f.read())
     else:
         with open(archived_path, "r" + mode) as f:
             return f.read()

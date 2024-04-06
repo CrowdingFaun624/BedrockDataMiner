@@ -1,19 +1,24 @@
-import json
 from typing import Any
 
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.GrabSingleFile.GrabSingleFileDataMiner as GrabSingleFileDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.DataTypes as DataTypes
+import DataMiners.GrabSingleFile.GrabSingleFileDataMiner as GrabSingleFileDataMiner
 import Utilities.Sorting as Sorting
 
 class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
+        "data_type": (DataMinerParameters.LiteralParameters(DataTypes.DataTypes.data_types()), False),
         "location": (str, True),
         "file_display_name": (str, True),
     })
 
     def initialize(self, **kwargs) -> None:
+        if "data_type" not in kwargs:
+            self.data_type = DataTypes.DataTypes.json
+        else:
+            self.data_type = DataTypes.DataTypes[kwargs["data_type"]]
         self.location:str = kwargs["location"]
         self.file_display_name:str|None = kwargs["file_display_name"]
 
@@ -32,5 +37,5 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
         if exception is not None:
             raise exception
 
-        file_data = json.loads(file)
+        file_data = DataTypes.get_data_from_content(file, self.data_type)
         return Sorting.sort_everything(file_data)

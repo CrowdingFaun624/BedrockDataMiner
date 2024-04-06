@@ -10,6 +10,7 @@ import Comparison.Normalizer as Normalizer
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.DataMinerParameters as DataMinerParameters
 import Downloader.VersionsParser as VersionsParser
+import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import WaitValue
 import Utilities.Version as Version
@@ -29,13 +30,15 @@ def str_to_version(version_str:str|None) -> Version.Version|Literal["-"]:
 
 class DataMinerSettings():
 
-    def __init__(self, start_version_str:str|None, end_version_str:str|None, dataminer_class:type["DataMiner"], dependencies:list[str]|None=None, **kwargs) -> None:
+    def __init__(self, start_version_str:str|None, end_version_str:str|None, dataminer_class:type["DataMiner"], name:str, dependencies:list[str]|None=None, **kwargs) -> None:
         if not (start_version_str is None or isinstance(start_version_str, str)):
             raise TypeError("`start_version_str` is not a str or None, but instead \"%s\"!" % start_version_str)
         if not (end_version_str is None or isinstance(end_version_str, str)):
             raise TypeError("`end_version_str` is not a str or None, but instead \"%s\"!" % end_version_str)
         if not isinstance(dataminer_class, type):
             raise TypeError("`dataminer_class` is not a type!")
+        if not isinstance(name, str):
+            raise TypeError("`name` is not a str or None!")
         if dependencies is not None and not isinstance(dependencies, list):
             raise TypeError("`dependencies` is not None or a list!")
         if dependencies is not None and not all(isinstance(dependency, str) for dependency in dependencies):
@@ -43,7 +46,7 @@ class DataMinerSettings():
 
         self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
         self.file_name:str|None = None
-        self.name:str|None = None
+        self.name:str|None = name
         self.comparer:WaitValue[Comparer.Comparer]|None = None
         self.dataminer_class = dataminer_class
         self.dependencies = dependencies if dependencies is not None else []
@@ -103,18 +106,18 @@ class DataMiner():
         if not data_path.exists():
             data_path.mkdir()
         with open(self.get_data_file_path(), "wt") as f:
-            json.dump(data, f)
+            json.dump(data, f, separators=(",", ":"), cls=CustomJson.encoder)
 
         normalizer_dependencies = Normalizer.LocalNormalizerDependencies(Normalizer.NormalizerDependencies({}, dataminer_collections), self.version, None)
         if self.settings.comparer is not None:
-            normalized_data = self.settings.comparer.get().normalize(copy.deepcopy(data), normalizer_dependencies)
+            normalized_data = self.settings.comparer.get().normalize(data, normalizer_dependencies)
             self.settings.comparer.get().check_types(normalized_data)
 
-        return data
+        return self.get_data_file() # since the normalizing immediately before may modify it.
 
     def get_data_file(self) -> Any:
         with open(self.get_data_file_path(), "rt") as f:
-            return json.load(f)
+            return json.load(f, cls=CustomJson.decoder)
 
     def get_files_in(self, parent:str) -> Iterable[str]:
         if self.version.install_manager is None:
@@ -126,16 +129,16 @@ class DataMiner():
             raise RuntimeError("Attempted to call `get_file_list` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.get_file_list()
 
-    def read_file(self, file_name:str, mode:str="t") -> str|bytes:
+    def read_file(self, file_name:str, mode:Literal["b", "t"]="t") -> str|bytes:
         if self.version.install_manager is None:
             raise RuntimeError("Attempted to call `read_file` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.read(file_name, mode)
 
-    def read_files(self, files:Sequence[str|tuple[str,Literal["t", "b"],None|Callable[[IO],Any]]], non_exist_ok:bool=False) -> dict[str,str|bytes|Any]:
+    def read_files(self, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],Any]]], non_exist_ok:bool=False) -> dict[str,str|bytes|Any]:
         '''Asynchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
 
-        def read_async(files:Iterable[tuple[str,str,None|Callable[[IO],Any]]], file_results:dict[str,str|bytes|Any], non_exist_ok:bool, lock:threading.Lock) -> None:
+        def read_async(files:Iterable[tuple[str,Literal["b", "t"],None|Callable[[IO],Any]]], file_results:dict[str,str|bytes|Any], non_exist_ok:bool, lock:threading.Lock) -> None:
             with lock:
                 for file_name, mode, callable in files:
                     try:
@@ -205,7 +208,7 @@ class DataMiner():
             raise RuntimeError("Attempted to call `file_exists` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.file_exists(file_name)
 
-    def get_file(self, file_name:str, mode:str="t") -> FileManager.FilePromise:
+    def get_file(self, file_name:str, mode:Literal["b","t"]="t") -> FileManager.FilePromise:
         if self.version.install_manager is None:
             raise RuntimeError("Attempted to call `get_file` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.get_file(file_name, mode)
@@ -213,7 +216,7 @@ class DataMiner():
 class NullDataMiner(DataMiner):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
 
-    def get_file(self, file_name:str, mode:str="t") -> FileManager.FilePromise:
+    def get_file(self, file_name:str, mode:Literal["b","t"]="t") -> FileManager.FilePromise:
         raise RuntimeError("Attempted to use `get_file` from a NullDataMiner!")
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
@@ -225,7 +228,7 @@ class NullDataMiner(DataMiner):
     def get_file_list(self) -> Iterable[str]:
         raise RuntimeError("Attempted to use `get_file_list` from a NullDataMiner!")
 
-    def read_file(self, file_name: str, mode: str = "t") -> str | bytes:
+    def read_file(self, file_name: str, mode: Literal["b","t"] = "t") -> str | bytes:
         raise RuntimeError("Attempted to use `read_file` from a NullDataMiner!")
 
     def read_files(self, files:list[str|tuple[str,str,Callable[[IO],Any]|None]]) -> dict[str,str|bytes|Any]:
@@ -267,7 +270,7 @@ class DataMinerCollection():
             else:
                 raise FileNotFoundError("Version \"%s\" does not currently have a data file \"%s\"!" % (version.name, self.file_name))
         with open(data_path, "rt") as f:
-            return json.load(f)
+            return json.load(f, cls=CustomJson.decoder)
 
     def compare(
             self,
@@ -295,7 +298,14 @@ class DataMinerCollection():
 
     def get_null_dataminer_settings(self) -> DataMinerSettings:
         '''Returns an instance of DataMinerSettings that is usable on a NullDataMiner.'''
-        return DataMinerSettings(None, None, NullDataMiner)
+        return DataMinerSettings(None, None, NullDataMiner, self.name)
+
+    def get_dataminer_settings(self, version:Version.Version) -> DataMinerSettings:
+        '''Returns a DataMinerSettings such that `version` is in the dataminer's VersionRange'''
+        for dataminer_setting in self.dataminer_settings:
+            if version in dataminer_setting.version_range:
+                return dataminer_setting
+        else: return self.get_null_dataminer_settings()
 
     def get_version(self, version:Version.Version) -> DataMiner:
         '''Returns a DataMiner such that `version` is in the dataminer's VersionRange.'''

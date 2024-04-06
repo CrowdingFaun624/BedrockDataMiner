@@ -1,14 +1,16 @@
-import pyjson5 # supports comments
 from typing import Any
 
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiner as GrabMultiplePackFilesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.DataTypes as DataTypes
+import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiner as GrabMultiplePackFilesDataMiner
 import Utilities.Sorting as Sorting
 
 class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultiplePackFilesDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
+        "data_type": (DataMinerParameters.LiteralParameters(DataTypes.DataTypes.data_types()), False),
+        "ignore_suffixes": (DataMinerParameters.ListParameters(str), False),
         "location": (str, True),
         "pack_type": (DataMinerParameters.LiteralParameters({"resource_packs", "behavior_packs"}), True),
         "suffixes": (DataMinerParameters.ListParameters(str), False),
@@ -16,6 +18,14 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
     })
 
     def initialize(self, **kwargs) -> None:
+        if "data_type" not in kwargs:
+            self.data_type = DataTypes.DataTypes.json
+        else:
+            self.data_type = DataTypes.DataTypes[kwargs["data_type"]]
+        if "ignore_suffixes" in kwargs:
+            self.ignore_suffixes:list[str]|None = kwargs["ignore_suffixes"]
+        else:
+            self.ignore_suffixes = None
         self.location:str = kwargs["location"]
         if not self.location.endswith("/"):
             raise ValueError("\"location\" \"%s\" does not end in \"/\"!" % (self.location))
@@ -32,6 +42,8 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
         for pack in packs:
             path_base = self.location % pack["name"]
             for path in self.get_files_in(path_base):
+                if self.ignore_suffixes is not None and any(path.endswith("." + ignore_suffix) for ignore_suffix in self.ignore_suffixes):
+                    continue
                 if self.suffixes is None:
                     file_name = path.replace(path_base, "", 1)
                     files[file_name, pack["name"]] = path
@@ -46,9 +58,7 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
 
         output:dict[str,dict[str,Any]] = {}
         for (file_name, pack_name), path in files.items():
-            file_bits = self.read_file(path)
-            if len(file_bits) <= 1: continue
-            file_data = pyjson5.loads(file_bits)
+            file_data = DataTypes.get_data(self, path, self.data_type)
             if file_name not in output:
                 output[file_name] = {pack_name: file_data}
             else:

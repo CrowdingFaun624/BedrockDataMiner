@@ -1,17 +1,16 @@
-import pyjson5 # supports comments
 from typing import Any
 
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.GrabMultipleFiles.GrabMultipleFilesDataMiner as GrabMultipleFilesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.DataTypes as DataTypes
+import DataMiners.GrabMultipleFiles.GrabMultipleFilesDataMiner as GrabMultipleFilesDataMiner
 import Utilities.Sorting as Sorting
-
-def a(aa:tuple[type,...]) -> None: pass
-a((str, type(None)))
 
 class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
+        "data_type": (DataMinerParameters.LiteralParameters(DataTypes.DataTypes.data_types()), False),
+        "ignore_suffixes": (DataMinerParameters.ListParameters(str), False),
         "location": (str, True),
         "suffixes": (DataMinerParameters.ListParameters(str), False),
         "file_display_name": ((str, type(None)), True),
@@ -19,6 +18,14 @@ class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDa
     })
 
     def initialize(self, **kwargs) -> None:
+        if "data_type" not in kwargs:
+            self.data_type = DataTypes.DataTypes.json
+        else:
+            self.data_type = DataTypes.DataTypes[kwargs["data_type"]]
+        if "ignore_suffixes" in kwargs:
+            self.ignore_suffixes:list[str]|None = kwargs["ignore_suffixes"]
+        else:
+            self.ignore_suffixes = None
         self.location:str = kwargs["location"]
         if not self.location.endswith("/"):
             raise ValueError("\"location\" \"%s\" does not end in \"/\"!" % (self.location))
@@ -36,6 +43,8 @@ class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDa
         files:dict[str,str] = {}
         path_base = self.location
         for path in self.get_files_in(path_base):
+            if self.ignore_suffixes is not None and any(path.endswith("." + ignore_suffix) for ignore_suffix in self.ignore_suffixes):
+                continue
             if self.suffixes is None:
                 file_name = path.replace(path_base, "", 1)
                 files[file_name] = path
@@ -55,7 +64,7 @@ class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDa
 
         output:dict[str,dict[str,Any]] = {}
         for file_name, path in files.items():
-            file_data = pyjson5.loads(self.read_file(path))
+            file_data = DataTypes.get_data(self, path, self.data_type)
             if self.insert_pack is None:
                 output[file_name] = file_data
             else:

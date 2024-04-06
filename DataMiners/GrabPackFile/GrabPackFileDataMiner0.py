@@ -1,20 +1,25 @@
-import pyjson5 # supports comments
 from typing import Any
 
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabPackFile.GrabPackFileDataMiner as GrabPackFileDataMiner
 import Utilities.Sorting as Sorting
 
 class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
+        "data_type": (DataMinerParameters.LiteralParameters(DataTypes.DataTypes.data_types()), False),
         "locations": (DataMinerParameters.ListParameters(str), True),
         "pack_type": (DataMinerParameters.LiteralParameters({"resource_packs", "behavior_packs"}), True),
         "file_display_name": (str, True),
     })
 
     def initialize(self, **kwargs) -> None:
+        if "data_type" not in kwargs:
+            self.data_type = DataTypes.DataTypes.json
+        else:
+            self.data_type = DataTypes.DataTypes[kwargs["data_type"]]
         self.locations:list[str] = kwargs["locations"]
         self.pack_type:str = kwargs["pack_type"]
         self.file_display_name:str|None = kwargs["file_display_name"]
@@ -25,7 +30,7 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
         pack_files:dict[str,str] = {}
         for blocks_location in self.locations:
             pack_files.update({blocks_location % pack_name: pack_name for pack_name in pack_names})
-        files_request = [(file, "t", pyjson5.load) for file in pack_files.keys()]
+        files_request = DataTypes.get_file_request(pack_files.keys(), self.data_type)
         files:dict[str,Any] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             if self.file_display_name is None:
