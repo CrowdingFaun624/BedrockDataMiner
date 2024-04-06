@@ -1,6 +1,34 @@
-import json
 from typing import Any
+
+import Utilities.Nbt.NbtReader as NbtReader
+import Utilities.Nbt.NbtTypes as NbtTypes
+
+NoneType = type(None)
 
 def stringify(data:Any) -> str:
     '''Returns the string of data containing no Diffs. Is used in the comparison reporter.'''
-    return json.dumps(data)
+    match data:
+        case str():
+            return "\"%s\"" % data
+        case bool():
+            return "true" if data else "false"
+        case dict()|list()|int()|float()|bool():
+            return str(data)
+        case NoneType():
+            return "null"
+        case NbtTypes.TAG():
+            return str(data)
+        case NbtReader.NbtBytes():
+            try:
+                return str(NbtReader.unpack_bytes(data.value, gzipped=False)[1])
+            except Exception:
+                return "Unencodable Nbt Object"
+        case _:
+            try:
+                stringified_data = str(data)
+            except Exception: stringified_data = None
+            if stringified_data is None:
+                error_message = "Unencodable object of type \"%s\"!" % (data.__class__.__name__)
+            else:
+                error_message = "Unencodable object of type \"%s\": %s" % (data.__class__.__name__, stringified_data)
+            raise TypeError(error_message)

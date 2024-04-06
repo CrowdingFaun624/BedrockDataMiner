@@ -2,18 +2,27 @@ from typing import Callable
 
 import Comparison.ComparerImporter.ComparerTyping as ComparerTyping
 import Comparison.ComparerImporter.Intermediate as Intermediate
+import Comparison.ComparerImporter.IntermediateCapabilities as IntermediateCapabilities
+import Utilities.TypeVerifier as TypeVerifier
 
 class TypeAliasIntermediate(Intermediate.Intermediate):
 
+    class_name_article = "a TypeAlias"
+    class_name = "TypeAlias"
+
+    my_properties = IntermediateCapabilities.Capabilities(is_type_alias=True)
+
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
+            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
+            TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        )),
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str, lambda key, value: (value not in ComparerTyping.DEFAULT_TYPES, "\"name\" cannot be one of [%s]!" % ", ".join(ComparerTyping.DEFAULT_TYPES.keys()))),
+        TypeVerifier.TypedDictKeyTypeVerifier("index", "an int", True, int),
+    )
+
     def __init__(self, data:ComparerTyping.TypeAliasTypedDict, name:str, index:int) -> None:
-        self.check_types(data, name, index, [
-            ("type", str, "a str", True),
-            ("types", list, "a list", True),
-        ])
-        if data["type"] != "TypeAlias":
-            raise ValueError("Key \"type\" of TypeAlias \"%s\" is not \"TypeAlias\"!" % (name))
-        if name in ("dict", "float", "int", "list", "str"):
-            raise ValueError("TypeAlias \"%s\" has an invalid name!" % name)
+        self.type_verifier.base_verify({"data": data, "name": name, "index": index}, ["%s \"%s\"" % (self.class_name, name)])
 
         self.name = name
         self.types_strs = data["types"]
@@ -29,9 +38,9 @@ class TypeAliasIntermediate(Intermediate.Intermediate):
         already_types:set[str] = set()
         for type_str in self.types_strs:
             if type_str in already_types:
-                raise KeyError("Duplicate type \"%s\" of TypeAlias \"%s\"." % (type_str, self.name))
+                raise KeyError("Duplicate type \"%s\" of %s \"%s\"." % (type_str, self.class_name, self.name))
             already_types.add(type_str)
             if type_str in ComparerTyping.DEFAULT_TYPES:
                 self.types.append(ComparerTyping.DEFAULT_TYPES[type_str])
             else:
-                raise KeyError("TypeAlias refers to type \"%s\", which is not a valid default type!" % type_str)
+                raise KeyError("%s \"%s\" refers to type \"%s\", which is not a valid default type!" % (self.class_name, self.name, type_str))

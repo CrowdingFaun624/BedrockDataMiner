@@ -10,13 +10,32 @@ import Comparison.ComparerImporter.GroupIntermediate as GroupIntermediate
 import Comparison.ComparerImporter.Intermediate as Intermediate
 import Comparison.ComparerImporter.ListComparerIntermediate as ListComparerIntermediate
 import Comparison.ComparerImporter.MainIntermediate as MainIntermediate
+import Comparison.ComparerImporter.NbtBaseIntermediate as NbtBaseIntermediate
+import Comparison.ComparerImporter.NbtTagCompoundComparerIntermediate as NbtTagCompoundComparerIntermediate
+import Comparison.ComparerImporter.NbtTagListComparerIntermediate as NbtTagListComparerIntermediate
+import Comparison.ComparerImporter.NbtTypedTagCompoundComparerIntermediate as NbtTypedTagCompoundComparerIntermediate
 import Comparison.ComparerImporter.NormalizerFunctionIntermediate as NormalizerFunctionIntermediate
 import Comparison.ComparerImporter.TypeAliasIntermediate as TypeAliasIntermediate
 import Comparison.ComparerImporter.TypedDictComparerIntermediate as TypedDictComparerIntermediate
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
-NoneType = type(None)
+comparer_types:list[type[Intermediate.Intermediate]] = [
+    GroupIntermediate.GroupIntermediate, # near the top so they are created first
+    NormalizerFunctionIntermediate.NormalizerFunctionIntermediate,
+    DictComparerIntermediate.DictComparerIntermediate,
+    ListComparerIntermediate.ListComparerIntermediate,
+    MainIntermediate.MainIntermediate,
+    TypeAliasIntermediate.TypeAliasIntermediate,
+    TypedDictComparerIntermediate.TypedDictComparerIntermediate,
+    NbtBaseIntermediate.NbtBaseIntermediate,
+    NbtTagListComparerIntermediate.NbtTagByteArrayComparerIntermediate,
+    NbtTagCompoundComparerIntermediate.NbtTagCompoundComparerIntermediate,
+    NbtTagListComparerIntermediate.NbtTagIntArrayComparerIntermediate,
+    NbtTagListComparerIntermediate.NbtTagListComparerIntermediate,
+    NbtTagListComparerIntermediate.NbtTagLongArrayComparerIntermediate,
+    NbtTypedTagCompoundComparerIntermediate.NbtTypedTagCompoundComparerIntermediate,
+]
 
 def get_file(name:str) -> ComparerTyping.ComparerType:
     with open(FileManager.get_comparer_path(name), "rt") as f:
@@ -37,15 +56,7 @@ def get_used_intermediates(main_comparer:MainIntermediate.MainIntermediate) -> s
     return visited_nodes
 
 def get_link_final_order(intermediate_comparers:Iterable[tuple[str,Intermediate.Intermediate]]) -> Generator[tuple[str,Intermediate.Intermediate], None, None]:
-    intermediate_types:dict[type[Intermediate.Intermediate], list[tuple[str,Intermediate.Intermediate]]] = {
-        GroupIntermediate.GroupIntermediate: [],
-        DictComparerIntermediate.DictComparerIntermediate: [],
-        ListComparerIntermediate.ListComparerIntermediate: [],
-        MainIntermediate.MainIntermediate: [],
-        NormalizerFunctionIntermediate.NormalizerFunctionIntermediate: [],
-        TypeAliasIntermediate.TypeAliasIntermediate: [],
-        TypedDictComparerIntermediate.TypedDictComparerIntermediate: [],
-    }
+    intermediate_types:dict[type[Intermediate.Intermediate], list[tuple[str,Intermediate.Intermediate]]] = {comparer_type: [] for comparer_type in comparer_types}
     for name, intermediate in intermediate_comparers:
         intermediate_types[type(intermediate)].append((name, intermediate))
     for intermediates in intermediate_types.values():
@@ -64,25 +75,17 @@ def create_intermediates(name:str, data:ComparerTyping.ComparerType) -> tuple[li
             raise KeyError("Comparer \"%s\" has no \"type\" key!" % (comparer_name))
         if not isinstance(comparer_data["type"], str):
             raise TypeError("Key \"type\" of Comparer \"%s\" is not a str!" % (comparer_name))
-        match comparer_data["type"]:
-            case "Dict":
-                intermediate_comparers[comparer_name] = DictComparerIntermediate.DictComparerIntermediate(comparer_data, comparer_name, index)
-            case "Group":
-                intermediate_comparers[comparer_name] = GroupIntermediate.GroupIntermediate(comparer_data, comparer_name, index)
-            case "List":
-                intermediate_comparers[comparer_name] = ListComparerIntermediate.ListComparerIntermediate(comparer_data, comparer_name, index)
-            case "Main":
-                comparer = MainIntermediate.MainIntermediate(comparer_data, comparer_name, index)
-                intermediate_comparers[comparer_name] = comparer
-                main_comparers.append((comparer_name, comparer))
-            case "NormalizerFunction":
-                intermediate_comparers[comparer_name] = NormalizerFunctionIntermediate.NormalizerFunctionIntermediate(comparer_data, comparer_name, index)
-            case "TypeAlias":
-                intermediate_comparers[comparer_name] = TypeAliasIntermediate.TypeAliasIntermediate(comparer_data, comparer_name, index)
-            case "TypedDict":
-                intermediate_comparers[comparer_name] = TypedDictComparerIntermediate.TypedDictComparerIntermediate(comparer_data, comparer_name, index)
-            case _:
-                raise ValueError("Comparer \"%s\" has an invalid \"type\" key: %s" % (comparer_name, comparer_data["type"]))
+        for comparer_type in comparer_types:
+            if comparer_type.class_name == comparer_data["type"]:
+                intermediate_comparer = comparer_type(comparer_data, comparer_name, index)
+                intermediate_comparers[comparer_name] = intermediate_comparer
+                if comparer_type is MainIntermediate.MainIntermediate:
+                    assert isinstance(intermediate_comparer, MainIntermediate.MainIntermediate) # >:(
+                    main_comparers.append((comparer_name, intermediate_comparer))
+                break
+        else:
+            raise ValueError("Comparer \"%s\" has an invalid \"type\" key: %s. Must be one of [%s]!" % (comparer_name, comparer_data["type"], ", ".join(comparer_type.class_name for comparer_type in comparer_types)))
+                
     return main_comparers, intermediate_comparers
 
 def set_comparers(intermediate_comparers:dict[str,Intermediate.Intermediate], do_not_set_intermediates:set[str], functions:dict[str,Callable]) -> None:
@@ -147,6 +150,11 @@ def check_comparers(intermediate_comparers:dict[str,Intermediate.Intermediate], 
     if len(exceptions) > 0:
         raise RuntimeError("Failed to parse comparer!")
 
+def finalize_finals(intermediate_comparers:dict[str,Intermediate.Intermediate], exclude:set[str]) -> None:
+    for name, comparer_intermediate in intermediate_comparers.items():
+        if name in exclude: continue
+        comparer_intermediate.finalize_finals()
+
 def parse_comparer_file(name:str, data:ComparerTyping.ComparerType, functions:dict[str,Callable]) -> Comparer.Comparer:
     if not isinstance(data, dict):
         raise TypeError("Comparer file \"%s\" is not a dict!" % (name))
@@ -174,6 +182,7 @@ def parse_comparer_file(name:str, data:ComparerTyping.ComparerType, functions:di
     create_final_comparers(intermediate_comparers, exclude=set(imported_intermediates.keys()))
     link_final_comparers(intermediate_comparers, exclude=set(imported_intermediates.keys()))
     check_comparers(intermediate_comparers, exclude=set(imported_intermediates.keys()))
+    finalize_finals(intermediate_comparers, exclude=set(imported_intermediates.keys()))
 
     assert main_comparer.final is not None
     return main_comparer.final
@@ -199,6 +208,7 @@ def parse_comparer_file_for_import(name:str, data:ComparerTyping.ComparerType, f
     create_final_comparers(intermediate_comparers, exclude=set(imported_intermediates.keys()))
     link_final_comparers(intermediate_comparers, exclude=set(imported_intermediates.keys()))
     check_comparers(intermediate_comparers, exclude=set(imported_intermediates.keys()))
+    finalize_finals(intermediate_comparers, exclude=set(imported_intermediates.keys()))
     partially_imported.remove(name)
     return intermediate_comparers
 

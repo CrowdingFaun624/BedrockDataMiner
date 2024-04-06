@@ -2,20 +2,29 @@ from typing import Callable
 
 import Comparison.ComparerImporter.Intermediate as Intermediate
 import Comparison.ComparerImporter.ComparerTyping as ComparerTyping
+import Comparison.ComparerImporter.IntermediateCapabilities as IntermediateCapabilities
 import Comparison.Normalizer as Normalizer
+import Utilities.TypeVerifier as TypeVerifier
 
 class NormalizerFunctionIntermediate(Intermediate.Intermediate):
 
+    class_name_article = "a NormalizerFunction"
+    class_name = "NormalizerFunction"
+
+    my_properties = IntermediateCapabilities.Capabilities(is_function=True, is_normalizer_function=True)
+
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
+            TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+            TypeVerifier.TypedDictKeyTypeVerifier("function_name", "a str", True, str),
+            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
+        )),
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("index", "an int", True, int)
+    )
+
     def __init__(self, data:ComparerTyping.NormalizerFunctionTypedDict, name:str, index:int) -> None:
-        self.check_types(data, name, index, [
-            ("dependencies", list, "a list", True),
-            ("function_name", str, "a str", True),
-            ("type", str, "a str", True),
-        ])
-        if data["type"] != "NormalizerFunction":
-            raise ValueError("Key \"type\" of Main \"%s\" is not \"Main\"!" % (name))
-        if not all(isinstance(item, str) for item in data["dependencies"]):
-            raise TypeError("An item of key \"dependencies\" of NormalizerFunction \"%s\" is not a str!" % (name))
+        self.type_verifier.base_verify({"data": data, "name": name, "index": index}, ["%s \"%s\"" % (self.class_name, name)])
 
         self.name = name
         self.dependencies = data["dependencies"]
@@ -29,5 +38,5 @@ class NormalizerFunctionIntermediate(Intermediate.Intermediate):
 
     def set(self, intermediate_comparers: dict[str, Intermediate.Intermediate], functions: dict[str, Callable]) -> None:
         if self.function_name not in functions:
-            raise KeyError("Function \"%s\", referenced in key \"function_name\" of NormalizerFunction \"%s\", does not exist!" % (self.function_name, self.name))
+            raise KeyError("Function \"%s\", referenced in key \"function_name\" of %s \"%s\", does not exist!" % (self.function_name, self.class_name, self.name))
         self.final = Normalizer.Normalizer(functions[self.function_name], self.dependencies)

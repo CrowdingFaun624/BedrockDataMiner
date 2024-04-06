@@ -1,39 +1,35 @@
-from typing import Any, Callable, Generic, Union
+from typing import Any, Callable, Iterable, Union
 
+import Comparison.ComparerImporter.IntermediateCapabilities as IntermediateCapabilities
 import Comparison.ComparerImporter.ComparerTyping as ComparerTyping
+import Utilities.TypeVerifier as TypeVerifier
 
-class Intermediate(Generic[ComparerTyping.IntermediateType]):
+class Intermediate():
 
-    def __init__(self, data:ComparerTyping.IntermediateType, name:str, index:int) -> None:
+    class_name_article = "an Intermediate"
+    class_name = "Intermediate"
+
+    my_properties:IntermediateCapabilities.Capabilities
+    children_has_normalizer_default = False
+
+    type_verifier:TypeVerifier.TypeVerifier
+
+    def __init__(self, data:ComparerTyping.Intermediates, name:str, index:int) -> None:
         self.name = name
         self.links_to_other_intermediates:list[Intermediate] = []
         self.parents:list[Intermediate] = []
         self.children_has_normalizer = False
 
-    def check_types(self, data:ComparerTyping.IntermediateType, name:str, index:int, allowed_types:list[tuple[str, type|tuple[type,...], str, bool]]) -> None:
-        for parameter, parameter_name, allowed_parameter_types, types_str in (
-            (data, "data", dict, "a dict"),
-            (name, "name", str, "a str"),
-            (index, "index", int, "an int"),
-        ):
-            if not isinstance(parameter, allowed_parameter_types):
-                raise TypeError("Parameter \"%s\" of a %s is not a %s!" % (parameter_name, self.__class__.__name__, types_str))
-        if len(name) == 0:
-            raise ValueError("Parameter \"name\" of %s %i is empty!" % (self.__class__.__name__, index))
-        allowed_keys:set[str] = set()
-        for key, allowed_type, types_str, is_required in allowed_types:
-            allowed_keys.add(key)
-            if is_required and key not in data:
-                raise KeyError("Key \"%s\" is not in %s \"%s\"!" % (key, self.__class__.__name__, name))
-            if key in data and not isinstance(data[key], allowed_type):
-                raise TypeError("Key \"%s\" of %s \"%s\" is not %s!" % (key, self.__class__.__name__, name, types_str))
-        for key in data:
-            if key not in allowed_keys:
-                raise KeyError("Key \"%s\" should not exist in %s \"%s\"!" % (key, self.__class__.__name__, name))
+    def link_intermediates(self, intermediates:"Intermediate"|Iterable["Intermediate"]) -> None:
+        if isinstance(intermediates, Intermediate):
+            intermediates = [intermediates]
+        self.links_to_other_intermediates.extend(intermediates)
+        for intermediate in intermediates:
+            intermediate.parents.append(self)
 
     def set(self, intermediate_comparers:dict[str,"Intermediate"], functions:dict[str,Callable]) -> None:
         '''Links this Intermediate to other Intermediates'''
-        raise NotImplementedError("Class \"%s\" does not have its `set` function!" % (self.__class__.__name__,))
+        raise NotImplementedError("Class \"%s\" does not have its `set` function!" % (self.class_name,))
 
     def create_final(self) -> None:
         '''Creates this Intermediate's final ComparerSection or Comparer, if applicable.'''
@@ -47,6 +43,10 @@ class Intermediate(Generic[ComparerTyping.IntermediateType]):
         '''Make sure that this Intermediate's types are all in order; no error could occur.'''
         pass
 
+    def finalize_finals(self) -> None:
+        '''Can be used to call a method on the final object.'''
+        pass
+
     def propagate_variables(self, child:Union["Intermediate",None]=None) -> None:
         '''Calls `propagates_variables` on the parents of this intermediate with the child.'''
         has_changed = False
@@ -58,28 +58,29 @@ class Intermediate(Generic[ComparerTyping.IntermediateType]):
             for parent in self.parents:
                 parent.propagate_variables(self)
 
-    def choose_intermediate(
-            self,
-            name:str,
-            required_type:type|tuple[type,...],
-            required_type_str:str,
-            intermediate_comparers:dict[str,"Intermediate"],
-            keys:list[str|int],
-        ) -> Any:
-        get_keys_strs:Callable[[bool],str] = lambda is_capital: "".join(
+    def get_keys_strs(self, is_capital:bool, keys:list[str|int]) -> str:
+        return "".join(
             ("%sey \"%s\" of " % ("K" if index == 0 and is_capital else "k", key)) if isinstance(key, str)
             else ("%stem %i of " % ("I" if index == 0 and is_capital else "i", key))
             for index, key in enumerate(reversed(keys))
-            )
+        )
+
+    def choose_intermediate(
+            self,
+            name:str,
+            required_properties:IntermediateCapabilities.CapabilitiesPattern,
+            intermediate_comparers:dict[str,"Intermediate"],
+            keys:list[str|int],
+        ) -> Any:
         if name not in intermediate_comparers:
-            raise KeyError("%s \"%s\", referenced in %s%s \"%s\", does not exist!" % (required_type_str, name, get_keys_strs(False), self.__class__.__name__, self.name))
+            raise KeyError("%s \"%s\", referenced in %s%s \"%s\", does not exist!" % (required_properties, name, self.get_keys_strs(False, keys), self.class_name, self.name))
         comparer = intermediate_comparers[name]
-        if not isinstance(comparer, required_type):
-            raise ValueError("%s%s \"%s\" references object \"%s\", expecting %s but getting a %s!" % (get_keys_strs(True), self.__class__.__name__, self.name, name, required_type_str, comparer.__class__.__name__))
+        if comparer.my_properties not in required_properties:
+            raise ValueError("%s%s \"%s\" references object \"%s\", expecting %s but getting a %s!" % (self.get_keys_strs(True, keys), self.class_name, self.name, name, required_properties, comparer.my_properties))
         return comparer
 
     def __hash__(self) -> int:
         return hash(self.name)
 
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, self.name)
+        return "<%s %s>" % (self.class_name, self.name)
