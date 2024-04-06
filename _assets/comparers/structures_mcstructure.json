@@ -1,0 +1,300 @@
+{
+    "main": {
+        "type": "Main",
+        "name": "structures_mcstructure",
+        "base_comparer_section": "structures"
+    },
+    "collapse_resource_packs": {
+        "type": "NormalizerFunction",
+        "dependencies": ["behavior_packs"],
+        "function_name": "collapse_behavior_packs_without_defined_in"
+    },
+    "structures": {
+        "type": "Dict",
+        "field": "structure",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparison_move_function": "structures_structure_move",
+        "comparer": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "field": "behavior pack",
+        "types": ["TAG_Compound"],
+        "normalizer": ["collapse_resource_packs"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparison_move_function": "structures_resource_pack_move",
+        "comparer": "structure_base"
+    },
+    "structure_base": {
+        "type": "NbtBase",
+        "types": ["TAG_Compound"],
+        "endianness": "little",
+        "comparer": "structure"
+    },
+    "empty_array": {
+        "type": "NbtTagList",
+        "types": ["null"],
+        "comparer": null
+    },
+    "vector_tag_int": {
+        "type": "NbtTagList",
+        "field": "coordinate",
+        "types": ["TAG_Int"],
+        "measure_length": false,
+        "ordered": true,
+        "comparer": null
+    },
+    "vector_tag_float": {
+        "type": "NbtTagList",
+        "field": "coordinate",
+        "types": ["TAG_Float"],
+        "measure_length": false,
+        "ordered": true,
+        "comparer": null
+    },
+    "structure": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "format_version": {"type": "TAG_Int"},
+            "size": {"type": "TAG_List", "comparer": "vector_tag_int"},
+            "structure": {"type": "TAG_Compound", "comparer": "structure.structure"},
+            "structure_world_origin": {"type": "TAG_List", "comparer": "vector_tag_int"}
+        }
+    },
+    "structure.structure": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "block_indices": {"type": "TAG_List", "comparer": "block_indices"},
+            "entities": {"type": "TAG_List", "comparer": "entities"},
+            "palette": {"type": "TAG_Compound", "comparer": "palette"}
+        }
+    },
+    "item": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "Count": {"type": "TAG_Byte"},
+            "Damage": {"type": "TAG_Short"},
+            "Name": {"type": "TAG_String"},
+            "Slot": {"type": "TAG_Byte"},
+            "tag": {"type": "TAG_Compound", "comparer": "item.tag"},
+            "WasPickedUp": {"type": "TAG_Byte"}
+        }
+    },
+    "item.tag": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "Damage": {"type": "TAG_Int"}
+        }
+    },
+    "item_list": {
+        "type": "NbtTagList",
+        "field": "item",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "item"
+    },
+    "block_indices": {
+        "type": "NbtTagList",
+        "field": "block",
+        "types": ["TAG_List"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "vector_tag_int"
+    },
+    "entities": {
+        "type": "NbtTagList",
+        "field": "entity",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "entity"
+    },
+    "entity": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "Air": {"type": "TAG_Short"},
+            "Armor": {"type": "TAG_List", "comparer": "item_list"},
+            "AttackTime": {"type": "TAG_Short"},
+            "Attributes": {"type": "TAG_List", "comparer": "entity.attributes"},
+            "BodyRot": {"type": "TAG_Float"},
+            "boundX": {"type": "TAG_Int"},
+            "boundY": {"type": "TAG_Int"},
+            "boundZ": {"type": "TAG_Int"},
+            "BreedCooldown": {"type": "TAG_Int"},
+            "canPickupItems": {"type": "TAG_Byte"},
+            "ChestItems": {"type": "TAG_List", "comparer": "item_list"},
+            "Chested": {"type": "TAG_Byte"},
+            "Color": {"type": "TAG_Byte"},
+            "Color2": {"type": "TAG_Byte"},
+            "Dead": {"type": "TAG_Byte"},
+            "DeathTime": {"type": "TAG_Short"},
+            "definitions": {"type": "TAG_List", "comparer": "entity.definitions"},
+            "FallDistance": {"type": "TAG_Float"},
+            "Fire": {"type": "TAG_Short"},
+            "hasBoundOrigin": {"type": "TAG_Byte"},
+            "hasSetCanPickupItems": {"type": "TAG_Byte"},
+            "HomeDimensionId": {"type": "TAG_Int"},
+            "HomePos": {"type": "TAG_List", "comparer": "vector_tag_float"},
+            "HurtTime": {"type": "TAG_Short"},
+            "identifier": {"type": "TAG_String"},
+            "InLove": {"type": "TAG_Int"},
+            "InventoryVersion": {"type": "TAG_String"},
+            "Invulnerable": {"type": "TAG_Byte"},
+            "IsAngry": {"type": "TAG_Byte"},
+            "IsAutonomous": {"type": "TAG_Byte"},
+            "IsBaby": {"type": "TAG_Byte"},
+            "IsEating": {"type": "TAG_Byte"},
+            "IsGliding": {"type": "TAG_Byte"},
+            "IsGlobal": {"type": "TAG_Byte"},
+            "IsIllagerCaptain": {"type": "TAG_Byte"},
+            "IsOrphaned": {"type": "TAG_Byte"},
+            "IsPregnant": {"type": "TAG_Byte"},
+            "IsRoaring": {"type": "TAG_Byte"},
+            "IsScared": {"type": "TAG_Byte"},
+            "IsStunned": {"type": "TAG_Byte"},
+            "IsSwimming": {"type": "TAG_Byte"},
+            "IsTamed": {"type": "TAG_Byte"},
+            "IsTrusting": {"type": "TAG_Byte"},
+            "ItemInHand": {"type": "TAG_Compound", "comparer": "item"},
+            "LastDimensionId": {"type": "TAG_Int"},
+            "LeasherID": {"type": "TAG_Long"},
+            "limitedLife": {"type": "TAG_Int"},
+            "LootDropped": {"type": "TAG_Byte"},
+            "LoveCause": {"type": "TAG_Long"},
+            "Mainhand": {"type": "TAG_List", "comparer": "item_list"},
+            "MarkVariant": {"type": "TAG_Int"},
+            "NaturalSpawn": {"type": "TAG_Byte"},
+            "Offhand": {"type": "TAG_List", "comparer": "item_list"},
+            "OnGround": {"type": "TAG_Byte"},
+            "OwnerNew": {"type": "TAG_Long"},
+            "Persistent": {"type": "TAG_Byte"},
+            "PortalCooldown": {"type": "TAG_Int"},
+            "Pos": {"type": "TAG_List", "comparer": "vector_tag_float"},
+            "Rotation": {"type": "TAG_List", "comparer": "entity.rotation"},
+            "Saddled": {"type": "TAG_Byte"},
+            "Sheared": {"type": "TAG_Byte"},
+            "ShowBottom": {"type": "TAG_Byte"},
+            "Sitting": {"type": "TAG_Byte"},
+            "SkinID": {"type": "TAG_Int"},
+            "SpawnedByNight": {"type": "TAG_Byte"},
+            "Strength": {"type": "TAG_Int"},
+            "StrengthMax": {"type": "TAG_Int"},
+            "Surface": {"type": "TAG_Byte"},
+            "Tags": {"type": "TAG_List", "comparer": "entity.tags"},
+            "TargetID": {"type": "TAG_Long"},
+            "TradeExperience": {"type": "TAG_Int"},
+            "TradeTier": {"type": "TAG_Int"},
+            "UniqueID": {"type": "TAG_Long"},
+            "Variant": {"type": "TAG_Int"}
+        }
+    },
+    "entity.attributes": {
+        "type": "NbtTagList",
+        "field": "attribute",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "entity.attributes.item"
+    },
+    "entity.attributes.item": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "Base": {"type": "TAG_Float"},
+            "Current": {"type": "TAG_Float"},
+            "Max": {"type": "TAG_Float"},
+            "Name": {"type": "TAG_String"}
+        }
+    },
+    "entity.definitions": {
+        "type": "NbtTagList",
+        "field": "definition",
+        "types": ["TAG_String"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
+    "entity.rotation": {
+        "type": "NbtTagList",
+        "field": "axis",
+        "types": ["TAG_Float"],
+        "ordered": true,
+        "measure_length": false,
+        "comparer": null
+    },
+    "entity.tags": {
+        "type": "NbtTagList",
+        "field": "tag",
+        "types": ["TAG_String"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": null
+    },
+    "palette": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "default": {"type": "TAG_Compound", "comparer": "palette.default"}
+        }
+    },
+    "palette.default": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "block_palette": {"type": "TAG_List", "comparer": "palette.default.block_palette"},
+            "block_position_data": {"type": "TAG_Compound", "comparer": "palette.default.block_position_data"}
+        }
+    },
+    "palette.default.block_palette": {
+        "type": "NbtTagList",
+        "field": "palette",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "comparer": "palette.default.block_palette.item"
+    },
+    "palette.default.block_palette.item": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "name": {"type": "TAG_String"},
+            "states": {"type": "TAG_Compound", "comparer": "palette.default.block_palette.item.states"},
+            "version": {"type": "TAG_Int"}
+        }
+    },
+    "palette.default.block_palette.item.states": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "facing_direction": {"type": "TAG_Int"},
+            "rotation": {"type": "TAG_Int"}
+        }
+    },
+    "palette.default.block_position_data": {
+        "type": "NbtTagCompound",
+        "field": "block",
+        "types": ["TAG_Compound"],
+        "measure_length": true,
+        "comparer": "palette.default.block_position_data.item"
+    },
+    "palette.default.block_position_data.item": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "block_entity_data": {"type": "TAG_Compound", "comparer": "palette.default.block_position_data.item.block_entity_data"}
+        }
+    },
+    "palette.default.block_position_data.item.block_entity_data": {
+        "type": "NbtTypedTagCompound",
+        "types": {
+            "final_state": {"type": "TAG_String"},
+            "id": {"type": "TAG_String"},
+            "isMovable": {"type": "TAG_Byte"},
+            "joint": {"type": "TAG_String"},
+            "name": {"type": "TAG_String"},
+            "target": {"type": "TAG_String"},
+            "target_pool": {"type": "TAG_String"},
+            "x": {"type": "TAG_Int"},
+            "y": {"type": "TAG_Int"},
+            "z": {"type": "TAG_Int"}
+        }
+    }
+}
