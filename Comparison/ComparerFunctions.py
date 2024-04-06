@@ -134,9 +134,9 @@ def languages_normalize(data:DataMinerTyping.Languages, dependencies:DataMinerTy
                 output[resource_pack] = {}
         return CollapseResourcePacks.collapse_resource_packs(output, resource_packs)
 
-    resource_packs = dependencies["resource_packs"]
+    resource_packs:DataMinerTyping.ResourcePacks|None = dependencies["resource_packs"]
     if resource_packs is None:
-        resource_packs:DataMinerTyping.ResourcePacks = [{"name": "vanilla", "tags": ["core"], "id": 1}]
+        resource_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}]
 
     return {language["code"]: fix_properties(language, resource_packs) for language in data}
 
@@ -223,6 +223,19 @@ def recipes_behavior_pack_comparison_move_function(key:str, value:dict[str,Any])
 def resource_packs_normalize(data:DataMinerTyping.ResourcePacks, dependencies:DataMinerTyping.DependenciesTypedDict) -> list[str]:
     return [resource_pack["name"] for resource_pack in data]
 
+def render_controllers_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "render_controllers" in data: return
+    if "defined_in" in data:
+        del data["defined_in"]
+    output = data.copy()
+    for key in list(data.keys()):
+        del data[key]
+    data["render_controllers"] = output
+
+def render_controllers_remove_texures(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "texures" in data:
+        del data["texures"]
+
 def sound_definitions_fix_MCPE_153558(data:DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-153558
     if "pitch" in data:
@@ -298,18 +311,9 @@ def sounds_json_fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict, depend
 
 sounds_json_sound_collections_comparison_move_function = lambda key, value: None if len(value) == 0 else value
 
-def render_controllers_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
-    if "render_controllers" in data: return
-    if "defined_in" in data:
-        del data["defined_in"]
-    output = data.copy()
-    for key in list(data.keys()):
-        del data[key]
-    data["render_controllers"] = output
+structures_resource_pack_move = lambda key, value: value["hash"]
 
-def render_controllers_remove_texures(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
-    if "texures" in data:
-        del data["texures"]
+structures_structure_move = lambda key, value: [resource_pack["hash"] for resource_pack in value.values()]
 
 texture_list_comparison_move_function = lambda key, value: key
 
@@ -359,6 +363,8 @@ functions:dict[str,Callable] = {
     "models_normalize_bones": models_normalize_bones,
     "recipes_behavior_pack_comparison_move_function": recipes_behavior_pack_comparison_move_function,
     "resource_packs_normalize": resource_packs_normalize,
+    "render_controllers_fix_old": render_controllers_fix_old,
+    "render_controllers_remove_texures": render_controllers_remove_texures,
     "sound_definitions_fix_MCPE_153558": sound_definitions_fix_MCPE_153558,
     "sound_definitions_fix_MCPE_178265": sound_definitions_fix_MCPE_178265,
     "sound_definitions_make_sounds_dict": sound_definitions_make_sounds_dict,
@@ -372,8 +378,8 @@ functions:dict[str,Callable] = {
     "sounds_json_remove_bad_interactive_entity_events": sounds_json_remove_bad_interactive_entity_events,
     "sounds_json_fix_sounds": sounds_json_fix_sounds,
     "sounds_json_sound_collections_comparison_move_function": sounds_json_sound_collections_comparison_move_function,
-    "render_controllers_fix_old": render_controllers_fix_old,
-    "render_controllers_remove_texures": render_controllers_remove_texures,
+    "structures_resource_pack_move": structures_resource_pack_move,
+    "structures_structure_move": structures_structure_move,
     "texture_list_comparison_move_function": texture_list_comparison_move_function,
     "texture_list_normalize": texture_list_normalize,
 }
