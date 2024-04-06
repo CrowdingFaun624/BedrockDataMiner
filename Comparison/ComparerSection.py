@@ -1,7 +1,8 @@
-from typing import Generic, TypeVar, Union
+from typing import Any, Generic, TypeVar, Union
 
 import Comparison.ComparerSet as ComparerSet
 import Comparison.ComparisonUtilities as CU
+import Comparison.Modifier as Modifier
 import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
 
@@ -9,17 +10,18 @@ a = TypeVar("a")
 
 class ComparerSection(Generic[a]):
 
-    def __init__(self, name:str) -> None:
-        self.name = name
-        self.normalizer:list[Normalizer.Normalizer]|None
-        self.check_initialization_parameters()
+    name:str
+    normalizer:list[Normalizer.Normalizer]|None
+    modifier:Modifier.Modifier|None
 
-    def check_initialization_parameters(self) -> None:
-        if not isinstance(self.name, str):
-            raise TypeError("`name` is not a str!")
+    def check_initialization_parameters(self) -> None: ...
+
+    def modifier_modify(self, data:Any) -> None: ...
 
     def __repr__(self) -> str:
-        return "<ComparerSection %s>" % self.name
+        return "<%s %s>" % (self.__class__.__name__, self.name)
+
+    def choose_comparer_flat(self, key, value:type, trace:Trace.Trace) -> Union["ComparerSection",None]: ...
 
     def print_single(self, key_str:str|int|None, data:a, message:str, output:list[str], printer:Union["ComparerSection[a]",None], trace:Trace.Trace) -> None:
         if printer is None:
@@ -86,7 +88,7 @@ class ComparerSection(Generic[a]):
 
     def print_text(self, data:a, trace:Trace.Trace) -> list[str]: ...
 
-    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> None:
+    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> Any|None:
         raise NotImplementedError()
 
     def compare(self, data1:a, data2:a, trace:Trace.Trace) -> tuple[a,list[tuple[Trace.Trace,Exception]]]: ...

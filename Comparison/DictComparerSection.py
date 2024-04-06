@@ -1,11 +1,14 @@
-from typing import Any, Callable, Generator, Iterable, TypeVar
+from typing import Any, Callable, Generator, Iterable, MutableMapping, TypeVar
 
 import Comparison.ComparerSection as ComparerSection
 import Comparison.ComparerSet as ComparerSet
 import Comparison.ComparisonUtilities as CU
 import Comparison.Difference as D
+import Comparison.Modifier as Modifier
 import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
+import Utilities.Nbt.NbtTypes as NbtTypes
+import Utilities.TypeVerifier as TypeVerifier
 
 b = TypeVar("b")
 d = TypeVar("d")
@@ -19,7 +22,26 @@ def glue_iterables(iter1:Iterable[b], iter2:Iterable[d]) -> Generator[b|d,None,N
     yield from iter1
     yield from iter2
 
-class DictComparerSection(ComparerSection.ComparerSection[dict[str, d]]):
+class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]]):
+
+    valid_types = (dict, NbtTypes.TAG_Compound)
+
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("comparer", "a ComparerSection, None, or a dict", True, TypeVerifier.UnionTypeVerifier("a ComparerSection, None, or a dict",
+            ComparerSection.ComparerSection,
+            type(None),
+            TypeVerifier.DictTypeVerifier(dict, type, (ComparerSection.ComparerSection, type(None)), "a dict", "a type", "a ComparerSection or None")
+        )),
+        TypeVerifier.TypedDictKeyTypeVerifier("types", "a tuple", True, TypeVerifier.ListTypeVerifier(type, tuple, "a type", "a tuple")),
+        TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("comparison_move_function", "a Callable or None", True, (Callable, None)),
+        TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("modifier", "a Modifier", True, (Modifier.Modifier, type(None))),
+    )
 
     def __init__(
             self,
@@ -32,6 +54,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[str, d]]):
             print_all:bool=False,
             normalizer:list[Normalizer.Normalizer]|None=None,
             children_has_normalizer:bool=False,
+            modifier:Modifier.Modifier|None=None
         ) -> None:
         ''' * `name` is what the key of this dictionary is.
          * If `comparer` is a ComparerSection, then it will compare and print all values using that ComparerSection.
@@ -54,39 +77,24 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[str, d]]):
         self.print_all = print_all
         self.normalizer = normalizer
         self.children_has_normalizer = children_has_normalizer
+        self.modifier = modifier
+        if self.modifier is not None:
+            self.modifier.give_comparer_section(self)
         self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
-        if not isinstance(self.name, str):
-            raise TypeError("`name` is not a str!")
-        if not (self.comparer is None or isinstance(self.comparer, (ComparerSection.ComparerSection, dict))):
-            raise TypeError("`comparer` is not a ComparerSection, NoneType, or list!")
-        if isinstance(self.comparer, dict):
-            for comparer_index, (comparer_key, comparer_value) in enumerate(self.comparer.items()):
-                if not isinstance(comparer_key, type):
-                    raise TypeError("Key number %i of `comparer` is not a type!" % (comparer_index))
-                if not (comparer_value is None or isinstance(comparer_value, ComparerSection.ComparerSection)):
-                    raise TypeError("Key \"%s\" of `comparer` is not a ComparerSection or None!" % (comparer_key.__name__))
-        if not isinstance(self.types, tuple) and self.types is not None:
-            raise TypeError("`types` is not a tuple or None!")
-        if isinstance(self.types, tuple) and not all(isinstance(item, (type)) for item in self.types):
-            raise TypeError("An item of `types` is not a type!")
-        if not isinstance(self.detect_key_moves, bool):
-            raise TypeError("`detect_key_moves` is not a bool!")
-        if not isinstance(self.comparison_move_function, Callable) and self.comparison_move_function is not None:
-            raise TypeError("`comparison_move_function` is not a Callable or None!")
-        if not isinstance(self.measure_length, bool):
-            raise TypeError("`measure_length` is not a bool!")
-        if not isinstance(self.print_all, bool):
-            raise TypeError("`print_all` is not a bool!")
-        if not (self.normalizer is None or isinstance(self.normalizer, list)):
-            raise TypeError("`normalizer` is not a list or None!")
-        if isinstance(self.normalizer, list) and len(self.normalizer) == 0:
-            raise TypeError("`normalizer` is empty!")
-        if isinstance(self.normalizer, list) and not all(isinstance(item, Normalizer.Normalizer) for item in self.normalizer):
-            raise TypeError("An item of `normalizer` is not a Normalizer!")
-        if not isinstance(self.children_has_normalizer, bool):
-            raise TypeError("`children_has_normalizer` is not a bool!")
+        self.type_verifier.base_verify({
+            "name": self.name,
+            "comparer": self.comparer,
+            "types": self.types,
+            "detect_key_moves": self.detect_key_moves,
+            "comparison_move_function": self.comparison_move_function,
+            "measure_length": self.measure_length,
+            "print_all": self.print_all,
+            "normalizer": self.normalizer,
+            "children_has_normalizer": self.children_has_normalizer,
+            "modifier": self.modifier,
+        })
 
     def check_type(self, key:str, value:d, trace:Trace.Trace) -> tuple[Trace.Trace,Exception]|None:
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):
@@ -94,11 +102,11 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[str, d]]):
         if not isinstance(value, self.types):
             return (trace.copy(self.name, key), TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (CU.stringify(key), CU.stringify(value), self.name, self.types)))
 
-    def check_all_types(self, data:dict[str,d], trace:Trace.Trace) -> list[tuple[Trace.Trace,Exception]]:
+    def check_all_types(self, data:MutableMapping[str,d], trace:Trace.Trace) -> list[tuple[Trace.Trace,Exception]]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[tuple[Trace.Trace,Exception]] = []
-        if not isinstance(data, dict):
-            output.append((trace, TypeError("`data` has the wrong type, %s instead of dict!" % type(data))))
+        if not isinstance(data, self.valid_types):
+            output.append((trace, TypeError("`data` has the wrong type, %s instead of [%s]!" % (type(data), ", ".join(valid_type.__name__ for valid_type in self.valid_types)))))
             return output
         for key, value in data.items():
             check_type_output = self.check_type(key, value, trace)
@@ -107,10 +115,7 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[str, d]]):
                 output.append(check_type_output)
                 continue
 
-            comparer_set = self.choose_comparer(key, value, trace)
-            if len(comparer_set) != 1 or D.DiffType.not_diff not in comparer_set:
-                raise TypeError("`check_all_types` was given data containing Diffs!")
-            comparer = comparer_set[D.DiffType.not_diff]
+            comparer = self.choose_comparer_flat(key, type(value), trace)
             if comparer is not None:
                 output.extend(comparer.check_all_types(value, trace.copy(self.name, key)))
         return output
@@ -122,22 +127,24 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[str, d]]):
                 normalizer(data, normalizer_dependencies, trace, version_number)
         for key, value in data.items():
             try:
-                comparer_set = self.choose_comparer(key, value, trace)
+                comparer = self.choose_comparer_flat(key, type(value), trace)
             except Exception:
                 # it hasn't been type checked yet, so something could except
                 continue
-            if len(comparer_set) != 1 or D.DiffType.not_diff not in comparer_set:
-                continue
-            comparer = comparer_set[D.DiffType.not_diff]
             if comparer is not None:
-                comparer.normalize(value, normalizer_dependencies, version_number, trace.copy(self.name, key))
+                normalize_output = comparer.normalize(value, normalizer_dependencies, version_number, trace.copy(self.name, key))
+                if normalize_output is not None:
+                    data[key] = normalize_output
 
     def compare(
             self,
-            data1:dict[str,d],
-            data2:dict[str,d],
+            data1:MutableMapping[str,d],
+            data2:MutableMapping[str,d],
             trace:Trace.Trace,
-        ) -> tuple[dict[str|D.Diff[str,str],d|D.Diff[d,d]],list[tuple[Trace.Trace,Exception]]]:
+        ) -> tuple[MutableMapping[str|D.Diff[str,str],d|D.Diff[d,d]],list[tuple[Trace.Trace,Exception]]]:
+        if type(data1) != type(data2):
+            raise TypeError("Attempted to compare type %s with type %s!" % (data1.__class__.__name__, data2.__class__.__name__))
+
         key_occurences:dict[str,list[D.DiffType]] = {}
         exceptions:list[tuple[Trace.Trace,Exception]] = []
 
@@ -221,7 +228,23 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[str, d]]):
             else:
                 raise RuntimeError("Illegal state: %s, %s" % (key, occurences))
 
-        return {key: value for key, value in sorted(output.items())}, exceptions
+        sorted_output:dict[str|D.Diff,d|D.Diff] = type(data1)() # type: ignore # why does it even error anyways
+        for key, value in sorted(output.items()):
+            sorted_output[key] = value
+        return sorted_output, exceptions
+
+    def choose_comparer_flat(self, key:str, value: type[d], trace: Trace.Trace) -> ComparerSection.ComparerSection|None:
+        if isinstance(self.comparer, dict):
+            exception = None
+            try:
+                return self.comparer[value]
+            except Exception as e:
+                exception = e
+                exception.args = tuple(list(exception.args) + ["Failed to get comparer at %s of key, value: %s: %s" % (trace, key, value)])
+            if exception is not None:
+                raise exception
+        else:
+            return self.comparer
 
     def choose_comparer(self, key:str|D.Diff[str,str], value:d|D.Diff[d,d], trace:Trace.Trace) -> ComparerSet.ComparerSet:
         output:dict[D.DiffType,ComparerSection.ComparerSection|None] = {}
@@ -253,22 +276,20 @@ class DictComparerSection(ComparerSection.ComparerSection[dict[str, d]]):
                 output.extend("\t" + line for line in subcomparer_output)
                 return output
 
-    def print_text(self, data:dict[str, d], trace:Trace.Trace) -> list[str]:
+    def print_text(self, data:MutableMapping[str, d], trace:Trace.Trace) -> list[str]:
         output:list[str] = []
-        if not isinstance(data, dict):
-            raise TypeError("`data` is not a dict at %s, but instead type %s!" % (trace.give_key(self.name), type(data)))
+        if not isinstance(data, self.valid_types):
+            raise TypeError("`data` is not [%s] at %s, but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), trace.give_key(self.name), type(data)))
         for key, value in data.items():
             comparer_set = self.choose_comparer(key, value, trace)
-            assert len(comparer_set) != 0
-            # print(key, value, comparer_set)
             output.extend(self.print_item(key, value, comparer_set, trace))
         return output
 
-    def compare_text(self, data:dict[str, d], trace:Trace.Trace) -> tuple[list[str],bool]:
+    def compare_text(self, data:MutableMapping[str, d], trace:Trace.Trace) -> tuple[list[str],bool]:
         output:list[str] = []
         any_changes = False
-        if not isinstance(data, dict):
-            raise TypeError("`data` is not a dict at %s, but instead type %s!" % (trace.give_key(self.name), type(data)))
+        if not isinstance(data, self.valid_types):
+            raise TypeError("`data` is not [%s] at %s, but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), trace.give_key(self.name), type(data)))
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
         for key, value in data.items():
