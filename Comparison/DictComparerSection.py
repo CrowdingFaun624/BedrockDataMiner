@@ -46,12 +46,12 @@ class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]
             name:str,
             comparer:ComparerSection.ComparerSection[d]|None|dict[type,ComparerSection.ComparerSection[d]|None],
             types:tuple[type,...]|None,
-            detect_key_moves:bool=False,
-            comparison_move_function:Callable[[str, d], Any]|None=None,
-            measure_length:bool=False,
-            print_all:bool=False,
-            normalizer:list[Normalizer.Normalizer]|None=None,
-            children_has_normalizer:bool=False,
+            detect_key_moves:bool,
+            comparison_move_function:Callable[[str, d], Any]|None,
+            measure_length:bool,
+            print_all:bool,
+            normalizer:list[Normalizer.Normalizer]|None,
+            children_has_normalizer:bool,
         ) -> None:
         ''' * `name` is what the key of this dictionary is.
          * If `comparer` is a ComparerSection, then it will compare and print all values using that ComparerSection.

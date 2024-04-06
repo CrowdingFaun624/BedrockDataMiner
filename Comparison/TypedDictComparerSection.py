@@ -17,10 +17,10 @@ class TypedDictComparerSection(DictComparerSection.DictComparerSection[d]):
             self,
             name:str,
             types:dict[tuple[str,type],ComparerSection.ComparerSection[d]|None],
-            measure_length:bool=False,
-            print_all:bool=False,
-            normalizer:list[Normalizer.Normalizer]|None=None,
-            children_has_normalizer:bool=False,
+            measure_length:bool,
+            print_all:bool,
+            normalizer:list[Normalizer.Normalizer]|None,
+            children_has_normalizer:bool,
         ) -> None:
         ''' * `name` is what the key of this dictionary is.
          * `types` is a dictionary with keys of tuples of strings and types and values of comparer sections or Nones.

@@ -18,12 +18,12 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
             name:str,
             comparer:ComparerSection.ComparerSection[d]|None|dict[type,ComparerSection.ComparerSection[d]|None],
             types:tuple[type,...]|None,
-            print_flat:bool=False,
-            ordered:bool=True,
-            measure_length:bool=False,
-            print_all:bool=False,
-            normalizer:list[Normalizer.Normalizer]|None=None,
-            children_has_normalizer:bool=False,
+            print_flat:bool,
+            ordered:bool,
+            measure_length:bool,
+            print_all:bool,
+            normalizer:list[Normalizer.Normalizer]|None,
+            children_has_normalizer:bool,
         ) -> None:
         ''' * `name` is what the key of this list is.
          * If `comparer` is a ComparerSection, then it will compare and print all items using that ComparerSection.
