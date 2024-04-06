@@ -71,6 +71,8 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
-# TODO: add special key for Comparers that makes it check types (for debugging)
+# TODO: make each comparison report line an object to make indenting faster.
+# TODO: Rename stuff in Comparison
+# TODO: the ability to choose endianness per-key/comparer is completely unnecessary, please remove it
 # TODO: make more dataminers
 # TODO: make more domains
