@@ -9,6 +9,11 @@
         "dependencies": ["behavior_packs"],
         "function_name": "collapse_behavior_packs_without_defined_in"
     },
+    "normalize_text": {
+        "type": "NormalizerFunction",
+        "dependencies": [],
+        "function_name": "structures_nbt_normalize_text"
+    },
     "structures": {
         "type": "Dict",
         "field": "structure",
@@ -123,6 +128,7 @@
     "block_nbt": {
         "type": "NbtTypedTagCompound",
         "field": "tag",
+        "normalizer": "normalize_text",
         "measure_length": true,
         "types": {
             "attachement_type": {"type": "TAG_String"},
@@ -186,10 +192,10 @@
             "SpawnRange": {"type": "TAG_Short"},
             "target": {"type": "TAG_String"},
             "target_pool": {"type": "TAG_String"},
-            "Text1": {"type": "TAG_String"},
-            "Text2": {"type": "TAG_String"},
-            "Text3": {"type": "TAG_String"},
-            "Text4": {"type": "TAG_String"}
+            "Text1": {"type": "dict", "comparer": "nbt:text"},
+            "Text2": {"type": "dict", "comparer": "nbt:text"},
+            "Text3": {"type": "dict", "comparer": "nbt:text"},
+            "Text4": {"type": "dict", "comparer": "nbt:text"}
         }
     },
     "nbt:config": {
@@ -346,6 +352,12 @@
         "types": {
             "Entity": {"type": "TAG_Compound", "comparer": "entity_nbt"},
             "Weight": {"type": "TAG_Int"}
+        }
+    },
+    "nbt:text": {
+        "type": "TypedDict",
+        "types": {
+            "text": {"type": "str"}
         }
     },
     "entity_nbt": {

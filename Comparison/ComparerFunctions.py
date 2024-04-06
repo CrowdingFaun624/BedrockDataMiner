@@ -1,7 +1,9 @@
+import json
 from typing import Any, Callable, cast
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
+import Utilities.Nbt.NbtTypes as NbtTypes
 
 def animation_controllers_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     if "animation_controllers" in data: return
@@ -315,6 +317,12 @@ structures_resource_pack_move = lambda key, value: value["hash"]
 
 structures_structure_move = lambda key, value: [resource_pack["hash"] for resource_pack in value.values()]
 
+structures_nbt_normalize_text_keys = ["Text%i" % i for i in range(1, 5)]
+def structures_nbt_normalize_text(data:dict[str,NbtTypes.TAG_String], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    for key in structures_nbt_normalize_text_keys:
+        if key in data:
+            data[key] = json.loads(data[key].value)
+
 texture_list_comparison_move_function = lambda key, value: key
 
 def texture_list_normalize(data:dict[str,list[str]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,list[str]]:
@@ -380,6 +388,7 @@ functions:dict[str,Callable] = {
     "sounds_json_sound_collections_comparison_move_function": sounds_json_sound_collections_comparison_move_function,
     "structures_resource_pack_move": structures_resource_pack_move,
     "structures_structure_move": structures_structure_move,
+    "structures_nbt_normalize_text": structures_nbt_normalize_text,
     "texture_list_comparison_move_function": texture_list_comparison_move_function,
     "texture_list_normalize": texture_list_normalize,
 }
