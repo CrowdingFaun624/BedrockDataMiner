@@ -4,7 +4,6 @@ import Comparison.ComparerSection as ComparerSection
 import Comparison.ComparerSet as ComparerSet
 import Comparison.ComparisonUtilities as CU
 import Comparison.Difference as D
-import Comparison.Modifier as Modifier
 import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
 import Utilities.Nbt.NbtTypes as NbtTypes
@@ -40,7 +39,6 @@ class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("modifier", "a Modifier", True, (Modifier.Modifier, type(None))),
     )
 
     def __init__(
@@ -54,7 +52,6 @@ class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]
             print_all:bool=False,
             normalizer:list[Normalizer.Normalizer]|None=None,
             children_has_normalizer:bool=False,
-            modifier:Modifier.Modifier|None=None
         ) -> None:
         ''' * `name` is what the key of this dictionary is.
          * If `comparer` is a ComparerSection, then it will compare and print all values using that ComparerSection.
@@ -77,9 +74,6 @@ class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]
         self.print_all = print_all
         self.normalizer = normalizer
         self.children_has_normalizer = children_has_normalizer
-        self.modifier = modifier
-        if self.modifier is not None:
-            self.modifier.give_comparer_section(self)
         self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
@@ -93,7 +87,6 @@ class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]
             "print_all": self.print_all,
             "normalizer": self.normalizer,
             "children_has_normalizer": self.children_has_normalizer,
-            "modifier": self.modifier,
         })
 
     def check_type(self, key:str, value:d, trace:Trace.Trace) -> tuple[Trace.Trace,Exception]|None:

@@ -11,9 +11,7 @@ import Comparison.ComparerImporter.Intermediate as Intermediate
 import Comparison.ComparerImporter.ListComparerIntermediate as ListComparerIntermediate
 import Comparison.ComparerImporter.MainIntermediate as MainIntermediate
 import Comparison.ComparerImporter.NbtBaseIntermediate as NbtBaseIntermediate
-import Comparison.ComparerImporter.NbtTagCompoundComparerIntermediate as NbtTagCompoundComparerIntermediate
-import Comparison.ComparerImporter.NbtTagListComparerIntermediate as NbtTagListComparerIntermediate
-import Comparison.ComparerImporter.NbtTypedTagCompoundComparerIntermediate as NbtTypedTagCompoundComparerIntermediate
+import Comparison.ComparerImporter.NbtTagComparerIntermediate as NbtTagComparerIntermediate
 import Comparison.ComparerImporter.NormalizerFunctionIntermediate as NormalizerFunctionIntermediate
 import Comparison.ComparerImporter.TypeAliasIntermediate as TypeAliasIntermediate
 import Comparison.ComparerImporter.TypedDictComparerIntermediate as TypedDictComparerIntermediate
@@ -29,12 +27,12 @@ comparer_types:list[type[Intermediate.Intermediate]] = [
     TypeAliasIntermediate.TypeAliasIntermediate,
     TypedDictComparerIntermediate.TypedDictComparerIntermediate,
     NbtBaseIntermediate.NbtBaseIntermediate,
-    NbtTagListComparerIntermediate.NbtTagByteArrayComparerIntermediate,
-    NbtTagCompoundComparerIntermediate.NbtTagCompoundComparerIntermediate,
-    NbtTagListComparerIntermediate.NbtTagIntArrayComparerIntermediate,
-    NbtTagListComparerIntermediate.NbtTagListComparerIntermediate,
-    NbtTagListComparerIntermediate.NbtTagLongArrayComparerIntermediate,
-    NbtTypedTagCompoundComparerIntermediate.NbtTypedTagCompoundComparerIntermediate,
+    NbtTagComparerIntermediate.NbtTagByteArrayComparerIntermediate,
+    NbtTagComparerIntermediate.NbtTagCompoundComparerIntermediate,
+    NbtTagComparerIntermediate.NbtTagIntArrayComparerIntermediate,
+    NbtTagComparerIntermediate.NbtTagListComparerIntermediate,
+    NbtTagComparerIntermediate.NbtTagLongArrayComparerIntermediate,
+    NbtTagComparerIntermediate.NbtTypedTagCompoundComparerIntermediate,
 ]
 
 def get_file(name:str) -> ComparerTyping.ComparerType:

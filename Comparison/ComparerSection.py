@@ -2,7 +2,6 @@ from typing import Any, Generic, TypeVar, Union
 
 import Comparison.ComparerSet as ComparerSet
 import Comparison.ComparisonUtilities as CU
-import Comparison.Modifier as Modifier
 import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
 
@@ -12,7 +11,6 @@ class ComparerSection(Generic[a]):
 
     name:str
     normalizer:list[Normalizer.Normalizer]|None
-    modifier:Modifier.Modifier|None
 
     def check_initialization_parameters(self) -> None: ...
 

@@ -8,7 +8,6 @@ import Comparison.ComparerImporter.GroupIntermediate as GroupIntermediate
 import Comparison.ComparerImporter.NormalizerFunctionIntermediate as NormalizerFunctionIntermediate
 import Comparison.ComparerImporter.TypeAliasIntermediate as TypeAliasIntermediate
 import Comparison.ListComparerSection as ListComparerSection
-import Comparison.Modifier as Modifier
 import Comparison.Normalizer as Normalizer
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -110,7 +109,7 @@ class ListComparerIntermediate(ComparerIntermediate.ComparerIntermediate):
     def create_final_get_final_normalizers(self) -> list[Normalizer.Normalizer]|None:
         return None if self.normalizers is None else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizers]
 
-    def create_final_get_final(self, normalizer_final:list[Normalizer.Normalizer]|None, modifier:Modifier.Modifier|None) -> ListComparerSection.ListComparerSection:
+    def create_final_get_final(self, normalizer_final:list[Normalizer.Normalizer]|None) -> ListComparerSection.ListComparerSection:
         return ListComparerSection.ListComparerSection(
             name=self.field,
             comparer=None,
@@ -121,17 +120,12 @@ class ListComparerIntermediate(ComparerIntermediate.ComparerIntermediate):
             normalizer=normalizer_final,
             ordered=self.ordered,
             children_has_normalizer=self.children_has_normalizer,
-            modifier=modifier,
         )
-
-    def create_final_get_modifier(self) -> Modifier.Modifier|None:
-        return None
 
     def create_final(self) -> None:
         self.types_final:list[type] = self.create_final_get_final_types(self.types)
         normalizer_final = self.create_final_get_final_normalizers()
-        modifier = self.create_final_get_modifier()
-        self.final = self.create_final_get_final(normalizer_final, modifier)
+        self.final = self.create_final_get_final(normalizer_final, )
 
     def link_finals(self) -> None:
         assert self.final is not None

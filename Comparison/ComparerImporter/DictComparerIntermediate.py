@@ -9,7 +9,6 @@ import Comparison.ComparerImporter.Intermediate as Intermediate
 import Comparison.ComparerSection as ComparerSection
 import Comparison.ComparerImporter.IntermediateCapabilities as IntermediateCapabilities
 import Comparison.DictComparerSection as DictComparerSection
-import Comparison.Modifier as Modifier
 import Comparison.Normalizer as Normalizer
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -125,10 +124,7 @@ class DictComparerIntermediate(ComparerIntermediate.ComparerIntermediate):
     def create_final_get_normalizers(self, normalizers:list[NormalizerFunctionIntermediate.NormalizerFunctionIntermediate]|None) -> list[Normalizer.Normalizer]|None:
         return None if normalizers is None else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in normalizers]
 
-    def create_final_get_modifier(self) -> Modifier.Modifier|None:
-        return None
-
-    def create_final_get_final(self, normalizer_final:list[Normalizer.Normalizer]|None, modifier:Modifier.Modifier|None) -> DictComparerSection.DictComparerSection:
+    def create_final_get_final(self, normalizer_final:list[Normalizer.Normalizer]|None) -> DictComparerSection.DictComparerSection:
         return DictComparerSection.DictComparerSection(
             name=self.field,
             comparer=None,
@@ -139,14 +135,12 @@ class DictComparerIntermediate(ComparerIntermediate.ComparerIntermediate):
             normalizer=normalizer_final,
             print_all=self.print_all,
             children_has_normalizer=self.children_has_normalizer,
-            modifier=modifier,
         )
 
     def create_final(self) -> None:
         self.types_final = self.create_final_get_types_final(self.types)
         normalizer_final = self.create_final_get_normalizers(self.normalizers)
-        modifier = self.create_final_get_modifier()
-        self.final = self.create_final_get_final(normalizer_final, modifier)
+        self.final = self.create_final_get_final(normalizer_final)
 
     def link_finals(self) -> None:
         assert self.final is not None

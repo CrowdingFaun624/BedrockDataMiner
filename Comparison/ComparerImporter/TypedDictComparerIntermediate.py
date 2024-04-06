@@ -8,7 +8,6 @@ import Comparison.ComparerImporter.GroupIntermediate as GroupIntermediate
 import Comparison.ComparerImporter.NormalizerFunctionIntermediate as NormalizerFunctionIntermediate
 import Comparison.ComparerImporter.TypeAliasIntermediate as TypeAliasIntermediate
 import Comparison.ComparerSection as ComparerSection
-import Comparison.Modifier as Modifier
 import Comparison.Normalizer as Normalizer
 import Comparison.TypedDictComparerSection as TypedDictComparerSection
 import Utilities.TypeVerifier as TypeVerifier
@@ -137,10 +136,7 @@ class TypedDictComparerIntermediate(ComparerIntermediate.ComparerIntermediate):
     def create_final_get_final_normalizers(self) -> list[Normalizer.Normalizer]|None:
         return None if self.normalizers is None else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizers]
 
-    def create_final_get_modifier(self) -> Modifier.Modifier|None:
-        return None
-
-    def create_final_get_final(self, normalizer_final:list[Normalizer.Normalizer]|None, modifier:Modifier.Modifier|None) -> TypedDictComparerSection.TypedDictComparerSection:
+    def create_final_get_final(self, normalizer_final:list[Normalizer.Normalizer]|None) -> TypedDictComparerSection.TypedDictComparerSection:
         return TypedDictComparerSection.TypedDictComparerSection(
             name=self.field,
             types=self.types_final,
@@ -148,13 +144,11 @@ class TypedDictComparerIntermediate(ComparerIntermediate.ComparerIntermediate):
             normalizer=normalizer_final,
             print_all=self.print_all,
             children_has_normalizer=self.children_has_normalizer,
-            modifier=modifier,
         )
 
     def create_final(self) -> None:
         normalizer_final = self.create_final_get_final_normalizers()
-        modifier = self.create_final_get_modifier()
-        self.final = self.create_final_get_final(normalizer_final, modifier)
+        self.final = self.create_final_get_final(normalizer_final)
 
     def expand_types(self, types:Iterable[type|TypeAliasIntermediate.TypeAliasIntermediate]) -> Generator[type,None,None]:
         for item in types:

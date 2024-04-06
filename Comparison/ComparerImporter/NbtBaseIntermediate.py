@@ -7,8 +7,6 @@ import Comparison.ComparerImporter.Intermediate as Intermediate
 import Comparison.ComparerImporter.IntermediateCapabilities as IntermediateCapabilities
 import Comparison.ComparerImporter.NormalizerFunctionIntermediate as NormalizerFunctionIntermediate
 import Comparison.ComparerImporter.TypeAliasIntermediate as TypeAliasIntermediate
-import Comparison.Modifier as Modifier
-import Comparison.NbtModifier as NbtModifier
 import Comparison.NbtBaseComparerSection as NbtBaseComparerSection
 import Comparison.Normalizer as Normalizer
 import Utilities.Nbt.Endianness as Endianness
@@ -93,25 +91,26 @@ class NbtBaseIntermediate(ComparerIntermediate.ComparerIntermediate):
     def create_final_get_normalizers(self, normalizers:list[NormalizerFunctionIntermediate.NormalizerFunctionIntermediate]|None) -> list[Normalizer.Normalizer]|None:
         return None if self.normalizers is None else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizers]
 
-    def create_final_get_modifier(self) -> NbtModifier.NbtModifier:
-        default_endianness = Endianness.End.BIG if self.endianness == "big" else Endianness.End.LITTLE
-        return NbtModifier.NbtModifier(default_endianness)
+    def get_endianness(self, endianness:str) -> Endianness.End:
+        match endianness:
+            case "big": return Endianness.End.BIG
+            case "little": return Endianness.End.LITTLE
+            case _: raise ValueError("Invalid endianness \"%s\"!" % endianness)
 
-    def create_final_get_final(self, normalizers_final:list[Normalizer.Normalizer]|None, modifier:Modifier.Modifier) -> NbtBaseComparerSection.NbtBaseComparerSection:
+    def create_final_get_final(self, normalizers_final:list[Normalizer.Normalizer]|None) -> NbtBaseComparerSection.NbtBaseComparerSection:
         return NbtBaseComparerSection.NbtBaseComparerSection(
             name = self.name,
             comparer = None,
+            endianness=self.get_endianness(self.endianness),
             types = tuple(self.types_final),
-            modifier=modifier,
-            normalizers = normalizers_final
+            normalizers = normalizers_final,
         )
 
     def create_final(self) -> None:
         self.types_final = self.create_final_get_types_final(self.types)
         self.my_type = self.types_final
         normalizers_final = self.create_final_get_normalizers(self.normalizers)
-        modifier = self.create_final_get_modifier()
-        self.final = self.create_final_get_final(normalizers_final, modifier)
+        self.final = self.create_final_get_final(normalizers_final)
     
     def link_finals(self) -> None:
         assert self.final is not None

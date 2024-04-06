@@ -82,53 +82,8 @@ class TypedDictComparerTypedDict(TypedDict):
     type: Required[Literal["TypedDict"]]
     types: Required[dict[str,TypedDictTypeTypedDict]]
 
-class NbtTagListTypedDict(TypedDict):
-    comparer: Required[str|None]
-    endianness: Literal["big", "little", None]
-    field: NotRequired[str]
-    measure_length: NotRequired[bool]
-    normalizer: NotRequired[str|list[str]]
-    ordered: NotRequired[bool]
-    print_all: NotRequired[bool]
-    print_flat: NotRequired[bool]
-    type: Required[Literal["List"]]
-    types: Required[list[str]]
-
-class NbtTagCompoundTypedDict(TypedDict):
-    comparer: Required[str|None]
-    comparison_move_function: NotRequired[str]
-    detect_key_moves: NotRequired[bool]
-    endianness: Literal["big", "little", None]
-    field: NotRequired[str]
-    measure_length: NotRequired[bool]
-    normalizer: NotRequired[str|list[str]]
-    type: Required[Literal["Dict"]]
-    print_all: NotRequired[bool]
-    types: Required[list[str]]
-
-class NbtTypedTagCompoundTypeTypedDict(TypedDict):
-    type: Required[str|list[str]]
-    comparer: NotRequired[str|None]
-    endianness: NotRequired[Literal["big", "little"]]
-    tags: NotRequired[list[str]]
-
-class NbtTypedTagCompoundTypeFilledTypedDict(TypedDict):
-    type: Required[list[Union[type, "TypeAliasIntermediate.TypeAliasIntermediate"]]]
-    comparer: Required[Union["ComparerIntermediate.ComparerIntermediate", "GroupIntermediate.GroupIntermediate", None]]
-    endianness: Required[Endianness.End|None]
-    tags: NotRequired[list[str]]
-
-class NbtTypedTagCompoundComparerTypedDict(TypedDict):
-    endianness: NotRequired[Literal["big", "little", None]]
-    field: NotRequired[str]
-    imports: NotRequired[str|list[str]]
-    measure_length: NotRequired[bool]
-    normalizer: NotRequired[str|list[str]]
-    type: Required[Literal["TypedTagCompound"]]
-    types: Required[dict[str,TypedDictTypeTypedDict]]
-
-Intermediates = DictComparerTypedDict|GroupTypedDict|ListComparerTypedDict|MainTypedDict|NbtBaseTypedDict|NormalizerFunctionTypedDict|TypeAliasTypedDict|TypedDictComparerTypedDict|NbtTypedTagCompoundComparerTypedDict
-Comparers = DictComparerTypedDict|ListComparerTypedDict|TypedDictComparerTypedDict|NbtTypedTagCompoundComparerTypedDict
+Intermediates = DictComparerTypedDict|GroupTypedDict|ListComparerTypedDict|MainTypedDict|NbtBaseTypedDict|NormalizerFunctionTypedDict|TypeAliasTypedDict|TypedDictComparerTypedDict
+Comparers = DictComparerTypedDict|ListComparerTypedDict|TypedDictComparerTypedDict
 ComparerType = dict[str,Intermediates]
 
 DEFAULT_TYPES:dict[str,type] = {

@@ -5,7 +5,6 @@ import Comparison.ComparerSection as ComparerSection
 import Comparison.ComparerSet as ComparerSet
 import Comparison.ComparisonUtilities as CU
 import Comparison.Difference as D
-import Comparison.Modifier as Modifier
 import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
@@ -25,7 +24,6 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
             print_all:bool=False,
             normalizer:list[Normalizer.Normalizer]|None=None,
             children_has_normalizer:bool=False,
-            modifier:Modifier.Modifier|None=None,
         ) -> None:
         ''' * `name` is what the key of this list is.
          * If `comparer` is a ComparerSection, then it will compare and print all items using that ComparerSection.
@@ -47,9 +45,6 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
         self.print_all = print_all
         self.normalizer = normalizer
         self.children_has_normalizer = children_has_normalizer
-        self.modifier = modifier
-        if self.modifier is not None:
-            self.modifier.give_comparer_section(self)
         self.check_initialization_parameters()
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
@@ -67,7 +62,6 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list", additional_function=lambda data: (sum(1 for item in data) > 0, "empty"))))),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("modifier", "a Modifier or None", True, (Modifier.Modifier, type(None))),
     )
 
     def check_initialization_parameters(self) -> None:
@@ -81,7 +75,6 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
             "print_all": self.print_all,
             "normalizer": self.normalizer,
             "children_has_normalizer": self.children_has_normalizer,
-            "modifier": self.modifier,
         })
 
     def check_type(self, index:int, item:d, trace:Trace.Trace) -> tuple[Trace.Trace,Exception]|None:

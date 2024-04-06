@@ -6,7 +6,7 @@ import Comparison.ComparisonUtilities as CU
 import Comparison.Difference as D
 import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
-import Comparison.Modifier as Modifier
+import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
 
@@ -17,7 +17,7 @@ class NbtBaseComparerSection(ComparerSection.ComparerSection[NbtTypes.TAG]):
             name:str,
             comparer:ComparerSection.ComparerSection|dict[type,ComparerSection.ComparerSection|None]|None,
             types:tuple[type,...]|None,
-            modifier:Modifier.Modifier,
+            endianness:Endianness.End,
             normalizers:list[Normalizer.Normalizer]|None=None,
             children_has_normalizers:bool=False,
         ) -> None:
@@ -26,8 +26,7 @@ class NbtBaseComparerSection(ComparerSection.ComparerSection[NbtTypes.TAG]):
         self.types = (object,) if types is None else types
         self.normalizers = normalizers
         self.children_has_normalizer = children_has_normalizers
-        self.modifier:Modifier.Modifier = modifier
-        self.modifier.give_comparer_section(self)
+        self.endianness=endianness
         self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
@@ -45,6 +44,8 @@ class NbtBaseComparerSection(ComparerSection.ComparerSection[NbtTypes.TAG]):
             raise TypeError("`types` is not a tuple or None, but instead a %s!" % (self.types.__class__.__name__))
         if isinstance(self.types, tuple) and not all(isinstance(item, (type)) for item in self.types):
             raise TypeError("An item of `types` is not a type!")
+        if not isinstance(self.endianness, Endianness.End):
+            raise TypeError("`endianness` is not an End!")
 
     def check_all_types(self, data: NbtTypes.TAG, trace: Trace.Trace) -> list[tuple[Trace.Trace, Exception]]:
         if isinstance(data, D.Diff):
@@ -91,7 +92,7 @@ class NbtBaseComparerSection(ComparerSection.ComparerSection[NbtTypes.TAG]):
     def normalize(self, data: NbtReader.NbtBytes, normalizer_dependencies: Normalizer.LocalNormalizerDependencies, version_number: int, trace: Trace.Trace) -> NbtTypes.TAG:
         exception = None
         try:
-            data_parsed:NbtTypes.TAG = self.modifier.base_modify(data, trace)
+            data_parsed = NbtReader.unpack_bytes(data.value, gzipped=False, endianness=self.endianness)[1]
         except Exception as e:
             raise RuntimeError("Failed to parse nbt at %s!" % (trace))
         if exception is not None:
