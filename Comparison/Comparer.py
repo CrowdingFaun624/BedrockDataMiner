@@ -69,7 +69,7 @@ class Comparer():
         if not comparison_path.parent.exists(): # type: ignore # >:(
             comparison_path.parent.mkdir() # type: ignore
         file_counts[self.name] = store_number
-        with open(comparison_path, "wt") as f:
+        with open(comparison_path, "wt", encoding="UTF8") as f:
             f.write(report)
 
     def comparison_report(
