@@ -296,7 +296,7 @@ class TAG_Compound(TAG[dict[str,TAG]]):
         output += "}"
         return output
 
-    def should_enquote_key(self, key:str, pattern=re.compile(r'[^a-zA-Z0-9.]').search) -> bool:
+    def should_enquote_key(self, key:str, pattern=re.compile(r'[^a-zA-Z0-9._]').search) -> bool:
         if len(key) == 0: return True
         return bool(pattern(key))
 
