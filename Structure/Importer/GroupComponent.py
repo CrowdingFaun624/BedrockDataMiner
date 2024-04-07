@@ -42,7 +42,7 @@ class GroupComponent(Component.Component):
 
         self.children_has_normalizer = False
 
-    def set(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
+    def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
         self.subcomponents = []
         already_types:set[str] = set()
         for type_str, subcomponent_str in self.subcomponents_strs.items():
@@ -55,7 +55,7 @@ class GroupComponent(Component.Component):
                 subcomponent_type = ComponentTyping.DEFAULT_TYPES[type_str]
                 self.my_type.add(subcomponent_type)
             else:
-                subcomponent_type = self.choose_component(type_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, ["types", type_str])
+                subcomponent_type = self.choose_component(type_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, ["subcomponents", type_str])
                 assert isinstance(subcomponent_type, TypeAliasComponent.TypeAliasComponent)
                 self.links_to_other_components.append(subcomponent_type)
                 subcomponent_type.parents.append(self)
@@ -64,7 +64,7 @@ class GroupComponent(Component.Component):
             if subcomponent_str is None:
                 subcomponent = None
             else:
-                subcomponent = self.choose_component(subcomponent_str, COMPONENT_REQUEST_PROPERTIES, components, ["types", type_str])
+                subcomponent = self.choose_component(subcomponent_str, COMPONENT_REQUEST_PROPERTIES, components, ["subcomponents", type_str])
                 assert subcomponent is not None
                 self.links_to_other_components.append(subcomponent)
                 subcomponent.parents.append(self)

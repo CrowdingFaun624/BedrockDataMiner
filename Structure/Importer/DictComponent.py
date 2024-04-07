@@ -7,6 +7,7 @@ import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
+import Structure.Importer.TagComponent as TagComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
@@ -14,6 +15,7 @@ import Utilities.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
+TAG_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_tag": True}])
 TYPE_ALIAS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
 
 class DictComponent(StructureComponent.StructureComponent):
@@ -34,6 +36,7 @@ class DictComponent(StructureComponent.StructureComponent):
             TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
             TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
+            TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
             TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         )),
@@ -53,15 +56,18 @@ class DictComponent(StructureComponent.StructureComponent):
         self.normalizer_strs = None if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"])
         self.print_all = data.get("print_all", False)
         self.types_strs = data["types"]
+        self.tags_strs = data.get("tags", [])
 
         self.subcomponent:StructureComponent.StructureComponent|GroupComponent.GroupComponent|None = None
         self.comparison_move_function:Callable|None = None
         self.normalizers:list[NormalizerComponent.NormalizerComponent]|None = None
         self.types:list[type|TypeAliasComponent.TypeAliasComponent] = []
+        self.tags:list[TagComponent.TagComponent]|None = None
         self.links_to_other_components:list[Component.Component] = []
         self.parents:list[Component.Component] = []
         self.types_final:tuple[type,...]|None = None
         self.final:DictStructure.DictStructure|None = None
+        self.tags_final:list[str] = []
 
         self.children_has_normalizer = False
 
@@ -104,10 +110,18 @@ class DictComponent(StructureComponent.StructureComponent):
             self.link_components(normalizers)
             return normalizers
 
-    def set(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
+    def set_tags(self, tags_strs:list[str], components:dict[str,Component.Component]) -> list[TagComponent.TagComponent]:
+        tags:list[TagComponent.TagComponent] = []
+        for index, tag_str in enumerate(tags_strs):
+            tags.append(self.choose_component(tag_str, TAG_REQUEST_PROPERTIES, components, ["tags", index]))
+        self.link_components(tags)
+        return tags
+
+    def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
         self.subcomponent = self.set_subcomponent(components, self.subcomponent_str)
         self.comparison_move_function = self.set_comparison_move_function(functions, self.comparison_move_function_str)
         self.types = self.choose_types("types", self.types_strs, components)
+        self.tags = self.set_tags(self.tags_strs, components)
         self.normalizers = self.set_normalizers(components, self.normalizer_strs)
 
     def create_final_get_types_final(self, types:list[type|TypeAliasComponent.TypeAliasComponent]) -> tuple[type,...]:
@@ -134,6 +148,7 @@ class DictComponent(StructureComponent.StructureComponent):
             measure_length=self.measure_length,
             normalizer=normalizer_final,
             print_all=self.print_all,
+            tags=self.tags_final,
             children_has_normalizer=self.children_has_normalizer,
         )
 
@@ -149,6 +164,10 @@ class DictComponent(StructureComponent.StructureComponent):
         else:
             assert self.subcomponent.final is not None
             self.final.structure = cast(Structure.Structure|None|dict[type,Structure.Structure|None], self.subcomponent.final)
+        
+        assert self.tags is not None
+        for tag in self.tags:
+            self.tags_final.append(tag.name)
 
     def check(self) -> list[Exception]|None:
         assert self.final is not None

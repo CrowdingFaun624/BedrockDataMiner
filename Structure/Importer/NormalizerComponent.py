@@ -36,7 +36,7 @@ class NormalizerComponent(Component.Component):
 
         self.children_has_normalizer = True
 
-    def set(self, components: dict[str, Component.Component], functions: dict[str, Callable]) -> None:
+    def set_component(self, components: dict[str, Component.Component], functions: dict[str, Callable]) -> None:
         if self.function_name not in functions:
             raise KeyError("Function \"%s\", referenced in key \"function_name\" of %s \"%s\", does not exist!" % (self.function_name, self.class_name, self.name))
         self.final = Normalizer.Normalizer(functions[self.function_name], self.dependencies)

@@ -6,6 +6,7 @@ import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
+import Structure.Importer.TagComponent as TagComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.ListStructure as ListStructure
 import Structure.Normalizer as Normalizer
@@ -13,6 +14,7 @@ import Utilities.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
+TAG_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_tag": True}])
 TYPE_ALIAS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
 
 class ListComponent(StructureComponent.StructureComponent):
@@ -33,6 +35,7 @@ class ListComponent(StructureComponent.StructureComponent):
             TypeVerifier.TypedDictKeyTypeVerifier("ordered", "a bool", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", False, bool),
+            TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
             TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         )),
@@ -51,6 +54,7 @@ class ListComponent(StructureComponent.StructureComponent):
         self.ordered = data.get("ordered", True)
         self.print_all = data.get("print_all", False)
         self.print_flat = data.get("print_flat", False)
+        self.tags_strs = data.get("tags", [])
         self.types_strs = data["types"]
 
         self.subcomponent:StructureComponent.StructureComponent|GroupComponent.GroupComponent|None = None
@@ -58,12 +62,14 @@ class ListComponent(StructureComponent.StructureComponent):
         self.links_to_other_components:list[Component.Component] = []
         self.parents:list[Component.Component] = []
         self.normalizers:list[NormalizerComponent.NormalizerComponent]|None = None
+        self.tags:list[TagComponent.TagComponent]|None = []
         self.types_final:list[type] = []
+        self.tags_final:list[str] = []
         self.final:ListStructure.ListStructure|None = None
 
         self.children_has_normalizer = False
 
-    def set_component(self, components:dict[str,Component.Component], subcomponent_str:str|None) -> StructureComponent.StructureComponent|GroupComponent.GroupComponent|None:
+    def set_sub_component(self, components:dict[str,Component.Component], subcomponent_str:str|None) -> StructureComponent.StructureComponent|GroupComponent.GroupComponent|None:
         if subcomponent_str is None:
             return None
         else:
@@ -90,9 +96,17 @@ class ListComponent(StructureComponent.StructureComponent):
             self.link_components(normalizers)
             return normalizers
 
-    def set(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
-        self.subcomponent = self.set_component(components, self.subcomponent_str)
+    def set_tags(self, components:dict[str,Component.Component], tags_strs:list[str]) -> list[TagComponent.TagComponent]:
+        tags:list[TagComponent.TagComponent] = []
+        for index, tag_str in enumerate(tags_strs):
+            tags.append(self.choose_component(tag_str, TAG_REQUEST_PROPERTIES, components, ["tags", index]))
+        self.link_components(tags)
+        return tags
+
+    def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
+        self.subcomponent = self.set_sub_component(components, self.subcomponent_str)
         self.types = self.set_types(components, self.types_strs)
+        self.tags = self.set_tags(components, self.tags_strs)
         self.normalizers = self.set_normalizers(components, self.normalizer_strs)
 
     def create_final_get_final_types(self, types:list[type|TypeAliasComponent.TypeAliasComponent]|None) -> list[type]:
@@ -119,6 +133,7 @@ class ListComponent(StructureComponent.StructureComponent):
             measure_length=self.measure_length,
             normalizer=normalizer_final,
             ordered=self.ordered,
+            tags=self.tags_final,
             children_has_normalizer=self.children_has_normalizer,
         )
 
@@ -133,6 +148,10 @@ class ListComponent(StructureComponent.StructureComponent):
             self.final.structure = None
         else:
             self.final.structure = self.subcomponent.final
+        
+        assert self.tags is not None
+        for tag in self.tags:
+            self.tags_final.append(tag.name)
 
     def check_components(self) -> list[Exception]:
         if self.subcomponent is None:

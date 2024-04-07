@@ -9,6 +9,18 @@ if TYPE_CHECKING:
     import Structure.Importer.GroupComponent as GroupComponent
     import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 
+ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotRequired[str], "component": Required[str]})
+
+ImportTypedDict = TypedDict("ImportTypedDict", {"from": Required[str], "components": Required[list[ImportedComponentTypedDict]]})
+
+class BaseComponentTypedDict(TypedDict):
+    subcomponent: Required[str]
+    imports: NotRequired[list[ImportTypedDict]]
+    name: Required[str]
+    normalizer: NotRequired[str]
+    post_normalizer: NotRequired[str]
+    type: Required[Literal["Base"]]
+
 class DictComponentTypedDict(TypedDict):
     subcomponent: Required[str|None]
     comparison_move_function: NotRequired[str]
@@ -23,45 +35,6 @@ class DictComponentTypedDict(TypedDict):
 class GroupComponentTypedDict(TypedDict):
     type: Required[Literal["Group"]]
     subcomponents: Required[dict[str,str|None]]
-
-class ListComponentTypedDict(TypedDict):
-    subcomponent: Required[str|None]
-    field: NotRequired[str]
-    measure_length: NotRequired[bool]
-    normalizer: NotRequired[str|list[str]]
-    ordered: NotRequired[bool]
-    print_all: NotRequired[bool]
-    print_flat: NotRequired[bool]
-    type: Required[Literal["List"]]
-    types: Required[list[str]]
-
-ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotRequired[str], "component": Required[str]})
-
-ImportTypedDict = TypedDict("ImportTypedDict", {"from": Required[str], "components": Required[list[ImportedComponentTypedDict]]})
-
-class BaseComponentTypedDict(TypedDict):
-    subcomponent: Required[str]
-    imports: NotRequired[list[ImportTypedDict]]
-    name: Required[str]
-    normalizer: NotRequired[str]
-    post_normalizer: NotRequired[str]
-    type: Required[Literal["Base"]]
-
-class NbtBaseTypedDict(TypedDict):
-    subcomponent: Required[str]
-    endianness: Required[Literal["big", "little"]]
-    normalizer: NotRequired[list[str]|str]
-    type: Required[Literal["NbtBase"]]
-    types: Required[list[str]]
-
-class NormalizerTypedDict(TypedDict):
-    dependencies: Required[list[str]]
-    function_name: Required[str]
-    type: Required[Literal["Normalizer"]]
-
-class TypeAliasTypedDict(TypedDict):
-    type: Required[Literal["TypeAlias"]]
-    types: Required[list[str]]
 
 class KeymapKeyTypedDict(TypedDict):
     type: Required[str|list[str]]
@@ -78,8 +51,39 @@ class KeymapComponentTypedDict(TypedDict):
     imports: NotRequired[str|list[str]]
     measure_length: NotRequired[bool]
     normalizer: NotRequired[str|list[str]]
+    tags: NotRequired[list[str]]
     type: Required[Literal["Keymap"]]
     keys: Required[dict[str,KeymapKeyTypedDict]]
+
+class ListComponentTypedDict(TypedDict):
+    subcomponent: Required[str|None]
+    field: NotRequired[str]
+    measure_length: NotRequired[bool]
+    normalizer: NotRequired[str|list[str]]
+    ordered: NotRequired[bool]
+    print_all: NotRequired[bool]
+    print_flat: NotRequired[bool]
+    type: Required[Literal["List"]]
+    types: Required[list[str]]
+
+class NbtBaseTypedDict(TypedDict):
+    subcomponent: Required[str]
+    endianness: Required[Literal["big", "little"]]
+    normalizer: NotRequired[list[str]|str]
+    type: Required[Literal["NbtBase"]]
+    types: Required[list[str]]
+
+class NormalizerTypedDict(TypedDict):
+    dependencies: Required[list[str]]
+    function_name: Required[str]
+    type: Required[Literal["Normalizer"]]
+
+class TagTypedDict(TypedDict):
+    type: Required[Literal["Tag"]]
+
+class TypeAliasTypedDict(TypedDict):
+    type: Required[Literal["TypeAlias"]]
+    types: Required[list[str]]
 
 ComponentTypedDicts = DictComponentTypedDict|GroupComponentTypedDict|ListComponentTypedDict|BaseComponentTypedDict|NbtBaseTypedDict|NormalizerTypedDict|TypeAliasTypedDict|KeymapComponentTypedDict
 StructureComponentTypedDicts = DictComponentTypedDict|ListComponentTypedDict|KeymapComponentTypedDict

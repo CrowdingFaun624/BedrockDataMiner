@@ -12,6 +12,7 @@ import Structure.Importer.ListComponent as ListComponent
 import Structure.Importer.NbtBaseComponent as NbtBaseComponent
 import Structure.Importer.NbtTagComponent as NbtTagComponent
 import Structure.Importer.NormalizerComponent as NormalizerComponent
+import Structure.Importer.TagComponent as TagComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.StructureBase as StructureBase
 import Structure.StructureFunctions as StructureFunctions
@@ -21,6 +22,7 @@ from Utilities.FunctionCaller import FunctionCaller, WaitValue
 component_types:list[type[Component.Component]] = [
     GroupComponent.GroupComponent, # near the top so they are created first
     NormalizerComponent.NormalizerComponent,
+    TagComponent.TagComponent,
     DictComponent.DictComponent,
     ListComponent.ListComponent,
     BaseComponent.BaseComponent,
@@ -90,7 +92,7 @@ def set_components(components:dict[str,Component.Component], exclude:set[str], f
     for component_name, component in components.items():
         if component_name in exclude:
             continue
-        component.set(components, functions)
+        component.set_component(components, functions)
 
 def do_imports(base_components:BaseComponent.BaseComponent, partially_imported:set[str]) -> dict[str,Component.Component]:
     if base_components.imports is None: return {}

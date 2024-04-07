@@ -23,6 +23,7 @@ class NbtTagCompoundComponent(DictComponent.DictComponent):
             TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
             TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
+            TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
             TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         )),
@@ -41,6 +42,7 @@ def get_list_type_verifier(class_name:str) -> TypeVerifier.TypeVerifier:
             TypeVerifier.TypedDictKeyTypeVerifier("ordered", "a bool", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", False, bool),
+            TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
             TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         )),
@@ -117,6 +119,7 @@ class NbtKeymapTagCompoundComponent(KeymapComponent.KeymapComponent):
             TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
             TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
+            TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
             TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
                 TypeVerifier.TypedDictKeyTypeVerifier("type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),

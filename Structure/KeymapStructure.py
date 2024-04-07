@@ -16,9 +16,10 @@ class KeymapStructure(DictStructure.DictStructure[d]):
     def __init__(
             self,
             name:str,
-            types:dict[tuple[str,type],Structure.Structure[d]|None],
+            keys:dict[tuple[str,type],Structure.Structure[d]|None],
             measure_length:bool,
             print_all:bool,
+            tags:dict[str,list[str]],
             normalizer:list[Normalizer.Normalizer]|None,
             children_has_normalizer:bool,
         ) -> None:
@@ -32,10 +33,11 @@ class KeymapStructure(DictStructure.DictStructure[d]):
          * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
 
         self.name = name
-        self.types = types
+        self.keys = keys
         self.detect_key_moves = False
         self.measure_length = measure_length
         self.print_all = print_all
+        self.tags = tags
         self.normalizer = normalizer
         self.children_has_normalizer = children_has_normalizer
         self.check_initialization_parameters()
@@ -43,7 +45,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
 
     def finalize(self) -> None:
         # During __init__, not all finals have been created yet, so self.types is not filled out yet. In finalize, it is filled out.
-        for allowed_key, key_type in self.types:
+        for allowed_key, key_type in self.keys:
             if allowed_key not in self.key_types:
                 self.key_types[allowed_key] = {key_type}
             else:
@@ -51,12 +53,13 @@ class KeymapStructure(DictStructure.DictStructure[d]):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("types", "a dict", True, TypeVerifier.DictTypeVerifier(dict, TypeVerifier.TupleTypeVerifier(tuple, "a tuple",
+        TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, TypeVerifier.TupleTypeVerifier(tuple, "a tuple",
             TypeVerifier.TupleItemTypeVerifier(str, "a str"),
             TypeVerifier.TupleItemTypeVerifier(type, "a type"),
         ), (Structure.Structure, type(None)), "a dict", "a tuple", "a Structure or None")),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"), "a dict", "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list", additional_function=lambda data: (sum(1 for item in data) > 0, "empty"))))),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
     )
@@ -64,9 +67,10 @@ class KeymapStructure(DictStructure.DictStructure[d]):
     def check_initialization_parameters(self) -> None:
         self.type_verifier.base_verify({
             "name": self.name,
-            "types": self.types,
+            "keys": self.keys,
             "measure_length": self.measure_length,
             "print_all": self.print_all,
+            "tags": self.tags,
             "normalizer": self.normalizer,
             "children_has_normalizer": self.children_has_normalizer,
         })
@@ -83,7 +87,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
     def choose_structure_flat(self, key: str, value:type[d], trace: Trace.Trace) -> Structure.Structure | None:
         exception = None
         try:
-            return self.types[key, value]
+            return self.keys[key, value]
         except Exception as e:
             exception = e
             exception.args = tuple(list(exception.args) + ["Failed to get Structure in %s in %s for key, value %s: %s" % (self.name, trace, key, value)])
@@ -100,7 +104,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
         for key_iter, value_iter, key_diff_type, value_diff_type in iterator:
             exception:Exception|None = None
             try:
-                output[value_diff_type] = self.types[key_iter, type(value_iter)]
+                output[value_diff_type] = self.keys[key_iter, type(value_iter)]
             except Exception as e:
                 exception = e
                 exception.args = tuple(list(exception.args) + ["Failed to get Structure in %s in %s for key, value %s: %s" % (self.name, trace, key_iter, value_iter)])

@@ -21,6 +21,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             ordered:bool,
             measure_length:bool,
             print_all:bool,
+            tags:list[str],
             normalizer:list[Normalizer.Normalizer]|None,
             children_has_normalizer:bool,
         ) -> None:
@@ -43,6 +44,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         self.measure_length = measure_length
         self.print_all = print_all
         self.normalizer = normalizer
+        self.tags = tags
         self.children_has_normalizer = children_has_normalizer
         self.check_initialization_parameters()
 
@@ -59,6 +61,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         TypeVerifier.TypedDictKeyTypeVerifier("ordered", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list", additional_function=lambda data: (len(data) > 0, "empty"))))),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
     )
@@ -72,6 +75,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             "ordered": self.ordered,
             "measure_length": self.measure_length,
             "print_all": self.print_all,
+            "tags": self.tags,
             "normalizer": self.normalizer,
             "children_has_normalizer": self.children_has_normalizer,
         })

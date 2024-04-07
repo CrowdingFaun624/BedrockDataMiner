@@ -33,7 +33,7 @@ class TypeAliasComponent(Component.Component):
 
         self.children_has_normalizer = False
 
-    def set(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
+    def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
         self.types = []
         already_types:set[str] = set()
         for type_str in self.types_strs:

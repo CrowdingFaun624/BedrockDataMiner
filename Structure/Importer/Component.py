@@ -11,14 +11,14 @@ class Component():
 
     my_properties:ComponentCapabilities.Capabilities
     children_has_normalizer_default = False
-
     type_verifier:TypeVerifier.TypeVerifier
 
-    def __init__(self, data:ComponentTyping.ComponentTypedDicts, name:str, index:int) -> None:
-        self.name = name
-        self.links_to_other_components:list[Component] = []
-        self.parents:list[Component] = []
-        self.children_has_normalizer = False
+    name: str
+    links_to_other_components:list["Component"]
+    parents:list["Component"]
+    children_has_normalizer:bool
+
+    def __init__(self, data:ComponentTyping.ComponentTypedDicts, name:str, index:int) -> None: ...
 
     def link_components(self, components:"Component"|Iterable["Component"]) -> None:
         if isinstance(components, Component):
@@ -27,9 +27,9 @@ class Component():
         for component in components:
             component.parents.append(self)
 
-    def set(self, components:dict[str,"Component"], functions:dict[str,Callable]) -> None:
+    def set_component(self, components:dict[str,"Component"], functions:dict[str,Callable]) -> None:
         '''Links this Component to other Components'''
-        raise NotImplementedError("Class \"%s\" does not have its `set` function!" % (self.class_name,))
+        raise NotImplementedError("Class \"%s\" does not have its `set_component` function!" % (self.class_name,))
 
     def create_final(self) -> None:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''

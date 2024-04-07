@@ -53,7 +53,7 @@ class NbtBaseComponent(StructureComponent.StructureComponent):
         self.final:NbtBaseStructure.NbtBaseStructure|None = None
         self.subcomponent:StructureComponent.StructureComponent|GroupComponent.GroupComponent|None = None
 
-    def set(self, components: dict[str, Component.Component], functions: dict[str, Callable]) -> None:
+    def set_component(self, components: dict[str, Component.Component], functions: dict[str, Callable]) -> None:
         self.subcomponent:StructureComponent.StructureComponent|GroupComponent.GroupComponent|None = self.choose_component(self.subcomponent_str, COMPONENT_REQUEST_PROPERTIES, components, ["subcomponent"])
         assert self.subcomponent is not None
         self.links_to_other_components.append(self.subcomponent)

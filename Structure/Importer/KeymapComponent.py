@@ -6,6 +6,7 @@ import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
+import Structure.Importer.TagComponent as TagComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.KeymapStructure as KeymapStructure
 import Structure.Normalizer as Normalizer
@@ -15,7 +16,10 @@ import Utilities.TypeVerifier as TypeVerifier
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 IMPORTABLE_KEYS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"has_importable_keys": True}])
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
+TAG_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_tag": True}])
 TYPE_ALIAS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
+
+empty_set_of_strings:set[str] = set()
 
 class KeymapComponent(StructureComponent.StructureComponent):
 
@@ -33,6 +37,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
             TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
             TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
+            TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier("Keymap")),
             TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
                 TypeVerifier.TypedDictKeyTypeVerifier("type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -49,20 +54,24 @@ class KeymapComponent(StructureComponent.StructureComponent):
 
         self.name = name
         self.field = data.get("field", "field")
-        self.types_strs = data["keys"]
-        self.types:dict[str,ComponentTyping.KeymapKeyFilledTypedDict]|None = None
+        self.keys_strs = data["keys"]
+        self.keys:dict[str,ComponentTyping.KeymapKeyFilledTypedDict]|None = None
         self.imports = [] if "imports" not in data else ([data["imports"]] if isinstance(data["imports"], str) else data["imports"])
         self.measure_length = data.get("measure_length", False)
         self.normalizer_strs:list[str]|None = None if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"])
         self.print_all = data.get("print_all", False)
-        self.tags = {key: (value["tags"] if "tags" in value else []) for key, value in self.types_strs.items()}
+        self.tags_for_all_strs = data.get("tags", [])
+        self.tags_strs = {key: (value["tags"] if "tags" in value else []) for key, value in self.keys_strs.items()}
 
         self.links_to_other_components:list[Component.Component] = []
         self.parents:list[Component.Component] = []
         self.normalizers:list[NormalizerComponent.NormalizerComponent]|None = None
+        self.tags:dict[str,list[TagComponent.TagComponent]]|None = None
+        self.tags_for_all:list[TagComponent.TagComponent]|None = None
         self.keys_final:dict[tuple[str,type],Structure.Structure|None] = {}
         self.check_keys_final:dict[str,tuple[list[type],StructureComponent.StructureComponent|GroupComponent.GroupComponent|None]] = {}
         self.final:KeymapStructure.KeymapStructure|None = None
+        self.tags_final:dict[str,list[str]] = {}
 
         self.children_has_normalizer = self.children_has_normalizer_default
 
@@ -96,11 +105,11 @@ class KeymapComponent(StructureComponent.StructureComponent):
 
     def add_import_to_self(self, imports:list["KeymapComponent"]) -> None:
         for component in imports:
-            for new_key, new_value in component.types_strs.items():
-                if new_key in self.types_strs: continue
-                self.types_strs[new_key] = new_value
+            for new_key, new_value in component.keys_strs.items():
+                if new_key in self.keys_strs: continue
+                self.keys_strs[new_key] = new_value
 
-    def set_component(self, key:str, data:ComponentTyping.KeymapKeyTypedDict, components:dict[str,Component.Component]) -> StructureComponent.StructureComponent|GroupComponent.GroupComponent|None:
+    def set_subcomponent(self, key:str, data:ComponentTyping.KeymapKeyTypedDict, components:dict[str,Component.Component]) -> StructureComponent.StructureComponent|GroupComponent.GroupComponent|None:
         if "subcomponent" not in data or data["subcomponent"] is None: return None
         subcomponent:StructureComponent.StructureComponent|GroupComponent.GroupComponent = self.choose_component(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, components, ["keys", key, "subcomponent"])
         self.links_to_other_components.append(subcomponent)
@@ -109,7 +118,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
 
     def set_type(self, key:str, data:ComponentTyping.KeymapKeyTypedDict, components:dict[str,Component.Component]) -> ComponentTyping.KeymapKeyFilledTypedDict:
         return {
-            "subcomponent": self.set_component(key, data, components),
+            "subcomponent": self.set_subcomponent(key, data, components),
             "type": self.choose_types(key, data, components),
         }
 
@@ -123,13 +132,28 @@ class KeymapComponent(StructureComponent.StructureComponent):
             normalizers:list[NormalizerComponent.NormalizerComponent] = [self.choose_component(normalizer_str, NORMALIZER_REQUEST_PROPERTIES, components, ["normalizer"]) for normalizer_str in normalizer_strs]
             return normalizers
 
-    def set(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
+    def set_tags(self, components:dict[str,Component.Component], tags_strs:dict[str,list[str]], tags_for_all_strs:list[str]) -> tuple[dict[str,list[TagComponent.TagComponent]], list[TagComponent.TagComponent]]:
+        tags:dict[str,list[TagComponent.TagComponent]] = {}
+        for key, key_tags_strs in tags_strs.items():
+            tag_components:list[TagComponent.TagComponent] = []
+            for index, key_tag_str in enumerate(key_tags_strs):
+                tag_components.append(self.choose_component(key_tag_str, TAG_REQUEST_PROPERTIES, components, ["keys", key, "tags", index]))
+            self.link_components(tag_components)
+            tags[key] = tag_components
+        tags_for_all:list[TagComponent.TagComponent] = []
+        for index, tag_str in enumerate(tags_for_all_strs):
+            tags_for_all.append(self.choose_component(tag_str, TAG_REQUEST_PROPERTIES, components, ["tags", index]))
+        self.link_components(tags_for_all)
+        return tags, tags_for_all
+
+    def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
         imports = self.set_imports(components, self.imports)
         self.link_components(imports)
         self.add_import_to_self(imports)
 
-        self.types = self.set_types(components, self.types_strs)
+        self.keys = self.set_types(components, self.keys_strs)
         self.normalizers = self.set_normalizers(components, self.normalizer_strs)
+        self.tags, self.tags_for_all = self.set_tags(components, self.tags_strs, self.tags_for_all_strs)
         if self.normalizers is not None:
             self.link_components(self.normalizers)
 
@@ -139,10 +163,11 @@ class KeymapComponent(StructureComponent.StructureComponent):
     def create_final_get_final(self, normalizer_final:list[Normalizer.Normalizer]|None) -> KeymapStructure.KeymapStructure:
         return KeymapStructure.KeymapStructure(
             name=self.field,
-            types=self.keys_final,
+            keys=self.keys_final,
             measure_length=self.measure_length,
             normalizer=normalizer_final,
             print_all=self.print_all,
+            tags=self.tags_final,
             children_has_normalizer=self.children_has_normalizer,
         )
 
@@ -158,8 +183,8 @@ class KeymapComponent(StructureComponent.StructureComponent):
                 yield from item.types
 
     def link_finals(self) -> None:
-        assert self.types is not None
-        for types_key, types_value in self.types.items():
+        assert self.keys is not None
+        for types_key, types_value in self.keys.items():
             subcomponent = types_value["subcomponent"]
             if isinstance(subcomponent, GroupComponent.GroupComponent):
                 assert subcomponent.final is not None
@@ -172,6 +197,12 @@ class KeymapComponent(StructureComponent.StructureComponent):
                 for key_type in key_types:
                     self.keys_final[types_key, key_type] = structure
                 self.check_keys_final[types_key] = (list(self.expand_types(types_value["type"])), subcomponent)
+        
+        assert self.tags is not None
+        assert self.tags_for_all is not None
+        tags_for_all_set = {tag.name for tag in self.tags_for_all}
+        for key, tags in self.tags.items():
+            self.tags_final[key] = sorted({tag.name for tag in tags} | tags_for_all_set)
 
     def check(self) -> list[Exception]|None:
         assert self.final is not None

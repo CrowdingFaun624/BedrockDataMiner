@@ -56,7 +56,7 @@ class BaseComponent(Component.Component):
 
         self.children_has_normalizer = False
 
-    def set(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
+    def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
         self.subcomponent:StructureComponent.StructureComponent|None = self.choose_component(self.subcomponent_str, COMPONENT_REQUEST_PROPERTIES, components, ["subcomponent"])
         assert self.subcomponent is not None
         self.links_to_other_components.append(self.subcomponent)

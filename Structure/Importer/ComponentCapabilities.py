@@ -7,6 +7,7 @@ ALLOWED_PROPERTIES = set([
     "is_nbt_base",
     "is_nbt_tag",
     "is_normalizer",
+    "is_tag",
     "is_type_alias",
 ])
 
