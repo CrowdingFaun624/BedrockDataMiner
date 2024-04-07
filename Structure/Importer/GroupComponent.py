@@ -1,11 +1,11 @@
 from typing import Callable
 
-import Structure.Structure as Structure
-import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
+import Structure.Structure as Structure
 import Utilities.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_structure": True}])

@@ -1,8 +1,8 @@
 from typing import Callable
 
 import Structure.Importer.Component as Component
-import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Normalizer as Normalizer
 import Utilities.TypeVerifier as TypeVerifier
 

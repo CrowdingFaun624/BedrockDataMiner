@@ -1,10 +1,10 @@
 from typing import Callable
 
-import Structure.Importer.StructureComponent as StructureComponent
-import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.NormalizerComponent as NormalizerComponent
+import Structure.Importer.StructureComponent as StructureComponent
 import Structure.StructureBase as StructureBase
 import Utilities.TypeVerifier as TypeVerifier
 

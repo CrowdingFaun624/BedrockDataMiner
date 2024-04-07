@@ -1,6 +1,6 @@
-import Structure.Structure as Structure
-import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Component as Component
+import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Structure as Structure
 
 class StructureComponent(Component.Component): # just for type hints lol
 

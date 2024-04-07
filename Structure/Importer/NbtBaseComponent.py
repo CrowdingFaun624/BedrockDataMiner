@@ -1,17 +1,16 @@
 from typing import Callable, cast
 
-import Structure.Importer.ComponentTyping as ComponentTyping
-import Structure.Importer.StructureComponent as StructureComponent
-import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.NormalizerComponent as NormalizerComponent
+import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.NbtBaseStructure as NbtBaseStructure
 import Structure.Normalizer as Normalizer
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtTypes as NbtTypes
-import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])

@@ -1,11 +1,11 @@
 from typing import Callable, cast
 
-import Structure.Importer.StructureComponent as StructureComponent
-import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.NormalizerComponent as NormalizerComponent
+import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.ListStructure as ListStructure
 import Structure.Normalizer as Normalizer

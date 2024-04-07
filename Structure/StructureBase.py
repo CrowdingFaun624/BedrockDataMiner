@@ -1,10 +1,10 @@
 import traceback
 from typing import Any, TypeVar, TYPE_CHECKING, Union
 
-import Structure.Structure as Structure
-import Structure.StructureUtilities as SU
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
+import Structure.Structure as Structure
+import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier

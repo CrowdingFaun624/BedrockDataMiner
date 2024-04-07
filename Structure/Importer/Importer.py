@@ -2,19 +2,19 @@ import json
 import traceback
 from typing import Callable, Generator, Iterable
 
-import Structure.StructureBase as StructureBase
-import Structure.StructureFunctions as StructureFunctions
+import Structure.Importer.BaseComponent as BaseComponent
+import Structure.Importer.Component as Component
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.DictComponent as DictComponent
 import Structure.Importer.GroupComponent as GroupComponent
-import Structure.Importer.Component as Component
+import Structure.Importer.KeymapComponent as KeymapComponent
 import Structure.Importer.ListComponent as ListComponent
-import Structure.Importer.BaseComponent as BaseComponent
 import Structure.Importer.NbtBaseComponent as NbtBaseComponent
 import Structure.Importer.NbtTagComponent as NbtTagComponent
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
-import Structure.Importer.KeymapComponent as KeymapComponent
+import Structure.StructureBase as StructureBase
+import Structure.StructureFunctions as StructureFunctions
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
 

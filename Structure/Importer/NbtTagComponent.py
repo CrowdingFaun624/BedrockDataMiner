@@ -1,7 +1,7 @@
-import Structure.Importer.DictComponent as DictComponent
-import Structure.Importer.ListComponent as ListComponent
-import Structure.Importer.KeymapComponent as KeymapComponent
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.DictComponent as DictComponent
+import Structure.Importer.KeymapComponent as KeymapComponent
+import Structure.Importer.ListComponent as ListComponent
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.TypeVerifier as TypeVerifier
 

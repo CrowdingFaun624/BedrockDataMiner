@@ -1,11 +1,11 @@
 from typing import TypeVar
 
-import Structure.Structure as Structure
-import Structure.StructureSet as StructureSet
-import Structure.StructureUtilities as SU
 import Structure.DictStructure as DictStructure
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
+import Structure.Structure as Structure
+import Structure.StructureSet as StructureSet
+import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 

@@ -1,8 +1,8 @@
 from typing import Callable
 
-import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.ComponentTyping as ComponentTyping
 import Utilities.TypeVerifier as TypeVerifier
 
 class TypeAliasComponent(Component.Component):

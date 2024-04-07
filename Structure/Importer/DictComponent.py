@@ -1,15 +1,15 @@
 from typing import Callable, cast
 
-import Structure.Structure as Structure
 import Structure.DictStructure as DictStructure
-import Structure.Importer.StructureComponent as StructureComponent
-import Structure.Importer.ComponentTyping as ComponentTyping
-import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.NormalizerComponent as NormalizerComponent
+import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.Normalizer as Normalizer
+import Structure.Structure as Structure
 import Utilities.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])

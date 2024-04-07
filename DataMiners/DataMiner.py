@@ -4,11 +4,11 @@ import threading
 import traceback
 from typing import Any, Callable, IO, Iterable, Literal, Sequence
 
-import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.DataMinerParameters as DataMinerParameters
+import DataMiners.DataMinerTyping as DataMinerTyping
 import Downloader.VersionsParser as VersionsParser
-import Structure.StructureBase as StructureBase
 import Structure.Normalizer as Normalizer
+import Structure.StructureBase as StructureBase
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import WaitValue

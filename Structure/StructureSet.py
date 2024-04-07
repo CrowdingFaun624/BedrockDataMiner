@@ -1,7 +1,7 @@
 from typing import Generic, TYPE_CHECKING, TypeVar, Union
 
-import Structure.StructureUtilities as SU
 import Structure.Difference as D
+import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 
 if TYPE_CHECKING:
