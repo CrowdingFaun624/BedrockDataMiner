@@ -256,21 +256,21 @@ class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]
                 output[value_diff_type] = self.comparer
         return ComparerSet.ComparerSet(output)
 
-    def print_item(self, key:str, value:d, comparer_set:ComparerSet.ComparerSet[d], trace:Trace.Trace, message:str="") -> list[str]:
+    def print_item(self, key:str, value:d, comparer_set:ComparerSet.ComparerSet[d], trace:Trace.Trace, message:str="") -> list[CU.Line]:
         subcomparer_output = comparer_set.print_text(D.DiffType.not_diff, value, trace.copy(self.name, key))
         match len(subcomparer_output):
             case 0:
-                return ["%s%s %s: empty" % (message, self.name, CU.stringify(key))]
+                return [CU.Line("%s%s %s: empty") % (message, self.name, CU.stringify(key))]
             case 1:
-                return ["%s%s %s: %s" % (message, self.name, CU.stringify(key), subcomparer_output[0])]
+                return [CU.Line("%s%s %s: %s") % (message, self.name, CU.stringify(key), subcomparer_output[0])]
             case _:
-                output:list[str] = []
-                output.append("%s%s %s:" % (message, self.name, CU.stringify(key)))
-                output.extend("\t" + line for line in subcomparer_output)
+                output:list[CU.Line] = []
+                output.append(CU.Line("%s%s %s:") % (message, self.name, CU.stringify(key)))
+                output.extend(line.indent() for line in subcomparer_output)
                 return output
 
-    def print_text(self, data:MutableMapping[str, d], trace:Trace.Trace) -> list[str]:
-        output:list[str] = []
+    def print_text(self, data:MutableMapping[str, d], trace:Trace.Trace) -> list[CU.Line]:
+        output:list[CU.Line] = []
         if not isinstance(data, self.valid_types):
             raise TypeError("`data` is not [%s] at %s, but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), trace.give_key(self.name), type(data)))
         for key, value in data.items():
@@ -278,8 +278,8 @@ class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]
             output.extend(self.print_item(key, value, comparer_set, trace))
         return output
 
-    def compare_text(self, data:MutableMapping[str, d], trace:Trace.Trace) -> tuple[list[str],bool]:
-        output:list[str] = []
+    def compare_text(self, data:MutableMapping[str, d], trace:Trace.Trace) -> tuple[list[CU.Line],bool]:
+        output:list[CU.Line] = []
         any_changes = False
         if not isinstance(data, self.valid_types):
             raise TypeError("`data` is not [%s] at %s, but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), trace.give_key(self.name), type(data)))
@@ -293,7 +293,7 @@ class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]
             if isinstance(key, D.Diff) and key.is_change:
                 can_print_print_all = False
                 any_changes = True
-                output.append("Moved %s %s to %s." % (self.name, CU.stringify(key.old), CU.stringify(key.new)))
+                output.append(CU.Line("Moved %s %s to %s.") % (self.name, CU.stringify(key.old), CU.stringify(key.new)))
             if isinstance(value, D.Diff):
                 any_changes = True
                 size_changed = True
@@ -317,10 +317,10 @@ class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]
                     subcomparer_lines, has_changes = comparer_set.compare_text(D.DiffType.not_diff, value, trace.copy(self.name, key_str))
                     if has_changes:
                         any_changes = True
-                        output.append("Changed %s %s:" % (self.name, CU.stringify(key_str)))
-                        output.extend("\t" + line for line in subcomparer_lines)
+                        output.append(CU.Line("Changed %s %s:") % (self.name, CU.stringify(key_str)))
+                        output.extend(line.indent() for line in subcomparer_lines)
                     elif self.print_all and can_print_print_all:
                         output.extend(self.print_item(key_str, value, comparer_set, trace, message="Unchanged "))
         if self.measure_length and size_changed:
-            output = ["Total %s: %i (+%i, -%i)" % (self.name, current_length, addition_length, removal_length)] + output
+            output = [CU.Line("Total %s: %i (+%i, -%i)") % (self.name, current_length, addition_length, removal_length)] + output
         return output, any_changes

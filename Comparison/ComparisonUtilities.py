@@ -32,3 +32,20 @@ def stringify(data:Any) -> str:
             else:
                 error_message = "Unencodable object of type \"%s\": %s" % (data.__class__.__name__, stringified_data)
             raise TypeError(error_message)
+
+class Line():
+
+    def __init__(self, text:str, *, indent:int=0) -> None:
+        self.text = text
+        self.indents = indent
+
+    def indent(self, amount:int=1) -> "Line":
+        self.indents += amount
+        return self
+    
+    def __mod__(self, data:Any) -> "Line":
+        self.text %= data
+        return self
+
+    def __str__(self) -> str:
+        return "\t" * self.indents + self.text

@@ -71,9 +71,7 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
-# TODO: make each comparison report line an object to make indenting faster.
 # TODO: Rename stuff in Comparison
-# TODO: the ability to choose endianness per-key/comparer is completely unnecessary, please remove it
 # TODO: fix meta-dataminers relating to the usage of sound events (use all available sources)
 # TODO: make more dataminers
 # TODO: make more domains

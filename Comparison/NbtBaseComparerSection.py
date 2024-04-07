@@ -114,13 +114,13 @@ class NbtBaseComparerSection(ComparerSection.ComparerSection[NbtTypes.TAG]):
         comparer_set = self.choose_comparer(D.Diff(data1, data2), trace)
         return comparer_set.compare(data1, data2, trace)
 
-    def print_text(self, data: NbtTypes.TAG, trace: Trace.Trace) -> list[str]:
+    def print_text(self, data: NbtTypes.TAG, trace: Trace.Trace) -> list[CU.Line]:
         return self.choose_comparer(data, trace).print_text(D.DiffType.not_diff, data, trace.copy(self.name))
 
-    def compare_text(self, data:NbtTypes.TAG|D.Diff[NbtTypes.TAG,NbtTypes.TAG], trace: Trace.Trace) -> tuple[list[str], bool]:
+    def compare_text(self, data:NbtTypes.TAG|D.Diff[NbtTypes.TAG,NbtTypes.TAG], trace: Trace.Trace) -> tuple[list[CU.Line], bool]:
         comparer_set = self.choose_comparer(data, trace)
         if isinstance(data, D.Diff):
-            output:list[str] = []
+            output:list[CU.Line] = []
             match data.change_type:
                 case D.ChangeType.addition:
                     self.print_single(None, data.new, "Added", output, comparer_set[D.DiffType.new], trace)

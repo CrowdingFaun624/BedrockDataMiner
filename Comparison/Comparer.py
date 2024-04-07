@@ -2,6 +2,7 @@ import traceback
 from typing import Any, TypeVar, TYPE_CHECKING, Union
 
 import Comparison.ComparerSection as ComparerSection
+import Comparison.ComparisonUtilities as CU
 import Comparison.Difference as D
 import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
@@ -112,13 +113,10 @@ class Comparer():
 
         data_comparison = self.compare(normalized_data1, normalized_data2)
 
-        comparer_output = self.compare_text(data_comparison)
-        if not isinstance(comparer_output, tuple):
-            raise RuntimeError("Base comparer of \"%s\" did not return a tuple, but instead %s!" % (self.name, type(comparer_output)))
-        lines, any_changes = comparer_output
+        lines, any_changes = self.compare_text(data_comparison)
 
         final = header
-        final.extend(lines)
+        final.extend(str(line) for line in lines)
 
         return "\n".join(final), any_changes
 
@@ -147,13 +145,13 @@ class Comparer():
         self.print_exception_list(traces)
         return output
 
-    def compare_text(self, data:Any) -> tuple[list[str],bool]:
+    def compare_text(self, data:Any) -> tuple[list[CU.Line],bool]:
         '''Returns a list of lines and if there were any changes'''
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
         return self.base_comparer_section.compare_text(data, Trace.Trace())
 
-    def print_text(self, data:Any) -> list[str]:
+    def print_text(self, data:Any) -> list[CU.Line]:
         if self.base_comparer_section is None:
             raise RuntimeError("`base_comparer_section` was never initialized!")
         return self.base_comparer_section.print_text(data, Trace.Trace())

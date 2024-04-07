@@ -187,7 +187,6 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
         else:
             return self.comparer
 
-
     def choose_comparer(self, index:int, item:d|D.Diff[d,d], trace:Trace.Trace) -> ComparerSet.ComparerSet:
         output:dict[D.DiffType,ComparerSection.ComparerSection|None] = {}
         for item_iter, diff_type in D.iter_diff(item):
@@ -204,27 +203,27 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
                 output[diff_type] = self.comparer
         return ComparerSet.ComparerSet(output)
 
-    def print_item(self, index:int, item:d, subcomparer_output:list[str], message:str="") -> list[str]:
+    def print_item(self, index:int, item:d, subcomparer_output:list[CU.Line], message:str="") -> list[CU.Line]:
         match len(subcomparer_output), self.ordered:
             case 0, True:
-                return ["%s%s %i: empty" % (message, self.name, index)]
+                return [CU.Line("%s%s %i: empty") % (message, self.name, index)]
             case 0, False:
-                return ["%s%s: empty" % (message, self.name)]
+                return [CU.Line("%s%s: empty") % (message, self.name)]
             case 1, True:
-                return ["%s%s %i: %s" % (message, self.name, index, subcomparer_output[0])]
+                return [CU.Line("%s%s %i: %s") % (message, self.name, index, subcomparer_output[0])]
             case 1, False:
-                return ["%s%s: %s" % (message, self.name, subcomparer_output[0])]
+                return [CU.Line("%s%s: %s") % (message, self.name, subcomparer_output[0])]
             case _:
-                output:list[str] = []
+                output:list[CU.Line] = []
                 if self.ordered:
-                    output.append("%s%s %i:" % (message, self.name, index))
+                    output.append(CU.Line("%s%s %i:") % (message, self.name, index))
                 else:
-                    output.append("%s%s:" % (message, self.name))
-                output.extend("\t" + line for line in subcomparer_output)
+                    output.append(CU.Line("%s%s:") % (message, self.name))
+                output.extend(line.indent() for line in subcomparer_output)
                 return output
 
-    def print_text(self, data:Iterable[d], trace:Trace.Trace) -> list[str]:
-        output:list[str] = []
+    def print_text(self, data:Iterable[d], trace:Trace.Trace) -> list[CU.Line]:
+        output:list[CU.Line] = []
         items_str:list[str] = [] # print_flat only
         if not isinstance(data, Iterable):
             raise TypeError("`data` is not an Iterable at %s, but instead type %s!" % (trace.give_key(self.name), type(data)))
@@ -234,17 +233,17 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
             subcomparer_output = comparer_set.print_text(D.DiffType.not_diff, item, trace.copy(self.name, index))
             if self.print_flat:
                 if len(subcomparer_output) == 1:
-                    items_str.append(subcomparer_output[0])
+                    items_str.append(subcomparer_output[0].text)
                 else:
                     raise RuntimeError("Subcomparer of flat-printing %s returned multiple lines!" % (trace.give_key(self.name)))
             else:
                 output.extend(self.print_item(index, item, subcomparer_output))
         if self.print_flat:
-            output.append("[" + ", ".join(items_str) + "]")
+            output.append(CU.Line("[" + ", ".join(items_str) + "]"))
         return output
 
-    def compare_text(self, data:Iterable[d], trace:Trace.Trace) -> tuple[list[str],bool]:
-        output:list[str] = []
+    def compare_text(self, data:Iterable[d], trace:Trace.Trace) -> tuple[list[CU.Line],bool]:
+        output:list[CU.Line] = []
         any_changes = False
         if not isinstance(data, Iterable):
             raise TypeError("`data` is not an Iterable at %s, but instead type %s!" % (trace, type(data)))
@@ -279,12 +278,12 @@ class ListComparerSection(ComparerSection.ComparerSection[Iterable[d]]):
                     if has_changes:
                         any_changes = True
                         if self.ordered:
-                            output.append("Changed %s %i:" % (self.name, index))
+                            output.append(CU.Line("Changed %s %i:") % (self.name, index))
                         else:
-                            output.append("Changed %s:" % (self.name))
-                        output.extend("\t" + line for line in subcomparer_lines)
+                            output.append(CU.Line("Changed %s:") % (self.name))
+                        output.extend(line.indent() for line in subcomparer_lines)
                     elif self.print_all:
                         output.extend(self.print_item(index, item, comparer_set.print_text(D.DiffType.not_diff, item, new_trace), message="Unchanged "))
         if self.measure_length and size_changed:
-            output = ["Total %s: %i (+%i, -%i)" % (self.name, current_length, addition_length, removal_length)] + output
+            output = [CU.Line("Total %s: %i (+%i, -%i)") % (self.name, current_length, addition_length, removal_length)] + output
         return output, any_changes

@@ -33,16 +33,16 @@ class ComparerSet(Generic[d]):
         else:
             raise KeyError("Attempted to index a ComparerSet using a %s rather than a D.DiffType!" % type(key))
 
-    def print_text(self, key:D.DiffType|int, data:d, trace:Trace.Trace) -> list[str]:
+    def print_text(self, key:D.DiffType|int, data:d, trace:Trace.Trace) -> list[CU.Line]:
         if  isinstance(key, D.DiffType) and key not in self:
             raise RuntimeError("KeyError on \"%s\" in %s for data %s!" % (key, trace, data))
         comparer = self[key]
         if comparer is None:
-            return [CU.stringify(data)]
+            return [CU.Line(CU.stringify(data))]
         else:
             return comparer.print_text(data, trace)
 
-    def compare_text(self, key:D.DiffType|int, data:d, trace:Trace.Trace) -> tuple[list[str],bool]:
+    def compare_text(self, key:D.DiffType|int, data:d, trace:Trace.Trace) -> tuple[list[CU.Line],bool]:
         comparer = self[key]
         if comparer is None:
             raise RuntimeError("Attempted to compare (key %s) using a NoneType object at %s!" % (key, trace))
