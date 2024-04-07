@@ -59,7 +59,7 @@ def __output_file_all_done(input_file_releases:dict[str,bool], file_path:Path) -
     input_file_releases[file_name] = True
     file_path.unlink()
     if all(input_file_releases.values()):
-        file_path.parent.rmdir()
+        Path(file_path.parent).rmdir()
 
 def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager.FilePromise]:
 
