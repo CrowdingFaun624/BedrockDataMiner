@@ -1,4 +1,3 @@
-import copy
 import json
 from pathlib2 import Path
 import threading
@@ -13,6 +12,7 @@ import Downloader.VersionsParser as VersionsParser
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import WaitValue
+import Utilities.TypeVerifier as TypeVerifier
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
 
@@ -30,19 +30,20 @@ def str_to_version(version_str:str|None) -> Version.Version|Literal["-"]:
 
 class DataMinerSettings():
 
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("start_version_str", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("end_version_str", "a str", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("dataminer_class", "a type", True, type),
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list or None", True, TypeVerifier.UnionTypeVerifier(
+            "a list or None",
+            type(None),
+            TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"),
+        ))
+    )
+
     def __init__(self, start_version_str:str|None, end_version_str:str|None, dataminer_class:type["DataMiner"], name:str, dependencies:list[str]|None=None, **kwargs) -> None:
-        if not (start_version_str is None or isinstance(start_version_str, str)):
-            raise TypeError("`start_version_str` is not a str or None, but instead \"%s\"!" % start_version_str)
-        if not (end_version_str is None or isinstance(end_version_str, str)):
-            raise TypeError("`end_version_str` is not a str or None, but instead \"%s\"!" % end_version_str)
-        if not isinstance(dataminer_class, type):
-            raise TypeError("`dataminer_class` is not a type!")
-        if not isinstance(name, str):
-            raise TypeError("`name` is not a str or None!")
-        if dependencies is not None and not isinstance(dependencies, list):
-            raise TypeError("`dependencies` is not None or a list!")
-        if dependencies is not None and not all(isinstance(dependency, str) for dependency in dependencies):
-            raise TypeError("An item in `dependencies` is not a str!")
+        self.type_verifier.base_verify({"start_version_str": start_version_str, "end_version_str": end_version_str, "dataminer_class": dataminer_class, "name": name, "dependencies": dependencies})
 
         self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
         self.file_name:str|None = None
@@ -62,11 +63,13 @@ class DataMiner():
 
     parameters:DataMinerParameters.Parameters|None = None
 
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("version", "a Version", True, Version.Version),
+        TypeVerifier.TypedDictKeyTypeVerifier("settings", "a DataMinerSettings", True, DataMinerSettings),
+    )
+
     def __init__(self, version:Version.Version, settings:DataMinerSettings) -> None:
-        if not isinstance(version, Version.Version):
-            raise TypeError("`version` is not a Version!")
-        if not isinstance(settings, DataMinerSettings):
-            raise TypeError("`settings` is not a DataMinerSettings!")
+        self.type_verifier.base_verify({"version": version, "settings": settings})
 
         self.version = version
         self.settings = settings
@@ -236,17 +239,16 @@ class NullDataMiner(DataMiner):
 
 
 class DataMinerCollection():
+
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("comparer", "a Comparer or WaitValue", True, (Comparer.Comparer, WaitValue)),
+        TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(DataMinerSettings, list, "a DataMinerSettings", "a list")),
+    )
+
     def __init__(self, file_name:str, name:str, comparer:WaitValue[Comparer.Comparer]|Comparer.Comparer, dataminers:list[DataMinerSettings]) -> None:
-        if not isinstance(file_name, str):
-            raise TypeError("`file_name` is not a str!")
-        if not isinstance(name, str):
-            raise TypeError("`name` is not a str!")
-        if not isinstance(comparer, (Comparer.Comparer, WaitValue)):
-            raise TypeError("`comparer` is not a Comparer or WaitValue!")
-        if not isinstance(dataminers, list):
-            raise TypeError("`dataminers` is not a list!")
-        if not all(isinstance(setting, DataMinerSettings) for setting in dataminers):
-            raise TypeError("An item of `dataminers` is not a DataMinerSettings!")
+        self.type_verifier.base_verify({"file_name": file_name, "name": name, "comparer": comparer, "dataminers": dataminers})
 
         self.dataminer_settings = dataminers
         self.name = name

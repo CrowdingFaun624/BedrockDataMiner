@@ -1,5 +1,5 @@
 import json
-from typing import Any, Iterable, TYPE_CHECKING, TypedDict
+from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING, TypedDict
 
 import Downloader.DownloadManager as DownloadManager
 import Downloader.LocalManager as LocalManager
@@ -7,6 +7,7 @@ import Downloader.StoredManager as StoredManager
 import Downloader.UrlValidator as UrlValidator
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
+import Utilities.TypeVerifier as TypeVerifier
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
 import Utilities.VersionTags as VersionTags
@@ -21,29 +22,6 @@ INSTALL_MANAGERS:dict[Version.DownloadMethod,type["InstallManager.InstallManager
     Version.DownloadMethod.DOWNLOAD_URL: DownloadManager.DownloadManager,
 }
 
-def read_versions_file() -> Any:
-    '''Returns the contents of '''
-    path = FileManager.VERSIONS_FILE
-    with open(path, "rt") as f:
-        return json.load(f)
-
-def is_valid_keys(keys:Iterable[str], possible_keys:Iterable[str], optional_keys:Iterable[str], strict_ordering:bool) -> bool:
-    '''Checks the validity and order of the keys based off of the possible keys and the optional keys.'''
-    for key in keys:
-        if key not in possible_keys:
-            return False
-    required_keys = [possible_key for possible_key in possible_keys if possible_key not in optional_keys]
-    for required_key in required_keys:
-        if required_key not in keys:
-            return False
-    if not strict_ordering: return True
-    used_keys = [possible_key for possible_key in possible_keys if possible_key in keys]
-    if used_keys == keys: return True
-    else: return False
-
-def is_sorted(data:list[Any]) -> bool:
-    return all(a <= b for a, b in zip(data, data[1:]))
-
 class VersionTypedDict(TypedDict):
     id: str
     download: str|None
@@ -53,44 +31,38 @@ class VersionTypedDict(TypedDict):
     development_categories: list[str]
     wiki_page: str
 
+def is_sorted(data:Sequence[str]) -> tuple[bool, str]:
+    return all(a <= b for a, b in zip(data, data[1:])), "data is not sorted!"
+
+def is_sorted_and_not_empty(data:Sequence[str]) -> tuple[bool, str]:
+    if len(data) == 0:
+        return False, "data is empty!"
+    return all(a <= b for a, b in zip(data, data[1:])), "data is not sorted!"
+
+KEY_ORDER = ["id", "download", "parent", "time", "tags", "wiki_page", "development_categories"]
+def keys_in_order(data:Mapping[Any, Any]) -> tuple[bool, str]:
+    return list(data.keys()) == [key for key in KEY_ORDER if key in data], "keys are not in order of %s!" % (KEY_ORDER)
+
+versions_type_verifier = TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("id", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("download", "a str or None", True, (str, type(None))),
+    TypeVerifier.TypedDictKeyTypeVerifier("parent", "a str or None", True, (str, type(None))),
+    TypeVerifier.TypedDictKeyTypeVerifier("time", "a str or None", True, (str, type(None))),
+    TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=is_sorted)),
+    TypeVerifier.TypedDictKeyTypeVerifier("wiki_page", "a str", False, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("development_categories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=is_sorted_and_not_empty)),
+    function=keys_in_order,
+), list, "a dict", "a list")
+
 def verify_data_types(data:list[VersionTypedDict]) -> None:
     '''Raises a TypeError if the structure of `versions.json` is invalid.'''
-    VALID_KEYS = ["id", "download", "parent", "time", "tags", "wiki_page", "development_categories"]
-    OPTIONAL_KEYS = ["wiki_page", "development_categories"]
-    NoneType = type(None)
-    KEY_TYPES = {"id": str, "download": [NoneType, str], "parent": [NoneType, str], "time": [NoneType, str], "tags": list, "wiki_page": str, "development_categories": list}
-    if not isinstance(data, list): raise TypeError("`data` is not a `list`!")
-    for index, version_dict in enumerate(data):
-        if not isinstance(version_dict, dict): raise TypeError("Item %i of `data` is not a `dict`!" % index)
-        keys = list(version_dict.keys())
-        if not is_valid_keys(keys, VALID_KEYS, OPTIONAL_KEYS, False):
-            if "id" in version_dict and isinstance(version_dict["id"], str):
-                raise TypeError("Invalid set of keys in version %s of `data`!" % version_dict["id"])
-            else:
-                raise TypeError("Invalid set of keys in item %i of `data`!" % index)
-        version_name = version_dict["id"]
-        if not is_valid_keys(keys, VALID_KEYS, OPTIONAL_KEYS, True):
-            raise TypeError("Keys \"%s\" are not in order in version %s of `data`!" % (str(keys), version_name))
+    versions_type_verifier.base_verify(data)
 
-        for key, key_type in KEY_TYPES.items():
-            if key not in keys: continue
-            if isinstance(key_type, Iterable):
-                if not any(isinstance(key, key_subtype) for key_subtype in key_type):
-                    raise TypeError("Key \"%s\" of version %s of `data` is not any of %s!" % (key, version_name, str(key_type)))
-            else:
-                if not isinstance(version_dict[key], key_type):
-                    raise TypeError("Key \"%s\" of version %s of `data` is not a %s!" % (key, version_name, str(key_type)))
-        for tag_index, tag in enumerate(version_dict["tags"]):
-            if not isinstance(tag, str):
-                raise TypeError("Tag %i of version %s of `data` is not a str!" % (tag_index, version_name))
-        if not is_sorted(version_dict["tags"]):
-            raise TypeError("Tags in version \"%s\" of `data` is not sorted!" % version_name)
-        if "development_categories" in version_dict:
-            for development_category_index, development_category in enumerate(version_dict["development_categories"]):
-                if not isinstance(development_category, str):
-                    raise TypeError("Development categorie %i of version %s of `data` is not a str!" % (development_category_index, version_name))
-            if not is_sorted(version_dict["development_categories"]):
-                raise TypeError("Development categories in version \"%s\" of `data` is not sorted!" % version_name)
+def read_versions_file() -> Any:
+    '''Returns the contents of '''
+    path = FileManager.VERSIONS_FILE
+    with open(path, "rt") as f:
+        return json.load(f)
 
 def assign_parents(versions:list[Version.Version]) -> None:
     '''Calls `assign_parent` on all versions, giving them a link to another version.'''

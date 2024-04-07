@@ -9,6 +9,7 @@ from typing import Any, Callable, IO, Literal
 import uuid
 
 from Utilities.FunctionCaller import FunctionCaller
+import Utilities.TypeVerifier as TypeVerifier
 
 PARENT_FOLDER          = Path("./").absolute()
 ASSETS_FOLDER          = Path(PARENT_FOLDER.joinpath("_assets"))
@@ -152,17 +153,15 @@ def clear_temp() -> None:
 class FilePromise():
     '''An abstraction for a file that can return an IO object multiple times with FilePromise.open()'''
 
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("open_callable", "a Callable", True, Callable),
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("mode", "a str", True, TypeVerifier.EnumTypeVerifier(("b", "t"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("all_done_callable", "a Callable or None", True, (Callable, type(None)))
+    )
+
     def __init__(self, open_callable:FunctionCaller[IO], name:str, mode:Literal["b", "t"], all_done_callable:FunctionCaller|Callable[[],Any]|None=None) -> None:
-        if not isinstance(name, str):
-            raise TypeError("`name` is not a str!")
-        if len(name) == 0:
-            raise ValueError("`name` is empty!")
-        if "/" in name or "\\" in name:
-            raise ValueError("`name` cannot have a \"/\" or \"\\\" character: \"%s\"" % name)
-        if not isinstance(mode, str):
-            raise TypeError("`mode` is not a str!")
-        if mode not in ("t", "b"):
-            raise ValueError("`mode` is not \"t\" or \"b\"!")
+        self.type_verifier.base_verify({"open_callable": open_callable, "name": name, "mode": mode, "all_done_callable": all_done_callable})
 
         self.open_callable = open_callable
         self.all_done_callable = all_done_callable

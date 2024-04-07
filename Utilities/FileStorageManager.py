@@ -96,7 +96,7 @@ def open_archived(hex_string:str, mode:Literal["t", "b"]) -> FileManager.FilePro
     if is_zipped:
         temp_file = FileManager.get_temp_file_path()
         with open(archived_path, "rb") as f, open(temp_file, "wb") as temp_file_io:
-            temp_file_io.write(gzip.decompress(f))
+            temp_file_io.write(gzip.decompress(f.read()))
         return FileManager.FilePromise(FunctionCaller(open, [temp_file, "r" + mode]), temp_file.name, "b", temp_file.unlink)
     else:
         return FileManager.FilePromise(FunctionCaller(open, [archived_path, "r" + mode]), hex_string, "b")

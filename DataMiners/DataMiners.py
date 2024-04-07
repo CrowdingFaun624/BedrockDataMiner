@@ -7,7 +7,6 @@ import DataMiners.DataMinerTyping as DataMinerTyping
 import Downloader.VersionsParser as VersionsParser
 import Utilities.Version as Version
 
-
 dataminers = DataMinerCollectionImporter.load_dataminers()
 
 def run_with_dependencies(version:Version.Version, name:str, recalculate_this:bool=False, recalculate_everything:bool=False) -> None:

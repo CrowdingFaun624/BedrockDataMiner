@@ -8,6 +8,7 @@ import DataMiners.DataMiner as DataMiner
 import Downloader.VersionsParser as VersionsParser
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import WaitValue
+import Utilities.TypeVerifier as TypeVerifier
 import Utilities.Version as Version
 
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
@@ -82,31 +83,25 @@ def glue_adjacent(iter:list[a]) -> Generator[tuple[a, a], None, None]:
 
 class DataMinerCollectionIntermediate():
 
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
+            TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
+            TypeVerifier.TypedDictKeyTypeVerifier("comparer", "a str", True, str),
+            TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
+                TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
+                TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
+                TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
+                TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+                TypeVerifier.TypedDictKeyTypeVerifier("parameters", "a dict", False, dict),
+            ), list, "a dict", "a list")),
+            TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool)
+        )),
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("comparers", "a dict", True, dict),
+    )
+
     def __init__(self, data:DataMinerCollectionTypedDict, name:str, comparers:dict[str,WaitValue[Comparer.Comparer]]) -> None:
-        if not isinstance(data, dict):
-            raise TypeError("`data` is not a dict!")
-        if not isinstance(name, str):
-            raise TypeError("`name` is not a str!")
-        for key, key_type, key_type_str, is_required in (("file_name", str, "a str", True), ("comparer", str, "a str", True), ("dataminers", list, "a list", True), ("disabled", bool, "a bool", False)):
-            if key not in data and is_required:
-                raise KeyError("Required key \"%s\" is not in DataMinerCollection \"%s\"!" % (key, name))
-            if key not in data: continue
-            if not isinstance(data[key], key_type):
-                raise TypeError("Key \"%s\" of DataMinerCollection \"%s\" is not %s, but instead %s!" % (key, name, key_type_str, data[key].__class__.__name__))
-        if "dataminers" in data:
-            for index, dataminer in enumerate(data["dataminers"]):
-                if not isinstance(dataminer, dict):
-                    raise TypeError("Dataminer %i of DataMinerCollection %s is not a dict!" % (index, name))
-                for key, key_type, key_type_str, is_required in (
-                    ("new", str|type(None), "a str or None", True), ("old", str|type(None), "a str or None", True),
-                    ("name", str|None, "a str or None", True), ("dependencies", list, "a list", False), ("parameters", dict, "a dict", False)):
-                        if key not in dataminer and is_required:
-                            raise KeyError("Required key \"%s\" is not in DataMinerSettings %i of DataMinerCollection \"%s\"!" % (key, index, name))
-                        if key not in dataminer: continue
-                        if not isinstance(dataminer[key], key_type):
-                            raise TypeError("Key \"%s\" of DataMinerSettings %i of DataMinerCollection \"%s\" is not %s, but instead %s!" % (key, index, name, key_type_str, dataminer[key].__class__.__name__))
-                if "dependencies" in dataminer and not all(isinstance(item, str) for item in dataminer["dependencies"]):
-                    raise TypeError("An item of key \"dependencies\" of DataMinerSettings %i of DataMinerCollection \"%s\" is not a str!" % (index, name))
+        self.type_verifier.base_verify({"data": data, "name": name, "comparers": comparers})
 
         self.name = name
         self.file_name = data["file_name"]

@@ -7,6 +7,7 @@ import Comparison.Difference as D
 import Comparison.Normalizer as Normalizer
 import Comparison.Trace as Trace
 import Utilities.FileManager as FileManager
+import Utilities.TypeVerifier as TypeVerifier
 import Utilities.VersionTags as VersionTags
 
 if TYPE_CHECKING:
@@ -22,6 +23,13 @@ file_counts:dict[str,int] = {}
 class Comparer():
     '''Can be created by a DataMinerCollection to compare the output of the DataMiners with each other.'''
 
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("base_comparer_section", "a ComparerSection or None", True, (ComparerSection.ComparerSection, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a Normalizer or None", True, (Normalizer.Normalizer, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a Normalizer or None", True, (Normalizer.Normalizer, type(None))),
+    )
+
     def __init__(
             self,
             name:str,
@@ -29,14 +37,7 @@ class Comparer():
             base_comparer_section:ComparerSection.ComparerSection[b]|None,
             post_normalizer:Normalizer.Normalizer|None=None,
         ) -> None:
-        if not isinstance(name, str):
-            raise TypeError("`name` is not a str, but instead %s!" % (name.__class__.__name__))
-        if not (normalizer is None or isinstance(normalizer, Normalizer.Normalizer)):
-            raise TypeError("`normalizer` is not a Normalizer or None, but instead %s!" % (normalizer.__class__.__name__))
-        if not (post_normalizer is None or isinstance(post_normalizer, Normalizer.Normalizer)):
-            raise TypeError("`post_normalizer` is not a Normalizer or None, but instead %s!" % (post_normalizer.__class__.__name__))
-        if not (isinstance(base_comparer_section, ComparerSection.ComparerSection) or base_comparer_section is None):
-            raise TypeError("`base_comparer_section` is not a ComparerSection, but instead %s!" % (base_comparer_section.__class__.__name__))
+        self.type_verifier.base_verify({"name": name, "normalizer": normalizer, "base_comparer_section": base_comparer_section, "post_normalizer": post_normalizer})
 
         self.name = name
         self.normalizer = normalizer

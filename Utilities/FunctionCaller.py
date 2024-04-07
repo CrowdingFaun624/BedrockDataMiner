@@ -1,18 +1,19 @@
 from typing import Any, Callable, Generic, TypeVar
 
+import Utilities.TypeVerifier as TypeVerifier
+
 T = TypeVar("T") # I love type hinting
 
 class FunctionCaller(Generic[T]):
 
-    def __init__(self, target:Callable[..., T], args:list[Any]=None, kwargs:dict[str,Any]=None) -> None:
-        if not isinstance(target, Callable):
-            raise TypeError("`target` is not a Callable!")
-        if args is not None and not isinstance(args, list) and args is not None:
-            raise TypeError("`args` is not a list or None!")
-        if not isinstance(kwargs, dict) and kwargs is not None:
-            raise TypeError("`kwargs` is not a dict or None!")
-        if kwargs is not None and any(not isinstance(key, str) for key in kwargs):
-            raise TypeError("`kwargs` has a key that is not a str!")
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("target", "a Callable", True, Callable),
+        TypeVerifier.TypedDictKeyTypeVerifier("args", "a list or None", True, (list, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("kwargs", "a dict or None", True, (dict, type(None))),
+    )
+
+    def __init__(self, target:Callable[..., T], args:list[Any]|None=None, kwargs:dict[str,Any]|None=None) -> None:
+        self.type_verifier.base_verify({"target": target, "args": args, "kwargs": kwargs})
 
         self.target = target
         self.args = [] if args is None else args

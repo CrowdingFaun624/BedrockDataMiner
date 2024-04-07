@@ -104,7 +104,7 @@ class NbtBaseIntermediate(ComparerIntermediate.ComparerIntermediate):
             endianness=self.get_endianness(self.endianness),
             types = tuple(self.types_final),
             normalizer = normalizers_final,
-            children_has_normalizers=self.children_has_normalizer,
+            children_has_normalizer=self.children_has_normalizer,
         )
 
     def create_final(self) -> None:

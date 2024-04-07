@@ -34,7 +34,7 @@ class DictComparerSection(ComparerSection.ComparerSection[MutableMapping[str, d]
         )),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a tuple", True, TypeVerifier.ListTypeVerifier(type, tuple, "a type", "a tuple")),
         TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("comparison_move_function", "a Callable or None", True, (Callable, None)),
+        TypeVerifier.TypedDictKeyTypeVerifier("comparison_move_function", "a Callable or None", True, (Callable, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list"))),

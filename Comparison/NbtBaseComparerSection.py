@@ -9,8 +9,31 @@ import Comparison.Trace as Trace
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
+import Utilities.TypeVerifier as TypeVerifier
 
 class NbtBaseComparerSection(ComparerSection.ComparerSection[NbtTypes.TAG]):
+
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("comparer", "a ComparerSection, a dict, or None", True, TypeVerifier.UnionTypeVerifier(
+            "a ComparerSection, a dict, or None",
+            ComparerSection.ComparerSection,
+            type(None),
+            TypeVerifier.DictTypeVerifier(dict, type, (ComparerSection.ComparerSection, type(None)), "a dict", "a type", "a ComparerSection or None"),
+        )),
+        TypeVerifier.TypedDictKeyTypeVerifier("types", "a tuple or None", True, TypeVerifier.UnionTypeVerifier(
+            "a tuple or None",
+            type(None),
+            TypeVerifier.ListTypeVerifier(type, tuple, "a type", "a tuple"),
+        )),
+        TypeVerifier.TypedDictKeyTypeVerifier("endianness", "an End", True, Endianness.End),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier(
+            "a list or None",
+            type(None),
+            TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list"),
+        )),
+        TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizers", "a bool", True, bool),
+    )
 
     def __init__(
             self,
@@ -19,33 +42,25 @@ class NbtBaseComparerSection(ComparerSection.ComparerSection[NbtTypes.TAG]):
             types:tuple[type,...]|None,
             endianness:Endianness.End,
             normalizer:list[Normalizer.Normalizer]|None,
-            children_has_normalizers:bool,
+            children_has_normalizer:bool,
         ) -> None:
         self.name = name
         self.comparer = comparer
         self.types = (object,) if types is None else types
         self.normalizer = normalizer
-        self.children_has_normalizer = children_has_normalizers
+        self.children_has_normalizer = children_has_normalizer
         self.endianness=endianness
         self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
-        if not isinstance(self.name, str):
-            raise TypeError("`name` is not a str!")
-        if not (self.comparer is None or isinstance(self.comparer, (ComparerSection.ComparerSection, dict))):
-            raise TypeError("`comparer` is not a ComparerSection, NoneType, or dict, but instead a %s!" % (self.comparer.__class__.__name__))
-        if isinstance(self.comparer, dict):
-            for comparer_index, (comparer_key, comparer_value) in enumerate(self.comparer.items()):
-                if not isinstance(comparer_key, type):
-                    raise TypeError("Key number %i of `comparer` is not a type, but instead a %s!" % (comparer_index, comparer_key.__class__.__name__))
-                if not (comparer_value is None or isinstance(comparer_value, ComparerSection.ComparerSection)):
-                    raise TypeError("Key \"%s\" of `comparer` is not a ComparerSection or None, but instead a %s!" % (comparer_key.__name__, comparer_value.__class__.__name__))
-        if not isinstance(self.types, tuple) and self.types is not None:
-            raise TypeError("`types` is not a tuple or None, but instead a %s!" % (self.types.__class__.__name__))
-        if isinstance(self.types, tuple) and not all(isinstance(item, (type)) for item in self.types):
-            raise TypeError("An item of `types` is not a type!")
-        if not isinstance(self.endianness, Endianness.End):
-            raise TypeError("`endianness` is not an End!")
+        self.type_verifier.base_verify({
+            "name": self.name,
+            "comparer": self.comparer,
+            "types": self.types,
+            "endianness": self.endianness,
+            "normalizer": self.normalizer,
+            "children_has_normalizers": self.children_has_normalizer
+        })
 
     def check_all_types(self, data: NbtTypes.TAG, trace: Trace.Trace) -> list[tuple[Trace.Trace, Exception]]:
         if isinstance(data, D.Diff):

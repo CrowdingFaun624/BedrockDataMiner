@@ -2,6 +2,7 @@ from typing import Any, Callable, cast, Generic, TYPE_CHECKING, TypeVar
 
 import Comparison.Trace as Trace
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.TypeVerifier as TypeVerifier
 import Utilities.Version as Version
 
 if TYPE_CHECKING:
@@ -12,15 +13,15 @@ OUT = TypeVar("OUT")
 
 class Normalizer(Generic[IN, OUT]):
 
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("function", "a Callable", True, Callable),
+        TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))
+    )
+
     def __init__(self, function:Callable[[IN, DataMinerTyping.DependenciesTypedDict], OUT], dependencies:list[str]):
         '''`function` is a Callable that modifies the original object and returns nothing.
         `dependencies` is a list of DataMinerCollection names.'''
-        if not isinstance(function, Callable):
-            raise TypeError("`function` is not a Callable, but instead %s!" % (function.__class__.__name__))
-        if not isinstance(dependencies, list):
-            raise TypeError("`dependencies` is not a list, but instead %s!" % (dependencies.__class__.__name__))
-        if not all(isinstance(item, str) for item in dependencies):
-            raise TypeError("An item of `dependencies` is not a str!")
+        self.type_verifier.base_verify({"function": function, "dependencies": dependencies})
 
         self.function = function
         self.dependencies = cast(list[DataMinerTyping.DependenciesLiterals], dependencies)
