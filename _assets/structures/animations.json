@@ -1,0 +1,192 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "animations",
+        "subcomponent": "files"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "fix_old": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "animations_fix_old"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "files": {
+        "type": "Dict",
+        "field": "file",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "normalizer": "collapse_resource_packs",
+        "comparison_move_function": "entities_behavior_pack_comparison_move_function",
+        "subcomponent": "animations_file"
+    },
+    "animations_file": {
+        "type": "Keymap",
+        "normalizer": "fix_old",
+        "keys": {
+            "animations": {"type": "dict", "subcomponent": "animations"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "format_version": {"type": "str"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "animations": {
+        "type": "Dict",
+        "field": "animation",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "animation"
+    },
+    "timestamps_and_vectors_or_vector_or_lerp": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "timestamps_and_vectors_or_lerp",
+            "list": "vector_special"
+        }
+    },
+    "timestamps_and_vectors_or_lerp": {
+        "type": "Dict",
+        "field": "timestamp",
+        "types": ["dict", "list"],
+        "detect_key_moves": false,
+        "measure_length": true,
+        "subcomponent": "vector_or_lerp"
+    },
+    "vector_or_lerp": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "lerp",
+            "list": "vector_special"
+        }
+    },
+    "lerp": {
+        "type": "Keymap",
+        "keys": {
+            "lerp_mode": {"type": "str"},
+            "pre": {"type": "list", "subcomponent": "vector_special"},
+            "post": {"type": "list", "subcomponent": "vector_special"}
+        }
+    },
+    "vector_special": {
+        "type": "List",
+        "field": "vector item",
+        "types": ["decimal", "dict", "str"],
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "measure_length": false,
+        "subcomponent": "vector_special_group"
+    },
+    "vector_special_group": {
+        "type": "Group",
+        "subcomponents": {
+            "decimal": null,
+            "dict": "vector_dict",
+            "str": null
+        }
+    },
+    "vector_dict": {
+        "type": "Keymap",
+        "keys": {
+            "x": {"type": "str"},
+            "y": {"type": "str"},
+            "z": {"type": "str"}
+        }
+    },
+    "animation": {
+        "type": "Keymap",
+        "keys": {
+            "anim_time_update": {"type": "str"},
+            "animation_length": {"type": "decimal"},
+            "bones": {"type": "dict", "subcomponent": "bones"},
+            "loop": {"type": ["bool", "str"]},
+            "override_previous_animation": {"type": "bool"},
+            "particle_effects": {"type": "dict", "subcomponent": "particle_effects"},
+            "sound_effects": {"type": "dict", "subcomponent": "sound_effects"},
+            "start_delay": {"type": "str"}
+        }
+    },
+    "bones": {
+        "type": "Dict",
+        "field": "bone",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "bone"
+    },
+    "bone": {
+        "type": "Keymap",
+        "keys": {
+            "relative_to": {"type": "dict", "subcomponent": "bone.relative_to"},
+            "rotation": {"type": ["list", "dict"], "subcomponent": "timestamps_and_vectors_or_vector_or_lerp"},
+            "position": {"type": ["list", "dict"], "subcomponent": "timestamps_and_vectors_or_vector_or_lerp"},
+            "scale": {"type": ["decimal", "dict", "list", "str"], "subcomponent": "bone.scale"}
+        }
+    },
+    "bone.relative_to": {
+        "type": "Keymap",
+        "keys": {
+            "rotation": {"type": "str"}
+        }
+    },
+    "bone.scale": {
+        "type": "Group",
+        "subcomponents": {
+            "decimal": null,
+            "dict": "timestamps_and_vectors_or_lerp",
+            "list": "vector_special",
+            "str": null
+        }
+    },
+    "particle_effects": {
+        "type": "Dict",
+        "field": "timestamp",
+        "types": ["dict"],
+        "detect_key_moves": false,
+        "measure_length": true,
+        "subcomponent": "particle_effects.item"
+    },
+    "particle_effects.item": {
+        "type": "Keymap",
+        "keys": {
+            "effect": {"type": "str"},
+            "pre_effect_script": {"type": "str"}
+        }
+    },
+    "sound_effects": {
+        "type": "Dict",
+        "field": "timestamp",
+        "types": ["dict"],
+        "detect_key_moves": false,
+        "measure_length": true,
+        "subcomponent": "sound_effects.item"
+    },
+    "sound_effects.item": {
+        "type": "Keymap",
+        "keys": {
+            "effect": {"type": "str"}
+        }
+    }
+}

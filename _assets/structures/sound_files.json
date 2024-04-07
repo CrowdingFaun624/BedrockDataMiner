@@ -1,0 +1,98 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "sound_files",
+        "subcomponent": "sound_file"
+    },
+    "remove_obj": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "sound_files_remove_obj"
+    },
+    "sound_file": {
+        "type": "Dict",
+        "field": "sound file",
+        "types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "sound_files_sound_file_comparison_move_function",
+        "measure_length": true,
+        "subcomponent": "internal_sound_file"
+    },
+    "internal_sound_file": {
+        "type": "Dict",
+        "field": "internal sound file",
+        "types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "sound_files_internal_sound_file_comparison_move_function",
+        "measure_length": true,
+        "subcomponent": "sound_property"
+    },
+    "sound_property": {
+        "type": "Keymap",
+        "field": "property",
+        "normalizer": "remove_obj",
+        "keys": {
+            "filesize": {"type": "int"},
+            "pictures": {"type": "list", "subcomponent": "pictures"},
+            "tags": {"type": "dict", "subcomponent": "tags"},
+            "_subchunks": {"type": "list", "subcomponent": "subchunks"},
+            "streaminfo": {"type": "dict", "subcomponent": "streaminfo"},
+            "sha1_hash": {"type": "str"}
+        }
+    },
+    "pictures": {
+        "type": "List",
+        "field": "picture",
+        "types": ["null"],
+        "subcomponent": null,
+        "measure_length": true
+    },
+    "tags": {
+        "type": "Keymap",
+        "field": "tag type",
+        "keys": {
+            "comment": {"type": "list", "subcomponent": "tag"},
+            "encoder": {"type": "list", "subcomponent": "tag"},
+            "title": {"type": "list", "subcomponent": "tag"},
+            "tracknumber": {"type": "list", "subcomponent": "tag"}
+        }
+    },
+    "tag": {
+        "type": "List",
+        "field": "tag",
+        "types": ["str"],
+        "subcomponent": null
+    },
+    "subchunks": {
+        "type": "List",
+        "types": ["null"],
+        "subcomponent": null,
+        "measure_length": true
+    },
+    "streaminfo": {
+        "type": "Keymap",
+        "field": "property",
+        "keys": {
+            "_start": {"type": "int"},
+            "_size": {"type": "int"},
+            "_version": {"type": "list", "subcomponent": "version"},
+            "_extension_data": {"type": "null"},
+            "audio_format": {"type": "str"},
+            "bit_depth": {"type": "int"},
+            "bitrate": {"type": ["float", "int"]},
+            "channels": {"type": "int"},
+            "duration": {"type": "float"},
+            "max_bitrate": {"type": "int"},
+            "min_bitrate": {"type": "int"},
+            "nominal_bitrate": {"type": "int"},
+            "sample_rate": {"type": "int"}
+        }
+    },
+    "version": {
+        "type": "List",
+        "field": "version number",
+        "types": ["int"],
+        "subcomponent": null,
+        "print_flat": true
+    }
+}

@@ -1,0 +1,251 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "entities_client",
+        "subcomponent": "entities"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "fix_old": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "entities_client_fix_old"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "entities": {
+        "type": "Dict",
+        "field": "entity",
+        "types": ["dict"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "entities_behavior_pack_comparison_move_function",
+        "measure_length": true,
+        "normalizer": "collapse_resource_packs",
+        "subcomponent": "entity"
+    },
+    "entity": {
+        "type": "Keymap",
+        "normalizer": "fix_old",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "format_version": {"type": "str"},
+            "minecraft:client_entity": {"type": "dict", "subcomponent": "minecraft:client_entity"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "vector_decimal": {
+        "type": "List",
+        "field": "vector item",
+        "types": ["decimal"],
+        "ordered": true,
+        "print_flat": true,
+        "print_all": true,
+        "subcomponent": null
+    },
+    "minecraft:client_entity": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "animation_controllers": {"type": "list", "subcomponent": "animation_controllers"},
+            "animations": {"type": "dict", "subcomponent": "animations"},
+            "enable_attachables": {"type": "bool"},
+            "geometry": {"type": "dict", "subcomponent": "geometry"},
+            "held_item_ignores_lighting": {"type": "bool"},
+            "hide_armor": {"type": "bool"},
+            "identifier": {"type": "str"},
+            "locators": {"type": "dict", "subcomponent": "locators", "tags": ["outdated"]},
+            "materials": {"type": "dict", "subcomponent": "materials"},
+            "min_engine_version": {"type": "str"},
+            "particle_effects": {"type": "dict", "subcomponent": "particle_effects"},
+            "particle_emitters": {"type": "dict", "subcomponent": "particle_emitters"},
+            "render_controllers": {"type": "list", "subcomponent": "render_controllers"},
+            "scripts": {"type": "dict", "subcomponent": "scripts"},
+            "sound_effects": {"type": "dict", "subcomponent": "sound_effects"},
+            "spawn_egg": {"type": "dict", "subcomponent": "spawn_egg"},
+            "textures": {"type": "dict", "subcomponent": "textures"}
+        }
+    },
+    "animation_controllers": {
+        "type": "List",
+        "field": "animation controller group",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "animation_controllers.item"
+    },
+    "animation_controllers.item": {
+        "type": "Dict",
+        "field": "animation controller",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "animations": {
+        "type": "Dict",
+        "field": "animation",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "geometry": {
+        "type": "Dict",
+        "field": "geometry",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "locators": {
+        "type": "Dict",
+        "field": "locator set",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "locator"
+    },
+    "locator": {
+        "type": "Dict",
+        "field": "locator",
+        "types": ["list"],
+        "measure_length": true,
+        "subcomponent": "vector_decimal"
+    },
+    "materials": {
+        "type": "Dict",
+        "field": "materials",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "particle_effects": {
+        "type": "Dict",
+        "field": "particle effect",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "particle_emitters": {
+        "type": "Dict",
+        "field": "particle emitter",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "render_controllers": {
+        "type": "List",
+        "field": "render controller",
+        "types": ["dict", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "render_controllers:item_group"
+    },
+    "render_controllers:item_group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "render_controllers:item",
+            "str": null
+        }
+    },
+    "render_controllers:item": {
+        "type": "Dict",
+        "field": "render controller item",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "scripts": {
+        "type": "Keymap",
+        "keys": {
+            "animate": {"type": "list", "subcomponent": "scripts:item"},
+            "initialize": {"type": "list", "subcomponent": "scripts:item"},
+            "pre_animation": {"type": "list", "subcomponent": "scripts:item"},
+            "scale": {"type": "str"},
+            "scalex": {"type": "str", "tags": ["outdated"]},
+            "scaleX": {"type": "str"},
+            "scaley": {"type": "str", "tags": ["outdated"]},
+            "scaleY": {"type": "str"},
+            "scalez": {"type": "str", "tags": ["outdated"]},
+            "scaleZ": {"type": "str"},
+            "should_update_bones_and_effects_offscreen": {"type": "str"},
+            "should_update_effects_offscreen": {"type": "str"}
+        }
+    },
+    "scripts:item": {
+        "type": "List",
+        "field": "script",
+        "types": ["dict", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "scripts:item_group"
+    },
+    "scripts:item_group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "scripts:item_dict",
+            "str": null
+        }
+    },
+    "scripts:item_dict": {
+        "type": "Dict",
+        "field": "script item",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "sound_effects": {
+        "type": "Dict",
+        "field": "sound effect",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "spawn_egg": {
+        "type": "Keymap",
+        "keys": {
+            "base_color": {"type": "str"},
+            "overlay_color": {"type": "str"},
+            "texture": {"type": "str"},
+            "texture_index": {"type": "int"}
+        }
+    },
+    "textures": {
+        "type": "Dict",
+        "field": "texture",
+        "types": ["str"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": null
+    }
+}

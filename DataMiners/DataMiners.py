@@ -84,11 +84,11 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
         except Exception as e:
             data[name] = e
 
-def test_comparers() -> None:
+def test_structures() -> None:
     for dataminer in dataminers:
         print("%s:" % (dataminer.name))
-        print(dataminer.comparer.get())
-    print("All comparers successfully parsed.")
+        print(dataminer.structure.get())
+    print("All structures successfully parsed.")
 
 def user_interface() -> None:
     version_names = VersionsParser.versions_dict.get()

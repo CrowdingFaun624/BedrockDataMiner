@@ -1,0 +1,209 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "animation_controllers",
+        "subcomponent": "files"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "fix_old": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "animation_controllers_fix_old"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "empty": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "files": {
+        "type": "Dict",
+        "field": "file",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "normalizer": "collapse_resource_packs",
+        "comparison_move_function": "entities_behavior_pack_comparison_move_function",
+        "subcomponent": "animation_controllers_file"
+    },
+    "animation_controllers_file": {
+        "type": "Keymap",
+        "normalizer": "fix_old",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "format_version": {"type": "str"},
+            "animation_controllers": {"type": "dict", "subcomponent": "animation_controllers"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "animation_controllers": {
+        "type": "Dict",
+        "field": "animation controller",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "animation_controller"
+    },
+    "animation_controller": {
+        "type": "Keymap",
+        "keys": {
+            "initial_state": {"type": "str"},
+            "states": {"type": "dict", "subcomponent": "states"}
+        }
+    },
+    "states": {
+        "type": "Dict",
+        "field": "state",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "state"
+    },
+    "state": {
+        "type": "Keymap",
+        "keys": {
+            "animations": {"type": ["dict", "list"], "subcomponent": "animations:group"},
+            "blend_transition": {"type": "decimal"},
+            "blend_via_shortest_path": {"type": "bool"},
+            "parameters": {"type": "list", "subcomponent": "parameters", "tags": ["outdated"]},
+            "particle_effects": {"type": "list", "subcomponent": "particle_effects"},
+            "sound_effects": {"type": "list", "subcomponent": "sound_effects"},
+            "transitions": {"type": "list", "subcomponent": "transitions"}
+        }
+    },
+    "animations:group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "animations:dict",
+            "list": "animations"
+        }
+    },
+    "animations": {
+        "type": "List",
+        "field": "animation dict",
+        "types": ["dict", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "animations_group"
+    },
+    "animations:dict": {
+        "type": "Dict",
+        "field": "animation",
+        "types": ["dict", "list"],
+        "measure_length": true,
+        "subcomponent": "animations:dict.group"
+    },
+    "animations:dict.group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "empty",
+            "list": "animation:list"
+        }
+    },
+    "animations_group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "animation",
+            "str": null
+        }
+    },
+    "animation": {
+        "type": "Dict",
+        "field": "animation",
+        "types": ["list", "str"],
+        "measure_length": true,
+        "subcomponent": "animation_group"
+    },
+    "animation_group": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "animation:list",
+            "str": null
+        }
+    },
+    "animation:list": {
+        "type": "List",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "animation:list.dict"
+    },
+    "animation:list.dict": {
+        "type": "Dict",
+        "field": "timestamp",
+        "types": ["decimal"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "parameters": {
+        "type": "List",
+        "field": "parameter",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "particle_effects": {
+        "type": "List",
+        "field": "particle effect",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "particle_effect"
+    },
+    "particle_effect": {
+        "type": "Keymap",
+        "keys": {
+            "effect": {"type": "str"},
+            "locator": {"type": "str"}
+        }
+    },
+    "sound_effects": {
+        "type": "List",
+        "field": "sound effect",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "sound_effect"
+    },
+    "sound_effect": {
+        "type": "Keymap",
+        "keys": {
+            "effect": {"type": "str"}
+        }
+    },
+    "transitions": {
+        "type": "List",
+        "field": "transition list",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "transition"
+    },
+    "transition": {
+        "type": "Dict",
+        "field": "transition",
+        "types": ["str"],
+        "measure_length": true,
+        "subcomponent": null
+    }
+}

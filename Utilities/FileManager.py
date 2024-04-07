@@ -13,7 +13,6 @@ import Utilities.TypeVerifier as TypeVerifier
 
 PARENT_FOLDER          = Path("./").absolute()
 ASSETS_FOLDER          = Path(PARENT_FOLDER.joinpath("_assets"))
-COMPARERS_FOLDER       = Path(ASSETS_FOLDER.joinpath("comparers"))
 FILE_STORAGE_FOLDER    = Path(ASSETS_FOLDER.joinpath("file_storage"))
 FILE_STORAGE_OBJECTS_FOLDER = Path(FILE_STORAGE_FOLDER.joinpath("objects"))
 FILE_STORAGE_INDEX_FILE = Path(FILE_STORAGE_FOLDER.joinpath("index.txt"))
@@ -26,10 +25,8 @@ STORED_VERSIONS_OBJECTS_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("objects")
 STORED_VERSIONS_INDEXES_FILE = Path(STORED_VERSIONS_FOLDER.joinpath("indexes.zip"))
 STORED_VERSIONS_INPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("input"))
 STORED_VERSIONS_OUTPUT_FOLDER = Path(STORED_VERSIONS_FOLDER.joinpath("output"))
-STORED_VERSIONS2_FOLDER = Path(ASSETS_FOLDER.joinpath("stored_versions2"))
-STORED_VERSIONS2_OBJECTS_FOLDER = Path(STORED_VERSIONS2_FOLDER.joinpath("objects"))
-STORED_VERSIONS2_INDEX_FILE = Path(STORED_VERSIONS2_FOLDER.joinpath("zippedness_index.txt"))
-COMPARERS_FILE         = Path(ASSETS_FOLDER.joinpath("comparers.json"))
+STRUCTURES_FOLDER       = Path(ASSETS_FOLDER.joinpath("structures"))
+STRUCTURES_FILE         = Path(ASSETS_FOLDER.joinpath("structures.json"))
 DATAMINER_COLLECTIONS_FILE = Path(ASSETS_FOLDER.joinpath("dataminer_collections.json"))
 VERSIONS_FILE          = Path(ASSETS_FOLDER.joinpath("versions.json"))
 FSB_CACHE_FILE         = Path(ASSETS_FOLDER.joinpath("fsb_cache.json"))
@@ -59,11 +56,11 @@ def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/g
     io.seek(start)
     return size
 
-def get_comparer_path(comparer_name:str) -> Path:
-    comparer_path = Path(COMPARERS_FOLDER.joinpath(comparer_name + ".json"))
-    if COMPARERS_FOLDER not in comparer_path.parents:
-        raise FileNotFoundError("Comparer \"%s\" can not be created due to illegal characters!" % comparer_name)
-    return comparer_path
+def get_structure_path(structure_name:str) -> Path:
+    structure_path = Path(STRUCTURES_FOLDER.joinpath(structure_name + ".json"))
+    if STRUCTURES_FOLDER not in structure_path.parents:
+        raise FileNotFoundError("Structure \"%s\" can not be created due to illegal characters!" % structure_name)
+    return structure_path
 
 def get_version_path(version_name:str) -> Path:
     version_path = Path(VERSIONS_FOLDER.joinpath(version_name))

@@ -2,10 +2,10 @@ import json
 import traceback
 from typing import Any, Generator, Mapping, Sequence, TypedDict, TypeVar
 
-import Comparison.Comparer as Comparer
-import Comparison.ComparerImporter.ComparerImporter as ComparerImporter
 import DataMiners.DataMiner as DataMiner
 import Downloader.VersionsParser as VersionsParser
+import Structure.StructureBase as StructureBase
+import Structure.Importer.Importer as Importer
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import WaitValue
 import Utilities.TypeVerifier as TypeVerifier
@@ -69,7 +69,7 @@ class DataMinerSettingsTypedDict(TypedDict):
 
 class DataMinerCollectionTypedDict(TypedDict):
     file_name: str
-    comparer: str
+    structure: str
     disabled: bool
     dataminers: list[DataMinerSettingsTypedDict]
 
@@ -86,7 +86,7 @@ class DataMinerCollectionIntermediate():
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
             TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("comparer", "a str", True, str),
+            TypeVerifier.TypedDictKeyTypeVerifier("structure", "a str", True, str),
             TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
                 TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
                 TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
@@ -97,21 +97,21 @@ class DataMinerCollectionIntermediate():
             TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool)
         )),
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("comparers", "a dict", True, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("structures", "a dict", True, dict),
     )
 
-    def __init__(self, data:DataMinerCollectionTypedDict, name:str, comparers:dict[str,WaitValue[Comparer.Comparer]]) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "comparers": comparers})
+    def __init__(self, data:DataMinerCollectionTypedDict, name:str, structures:dict[str,WaitValue[StructureBase.StructureBase]]) -> None:
+        self.type_verifier.base_verify({"data": data, "name": name, "structures": structures})
 
         self.name = name
         self.file_name = data["file_name"]
-        self.comparer_name = data["comparer"]
+        self.structure_name = data["structure"]
         self.dataminer_settings_strs = data["dataminers"]
         self.disabled = data["disabled"] if "disabled" in data else False
 
-        if self.comparer_name not in comparers:
-            raise KeyError("Comparer \"%s\", referenced by DataMinerCollection \"%s\", does not exist!" % (self.comparer_name, self.name))
-        self.comparer = comparers[self.comparer_name]
+        if self.structure_name not in structures:
+            raise KeyError("Structure \"%s\", referenced by DataMinerCollection \"%s\", does not exist!" % (self.structure_name, self.name))
+        self.structure = structures[self.structure_name]
         self.dataminer_classes:dict[str,type[DataMiner.DataMiner]]|None = None
 
     def __repr__(self) -> str:
@@ -139,7 +139,7 @@ class DataMinerCollectionIntermediate():
         return DataMiner.DataMinerCollection(
             file_name = self.file_name,
             name = self.name,
-            comparer = self.comparer,
+            structure = self.structure,
             dataminers = dataminer_settings,
         )
 
@@ -225,11 +225,11 @@ def load_dataminers() -> list[DataMiner.DataMinerCollection]:
     if not isinstance(data, dict):
         raise TypeError("dataminer_collections.json is not a dict!")
 
-    comparers:dict[str,WaitValue[Comparer.Comparer]] = ComparerImporter.comparers
+    structures:dict[str,WaitValue[StructureBase.StructureBase]] = Importer.structures
     all_dataminers_dict = {dataminer.__name__: dataminer for dataminer in all_dataminers}
     dataminer_collection_intermediates:dict[str,DataMinerCollectionIntermediate] = {}
     for name, dataminer_collection_data in data.items():
-        dataminer_collection_intermediates[name] = DataMinerCollectionIntermediate(dataminer_collection_data, name, comparers)
+        dataminer_collection_intermediates[name] = DataMinerCollectionIntermediate(dataminer_collection_data, name, structures)
     finals = [dataminer_collection_intermediate.create_final(all_dataminers_dict) for dataminer_collection_intermediate in dataminer_collection_intermediates.values() if not dataminer_collection_intermediate.disabled]
     versions = VersionsParser.versions_dict.get()
     all_used_versions:set["Version.Version"] = set()

@@ -1,7 +1,5 @@
 from typing import Any, Generator, Generic, TypeVar, Union
 
-# I swear this is not comparer 2 electric boogaloo
-
 ParametersDataType = TypeVar("ParametersDataType")
 
 class Parameters(Generic[ParametersDataType]): # Abstract type

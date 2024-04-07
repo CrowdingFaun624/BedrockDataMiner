@@ -1,0 +1,191 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "render_controllers",
+        "subcomponent": "files"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "fix_old": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "render_controllers_fix_old"
+    },
+    "remove_texures": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "render_controllers_remove_texures"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "files": {
+        "type": "Dict",
+        "field": "file",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "normalizer": "collapse_resource_packs",
+        "comparison_move_function": "entities_behavior_pack_comparison_move_function",
+        "subcomponent": "render_controllers_file"
+    },
+    "render_controllers_file": {
+        "type": "Keymap",
+        "normalizer": "fix_old",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "format_version": {"type": "str"},
+            "render_controllers": {"type": "dict", "subcomponent": "render_controllers"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "render_controllers": {
+        "type": "Dict",
+        "field": "render controller",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "render_controller"
+    },
+    "color": {
+        "type": "Keymap",
+        "field": "channel",
+        "keys": {
+            "a": {"type": ["decimal", "str"]},
+            "r": {"type": ["decimal", "str"]},
+            "g": {"type": ["decimal", "str"]},
+            "b": {"type": ["decimal", "str"]}
+        }
+    },
+    "render_controller": {
+        "type": "Keymap",
+        "normalizer": "remove_texures",
+        "keys": {
+            "arrays": {"type": "dict", "subcomponent": "arrays"},
+            "color": {"type": "dict", "subcomponent": "color"},
+            "filter_lighting": {"type": "bool"},
+            "geometry": {"type": "str"},
+            "ignore_lighting": {"type": "bool"},
+            "is_hurt_color": {"type": "dict", "subcomponent": "color"},
+            "light_color_multiplier": {"type": "decimal"},
+            "materials": {"type": "list", "subcomponent": "materials"},
+            "on_fire_color": {"type": "dict", "subcomponent": "color"},
+            "overlay_color": {"type": "dict", "subcomponent": "color"},
+            "part_visibility": {"type": ["dict", "list"], "subcomponent": "part_visibility.group"},
+            "rebuild_animation_matrices": {"type": "bool"},
+            "textures": {"type": "list", "subcomponent": "textures"},
+            "uv_anim": {"type": "dict", "subcomponent": "uv_anim"}
+        }
+    },
+    "arrays": {
+        "type": "Keymap",
+        "keys": {
+            "geometries": {"type": "dict", "subcomponent": "array"},
+            "materials": {"type": "dict", "subcomponent": "array"},
+            "textures": {"type": "dict", "subcomponent": "array"}
+        }
+    },
+    "array": {
+        "type": "Dict",
+        "field": "array",
+        "types": ["list"],
+        "measure_length": true,
+        "subcomponent": "array_list"
+    },
+    "array_list": {
+        "type": "List",
+        "field": "array item",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "materials": {
+        "type": "List",
+        "field": "material dict",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "material_dict"
+    },
+    "material_dict": {
+        "type": "Dict",
+        "field": "material",
+        "types": ["str"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "part_visibility.group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "part_visibility_dict",
+            "list": "part_visibility"
+        }
+    },
+    "part_visibility": {
+        "type": "List",
+        "field": "part visibility dict",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "part_visibility_dict"
+    },
+    "part_visibility_dict": {
+        "type": "Dict",
+        "field": "part visibility",
+        "types": ["bool", "int", "str"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "textures": {
+        "type": "List",
+        "field": "texture",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "uv_anim": {
+        "type": "Keymap",
+        "keys": {
+            "offset": {"type": "list", "subcomponent": "uv_anim.offsets"},
+            "scale": {"type": "list", "subcomponent": "uv_anim.scale"}
+        }
+    },
+    "uv_anim.offsets": {
+        "type": "List",
+        "field": "expression",
+        "types": ["decimal", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "uv_anim.scale": {
+        "type": "List",
+        "field": "range item",
+        "types": ["decimal"],
+        "ordered": true,
+        "measure_length": false,
+        "print_flat": true,
+        "print_all": true,
+        "subcomponent": null
+    }
+}

@@ -1,0 +1,174 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "trade_tables",
+        "subcomponent": "trade_tables",
+        "imports": [
+            {
+                "from": "entities",
+                "components": [
+                    {"component": "filter"}
+                ]
+            },
+            {
+                "from": "loot_tables",
+                "components": [
+                    {"component": "range_int_or_int"},
+                    {"component": "normalize_functions"},
+                    {"component": "functions"}
+                ]
+            }
+        ]
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["behavior_packs"],
+        "function_name": "collapse_behavior_packs_with_defined_in"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "trade_tables": {
+        "type": "Dict",
+        "field": "trade table",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "types": ["dict"],
+        "field": "behavior pack",
+        "detect_key_moves": true,
+        "normalizer": "collapse_resource_packs",
+        "comparison_move_function": "loot_tables_behavior_pack_comparison_move_function",
+        "subcomponent": "trade_table"
+    },
+    "trade_table": {
+        "type": "Keymap",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "format_version": {"type": "str"},
+            "tiers": {"type": "list", "subcomponent": "tiers"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "behavior pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "tiers": {
+        "type": "List",
+        "field": "tier",
+        "types": ["dict"],
+        "ordered": true,
+        "subcomponent": "tier"
+    },
+    "tier": {
+        "type": "Keymap",
+        "keys": {
+            "groups": {"type": "list", "subcomponent": "groups"},
+            "num_to_select": {"type": "int"},
+            "total_exp_required": {"type": "int"},
+            "trades": {"type": "list", "subcomponent": "trades"}
+        }
+    },
+    "groups": {
+        "type": "List",
+        "field": "group",
+        "types": ["dict"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "tier"
+    },
+    "trades": {
+        "type": "List",
+        "field": "trade",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "trade"
+    },
+    "biome_list": {
+        "type": "List",
+        "field": "biome",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "trade": {
+        "type": "Keymap",
+        "keys": {
+            "gives": {"type": "list", "subcomponent": "trade:gives"},
+            "max_uses": {"type": "int"},
+            "reward_exp": {"type": "bool"},
+            "total_exp_required": {"type": "int"},
+            "trader_exp": {"type": "int"},
+            "wants": {"type": "list", "subcomponent": "trade:wants"},
+            "weight": {"type": "int"}
+        }
+    },
+    "trade:gives": {
+        "type": "List",
+        "field": "given item",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "trade:gives.item"
+    },
+    "trade:wants": {
+        "type": "List",
+        "field": "wanted item",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "trade:wants.item"
+    },
+    "trade:gives.item": {
+        "type": "Keymap",
+        "normalizer": "normalize_functions",
+        "keys": {
+            "biomes": {"type": "list", "subcomponent": "biome_list"},
+            "choice": {"type": "list", "subcomponent": "trade:gives.item.choice"},
+            "filters": {"type": "dict", "subcomponent": "filter"},
+            "functions": {"type": "dict", "subcomponent": "functions"},
+            "item": {"type": "str"},
+            "quantity": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"}
+        }
+    },
+    "trade:gives.item.choice": {
+        "type": "List",
+        "field": "choice",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "trade:gives.item"
+    },
+    "trade:wants.item": {
+        "type": "Keymap",
+        "normalizer": "normalize_functions",
+        "keys": {
+            "choice": {"type": "list", "subcomponent": "trade:wants.item.choice"},
+            "biomes": {"type": "list", "subcomponent": "biome_list", "tags": ["outdated"]},
+            "filters": {"type": "dict", "subcomponent": "filter"},
+            "functions": {"type": "dict", "subcomponent": "functions", "tags": ["outdated"]},
+            "item": {"type": "str"},
+            "price_multiplier": {"type": "decimal"},
+            "quantity": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"}
+        }
+    },
+    "trade:wants.item.choice": {
+        "type": "List",
+        "field": "choice",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "trade:wants.item"
+    }
+}

@@ -1,0 +1,427 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "items",
+        "subcomponent": "items"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["behavior_packs", "resource_packs"],
+        "function_name": "collapse_behavior_packs_or_resource_packs_with_defined_in"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "items": {
+        "type": "Dict",
+        "types": ["dict"],
+        "field": "item",
+        "measure_length": true,
+        "detect_key_moves": false,
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "types": ["dict"],
+        "field": "behavior pack",
+        "detect_key_moves": true,
+        "normalizer": "collapse_resource_packs",
+        "comparison_move_function": "items_behavior_pack_comparison_move_function",
+        "subcomponent": "item"
+    },
+    "item": {
+        "type": "Keymap",
+        "imports": ["minecraft:item.old"],
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "format_version": {"type": "str"},
+            "minecraft:item": {"type": "dict", "subcomponent": "minecraft:item"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "behavior pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "minecraft:item": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "components": {"type": "dict", "subcomponent": "components"}
+        }
+    },
+    "minecraft:item.old": {
+        "type": "Keymap",
+        "keys": {
+            "block": {"type": "str"},
+            "camera": {"type": "dict", "subcomponent": "component.camera"},
+            "category": {"type": "str"},
+            "foil": {"type": "bool"},
+            "food": {"type": "dict", "subcomponent": "component.food"},
+            "hand_equipped": {"type": "bool"},
+            "hover_text_color": {"type": "str"},
+            "icon": {"type": "str"},
+            "id": {"type": "int"},
+            "max_damage": {"type": "int"},
+            "max_stack_size": {"type": "int"},
+            "seed": {"type": "dict", "subcomponent": "component.seed"},
+            "stack_by_data": {"type": "bool"},
+            "stacked_by_data": {"type": "bool"},
+            "use_animation": {"type": "str"},
+            "use_duration": {"type": "int"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "category": {"type": "str"},
+            "identifier": {"type": "str"}
+        }
+    },
+    "block_list": {
+        "type": "List",
+        "field": "block",
+        "measure_length": true,
+        "ordered": false,
+        "types": ["str"],
+        "subcomponent": null
+    },
+    "block_list_or_block": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "block_list",
+            "str": null
+        }
+    },
+    "empty": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "item_list": {
+        "type": "List",
+        "field": "item",
+        "measure_length": true,
+        "ordered": false,
+        "types": ["str"],
+        "subcomponent": null
+    },
+    "vector_int": {
+        "type": "List",
+        "field": "vector item",
+        "ordered": true,
+        "types": ["int"],
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    },
+    "components": {
+        "type": "Keymap",
+        "field": "component",
+        "keys": {
+            "minecraft:allow_off_hand": {"type": "dict", "subcomponent": "component.allow_off_hand"},
+            "minecraft:block": {"type": "str", "tags": ["not_in_documentation"]},
+            "minecraft:block_placer": {"type": "dict", "subcomponent": "component.block_placer"},
+            "minecraft:camera": {"type": "dict", "subcomponent": "component.camera", "tags": ["not_in_documentation"]},
+            "minecraft:can_destroy_in_creative": {"type": "dict", "subcomponent": "component.can_destroy_in_creative"},
+            "minecraft:cooldown": {"type": "dict", "subcomponent": "component.cooldown"},
+            "minecraft:damage": {"type": "dict", "subcomponent": "component.damage"},
+            "minecraft:digger": {"type": "dict", "subcomponent": "component.digger"},
+            "minecraft:display_name": {"type": "dict", "subcomponent": "component.display_name"},
+            "minecraft:durability": {"type": "dict", "subcomponent": "component.durability"},
+            "minecraft:enchantable": {"type": "dict", "subcomponent": "component.enchantable"},
+            "minecraft:entity_placer": {"type": "dict", "subcomponent": "component.entity_placer"},
+            "minecraft:foil": {"type": "bool", "tags": ["not_in_documentation"]},
+            "minecraft:food": {"type": "dict", "subcomponent": "component.food"},
+            "minecraft:fuel": {"type": "dict", "subcomponent": "component.fuel"},
+            "minecraft:glint": {"type": "dict", "subcomponent": "component.glint"},
+            "minecraft:hand_equipped": {"type": "bool"},
+            "minecraft:hover_text_color": {"type": "dict", "subcomponent": "component.hover_text_color"},
+            "minecraft:icon": {"type": "dict", "subcomponent": "component.icon"},
+            "minecraft:interact_button": {"type": ["bool", "str"]},
+            "minecraft:liquid_clipped": {"type": "dict", "subcomponent": "component.liquid_clipped"},
+            "minecraft:max_damage": {"type": "int", "tags": ["not_in_documentation"]},
+            "minecraft:max_stack_size": {"type": "int"},
+            "minecraft:portfolio": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
+            "minecraft:projectile": {"type": "dict", "subcomponent": "component.projectile"},
+            "minecraft:record": {"type": "dict", "subcomponent": "component.record"},
+            "minecraft:repairable": {"type": "dict", "subcomponent": "component.repairable"},
+            "minecraft:seed": {"type": "dict", "subcomponent": "component.seed", "tags": ["not_in_documentation"]},
+            "minecraft:shooter": {"type": "dict", "subcomponent": "component.shooter"},
+            "minecraft:should_despawn": {"type": "dict", "subcomponent": "component.should_despawn"},
+            "minecraft:stacked_by_data": {"type": "bool"},
+            "tag:minecraft:is_food": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
+            "minecraft:tags": {"type": "dict", "subcomponent": "component.tags"},
+            "minecraft:throwable": {"type": "dict", "subcomponent": "component.throwable"},
+            "minecraft:use_animation": {"type": "str"},
+            "minecraft:use_duration": {"type": "decimal", "tags": ["not_in_documentation"]},
+            "minecraft:use_modifiers": {"type": "dict", "subcomponent": "component.use_modifiers"},
+            "minecraft:wearable": {"type": "dict", "subcomponent": "component.wearable"}
+        }
+    },
+    "component.allow_off_hand": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"type": "bool"}
+        }
+    },
+    "component.block_placer": {
+        "type": "Keymap",
+        "keys": {
+            "block": {"type": "str"},
+            "use_on": {"type": "list", "subcomponent": "block_list"}
+        }
+    },
+    "component.camera": {
+        "type": "Keymap",
+        "keys": {
+            "black_bars_duration": {"type": "decimal"},
+            "black_bars_screen_ratio": {"type": "decimal"},
+            "picture_duration": {"type": "decimal"},
+            "shutter_duration": {"type": "decimal"},
+            "shutter_screen_ratio": {"type": "decimal", "tags": ["outdated"]},
+            "slide_away_duration": {"type": "decimal"}
+        }
+    },
+    "component.can_destroy_in_creative": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"type": "bool"}
+        }
+    },
+    "component.cooldown": {
+        "type": "Keymap",
+        "keys": {
+            "category": {"type": "str"},
+            "duration": {"type": "decimal"}
+        }
+    },
+    "component.damage": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"type": "int"}
+        }
+    },
+    "component.digger": {
+        "type": "Keymap",
+        "keys": {
+            "destroy_speeds": {"type": "null"},
+            "use_efficiency": {"type": "bool"}
+        }
+    },
+    "component.display_name": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"type": "str"}
+        }
+    },
+    "component.durability": {
+        "type": "Keymap",
+        "keys": {
+            "damage_chance": {"type": "dict", "subcomponent": "component.durability:damage_chance"},
+            "max_durability": {"type": "int"}
+        }
+    },
+    "component.durability:damage_chance": {
+        "type": "Keymap",
+        "keys": {
+            "max": {"type": "int"},
+            "min": {"type": "int"}
+        }
+    },
+    "component.enchantable": {
+        "type": "Keymap",
+        "keys": {
+            "slot": {"type": "str"},
+            "value": {"type": "int"}
+        }
+    },
+    "component.entity_placer": {
+        "type": "Keymap",
+        "keys": {
+            "dispense_on": {"type": "list", "subcomponent": "block_list"},
+            "entity": {"type": "str"},
+            "use_on": {"type": "list", "subcomponent": "block_list"}
+        }
+    },
+    "component.food": {
+        "type": "Keymap",
+        "keys": {
+            "can_always_eat": {"type": "bool"},
+            "cooldown_time": {"type": "int", "tags": ["not_in_documentation"]},
+            "cooldown_type": {"type": "str", "tags": ["not_in_documentation"]},
+            "eat_sound": {"type": "str", "tags": ["outdated"]},
+            "effects": {"type": "list", "subcomponent": "component.food:effects", "tags": ["not_in_documentation"]},
+            "enchanted_effects": {"type": "list", "subcomponent": "component.food:effects", "tags": ["outdated"]},
+            "is_meat": {"type": "bool", "tags": ["not_in_documentation"]},
+            "nutrition": {"type": "int"},
+            "on_use_action": {"type": "str", "tags": ["not_in_documentation"]},
+            "on_use_range": {"type": "list", "subcomponent": "vector_int", "tags": ["not_in_documentation"]},
+            "remove_effects": {"type": "list", "subcomponent": "component.food:remove_effects", "tags": ["not_in_documentation"]},
+            "saturation_modifier": {"type": ["decimal", "str"]},
+            "using_converts_to": {"type": "str"}
+        }
+    },
+    "component.food:effects": {
+        "type": "List",
+        "types": ["dict"],
+        "field": "effect",
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "component.food:effects.item"
+    },
+    "component.food:effects.item": {
+        "type": "Keymap",
+        "keys": {
+            "amplifier": {"type": "int"},
+            "chance": {"type": "decimal"},
+            "duration": {"type": "int"},
+            "hide_particles": {"type": "bool", "tags": ["outdated"]},
+            "name": {"type": "str"}
+        }
+    },
+    "component.food:remove_effects": {
+        "type": "List",
+        "field": "effect",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["str"],
+        "subcomponent": null
+    },
+    "component.fuel": {
+        "type": "Keymap",
+        "keys": {
+            "duration": {"type": "decimal"}
+        }
+    },
+    "component.glint": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"type": "bool"}
+        }
+    },
+    "component.hover_text_color": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"type": "null"}
+        }
+    },
+    "component.icon": {
+        "type": "Keymap",
+        "keys": {
+            "texture": {"type": "str"}
+        }
+    },
+    "component.liquid_clipped": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"type": "bool"}
+        }
+    },
+    "component.projectile": {
+        "type": "Keymap",
+        "keys": {
+            "minimum_critical_power": {"type": "decimal"},
+            "projectile_entity": {"type": "str"}
+        }
+    },
+    "component.record": {
+        "type": "Keymap",
+        "keys": {
+            "comparator_signal": {"type": "int"},
+            "duration": {"type": "decimal"},
+            "sound_event": {"type": "str"}
+        }
+    },
+    "component.repairable": {
+        "type": "Keymap",
+        "keys": {
+            "repair_items": {"type": "list", "subcomponent": "item_list"}
+        }
+    },
+    "component.seed": {
+        "type": "Keymap",
+        "keys": {
+            "crop_result": {"type": "str"},
+            "plant_at": {"type": ["list", "str"], "subcomponent": "block_list_or_block"},
+            "plant_at_any_solid_surface": {"type": "bool"},
+            "plant_at_face": {"type": "str"}
+        }
+    },
+    "component.shooter": {
+        "type": "Keymap",
+        "keys": {
+            "ammunition": {"type": "list", "subcomponent": "component.shooter:ammunition"},
+            "charge_on_draw": {"type": "bool"},
+            "max_draw_duration": {"type": "decimal"},
+            "scale_power_by_draw_duration": {"type": "bool"}
+        }
+    },
+    "component.shooter:ammunition": {
+        "type": "List",
+        "field": "ammunition",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "component.shooter:ammunition.item"
+    },
+    "component.shooter:ammunition.item": {
+        "type": "Keymap",
+        "keys": {
+            "item": {"type": "str"},
+            "use_offhand": {"type": "bool"},
+            "search_inventory": {"type": "bool"},
+            "use_in_creative": {"type": "bool"}
+        }
+    },
+    "component.should_despawn": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"type": "bool"}
+        }
+    },
+    "component.tags": {
+        "type": "Keymap",
+        "keys": {
+            "tags": {"type": "list", "subcomponent": "component.tags:tags"}
+        }
+    },
+    "component.tags:tags": {
+        "type": "List",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "field": "tag",
+        "subcomponent": null
+    },
+    "component.throwable": {
+        "type": "Keymap",
+        "keys": {
+            "default_offset_scale": {"type": "decimal"},
+            "do_swing_animation": {"type": "bool"},
+            "inside_block_offset_scale": {"type": "decimal"},
+            "launch_power_scale": {"type": "decimal"},
+            "max_draw_duration": {"type": "decimal"},
+            "max_launch_power": {"type": "decimal"},
+            "min_draw_duration": {"type": "decimal"},
+            "scale_power_by_draw_duration": {"type": "bool"}
+        }
+    },
+    "component.use_modifiers": {
+        "type": "Keymap",
+        "keys": {
+            "movement_modifier": {"type": "decimal"},
+            "use_duration": {"type": "decimal"}
+        }
+    },
+    "component.wearable": {
+        "type": "Keymap",
+        "keys": {
+            "protection": {"type": "int"},
+            "slot": {"type": "str"}
+        }
+    }
+}

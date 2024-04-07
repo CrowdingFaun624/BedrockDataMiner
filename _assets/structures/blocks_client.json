@@ -1,0 +1,98 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "blocks_client",
+        "normalizer": "normalize",
+        "subcomponent": "block"
+    },
+    "normalize": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "blocks_client_normalize"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "fix_MCPE_76182": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "blocks_client_fix_MCPE_76182"
+    },
+    "block": {
+        "type": "Dict",
+        "field": "block",
+        "types": ["dict"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": "resource_pack"
+    },
+    "resource_pack": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "measure_length": true,
+        "normalizer": "collapse_resource_packs",
+        "subcomponent": "block_properties"
+    },
+    "block_properties": {
+        "type": "Keymap",
+        "field": "property",
+        "normalizer": "fix_MCPE_76182",
+        "keys": {
+            "blockshape": {"type": "str"},
+            "brightness_gamma": {"type": "float"},
+            "carried_textures": {"type": ["dict", "str"], "subcomponent": "textures_group"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "isotropic": {"type": ["bool", "dict"], "subcomponent": "isotropic_group"},
+            "sound": {"type": "str"},
+            "textures": {"type": ["dict", "str"], "subcomponent": "textures_group"}
+        }
+    },
+    "textures_group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "textures",
+            "str": null
+        }
+    },
+    "isotropic_group": {
+        "type": "Group",
+        "subcomponents": {
+            "bool": null,
+            "dict": "isotropic"
+        }
+    },
+    "defined_in": {
+        "field": "resource pack",
+        "type": "List",
+        "subcomponent": null,
+        "types": ["str"],
+        "print_flat": true,
+        "ordered": false
+    },
+    "textures": {
+        "type": "Keymap",
+        "field": "direction",
+        "keys": {
+            "down": {"type": "str"},
+            "east": {"type": "str"},
+            "north": {"type": "str"},
+            "side": {"type": "str"},
+            "south": {"type": "str"},
+            "up": {"type": "str"},
+            "west": {"type": "str"}
+        }
+    },
+    "isotropic": {
+        "type": "Keymap",
+        "field": "direction",
+        "keys": {
+            "down": {"type": "bool"},
+            "up": {"type": "bool"}
+        }
+    }
+}

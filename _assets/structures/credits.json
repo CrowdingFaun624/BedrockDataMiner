@@ -1,0 +1,76 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "credits",
+        "normalizer": "normalize_sections",
+        "subcomponent": "sections"
+    },
+    "normalize_sections": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "credits_normalize_sections"
+    },
+    "normalize_disciplines": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "credits_normalize_disciplines"
+    },
+    "normalize_titles": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "credits_normalize_titles"
+    },
+    "sections": {
+        "type": "Dict",
+        "field": "section",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "section"
+    },
+    "section": {
+        "type": "Keymap",
+        "normalizer": ["normalize_disciplines", "normalize_titles"],
+        "keys": {
+            "disciplines": {"type": "dict", "subcomponent": "disciplines"},
+            "section": {"type": "str"},
+            "titles": {"type": "dict", "subcomponent": "titles"}
+        }
+    },
+    "disciplines": {
+        "type": "Dict",
+        "field": "discipline",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "discipline"
+    },
+    "discipline": {
+        "type": "Keymap",
+        "normalizer": "normalize_titles",
+        "keys": {
+            "discipline": {"type": "str"},
+            "titles": {"type": "dict", "subcomponent": "titles"}
+        }
+    },
+    "titles": {
+        "type": "Dict",
+        "field": "title",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "title"
+    },
+    "title": {
+        "type": "Keymap",
+        "keys": {
+            "names": {"type": "list", "subcomponent": "names"},
+            "title": {"type": "str"}
+        }
+    },
+    "names": {
+        "type": "List",
+        "field": "name",
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null,
+        "types": ["str"]
+    }
+}

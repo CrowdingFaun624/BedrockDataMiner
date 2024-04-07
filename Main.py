@@ -23,7 +23,7 @@ if __name__ == "__main__":
 #     stats = pstats.Stats(profile, stream=stream)
 #     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
 
-import Comparison.CompareAll as CompareAll
+import Programs.CompareAll as CompareAll
 import DataMiners.DataMiners as DataMiners
 import Downloader.AllVersions as AllVersions
 import Downloader.VersionsParser as VersionsParser
@@ -46,7 +46,7 @@ PROGRAM_NAMES = {
     "GetFile": GetFile.main,
     "NbtReader": NbtReader.main,
     "StoredVersions": StoredVersionsManager.main,
-    "TestComparers": DataMiners.test_comparers,
+    "TestStructures": DataMiners.test_structures,
     "VersionsParser": VersionsParser.main,
     "WikiValidator": WikiValidator.main,
 }
@@ -71,7 +71,6 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
-# TODO: Rename stuff in Comparison
 # TODO: fix meta-dataminers relating to the usage of sound events (use all available sources)
 # TODO: make more dataminers
 # TODO: make more domains

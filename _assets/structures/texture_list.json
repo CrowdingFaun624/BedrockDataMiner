@@ -1,0 +1,36 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "texture_list",
+        "normalizer": "normalize",
+        "subcomponent": "textures"
+    },
+    "normalize": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "texture_list_normalize"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_pack_list"
+    },
+    "textures": {
+        "type": "Dict",
+        "field": "texture",
+        "types": ["list"],
+        "measure_length": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "normalizer": "collapse_resource_packs",
+        "measure_length": true,
+        "print_flat": true,
+        "print_all": true,
+        "subcomponent": null
+    }
+}

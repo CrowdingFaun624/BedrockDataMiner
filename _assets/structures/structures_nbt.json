@@ -1,0 +1,478 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "structures_nbt",
+        "subcomponent": "structures"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["behavior_packs"],
+        "function_name": "collapse_behavior_packs_without_defined_in"
+    },
+    "normalize_text": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "structures_nbt_normalize_text"
+    },
+    "structures": {
+        "type": "Dict",
+        "field": "structure",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparison_move_function": "structures_structure_move",
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "field": "behavior pack",
+        "types": ["TAG_Compound"],
+        "normalizer": ["collapse_resource_packs"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparison_move_function": "structures_resource_pack_move",
+        "subcomponent": "structure_base"
+    },
+    "structure_base": {
+        "type": "NbtBase",
+        "types": ["TAG_Compound"],
+        "endianness": "big",
+        "subcomponent": "structure"
+    },
+    "vector_tag_int": {
+        "type": "NbtTagList",
+        "field": "coordinate",
+        "types": ["TAG_Int"],
+        "measure_length": false,
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    },
+    "vector_tag_double": {
+        "type": "NbtTagList",
+        "field": "coordinate",
+        "types": ["TAG_Double"],
+        "measure_length": false,
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    },
+    "structure": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "author": {"type": "TAG_String"},
+            "blocks": {"type": "TAG_List", "subcomponent": "blocks"},
+            "DataVersion": {"type": "TAG_Int"},
+            "entities": {"type": "TAG_List", "subcomponent": "entities"},
+            "palette": {"type": "TAG_List", "subcomponent": "palettes"},
+            "size": {"type": "TAG_List", "subcomponent": "vector_tag_int"},
+            "version": {"type": "TAG_Int"}
+        }
+    },
+    "blocks": {
+        "type": "NbtTagList",
+        "field": "block",
+        "types": ["TAG_Compound"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "block"
+    },
+    "block": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "nbt": {"type": "TAG_Compound", "subcomponent": "block_nbt"},
+            "pos": {"type": "TAG_List", "subcomponent": "vector_tag_int"},
+            "state": {"type": "TAG_Int"}
+        }
+    },
+    "entities": {
+        "type": "NbtTagList",
+        "field": "entity",
+        "types": ["TAG_Compound"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "entity"
+    },
+    "entity": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "blockPos": {"type": "TAG_List", "subcomponent": "vector_tag_int"},
+            "nbt": {"type": "TAG_Compound", "subcomponent": "entity_nbt"},
+            "pos": {"type": "TAG_List", "subcomponent": "vector_tag_double"}
+        }
+    },
+    "palettes": {
+        "type": "NbtTagList",
+        "field": "palette",
+        "types": ["TAG_Compound"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "palette"
+    },
+    "palette": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "Name": {"type": "TAG_String"},
+            "Properties": {"type": "TAG_Compound", "subcomponent": "palette_properties"}
+        }
+    },
+    "palette_properties": {
+        "type": "NbtTagCompound",
+        "field": "property",
+        "types": ["TAG_String"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "block_nbt": {
+        "type": "NbtKeymapTagCompound",
+        "field": "tag",
+        "normalizer": "normalize_text",
+        "measure_length": true,
+        "keys": {
+            "attachement_type": {"type": "TAG_String"},
+            "author": {"type": "TAG_String"},
+            "Base": {"type": "TAG_Int"},
+            "BrewTime": {"type": "TAG_Short"},
+            "BurnTime": {"type": "TAG_Short"},
+            "Color": {"type": "TAG_String"},
+            "config": {"type": "TAG_Compound", "subcomponent": "nbt:config"},
+            "CookingTimes": {"type": "TAG_Int_Array", "subcomponent": "nbt:cooking_times"},
+            "CookingTotalTimes": {"type": "TAG_Int_Array", "subcomponent": "nbt:cooking_times"},
+            "CookTime": {"type": "TAG_Short"},
+            "CookTimeTotal": {"type": "TAG_Short"},
+            "Data": {"type": "TAG_Int"},
+            "Delay": {"type": "TAG_Short"},
+            "final_state": {"type": "TAG_String"},
+            "Fuel": {"type": "TAG_Byte"},
+            "id": {"type": "TAG_String"},
+            "ignoreEntities": {"type": "TAG_Byte"},
+            "integrity": {"type": "TAG_Float"},
+            "item": {"type": "TAG_Compound", "subcomponent": "nbt:item"},
+            "Item": {"type": "TAG_String"},
+            "Items": {"type": "TAG_List", "subcomponent": "nbt:items"},
+            "joint": {"type": "TAG_String"},
+            "Lock": {"type": "TAG_String"},
+            "LootTable": {"type": "TAG_String"},
+            "MaxNearbyEntities": {"type": "TAG_Short"},
+            "MaxSpawnDelay": {"type": "TAG_Short"},
+            "metadata": {"type": "TAG_String"},
+            "MinSpawnDelay": {"type": "TAG_Short"},
+            "mirror": {"type": "TAG_String"},
+            "mode": {"type": "TAG_String"},
+            "name": {"type": "TAG_String"},
+            "normal_config": {"type": "TAG_Compound", "subcomponent": "nbt:normal_config"},
+            "ominous_config": {"type": "TAG_Compound", "subcomponent": "nbt:ominous_config"},
+            "OutputSignal": {"type": "TAG_Int"},
+            "Patterns": {"type": "TAG_List", "subcomponent": "nbt:patterns"},
+            "placement_priority": {"type": "TAG_Int"},
+            "pool": {"type": "TAG_String"},
+            "posX": {"type": "TAG_Int"},
+            "posY": {"type": "TAG_Int"},
+            "posZ": {"type": "TAG_Int"},
+            "powered": {"type": "TAG_Byte"},
+            "RecipesUsed": {"type": "TAG_Compound", "subcomponent": "nbt:recipes_used"},
+            "RecipesUsedSize": {"type": "TAG_Short"},
+            "RequiredPlayerRange": {"type": "TAG_Short"},
+            "Rot": {"type": "TAG_Byte"},
+            "rotation": {"type": "TAG_String"},
+            "seed": {"type": "TAG_Long"},
+            "selection_priority": {"type": "TAG_Int"},
+            "sherds": {"type": "TAG_List", "subcomponent": "nbt:sherds"},
+            "showair": {"type": "TAG_Byte"},
+            "showboundingbox": {"type": "TAG_Byte"},
+            "sizeX": {"type": "TAG_Int"},
+            "sizeY": {"type": "TAG_Int"},
+            "sizeZ": {"type": "TAG_Int"},
+            "SkullType": {"type": "TAG_Byte"},
+            "SpawnCount": {"type": "TAG_Short"},
+            "SpawnData": {"type": "TAG_Compound", "subcomponent": "entity_nbt"},
+            "SpawnPotentials": {"type": "TAG_List", "subcomponent": "nbt:spawn_potentials"},
+            "SpawnRange": {"type": "TAG_Short"},
+            "target": {"type": "TAG_String"},
+            "target_pool": {"type": "TAG_String"},
+            "Text1": {"type": "dict", "subcomponent": "nbt:text"},
+            "Text2": {"type": "dict", "subcomponent": "nbt:text"},
+            "Text3": {"type": "dict", "subcomponent": "nbt:text"},
+            "Text4": {"type": "dict", "subcomponent": "nbt:text"}
+        }
+    },
+    "nbt:config": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "key_item": {"type": "TAG_Compound", "subcomponent": "nbt:item"},
+            "loot_table": {"type": "TAG_String"}
+        }
+    },
+    "nbt:cooking_times": {
+        "type": "NbtTagIntArray",
+        "field": "time",
+        "types": ["TAG_Int"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": null
+    },
+    "nbt:items": {
+        "type": "NbtTagList",
+        "field": "item",
+        "types": ["TAG_Compound"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "nbt:item"
+    },
+    "nbt:item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "count": {"type": ["TAG_Byte", "TAG_Int"]},
+            "Count": {"type": "TAG_Byte"},
+            "Damage": {"type": "TAG_Short"},
+            "Slot": {"type": "TAG_Byte"},
+            "id": {"type": "TAG_String"},
+            "tag": {"type": "TAG_Compound", "subcomponent": "nbt:item.tag"}
+        }
+    },
+    "nbt:item.tag": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "Damage": {"type": "TAG_Int"},
+            "ench": {"type": "TAG_List", "subcomponent": "nbt:item.tag.ench"},
+            "Potion": {"type": "TAG_String"}
+        }
+    },
+    "nbt:item.tag.ench": {
+        "type": "NbtTagList",
+        "field": "enchantment",
+        "types": ["TAG_Compound"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "nbt:item.tag.ench.item"
+    },
+    "nbt:item.tag.ench.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "id": {"type": "TAG_Short"},
+            "lvl": {"type": "TAG_Short"}
+        }
+    },
+    "nbt:normal_config": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "simultaneous_mobs": {"type": "TAG_Float"},
+            "simultaneous_mobs_added_per_player": {"type": "TAG_Float"},
+            "spawn_potentials": {"type": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials"},
+            "ticks_between_spawn": {"type": "TAG_Int"},
+            "total_mobs": {"type": "TAG_Float"},
+            "total_mobs_added_per_player": {"type": "TAG_Float"}
+        }
+    },
+    "nbt:normal_config.spawn_potentials": {
+        "type": "NbtTagList",
+        "field": "entity",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "nbt:normal_config.spawn_potentials.item"
+    },
+    "nbt:normal_config.spawn_potentials.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "data": {"type": "TAG_Compound", "subcomponent": "nbt:normal_config.spawn_potentials.item.data"},
+            "weight": {"type": "TAG_Int"}
+        }
+    },
+    "nbt:normal_config.spawn_potentials.item.data": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "entity": {"type": "TAG_Compound", "subcomponent": "entity_nbt"},
+            "equipment_loot_table": {"type": "TAG_String"}
+        }
+    },
+    "nbt:ominous_config": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "loot_tables_to_eject": {"type": "TAG_List", "subcomponent": "nbt:ominous_config.loot_tables_to_eject"},
+            "spawn_potentials": {"type": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials"}
+        }
+    },
+    "nbt:ominous_config.loot_tables_to_eject": {
+        "type": "NbtTagList",
+        "field": "loot table",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "nbt:ominous_config.loot_tables_to_eject.item"
+    },
+    "nbt:ominous_config.loot_tables_to_eject.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "data": {"type": "TAG_String"},
+            "weight": {"type": "TAG_Int"}
+        }
+    },
+    "nbt:patterns": {
+        "type": "NbtTagList",
+        "field": "pattern",
+        "types": ["TAG_Compound"],
+        "measure_length": true,
+        "ordered": true,
+        "subcomponent": "nbt:patterns.item"
+    },
+    "nbt:patterns.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "Color": {"type": "TAG_Int"},
+            "Pattern": {"type": "TAG_String"}
+        }
+    },
+    "nbt:recipes_used": {
+        "type": "NbtTagCompound",
+        "field": "recipe",
+        "types": ["TAG_Int"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "nbt:sherds": {
+        "type": "NbtTagList",
+        "field": "sherd",
+        "types": ["TAG_String"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "nbt:spawn_potentials": {
+        "type": "NbtTagList",
+        "field": "entity",
+        "types": ["TAG_Compound"],
+        "measure_length": true,
+        "subcomponent": "nbt:spawn_potentials.item"
+    },
+    "nbt:spawn_potentials.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "Entity": {"type": "TAG_Compound", "subcomponent": "entity_nbt"},
+            "Weight": {"type": "TAG_Int"}
+        }
+    },
+    "nbt:text": {
+        "type": "Keymap",
+        "keys": {
+            "text": {"type": "str"}
+        }
+    },
+    "entity_nbt": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "AbsorptionAmount": {"type": "TAG_Float"},
+            "Age": {"type": "TAG_Int"},
+            "Air": {"type": "TAG_Short"},
+            "ArmorDropChances": {"type": "TAG_List", "subcomponent": "nbt:armor_drop_chances"},
+            "ArmorItems": {"type": "TAG_List", "subcomponent": "nbt:armor_items"},
+            "Attributes": {"type": "TAG_List", "subcomponent": "nbt:attributes"},
+            "CanPickUpLoot": {"type": "TAG_Byte"},
+            "Career": {"type": "TAG_Int"},
+            "CareerLevel": {"type": "TAG_Int"},
+            "DeathTime": {"type": "TAG_Short"},
+            "Dimension": {"type": "TAG_Int"},
+            "FallDistance": {"type": "TAG_Float"},
+            "FallFlying": {"type": "TAG_Byte"},
+            "Fire": {"type": "TAG_Short"},
+            "ForcedAge": {"type": "TAG_Int"},
+            "HandDropChances": {"type": "TAG_List", "subcomponent": "nbt:hand_drop_chances"},
+            "HandItems": {"type": "TAG_List", "subcomponent": "nbt:hand_items"},
+            "Health": {"type": "TAG_Float"},
+            "HurtByTimestamp": {"type": "TAG_Int"},
+            "HurtTime": {"type": "TAG_Short"},
+            "id": {"type": "TAG_String"},
+            "Inventory": {"type": "TAG_List", "subcomponent": "nbt:inventory"},
+            "Invulnerable": {"type": "TAG_Byte"},
+            "IsBaby": {"type": "TAG_Byte"},
+            "Leashed": {"type": "TAG_Byte"},
+            "LeftHanded": {"type": "TAG_Byte"},
+            "Motion": {"type": "TAG_List", "subcomponent": "vector_tag_double"},
+            "Offers": {"type": "TAG_Compound", "subcomponent": "nbt:offers"},
+            "OnGround": {"type": "TAG_Byte"},
+            "PersistenceRequired": {"type": "TAG_Byte"},
+            "PortalCooldown": {"type": "TAG_Int"},
+            "Pos": {"type": "TAG_List", "subcomponent": "vector_tag_double"},
+            "Size": {"type": "TAG_Int"},
+            "Profession": {"type": "TAG_Int"},
+            "Riches": {"type": "TAG_Int"},
+            "Rotation": {"type": "TAG_List", "subcomponent": "nbt:rotation"},
+            "UUIDLeast": {"type": "TAG_Long"},
+            "UUIDMost": {"type": "TAG_Long"},
+            "Willing": {"type": "TAG_Byte"}
+        }
+    },
+    "nbt:armor_drop_chances": {
+        "type": "NbtTagList",
+        "field": "chance",
+        "types": ["TAG_Float"],
+        "ordered": true,
+        "measure_length": false,
+        "subcomponent": null
+    },
+    "nbt:armor_items": {
+        "type": "NbtTagList",
+        "field": "armor item",
+        "types": ["TAG_Compound"],
+        "ordered": true,
+        "measure_length": false,
+        "subcomponent": "nbt:item"
+    },
+    "nbt:attributes": {
+        "type": "NbtTagList",
+        "field": "attribute",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "nbt:attributes.item"
+    },
+    "nbt:attributes.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "Base": {"type": "TAG_Double"},
+            "Name": {"type": "TAG_String"}
+        }
+    },
+    "nbt:hand_drop_chances": {
+        "type": "NbtTagList",
+        "field": "chance",
+        "types": ["TAG_Float"],
+        "ordered": true,
+        "measure_length": false,
+        "subcomponent": null
+    },
+    "nbt:hand_items": {
+        "type": "NbtTagList",
+        "field": "hand item",
+        "types": ["TAG_Compound"],
+        "ordered": true,
+        "measure_length": false,
+        "subcomponent": "nbt:item"
+    },
+    "nbt:inventory": {
+        "type": "NbtTagList",
+        "field": "item",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "nbt:item"
+    },
+    "nbt:offers": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "Recipes": {"type": "TAG_List", "subcomponent": "nbt:items"}
+        }
+    },
+    "nbt:rotation": {
+        "type": "NbtTagList",
+        "field": "axis",
+        "types": ["TAG_Float"],
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "measure_length": false,
+        "subcomponent": null
+    }
+}

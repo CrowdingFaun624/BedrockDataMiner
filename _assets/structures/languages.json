@@ -1,0 +1,43 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "languages",
+        "normalizer": "normalize",
+        "subcomponent": "language"
+    },
+    "normalize": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "languages_normalize"
+    },
+    "language": {
+        "type": "Dict",
+        "field": "language",
+        "types": ["dict"],
+        "detect_key_moves": true,
+        "measure_length": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "subcomponent": "language_property"
+    },
+    "language_property": {
+        "type": "Keymap",
+        "field": "property",
+        "keys": {
+            "name": {"type": "str"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "print_flat": true,
+        "ordered": false,
+        "subcomponent": null
+    }
+}

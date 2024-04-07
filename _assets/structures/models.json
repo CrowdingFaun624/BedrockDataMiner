@@ -1,0 +1,220 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "models",
+        "subcomponent": "files",
+        "normalizer": "model_normalize"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_without_defined_in"
+    },
+    "model_normalize": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "models_model_normalize"
+    },
+    "normalize_bones": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "models_normalize_bones"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "vector_decimal": {
+        "type": "List",
+        "field": "vector item",
+        "types": ["decimal"],
+        "ordered": true,
+        "print_flat": true,
+        "print_all": true,
+        "subcomponent": null
+    },
+    "files": {
+        "type": "Dict",
+        "field": "file",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "normalizer": "collapse_resource_packs",
+        "detect_key_moves": true,
+        "comparison_move_function": "entities_behavior_pack_comparison_move_function",
+        "subcomponent": "model"
+    },
+    "model": {
+        "type": "Keymap",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "format_version": {"type": ["null", "str"]},
+            "minecraft:geometry": {"type": "dict", "subcomponent": "minecraft:geometry"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": null
+    },
+    "minecraft:geometry": {
+        "type": "Keymap",
+        "normalizer": "normalize_bones",
+        "keys": {
+            "bones": {"type": "dict", "subcomponent": "bones"},
+            "description": {"type": "dict", "subcomponent": "description"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "animationArmsDown": {"type": "bool", "tags": ["outdated"]},
+            "animationArmsOutFront": {"type": "bool", "tags": ["outdated"]},
+            "animationDontShowArmor": {"type": "bool", "tags": ["outdated"]},
+            "animationInvertedCrouch": {"type": "bool", "tags": ["outdated"]},
+            "animationNoHeadBob": {"type": "bool", "tags": ["outdated"]},
+            "animationSingleArmAnimation": {"type": "bool", "tags": ["outdated"]},
+            "animationSingleLegAnimation": {"type": "bool", "tags": ["outdated"]},
+            "animationStationaryLegs": {"type": "bool", "tags": ["outdated"]},
+            "animationStatueOfLibertyArms": {"type": "bool", "tags": ["outdated"]},
+            "animationUpsideDown": {"type": "bool", "tags": ["outdated"]},
+            "identifier": {"type": "str"},
+            "META_ModelVersion": {"type": "str", "tags": ["outdated"]},
+            "rigtype": {"type": ["null", "str"], "tags": ["outdated"]},
+            "texture_height": {"type": "decimal"},
+            "texture_width": {"type": "decimal"},
+            "textureheight": {"type": "decimal"},
+            "texturewidth": {"type": "decimal"},
+            "visible_bounds_height": {"type": "decimal"},
+            "visible_bounds_offset": {"type": "list", "subcomponent": "vector_decimal"},
+            "visible_bounds_width": {"type": "decimal"}
+        }
+    },
+    "bones": {
+        "type": "Dict",
+        "field": "bone",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "bone"
+    },
+    "bone": {
+        "type": "Keymap",
+        "keys": {
+            "bind_pose_rotation": {"type": "list", "subcomponent": "vector_decimal"},
+            "binding": {"type": "str"},
+            "cubes": {"type": "list", "subcomponent": "cubes"},
+            "inflate": {"type": "decimal"},
+            "locators": {"type": "dict", "subcomponent": "locators"},
+            "material": {"type": "str", "tags": ["outdated"]},
+            "META_BoneType": {"type": ["null", "str"], "tags": ["outdated"]},
+            "mirror": {"type": ["bool", "str"]},
+            "neverRender": {"type": "bool"},
+            "parent": {"type": ["null", "str"]},
+            "pivot": {"type": "list", "subcomponent": "vector_decimal"},
+            "pos": {"type": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
+            "pre_rotation": {"type": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
+            "reset": {"type": ["bool", "str"]},
+            "rotation": {"type": "list", "subcomponent": "vector_decimal"},
+            "texture_meshes": {"type": "list", "subcomponent": "texture_meshes"}
+        }
+    },
+    "cubes": {
+        "type": "List",
+        "field": "cube",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "cube"
+    },
+    "cube": {
+        "type": "Keymap",
+        "keys": {
+            "inflate": {"type": "decimal"},
+            "mirror": {"type": "bool"},
+            "origin": {"type": "list", "subcomponent": "vector_decimal"},
+            "rotation": {"type": "list", "subcomponent": "vector_decimal"},
+            "pivot": {"type": "list", "subcomponent": "vector_decimal"},
+            "size": {"type": "list", "subcomponent": "vector_decimal"},
+            "uv": {"type": ["dict", "list"], "subcomponent": "uv_group"}
+        }
+    },
+    "uv_group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "uv_dict",
+            "list": "uv_list"
+        }
+    },
+    "uv_dict": {
+        "type": "Keymap",
+        "keys": {
+            "down": {"type": "dict", "subcomponent": "uv_dict.item"},
+            "east": {"type": "dict", "subcomponent": "uv_dict.item"},
+            "north": {"type": "dict", "subcomponent": "uv_dict.item"},
+            "south": {"type": "dict", "subcomponent": "uv_dict.item"},
+            "up": {"type": "dict", "subcomponent": "uv_dict.item"},
+            "west": {"type": "dict", "subcomponent": "uv_dict.item"}
+        }
+    },
+    "uv_dict.item": {
+        "type": "Keymap",
+        "keys": {
+            "uv": {"type": "list", "subcomponent": "uv_list"},
+            "uv_size": {"type": "list", "subcomponent": "uv_size"}
+        }
+    },
+    "uv_size": {
+        "type": "List",
+        "field": "uv size item",
+        "types": ["int"],
+        "ordered": true,
+        "print_flat": true,
+        "print_all": true,
+        "subcomponent": null
+    },
+    "uv_list": {
+        "type": "List",
+        "field": "uv item",
+        "types": ["decimal"],
+        "ordered": true,
+        "print_flat": true,
+        "print_all": true,
+        "subcomponent": null
+    },
+    "locators": {
+        "type": "Dict",
+        "field": "locator",
+        "types": ["list"],
+        "measure_length": true,
+        "subcomponent": "vector_decimal"
+    },
+    "texture_meshes": {
+        "type": "List",
+        "field": "texture mesh",
+        "types": ["dict"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "texture_mesh"
+    },
+    "texture_mesh": {
+        "type": "Keymap",
+        "keys": {
+            "local_pivot": {"type": "list", "subcomponent": "vector_decimal"},
+            "position": {"type": "list", "subcomponent": "vector_decimal"},
+            "rotation": {"type": "list", "subcomponent": "vector_decimal"},
+            "scale": {"type": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
+            "texture": {"type": "str"}
+        }
+    }
+}

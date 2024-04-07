@@ -1,0 +1,561 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "loot_tables",
+        "subcomponent": "loot_tables"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["behavior_packs"],
+        "function_name": "collapse_behavior_packs_with_defined_in"
+    },
+    "normalize_conditions": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "loot_tables_normalize_conditions"
+    },
+    "normalize_functions": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "loot_tables_normalize_functions"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "loot_tables": {
+        "type": "Dict",
+        "field": "loot table",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "types": ["dict"],
+        "field": "behavior pack",
+        "detect_key_moves": true,
+        "normalizer": "collapse_resource_packs",
+        "comparison_move_function": "loot_tables_behavior_pack_comparison_move_function",
+        "subcomponent": "loot_table"
+    },
+    "empty": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "range_decimal": {
+        "type": "Keymap",
+        "print_all": true,
+        "keys": {
+            "max": {"type": "decimal"},
+            "min": {"type": "decimal"}
+        }
+    },
+    "range_decimal_or_decimal": {
+        "type": "Group",
+        "subcomponents": {
+            "decimal": null,
+            "dict": "range_decimal"
+        }
+    },
+    "range_int": {
+        "type": "Keymap",
+        "print_all": true,
+        "keys": {
+            "max": {"type": "int"},
+            "min": {"type": "int"}
+        }
+    },
+    "range_int_or_int": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "range_int",
+            "int": null
+        }
+    },
+    "range_list_int": {
+        "type": "List",
+        "ordered": true,
+        "types": ["int"],
+        "field": "range_item",
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    },
+    "range_list_int_or_int": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "range_list_int",
+            "int": null
+        }
+    },
+    "loot_table": {
+        "type": "Keymap",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "pools": {"type": "list", "subcomponent": "pools"},
+            "random_sequence": {"type": "str", "tags": ["outdated"]},
+            "type": {"type": "str"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "behavior pack",
+        "types": ["str"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": null
+    },
+    "pools": {
+        "type": "List",
+        "field": "pool",
+        "types": ["dict"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "pool"
+    },
+    "pool": {
+        "type": "Keymap",
+        "normalizer": ["normalize_conditions", "normalize_functions"],
+        "keys": {
+            "bonus_rolls": {"type": "decimal"},
+            "conditions": {"type": "dict", "subcomponent": "conditions"},
+            "entries": {"type": "list", "subcomponent": "entries"},
+            "functions": {"type": "dict", "subcomponent": "functions"},
+            "rolls": {"type": ["decimal", "dict"], "subcomponent": "range_decimal_or_decimal"},
+            "tiers": {"type": "dict", "subcomponent": "tiers"}
+        }
+    },
+    "tiers": {
+        "type": "Keymap",
+        "keys": {
+            "bonus_chance": {"type": "decimal"},
+            "bonus_rolls": {"type": "int"},
+            "initial_range": {"type": "int"}
+        }
+    },
+    "entries": {
+        "type": "List",
+        "field": "entry",
+        "types": ["dict"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "entry"
+    },
+    "entry": {
+        "type": "Keymap",
+        "normalizer": ["normalize_functions", "normalize_conditions"],
+        "keys": {
+            "aux_val": {"type": "int"},
+            "auxVal": {"type": "int"},
+            "conditions": {"type": "dict", "subcomponent": "conditions"},
+            "count": {"type": "int"},
+            "functions": {"type": "dict", "subcomponent": "functions"},
+            "name": {"type": "str"},
+            "pools": {"type": "list", "subcomponent": "pools"},
+            "quality": {"type": "int"},
+            "type": {"type": "str"},
+            "weight": {"type": "int"}
+        }
+    },
+    "functions": {
+        "type": "Keymap",
+        "field": "function",
+        "measure_length": true,
+        "keys": {
+            "enchant_book_for_trading": {"type": "dict", "subcomponent": "function.enchant_book_for_trading"},
+            "enchant_random_gear": {"type": "dict", "subcomponent": "function.enchant_random_gear"},
+            "enchant_randomly": {"type": "dict", "subcomponent": "function.enchant_randomly"},
+            "enchant_with_levels": {"type": "dict", "subcomponent": "function.enchant_with_levels"},
+            "exploration_map": {"type": "dict", "subcomponent": "function.exploration_map"},
+            "fill_container": {"type": "dict", "subcomponent": "function.fill_container"},
+            "furnace_smelt": {"type": "dict", "subcomponent": "function.furnace_smelt"},
+            "looting_enchant": {"type": "dict", "subcomponent": "function.looting_enchant"},
+            "minecraft:enchant_randomly": {"type": "dict", "subcomponent": "function.enchant_randomly"},
+            "minecraft:enchant_with_levels": {"type": "dict", "subcomponent": "function.enchant_with_levels", "tags": ["outdated"]},
+            "minecraft:set_count": {"type": "dict", "subcomponent": "function.set_count"},
+            "minecraft:set_damage": {"type": "dict", "subcomponent": "function.set_damage"},
+            "minecraft:set_data": {"type": "dict", "subcomponent": "function.set_data"},
+            "minecraft:set_data_from_color_index": {"type": "dict", "subcomponent": "empty"},
+            "minecraft:set_stew_effect": {"type": "dict", "subcomponent": "function.set_stew_effect"},
+            "random_aux_value": {"type": "dict", "subcomponent": "function.random_aux_value"},
+            "random_block_state": {"type": "dict", "subcomponent": "function.random_block_state"},
+            "random_dye": {"type": "dict", "subcomponent": "empty"},
+            "set_actor_id": {"type": "dict", "subcomponent": "function.set_actor_id"},
+            "set_armor_trim": {"type": "dict", "subcomponent": "function.set_armor_trim"},
+            "set_banner_details": {"type": "dict", "subcomponent": "function.set_banner_details"},
+            "set_book_contents": {"type": "dict", "subcomponent": "function.set_book_contents"},
+            "set_count": {"type": "dict", "subcomponent": "function.set_count"},
+            "set_damage": {"type": "dict", "subcomponent": "function.set_damage"},
+            "set_data": {"type": "dict", "subcomponent": "function.set_data"},
+            "set_lore": {"type": "dict", "subcomponent": "function.set_lore"},
+            "set_name": {"type": "dict", "subcomponent": "function.set_name"},
+            "set_ominous_bottle_amplifier": {"type": "dict", "subcomponent": "function.set_ominous_bottle_amplifier"},
+            "specific_enchants": {"type": "dict", "subcomponent": "function.specific_enchants"},
+            "trader_material_type": {"type": "dict", "subcomponent": "empty"}
+        }
+    },
+    "function.enchant_book_for_trading": {
+        "type": "Keymap",
+        "keys": {
+            "base_cost": {"type": "int"},
+            "base_random_cost": {"type": "int"},
+            "enchantments": {"type": "list", "subcomponent": "function.enchant_book_for_trading:enchantments"},
+            "per_level_cost": {"type": "int"},
+            "per_level_random_cost": {"type": "int"}
+        }
+    },
+    "function.enchant_book_for_trading:enchantments": {
+        "type": "List",
+        "field": "enchantment",
+        "ordered": false,
+        "types": ["dict"],
+        "subcomponent": "function.enchant_book_for_trading:enchantments.item"
+    },
+    "function.enchant_book_for_trading:enchantments.item": {
+        "type": "Keymap",
+        "keys": {
+            "max": {"type": "int"},
+            "min": {"type": "int"},
+            "name": {"type": "str"}
+        }
+    },
+    "function.enchant_random_gear": {
+        "type": "Keymap",
+        "keys": {
+            "chance": {"type": "decimal"}
+        }
+    },
+    "function.enchant_randomly": {
+        "type": "Keymap",
+        "keys": {
+            "treasure": {"type": "bool"}
+        }
+    },
+    "function.enchant_with_levels": {
+        "type": "Keymap",
+        "keys": {
+            "levels": {"type": ["decimal", "dict"], "subcomponent": "range_decimal_or_decimal"},
+            "treasure": {"type": "bool"}
+        }
+    },
+    "function.exploration_map": {
+        "type": "Keymap",
+        "keys": {
+            "decoration_id": {"type": "int", "tags": ["outdated"]},
+            "destination": {"type": "str"}
+        }
+    },
+    "function.fill_container": {
+        "type": "Keymap",
+        "keys": {
+            "loot_table": {"type": "str"}
+        }
+    },
+    "function.furnace_smelt": {
+        "type": "Keymap",
+        "normalizer": "normalize_conditions",
+        "keys": {
+            "conditions": {"type": "dict", "subcomponent": "conditions"}
+        }
+    },
+    "function.looting_enchant": {
+        "type": "Keymap",
+        "keys": {
+            "count": {"type": "dict", "subcomponent": "range_int"},
+            "limit": {"type": "int", "tags": ["not_in_documentation"]}
+        }
+    },
+    "function.random_aux_value": {
+        "type": "Keymap",
+        "keys": {
+            "values": {"type": "dict", "subcomponent": "range_int"}
+        }
+    },
+    "function.random_block_state": {
+        "type": "Keymap",
+        "keys": {
+            "block_state": {"type": "str"},
+            "values": {"type": "dict", "subcomponent": "range_decimal"}
+        }
+    },
+    "function.set_actor_id": {
+        "type": "Keymap",
+        "keys": {
+            "id": {"type": "str"}
+        }
+    },
+    "function.set_armor_trim": {
+        "type": "Keymap",
+        "keys": {
+            "material": {"type": "str"},
+            "pattern": {"type": "str"}
+        }
+    },
+    "function.set_banner_details": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"type": "int"}
+        }
+    },
+    "function.set_book_contents": {
+        "type": "Keymap",
+        "keys": {
+            "author": {"type": "str"},
+            "pages": {"type": "list", "subcomponent": "function.set_book_contents:pages"},
+            "title": {"type": "str"}
+        }
+    },
+    "function.set_book_contents:pages": {
+        "type": "List",
+        "field": "page",
+        "ordered": true,
+        "measure_length": true,
+        "types": ["str"],
+        "subcomponent": null
+    },
+    "function.set_count": {
+        "type": "Keymap",
+        "keys": {
+            "add": {"type": "bool"},
+            "count": {"type": ["dict", "decimal"], "subcomponent": "range_decimal_or_decimal"}
+        }
+    },
+    "function.set_damage": {
+        "type": "Keymap",
+        "keys": {
+            "add": {"type": "bool"},
+            "damage": {"type": "dict", "subcomponent": "range_decimal"}
+        }
+    },
+    "function.set_data": {
+        "type": "Keymap",
+        "keys": {
+            "data": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"}
+        }
+    },
+    "function.set_lore": {
+        "type": "Keymap",
+        "keys": {
+            "lore": {"type": "list", "subcomponent": "function.set_lore:lore"}
+        }
+    },
+    "function.set_lore:lore": {
+        "type": "List",
+        "field": "lore line",
+        "ordered": true,
+        "measure_length": true,
+        "types": ["str"],
+        "subcomponent": null
+    },
+    "function.set_name": {
+        "type": "Keymap",
+        "keys": {
+            "name": {"type": "str"}
+        }
+    },
+    "function.set_ominous_bottle_amplifier": {
+        "type": "Keymap",
+        "keys": {
+            "amplifier": {"type": "dict", "subcomponent": "range_int"}
+        }
+    },
+    "function.set_stew_effect": {
+        "type": "Keymap",
+        "keys": {
+            "effects": {"type": "list", "subcomponent": "function.set_stew_effect:effects"}
+        }
+    },
+    "function.set_stew_effect:effects": {
+        "type": "List",
+        "field": "effect",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "function.set_stew_effect:effects.item"
+    },
+    "function.set_stew_effect:effects.item": {
+        "type": "Keymap",
+        "keys": {
+            "id": {"type": "int"}
+        }
+    },
+    "function.specific_enchants": {
+        "type": "Keymap",
+        "keys": {
+            "enchants": {"type": ["dict", "list", "str"], "subcomponent": "function.specific_enchants:enchants_group"}
+        }
+    },
+    "function.specific_enchants:enchants_group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "function.specific_enchants:enchants.item",
+            "list": "function.specific_enchants:enchants",
+            "str": null
+        }
+    },
+    "function.specific_enchants:enchants": {
+        "type": "List",
+        "field": "enchantment",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict", "str"],
+        "subcomponent": "function.specific_enchants:enchants.item_group"
+    },
+    "function.specific_enchants:enchants.item_group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "function.specific_enchants:enchants.item",
+            "str": null
+        }
+    },
+    "function.specific_enchants:enchants.item": {
+        "type": "Keymap",
+        "keys": {
+            "id": {"type": "str"},
+            "level": {"type": ["int", "list"], "subcomponent": "range_list_int_or_int"}
+        }
+    },
+    "conditions": {
+        "type": "Keymap",
+        "field": "condition",
+        "keys": {
+            "entity_killed": {"type": "dict", "subcomponent": "condition.entity_killed"},
+            "entity_properties": {"type": "dict", "subcomponent": "condition.entity_properties"},
+            "has_mark_variant": {"type": "dict", "subcomponent": "condition.has_mark_variant"},
+            "has_variant": {"type": "dict", "subcomponent": "condition.has_variant"},
+            "killed_by_entity": {"type": "dict", "subcomponent": "condition.killed_by_entity"},
+            "killed_by_player": {"type": "dict", "subcomponent": "empty"},
+            "killed_by_player_or_pets": {"type": "dict", "subcomponent": "empty"},
+            "match_tool": {"type": "dict", "subcomponent": "condition.match_tool"},
+            "random_chance": {"type": "dict", "subcomponent": "condition.random_chance"},
+            "random_chance_with_looting": {"type": "dict", "subcomponent": "condition.random_chance_with_looting"},
+            "random_chance_with_moon_crap": {"type": "dict", "subcomponent": "condition.random_chance_with_moon_crap"},
+            "random_difficulty_chance": {"type": "dict", "subcomponent": "condition.random_difficulty_chance"},
+            "random_regional_difficulty_chance": {"type": "dict", "subcomponent": "condition.random_regional_difficulty_chance"}
+        }
+    },
+    "condition.entity_killed": {
+        "type": "Keymap",
+        "keys": {
+            "entity_type": {"type": "str"}
+        }
+    },
+    "condition.entity_properties": {
+        "type": "Keymap",
+        "keys": {
+            "entity": {"type": "str"},
+            "properties": {"type": "dict", "subcomponent": "condition.entity_properties:properties"}
+        }
+    },
+    "condition.entity_properties:properties": {
+        "type": "Keymap",
+        "field": "property",
+        "keys": {
+            "on_fire": {"type": "bool"}
+        }
+    },
+    "condition.killed_by_entity": {
+        "type": "Keymap",
+        "keys": {
+            "entity_type": {"type": "str"}
+        }
+    },
+    "condition.has_mark_variant": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"type": "int"}
+        }
+    },
+    "condition.has_variant": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"type": "int"}
+        }
+    },
+    "condition.match_tool": {
+        "type": "Keymap",
+        "keys": {
+            "count": {"type": "dict", "subcomponent": "condition.match_tool:count"},
+            "durability": {"type": "dict", "subcomponent": "condition.match_tool:durability"},
+            "enchantments": {"type": "list", "subcomponent": "condition.match_tool:enchantments"},
+            "item": {"type": "str"}
+        }
+    },
+    "condition.match_tool:count": {
+        "type": "Keymap",
+        "print_all": true,
+        "keys": {
+            "range_max": {"type": "int"},
+            "range_min": {"type": "int"}
+        }
+    },
+    "condition.match_tool:durability": {
+        "type": "Keymap",
+        "print_all": true,
+        "keys": {
+            "range_max": {"type": "int"},
+            "range_min": {"type": "int"}
+        }
+    },
+    "condition.match_tool:enchantments": {
+        "type": "List",
+        "field": "enchantment",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict"],
+        "subcomponent": "condition.match_tool:enchantments.item"
+    },
+    "condition.match_tool:enchantments.item": {
+        "type": "Keymap",
+        "keys": {
+            "enchantment": {"type": "str"},
+            "levels": {"type": "dict", "subcomponent": "condition.match_tool:enchantments.item.levels"},
+            "range_max": {"type": "int"},
+            "range_min": {"type": "int"}
+        }
+    },
+    "condition.match_tool:enchantments.item.levels": {
+        "type": "Keymap",
+        "print_all": true,
+        "keys": {
+            "range_max": {"type": "int"},
+            "range_min": {"type": "int"}
+        }
+    },
+    "condition.random_chance": {
+        "type": "Keymap",
+        "keys": {
+            "chance": {"type": "decimal"}
+        }
+    },
+    "condition.random_chance_with_looting": {
+        "type": "Keymap",
+        "keys": {
+            "chance": {"type": "decimal"},
+            "looting_multiplier": {"type": "decimal"}
+        }
+    },
+    "condition.random_chance_with_moon_crap": {
+        "type": "Keymap",
+        "keys": {
+            "chance": {"type": "decimal"}
+        }
+    },
+    "condition.random_difficulty_chance": {
+        "type": "Keymap",
+        "keys": {
+            "default_chance": {"type": "decimal"},
+            "easy": {"type": "decimal"},
+            "hard": {"type": "decimal"},
+            "peaceful": {"type": "decimal"}
+        }
+    },
+    "condition.random_regional_difficulty_chance": {
+        "type": "Keymap",
+        "keys": {
+            "max_chance": {"type": "decimal"}
+        }
+    }
+}
