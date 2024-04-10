@@ -1,0 +1,137 @@
+Difference of "entities" between "1.21.0.20" (beta of "1.21.0") and "1.21.0.21" (beta of "1.21.0").
+
+Total entity: 122 (+1, -0)
+Added entity "ominous_item_spawner":
+	behavior pack "experimental":
+		field "format_version": "1.20.80"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:ominous_item_spawner"
+				description "is_spawnable": false
+				description "is_summonable": false
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
+Changed entity "player":
+	Added behavior pack "experimental":
+		field "format_version": "1.18.20"
+		field "minecraft:entity":
+			field "component_groups":
+				component group "minecraft:add_raid_omen":
+					component "minecraft:spell_effects":
+						field "add_effects":
+							effect:
+								field "display_on_screen_animation": true
+								field "duration": 30
+								field "effect": "raid_omen"
+						field "remove_effects": "bad_omen"
+					component "minecraft:timer":
+						field "looping": false
+						field "time": [0.0, 0.0]
+						field "time_down_event":
+							field "event": "minecraft:clear_add_raid_omen"
+							field "target": "self"
+				component group "minecraft:clear_raid_omen_spell_effect": component "minecraft:spell_effects": empty
+				component group "minecraft:raid_trigger":
+					component "minecraft:raid_trigger":
+						field "triggered_event":
+							field "event": "minecraft:remove_raid_trigger"
+							field "target": "self"
+			field "components":
+				component "minecraft:attack": field "damage": 1
+				component "minecraft:block_climber": empty
+				component "minecraft:breathable":
+					field "generates_bubbles": false
+					field "inhale_time": 3.75
+					field "suffocate_time": -1
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 1.8
+					field "width": 0.6
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:environment_sensor":
+					field "triggers":
+						field "event": "minecraft:gain_raid_omen"
+						field "filters":
+							filter property "all_of":
+								filter:
+									filter property "subject": "self"
+									filter property "test": "has_mob_effect"
+									filter property "value": "bad_omen"
+								filter:
+									filter property "subject": "self"
+									filter property "test": "is_in_village"
+									filter property "value": true
+				component "minecraft:exhaustion_values":
+					field "attack": 0.1
+					field "damage": 0.1
+					field "heal": 6
+					field "jump": 0.05
+					field "mine": 0.005
+					field "sprint": 0.1
+					field "sprint_jump": 0.2
+					field "swim": 0.01
+					field "walk": 0.0
+				component "minecraft:experience_reward": field "on_death": "Math.Min(query.player_level * 7, 100)"
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:insomnia": field "days_until_insomnia": 3
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:loot": field "table": "loot_tables/empty.json"
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:nameable":
+					field "allow_name_tag_renaming": false
+					field "always_show": true
+				component "minecraft:physics": field "push_towards_closest_space": true
+				component "minecraft:player.exhaustion":
+					field "max": 20
+					field "value": 0
+				component "minecraft:player.experience":
+					field "max": 1
+					field "value": 0
+				component "minecraft:player.level":
+					field "max": 24791
+					field "value": 0
+				component "minecraft:player.saturation":
+					field "max": 20
+					field "value": 5
+				component "minecraft:pushable":
+					field "is_pushable": false
+					field "is_pushable_by_piston": true
+				component "minecraft:rideable":
+					field "family_types": family: "parrot_tame"
+					field "pull_in_entities": true
+					field "seat_count": 2
+					field "seats":
+						seat:
+							field "lock_rider_rotation": 0
+							field "max_rider_count": 0
+							field "min_rider_count": 0
+							field "position": [0.4, -0.2, -0.1]
+						seat:
+							field "lock_rider_rotation": 0
+							field "max_rider_count": 2
+							field "min_rider_count": 1
+							field "position": [-0.4, -0.2, -0.1]
+				component "minecraft:type_family": field "family": family: "player"
+			field "description":
+				description "identifier": "minecraft:player"
+				description "is_experimental": false
+				description "is_spawnable": false
+				description "is_summonable": false
+				description "spawn_category": "creature"
+			field "events":
+				event "minecraft:clear_add_raid_omen":
+					field "add": field "component_groups": component group: "minecraft:clear_raid_omen_spell_effect"
+					field "remove": field "component_groups": component group: "minecraft:add_raid_omen"
+				event "minecraft:gain_raid_omen": field "add": field "component_groups": component group: "minecraft:add_raid_omen"
+				event "minecraft:remove_raid_trigger": field "remove": field "component_groups": component group: "minecraft:raid_trigger"
+				event "minecraft:trigger_raid": field "add": field "component_groups": component group: "minecraft:raid_trigger"
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
