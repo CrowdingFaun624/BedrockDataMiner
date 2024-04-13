@@ -82,7 +82,7 @@ def main() -> None:
     selected_dataminers = select_dataminers(dataminers)
     versions = VersionsParser.versions.get()
     major_tags = (VersionTags.VersionTag.major, VersionTags.VersionTag.minor, VersionTags.VersionTag.patch)
-    major_versions:dict[Version.Version,list[Version.Version]] = {version: [] for version in versions if version.ordering_tag in major_tags}
+    major_versions:dict[Version.Version,list[Version.Version]] = {version: [] for version in versions.values() if version.ordering_tag in major_tags}
     for major_version, child_versions in major_versions.items():
         child_versions.extend([child for child in major_version.children if child.ordering_tag == VersionTags.VersionTag.beta])
         child_versions.append(major_version)
