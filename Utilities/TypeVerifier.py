@@ -1,6 +1,6 @@
 import enum
 import traceback
-from typing import Any, Callable, Container, Generic, Mapping, Sequence, TypeVar
+from typing import Any, Callable, Container, cast, Generic, Iterable, Mapping, Sequence, TypeVar
 
 class TraceItemType(enum.Enum):
     KEY = 0
@@ -373,6 +373,23 @@ class ListTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
             if not additional_function_success:
                 exceptions.append(TypeVerificationFunctionError(trace, additional_function_message, data))
         return exceptions
+
+class IterableTypeVerifier(ListTypeVerifier):
+
+    def __init__(
+            self,
+            item_type:type[item_typevar]|tuple[type[item_typevar],...]|TypeVerifier[item_typevar],
+            data_type:type[Iterable]|tuple[type[Iterable],...],
+            item_type_str:str,
+            data_type_str:str,
+            item_function:Callable[[item_typevar],tuple[bool,str|None]]|None=None,
+            additional_function:Callable[[Iterable[item_typevar]],tuple[bool,str|None]]|None=None,
+            type_check:bool=True,
+        ) -> None:
+        return super().__init__(item_type, cast(type[Sequence]|tuple[type[Sequence],...], data_type), item_type_str, data_type_str, item_function, additional_function, type_check)
+
+    def verify(self, data: Iterable[item_typevar], trace:Trace) -> list[TypeVerificationException]:
+        return super().verify(cast(Sequence[item_typevar], data), trace)
 
 class TupleItemTypeVerifier(TypeVerifier[tuple[int,item_typevar]]):
     def __init__(
