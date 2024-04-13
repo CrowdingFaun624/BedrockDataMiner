@@ -1,10 +1,10 @@
 import json
-from typing import Any, BinaryIO
+from typing import Any, IO
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 
-def decode(io:BinaryIO) -> Any:
+def decode(io:IO[bytes]) -> Any:
     # for decoding json files with foreign characters
     return json.loads(io.read().decode())
 
@@ -12,15 +12,16 @@ class LanguagesDataMiner0(LanguagesDataMiner.LanguagesDataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
         resource_packs = dependency_data["resource_packs"]
+        assert resource_packs is not None
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         languages_files = {"resource_packs/%s/texts/languages.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         languages_files_request = [(resource_pack_file, "t", json.load) for resource_pack_file in languages_files.keys()]
-        files:dict[str,list[str]] = {key: value for key, value in self.read_files(languages_files_request, non_exist_ok=True).items() if value is not None}
-        if len(files) == 0:
+        language_file_contents:dict[str,list[str]] = {key: value for key, value in self.read_files(languages_files_request, non_exist_ok=True).items() if value is not None}
+        if len(language_file_contents) == 0:
             raise FileNotFoundError("No \"languages.json\" files found in \"%s\"" % self.version)
 
         languages:dict[str,DataMinerTyping.LanguagesTypedDict] = {}
-        for resource_pack_file, resource_pack_languages in files.items():
+        for resource_pack_file, resource_pack_languages in language_file_contents.items():
             resource_pack_name = languages_files[resource_pack_file]
             this_resource_pack_codes:set[str] = set()
             for language_code in resource_pack_languages:
@@ -34,11 +35,11 @@ class LanguagesDataMiner0(LanguagesDataMiner.LanguagesDataMiner):
 
         language_names_files = {"resource_packs/%s/texts/language_names.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         language_names_files_request = [(resource_pack_file, "b", decode) for resource_pack_file in language_names_files.keys()]
-        files:dict[str,list[list[str,str]]] = {key: value for key, value in self.read_files(language_names_files_request, non_exist_ok=True).items() if value is not None}
-        if len(files) == 0:
+        language_names_file_contents:dict[str,list[list[str]]] = {key: value for key, value in self.read_files(language_names_files_request, non_exist_ok=True).items() if value is not None}
+        if len(language_names_file_contents) == 0:
             raise FileNotFoundError("No \"language_names.json\" files found in \"%s\"" % self.version)
 
-        for resource_pack_file, resource_pack_language_names in files.items():
+        for resource_pack_file, resource_pack_language_names in language_names_file_contents.items():
             resource_pack_name = language_names_files[resource_pack_file]
             for language_code, language_name in resource_pack_language_names:
                 if language_code not in languages:

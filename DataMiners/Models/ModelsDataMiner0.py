@@ -21,6 +21,7 @@ class ModelsDataMiner0(ModelsDataMiner.ModelsDataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         packs = dependency_data["resource_packs"]
+        assert packs is not None
         files:dict[tuple[str,str],str] = {}
         for pack in packs:
             path_base = self.location % pack["name"]

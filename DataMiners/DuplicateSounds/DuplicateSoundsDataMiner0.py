@@ -5,6 +5,7 @@ class DuplicateSoundsDataMiner0(DuplicateSoundsDataMiner.DuplicateSoundsDataMine
 
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> dict[str,list[DataMinerTyping.DuplicateSoundsTypedDict]]:
         sound_files = dependency_data["sound_files"]
+        assert sound_files is not None
 
         hash_dict:dict[str,list[DataMinerTyping.DuplicateSoundsTypedDict]] = {}
         for sound_file_name, sound_file_internals in sound_files.items():

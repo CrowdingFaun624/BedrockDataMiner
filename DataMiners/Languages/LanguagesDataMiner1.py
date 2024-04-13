@@ -15,6 +15,7 @@ class LanguagesDataMiner1(LanguagesDataMiner.LanguagesDataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
         resource_packs = dependency_data["resource_packs"]
+        assert resource_packs is not None
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         languages_files = {self.languages_location % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         languages_files_request = [(resource_pack_file, "t", json.load) for resource_pack_file in languages_files.keys()]

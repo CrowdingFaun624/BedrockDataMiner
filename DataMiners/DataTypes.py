@@ -1,6 +1,6 @@
 import enum
 import pyjson5
-from typing import Any, Callable, cast, IO, Iterable, Literal, Sequence
+from typing import Any, Callable, cast, IO, Iterable, Literal, overload, Sequence
 
 import DataMiners.DataMiner as DataMiner
 import Utilities.Nbt.NbtReader as NbtReader
@@ -32,6 +32,12 @@ def get_data_from_content(content:str|bytes|IO, data_type:DataTypes) -> Any:
         case _:
             raise ValueError()
 
+@overload
+def get_file_request(files:Iterable[str], data_type:Literal[DataTypes.json]) -> Sequence[tuple[str,Literal["t"],Callable[[IO[str]],Any]]]: ...
+@overload
+def get_file_request(files:Iterable[str], data_type:Literal[DataTypes.nbt]) -> Sequence[tuple[str,Literal["b"],Callable[[IO[bytes]],NbtReader.NbtBytes]]]: ...
+@overload
+def get_file_request(files:Iterable[str], data_type:DataTypes) -> Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],Any]]]: ...
 def get_file_request(files:Iterable[str], data_type:DataTypes) -> Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],Any]]]:
     data_format = data_type.get_data_format()
     data_function:Callable[[IO],Any] = lambda data: get_data_from_content(data, data_type)

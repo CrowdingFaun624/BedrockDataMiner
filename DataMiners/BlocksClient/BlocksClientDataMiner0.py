@@ -1,4 +1,5 @@
 import pyjson5 # supports comments
+from typing import Any, Callable, cast, IO
 
 import DataMiners.BlocksClient.BlocksClientDataMiner as BlocksDataMiner
 import DataMiners.DataMinerParameters as DataMinerParameters
@@ -12,13 +13,14 @@ class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
     def initialize(self, **kwargs) -> None:
         self.blocks_locations:list[str] = kwargs["blocks_locations"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,DataMinerTyping.MyBlocksJsonClientBlockTypedDict]:
+    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.MyBlocksJsonClientBlockTypedDict]:
         resource_packs = dependency_data["resource_packs"]
+        assert resource_packs is not None
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for blocks_location in self.blocks_locations:
             resource_pack_files.update({blocks_location % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names})
-        files_request = [(resource_pack_file, "t", pyjson5.load) for resource_pack_file in resource_pack_files.keys()]
+        files_request = [(resource_pack_file, "t", cast(Callable[[IO[str]],Any], pyjson5.load)) for resource_pack_file in resource_pack_files.keys()]
         files:dict[str,dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"blocks.json\" files found in \"%s\"" % self.version)

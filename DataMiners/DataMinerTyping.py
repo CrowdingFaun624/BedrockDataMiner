@@ -1,5 +1,5 @@
 from typing import Any, Literal, Optional, TypedDict
-from typing_extensions import NotRequired
+from typing_extensions import NotRequired, Required
 
 DependenciesLiterals = Literal["behavior_packs", "blocks", "credits", "duplicate_sounds", "entities", "entities_client", "items", "language", "languages", "loading_tips", "loot_tables", "models", "music_definitions", "non_existent_sounds", "recipes", "resource_packs", "sound_definitions", "sound_files", "sounds_json", "splashes", "trade_tables", "undefined_sound_events", "unused_sound_events"]
 
@@ -62,7 +62,7 @@ class BlocksJsonClientBlockTypedDict(TypedDict):
 
 class MyBlocksJsonClientBlockTypedDict(TypedDict):
     name: str
-    properties: BlocksJsonClientBlockTypedDict
+    properties: dict[str,BlocksJsonClientBlockTypedDict]
 
 class NormalizedBlocksJsonClientBlockTypedDict(TypedDict):
     blockshape: NotRequired[str]
@@ -128,8 +128,8 @@ Items = dict[str,dict[str,Any]] # TODO: fill this out
 # language
 
 class LanguageTypedDict(TypedDict):
-    comment: str
-    value: str
+    comment: NotRequired[str]
+    value: Required[str]
 
 Language = dict[str,dict[str,LanguageTypedDict]]
 

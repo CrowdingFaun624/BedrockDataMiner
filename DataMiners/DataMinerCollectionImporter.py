@@ -133,8 +133,8 @@ class DataMinerCollectionIntermediate():
                 end_version_str = dataminer_settings_str["new"],
                 dataminer_class = dataminer_class,
                 name = self.name,
-                dependencies = None if "dependencies" not in dataminer_settings_str else dataminer_settings_str["dependencies"],
-                **{} if "parameters" not in dataminer_settings_str else dataminer_settings_str["parameters"],
+                dependencies = dataminer_settings_str.get("dependencies", None),
+                kwargs = dataminer_settings_str.get("parameters", {}),
             ))
         return DataMiner.DataMinerCollection(
             file_name = self.file_name,

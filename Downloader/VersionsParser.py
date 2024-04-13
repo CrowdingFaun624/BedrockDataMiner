@@ -1,5 +1,6 @@
 import json
 from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING, TypedDict
+from typing_extensions import NotRequired, Required
 
 import Downloader.DownloadManager as DownloadManager
 import Downloader.LocalManager as LocalManager
@@ -23,13 +24,13 @@ INSTALL_MANAGERS:dict[Version.DownloadMethod,type["InstallManager.InstallManager
 }
 
 class VersionTypedDict(TypedDict):
-    id: str
-    download: str|None
-    parent: str|None
-    time: str|None
-    tags: list[str]
-    development_categories: list[str]
-    wiki_page: str
+    id: Required[str]
+    download: Required[str|None]
+    parent: Required[str|None]
+    time: Required[str|None]
+    tags: Required[list[str]]
+    development_categories: NotRequired[list[str]]
+    wiki_page: NotRequired[str]
 
 def is_sorted(data:Sequence[str]) -> tuple[bool, str]:
     return all(a <= b for a, b in zip(data, data[1:])), "data is not sorted!"

@@ -16,7 +16,7 @@ class SoundFilesDataMiner0(SoundFilesDataMiner.SoundFilesDataMiner):
             if "." + file_path.split(".")[-1].lower() in SoundFilesDataMiner.ALL_SOUND_FILE_FORMATS and not file_path.endswith(".fsb"):
                 output[file_path] = {"main": SoundFilesDataMiner.get_metadata(self.get_file(file_path, "b"))}
 
-        fsb_file_names:dict[str,str] = (name for name in file_list if name.lower().endswith(".fsb"))
+        fsb_file_names = (name for name in file_list if name.lower().endswith(".fsb"))
         fsb_files = EvilFSBExtractor.extract_fsb_files((file_name, self.get_file(file_name, "b")) for file_name in fsb_file_names)
         for file_name, wav_files in fsb_files:
             output[file_name] = {}

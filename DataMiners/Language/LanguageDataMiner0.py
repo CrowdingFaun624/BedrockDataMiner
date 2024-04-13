@@ -13,11 +13,12 @@ class LanguageDataMiner0(LanguageDataMiner.LanguageDataMiner):
 
     def initialize(self, **kwargs) -> None:
         self.language_code:str = kwargs["language_code"]
-        self.location:list[str] = kwargs["location"]
+        self.location:str = kwargs["location"]
         self.file_display_name:str|None = kwargs["file_display_name"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Language:
         packs = dependency_data["resource_packs"]
+        assert packs is not None
         pack_names = [pack["name"] for pack in packs]
         pack_files:dict[str,str] = {self.location % (pack_name, self.language_code): pack_name for pack_name in pack_names}
         files_request = [(file, "t", None) for file in pack_files.keys()]

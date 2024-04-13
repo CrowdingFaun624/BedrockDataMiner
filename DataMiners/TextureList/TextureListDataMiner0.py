@@ -17,6 +17,7 @@ class TextureListDataMiner0(TextureListDataMiner.TextureListDataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,list[str]]:
         packs = dependency_data["resource_packs"]
+        assert packs is not None
         pack_names = [pack["name"] for pack in packs]
         pack_files:dict[str,str] = {}
         for blocks_location in self.locations:

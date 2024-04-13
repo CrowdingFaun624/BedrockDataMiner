@@ -1,5 +1,5 @@
 import pyjson5 # supports comments
-from typing import Callable, IO
+from typing import Any, Callable, cast, IO
 
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
@@ -17,12 +17,13 @@ class SplashesDataMiner0(SplashesDataMiner.SplashesDataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Splashes:
         resource_packs = dependency_data["resource_packs"]
+        assert resource_packs is not None
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for splashes_location in self.splashes_locations:
             resource_pack_files.update({splashes_location % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names})
         loader:Callable[[IO[bytes]],dict] = lambda file: pyjson5.loads(file.read().decode())
-        files_request = [(resource_pack_file, "b", pyjson5.load) for resource_pack_file in resource_pack_files.keys()]
+        files_request = [(resource_pack_file, "b", cast(Callable[[IO[bytes]],Any], pyjson5.load)) for resource_pack_file in resource_pack_files.keys()]
         files:dict[str,DataMinerTyping.SplashesFile] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"splashes.json\" files found in \"%s\"" % self.version)

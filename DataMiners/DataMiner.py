@@ -2,7 +2,7 @@ import json
 from pathlib2 import Path
 import threading
 import traceback
-from typing import Any, Callable, IO, Iterable, Literal, Sequence
+from typing import Any, Callable, IO, Iterable, Literal, Mapping, overload, Sequence, TypeVar
 
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
@@ -42,7 +42,7 @@ class DataMinerSettings():
         ))
     )
 
-    def __init__(self, start_version_str:str|None, end_version_str:str|None, dataminer_class:type["DataMiner"], name:str, dependencies:list[str]|None=None, **kwargs) -> None:
+    def __init__(self, start_version_str:str|None, end_version_str:str|None, dataminer_class:type["DataMiner"], name:str, dependencies:list[str]|None, kwargs:dict[str,Any]) -> None:
         self.type_verifier.base_verify({"start_version_str": start_version_str, "end_version_str": end_version_str, "dataminer_class": dataminer_class, "name": name, "dependencies": dependencies})
 
         self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
@@ -127,38 +127,58 @@ class DataMiner():
             raise RuntimeError("Attempted to call `get_files_in` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.get_files_in(parent)
 
-    def get_file_list(self) -> Iterable[str]:
+    def get_file_list(self) -> list[str]:
         if self.version.install_manager is None:
             raise RuntimeError("Attempted to call `get_file_list` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.get_file_list()
 
+    @overload
+    def read_file(self, file_name:str, mode:Literal["b"]) -> bytes: ...
+    @overload
+    def read_file(self, file_name:str, mode:Literal["t"]) -> str: ...
+    @overload
+    def read_file(self, file_name:str) -> str: ...
     def read_file(self, file_name:str, mode:Literal["b", "t"]="t") -> str|bytes:
         if self.version.install_manager is None:
             raise RuntimeError("Attempted to call `read_file` on version (\"%s\") with no download available!" % self.version.name)
         return self.version.install_manager.read(file_name, mode)
 
-    def read_files(self, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],Any]]], non_exist_ok:bool=False) -> dict[str,str|bytes|Any]:
+    read_files_typevar = TypeVar("read_files_typevar")
+
+    def read_async(self, files:Iterable[tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], file_results:dict[str,str|bytes|read_files_typevar|Exception], non_exist_ok:bool, lock:threading.Lock) -> None:
+        with lock:
+            for file_name, mode, callable in files:
+                try:
+                    if not non_exist_ok or self.file_exists(file_name):
+                        if callable is None:
+                            file_results[file_name] = self.read_file(file_name, mode)
+                        else:
+                            file = self.get_file(file_name, mode)
+                            with file.open() as f:
+                                file_results[file_name] = callable(f)
+                            file.all_done()
+                    else: # file does not exist
+                        file_results[file_name] = EMPTY_FILE
+                except Exception as e:
+                    e.args = tuple(list(e.args) + ["Failed to get file \"%s\"!" % (file_name)])
+                    file_results[file_name] = e
+                    return
+
+    @overload
+    def read_files(self, files:Sequence[str], non_exist_ok:bool=False) -> dict[str,str]: ...
+    @overload
+    def read_files(self, files:Sequence[tuple[str,Literal["t"],None]], non_exist_ok:bool=False) -> dict[str,str]: ...
+    @overload
+    def read_files(self, files:Sequence[tuple[str,Literal["b"],None]], non_exist_ok:bool=False) -> dict[str,bytes]: ...
+    @overload
+    def read_files(self, files:Sequence[tuple[str,Literal["t"],Callable[[IO[str]],read_files_typevar]]], non_exist_ok:bool=False) -> dict[str,read_files_typevar]: ...
+    @overload
+    def read_files(self, files:Sequence[tuple[str,Literal["b"],Callable[[IO[bytes]],read_files_typevar]]], non_exist_ok:bool=False) -> dict[str,read_files_typevar]: ...
+    @overload
+    def read_files(self, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]: ...
+    def read_files(self, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]:
         '''Asynchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
-
-        def read_async(files:Iterable[tuple[str,Literal["b", "t"],None|Callable[[IO],Any]]], file_results:dict[str,str|bytes|Any], non_exist_ok:bool, lock:threading.Lock) -> None:
-            with lock:
-                for file_name, mode, callable in files:
-                    try:
-                        if not non_exist_ok or self.file_exists(file_name):
-                            if callable is None:
-                                file_results[file_name] = self.read_file(file_name, mode)
-                            else:
-                                file = self.get_file(file_name, mode)
-                                with file.open() as f:
-                                    file_results[file_name] = callable(f)
-                                file.all_done()
-                        else: # file does not exist
-                            file_results[file_name] = EMPTY_FILE
-                    except Exception as e:
-                        e.args = tuple(list(e.args) + ["Failed to get file \"%s\"!" % (file_name)])
-                        file_results[file_name] = e
-                        return
 
         if self.version.install_manager is None:
             raise RuntimeError("Attempted to call `read_files` on version (\"%s\") with no download available!" % self.version.name)
@@ -181,7 +201,7 @@ class DataMiner():
 
         locks = [threading.Lock() for index in range(LIMIT)]
         for lock, thread_responsibility in zip(locks, thread_responsibilities):
-            thread = threading.Thread(target=read_async, args=[thread_responsibility, file_results, non_exist_ok, lock])
+            thread = threading.Thread(target=self.read_async, args=[thread_responsibility, file_results, non_exist_ok, lock])
             thread.start()
         for lock in locks:
             lock.acquire() # wait for every thread to finish
@@ -300,7 +320,7 @@ class DataMinerCollection():
 
     def get_null_dataminer_settings(self) -> DataMinerSettings:
         '''Returns an instance of DataMinerSettings that is usable on a NullDataMiner.'''
-        return DataMinerSettings(None, None, NullDataMiner, self.name)
+        return DataMinerSettings(None, None, NullDataMiner, self.name, [], {})
 
     def get_dataminer_settings(self, version:Version.Version) -> DataMinerSettings:
         '''Returns a DataMinerSettings such that `version` is in the dataminer's VersionRange'''

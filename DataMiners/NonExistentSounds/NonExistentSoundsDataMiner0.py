@@ -20,7 +20,7 @@ def strip_file_name(file_name:str, resource_packs_location:str|None) -> str|None
     assert not file_name.endswith(file_extension)
     return file_name
 
-def get_sounds(sound_definitions:DataMinerTyping.SoundDefinitionsJson) -> Generator[tuple[str,str,str],None,None]:
+def get_sounds(sound_definitions:DataMinerTyping.MySoundDefinitionsJson) -> Generator[tuple[str,str,str],None,None]:
     '''Yields the sound event name, the resource pack name, and the sound location. Does not yield sounds from type=event sounds.'''
     for sound_event_name, sound_event_resource_packs in sound_definitions.items():
         for resource_pack_name, resource_pack_properties in sound_event_resource_packs.items():
@@ -43,6 +43,7 @@ class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDa
 
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NonExistentSounds:
         sound_files_data = dependency_data["sound_files"]
+        assert sound_files_data is not None
         sound_files = {strip_file_name(sound_file, self.resource_packs_location) for sound_file in sound_files_data.keys()}
         sound_files.discard(None)
         if len(sound_files) == 0:
@@ -50,6 +51,7 @@ class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDa
 
         non_existent_sounds:dict[str,dict[str,list[str]]] = {}
         sound_definitions = dependency_data["sound_definitions"]
+        assert sound_definitions is not None
         total_sound_locations = 0
         total_non_existent_sound_locations = 0
         for sound_event, resource_pack, sound_location in get_sounds(sound_definitions):

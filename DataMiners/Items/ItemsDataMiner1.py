@@ -1,5 +1,5 @@
 import pyjson5 # supports comments
-from typing import Any
+from typing import Any, Callable, cast, IO
 
 import DataMiners.Items.ItemsDataMiner as ItemsDataMiner
 import DataMiners.DataMinerParameters as DataMinerParameters
@@ -23,7 +23,7 @@ class ItemsDataMiner1(ItemsDataMiner.ItemsDataMiner):
         resource_pack_files:dict[str,str] = {}
         for items_location in self.locations:
             resource_pack_files.update({items_location % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names})
-        files_request = [(resource_pack_file, "t", pyjson5.load) for resource_pack_file in resource_pack_files.keys()]
+        files_request = [(resource_pack_file, "t", cast(Callable[[IO[str]],Any], pyjson5.load)) for resource_pack_file in resource_pack_files.keys()]
         files:dict[str,list[dict[str,Any]]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"items.json\" files found in \"%s\"" % self.version)

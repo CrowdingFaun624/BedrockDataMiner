@@ -1,5 +1,5 @@
 import pyjson5 # supports comments
-from typing import IO
+from typing import Any, Callable, cast, IO
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiner as SoundDefinitionsDataMiner
@@ -7,14 +7,15 @@ import Utilities.Sorting as Sorting
 
 class SoundDefinitionsDataMiner0(SoundDefinitionsDataMiner.SoundDefinitionsDataMiner):
 
-    def normalize(self, file:IO) -> dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]:
-        data = pyjson5.load(file)
+    def normalize(self, file:IO[str]) -> dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]:
+        data = cast(Callable[[IO[str]],Any], pyjson5.load)(file)
         if "sound_definitions" in data:
             return data["sound_definitions"]
         else: return data
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]]:
         resource_packs = dependency_data["resource_packs"]
+        assert resource_packs is not None
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         resource_pack_files = {"resource_packs/%s/sounds/sound_definitions.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         files_request = [(resource_pack_file, "t", self.normalize) for resource_pack_file in resource_pack_files.keys()]
