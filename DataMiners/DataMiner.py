@@ -11,7 +11,6 @@ import Structure.Normalizer as Normalizer
 import Structure.StructureBase as StructureBase
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
-from Utilities.FunctionCaller import WaitValue
 import Utilities.TypeVerifier as TypeVerifier
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
@@ -48,7 +47,7 @@ class DataMinerSettings():
         self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
         self.file_name:str|None = None
         self.name:str|None = name
-        self.structure:WaitValue[StructureBase.StructureBase]|None = None
+        self.structure:StructureBase.StructureBase|None = None
         self.dataminer_class = dataminer_class
         self.dependencies = dependencies if dependencies is not None else []
         self.kwargs = kwargs
@@ -113,8 +112,8 @@ class DataMiner():
 
         normalizer_dependencies = Normalizer.LocalNormalizerDependencies(Normalizer.NormalizerDependencies({}, dataminer_collections), self.version, None)
         if self.settings.structure is not None:
-            normalized_data = self.settings.structure.get().normalize(data, normalizer_dependencies)
-            self.settings.structure.get().check_types(normalized_data)
+            normalized_data = self.settings.structure.normalize(data, normalizer_dependencies)
+            self.settings.structure.check_types(normalized_data)
 
         return self.get_data_file() # since the normalizing immediately before may modify it.
 
@@ -263,16 +262,16 @@ class DataMinerCollection():
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a StructureBase or WaitValue", True, (StructureBase.StructureBase, WaitValue)),
+        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a StructureBase", True, StructureBase.StructureBase),
         TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(DataMinerSettings, list, "a DataMinerSettings", "a list")),
     )
 
-    def __init__(self, file_name:str, name:str, structure:WaitValue[StructureBase.StructureBase]|StructureBase.StructureBase, dataminers:list[DataMinerSettings]) -> None:
+    def __init__(self, file_name:str, name:str, structure:StructureBase.StructureBase, dataminers:list[DataMinerSettings]) -> None:
         self.type_verifier.base_verify({"file_name": file_name, "name": name, "structure": structure, "dataminers": dataminers})
 
         self.dataminer_settings = dataminers
         self.name = name
-        self.structure = structure if isinstance(structure, WaitValue) else WaitValue(lambda: structure)
+        self.structure = structure
         self.file_name = file_name
         for dataminer in dataminers:
             dataminer.file_name = self.file_name
@@ -310,9 +309,9 @@ class DataMinerCollection():
         else:
             version1_data = self.get_data_file(version1)
             version2_data = self.get_data_file(version2)
-        report, had_changes = self.structure.get().comparison_report(version1_data, version2_data, version1, version2, versions_between, normalizer_dependencies)
+        report, had_changes = self.structure.comparison_report(version1_data, version2_data, version1, version2, versions_between, normalizer_dependencies)
         if store and had_changes:
-            self.structure.get().store(report)
+            self.structure.store(report)
         return report
 
     def __repr__(self) -> str:
