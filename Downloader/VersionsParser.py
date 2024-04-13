@@ -5,7 +5,6 @@ from typing_extensions import NotRequired, Required
 import Downloader.DownloadManager as DownloadManager
 import Downloader.LocalManager as LocalManager
 import Downloader.StoredManager as StoredManager
-import Downloader.UrlValidator as UrlValidator
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
 import Utilities.Version as Version
