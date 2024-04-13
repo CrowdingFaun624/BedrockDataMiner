@@ -10,11 +10,11 @@ def __remove_files(files:Iterable[Path]) -> None:
 
 def main() -> None:
     version_selected_str = None
-    versions = VersionsParser.versions.get()
+    versions = VersionsParser.versions
     while version_selected_str != "*" and version_selected_str not in versions:
         version_selected_str = input("Select a version to remove data from (or \"*\" for all): ")
     if version_selected_str == "*":
-        versions_selected = VersionsParser.versions.get().values()
+        versions_selected = VersionsParser.versions.values()
     else:
         versions_selected = [versions[version_selected_str]]
 

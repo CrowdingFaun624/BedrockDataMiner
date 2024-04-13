@@ -1,7 +1,7 @@
 import Downloader.VersionsParser as VersionsParser
 
 def main() -> None:
-    versions = VersionsParser.versions.get()
+    versions = VersionsParser.versions
     version = None
     while version not in versions:
         version = input("Version: ")

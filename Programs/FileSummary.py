@@ -1,7 +1,7 @@
 import Downloader.VersionsParser as VersionsParser
 
 def main():
-    version_names = VersionsParser.versions.get()
+    version_names = VersionsParser.versions
     selected_version_name = None
     while selected_version_name not in version_names:
         selected_version_name = input("Select a version to analyze: ")

@@ -45,7 +45,7 @@ def main() -> None:
     has_encountered_exception = False
     exception_versions:list[Version.Version] = []
     version_index = 0
-    versions = list(reversed(VersionsParser.versions.get()))
+    versions = list(reversed(VersionsParser.versions))
     while len(active_threads) > 0 or (version_index < len(versions) and not has_encountered_exception):
         if version_index < len(versions):
             version = versions[version_index]

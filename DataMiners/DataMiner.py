@@ -22,7 +22,7 @@ def str_to_version(version_str:str|None) -> Version.Version|Literal["-"]:
     if version_str is None: return "-"
     if version_str == "-": raise RuntimeError("Version range \"-\" is not supported!")
     else:
-        versions = VersionsParser.versions.get()
+        versions = VersionsParser.versions
         if version_str in versions:
             return versions[version_str]
         else:

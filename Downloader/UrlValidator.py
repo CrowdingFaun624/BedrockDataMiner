@@ -104,7 +104,7 @@ def validate(version:Version.Version) -> list[str]:
 
 def main() -> None:
     '''Writes a list of warning strings to "./_assets/version_parser_warnings.txt"'''
-    versions = VersionsParser.versions.get()
+    versions = VersionsParser.versions
     warnings_list:list[str] = []
     for version in versions.values():
         if version.download_method is not Version.DownloadMethod.DOWNLOAD_URL: continue

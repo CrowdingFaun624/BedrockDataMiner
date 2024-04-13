@@ -7,7 +7,6 @@ import Downloader.LocalManager as LocalManager
 import Downloader.StoredManager as StoredManager
 import Downloader.UrlValidator as UrlValidator
 import Utilities.FileManager as FileManager
-from Utilities.FunctionCaller import FunctionCaller, WaitValue
 import Utilities.TypeVerifier as TypeVerifier
 import Utilities.Version as Version
 import Utilities.VersionRange as VersionRange
@@ -229,7 +228,7 @@ def fix_folders(versions:dict[str,Version.Version]) -> None:
                 continue
 
 
-versions = WaitValue(FunctionCaller(parse))
+versions = parse()
 
 def main() -> None:
     parse()

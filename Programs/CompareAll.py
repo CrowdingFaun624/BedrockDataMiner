@@ -80,7 +80,7 @@ def select_dataminers(dataminers:list["DataMiner.DataMinerCollection"]) -> list[
 def main() -> None:
     dataminers = DataMiners.dataminers
     selected_dataminers = select_dataminers(dataminers)
-    versions = VersionsParser.versions.get()
+    versions = VersionsParser.versions
     major_tags = (VersionTags.VersionTag.major, VersionTags.VersionTag.minor, VersionTags.VersionTag.patch)
     major_versions:dict[Version.Version,list[Version.Version]] = {version: [] for version in versions.values() if version.ordering_tag in major_tags}
     for major_version, child_versions in major_versions.items():

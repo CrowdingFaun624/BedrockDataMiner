@@ -249,7 +249,7 @@ def validate(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI) -> list[s
 def main() -> None:
     config = mediawikiapi.config.Config(mediawiki_url="http://minecraft.wiki/api.php")
     mwapi = mediawikiapi.MediaWikiAPI(config)
-    versions = VersionsParser.versions.get()
+    versions = VersionsParser.versions
     start_version = input("What version to start from? ")
     with open(FileManager.WIKI_VALIDATOR_WARNINGS_FILE, "wt") as f:
         f.write("")
