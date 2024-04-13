@@ -173,7 +173,9 @@ class DictTypeVerifier(TypeVerifier[Mapping[key_typevar, value_typevar]]):
                 "additional_function": additional_function,
             }, ["DictTypeVerifier"])
         self.key_type = key_type
+        self.key_type_is_verifier = isinstance(key_type, TypeVerifier)
         self.value_type = value_type
+        self.value_type_is_verifier = isinstance(value_type, TypeVerifier)
         self.data_type = data_type
         self.key_type_str = key_type_str
         self.value_type_str = value_type_str
@@ -188,22 +190,22 @@ class DictTypeVerifier(TypeVerifier[Mapping[key_typevar, value_typevar]]):
             exceptions.append(TypeVerificationTypeError(trace, self.data_type_str, type(data)))
             return exceptions
         for index, (key, value) in enumerate(data.items()):
-            if isinstance(self.key_type, TypeVerifier):
-                new_exceptions = self.key_type.verify(key, trace.copy(key, TraceItemType.KEY))
+            if self.key_type_is_verifier:
+                new_exceptions = cast(TypeVerifier, self.key_type).verify(key, trace.copy(key, TraceItemType.KEY))
                 if len(new_exceptions) > 0:
                     exceptions.extend(new_exceptions)
                     continue
             else:
-                if not isinstance(key, self.key_type):
+                if not isinstance(key, self.key_type): # type: ignore
                     exceptions.append(TypeVerificationTypeError(trace.copy(index, TraceItemType.ITEM), self.key_type_str, type(key)))
                     continue
-            if isinstance(self.value_type, TypeVerifier):
-                new_exceptions = self.value_type.verify(value, trace.copy(key, TraceItemType.VALUE))
+            if self.value_type_is_verifier:
+                new_exceptions = cast(TypeVerifier, self.value_type).verify(value, trace.copy(key, TraceItemType.VALUE))
                 if len(new_exceptions) > 0:
                     exceptions.extend(new_exceptions)
                     continue
             else:
-                if not isinstance(value, self.value_type):
+                if not isinstance(value, self.value_type): # type: ignore
                     exceptions.append(TypeVerificationTypeError(trace.copy(index, TraceItemType.VALUE), self.value_type_str, type(value)))
                     continue
             if self.key_function is not None:
@@ -245,6 +247,7 @@ class TypedDictKeyTypeVerifier(TypeVerifier[tuple[key_typevar, value_typevar]]):
             }, ["TypedDictKeyTypeVerifier"])
         self.key = key
         self.value_type = value_type
+        self.value_type_is_verifier = isinstance(value_type, TypeVerifier)
         self.value_type_str = value_str
         self.required = required
         self.function = function
@@ -253,13 +256,13 @@ class TypedDictKeyTypeVerifier(TypeVerifier[tuple[key_typevar, value_typevar]]):
         exceptions:list[TypeVerificationException] = []
         key, value = data
         assert key == self.key
-        if isinstance(self.value_type, TypeVerifier):
-            new_exceptions = self.value_type.verify(value, trace.copy(key, TraceItemType.VALUE))
+        if self.value_type_is_verifier:
+            new_exceptions = cast(TypeVerifier, self.value_type).verify(value, trace.copy(key, TraceItemType.VALUE))
             if len(new_exceptions) > 0:
                 exceptions.extend(new_exceptions)
                 return exceptions
         else:
-            if not isinstance(value, self.value_type):
+            if not isinstance(value, self.value_type): # type: ignore
                 exceptions.append(TypeVerificationTypeError(trace.copy(key, TraceItemType.VALUE), self.value_type_str, type(value)))
                 return exceptions
         if self.function is not None:
@@ -341,6 +344,7 @@ class ListTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
                 "additional_function": additional_function,
             }, ["ListTypeVerifier"])
         self.item_type = item_type
+        self.item_type_is_verifier = isinstance(item_type, TypeVerifier)
         self.data_type = data_type
         self.item_type_str = item_type_str
         self.data_type_str = data_type_str
@@ -353,13 +357,13 @@ class ListTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
             exceptions.append(TypeVerificationTypeError(trace, self.data_type_str, type(data)))
             return exceptions
         for index, item in enumerate(data):
-            if isinstance(self.item_type, TypeVerifier):
-                new_exceptions = self.item_type.verify(item, trace.copy(index, TraceItemType.ITEM))
+            if self.item_type_is_verifier:
+                new_exceptions = cast(TypeVerifier, self.item_type).verify(item, trace.copy(index, TraceItemType.ITEM))
                 if len(new_exceptions) > 0:
                     exceptions.extend(new_exceptions)
                     continue
             else:
-                if not isinstance(item, self.item_type):
+                if not isinstance(item, self.item_type): # type: ignore
                     exceptions.append(TypeVerificationTypeError(trace.copy(index, TraceItemType.ITEM), self.item_type_str, type(item)))
                     continue
             if self.item_function is not None:
@@ -404,15 +408,16 @@ class TupleItemTypeVerifier(TypeVerifier[tuple[int,item_typevar]]):
                 "item_type_str": item_type_str,
             }, ["TupleItemTypeVerifier"])
         self.item_type = item_type
+        self.item_type_is_verifier = isinstance(item_type, TypeVerifier)
         self.item_type_str = item_type_str
 
     def verify(self, data: tuple[int, item_typevar], trace:Trace) -> list[TypeVerificationException]:
         index, item = data
         exceptions:list[TypeVerificationException] = []
-        if isinstance(self.item_type, TypeVerifier):
-            exceptions.extend(self.item_type.verify(item, trace.copy(index, TraceItemType.ITEM)))
+        if self.item_type_is_verifier:
+            exceptions.extend(cast(TypeVerifier, self.item_type).verify(item, trace.copy(index, TraceItemType.ITEM)))
         else:
-            if not isinstance(item, self.item_type):
+            if not isinstance(item, self.item_type): # type: ignore
                 exceptions.append(TypeVerificationTypeError(trace.copy(index, TraceItemType.ITEM), self.item_type_str, type(item)))
         return exceptions
 
@@ -481,18 +486,20 @@ class UnionTypeVerifier(TypeVerifier[item_typevar]):
                 "types": types,
             }, ["UnionTypeVerifier"])
         self.types = types
+        self.types_are_type_verifiers = [isinstance(type, TypeVerifier) for type in types]
         self.type_str = type_str
 
     def verify(self, data: item_typevar, trace: Trace) -> list[TypeVerificationException]:
         exceptions:list[TypeVerificationException] = []
         union_exceptions:list[list[TypeVerificationException]] = []
-        for type_verifier in self.types:
-            if isinstance(type_verifier, TypeVerifier):
-                new_exceptions = type_verifier.verify(data, trace)
+        for type_verifier, is_type_verifier in zip(self.types, self.types_are_type_verifiers):
+            if is_type_verifier:
+                new_exceptions = cast(TypeVerifier, type_verifier).verify(data, trace)
                 if len(new_exceptions) == 0: return []
                 else: union_exceptions.append(new_exceptions)
             else:
-                if isinstance(data, type_verifier): return []
+                if isinstance(data, type_verifier): # type: ignore
+                    return []
         else:
             exceptions.append(TypeVerificationUnionError(trace, self.type_str, type(data), union_exceptions))
         return exceptions

@@ -36,3 +36,7 @@ class WaitValue(Generic[T]):
             self.has_called = True
             self.value = self.caller()
         return self.value
+    def set(self, value:T) -> None:
+        if self.value is None:
+            self.has_called = True
+        self.value = value

@@ -4,12 +4,11 @@ import shutil
 import threading
 import time
 from typing import Iterable, Literal
-from urllib.parse import urlparse
 import zipfile
 
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
-from Utilities.FunctionCaller import FunctionCaller
+from Utilities.FunctionCaller import FunctionCaller, WaitValue
 import Utilities.VersionTags as VersionTags
 
 CONNECTION_LIMITS:dict[str,int] = {}
@@ -17,11 +16,11 @@ CONNECTION_LIMITS_DEFAULT = 1
 
 class DownloadManager(InstallManager.InstallManager):
 
-    current_open_connections:dict[str|bytes,int] = {}
+    current_open_connections:int = 0
 
     def prepare_for_install(self) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
-        self.installed = self.apk_location.exists()
+        self.installed = WaitValue(self.apk_location.exists)
 
         self.has_zip_file_opened = False
 
@@ -31,16 +30,12 @@ class DownloadManager(InstallManager.InstallManager):
 
         assert self.version.download_link is not None
         self.url = self.version.download_link
-        self.domain = urlparse(self.url).netloc
-        if self.domain not in self.current_open_connections:
-            self.current_open_connections[self.domain] = 0
-        self.connection_limit = CONNECTION_LIMITS[self.domain] if self.domain in CONNECTION_LIMITS else CONNECTION_LIMITS_DEFAULT
         self.set_file_prepension()
 
     def open_zip_file(self) -> None:
         '''Opens the zip file if it hasn't already.'''
         if not self.has_zip_file_opened:
-            if not self.installed:
+            if not self.installed.get():
                 self.install_all()
             self.zip_file = zipfile.ZipFile(self.apk_location)
             self.members = {member.filename: member for member in self.zip_file.filelist}
@@ -67,7 +62,7 @@ class DownloadManager(InstallManager.InstallManager):
         if destination is not None and not isinstance(destination, Path):
             raise TypeError("Parameter `destination` is not a `Path`!")
 
-        if not self.installed:
+        if not self.installed.get():
             self.install_all()
         file_name = self.get_full_file_name(file_name)
         assert self.members is not None
@@ -88,7 +83,7 @@ class DownloadManager(InstallManager.InstallManager):
         return [file for file in self.get_file_list() if file.startswith(parent)]
 
     def get_file_list(self) -> Iterable[str]:
-        if not self.installed:
+        if not self.installed.get():
             self.install_all()
         self.open_zip_file()
         if self.file_list is None:
@@ -101,14 +96,14 @@ class DownloadManager(InstallManager.InstallManager):
         return self.file_list
 
     def get_full_file_list(self) -> list[str]:
-        if not self.installed:
+        if not self.installed.get():
             self.install_all()
         self.open_zip_file()
         assert self.zip_file is not None
         return [file.filename for file in self.zip_file.filelist]
 
     def file_exists(self, name:str) -> bool:
-        if not self.installed:
+        if not self.installed.get():
             self.install_all()
         return name in self.get_file_list()
 
@@ -121,7 +116,7 @@ class DownloadManager(InstallManager.InstallManager):
         if mode not in ("t", "b"):
             raise ValueError("Parameter `mode` is not \"b\" or \"t\"!")
 
-        if not self.installed:
+        if not self.installed.get():
             self.install_all()
         file_name = self.get_full_file_name(file_name)
         self.open_zip_file()
@@ -155,7 +150,7 @@ class DownloadManager(InstallManager.InstallManager):
         if mode not in ("t", "b"):
             raise ValueError("Parameter `mode` is not \"b\" or \"t\"!")
 
-        if not self.installed:
+        if not self.installed.get():
             self.install_all()
         if is_in_assets:
             file_name = self.get_full_file_name(file_name)
@@ -175,20 +170,20 @@ class DownloadManager(InstallManager.InstallManager):
 
         self.installation_lock.acquire()
         if destination is None: destination = self.apk_location
-        if not self.installed:
+        if not self.installed.get():
             with open(destination, "wb") as f:
-                while self.current_open_connections[self.domain] >= self.connection_limit:
+                while self.current_open_connections >= CONNECTION_LIMITS_DEFAULT:
                     time.sleep(0.1)
-                self.current_open_connections[self.domain] += 1
+                self.current_open_connections += 1
                 f.write(requests.get(self.url).content)
-                self.current_open_connections[self.domain] -= 1
-            self.installed = True
+                self.current_open_connections -= 1
+            self.installed.set(True)
             self.open_zip_file()
         self.installation_lock.release()
 
     def all_done(self) -> None:
         self.installation_lock.acquire() # So it doesn't do anything under my nose
-        self.installed = False
+        self.installed.set(False)
         self.zip_file = None
         self.members = None
         self.has_zip_file_opened = False

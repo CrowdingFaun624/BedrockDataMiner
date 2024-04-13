@@ -222,11 +222,12 @@ def fix_folders(versions:dict[str,Version.Version]) -> None:
     or when a version is renamed.'''
     for version_folder in FileManager.VERSIONS_FOLDER.iterdir():
         if not version_folder.is_dir(): continue
-        if version_folder.name not in versions_dict:
-            if sum(1 for child in version_folder.iterdir()) == 0:
+        if version_folder.name not in versions:
+            try:
                 version_folder.rmdir()
-            else:
-                print("Version folder \"%s\" does not exist in versions.json and contains files!")
+            except OSError:
+                print("Version folder \"%s\" does not exist in versions.json and contains files!" % version_folder.name)
+                continue
 
 
 versions = WaitValue(FunctionCaller(parse))
