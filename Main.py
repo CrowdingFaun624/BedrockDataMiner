@@ -28,6 +28,7 @@ import Programs.CompareAll as CompareAll
 import DataMiners.DataMiners as DataMiners
 import Downloader.AllVersions as AllVersions
 import Downloader.VersionsParser as VersionsParser
+import Downloader.UrlValidator as UrlValidator
 import Downloader.WikiValidator as WikiValidator
 import Programs.Cleaner as Cleaner
 import Programs.FileSummary as FileSummary
@@ -48,6 +49,7 @@ PROGRAM_NAMES = {
     "NbtReader": NbtReader.main,
     "StoredVersions": StoredVersionsManager.main,
     "TestStructures": DataMiners.test_structures,
+    "UrlValidator": UrlValidator.main,
     "VersionsParser": VersionsParser.main,
     "WikiValidator": WikiValidator.main,
 }

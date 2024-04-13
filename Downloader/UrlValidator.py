@@ -1,6 +1,7 @@
 import datetime
 from typing import Callable
 
+import Downloader.VersionsParser as VersionsParser
 import Utilities.FileManager as FileManager
 import Utilities.Version as Version
 import Utilities.VersionTags as VersionTags
@@ -101,8 +102,9 @@ def validate(version:Version.Version) -> list[str]:
             return url_function(version)
     else: return ["Version \"%s\" has an unknown url \"%s\"!" % (version.name, version.download_link)]
 
-def validate_url_data(versions:dict[str,Version.Version]) -> None:
+def main() -> None:
     '''Writes a list of warning strings to "./_assets/version_parser_warnings.txt"'''
+    versions = VersionsParser.versions.get()
     warnings_list:list[str] = []
     for version in versions.values():
         if version.download_method is not Version.DownloadMethod.DOWNLOAD_URL: continue

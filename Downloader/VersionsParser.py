@@ -212,7 +212,6 @@ def parse() -> dict[str,Version.Version]:
     assign_wiki_pages(versions)
     assign_install_managers(versions)
     assign_latest(versions)
-    UrlValidator.validate_url_data(versions)
     fix_folders(versions)
     return versions
 
