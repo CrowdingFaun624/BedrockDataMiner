@@ -8,7 +8,7 @@ if __name__ == "__main__":
 # import pstats
 # profile = cProfile.Profile()
 # profile.run('''
-# import Comparison.CompareAll as CompareAll
+# import Programs.CompareAll as CompareAll
 # import DataMiners.DataMiners as DataMiners
 # import Downloader.AllVersions as AllVersions
 # import Downloader.VersionsParser as VersionsParser
@@ -16,8 +16,9 @@ if __name__ == "__main__":
 # import Programs.Cleaner as Cleaner
 # import Programs.FileSummary as FileSummary
 # import Programs.GetFile as GetFile
-# import Utilities.Nbt.NbtReader as NbtReader
+# import Utilities.CustomJson as CustomJson
 # import Utilities.FileManager as FileManager
+# import Utilities.Nbt.NbtReader as NbtReader
 # import Utilities.StoredVersionsManager as StoredVersionsManager''')
 # with open(Path("./time_report.txt"), "wt") as stream:
 #     stats = pstats.Stats(profile, stream=stream)
