@@ -87,7 +87,7 @@ def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, lo
 def test_structures() -> None:
     for dataminer in dataminers:
         print("%s:" % (dataminer.name))
-        print(dataminer.structure.get())
+        print(dataminer.structure)
     print("All structures successfully parsed.")
 
 def user_interface() -> None:
