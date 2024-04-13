@@ -93,9 +93,12 @@ def test_structures() -> None:
 def user_interface() -> None:
     version_names = VersionsParser.versions.get()
     version = None
-    while version not in version_names:
+    while version not in version_names and version != "*":
         version = input("What version will be datamined? ")
-    version = version_names[version]
+    if version == "*":
+        versions = list(version_names.values())
+    else:
+        versions = [version_names[version]]
 
     dataminer_names = {dataminer.name: dataminer for dataminer in dataminers}
     dataminer_collection = None
@@ -106,6 +109,19 @@ def user_interface() -> None:
     else:
         dataminer_names = [dataminer_collection]
 
-    for dataminer_name in dataminer_names:
-        run_with_dependencies(version, dataminer_name, recalculate_this=True, recalculate_everything=False)
-        print("Successfully stored %s for %s." % (dataminer_name, version))
+    if len(versions) > 1:
+        cannot_datamine:list[Version.Version] = []
+        for version in versions:
+            if version.download_link is None: continue
+            for dataminer_name in dataminer_names:
+                try:
+                    run_with_dependencies(version, dataminer_name, recalculate_this=True, recalculate_everything=False)
+                except Exception:
+                    cannot_datamine.append(version)
+                print("Successfully stored %s for %s." % (dataminer_name, version))
+        print("Failed to datamine %i versions:\n%s" % (len(cannot_datamine), cannot_datamine))
+    else:
+        for dataminer_name in dataminer_names:
+            run_with_dependencies(versions[0], dataminer_name, recalculate_this=True, recalculate_everything=False)
+            print("Successfully stored %s for %s." % (dataminer_name, versions[0]))
+
