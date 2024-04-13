@@ -224,14 +224,14 @@ def load(name:str, functions:dict[str,Callable]) -> StructureBase.StructureBase:
     data = get_file(name)
     return parse_structure_file(name, data, functions)
 
-def load_from_file(name:str, functions:dict[str,Callable]) -> WaitValue[StructureBase.StructureBase]:
-    return WaitValue(FunctionCaller(load, args=[name, functions]))
+def load_from_file(name:str, functions:dict[str,Callable]) -> StructureBase.StructureBase:
+    return load(name, functions)
 
 def open_index_file() -> dict[str,dict]:
     with open(FileManager.STRUCTURES_FILE, "rt") as f:
         return json.load(f)
 
-def parse_structures_index() -> dict[str,WaitValue[StructureBase.StructureBase]]:
+def parse_structures_index() -> dict[str,StructureBase.StructureBase]:
     index = open_index_file()
     for structure_file_name in index:
         structure_file_path = FileManager.get_structure_path(structure_file_name)

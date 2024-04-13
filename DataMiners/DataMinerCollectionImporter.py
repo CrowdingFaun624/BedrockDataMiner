@@ -100,7 +100,7 @@ class DataMinerCollectionIntermediate():
         TypeVerifier.TypedDictKeyTypeVerifier("structures", "a dict", True, dict),
     )
 
-    def __init__(self, data:DataMinerCollectionTypedDict, name:str, structures:dict[str,WaitValue[StructureBase.StructureBase]]) -> None:
+    def __init__(self, data:DataMinerCollectionTypedDict, name:str, structures:dict[str,StructureBase.StructureBase]) -> None:
         self.type_verifier.base_verify({"data": data, "name": name, "structures": structures})
 
         self.name = name
@@ -225,7 +225,7 @@ def load_dataminers() -> list[DataMiner.DataMinerCollection]:
     if not isinstance(data, dict):
         raise TypeError("dataminer_collections.json is not a dict!")
 
-    structures:dict[str,WaitValue[StructureBase.StructureBase]] = Importer.structures
+    structures:dict[str,StructureBase.StructureBase] = Importer.structures
     all_dataminers_dict = {dataminer.__name__: dataminer for dataminer in all_dataminers}
     dataminer_collection_intermediates:dict[str,DataMinerCollectionIntermediate] = {}
     for name, dataminer_collection_data in data.items():
