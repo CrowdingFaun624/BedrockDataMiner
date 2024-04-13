@@ -55,6 +55,7 @@ class BaseComponent(Component.Component):
         self.final:StructureBase.StructureBase|None = None
 
         self.children_has_normalizer = False
+        self.children_tags:set[str] = set()
 
     def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
         self.subcomponent:StructureComponent.StructureComponent|None = self.choose_component(self.subcomponent_str, COMPONENT_REQUEST_PROPERTIES, components, ["subcomponent"])
@@ -84,6 +85,7 @@ class BaseComponent(Component.Component):
             normalizer=normalizer_final,
             post_normalizer=post_normalizer_final,
             structure=None,
+            children_tags=self.children_tags,
         )
 
     def link_finals(self) -> None:

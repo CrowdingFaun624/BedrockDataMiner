@@ -1,5 +1,6 @@
 from typing import Any, Callable, Generator, Iterable, MutableMapping, TypeVar
 
+import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
@@ -136,6 +137,17 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                 normalize_output = structure.normalize(value, normalizer_dependencies, version_number, trace.copy(self.name, key))
                 if normalize_output is not None:
                     data[key] = normalize_output
+
+    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath, trace:Trace.Trace) -> list[DataPath.DataPath]:
+        if tag not in self.children_tags: return []
+        output:list[DataPath.DataPath] = []
+        if tag in self.tags:
+            output.extend(data_path.copy((key, type(value))).embed(value) for key, value in data.items())
+        for key, value in data.items():
+            structure = self.choose_structure_flat(key, type(value), trace)
+            if structure is not None:
+                output.extend(structure.get_tag_paths(value, tag, data_path.copy((key, type(value))), trace.copy(self.name, key)))
+        return output
 
     def compare(
             self,

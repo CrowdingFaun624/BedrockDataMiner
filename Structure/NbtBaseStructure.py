@@ -1,5 +1,6 @@
 from typing import Literal
 
+import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
@@ -128,6 +129,12 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             if normalize_output is not None:
                 data_parsed = normalize_output
         return data_parsed
+
+    def get_tag_paths(self, data: NbtTypes.TAG, tag: str, data_path: DataPath.DataPath, trace: Trace.Trace) -> list[DataPath.DataPath]:
+        if tag not in self.children_tags: return []
+        structure = self.choose_structure_flat("", type(data), trace)
+        if structure is None: return []
+        return structure.get_tag_paths(data, tag, data_path.copy(("", type(data))), trace.copy(self.name))
 
     def compare(self, data1: NbtTypes.TAG, data2: NbtTypes.TAG, trace: Trace.Trace) -> tuple[NbtTypes.TAG|D.Diff[NbtTypes.TAG, NbtTypes.TAG], list[tuple[Trace.Trace, Exception]]]:
         structure_set = self.choose_structure(D.Diff(data1, data2), trace)

@@ -1,5 +1,6 @@
 from typing import Iterable, Sequence, TypeVar
 
+import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
@@ -121,6 +122,17 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 normalize_output = structure.normalize(item, normalizer_dependencies, version_number, trace.copy(self.name, index))
                 if normalize_output is not None:
                     data[index] = normalize_output
+
+    def get_tag_paths(self, data: list[d], tag: str, data_path: DataPath.DataPath, trace:Trace.Trace) -> list[DataPath.DataPath]:
+        if tag not in self.children_tags: return []
+        output:list[DataPath.DataPath] = []
+        if tag in self.tags:
+            output.extend(data_path.copy((index, type(value))).embed(value) for index, value in enumerate(data))
+        for index, value in enumerate(data):
+            structure = self.choose_structure_flat(index, type(value), trace)
+            if structure is not None:
+                output.extend(structure.get_tag_paths(value, tag, data_path.copy((index, type(value))), trace.copy(self.name, index)))
+        return output
 
     def compare(
             self,

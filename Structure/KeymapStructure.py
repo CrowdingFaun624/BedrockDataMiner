@@ -1,5 +1,6 @@
-from typing import TypeVar
+from typing import MutableMapping, TypeVar
 
+import Structure.DataPath as DataPath
 import Structure.DictStructure as DictStructure
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
@@ -97,6 +98,17 @@ class KeymapStructure(DictStructure.DictStructure[d]):
             exception.args = tuple(list(exception.args) + ["Failed to get Structure in %s in %s for key, value %s: %s" % (self.name, trace, key, value)])
         if exception is not None:
             raise exception
+
+    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath, trace:Trace.Trace) -> list[DataPath.DataPath]:
+        if tag not in self.children_tags: return []
+        output:list[DataPath.DataPath] = []
+        for key, value in data.items():
+            if tag in self.tags[key]:
+                output.append(data_path.copy((key, type(value))).embed(value))
+            structure = self.choose_structure_flat(key, type(value), trace)
+            if structure is not None:
+                output.extend(structure.get_tag_paths(value, tag, data_path.copy((key, type(value))), trace.copy(self.name, key)))
+        return output
 
     def choose_structure(self, key:str, value:d, trace:Trace.Trace) -> StructureSet.StructureSet:
         output:dict[D.DiffType,Structure.Structure|None] = {}

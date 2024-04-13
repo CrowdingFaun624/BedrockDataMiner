@@ -1,6 +1,7 @@
 import traceback
 from typing import Any, TypeVar, TYPE_CHECKING, Union
 
+import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
@@ -35,7 +36,8 @@ class StructureBase():
             name:str,
             normalizer:Normalizer.Normalizer|None,
             structure:Structure.Structure[b]|None,
-            post_normalizer:Normalizer.Normalizer|None=None,
+            post_normalizer:Normalizer.Normalizer|None,
+            children_tags:set[str],
         ) -> None:
         self.type_verifier.base_verify({"name": name, "normalizer": normalizer, "structure": structure, "post_normalizer": post_normalizer})
 
@@ -43,6 +45,7 @@ class StructureBase():
         self.normalizer = normalizer
         self.post_normalizer = post_normalizer
         self.structure = structure
+        self.children_tags = children_tags
 
     def normalize(self, data:Any, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int=1) -> Any:
         '''Manipulates the data before comparison.'''
@@ -59,6 +62,17 @@ class StructureBase():
         self.structure.normalize(output, normalizer_dependencies, version_number, Trace.Trace())
 
         return output
+
+    def has_tag(self, tag:str) -> bool:
+        return tag in self.children_tags
+
+    def get_tag_paths(self, data:Any, tag:str, version:"Version.Version", normalizer_dependencies:Normalizer.NormalizerDependencies) -> list[DataPath.DataPath]:
+        if not self.has_tag(tag):
+            return []
+        assert self.structure is not None
+        local_normalizer_dependencies = Normalizer.LocalNormalizerDependencies(normalizer_dependencies, version, None)
+        normalized_data = self.normalize(data, local_normalizer_dependencies, 1)
+        return self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.name), Trace.Trace())
 
     def store(self, report:str) -> None:
         if self.name is None:

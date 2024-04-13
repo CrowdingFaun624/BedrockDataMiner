@@ -1,5 +1,6 @@
 from typing import Any, Generic, TypeVar, Union
 
+import Structure.DataPath as DataPath
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Normalizer as Normalizer
@@ -88,6 +89,8 @@ class Structure(Generic[a]):
 
     def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> Any|None:
         raise NotImplementedError()
+
+    def get_tag_paths(self, data:a, tag:str, data_path:DataPath.DataPath, trace:Trace.Trace) -> list[DataPath.DataPath]: ...
 
     def compare(self, data1:a, data2:a, trace:Trace.Trace) -> tuple[a,list[tuple[Trace.Trace,Exception]]]: ...
 
