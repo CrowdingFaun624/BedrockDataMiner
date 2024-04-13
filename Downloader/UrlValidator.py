@@ -101,10 +101,10 @@ def validate(version:Version.Version) -> list[str]:
             return url_function(version)
     else: return ["Version \"%s\" has an unknown url \"%s\"!" % (version.name, version.download_link)]
 
-def validate_url_data(versions:list[Version.Version]) -> None:
+def validate_url_data(versions:dict[str,Version.Version]) -> None:
     '''Writes a list of warning strings to "./_assets/version_parser_warnings.txt"'''
     warnings_list:list[str] = []
-    for version in versions:
+    for version in versions.values():
         if version.download_method is not Version.DownloadMethod.DOWNLOAD_URL: continue
         warnings_list.extend(validate(version))
     with open(FileManager.VERSION_PARSER_WARNINGS_FILE, "wt") as f:

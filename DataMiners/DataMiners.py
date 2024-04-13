@@ -91,7 +91,7 @@ def test_structures() -> None:
     print("All structures successfully parsed.")
 
 def user_interface() -> None:
-    version_names = VersionsParser.versions_dict.get()
+    version_names = VersionsParser.versions.get()
     version = None
     while version not in version_names:
         version = input("What version will be datamined? ")
