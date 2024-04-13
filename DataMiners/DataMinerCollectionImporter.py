@@ -29,6 +29,7 @@ import DataMiners.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinition
 import DataMiners.SoundFiles.SoundFilesDataMiners as SoundFilesDataMiners
 import DataMiners.SoundsJson.SoundsJsonDataMiners as SoundsJsonDataMiners
 import DataMiners.Splashes.SplashesDataMiners as SplashesDataMiners
+import DataMiners.TagSearcher.TagSearcherDataMiners as TagSearcherDataMiners
 import DataMiners.TextureList.TextureListDataMiners as TextureListDataMiners
 import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as UndefinedSoundEventsDataMiners
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
@@ -53,6 +54,7 @@ dataminer_collections:list[Sequence[type[DataMiner.DataMiner]]] = [
     SoundFilesDataMiners.dataminers,
     SoundsJsonDataMiners.dataminers,
     SplashesDataMiners.dataminers,
+    TagSearcherDataMiners.dataminers,
     TextureListDataMiners.dataminers,
     UndefinedSoundEventsDataMiners.dataminers,
     UnusedSoundEventsDataMiners.dataminers

@@ -2,14 +2,16 @@ import json
 import traceback
 from typing import Any, cast, Generic, Literal, TypedDict, TypeVar
 
+import Structure.DataPath as DataPath
 import Utilities.FileStorageManager as FileStorageManager
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.Nbt.NbtReader as NbtReader
 
-NbtTypedDict = TypedDict("NbtTypedDict", {"$special_type": Literal["nbt"], "data": str})
+DataPathTypedDict = TypedDict("DataPathTypedDict", {"$special_type": Literal["data_path"], "root": str, "path_items":list[Any], "embedded_item": Any|None})
 NbtBytesTypedDict = TypedDict("NbtBytesTypedDict", {"$special_type": Literal["nbt_bytes"], "hash": str})
+NbtTypedDict = TypedDict("NbtTypedDict", {"$special_type": Literal["nbt"], "data": str})
 
-custom_types = NbtTypedDict|NbtBytesTypedDict
+custom_types = DataPathTypedDict|NbtBytesTypedDict|NbtTypedDict
 
 dict_type_var = TypeVar("dict_type_var")
 data_type_var = TypeVar("data_type_var")
@@ -18,6 +20,14 @@ class Coder(Generic[dict_type_var, data_type_var]):
     def decode(cls, data:dict_type_var) -> data_type_var: ...
     @classmethod
     def encode(cls, data:data_type_var) -> dict_type_var: ...
+
+class DataPathCoder(Coder[DataPathTypedDict, DataPath.DataPath]):
+    @classmethod
+    def decode(cls, data:DataPathTypedDict) -> DataPath.DataPath:
+        return DataPath.DataPath(data["path_items"], data["root"], data["embedded_item"])
+    @classmethod
+    def encode(cls, data:DataPath.DataPath) -> DataPathTypedDict:
+        return {"$special_type": "data_path", "path_items": data.path_items, "root": data.root, "embedded_item": data.embedded_item}
 
 class NbtCoder(Coder[NbtTypedDict, NbtTypes.TAG]):
     @classmethod
@@ -40,10 +50,12 @@ class NbtBytesCoder(Coder[NbtBytesTypedDict, NbtReader.NbtBytes]):
 class SpecialEncoder(json.JSONEncoder):
     def default(self, data:Any) -> custom_types:
         match data:
-            case NbtTypes.TAG():
-                return NbtCoder.encode(data)
+            case DataPath.DataPath():
+                return DataPathCoder.encode(data)
             case NbtReader.NbtBytes(): # stored as raw bytes because data (like endianness) can be lost upon conversion to other format
                 return NbtBytesCoder.encode(data)
+            case NbtTypes.TAG():
+                return NbtCoder.encode(data)
             case _:
                 raise TypeError("Object of type %s is not JSON serializable" % (data.__class__.__name__))
 
@@ -52,10 +64,12 @@ def decoder_function(data:dict[str,Any]|custom_types) -> Any:
         return data
     data = cast(custom_types, data)
     match data["$special_type"]:
-        case "nbt":
-            return NbtCoder.decode(data)
+        case "data_path":
+            return DataPathCoder.decode(data)
         case "nbt_bytes":
             return NbtBytesCoder.decode(data)
+        case "nbt":
+            return NbtCoder.decode(data)
         case _:
             raise ValueError("Invalid $special_type of \"%s\" received!" % data["$special_type"])
 

@@ -7,6 +7,7 @@ from typing import Any, Callable, IO, Iterable, Literal, Mapping, overload, Sequ
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Downloader.VersionsParser as VersionsParser
+import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
 import Structure.StructureBase as StructureBase
 import Utilities.CustomJson as CustomJson
@@ -292,6 +293,15 @@ class DataMinerCollection():
                 raise FileNotFoundError("Version \"%s\" does not currently have a data file \"%s\"!" % (version.name, self.file_name))
         with open(data_path, "rt") as f:
             return json.load(f, cls=CustomJson.decoder)
+
+    def get_tag_paths(self, version:Version.Version, tag:str, normalizer_dependencies:Normalizer.NormalizerDependencies) -> list[DataPath.DataPath]:
+        if not self.structure.has_tag(tag):
+            return []
+        dataminer = self.get_version(version)
+        if isinstance(dataminer, NullDataMiner):
+            return []
+        data = dataminer.get_data_file()
+        return self.structure.get_tag_paths(data, tag, version, normalizer_dependencies)
 
     def compare(
             self,
