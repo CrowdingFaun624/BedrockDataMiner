@@ -68,6 +68,7 @@ class ListComponent(StructureComponent.StructureComponent):
         self.final:ListStructure.ListStructure|None = None
 
         self.children_has_normalizer = False
+        self.children_tags:set[str] = set()
 
     def set_sub_component(self, components:dict[str,Component.Component], subcomponent_str:str|None) -> StructureComponent.StructureComponent|GroupComponent.GroupComponent|None:
         if subcomponent_str is None:
@@ -101,6 +102,7 @@ class ListComponent(StructureComponent.StructureComponent):
         for index, tag_str in enumerate(tags_strs):
             tags.append(self.choose_component(tag_str, TAG_REQUEST_PROPERTIES, components, ["tags", index]))
         self.link_components(tags)
+        self.children_tags.update(tags_strs)
         return tags
 
     def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
@@ -135,6 +137,7 @@ class ListComponent(StructureComponent.StructureComponent):
             ordered=self.ordered,
             tags=self.tags_final,
             children_has_normalizer=self.children_has_normalizer,
+            children_tags=self.children_tags,
         )
 
     def create_final(self) -> None:

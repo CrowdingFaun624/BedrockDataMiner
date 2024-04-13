@@ -33,6 +33,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list"),
         )),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizers", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
     )
 
     def __init__(
@@ -43,6 +44,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             endianness:Endianness.End,
             normalizer:list[Normalizer.Normalizer]|None,
             children_has_normalizer:bool,
+            children_tags:set[str]
         ) -> None:
         self.name = name
         self.structure = structure
@@ -50,6 +52,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         self.normalizer = normalizer
         self.children_has_normalizer = children_has_normalizer
         self.endianness=endianness
+        self.children_tags = children_tags
         self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
@@ -59,7 +62,8 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             "types": self.types,
             "endianness": self.endianness,
             "normalizer": self.normalizer,
-            "children_has_normalizers": self.children_has_normalizer
+            "children_has_normalizers": self.children_has_normalizer,
+            "children_tags": self.children_tags,
         })
 
     def check_all_types(self, data: NbtTypes.TAG, trace: Trace.Trace) -> list[tuple[Trace.Trace, Exception]]:

@@ -68,6 +68,7 @@ class DictComponent(StructureComponent.StructureComponent):
         self.types_final:tuple[type,...]|None = None
         self.final:DictStructure.DictStructure|None = None
         self.tags_final:list[str] = []
+        self.children_tags:set[str] = set()
 
         self.children_has_normalizer = False
 
@@ -115,6 +116,7 @@ class DictComponent(StructureComponent.StructureComponent):
         for index, tag_str in enumerate(tags_strs):
             tags.append(self.choose_component(tag_str, TAG_REQUEST_PROPERTIES, components, ["tags", index]))
         self.link_components(tags)
+        self.children_tags.update(tags_strs)
         return tags
 
     def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
@@ -150,6 +152,7 @@ class DictComponent(StructureComponent.StructureComponent):
             print_all=self.print_all,
             tags=self.tags_final,
             children_has_normalizer=self.children_has_normalizer,
+            children_tags=self.children_tags,
         )
 
     def create_final(self) -> None:

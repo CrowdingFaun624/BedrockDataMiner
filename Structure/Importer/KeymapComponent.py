@@ -74,6 +74,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
         self.tags_final:dict[str,list[str]] = {}
 
         self.children_has_normalizer = self.children_has_normalizer_default
+        self.children_tags:set[str] = set()
 
     def choose_types_type_iterator(self, data:ComponentTyping.KeymapKeyTypedDict) -> Generator[tuple[int|None, str], None, None]:
         '''Yields the index of the type_str and the type_str, or None and the type_str if it is not a list'''
@@ -140,10 +141,12 @@ class KeymapComponent(StructureComponent.StructureComponent):
                 tag_components.append(self.choose_component(key_tag_str, TAG_REQUEST_PROPERTIES, components, ["keys", key, "tags", index]))
             self.link_components(tag_components)
             tags[key] = tag_components
+            self.children_tags.update(key_tags_strs)
         tags_for_all:list[TagComponent.TagComponent] = []
         for index, tag_str in enumerate(tags_for_all_strs):
             tags_for_all.append(self.choose_component(tag_str, TAG_REQUEST_PROPERTIES, components, ["tags", index]))
         self.link_components(tags_for_all)
+        self.children_tags.update(tags_for_all_strs)
         return tags, tags_for_all
 
     def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
@@ -169,6 +172,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
             print_all=self.print_all,
             tags=self.tags_final,
             children_has_normalizer=self.children_has_normalizer,
+            children_tags=self.children_tags,
         )
 
     def create_final(self) -> None:

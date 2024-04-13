@@ -47,11 +47,13 @@ class NbtBaseComponent(StructureComponent.StructureComponent):
 
         self.links_to_other_components:list[Component.Component] = []
         self.parents:list[Component.Component] = []
-        self.children_has_normalizer = True # All NbtBases have built-in normalizers that unpack the NBT
         self.types:list[type|TypeAliasComponent.TypeAliasComponent]|None = None
         self.types_final:list[type] = []
         self.final:NbtBaseStructure.NbtBaseStructure|None = None
         self.subcomponent:StructureComponent.StructureComponent|GroupComponent.GroupComponent|None = None
+
+        self.children_has_normalizer = True # All NbtBases have built-in normalizers that unpack the NBT
+        self.children_tags:set[str] = set()
 
     def set_component(self, components: dict[str, Component.Component], functions: dict[str, Callable]) -> None:
         self.subcomponent:StructureComponent.StructureComponent|GroupComponent.GroupComponent|None = self.choose_component(self.subcomponent_str, COMPONENT_REQUEST_PROPERTIES, components, ["subcomponent"])
@@ -104,6 +106,7 @@ class NbtBaseComponent(StructureComponent.StructureComponent):
             types = tuple(self.types_final),
             normalizer = normalizers_final,
             children_has_normalizer=self.children_has_normalizer,
+            children_tags=self.children_tags,
         )
 
     def create_final(self) -> None:

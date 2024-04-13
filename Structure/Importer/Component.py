@@ -17,6 +17,7 @@ class Component():
     links_to_other_components:list["Component"]
     parents:list["Component"]
     children_has_normalizer:bool
+    children_tags:set[str]|None=None
 
     def __init__(self, data:ComponentTyping.ComponentTypedDicts, name:str, index:int) -> None: ...
 
@@ -54,6 +55,10 @@ class Component():
             if child.children_has_normalizer and not self.children_has_normalizer:
                 self.children_has_normalizer = True
                 has_changed = True
+            if self.children_tags is not None and child.children_tags is not None:
+                tags_length_before = len(self.children_tags)
+                self.children_tags.update(child.children_tags)
+                has_changed = has_changed or len(self.children_tags) != tags_length_before
         if has_changed or child is None:
             for parent in self.parents:
                 parent.propagate_variables(self)

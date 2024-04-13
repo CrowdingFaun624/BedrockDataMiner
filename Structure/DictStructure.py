@@ -40,6 +40,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
     )
 
     def __init__(
@@ -54,6 +55,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             normalizer:list[Normalizer.Normalizer]|None,
             tags:list[str],
             children_has_normalizer:bool,
+            children_tags:set[str],
         ) -> None:
         ''' * `name` is what the key of this dictionary is.
          * If `structure` is a Structure, then it will compare and print all values using that Structure.
@@ -77,6 +79,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
         self.normalizer = normalizer
         self.tags = tags
         self.children_has_normalizer = children_has_normalizer
+        self.children_tags = children_tags
         self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
@@ -91,6 +94,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             "normalizer": self.normalizer,
             "tags": self.tags,
             "children_has_normalizer": self.children_has_normalizer,
+            "children_tags": self.children_tags,
         })
 
     def check_type(self, key:str, value:d, trace:Trace.Trace) -> tuple[Trace.Trace,Exception]|None:

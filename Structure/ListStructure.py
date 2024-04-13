@@ -24,6 +24,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             tags:list[str],
             normalizer:list[Normalizer.Normalizer]|None,
             children_has_normalizer:bool,
+            children_tags:set[str]
         ) -> None:
         ''' * `name` is what the key of this list is.
          * If `structure` is a Structure, then it will compare and print all items using that Structure.
@@ -46,6 +47,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         self.normalizer = normalizer
         self.tags = tags
         self.children_has_normalizer = children_has_normalizer
+        self.children_tags = children_tags
         self.check_initialization_parameters()
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
@@ -64,6 +66,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list", additional_function=lambda data: (len(data) > 0, "empty"))))),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
     )
 
     def check_initialization_parameters(self) -> None:
@@ -78,6 +81,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             "tags": self.tags,
             "normalizer": self.normalizer,
             "children_has_normalizer": self.children_has_normalizer,
+            "children_tags": self.children_tags,
         })
 
     def check_type(self, index:int, item:d, trace:Trace.Trace) -> tuple[Trace.Trace,Exception]|None:

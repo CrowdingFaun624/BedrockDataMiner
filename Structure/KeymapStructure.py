@@ -22,6 +22,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
             tags:dict[str,list[str]],
             normalizer:list[Normalizer.Normalizer]|None,
             children_has_normalizer:bool,
+            children_tags:set[str],
         ) -> None:
         ''' * `name` is what the key of this dictionary is.
          * `types` is a dictionary with keys of tuples of strings and types and values of Structures or Nones.
@@ -40,6 +41,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
         self.tags = tags
         self.normalizer = normalizer
         self.children_has_normalizer = children_has_normalizer
+        self.children_tags = children_tags
         self.check_initialization_parameters()
         self.key_types:dict[str,set[type]] = {}
 
@@ -62,6 +64,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"), "a dict", "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list", additional_function=lambda data: (sum(1 for item in data) > 0, "empty"))))),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
     )
 
     def check_initialization_parameters(self) -> None:
@@ -73,6 +76,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
             "tags": self.tags,
             "normalizer": self.normalizer,
             "children_has_normalizer": self.children_has_normalizer,
+            "children_tags": self.children_tags,
         })
 
     def check_type(self, key:str, value:d, trace:Trace.Trace) -> tuple[Trace.Trace,Exception]|None:
