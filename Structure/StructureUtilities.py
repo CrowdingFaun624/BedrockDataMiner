@@ -2,6 +2,7 @@ from typing import Any
 
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
+import Utilities.Nbt.Endianness as Endianness
 
 NoneType = type(None)
 
@@ -20,9 +21,12 @@ def stringify(data:Any) -> str:
             return str(data)
         case NbtReader.NbtBytes():
             try:
-                return str(NbtReader.unpack_bytes(data.value, gzipped=False)[1])
+                return str(NbtReader.unpack_bytes(data.value, gzipped=False, endianness=Endianness.End.BIG)[1])
             except Exception:
-                return "Unencodable Nbt Object"
+                try:
+                    return str(NbtReader.unpack_bytes(data.value, gzipped=False, endianness=Endianness.End.LITTLE)[1])
+                except Exception:
+                    return "Unencodable Nbt Object"
         case _:
             try:
                 stringified_data = str(data)
