@@ -1,7 +1,5 @@
 import datetime
-import threading
 import time
-from typing import Any
 
 import Downloader.VersionsParser as VersionsParser
 import Utilities.FileManager as FileManager
@@ -155,6 +153,7 @@ def parse_betas(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI) -> lis
     '''Verifies information about the version's betas. Returns a list of warning messages.'''
     warning_messages:list[str] = []
     development_category_pages:list[mediawikiapi.WikipediaPage] = []
+    assert version.development_category_names is not None
     for development_category_name in version.development_category_names:
         try:
             development_category_pages.append(mwapi.page(development_category_name, auto_suggest=False))
@@ -163,13 +162,13 @@ def parse_betas(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI) -> lis
     wiki_betas:list[str] = []
     for development_category_page in development_category_pages:
         wiki_betas.extend(get_category_members(development_category_page))
-    wiki_betas = set(wiki_betas)
+    wiki_betas_set = set(wiki_betas)
     my_betas = set(child.wiki_page for child in version.children if child.ordering_tag is VersionTags.VersionTag.beta)
-    if wiki_betas != my_betas:
+    if wiki_betas_set != my_betas:
         for my_beta in my_betas:
-            if my_beta not in wiki_betas:
+            if my_beta not in wiki_betas_set:
                 warning_messages.append("Version \"%s\" (page \"%s\") lists a page \"%s\" as a beta that the wiki does not list as a beta!" % (version.name, version.wiki_page, my_beta))
-        for wiki_beta in wiki_betas:
+        for wiki_beta in wiki_betas_set:
             if wiki_beta not in my_betas:
                 warning_messages.append("Version \"%s\" (page \"%s\") does not list a page \"%s\" as a beta that the wiki does list as a beta!" % (version.name, version.wiki_page, wiki_beta))
     return warning_messages
@@ -187,71 +186,65 @@ def parse_client_downloads(client_dl_string:str, version:Version.Version) -> lis
             warning_messages.append("Link \"%s\" on \"%s\" is not in the page's links!" % (version.download_link, version.wiki_page))
     return warning_messages
 
-def parse_main_list(versions:list[Version.Version], rememberer:dict[str,str], mwapi:mediawikiapi.MediaWikiAPI) -> list[str]:
+def parse_main_list(versions:list[Version.Version], mwapi:mediawikiapi.MediaWikiAPI) -> list[str]:
     '''Compares Category:Bedrock Edition versions to the version list. Returns a list of warning messages.'''
-    try:
-        warning_messages:list[str] = []
-        EXCEPTIONS = [
-            "Bedrock Edition version history",
-            "Bedrock Edition version history/Development versions",
-            "Bedrock Edition 1.0.0", # redirect
-            "Bedrock Edition 1.1.0", # redirect
-            "Bedrock Edition 1.1.5", # redirect
-            "Bedrock Edition 1.1.7", # redirect
-            "Category:Pocket Edition versions",
-            "Category:Bedrock Edition development versions by year",
-            "Category:Bedrock Edition development versions by version",
-            "Pocket Edition 1.10.0", # redirect
-            "Pocket Edition 1.11.0", # redirect
-            "Pocket Edition 1.12.0", # redirect
-            "Pocket Edition 1.13.0", # redirect
-            "Pocket Edition 1.14.0", # redirect
-            "Pocket Edition 1.15.0", # redirect
-            "Pocket Edition 1.16.0", # redirect
-            "Pocket Edition 1.17.0", # redirect
-            "Pocket Edition 1.2.0", # redirect
-            "Pocket Edition 1.3.0", # redirect
-            "Pocket Edition 1.4.0", # redirect
-            "Pocket Edition 1.5.0", # redirect
-            "Pocket Edition 1.6.0", # redirect
-            "Pocket Edition 1.7.0", # redirect
-            "Pocket Edition 1.8.0", # redirect
-            "Pocket Edition 1.9.0", # redirect
-            "Category:Pocket Edition development versions by version",
-            "Category:Pocket Edition development versions by year",
-        ]
-        page_names = ["Category:Bedrock_Edition_versions", "Category:Pocket Edition versions"]
-        wiki_versions:list[str] = []
-        for page_name in page_names:
-            page = mwapi.page(page_name, auto_suggest=False)
-            wiki_versions.extend(get_category_members(page))
-        for exception in EXCEPTIONS:
-            if exception in wiki_versions: wiki_versions.remove(exception)
-        my_versions = [version.wiki_page for version in versions]
-        for my_version in my_versions:
-            if my_version not in wiki_versions:
-                warning_messages.append("My page \"%s\" does not exist on the wiki!" % (my_version))
-        for wiki_version in wiki_versions:
-            if wiki_version not in my_versions:
-                warning_messages.append("Wiki page \"%s\" does not exist in the versions file!" % (wiki_version))
-        rememberer["main"] = warning_messages
-    except Exception as e:
-        rememberer["main"] = e
+    warning_messages:list[str] = []
+    EXCEPTIONS = [
+        "Bedrock Edition version history",
+        "Bedrock Edition version history/Development versions",
+        "Bedrock Edition 1.0.0", # redirect
+        "Bedrock Edition 1.1.0", # redirect
+        "Bedrock Edition 1.1.5", # redirect
+        "Bedrock Edition 1.1.7", # redirect
+        "Category:Pocket Edition versions",
+        "Category:Bedrock Edition development versions by year",
+        "Category:Bedrock Edition development versions by version",
+        "Pocket Edition 1.10.0", # redirect
+        "Pocket Edition 1.11.0", # redirect
+        "Pocket Edition 1.12.0", # redirect
+        "Pocket Edition 1.13.0", # redirect
+        "Pocket Edition 1.14.0", # redirect
+        "Pocket Edition 1.15.0", # redirect
+        "Pocket Edition 1.16.0", # redirect
+        "Pocket Edition 1.17.0", # redirect
+        "Pocket Edition 1.2.0", # redirect
+        "Pocket Edition 1.3.0", # redirect
+        "Pocket Edition 1.4.0", # redirect
+        "Pocket Edition 1.5.0", # redirect
+        "Pocket Edition 1.6.0", # redirect
+        "Pocket Edition 1.7.0", # redirect
+        "Pocket Edition 1.8.0", # redirect
+        "Pocket Edition 1.9.0", # redirect
+        "Category:Pocket Edition development versions by version",
+        "Category:Pocket Edition development versions by year",
+    ]
+    page_names = ["Category:Bedrock_Edition_versions", "Category:Pocket Edition versions"]
+    wiki_versions:list[str] = []
+    for page_name in page_names:
+        page = mwapi.page(page_name, auto_suggest=False)
+        wiki_versions.extend(get_category_members(page))
+    for exception in EXCEPTIONS:
+        if exception in wiki_versions: wiki_versions.remove(exception)
+    my_versions = [version.wiki_page for version in versions]
+    for my_version in my_versions:
+        if my_version not in wiki_versions:
+            warning_messages.append("My page \"%s\" does not exist on the wiki!" % (my_version))
+    for wiki_version in wiki_versions:
+        if wiki_version not in my_versions:
+            warning_messages.append("Wiki page \"%s\" does not exist in the versions file!" % (wiki_version))
+    return warning_messages
 
-def validate(version:Version.Version, rememberer:dict[str,Any], mwapi:mediawikiapi.MediaWikiAPI) -> None:
+def validate(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI) -> list[str]:
     '''Prints a message if the wiki page of the version does not agree with the Version object.'''
-    try:
-        if version.wiki_page is None: raise ValueError("Wiki page of \"%s\" is None!" % version.name)
-        page = mwapi.page(version.wiki_page, auto_suggest=False)
-        wikitext = get_wikitext(page)
-        infobox_data = get_infobox_data(wikitext, version)
-        warning_messages:list[str] = []
-        if "date" in infobox_data: warning_messages.extend(parse_date(infobox_data["date"], version))
-        warning_messages.extend(parse_betas(version, mwapi))
-        if "clientdl" in infobox_data: warning_messages.extend(parse_client_downloads(infobox_data["clientdl"], version))
-        rememberer[version.name] = warning_messages
-    except Exception as e:
-        rememberer[version.name] = e
+    if version.wiki_page is None: raise ValueError("Wiki page of \"%s\" is None!" % version.name)
+    page = mwapi.page(version.wiki_page, auto_suggest=False)
+    wikitext = get_wikitext(page)
+    infobox_data = get_infobox_data(wikitext, version)
+    warning_messages:list[str] = []
+    if "date" in infobox_data: warning_messages.extend(parse_date(infobox_data["date"], version))
+    warning_messages.extend(parse_betas(version, mwapi))
+    if "clientdl" in infobox_data: warning_messages.extend(parse_client_downloads(infobox_data["clientdl"], version))
+    return warning_messages
 
 def main() -> None:
     config = mediawikiapi.config.Config(mediawiki_url="http://minecraft.wiki/api.php")
@@ -271,27 +264,8 @@ def main() -> None:
             versions_to_scan.append(version)
     if not scanning:
         print("No version found with name \"%s\"." % start_version)
-
-    thread_statuses:dict[str,Any] = {}
-    THREAD_LIMIT = 1
-    SLEEP_TIME = 1.25
-
-    thread_statuses["main"] = None
-    new_thread = threading.Thread(target=parse_main_list, args=[versions, thread_statuses, mwapi])
-    new_thread.start()
     for version in versions_to_scan:
-        while len(thread_statuses) >= THREAD_LIMIT:
-            time.sleep(SLEEP_TIME)
-            for thread_name, thread_status in list(thread_statuses.items()):
-                if isinstance(thread_status, Exception):
-                    print("\"%s\" (page \"%s\") has an error!" % (version.name, version.wiki_page))
-                    raise thread_status
-                elif thread_status is not None:
-                    del thread_statuses[thread_name]
-                    if len(thread_status) > 0:
-                        with open(FileManager.WIKI_VALIDATOR_WARNINGS_FILE, "at") as f:
-                            f.write("\n" + "\n".join(sorted(list(set(thread_status)))))
         print("Scanning \"%s\"..." % version.name)
-        thread_statuses[version.name] = None
-        new_thread = threading.Thread(target=validate, args=[version, thread_statuses])
-        new_thread.start()
+        warnings = validate(version, mwapi)
+        with open(FileManager.WIKI_VALIDATOR_WARNINGS_FILE, "at") as f:
+            f.write("\n" + "\n".join(sorted(list(set(warnings)))))
