@@ -7,7 +7,7 @@ import Utilities.FileStorageManager as FileStorageManager
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.Nbt.NbtReader as NbtReader
 
-DataPathTypedDict = TypedDict("DataPathTypedDict", {"$special_type": Literal["data_path"], "root": str, "path_items":list[Any], "embedded_item": Any|None})
+DataPathTypedDict = TypedDict("DataPathTypedDict", {"$special_type": Literal["data_path"], "root": str, "path_items":list[Any], "embedded_data": Any|None})
 NbtBytesTypedDict = TypedDict("NbtBytesTypedDict", {"$special_type": Literal["nbt_bytes"], "hash": str})
 NbtTypedDict = TypedDict("NbtTypedDict", {"$special_type": Literal["nbt"], "data": str})
 
@@ -27,11 +27,11 @@ class DataPathCoder(Coder[DataPathTypedDict, DataPath.DataPath]):
 
     @classmethod
     def decode(cls, data:DataPathTypedDict) -> DataPath.DataPath:
-        return DataPath.DataPath(data["path_items"], data["root"], data["embedded_item"])
+        return DataPath.DataPath(data["path_items"], data["root"], data["embedded_data"])
 
     @classmethod
     def encode(cls, data:DataPath.DataPath) -> DataPathTypedDict:
-        return {"$special_type": "data_path", "path_items": data.path_items, "root": data.root, "embedded_item": data.embedded_item}
+        return {"$special_type": "data_path", "path_items": data.path_items, "root": data.root, "embedded_data": data.embedded_data}
 
 class NbtCoder(Coder[NbtTypedDict, NbtTypes.TAG]):
 
