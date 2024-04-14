@@ -1,0 +1,297 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "biomes",
+        "subcomponent": "biomes"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "biome_component": {
+        "type": "Tag"
+    },
+    "biomes": {
+        "type": "Dict",
+        "field": "biome",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "biome"
+    },
+    "biome": {
+        "type": "Keymap",
+        "keys": {
+            "format_version": {"type": "str"},
+            "minecraft:biome": {"type": "dict", "subcomponent": "minecraft:biome"}
+        }
+    },
+    "minecraft:biome": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "components": {"type": "dict", "subcomponent": "components"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"type": "str"}
+        }
+    },
+    "block": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "block_dict",
+            "str": null
+        }
+    },
+    "block_dict": {
+        "type": "Keymap",
+        "keys": {
+            "name": {"type": "str"},
+            "states": {"type": "dict", "subcomponent": "block_dict.states"}
+        }
+    },
+    "block_dict.states": {
+        "type": "Keymap",
+        "keys": {
+            "dirt_type": {"type": "str"},
+            "sand_type": {"type": "str"}
+        }
+    },
+    "block_list": {
+        "type": "List",
+        "field": "block",
+        "types": ["str"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "empty_dict": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "range_decimal": {
+        "type": "List",
+        "field": "range item",
+        "types": ["decimal"],
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "measure_length": false,
+        "subcomponent": null
+    },
+    "range_decimal_molang": {
+        "type": "List",
+        "field": "range_item",
+        "types": ["decimal", "str"],
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "measure_length": false,
+        "subcomponent": null
+    },
+    "components": {
+        "type": "Keymap",
+        "field": "component",
+        "measure_length": true,
+        "tags": ["biome_component"],
+        "keys": {
+            "minecraft:capped_surface": {"type": "dict", "subcomponent": "component.capped_surface"},
+            "minecraft:climate": {"type": "dict", "subcomponent": "component.climate"},
+            "minecraft:consolidated_features": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:forced_features": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:frozen_ocean_surface": {"type": "dict", "subcomponent": "component.surface_parameters"},
+            "minecraft:ignore_automatic_features": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:legacy_world_generation_rules": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:mesa_surface": {"type": "dict", "subcomponent": "component.mesa_surface"},
+            "minecraft:mountain_parameters": {"type": "dict", "subcomponent": "component.mountain_parameters"},
+            "minecraft:multinoise_generation_rules": {"type": "dict", "subcomponent": "component.multinoise_generation_rules"},
+            "minecraft:nether_surface": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:overworld_generation_rules": {"type": "dict", "subcomponent": "component.overworld_generation_rules"},
+            "minecraft:overworld_height": {"type": "dict", "subcomponent": "component.overworld_height"},
+            "minecraft:surface_material_adjustments": {"type": "dict", "subcomponent": "component.surface_material_adjustments"},
+            "minecraft:surface_parameters": {"type": "dict", "subcomponent": "component.surface_parameters"},
+            "minecraft:swamp_surface": {"type": "dict", "subcomponent": "component.surface_parameters"},
+            "minecraft:tags": {"type": "dict", "subcomponent": "component.tags"},
+            "minecraft:the_end_surface": {"type": "dict", "subcomponent": "empty_dict"}
+        }
+    },
+    "component.capped_surface": {
+        "type": "Keymap",
+        "keys": {
+            "beach_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "ceiling_materials": {"type": "list", "subcomponent": "block_list"},
+            "floor_materials": {"type": "list", "subcomponent": "block_list"},
+            "foundation_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "sea_material": {"type": ["dict", "str"], "subcomponent": "block"}
+        }
+    },
+    "component.climate": {
+        "type": "Keymap",
+        "keys": {
+            "ash": {"type": "decimal"},
+            "blue_spores": {"type": "decimal"},
+            "downfall": {"type": "decimal"},
+            "red_spores": {"type": "decimal"},
+            "snow_accumulation": {"type": "list", "subcomponent": "range_decimal"},
+            "temperature": {"type": "decimal"},
+            "white_ash": {"type": "decimal"}
+        }
+    },
+    "component.mesa_surface": {
+        "type": "Keymap",
+        "keys": {
+            "bryce_pillars": {"type": "bool"},
+            "clay_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "foundation_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "hard_clay_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "has_forest": {"type": "bool"},
+            "mid_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "sea_floor_depth": {"type": "int"},
+            "sea_floor_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "sea_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "top_material": {"type": ["dict", "str"], "subcomponent": "block"}
+        }
+    },
+    "component.mountain_parameters": {
+        "type": "Keymap",
+        "keys": {
+            "peaks_factor": {"type": "decimal"},
+            "steep_material_adjustment": {"type": "dict", "subcomponent": "component.mountain_parameters:steep_material_adjustment"},
+            "top_slide": {"type": "dict", "subcomponent": "component.mountain_parameters:top_slide"}
+        }
+    },
+    "component.mountain_parameters:steep_material_adjustment": {
+        "type": "Keymap",
+        "keys": {
+            "east_slopes": {"type": "bool"},
+            "material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "north_slopes": {"type": "bool"},
+            "south_slopes": {"type": "bool"},
+            "west_slopes": {"type": "bool"}
+        }
+    },
+    "component.mountain_parameters:top_slide": {
+        "type": "Keymap",
+        "keys": {
+            "enabled": {"type": "bool"}
+        }
+    },
+    "component.multinoise_generation_rules": {
+        "type": "Keymap",
+        "keys": {
+            "target_altitude": {"type": "decimal"},
+            "target_humidity": {"type": "decimal"},
+            "target_temperature": {"type": "decimal"},
+            "target_weirdness": {"type": "decimal"},
+            "weight": {"type": "decimal"}
+        }
+    },
+    "component.overworld_generation_rules": {
+        "type": "Keymap",
+        "keys": {
+            "generate_for_climates": {"type": ["list", "str"], "subcomponent": "component.overworld_generation_rules:biome_references_group"},
+            "hills_transformation": {"type": ["list", "str"], "subcomponent": "component.overworld_generation_rules:biome_references_group"},
+            "mutate_transformation": {"type": ["list", "str"], "subcomponent": "component.overworld_generation_rules:biome_references_group"},
+            "river_transformation": {"type": ["list", "str"], "subcomponent": "component.overworld_generation_rules:biome_references_group"},
+            "shore_transformation": {"type": ["list", "str"], "subcomponent": "component.overworld_generation_rules:biome_references_group"}
+        }
+    },
+    "component.overworld_generation_rules:biome_references_group": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "component.overworld_generation_rules:biome_references",
+            "str": null
+        }
+    },
+    "component.overworld_generation_rules:biome_references": {
+        "type": "List",
+        "field": "biome reference",
+        "types": ["list", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "component.overworld_generation_rules:biome_reference_group"
+    },
+    "component.overworld_generation_rules:biome_reference_group": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "component.overworld_generation_rules:biome_reference",
+            "str": null
+        }
+    },
+    "component.overworld_generation_rules:biome_reference": {
+        "type": "List",
+        "types": ["int", "str"],
+        "ordered": true,
+        "measure_length": true,
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    },
+    "component.overworld_height": {
+        "type": "Keymap",
+        "keys": {
+            "noise_params": {"type": "list", "subcomponent": "range_decimal"},
+            "noise_type": {"type": "str"}
+        }
+    },
+    "component.surface_material_adjustments": {
+        "type": "Keymap",
+        "keys": {
+            "adjustments": {"type": "list", "subcomponent": "component.surface_material_adjustments:adjustments"}
+        }
+    },
+    "component.surface_material_adjustments:adjustments": {
+        "type": "List",
+        "field": "adjustment",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "component.surface_material_adjustments:adjustments.item"
+    },
+    "component.surface_material_adjustments:adjustments.item": {
+        "type": "Keymap",
+        "keys": {
+            "materials": {"type": "dict", "subcomponent": "component.surface_material_adjustments:adjustments.item.materials"},
+            "noise_range": {"type": "list", "subcomponent": "range_decimal"},
+            "height_range": {"type": "list", "subcomponent": "range_decimal_molang"},
+            "noise_frequency_scale": {"type": "decimal"}
+        }
+    },
+    "component.surface_material_adjustments:adjustments.item.materials": {
+        "type": "Keymap",
+        "keys": {
+            "foundation_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "mid_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "sea_floor_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "sea_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "top_material": {"type": ["dict", "str"], "subcomponent": "block"}
+        }
+    },
+    "component.surface_parameters":{ 
+        "type": "Keymap",
+        "keys": {
+            "foundation_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "mid_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "sea_floor_depth": {"type": "int"},
+            "sea_floor_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "sea_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "top_material": {"type": ["dict", "str"], "subcomponent": "block"}
+        }
+    },
+    "component.tags": {
+        "type": "Keymap",
+        "keys": {
+            "tags": {"type": "list", "subcomponent": "component.tags:tags"}
+        }
+    },
+    "component.tags:tags": {
+        "type": "List",
+        "field": "tag",
+        "types": ["str"],
+        "measure_length": true,
+        "ordered": false,
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    }
+}
