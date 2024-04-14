@@ -16,38 +16,47 @@ custom_types = DataPathTypedDict|NbtBytesTypedDict|NbtTypedDict
 dict_type_var = TypeVar("dict_type_var")
 data_type_var = TypeVar("data_type_var")
 class Coder(Generic[dict_type_var, data_type_var]):
+
     @classmethod
     def decode(cls, data:dict_type_var) -> data_type_var: ...
+
     @classmethod
     def encode(cls, data:data_type_var) -> dict_type_var: ...
 
 class DataPathCoder(Coder[DataPathTypedDict, DataPath.DataPath]):
+
     @classmethod
     def decode(cls, data:DataPathTypedDict) -> DataPath.DataPath:
         return DataPath.DataPath(data["path_items"], data["root"], data["embedded_item"])
+
     @classmethod
     def encode(cls, data:DataPath.DataPath) -> DataPathTypedDict:
         return {"$special_type": "data_path", "path_items": data.path_items, "root": data.root, "embedded_item": data.embedded_item}
 
 class NbtCoder(Coder[NbtTypedDict, NbtTypes.TAG]):
+
     @classmethod
     def decode(cls, data: NbtTypedDict) -> NbtTypes.TAG:
         return NbtReader.unpack_snbt(data["data"])
+
     @classmethod
     def encode(cls, data: NbtTypes.TAG) -> NbtTypedDict:
         return {"$special_type": "nbt", "data": str(data)}
 
 class NbtBytesCoder(Coder[NbtBytesTypedDict, NbtReader.NbtBytes]):
+
     @classmethod
     def decode(cls, data: NbtBytesTypedDict) -> NbtReader.NbtBytes:
         file = cast(bytes, FileStorageManager.read_archived(data["hash"], "b"))
         return NbtReader.NbtBytes(file)
+
     @classmethod
     def encode(cls, data: NbtReader.NbtBytes) -> NbtBytesTypedDict:
         file_hash = FileStorageManager.archive_data(data.value, ".nbt")
         return {"$special_type": "nbt_bytes", "hash": file_hash}
 
 class SpecialEncoder(json.JSONEncoder):
+
     def default(self, data:Any) -> custom_types:
         match data:
             case DataPath.DataPath():
@@ -74,6 +83,7 @@ def decoder_function(data:dict[str,Any]|custom_types) -> Any:
             raise ValueError("Invalid $special_type of \"%s\" received!" % data["$special_type"])
 
 class SpecialDecoder(json.JSONDecoder):
+
     def __init__(self) -> None:
         super().__init__(object_hook=decoder_function)
 

@@ -22,6 +22,9 @@ class FunctionCaller(Generic[T]):
     def __call__(self) -> T:
         return self.target(*self.args, **self.kwargs)
 
+    def __repr__(self) -> str:
+        return "<%s %s>" % (self.__class__.__name__, self.target)
+
 class WaitValue(Generic[T]):
     '''Does not call the FunctionCaller until `get` is called. It then stores the output of the FunctionCaller for future calls of `get`.'''
 
@@ -31,12 +34,17 @@ class WaitValue(Generic[T]):
         self.caller = caller
         self.has_called = False
         self.value = None
+
     def get(self) -> T:
         if not self.has_called:
             self.has_called = True
             self.value = self.caller()
         return self.value
+
     def set(self, value:T) -> None:
         if self.value is None:
             self.has_called = True
         self.value = value
+
+    def __repr__(self) -> str:
+        return "<%s %s %s>" % (self.__class__.__name__, ("called" if self.has_called else "uncalled"), self.caller)

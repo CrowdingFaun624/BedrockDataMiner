@@ -32,7 +32,7 @@ class CapabilitiesPattern():
         else:
             return NotImplemented
     
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return "<CapabilitiesPattern %s>" % (", ".join("(%s)" % (", ".join("%s: %s" % (property, value) for property, value in property_set.items())) for property_set in self.properties))
 
 class Capabilities():
@@ -46,5 +46,5 @@ class Capabilities():
                 properties[key] = False
         self.properties = properties
     
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return "<Capabilities %s>" % (", ".join(property for property, value in self.properties.items() if value is True))

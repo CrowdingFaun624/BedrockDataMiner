@@ -17,6 +17,9 @@ class Parameters(Generic[ParametersDataType]): # Abstract type
     def validate(self, data:ParametersDataType) -> Generator[Exception, None, None]:
         raise NotImplementedError()
 
+    def __repr__(self) -> str:
+        return "<%s>" % (self.__class__.__name__)
+
 class DictParameters(Parameters[dict[str,Any]]):
 
     accepted_type = dict
@@ -41,6 +44,15 @@ class DictParameters(Parameters[dict[str,Any]]):
                         yield TypeError("Value of key \"%s\" is not a %s, but instead %s!" % (key, self.value_type, value.__class__.__name__))
                         continue
 
+    def __repr__(self) -> str:
+        match self.value_type:
+            case Parameters():
+                return "<%s %s>" % (self.__class__.__name__, self.value_type.__class__.__name__)
+            case type():
+                return "<%s (%s)>" % (self.__class__.__name__, self.value_type.__name__)
+            case tuple():
+                return "<%s (%s)>" % (self.__class__.__name__, ", ".join(value_type.__name__ for value_type in self.value_type))
+
 class ListParameters(Parameters[list[Any]]):
 
     accepted_type = list
@@ -49,7 +61,7 @@ class ListParameters(Parameters[list[Any]]):
         self.check_type_or_parameter(item_type, "`item_type`")
 
         self.item_type = item_type
-    
+
     def validate(self, data) -> Generator[Exception, None, None]:
         for index, item in enumerate(data):
             match self.item_type:
@@ -63,6 +75,15 @@ class ListParameters(Parameters[list[Any]]):
                         yield TypeError("Item %i is not a %s, but instead %s!" % (index, self.item_type, item.__class__.__name__))
                         continue
 
+    def __repr__(self) -> str:
+        match self.item_type:
+            case Parameters():
+                return "<%s %s>" % (self.__class__.__name__, self.item_type.__class__.__name__)
+            case type():
+                return "<%s (%s)>" % (self.__class__.__name__, self.item_type.__name__)
+            case tuple():
+                return "<%s (%s)>" % (self.__class__.__name__, ", ".join(value_type.__name__ for value_type in self.item_type))
+
 class LiteralParameters(Parameters):
 
     accepted_type = object # Would rather get a more complete error message than just that the type is wrong
@@ -70,12 +91,15 @@ class LiteralParameters(Parameters):
     def __init__(self, values:list[Any]|set[Any]) -> None:
         if not isinstance(values, (list, set)):
             raise TypeError("`values` is not a list or set, but instead %s!" % (values.__class__.__name__))
-        
+
         self.values = values
-    
+
     def validate(self, data: Any) -> Generator[Exception, None, None]:
         if data not in self.values:
             yield ValueError("Value is \"%s\" instead of one of %s!" % (data, self.values))
+    
+    def __repr__(self) -> str:
+        return "<%s (%s)>" % (self.__class__.__name__, ", ".join(self.values))
 
 class TypedDictParameters(Parameters[dict[str,Any]]):
 
@@ -123,3 +147,6 @@ class TypedDictParameters(Parameters[dict[str,Any]]):
                     if not isinstance(value, value_type):
                         yield TypeError("Value of key \"%s\" is not a %s, but instead %s!" % (key, value_type, value.__class__.__name__))
                         continue
+
+    def __repr__(self) -> str:
+        return "<%s (%s)>" % (self.__class__.__name__, ", ".join(key for key in self.keys))

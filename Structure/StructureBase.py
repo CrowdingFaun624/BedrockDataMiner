@@ -47,6 +47,9 @@ class StructureBase():
         self.structure = structure
         self.children_tags = children_tags
 
+    def __repr__(self) -> str:
+        return "<%s %s>" % (self.__class__.__name__, self.name)
+
     def normalize(self, data:Any, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int=1) -> Any:
         '''Manipulates the data before comparison.'''
         # base normalizer

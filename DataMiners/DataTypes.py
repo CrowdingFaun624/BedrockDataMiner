@@ -6,12 +6,14 @@ import DataMiners.DataMiner as DataMiner
 import Utilities.Nbt.NbtReader as NbtReader
 
 class DataTypes(enum.Enum):
+
     json = "json"
     nbt = "nbt"
 
     @classmethod
     def data_types(cls) -> list[str]:
         return [item.value for item in cls]
+
     def get_data_format(self):
         types_dict:dict[DataTypes,Literal["b","t"]] = {DataTypes.json: "t", DataTypes.nbt: "b"}
         return types_dict[self]

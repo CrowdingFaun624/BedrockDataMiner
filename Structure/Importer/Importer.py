@@ -17,7 +17,6 @@ import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.StructureBase as StructureBase
 import Structure.StructureFunctions as StructureFunctions
 import Utilities.FileManager as FileManager
-from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
 component_types:list[type[Component.Component]] = [
     GroupComponent.GroupComponent, # near the top so they are created first

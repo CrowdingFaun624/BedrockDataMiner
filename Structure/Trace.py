@@ -26,3 +26,6 @@ class Trace():
                 return str(self.current_key)
             else:
                 return ".".join("%s[%s]" % (name, index) for name, index in self.data) + ".%s" % (self.current_key)
+    
+    def __repr__(self) -> str:
+        return "<%s %i>" % (self.__class__.__name__, len(self.data))

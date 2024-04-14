@@ -19,6 +19,9 @@ class InstallManager():
         self.location = location
         self.prepare_for_install()
 
+    def __repr__(self) -> str:
+        return "<%s for %s>" % (self.__class__.__name__, self.version.name)
+
     def get_full_file_name(self, asset_name:str) -> str:
         '''Returns the full file path within the archive needed to find the given asset.'''
         raise NotImplementedError("`get_full_file_name` is not implemented for \"%s\"'s InstallManager!" % self.version.name)

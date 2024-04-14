@@ -41,6 +41,9 @@ class Trace():
                     result += "%s of " % (index)
         result += "data"
         return result
+    
+    def __repr__(self) -> str:
+        return "<%s len %i>" % (self.__class__.__name__, len(self.trace))
 
 class TypeVerificationException(Exception):
     trace: Trace
@@ -140,6 +143,9 @@ class TypeVerifier(Generic[type_verifier_typevar]):
             for exception in exceptions:
                 traceback.print_exception(exception)
             raise TypeError("Failed to verify!")
+    
+    def __repr__(self) -> str:
+        return "<%s>" % (self.__class__.__name__)
 
 key_typevar = TypeVar("key_typevar")
 value_typevar = TypeVar("value_typevar")
@@ -226,6 +232,9 @@ class DictTypeVerifier(TypeVerifier[Mapping[key_typevar, value_typevar]]):
                 exceptions.append(TypeVerificationFunctionError(trace, additional_function_message, data))
         return exceptions
 
+    def __repr__(self) -> str:
+        return "<%s \"%s\", \"%s\", \"%s\">" % (self.__class__.__name__, self.key_type_str, self.value_type_str, self.data_type_str)
+
 class TypedDictKeyTypeVerifier(TypeVerifier[tuple[key_typevar, value_typevar]]):
 
     def __init__(
@@ -271,6 +280,9 @@ class TypedDictKeyTypeVerifier(TypeVerifier[tuple[key_typevar, value_typevar]]):
                 exceptions.append(TypeVerificationFunctionError(trace.copy(key, TraceItemType.KEY), function_message, value))
                 return exceptions
         return exceptions
+    
+    def __repr__(self) -> str:
+        return "<%s %s \"%s\">" % (self.__class__.__name__, self.key, self.value_type_str)
 
 class TypedDictTypeVerifier(TypeVerifier[Mapping[Any, Any]]):
 
@@ -321,6 +333,9 @@ class TypedDictTypeVerifier(TypeVerifier[Mapping[Any, Any]]):
             if not function_success:
                 exceptions.append(TypeVerificationFunctionError(trace, function_message, data))
         return exceptions
+
+    def __repr__(self) -> str:
+        return "<%s \"%s\" (%s)>" % (self.__class__.__name__, self.data_type_str, ", ".join(self.keys_dict))
 
 class ListTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
 
@@ -378,6 +393,9 @@ class ListTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
                 exceptions.append(TypeVerificationFunctionError(trace, additional_function_message, data))
         return exceptions
 
+    def __repr__(self) -> str:
+        return "<%s \"%s\" \"%s\">" % (self.__class__.__name__, self.item_type_str, self.data_type_str)
+
 class IterableTypeVerifier(ListTypeVerifier):
 
     def __init__(
@@ -420,6 +438,9 @@ class TupleItemTypeVerifier(TypeVerifier[tuple[int,item_typevar]]):
             if not isinstance(item, self.item_type): # type: ignore
                 exceptions.append(TypeVerificationTypeError(trace.copy(index, TraceItemType.ITEM), self.item_type_str, type(item)))
         return exceptions
+
+    def __repr__(self) -> str:
+        return "<%s \"%s\">" % (self.__class__.__name__, self.item_type_str)
 
 class TupleTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
 
@@ -464,6 +485,9 @@ class TupleTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
                 exceptions.append(TypeVerificationFunctionError(trace, function_message, data))
         return exceptions
 
+    def __repr__(self) -> str:
+        return "<%s \"%s\" len %i>" % (self.__class__.__name__, self.data_type_str, len(self.items))
+
 class EnumTypeVerifier(TypeVerifier[item_typevar]):
 
     def __init__(self, options:Container, type_check:bool=True) -> None:
@@ -476,6 +500,9 @@ class EnumTypeVerifier(TypeVerifier[item_typevar]):
         if data not in self.options:
             exceptions.append(TypeVerificationEnumError(trace, self.options, data))
         return exceptions
+
+    def __repr__(self) -> str:
+        return "<%s %r>" % (self.__class__.__name__, self.options)
 
 class UnionTypeVerifier(TypeVerifier[item_typevar]):
 
@@ -503,6 +530,9 @@ class UnionTypeVerifier(TypeVerifier[item_typevar]):
         else:
             exceptions.append(TypeVerificationUnionError(trace, self.type_str, type(data), union_exceptions))
         return exceptions
+    
+    def __repr__(self) -> str:
+        return "<%s \"%s\">" % (self.__class__.__name__, self.type_str)
 
 NoneType = type(None)
 special_type = type(Callable).mro()[2]|NoneType # type: ignore # you can't stop me, Python!

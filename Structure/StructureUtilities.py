@@ -53,3 +53,6 @@ class Line():
 
     def __str__(self) -> str:
         return "\t" * self.indents + self.text
+    
+    def __repr__(self) -> str:
+        return "<%s indent %i; len %i>" % (self.__class__.__name__, self.indents, len(self.text))

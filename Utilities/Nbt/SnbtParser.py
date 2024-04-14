@@ -3,25 +3,35 @@ from typing import Callable, cast
 import Utilities.Nbt.NbtTypes as NbtTypes
 
 class Reader():
+
     def __init__(self, data:str) -> None:
         self.data = data
         self.position = 0
         self.stack:list[int] = []
+    
+    def __repr__(self) -> str:
+        return "<%s pos %i/%i, stacklen %i>" % (self.__class__.__name__, self.position, len(self.data), len(self.stack))
+
     def read(self, amount:int=1) -> str:
         output = self.data[self.position:self.position+amount]
         self.position += amount
         return output
+
     def back(self, amount:int=1) -> None:
         self.position -= amount
+
     def add(self) -> "Reader":
         self.stack.append(self.position)
         return self
+
     def pop(self) -> "Reader":
         self.position = self.stack.pop()
         return self
+
     def remove_last(self) -> "Reader":
         self.stack.pop()
         return self
+
     def is_at_end(self) -> bool:
         return self.position == len(self.data)
 

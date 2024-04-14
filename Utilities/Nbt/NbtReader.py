@@ -8,8 +8,12 @@ import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.Nbt.SnbtParser as SnbtParser
 
 class NbtBytes():
+
     def __init__(self, value:bytes) -> None:
         self.value = value
+
+    def __repr__(self) -> str:
+        return "<%s len %i>" % (self.__class__.__name__, len(self.value))
 
 def unpack_bytes(data:bytes, gzipped:bool=True, endianness:Endianness.End|None=None) -> tuple[str|None,NbtTypes.TAG]:
     if endianness is None: endianness = Endianness.End.BIG
