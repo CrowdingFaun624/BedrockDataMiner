@@ -17,6 +17,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
     def __init__(
             self,
             name:str,
+            field:str,
             keys:dict[tuple[str,type],Structure.Structure[d]|None],
             measure_length:bool,
             print_all:bool,
@@ -35,6 +36,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
          * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
 
         self.name = name
+        self.field = field
         self.keys = keys
         self.detect_key_moves = False
         self.measure_length = measure_length
@@ -56,6 +58,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, TypeVerifier.TupleTypeVerifier(tuple, "a tuple",
             TypeVerifier.TupleItemTypeVerifier(str, "a str"),
             TypeVerifier.TupleItemTypeVerifier(type, "a type"),
@@ -71,6 +74,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
     def check_initialization_parameters(self) -> None:
         self.type_verifier.base_verify({
             "name": self.name,
+            "field": self.field,
             "keys": self.keys,
             "measure_length": self.measure_length,
             "print_all": self.print_all,

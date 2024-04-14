@@ -165,7 +165,8 @@ class KeymapComponent(StructureComponent.StructureComponent):
 
     def create_final_get_final(self, normalizer_final:list[Normalizer.Normalizer]|None) -> KeymapStructure.KeymapStructure:
         return KeymapStructure.KeymapStructure(
-            name=self.field,
+            name=self.name,
+            field=self.field,
             keys=self.keys_final,
             measure_length=self.measure_length,
             normalizer=normalizer_final,

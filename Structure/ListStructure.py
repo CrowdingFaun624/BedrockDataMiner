@@ -16,6 +16,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
     def __init__(
             self,
             name:str,
+            field:str,
             structure:Structure.Structure[d]|None|dict[type,Structure.Structure[d]|None],
             types:tuple[type,...]|None,
             print_flat:bool,
@@ -39,6 +40,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
          * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
 
         self.name = name
+        self.field = field
         self.structure = structure
         self.types = (object,) if types is None else types
         self.print_flat = print_flat
@@ -53,6 +55,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("structure", "a Structure, dict, or None", True, TypeVerifier.UnionTypeVerifier(
             "a Structure, dict, or None",
             type(None),
@@ -73,6 +76,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
     def check_initialization_parameters(self) -> None:
         self.type_verifier.base_verify({
             "name": self.name,
+            "field": self.field,
             "structure": self.structure,
             "types": self.types,
             "print_flat": self.print_flat,
@@ -225,19 +229,19 @@ class ListStructure(Structure.Structure[Iterable[d]]):
     def print_item(self, index:int, item:d, substructure_output:list[SU.Line], message:str="") -> list[SU.Line]:
         match len(substructure_output), self.ordered:
             case 0, True:
-                return [SU.Line("%s%s %i: empty") % (message, self.name, index)]
+                return [SU.Line("%s%s %i: empty") % (message, self.field, index)]
             case 0, False:
-                return [SU.Line("%s%s: empty") % (message, self.name)]
+                return [SU.Line("%s%s: empty") % (message, self.field)]
             case 1, True:
-                return [SU.Line("%s%s %i: %s") % (message, self.name, index, substructure_output[0])]
+                return [SU.Line("%s%s %i: %s") % (message, self.field, index, substructure_output[0])]
             case 1, False:
-                return [SU.Line("%s%s: %s") % (message, self.name, substructure_output[0])]
+                return [SU.Line("%s%s: %s") % (message, self.field, substructure_output[0])]
             case _:
                 output:list[SU.Line] = []
                 if self.ordered:
-                    output.append(SU.Line("%s%s %i:") % (message, self.name, index))
+                    output.append(SU.Line("%s%s %i:") % (message, self.field, index))
                 else:
-                    output.append(SU.Line("%s%s:") % (message, self.name))
+                    output.append(SU.Line("%s%s:") % (message, self.field))
                 output.extend(line.indent() for line in substructure_output)
                 return output
 
@@ -297,12 +301,12 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     if has_changes:
                         any_changes = True
                         if self.ordered:
-                            output.append(SU.Line("Changed %s %i:") % (self.name, index))
+                            output.append(SU.Line("Changed %s %i:") % (self.field, index))
                         else:
-                            output.append(SU.Line("Changed %s:") % (self.name))
+                            output.append(SU.Line("Changed %s:") % (self.field))
                         output.extend(line.indent() for line in substructure_output)
                     elif self.print_all:
                         output.extend(self.print_item(index, item, structure_set.print_text(D.DiffType.not_diff, item, new_trace), message="Unchanged "))
         if self.measure_length and size_changed:
-            output = [SU.Line("Total %s: %i (+%i, -%i)") % (self.name, current_length, addition_length, removal_length)] + output
+            output = [SU.Line("Total %s: %i (+%i, -%i)") % (self.field, current_length, addition_length, removal_length)] + output
         return output, any_changes

@@ -127,7 +127,8 @@ class ListComponent(StructureComponent.StructureComponent):
 
     def create_final_get_final(self, normalizer_final:list[Normalizer.Normalizer]|None) -> ListStructure.ListStructure:
         return ListStructure.ListStructure(
-            name=self.field,
+            name=self.name,
+            field=self.field,
             structure=None,
             types=tuple(self.types_final),
             print_flat=self.print_flat,

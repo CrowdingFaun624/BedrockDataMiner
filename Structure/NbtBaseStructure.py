@@ -48,6 +48,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             children_tags:set[str]
         ) -> None:
         self.name = name
+        self.field = name
         self.structure = structure
         self.types = (object,) if types is None else types
         self.normalizer = normalizer

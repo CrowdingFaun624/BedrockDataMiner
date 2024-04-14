@@ -142,7 +142,8 @@ class DictComponent(StructureComponent.StructureComponent):
 
     def create_final_get_final(self, normalizer_final:list[Normalizer.Normalizer]|None) -> DictStructure.DictStructure:
         return DictStructure.DictStructure(
-            name=self.field,
+            name=self.name,
+            field=self.field,
             structure=None,
             types=self.types_final,
             detect_key_moves=self.detect_key_moves,
