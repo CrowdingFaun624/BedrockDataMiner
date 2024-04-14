@@ -2,21 +2,25 @@ from typing import Any, Hashable
 
 class DataPath():
 
-    def __init__(self, path_items:list[tuple[Hashable,type]], root:str, embedded_item:Any|None=None) -> None:
+    def __init__(self, path_items:list[tuple[Hashable,type]], root:str, embedded_data:Any|None=None) -> None:
         '''
          * `path_items` cannot contain None.
          * `root` is the dataminer/structure in which this DataPath originates.
-         * `embedded_item` is data given to this DataPath when it reaches the correct tag.'''
+         * `embedded_data` is data given to this DataPath when it reaches the correct tag.'''
         self.path_items = path_items
         self.root = root
-        self.embedded_item:Any|None = embedded_item
+        self.embedded_data:Any|None = embedded_data
         self.hash = None
 
     def last_key(self) -> Hashable:
         return self[-1][0]
 
+    def remove_embedded_data(self) -> "DataPath":
+        self.embedded_data = None
+        return self
+
     def copy(self, new_item:tuple[Hashable,type]|None=None) -> "DataPath":
-        output = DataPath(self.path_items.copy(), self.root, self.embedded_item)
+        output = DataPath(self.path_items.copy(), self.root, self.embedded_data)
         if new_item is not None:
             output.append(new_item)
         return output
@@ -29,7 +33,7 @@ class DataPath():
 
     def embed(self, item:Any) -> "DataPath":
         '''Used to extract data from within the structure.'''
-        self.embedded_item = item
+        self.embedded_data = item
         return self
 
     def __str__(self) -> str:
