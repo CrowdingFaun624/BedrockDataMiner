@@ -111,9 +111,12 @@ class DataMinerCollectionIntermediate():
         self.dataminer_settings_strs = data["dataminers"]
         self.disabled = data["disabled"] if "disabled" in data else False
 
-        if self.structure_name not in structures:
-            raise KeyError("Structure \"%s\", referenced by DataMinerCollection \"%s\", does not exist!" % (self.structure_name, self.name))
-        self.structure = structures[self.structure_name]
+        if self.disabled:
+            self.structure = None
+        else:
+            if self.structure_name not in structures:
+                raise KeyError("Structure \"%s\", referenced by DataMinerCollection \"%s\", does not exist!" % (self.structure_name, self.name))
+            self.structure = structures[self.structure_name]
         self.dataminer_classes:dict[str,type[DataMiner.DataMiner]]|None = None
 
     def __repr__(self) -> str:
@@ -138,6 +141,7 @@ class DataMinerCollectionIntermediate():
                 dependencies = dataminer_settings_str.get("dependencies", None),
                 kwargs = dataminer_settings_str.get("parameters", {}),
             ))
+        assert self.structure is not None
         return DataMiner.DataMinerCollection(
             file_name = self.file_name,
             name = self.name,
