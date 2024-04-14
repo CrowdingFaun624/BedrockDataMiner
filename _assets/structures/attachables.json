@@ -1,0 +1,114 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "attachables",
+        "subcomponent": "attachables"
+    },
+    "attachables": {
+        "type": "Dict",
+        "field": "attachable",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "attachable"
+    },
+    "attachable": {
+        "type": "Keymap",
+        "keys": {
+            "format_version": {"type": "str"},
+            "minecraft:attachable": {"type": "dict", "subcomponent": "minecraft:attachable"}
+        }
+    },
+    "minecraft:attachable": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "animations": {"type": "dict", "subcomponent": "animations"},
+            "geometry": {"type": "dict", "subcomponent": "geometry"},
+            "identifier": {"type": "str"},
+            "item": {"type": "dict", "subcomponent": "items"},
+            "materials": {"type": "dict", "subcomponent": "materials"},
+            "render_controllers": {"type": "list", "subcomponent": "render_controllers"},
+            "scripts": {"type": "dict", "subcomponent": "scripts"},
+            "textures": {"type": "dict", "subcomponent": "textures"}
+        }
+    },
+    "animations": {
+        "type": "Dict",
+        "field": "animation",
+        "types": ["str"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "geometry": {
+        "type": "Dict",
+        "field": "geometry",
+        "types": ["str"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "items": {
+        "type": "Dict",
+        "field": "item",
+        "types": ["str"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "materials": {
+        "type": "Dict",
+        "field": "material",
+        "types": ["str"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "render_controllers": {
+        "type": "List",
+        "field": "render controller",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "scripts": {
+        "type": "Keymap",
+        "field": "situation",
+        "keys": {
+            "animate": {"type": "list", "subcomponent": "scripts.list"},
+            "initialize": {"type": "list", "subcomponent": "scripts.list"},
+            "parent_setup": {"type": "str"},
+            "pre_animation": {"type": "list", "subcomponent": "scripts.list"}
+        }
+    },
+    "scripts.list": {
+        "type": "List",
+        "field": "script",
+        "types": ["dict", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "scripts.list.group"
+    },
+    "scripts.list.group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "scripts.list.dict",
+            "str": null
+        }
+    },
+    "scripts.list.dict": {
+        "type": "Dict",
+        "types": ["str"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "textures": {
+        "type": "Dict",
+        "field": "texture",
+        "types": ["str"],
+        "measure_length": true,
+        "subcomponent": null
+    }
+}
