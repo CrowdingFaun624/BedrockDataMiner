@@ -1,0 +1,59 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "biomes_client",
+        "subcomponent": "resource_packs"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "normalizer": "collapse_resource_packs",
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Keymap",
+        "keys": {
+            "biomes": {"type": "dict", "subcomponent": "biomes"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "print_all": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "biomes": {
+        "type": "Dict",
+        "field": "biome",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "biome"
+    },
+    "biome": {
+        "type": "Keymap",
+        "keys": {
+            "fog_color": {"type": "str"},
+            "fog_identifier": {"type": "str"},
+            "inherit_from_prior_fog": {"type": "bool"},
+            "remove_all_prior_fog": {"type": "bool"},
+            "water_fog_color": {"type": "str"},
+            "water_fog_distance": {"type": "int"},
+            "water_surface_color": {"type": "str"},
+            "water_surface_transparency": {"type": "decimal"}
+        }
+    }
+}
