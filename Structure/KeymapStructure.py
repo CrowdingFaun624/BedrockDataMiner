@@ -84,50 +84,50 @@ class KeymapStructure(DictStructure.DictStructure[d]):
             "children_tags": self.children_tags,
         })
 
-    def check_type(self, key:str, value:d, trace:Trace.Trace) -> tuple[Trace.Trace,Exception]|None:
+    def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):
             raise TypeError("`check_all_types` was given data containing Diffs!")
         if key not in self.key_types:
-            return (trace.copy(self.name, key), TypeError("Key, value %s: %s in %s excepted because key is not recognized!" % (SU.stringify(key), SU.stringify(value), self.name)))
+            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because key is not recognized!" % (SU.stringify(key), SU.stringify(value), self.name)), self.name, key)
         if type(value) not in self.key_types[key]:
             value_types_string = ", ".join(type_key.__name__ for type_key in self.key_types[key])
-            return (trace.copy(self.name, key), TypeError("Key, value %s: %s in %s excepted because value is %s instead of [%s]!" % (SU.stringify(key), SU.stringify(value), self.name, value.__class__.__name__, value_types_string)))
+            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because value is %s instead of [%s]!" % (SU.stringify(key), SU.stringify(value), self.name, value.__class__.__name__, value_types_string)), self.name, key)
 
-    def choose_structure_flat(self, key: str, value:type[d], trace: Trace.Trace) -> Structure.Structure | None:
-        exception = None
-        try:
-            return self.keys[key, value]
-        except Exception as e:
-            exception = e
-            exception.args = tuple(list(exception.args) + ["Failed to get Structure in %s in %s for key, value %s: %s" % (self.name, trace, key, value)])
-        if exception is not None:
-            raise exception
+    def choose_structure_flat(self, key: str, value:type[d]) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+        output = self.keys.get((key, value), Structure.StructureFailure.choose_structure_failure)
+        if output is Structure.StructureFailure.choose_structure_failure:
+            return None, [Trace.ErrorTrace(KeyError("Failed to get Structure in %s for key, value %s: %s" % (self.name, key, value)), self.name, key)]
+        return output, []
 
-    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath, trace:Trace.Trace) -> list[DataPath.DataPath]:
-        if tag not in self.children_tags: return []
+    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+        if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
+        exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
             if tag in self.tags[key]:
                 output.append(data_path.copy((key, type(value))).embed(value))
-            structure = self.choose_structure_flat(key, type(value), trace)
+            structure, new_exceptions = self.choose_structure_flat(key, type(value))
+            for exception in new_exceptions: exception.add(self.name, key)
+            exceptions.extend(new_exceptions)
             if structure is not None:
-                output.extend(structure.get_tag_paths(value, tag, data_path.copy((key, type(value))), trace.copy(self.name, key)))
-        return output
+                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((key, type(value))))
+                output.extend(new_tags)
+                for exception in new_exceptions: exception.add(self.name, key)
+                exceptions.extend(new_exceptions)
+        return output, exceptions
 
-    def choose_structure(self, key:str, value:d, trace:Trace.Trace) -> StructureSet.StructureSet:
+    def choose_structure(self, key:str, value:d) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
         output:dict[D.DiffType,Structure.Structure|None] = {}
+        exceptions:list[Trace.ErrorTrace] = []
         if self.detect_key_moves:
             iterator = D.double_iter_diff(key, value)
         else:
             key_iter = key.first_existing_property() if isinstance(key, D.Diff) else key
             iterator = ((key_iter, iter_diff_item[0], None, iter_diff_item[1]) for iter_diff_item in D.iter_diff(value))
         for key_iter, value_iter, key_diff_type, value_diff_type in iterator:
-            exception:Exception|None = None
-            try:
-                output[value_diff_type] = self.keys[key_iter, type(value_iter)]
-            except Exception as e:
-                exception = e
-                exception.args = tuple(list(exception.args) + ["Failed to get Structure in %s in %s for key, value %s: %s" % (self.name, trace, key_iter, value_iter)])
-            if exception is not None:
-                raise exception
-        return StructureSet.StructureSet(output)
+            structure = self.keys.get((key_iter, type(value_iter)), Structure.StructureFailure.choose_structure_failure)
+            if structure is Structure.StructureFailure.choose_structure_failure:
+                exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure in %s for key, value: %s: %s" % (self.name, key_iter, value_iter)), self.name, key_iter))
+                continue
+            output[value_diff_type] = structure
+        return StructureSet.StructureSet(output), exceptions

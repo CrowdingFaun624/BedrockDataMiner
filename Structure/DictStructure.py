@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generator, Iterable, MutableMapping, TypeVar
+from typing import Any, Callable, Generator, Iterable, Literal, MutableMapping, TypeVar
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -102,74 +102,85 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             "children_tags": self.children_tags,
         })
 
-    def check_type(self, key:str, value:d, trace:Trace.Trace) -> tuple[Trace.Trace,Exception]|None:
+    def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):
             raise TypeError("`check_type` was given data containing Diffs!")
         if not isinstance(value, self.types):
-            return (trace.copy(self.name, key), TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (SU.stringify(key), SU.stringify(value), self.name, self.types)))
+            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (SU.stringify(key), SU.stringify(value), self.name, self.types)) ,self.name, key)
 
-    def check_all_types(self, data:MutableMapping[str,d], trace:Trace.Trace) -> list[tuple[Trace.Trace,Exception]]:
+    def check_all_types(self, data:MutableMapping[str,d]) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
-        output:list[tuple[Trace.Trace,Exception]] = []
+        output:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.valid_types):
-            output.append((trace, TypeError("`data` has the wrong type, %s instead of [%s]!" % (type(data), ", ".join(valid_type.__name__ for valid_type in self.valid_types)))))
+            output.append(Trace.ErrorTrace(TypeError("`data` has the wrong type, %s instead of [%s]!" % (type(data), ", ".join(valid_type.__name__ for valid_type in self.valid_types))), self.name, None))
             return output
         for key, value in data.items():
-            check_type_output = self.check_type(key, value, trace)
+            check_type_output = self.check_type(key, value)
             if check_type_output is not None:
-                assert check_type_output[0] is not None
                 output.append(check_type_output)
                 continue
 
-            structure = self.choose_structure_flat(key, type(value), trace)
+            structure, new_exceptions = self.choose_structure_flat(key, type(value))
+            for exception in new_exceptions: exception.add(self.name, key)
+            output.extend(new_exceptions)
             if structure is not None:
-                output.extend(structure.check_all_types(value, trace.copy(self.name, key)))
+                output.extend(structure.check_all_types(value))
         return output
 
-    def normalize(self, data:dict[str,d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, trace:Trace.Trace) -> None:
-        if not self.children_has_normalizer: return
+    def normalize(self, data:dict[str,d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+        if not self.children_has_normalizer: return None, []
         if self.normalizer is not None:
             for normalizer in self.normalizer:
-                normalizer(data, normalizer_dependencies, trace, version_number)
+                try:
+                    normalizer(data, normalizer_dependencies, version_number)
+                except Exception as e:
+                    return None, [Trace.ErrorTrace(e, self.name, None)]
+        exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
-            try:
-                structure = self.choose_structure_flat(key, type(value), trace)
-            except Exception:
-                # it hasn't been type checked yet, so something could except
-                continue
+            structure, new_exceptions = self.choose_structure_flat(key, type(value))
+            for exception in new_exceptions: exception.add(self.name, key)
+            exceptions.extend(new_exceptions)
             if structure is not None:
-                normalize_output = structure.normalize(value, normalizer_dependencies, version_number, trace.copy(self.name, key))
-                if normalize_output is not None:
-                    data[key] = normalize_output
+                normalizer_output, new_exceptions = structure.normalize(value, normalizer_dependencies, version_number)
+                for exception in new_exceptions: exception.add(self.name, key)
+                exceptions.extend(new_exceptions)
+                if normalizer_output is not None:
+                    data[key] = normalizer_output
+        return None, exceptions
 
-    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath, trace:Trace.Trace) -> list[DataPath.DataPath]:
-        if tag not in self.children_tags: return []
+    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+        if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         if tag in self.tags:
             output.extend(data_path.copy((key, type(value))).embed(value) for key, value in data.items())
+        exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
-            structure = self.choose_structure_flat(key, type(value), trace)
+            structure, new_exceptions = self.choose_structure_flat(key, type(value))
+            for exception in new_exceptions: exception.add(self.name, key)
+            exceptions.extend(new_exceptions)
             if structure is not None:
-                output.extend(structure.get_tag_paths(value, tag, data_path.copy((key, type(value))), trace.copy(self.name, key)))
-        return output
+                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((key, type(value))))
+                output.extend(new_tags)
+                for exception in new_exceptions: exception.add(self.name, key)
+                exceptions.extend(new_exceptions)
+        return output, exceptions
 
     def compare(
             self,
             data1:MutableMapping[str,d],
             data2:MutableMapping[str,d],
-            trace:Trace.Trace,
-        ) -> tuple[MutableMapping[str|D.Diff[str,str],d|D.Diff[d,d]],list[tuple[Trace.Trace,Exception]]]:
+        ) -> tuple[MutableMapping[str|D.Diff[str,str],d|D.Diff[d,d]],list[Trace.ErrorTrace]]:
         if type(data1) != type(data2):
             raise TypeError("Attempted to compare type %s with type %s!" % (data1.__class__.__name__, data2.__class__.__name__))
 
         key_occurences:dict[str,list[D.DiffType]] = {}
-        exceptions:list[tuple[Trace.Trace,Exception]] = []
+        exceptions:list[Trace.ErrorTrace] = []
 
         # get occurence counts
         data1_iterator = zip(infinite_generator(D.DiffType.old), data1.items()) # since zip stops at the shortest iterator, this will not run forever.
         data2_iterator = zip(infinite_generator(D.DiffType.new), data2.items())
         for diff_type, (key, value) in glue_iterables(data1_iterator, data2_iterator):
-            if (check_type_exception := self.check_type(key, value, trace)) is not None:
+            if (check_type_exception := self.check_type(key, value)) is not None:
                 exceptions.append(check_type_exception)
             if key in key_occurences:
                 key_occurences[key].append(diff_type)
@@ -229,8 +240,11 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                     # verified, then this would be correct data too.
                     output[key] = value1
                 else:
-                    structure_set = self.choose_structure(key, D.Diff(value1, value2), trace)
-                    output[key], new_exceptions = structure_set.compare(value1, value2, trace.copy(self.name, key))
+                    structure_set, new_exceptions = self.choose_structure(key, D.Diff(value1, value2))
+                    for exception in new_exceptions: exception.add(self.name, D.first_existing_property(key))
+                    exceptions.extend(new_exceptions)
+                    output[key], new_exceptions = structure_set.compare(value1, value2)
+                    for exception in new_exceptions: exception.add(self.name, D.first_existing_property(key))
                     exceptions.extend(new_exceptions)
                     continue
             elif len(occurences) == 1:
@@ -250,69 +264,72 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             sorted_output[key] = value
         return sorted_output, exceptions
 
-    def choose_structure_flat(self, key:str, value: type[d], trace: Trace.Trace) -> Structure.Structure|None:
+    def choose_structure_flat(self, key:str, value: type[d]) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         if isinstance(self.structure, dict):
-            exception = None
-            try:
-                return self.structure[value]
-            except Exception as e:
-                exception = e
-                exception.args = tuple(list(exception.args) + ["Failed to get Structure at %s of key, value: %s: %s" % (trace, key, value)])
-            if exception is not None:
-                raise exception
+            output:Structure.Structure[d]|None|Literal[Structure.StructureFailure.choose_structure_failure] = self.structure.get(value, Structure.StructureFailure.choose_structure_failure)
+            if output is Structure.StructureFailure.choose_structure_failure:
+                return None, [Trace.ErrorTrace(KeyError("Failed to get Structure of key, value: %s: %s" % (key, value)), self.name, key)]
+            return output, []
         else:
-            return self.structure
+            return self.structure, []
 
-    def choose_structure(self, key:str|D.Diff[str,str], value:d|D.Diff[d,d], trace:Trace.Trace) -> StructureSet.StructureSet:
+    def choose_structure(self, key:str|D.Diff[str,str], value:d|D.Diff[d,d]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
         output:dict[D.DiffType,Structure.Structure|None] = {}
+        exceptions:list[Trace.ErrorTrace] = []
         for value_iter, value_diff_type in D.iter_diff(value):
             if isinstance(self.structure, dict):
-                exception = None
-                try:
-                    output[value_diff_type] = self.structure[type(value_iter)]
-                except Exception as e:
-                    exception = e
-                    exception.args = tuple(list(exception.args) + ["Failed to get Structure at %s of key, value: %s: %s" % (trace, key, value_iter)])
-                if exception is not None:
-                    raise exception
-                # errors might not be caught by the type checker.
+                structure = self.structure.get(type(value_iter), Structure.StructureFailure.choose_structure_failure)
+                if structure is Structure.StructureFailure.choose_structure_failure:
+                    exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure of key, value: %s: %s" % (key, value)), self.name, D.first_existing_property(key)))
+                    continue
+                    # errors might not be caught by the type checker.
+                output[value_diff_type] = structure
             else:
                 output[value_diff_type] = self.structure
-        return StructureSet.StructureSet(output)
+        return StructureSet.StructureSet(output), exceptions
 
-    def print_item(self, key:str, value:d, structure_set:StructureSet.StructureSet[d], trace:Trace.Trace, message:str="") -> list[SU.Line]:
-        substructure_output = structure_set.print_text(D.DiffType.not_diff, value, trace.copy(self.name, key))
+    def print_item(self, key:str, value:d, structure_set:StructureSet.StructureSet[d], message:str="") -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
+        substructure_output, exceptions = structure_set.print_text(D.DiffType.not_diff, value)
         match len(substructure_output):
             case 0:
-                return [SU.Line("%s%s %s: empty") % (message, self.field, SU.stringify(key))]
+                return [SU.Line("%s%s %s: empty") % (message, self.field, SU.stringify(key))], exceptions
             case 1:
-                return [SU.Line("%s%s %s: %s") % (message, self.field, SU.stringify(key), substructure_output[0])]
+                return [SU.Line("%s%s %s: %s") % (message, self.field, SU.stringify(key), substructure_output[0])], exceptions
             case _:
                 output:list[SU.Line] = []
                 output.append(SU.Line("%s%s %s:") % (message, self.field, SU.stringify(key)))
                 output.extend(line.indent() for line in substructure_output)
-                return output
+                return output, exceptions
 
-    def print_text(self, data:MutableMapping[str, d], trace:Trace.Trace) -> list[SU.Line]:
+    def print_text(self, data:MutableMapping[str, d]) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         output:list[SU.Line] = []
         if not isinstance(data, self.valid_types):
-            raise TypeError("`data` is not [%s] at %s, but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), trace.give_key(self.name), type(data)))
+            return output, [Trace.ErrorTrace(TypeError("`data` is not [%s], but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), type(data))), self.name, None)]
+        exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
-            structure_set = self.choose_structure(key, value, trace)
-            output.extend(self.print_item(key, value, structure_set, trace))
-        return output
+            structure_set, new_exceptions = self.choose_structure(key, value)
+            for exception in new_exceptions: exception.add(self.name, key)
+            exceptions.extend(new_exceptions)
+            new_lines, new_exceptions = self.print_item(key, value, structure_set)
+            output.extend(new_lines)
+            for exception in new_exceptions: exception.add(self.name, key)
+            exceptions.extend(new_exceptions)
+        return output, exceptions
 
-    def compare_text(self, data:MutableMapping[str, d], trace:Trace.Trace) -> tuple[list[SU.Line],bool]:
+    def compare_text(self, data:MutableMapping[str, d]) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
         output:list[SU.Line] = []
         any_changes = False
         if not isinstance(data, self.valid_types):
-            raise TypeError("`data` is not [%s] at %s, but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), trace.give_key(self.name), type(data)))
+            return [], False, [Trace.ErrorTrace(TypeError("`data` is not [%s], but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), type(data))), self.name, None)]
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
+        exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
             can_print_print_all = True # if the print_all thing is overridden for whatever reason.
             key_str = key.first_existing_property() if isinstance(key, D.Diff) else key
-            structure_set = self.choose_structure(key, value, trace)
+            structure_set, new_exceptions = self.choose_structure(key, value)
+            for exception in new_exceptions: exception.add(self.name, key)
+            exceptions.extend(new_exceptions)
 
             if isinstance(key, D.Diff) and key.is_change:
                 can_print_print_all = False
@@ -324,27 +341,37 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                 match value.change_type:
                     case D.ChangeType.addition:
                         current_length += 1; addition_length += 1
-                        self.print_single(key_str, value.new, "Added", output, structure_set[D.DiffType.new], trace)
+                        new_exceptions = self.print_single(key_str, value.new, "Added", output, structure_set[D.DiffType.new])
                     case D.ChangeType.change:
                         current_length += 1
-                        self.print_double(key_str, value.old, value.new, "Changed", output, structure_set, trace)
+                        new_exceptions = self.print_double(key_str, value.old, value.new, "Changed", output, structure_set)
                     case D.ChangeType.removal:
                         removal_length += 1
-                        self.print_single(key_str, value.old, "Removed", output, structure_set[D.DiffType.old], trace)
+                        new_exceptions = self.print_single(key_str, value.old, "Removed", output, structure_set[D.DiffType.old])
+                for exception in new_exceptions: exception.add(self.name, key)
+                exceptions.extend(new_exceptions)
             else:
                 current_length += 1
                 if structure_set[D.DiffType.not_diff] is None:
                     if self.print_all and can_print_print_all:
-                        output.extend(self.print_item(key_str, value, structure_set, trace, message="Unchanged "))
+                        new_lines, new_exceptions = self.print_item(key_str, value, structure_set, message="Unchanged ")
+                        output.extend(new_lines)
+                        for exception in new_exceptions: exception.add(self.name, key)
+                        exceptions.extend(new_exceptions)
                     pass # This means that it is not a difference and does not contain differences.
                 else:
-                    substructure_output, has_changes = structure_set.compare_text(D.DiffType.not_diff, value, trace.copy(self.name, key_str))
+                    substructure_output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, value)
+                    for exception in new_exceptions: exception.add(self.name, key)
+                    exceptions.extend(new_exceptions)
                     if has_changes:
                         any_changes = True
                         output.append(SU.Line("Changed %s %s:") % (self.field, SU.stringify(key_str)))
                         output.extend(line.indent() for line in substructure_output)
                     elif self.print_all and can_print_print_all:
-                        output.extend(self.print_item(key_str, value, structure_set, trace, message="Unchanged "))
+                        new_lines, new_exceptions = self.print_item(key_str, value, structure_set, message="Unchanged ")
+                        output.extend(new_lines)
+                        for exception in new_exceptions: exception.add(self.name, key)
+                        exceptions.extend(new_exceptions)
         if self.measure_length and size_changed:
             output = [SU.Line("Total %s: %i (+%i, -%i)") % (self.field, current_length, addition_length, removal_length)] + output
-        return output, any_changes
+        return output, any_changes, exceptions

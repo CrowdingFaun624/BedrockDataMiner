@@ -41,7 +41,7 @@ class BaseComponent(Component.Component):
         self.type_verifier.base_verify({"data": data, "name": name, "index": index}, ["%s \"%s\"" % (self.class_name, name)])
 
         self.name = name
-        self.component_name = data["name"]
+        self.structure_name = data["name"]
         self.subcomponent_str = data["subcomponent"]
         self.normalizer_str = data.get("normalizer", None)
         self.post_normalizer_str = data.get("post_normalizer", None)
@@ -81,7 +81,8 @@ class BaseComponent(Component.Component):
         normalizer_final = None if self.normalizer is None else self.normalizer.final
         post_normalizer_final = None if self.post_normalizer is None else self.post_normalizer.final
         self.final = StructureBase.StructureBase(
-            name=self.component_name,
+            component_name=self.name,
+            structure_name=self.structure_name,
             normalizer=normalizer_final,
             post_normalizer=post_normalizer_final,
             structure=None,

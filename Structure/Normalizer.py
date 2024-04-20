@@ -26,7 +26,7 @@ class Normalizer(Generic[IN, OUT]):
         self.function = function
         self.dependencies = cast(list[DataMinerTyping.DependenciesLiterals], dependencies)
 
-    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", trace:Trace.Trace, version_number:int) -> OUT|None:
+    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", version_number:int) -> OUT|None:
         if version_number not in (1, 2):
             raise ValueError("`version_number` is not 1 or 2!")
         version = normalizer_dependencies.get_version(version_number)
@@ -35,7 +35,7 @@ class Normalizer(Generic[IN, OUT]):
             this_data = cast(DataMinerTyping.DependenciesTypedDict, {dependency: None for dependency in self.dependencies})
         else:
             this_data = cast(DataMinerTyping.DependenciesTypedDict, {dependency: normalizer_dependencies.get_data(version, dependency) for dependency in self.dependencies})
-        # `this_data` is only the dataminer data that is needed for this normalizer function.
+        # `this_data` is only the dataminer data that is needed for this normalizer.
         exception = None
         try:
             return self.function(data, this_data)
@@ -43,9 +43,9 @@ class Normalizer(Generic[IN, OUT]):
             exception = e
             data_string = str(data)
             if len(data_string) > 500:
-                exception.args = tuple(list(exception.args) + ["Normalizer function excepted at %s!" % (trace)])
+                exception.args = tuple(list(exception.args) + ["Normalizer excepted!"])
             else:
-                exception.args = tuple(list(exception.args) + ["Normalizer function excepted at %s on data: %s" % (trace, data_string)])
+                exception.args = tuple(list(exception.args) + ["Normalizer excepted at %s on data: %s" % (data_string)])
         if exception is not None:
             raise exception
 

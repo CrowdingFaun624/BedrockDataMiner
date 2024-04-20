@@ -33,23 +33,23 @@ class StructureSet(Generic[d]):
         else:
             raise KeyError("Attempted to index a StructureSet using a %s rather than a D.DiffType!" % type(key))
 
-    def print_text(self, key:D.DiffType|int, data:d, trace:Trace.Trace) -> list[SU.Line]:
+    def print_text(self, key:D.DiffType|int, data:d) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
         if  isinstance(key, D.DiffType) and key not in self:
-            raise RuntimeError("KeyError on \"%s\" in %s for data %s!" % (key, trace, data))
+            return [], [Trace.ErrorTrace(RuntimeError("KeyError on \"%s\" for data %s!" % (key, data)), None, None)]
         structure = self[key]
         if structure is None:
-            return [SU.Line(SU.stringify(data))]
+            return [SU.Line(SU.stringify(data))], []
         else:
-            return structure.print_text(data, trace)
+            return structure.print_text(data)
 
-    def compare_text(self, key:D.DiffType|int, data:d, trace:Trace.Trace) -> tuple[list[SU.Line],bool]:
+    def compare_text(self, key:D.DiffType|int, data:d) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
         structure = self[key]
         if structure is None:
-            raise RuntimeError("Attempted to compare (key %s) using a NoneType object at %s!" % (key, trace))
+            raise RuntimeError("Attempted to compare (key %s) using a NoneType object!" % (key))
         else:
-            return structure.compare_text(data, trace)
+            return structure.compare_text(data)
 
-    def compare(self, data1:d, data2:d, trace:Trace.Trace) -> tuple[d|D.Diff[d,d],list[tuple[Trace.Trace,Exception]]]:
+    def compare(self, data1:d, data2:d) -> tuple[d|D.Diff[d,d],list[Trace.ErrorTrace]]:
         if (len(self) == 1) or (len(self) == 2 and self[0] == self[1]):
             # both items have the same Structure.
             structure = self[0]
@@ -57,7 +57,7 @@ class StructureSet(Generic[d]):
                 return D.Diff(data1, data2), []
             else:
                 # items must be not equal because then the D.Diff could not be created.
-                return structure.compare(data1, data2, trace)
+                return structure.compare(data1, data2)
         else:
             # items have different data types.
             return D.Diff(data1, data2), []

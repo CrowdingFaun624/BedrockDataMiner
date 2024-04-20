@@ -68,93 +68,121 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             "children_tags": self.children_tags,
         })
 
-    def check_all_types(self, data: NbtTypes.TAG, trace: Trace.Trace) -> list[tuple[Trace.Trace, Exception]]:
+    def check_all_types(self, data: NbtTypes.TAG) -> list[Trace.ErrorTrace]:
+        output:list[Trace.ErrorTrace] = []
         if isinstance(data, D.Diff):
             raise TypeError("`check_all_types` was given data containing Diffs!")
         if not isinstance(data, self.types):
             item_types_string = ", ".join(type_key.__name__ for type_key in self.types)
-            return [(trace.copy(self.name), TypeError("Data %s in %s excepted is %s instead of [%s]!" % (SU.stringify(data), self.name, data.__class__.__name__, item_types_string)))]
-        structure = self.choose_structure_flat("", type(data), trace)
+            output.append(Trace.ErrorTrace(TypeError("Data %s in %s excepted is %s instead of [%s]!" % (SU.stringify(data), self.name, data.__class__.__name__, item_types_string)), self.name, None))
+            return output
+        structure, new_exceptions = self.choose_structure_flat("", type(data))
+        for exception in new_exceptions: exception.add(self.name, None)
+        output.extend(new_exceptions)
         if structure is not None:
-            return structure.check_all_types(data, trace.copy(self.name))
-        return []
+            output.extend(structure.check_all_types(data))
+        return output
 
-    def choose_structure_flat(self, key:Literal[""], value:type[NbtTypes.TAG], trace:Trace.Trace) -> Structure.Structure|None:
+    def choose_structure_flat(self, key:Literal[""], value:type[NbtTypes.TAG]) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         if key != "":
-            raise RuntimeError("Nbt root tag name at %s is not an empty string, but instead \"%s\"!" % key)
+            return None, [Trace.ErrorTrace(RuntimeError("Nbt root tag name at %s is not an empty string, but instead \"%s\"!" % (key)), self.name, key)]
         if isinstance(self.structure, dict):
-            exception = None
-            try:
-                return self.structure[value]
-            except Exception as e:
-                exception = e
-                exception.args = tuple(list(exception.args) + ["Failed to get Structure at %s: %s" % (trace, value)])
-            if exception is not None:
-                raise exception
+            output = self.structure.get(value, Structure.StructureFailure.choose_structure_failure)
+            if output is Structure.StructureFailure.choose_structure_failure:
+                return None, [Trace.ErrorTrace(KeyError("Failed to get Structure at: %s" % (value)), self.name, key)]
+            return output, []
         else:
-            return self.structure
+            return self.structure, []
 
-    def choose_structure(self, item:NbtTypes.TAG|D.Diff[NbtTypes.TAG,NbtTypes.TAG], trace:Trace.Trace) -> StructureSet.StructureSet:
+    def choose_structure(self, item:NbtTypes.TAG|D.Diff[NbtTypes.TAG,NbtTypes.TAG]) -> tuple[StructureSet.StructureSet,list[Trace.ErrorTrace]]:
         output:dict[D.DiffType,Structure.Structure|None] = {}
+        exceptions:list[Trace.ErrorTrace] = []
         for item_iter, diff_type in D.iter_diff(item):
             if isinstance(self.structure, dict):
-                exception = None
-                try:
-                    output[diff_type] = self.structure[type(item_iter)]
-                except Exception as e:
-                    exception = e
-                    exception.args = tuple(list(exception.args) + ["Failed to get Structure at %s: %s" % (trace, item_iter)])
-                if exception is not None:
-                    raise exception
+                structure = self.structure.get(type(item_iter), Structure.StructureFailure.choose_structure_failure)
+                if structure is Structure.StructureFailure.choose_structure_failure:
+                    exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure at: %s" % (item_iter)), self.name, None))
+                    continue
+                output[diff_type] = structure
             else:
                 output[diff_type] = self.structure
-        return StructureSet.StructureSet(output)
+        return StructureSet.StructureSet(output), exceptions
 
-    def normalize(self, data: NbtReader.NbtBytes, normalizer_dependencies: Normalizer.LocalNormalizerDependencies, version_number: int, trace: Trace.Trace) -> NbtTypes.TAG:
+    def normalize(self, data: NbtReader.NbtBytes, normalizer_dependencies: Normalizer.LocalNormalizerDependencies, version_number: int) -> tuple[NbtTypes.TAG|None, list[Trace.ErrorTrace]]:
         try:
             data_parsed = NbtReader.unpack_bytes(data.value, gzipped=False, endianness=self.endianness)[1]
-        except Exception:
-            raise RuntimeError("Failed to parse nbt at %s!" % (trace))
-
-        if not self.children_has_normalizer: return data_parsed
+        except Exception as e:
+            return None, [Trace.ErrorTrace(e, self.name, None)]
+        if not self.children_has_normalizer: return data_parsed, []
         if self.normalizer is not None:
             for normalizer in self.normalizer:
-                normalizer(data_parsed, normalizer_dependencies, trace, version_number)
-        try:
-            structure = self.choose_structure_flat("", type(data_parsed), trace)
-        except Exception:
-            # it hasn't been type checked yet, so something could except
-            return data_parsed
+                try:
+                    normalizer(data_parsed, normalizer_dependencies, version_number)
+                except Exception as e:
+                    return None, [Trace.ErrorTrace(e, self.name, None)]
+        exceptions:list[Trace.ErrorTrace] = []
+        structure, new_exceptions = self.choose_structure_flat("", type(data_parsed))
+        for exception in new_exceptions: exception.add(self.name, None)
+        exceptions.extend(new_exceptions)
         if structure is not None:
-            normalize_output = structure.normalize(data_parsed, normalizer_dependencies, version_number, trace.copy(self.name))
+            normalize_output, new_exceptions = structure.normalize(data_parsed, normalizer_dependencies, version_number)
+            for exception in new_exceptions: exception.add(self.name, None)
+            exceptions.extend(new_exceptions)
             if normalize_output is not None:
                 data_parsed = normalize_output
-        return data_parsed
+        return data_parsed, exceptions
 
-    def get_tag_paths(self, data: NbtTypes.TAG, tag: str, data_path: DataPath.DataPath, trace: Trace.Trace) -> list[DataPath.DataPath]:
-        if tag not in self.children_tags: return []
-        structure = self.choose_structure_flat("", type(data), trace)
-        if structure is None: return []
-        return structure.get_tag_paths(data, tag, data_path.copy(("", type(data))), trace.copy(self.name))
+    def get_tag_paths(self, data: NbtTypes.TAG, tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+        if tag not in self.children_tags: return [], []
+        exceptions:list[Trace.ErrorTrace] = []
+        structure, new_exceptions = self.choose_structure_flat("", type(data))
+        for exception in new_exceptions: exception.add(self.name, None)
+        exceptions.extend(new_exceptions)
+        if structure is None: return [], exceptions
+        output, new_exceptions = structure.get_tag_paths(data, tag, data_path.copy(("", type(data))))
+        for exception in new_exceptions: exception.add(self.name, None)
+        exceptions.extend(new_exceptions)
+        return output, exceptions
 
-    def compare(self, data1: NbtTypes.TAG, data2: NbtTypes.TAG, trace: Trace.Trace) -> tuple[NbtTypes.TAG|D.Diff[NbtTypes.TAG, NbtTypes.TAG], list[tuple[Trace.Trace, Exception]]]:
-        structure_set = self.choose_structure(D.Diff(data1, data2), trace)
-        return structure_set.compare(data1, data2, trace)
+    def compare(self, data1: NbtTypes.TAG, data2: NbtTypes.TAG) -> tuple[NbtTypes.TAG|D.Diff[NbtTypes.TAG, NbtTypes.TAG], list[Trace.ErrorTrace]]:
+        exceptions:list[Trace.ErrorTrace] = []
+        structure_set, new_exceptions = self.choose_structure(D.Diff(data1, data2))
+        for exception in new_exceptions: exception.add(self.name, None)
+        exceptions.extend(new_exceptions)
+        output, new_exceptions = structure_set.compare(data1, data2)
+        for exception in new_exceptions: exception.add(self.name, None)
+        exceptions.extend(new_exceptions)
+        return output, exceptions
 
-    def print_text(self, data: NbtTypes.TAG, trace: Trace.Trace) -> list[SU.Line]:
-        return self.choose_structure(data, trace).print_text(D.DiffType.not_diff, data, trace.copy(self.name))
+    def print_text(self, data: NbtTypes.TAG) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+        exceptions:list[Trace.ErrorTrace] = []
+        structure, new_exceptions = self.choose_structure(data)
+        for exception in new_exceptions: exception.add(self.name, None)
+        exceptions.extend(new_exceptions)
+        output, new_exceptions = structure.print_text(D.DiffType.not_diff, data)
+        for exception in new_exceptions: exception.add(self.name, None)
+        exceptions.extend(new_exceptions)
+        return output, exceptions
 
-    def compare_text(self, data:NbtTypes.TAG|D.Diff[NbtTypes.TAG,NbtTypes.TAG], trace: Trace.Trace) -> tuple[list[SU.Line], bool]:
-        structure_set = self.choose_structure(data, trace)
+    def compare_text(self, data:NbtTypes.TAG|D.Diff[NbtTypes.TAG,NbtTypes.TAG]) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
+        exceptions:list[Trace.ErrorTrace] = []
+        structure_set, new_exceptions = self.choose_structure(data)
+        for exception in new_exceptions: exception.add(self.name, None)
+        exceptions.extend(new_exceptions)
         if isinstance(data, D.Diff):
             output:list[SU.Line] = []
             match data.change_type:
                 case D.ChangeType.addition:
-                    self.print_single(None, data.new, "Added", output, structure_set[D.DiffType.new], trace)
+                    new_exceptions = self.print_single(None, data.new, "Added", output, structure_set[D.DiffType.new])
                 case D.ChangeType.change:
-                    self.print_double(None, data.old, data.new, "Changed", output, structure_set, trace)
+                    new_exceptions = self.print_double(None, data.old, data.new, "Changed", output, structure_set)
                 case D.ChangeType.removal:
-                    self.print_single(None, data.old, "Removed", output, structure_set[D.DiffType.old], trace)
-            return output, True
+                    new_exceptions = self.print_single(None, data.old, "Removed", output, structure_set[D.DiffType.old])
+            for exception in new_exceptions: exception.add(self.name, None)
+            exceptions.extend(new_exceptions)
+            return output, True, exceptions
         else:
-            return structure_set.compare_text(D.DiffType.not_diff, data, trace.copy(self.name))
+            output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, data)
+            for exception in new_exceptions: exception.add(self.name, None)
+            exceptions.extend(new_exceptions)
+            return output, has_changes, exceptions

@@ -113,6 +113,13 @@ class Diff(Generic[Dt1,Dt2]):
 
 a = TypeVar("a")
 b = TypeVar("b")
+c = TypeVar("c")
+
+def first_existing_property(item:a|Diff[b,c]) -> a|b|c:
+    if isinstance(item, Diff):
+        return item.first_existing_property()
+    else:
+        return item
 
 def iter_diff(thing:a|Diff[Dt1,Dt2]) -> Sequence[tuple[a|Dt1|Dt2,DiffType]]:
     if isinstance(thing, Diff):
