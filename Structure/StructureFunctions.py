@@ -92,6 +92,32 @@ def entities_client_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.Dep
     del data[entity_client_name]
     data["minecraft:client_entity"] = {"description": output}
 
+def features_fix_growing_plant_feature_body_blocks(data:list[list[Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    for index, item in enumerate(data):
+        assert len(item) == 2
+        data[index] = {"plant_body_block": item[0], "weight": item[1]}
+
+def features_fix_growing_plant_feature_head_blocks(data:list[list[Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    for index, item in enumerate(data):
+        assert len(item) == 2
+        data[index] = {"plant_head_block": item[0], "weight": item[1]}
+
+def features_fix_growing_plant_feature_height_distribution(data:list[list[Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    for index, item in enumerate(data):
+        assert len(item) == 2
+        data[index] = {"height": item[0], "weight": item[1]}
+
+def features_fix_tree_feature_canopy_leaf_blocks(data:dict[str,list[Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "leaf_blocks" in data:
+        for index, item in enumerate(data):
+            assert len(item) == 2
+            data[index] = {"leaf_block": item[0], "weight": item[1]}
+
+def features_fix_weighted_random_features(data:list[list[Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    for index, item in enumerate(data):
+        assert len(item) == 2
+        data[index] = {"feature": item[0], "weight": item[1]}
+
 def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
     output:dict[str,dict[str,Any]] = {}
     for resource_pack_name, item_textures_data in data.items():
@@ -359,6 +385,11 @@ functions:dict[str,Callable] = {
     "entities_fix_invalid_components": entities_fix_invalid_components,
     "entities_fix_priotiry": entities_fix_priotiry,
     "entities_client_fix_old": entities_client_fix_old,
+    "features_fix_growing_plant_feature_body_blocks": features_fix_growing_plant_feature_body_blocks,
+    "features_fix_growing_plant_feature_head_blocks": features_fix_growing_plant_feature_head_blocks,
+    "features_fix_growing_plant_feature_height_distribution": features_fix_growing_plant_feature_height_distribution,
+    "features_fix_tree_feature_canopy_leaf_blocks": features_fix_tree_feature_canopy_leaf_blocks,
+    "features_fix_weighted_random_features": features_fix_weighted_random_features,
     "item_textures_normalize": item_textures_normalize,
     "items_behavior_pack_comparison_move_function": items_behavior_pack_comparison_move_function,
     "items_fix_old": items_fix_old,

@@ -1,0 +1,986 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "features",
+        "subcomponent": "features"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "fix_growing_plant_feature_body_blocks": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "features_fix_growing_plant_feature_body_blocks"
+    },
+    "fix_growing_plant_feature_head_blocks": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "features_fix_growing_plant_feature_head_blocks"
+    },
+    "fix_growing_plant_feature_height_distribution": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "features_fix_growing_plant_feature_height_distribution"
+    },
+    "fix_tree_feature_canopy_leaf_blocks": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "features_fix_tree_feature_canopy_leaf_blocks"
+    },
+    "fix_weighted_random_features": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "features_fix_weighted_random_features"
+    },
+    "features": {
+        "type": "Dict",
+        "field": "feature",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "feature"
+    },
+    "block_list": {
+        "type": "List",
+        "field": "block",
+        "types": ["dict", "str"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "block_reference"
+    },
+    "block_list_or_block": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "block_reference.dict",
+            "list": "block_list",
+            "str": null
+        }
+    },
+    "block_reference": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "block_reference.dict",
+            "str": null
+        }
+    },
+    "block_reference.dict": {
+        "type": "Keymap",
+        "keys": {
+            "name": {"type": "str"},
+            "states": {"type": "dict", "subcomponent": "block_reference.states"}
+        }
+    },
+    "block_reference.states": {
+        "type": "Keymap",
+        "keys": {
+            "age": {"type": "int"},
+            "direction": {"type": "int"},
+            "dirt_type": {"type": "str"},
+            "moisturized_amount":{ "type": "int"},
+            "new_leaf_type": {"type": "str"},
+            "new_log_type": {"type": "str"},
+            "old_leaf_type": {"type": "str"},
+            "old_log_type": {"type": "str"},
+            "stone_type": {"type": "str"},
+            "tall_grass_type": {"type": "str"},
+            "upper_block_bit": {"type": "bool"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"type": "str"}
+        }
+    },
+    "empty_dict": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "feature_list": {
+        "type": "List",
+        "field": "feature",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "fraction": {
+        "type": "Keymap",
+        "keys": {
+            "denominator": {"type": "int"},
+            "numerator": {"type": "int"}
+        }
+    },
+    "fraction_or_decimal": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "fraction",
+            "decimal": null
+        }
+    },
+    "fraction_slope": {
+        "type": "Keymap",
+        "keys": {
+            "rise": {"type": "int"},
+            "run": {"type": "int"}
+        }
+    },
+    "range_dict_decimal": {
+        "type": "Keymap",
+        "print_all": true,
+        "keys": {
+            "max": {"type": "decimal"},
+            "min": {"type": "decimal"}
+        }
+    },
+    "range_dict_int": {
+        "type": "Keymap",
+        "print_all": true,
+        "keys": {
+            "max": {"type": "int"},
+            "min": {"type": "int"},
+            "range_max": {"type": "int"},
+            "range_min": {"type": "int"}
+        }
+    },
+    "range_int_or_int": {
+        "type": "Group",
+        "subcomponents": {
+            "int": null,
+            "dict": "range_dict_int"
+        }
+    },
+    "range_list_decimal": {
+        "type": "List",
+        "field": "range item",
+        "types": ["decimal"],
+        "ordered": true,
+        "measure_length": false,
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    },
+    "range_list_molang": {
+        "type": "List",
+        "field": "range item",
+        "types": ["int", "str"],
+        "ordered": true,
+        "measure_length": false,
+        "subcomponent": null
+    },
+    "vector_int": {
+        "type": "List",
+        "field": "vector item",
+        "types": ["int"],
+        "ordered": true,
+        "measure_length": false,
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    },
+    "feature": {
+        "type": "Keymap",
+        "keys": {
+            "format_version": {"type": "str"},
+            "minecraft:aggregate_feature": {"type": "dict", "subcomponent": "feature.aggregate_feature"},
+            "minecraft:cave_carver_feature": {"type": "dict", "subcomponent": "feature.cave_carver_feature"},
+            "minecraft:fossil_feature": {"type": "dict", "subcomponent": "feature.fossil_feature"},
+            "minecraft:geode_feature": {"type": "dict", "subcomponent": "feature.geode_feature"},
+            "minecraft:growing_plant_feature": {"type": "dict", "subcomponent": "feature.growing_plant_feature"},
+            "minecraft:multiface_feature": {"type": "dict", "subcomponent": "feature.multiface_feature"},
+            "minecraft:nether_cave_carver_feature": {"type": "dict", "subcomponent": "feature.nether_cave_carver_feature"},
+            "minecraft:ore_feature": {"type": "dict", "subcomponent": "feature.ore_feature"},
+            "minecraft:partially_exposed_blob_feature": {"type": "dict", "subcomponent": "feature.partially_exposed_blob_feature"},
+            "minecraft:scatter_feature": {"type": "dict", "subcomponent": "feature.scatter_feature"},
+            "minecraft:search_feature": {"type": "dict", "subcomponent": "feature.search_feature"},
+            "minecraft:sequence_feature": {"type": "dict", "subcomponent": "feature.sequence_feature"},
+            "minecraft:single_block_feature": {"type": "dict", "subcomponent": "feature.single_block_feature"},
+            "minecraft:snap_to_surface_feature": {"type": "dict", "subcomponent": "feature.snap_to_surface_feature"},
+            "minecraft:structure_template_feature": {"type": "dict", "subcomponent": "feature.structure_template_feature"},
+            "minecraft:surface_relative_threshold_feature": {"type": "dict", "subcomponent": "feature.surface_relative_threshold_feature"},
+            "minecraft:tree_feature": {"type": "dict", "subcomponent": "feature.tree_feature"},
+            "minecraft:underwater_cave_carver_feature": {"type": "dict", "subcomponent": "feature.underwater_cave_carver_feature"},
+            "minecraft:vegetation_patch_feature": {"type": "dict", "subcomponent": "feature.vegetation_patch_feature"},
+            "minecraft:weighted_random_feature": {"type": "dict", "subcomponent": "feature.weighted_random_feature"}
+        }
+    },
+    "feature.aggregate_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "early_out": {"type": "str"},
+            "features": {"type": "list", "subcomponent": "feature_list"}
+        }
+    },
+    "feature.cave_carver_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "fill_with": {"type": "str"},
+            "floor_level": {"type": "list", "subcomponent": "range_list_decimal"},
+            "height_limit": {"type": "int"},
+            "horizontal_radius_multiplier": {"type": "list", "subcomponent": "range_list_decimal"},
+            "skip_carve_chance": {"type": "int"},
+            "vertical_radius_multiplier": {"type": "list", "subcomponent": "range_list_decimal"},
+            "width_modifier": {"type": "decimal"},
+            "y_scale": {"type": "list", "subcomponent": "range_list_decimal"}
+        }
+    },
+    "feature.fossil_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "ore_block": {"type": "str"},
+            "max_empty_corners": {"type": "int"}
+        }
+    },
+    "feature.geode_feature": {
+        "type": "Keymap",
+        "keys": {
+            "alternate_inner_layer": {"type": "str"},
+            "base_crack_size": {"type": "decimal"},
+            "crack_point_offset": {"type": "int"},
+            "description": {"type": "dict", "subcomponent": "description"},
+            "filler": {"type": "str"},
+            "generate_crack_chance": {"type": "decimal"},
+            "inner_layer": {"type": "str"},
+            "inner_placements": {"type": "list", "subcomponent": "block_list"},
+            "inavlid_blocks_threshold": {"type": "int"},
+            "middle_layer": {"type": "str"},
+            "outer_layer": {"type": "str"},
+            "max_distribution_points": {"type": "int"},
+            "max_outer_wall_distance": {"type": "int"},
+            "max_point_offset": {"type": "int"},
+            "max_radius": {"type": "int"},
+            "min_distribution_points": {"type": "int"},
+            "min_outer_wall_distance": {"type": "int"},
+            "min_point_offset": {"type": "int"},
+            "noise_multiplier": {"type": "decimal"},
+            "placements_require_layer0_alternate": {"type": "bool"},
+            "use_alternate_layer0_chance": {"type": "decimal"},
+            "use_potential_placements_chance": {"type": "decimal"}
+        }
+    },
+    "feature.growing_plant_feature": {
+        "type": "Keymap",
+        "keys": {
+            "allow_water": {"type": "bool"},
+            "age": {"type": "int"},
+            "body_blocks": {"type": "list", "subcomponent": "feature.growing_plant_feature:body_blocks"},
+            "description": {"type": "dict", "subcomponent": "description"},
+            "growth_direction": {"type": "str"},
+            "head_blocks": {"type": "list", "subcomponent": "feature.growing_plant_feature:head_blocks"},
+            "height_distribution": {"type": "list", "subcomponent": "feature.growing_plant_feature:height_distribution"}
+        }
+    },
+    "feature.growing_plant_feature:body_blocks": {
+        "type": "List",
+        "field": "body block",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "normalizer": "fix_growing_plant_feature_body_blocks",
+        "subcomponent": "feature.growing_plant_feature:body_blocks.item"
+    },
+    "feature.growing_plant_feature:body_blocks.item": {
+        "type": "Keymap",
+        "keys": {
+            "plant_body_block": {"type": "str"},
+            "weight": {"type": "decimal"}
+        }
+    },
+    "feature.growing_plant_feature:head_blocks": {
+        "type": "List",
+        "field": "head block",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "normalizer": "fix_growing_plant_feature_head_blocks",
+        "subcomponent": "feature.growing_plant_feature:head_blocks.item"
+    },
+    "feature.growing_plant_feature:head_blocks.item": {
+        "type": "Keymap",
+        "keys": {
+            "plant_head_block": {"type": "str"},
+            "weight": {"type": "decimal"}
+        }
+    },
+    "feature.growing_plant_feature:height_distribution": {
+        "type": "List",
+        "field": "height",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "normalizer": "fix_growing_plant_feature_height_distribution",
+        "subcomponent": "feature.growing_plant_feature:height_distribution.item"
+    },
+    "feature.growing_plant_feature:height_distribution.item": {
+        "type": "Keymap",
+        "keys": {
+            "height": {"type": "decimal"},
+            "weight": {"type": "decimal"}
+        }
+    },
+    "feature.multiface_feature": {
+        "type": "Keymap",
+        "keys": {
+            "can_place_on": {"type": "list", "subcomponent": "block_list"},
+            "can_place_on_ceiling": {"type": "bool"},
+            "can_place_on_floor": {"type": "bool"},
+            "can_place_on_wall": {"type": "bool"},
+            "chance_of_spreading": {"type": "decimal"},
+            "description": {"type": "dict", "subcomponent": "description"},
+            "places_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "search_range": {"type": "int"}
+        }
+    },
+    "feature.nether_cave_carver_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "fill_with": {"type": "str"},
+            "width_modifier": {"type": "decimal"},
+            "skip_carve_chance": {"type": "int"},
+            "height_limit": {"type": "int"},
+            "y_scale": {"type": "list", "subcomponent": "range_list_decimal"},
+            "horizontal_radius_multiplier": {"type": "list", "subcomponent": "range_list_decimal"},
+            "vertical_radius_multiplier": {"type": "list", "subcomponent": "range_list_decimal"},
+            "floor_level": {"type": "list", "subcomponent": "range_list_decimal"}
+        }
+    },
+    "feature.ore_feature": {
+        "type": "Keymap",
+        "keys": {
+            "count": {"type": "int"},
+            "description": {"type": "dict", "subcomponent": "description"},
+            "discard_chance_on_air_exposure": {"type": "decimal"},
+            "replace_rules": {"type": "list", "subcomponent": "feature.ore_feature:replace_rules"}
+        }
+    },
+    "feature.ore_feature:replace_rules": {
+        "type": "List",
+        "field": "rule",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "feature.ore_feature:replace_rules.item"
+    },
+    "feature.ore_feature:replace_rules.item": {
+        "type": "Keymap",
+        "keys": {
+            "places_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "may_replace": {"type": "list", "subcomponent": "block_list"}
+        }
+    },
+    "feature.partially_exposed_blob_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "exposed_face": {"type": "str"},
+            "placement_probability_per_valid_position": {"type": "decimal"},
+            "placement_radius_around_floor": {"type": "int"},
+            "places_block": {"type": ["dict", "str"], "subcomponent": "block_reference"}
+        }
+    },
+    "feature.scatter_feature": {
+        "type": "Keymap",
+        "keys": {
+            "coordinate_eval_order": {"type": "str"},
+            "description": {"type": "dict", "subcomponent": "description"},
+            "iterations": {"type": "int"},
+            "places_feature": {"type": "str"},
+            "project_input_to_floor": {"type": "bool"},
+            "scatter_chance": {"type": ["dict", "decimal", "str"], "subcomponent": "feature.scatter_feature:scatter_chance"},
+            "x": {"type": ["dict", "int", "str"], "subcomponent": "feature.scatter_feature:coordinate_group"},
+            "y": {"type": ["dict", "int", "str"], "subcomponent": "feature.scatter_feature:coordinate_group"},
+            "z": {"type": ["dict", "int", "str"], "subcomponent": "feature.scatter_feature:coordinate_group"}
+        }
+    },
+    "feature.scatter_feature:coordinate_group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "feature.scatter_feature:coordinate",
+            "int": null,
+            "str": null
+        }
+    },
+    "feature.scatter_feature:coordinate": {
+        "type": "Keymap",
+        "keys": {
+            "distribution": {"type": "str"},
+            "step_size": {"type": "int"},
+            "grid_offset": {"type": "int"},
+            "extent": {"type": "list", "subcomponent": "range_list_molang"}
+        }
+    },
+    "feature.scatter_feature:scatter_chance": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "fraction",
+            "decimal": null,
+            "str": null
+        }
+    },
+    "feature.search_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "places_feature": {"type": "str"},
+            "required_successes": {"type": "int"},
+            "search_axis": {"type": "str"},
+            "search_volume": {"type": "dict", "subcomponent": "feature.search_feature:search_volume"}
+        }
+    },
+    "feature.search_feature:search_volume": {
+        "type": "Keymap",
+        "keys": {
+            "max": {"type": "list", "subcomponent": "vector_int"},
+            "min": {"type": "list", "subcomponent": "vector_int"}
+        }
+    },
+    "feature.sequence_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "features": {"type": "list", "subcomponent": "feature_list"}
+        }
+    },
+    "feature.single_block_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "enforce_placement_rules": {"type": "bool"},
+            "enforce_survivability_rules": {"type": "bool"},
+            "may_attach_to": {"type": "dict", "subcomponent": "feature.single_block_feature:may_attach_to"},
+            "may_replace": {"type": "list", "subcomponent": "block_list"},
+            "places_block": {"type": ["dict", "str"], "subcomponent": "block_reference"}
+        }
+    },
+    "feature.single_block_feature:may_attach_to": {
+        "type": "Keymap",
+        "keys": {
+            "all":    {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "auto_rotate": {"type": "bool"},
+            "bottom": {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "east":   {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "min_sides_must_attach": {"type": "int"},
+            "north":  {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "sides":  {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "top":    {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "south":  {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "west":   {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"}
+        }
+    },
+    "feature.snap_to_surface_feature": {
+        "type": "Keymap",
+        "keys": {
+            "allow_air_placement": {"type": "bool"},
+            "allow_underwater_placement": {"type": "bool"},
+            "description": {"type": "dict", "subcomponent": "description"},
+            "feature_to_snap": {"type": "str"},
+            "surface": {"type": "str"},
+            "vertical_search_range": {"type": "int"}
+        }
+    },
+    "feature.structure_template_feature": {
+        "type": "Keymap",
+        "keys": {
+            "adjustment_radius": {"type": "int"},
+            "constraints": {"type": "dict", "subcomponent": "feature.structure_template_feature:constraints"},
+            "description": {"type": "dict", "subcomponent": "description"},
+            "facing_direction": {"type": "str"},
+            "structure_name": {"type": "str"}
+        }
+    },
+    "feature.structure_template_feature:constraints": {
+        "type": "Keymap",
+        "keys": {
+            "block_intersection": {"type": "dict", "subcomponent": "feature.structure_template_feature:constraints.block_intersection"},
+            "grounded": {"type": "dict", "subcomponent": "empty_dict"},
+            "unburied": {"type": "dict", "subcomponent": "empty_dict"}
+        }
+    },
+    "feature.structure_template_feature:constraints.block_intersection": {
+        "type": "Keymap",
+        "keys": {
+            "block_allowlist": {"type": "list", "subcomponent": "block_list"}
+        }
+    },
+    "feature.surface_relative_threshold_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "feature_to_place": {"type": "str"},
+            "minimum_distance_below_surface": {"type": "int"}
+        }
+    },
+    "feature.tree_feature": {
+        "type": "Keymap",
+        "imports": "feature.tree_feature:canopy",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "base_block": {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "base_cluster": {"type": "dict", "subcomponent": "feature.tree_feature:base_cluster"},
+            "may_grow_on": {"type": "list", "subcomponent": "block_list"},
+            "may_replace": {"type": "list", "subcomponent": "block_list"},
+            "may_grow_through": {"type": "list", "subcomponent": "block_list"},
+            "acacia_trunk": {"type": "dict", "subcomponent": "feature.tree_feature:acacia_trunk"},
+            "cherry_trunk": {"type": "dict", "subcomponent": "feature.tree_feature:cherry_trunk"},
+            "fallen_trunk": {"type": "dict", "subcomponent": "feature.tree_feature:fallen_trunk"},
+            "fancy_trunk": {"type": "dict", "subcomponent": "feature.tree_feature:fancy_trunk"},
+            "mangrove_trunk": {"type": "dict", "subcomponent": "feature.tree_feature:mangrove_trunk"},
+            "mega_trunk": {"type": "dict", "subcomponent": "feature.tree_feature:mega_trunk"},
+            "trunk": {"type": "dict", "subcomponent": "feature.tree_feature:trunk"},
+            "mangrove_roots": {"type": "dict", "subcomponent": "feature.tree_feature:mangrove_roots"}
+        }
+    },
+    "feature.tree_feature:base_cluster": {
+        "type": "Keymap",
+        "keys": {
+            "cluster_radius": {"type": "int"},
+            "may_replace": {"type": "list", "subcomponent": "block_list"},
+            "num_clusters": {"type": "int"}
+        }
+    },
+    "feature.tree_feature:acacia_trunk": {
+        "type": "Keymap",
+        "keys": {
+            "branches": {"type": "dict", "subcomponent": "feature.tree_feature:acacia_trunk.branches"},
+            "trunk_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "trunk_decoration": {"type": "dict", "subcomponent": "feature.tree_feature:decoration"},
+            "trunk_height": {"type": "dict", "subcomponent": "feature.tree_feature:acacia_trunk.trunk_height"},
+            "trunk_lean": {"type": "dict", "subcomponent": "feature.tree_feature:acacia_trunk.trunk_lean"},
+            "trunk_width": {"type": "int"}
+        }
+    },
+    "feature.tree_feature:acacia_trunk.branches": {
+        "type": "Keymap",
+        "keys": {
+            "branch_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy"},
+            "branch_chance": {"type": ["decimal", "dict"], "subcomponent": "fraction_or_decimal"},
+            "branch_length": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "branch_position": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"}
+        }
+    },
+    "feature.tree_feature:acacia_trunk.trunk_height": {
+        "type": "Keymap",
+        "keys": {
+            "base": {"type": "int"},
+            "intervals": {"type": "list", "subcomponent": "feature.tree_feature:trunk.intervals"},
+            "min_height_for_canopy": {"type": "int"}
+        }
+    },
+    "feature.tree_feature:acacia_trunk.trunk_lean": {
+        "type": "Keymap",
+        "keys": {
+            "allow_diagonal_growth": {"type": "bool"},
+            "lean_height": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "lean_length": {"type": "int"},
+            "lean_steps": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"}
+        }
+    },
+    "feature.tree_feature:cherry_trunk": {
+        "type": "Keymap",
+        "keys": {
+            "trunk_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "trunk_height": {"type": "dict", "subcomponent": "feature.tree_feature:cherry_trunk.trunk_height"},
+            "branches": {"type": "dict", "subcomponent": "feature.tree_feature:cherry_trunk.branches"}
+        }
+    },
+    "feature.tree_feature:cherry_trunk.trunk_height": {
+        "type": "Keymap",
+        "keys": {
+            "base": {"type": "int"},
+            "intervals": {"type": "list", "subcomponent": "feature.tree_feature:trunk.intervals"}
+        }
+    },
+    "feature.tree_feature:cherry_trunk.branches": {
+        "type": "Keymap",
+        "keys": {
+            "branch_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy"},
+            "branch_end_offset_from_top": {"type": "int"},
+            "branch_horizontal_length": {"type": "int"},
+            "branch_start_offset_from_top": {"type": "int"},
+            "tree_type_weights": {"type": "dict", "subcomponent": "feature.tree_feature:cherry_trunk.branches.tree_type_weights"}
+        }
+    },
+    "feature.tree_feature:cherry_trunk.branches.tree_type_weights": {
+        "type": "Keymap",
+        "keys": {
+            "one_branch": {"type": "int"},
+            "two_branches": {"type": "int"},
+            "two_branches_and_trunk": {"type": "int"}
+        }
+    },
+    "feature.tree_feature:fallen_trunk": {
+        "type": "Keymap",
+        "keys": {
+            "log_length": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "stump_height": {"type": "int"},
+            "height_modifier": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "trunk_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "log_decoration_feature": {"type": "str"},
+            "trunk_decoration": {"type": "dict", "subcomponent": "feature.tree_feature:decoration"}
+        }
+    },
+    "feature.tree_feature:fancy_trunk": {
+        "type": "Keymap",
+        "keys": {
+            "branches": {"type": "dict", "subcomponent": "feature.tree_feature:fancy_trunk.branches"},
+            "foliage_altitude_factor": {"type": "decimal"},
+            "trunk_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "trunk_height": {"type": "dict", "subcomponent": "feature.tree_feature:fancy_trunk.trunk_height"},
+            "trunk_width": {"type": "int"},
+            "width_scale": {"type": "decimal"}
+        }
+    },
+    "feature.tree_feature:fancy_trunk.branches": {
+        "type": "Keymap",
+        "keys": {
+            "slope": {"type": "decimal"},
+            "density": {"type": "decimal"},
+            "min_altitude_factor": {"type": "decimal"}
+        }
+    },
+    "feature.tree_feature:fancy_trunk.trunk_height": {
+        "type": "Keymap",
+        "keys": {
+            "base": {"type": "int"},
+            "variance": {"type": "int"},
+            "scale": {"type": "decimal"}
+        }
+    },
+    "feature.tree_feature:mangrove_trunk": {
+        "type": "Keymap",
+        "keys": {
+            "branches": {"type": "dict", "subcomponent": "feature.tree_feature:mangrove_trunk.branches"},
+            "trunk_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "trunk_decoration": {"type": "dict", "subcomponent": "feature.tree_feature:decoration"},
+            "trunk_height": {"type": "dict", "subcomponent": "feature.tree_feature:mangrove_trunk.trunk_height"},
+            "trunk_width": {"type": "int"}
+        }
+    },
+    "feature.tree_feature:mangrove_trunk.branches": {
+        "type": "Keymap",
+        "keys": {
+            "branch_length": {"type": "int"},
+            "branch_steps": {"type": "int"},
+            "branch_chance": {"type": ["decimal", "dict"], "subcomponent": "fraction_or_decimal"}
+        }
+    },
+    "feature.tree_feature:mangrove_trunk.trunk_height": {
+        "type": "Keymap",
+        "keys": {
+            "base": {"type": "int"},
+            "height_rand_a": {"type": "int"},
+            "height_rand_b": {"type": "int"}
+        }
+    },
+    "feature.tree_feature:mega_trunk": {
+        "type": "Keymap",
+        "keys": {
+            "branches": {"type": "dict", "subcomponent": "feature.tree_feature:mega_trunk.branches"},
+            "trunk_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "trunk_decoration": {"type": "dict", "subcomponent": "feature.tree_feature:decoration"},
+            "trunk_height": {"type": "dict", "subcomponent": "feature.tree_feature:mega_trunk.trunk_height"},
+            "trunk_width": {"type": "int"}
+        }
+    },
+    "feature.tree_feature:mega_trunk.branches": {
+        "type": "Keymap",
+        "keys": {
+            "branch_altitude_factor": {"type": "dict", "subcomponent": "range_dict_decimal"},
+            "branch_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy"},
+            "branch_interval": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "branch_length": {"type": "int"},
+            "branch_slope": {"type": "decimal"}
+        }
+    },
+    "feature.tree_feature:mega_trunk.trunk_height": {
+        "type": "Keymap",
+        "keys": {
+            "base": {"type": "int"},
+            "intervals": {"type": "list", "subcomponent": "feature.tree_feature:trunk.intervals"}
+        }
+    },
+    "feature.tree_feature:trunk": {
+        "type": "Keymap",
+        "keys": {
+            "can_be_submerged": {"type": ["bool", "dict"], "subcomponent": "feature.tree_feature:trunk.can_be_submerged_group"},
+            "height_modifier": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "trunk_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "trunk_decoration": {"type": "dict", "subcomponent": "feature.tree_feature:decoration"},
+            "trunk_height": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"}
+        }
+    },
+    "feature.tree_feature:trunk.can_be_submerged_group": {
+        "type": "Group",
+        "subcomponents": {
+            "bool": null,
+            "dict": "feature.tree_feature:trunk.can_be_submerged"
+        }
+    },
+    "feature.tree_feature:trunk.can_be_submerged": {
+        "type": "Keymap",
+        "keys": {
+            "max_depth": {"type": "int"}
+        }
+    },
+    "feature.tree_feature:mangrove_roots": {
+        "type": "Keymap",
+        "keys": {
+            "max_root_width": {"type": "int"},
+            "max_root_length": {"type": "int"},
+            "root_block": {"type": "str"},
+            "above_root": {"type": "dict", "subcomponent": "feature.tree_feature:mangrove_roots.above_root"},
+            "muddy_root_block": {"type": "str"},
+            "mud_block": {"type": "str"},
+            "y_offset": {"type": "int"},
+            "roots_may_grow_through": {"type": "list", "subcomponent": "block_list"},
+            "root_decoration": {"type": "dict", "subcomponent": "feature.tree_feature:decoration"}
+        }
+    },
+    "feature.tree_feature:mangrove_roots.above_root": {
+        "type": "Keymap",
+        "keys": {
+            "above_root_block": {"type": "str"},
+            "above_root_chance": {"type": "decimal"}
+        }
+    },
+    "feature.tree_feature:decoration": {
+        "type": "Keymap",
+        "keys": {
+            "decoration_chance": {"type": ["decimal", "dict"], "subcomponent": "fraction_or_decimal"},
+            "decoration_block": {"type": "str"},
+            "num_steps": {"type": "int"},
+            "step_direction": {"type": "str"}
+        }
+    },
+    "feature.tree_feature:trunk.intervals": {
+        "type": "List",
+        "field": "interval",
+        "types": ["int"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "feature.tree_feature:canopy:leaf_blocks": {
+        "type": "List",
+        "field": "leaf block",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "feature.tree_feature:canopy:leaf_blocks.item"
+    },
+    "feature.tree_feature:canopy:leaf_blocks.item": {
+        "type": "Keymap",
+        "keys": {
+            "leaf_block": {"type": ["str", "dict"], "subcomponent": "block_reference"},
+            "weight": {"type": "decimal"}
+        }
+    },
+    "feature.tree_feature:canopy": {
+        "type": "Keymap",
+        "keys": {
+            "acacia_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.acacia_canopy"},
+            "canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.canopy"},
+            "cherry_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.cherry_canopy"},
+            "fancy_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.fancy_canopy"},
+            "mangrove_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.mangrove_canopy"},
+            "mega_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.mega_canopy"},
+            "mega_pine_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.mega_pine_canopy"},
+            "pine_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.pine_canopy"},
+            "roofed_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.roofed_canopy"},
+            "spruce_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.spruce_canopy"},
+            "random_spread_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy.random_spread_canopy"}
+        }
+    },
+    "feature.tree_feature:canopy.acacia_canopy": {
+        "type": "Keymap",
+        "keys": {
+            "canopy_size": {"type": "int"},
+            "leaf_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "simplify_canopy": {"type": "bool"}
+        }
+    },
+    "feature.tree_feature:canopy.canopy": {
+        "type": "Keymap",
+        "keys": {
+            "canopy_offset": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "min_width": {"type": "int"},
+            "canopy_slope": {"type": "dict", "subcomponent": "fraction_slope"},
+            "variation_chance": {"type": ["decimal", "dict", "list"], "subcomponent": "feature.tree_feature:canopy.canopy:variation_chance_group"},
+            "leaf_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "canopy_decoration": {"type": "dict", "subcomponent": "feature.tree_feature:decoration"}
+        }
+    },
+    "feature.tree_feature:canopy.canopy:variation_chance_group": {
+        "type": "Group",
+        "subcomponents": {
+            "decimal": null,
+            "dict": "fraction",
+            "list": "feature.tree_feature:canopy.canopy:variation_chance"
+        }
+    },
+    "feature.tree_feature:canopy.canopy:variation_chance": {
+        "type": "List",
+        "field": "chance",
+        "types": ["decimal", "dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "feature.tree_feature:canopy.canopy:variation_chance.item"
+    },
+    "feature.tree_feature:canopy.canopy:variation_chance.item": {
+        "type": "Group",
+        "subcomponents": {
+            "decimal": null,
+            "dict": "fraction"
+        }
+    },
+    "feature.tree_feature:canopy.cherry_canopy": {
+        "type": "Keymap",
+        "keys": {
+            "leaf_block": {"type": ["dict", "str"], "subcomponent": "block_reference"},
+            "height": {"type": "int"},
+            "radius": {"type": "int"},
+            "trunk_width": {"type": "int"},
+            "wide_bottom_layer_hole_chance": {"type": "decimal"},
+            "corner_hole_chance": {"type": "decimal"},
+            "hanging_leaves_chance": {"type": "decimal"},
+            "hanging_leaves_extension_chance": {"type": "decimal"}
+        }
+    },
+    "feature.tree_feature:canopy.fancy_canopy": {
+        "type": "Keymap",
+        "keys": {
+            "height": {"type": "int"},
+            "radius": {"type": "int"},
+            "leaf_block": {"type": ["dict", "str"], "subcomponent": "block_reference"}
+        }
+    },
+    "feature.tree_feature:canopy.mangrove_canopy": {
+        "type": "Keymap",
+        "normalizer": "fix_tree_feature_canopy_leaf_blocks",
+        "keys": {
+            "canopy_height": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "canopy_radius": {"type": "int"},
+            "leaf_placement_attempts": {"type": "int"},
+            "leaf_blocks": {"type": "list", "subcomponent": "feature.tree_feature:canopy:leaf_blocks"},
+            "canopy_decoration": {"type": "dict", "subcomponent": "feature.tree_feature:decoration"},
+            "hanging_block": {"type": "str"},
+            "hanging_block_placement_chance": {"type": "decimal"}
+        }
+    },
+    "feature.tree_feature:canopy.mega_canopy": {
+        "type": "Keymap",
+        "keys": {
+            "canopy_height": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "base_radius": {"type": "int"},
+            "core_width": {"type": "int"},
+            "simplify_canopy": {"type": "bool"},
+            "leaf_block": {"type": ["dict", "str"], "subcomponent": "block_reference"}
+        }
+    },
+    "feature.tree_feature:canopy.mega_pine_canopy": {
+        "type": "Keymap",
+        "keys": {
+            "canopy_height": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "base_radius": {"type": "int"},
+            "radius_step_modifier": {"type": "decimal"},
+            "core_width": {"type": "int"},
+            "leaf_block": {"type": ["dict", "str"], "subcomponent": "block_reference"}
+        }
+    },
+    "feature.tree_feature:canopy.pine_canopy": {
+        "type": "Keymap",
+        "keys": {
+            "canopy_height": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "base_radius": {"type": "int"},
+            "leaf_block": {"type": ["dict", "str"], "subcomponent": "block_reference"}
+        }
+    },
+    "feature.tree_feature:canopy.roofed_canopy": {
+        "type": "Keymap",
+        "keys": {
+            "canopy_height": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "core_width": {"type": "int"},
+            "outer_radius": {"type": "int"},
+            "inner_radius": {"type": "int"},
+            "leaf_block": {"type": ["dict", "str"], "subcomponent": "block_reference"}
+        }
+    },
+    "feature.tree_feature:canopy.spruce_canopy": {
+        "type": "Keymap",
+        "keys": {
+            "lower_offset": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "upper_offset": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "max_radius": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "leaf_block": {"type": ["dict", "str"], "subcomponent": "block_reference"}
+        }
+    },
+    "feature.tree_feature:canopy.random_spread_canopy": {
+        "type": "Keymap",
+        "normalizer": "fix_tree_feature_canopy_leaf_blocks",
+        "keys": {
+            "canopy_height": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "canopy_radius": {"type": "int"},
+            "leaf_placement_attempts": {"type": "int"},
+            "leaf_blocks": {"type": "list", "subcomponent": "feature.tree_feature:canopy:leaf_blocks"}
+        }
+    },
+    "feature.underwater_cave_carver_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "fill_with": {"type": "str"},
+            "floor_level": {"type": "list", "subcomponent": "range_list_decimal"},
+            "height_limit": {"type": "int"},
+            "horizontal_radius_multiplier": {"type": "list", "subcomponent": "range_list_decimal"},
+            "replace_air_with": {"type": "str"},
+            "skip_carve_chance": {"type": "int"},
+            "vertical_radius_multiplier": {"type": "list", "subcomponent": "range_list_decimal"},
+            "width_modifier": {"type": "decimal"},
+            "y_scale": {"type": "list", "subcomponent": "range_list_decimal"}
+        }
+    },
+    "feature.vegetation_patch_feature": {
+        "type": "Keymap",
+        "keys": {
+            "depth": {"type": "int"},
+            "description": {"type": "dict", "subcomponent": "description"},
+            "extra_deep_block_chance": {"type": "decimal"},
+            "extra_edge_column_chance": {"type": "decimal"},
+            "ground_block": {"type": "str"},
+            "horizontal_radius": {"type": "int"},
+            "replaceable_blocks": {"type": "list", "subcomponent": "block_list"},
+            "surface": {"type": "str"},
+            "vegetation_chance": {"type": "decimal"},
+            "vegetation_feature": {"type": "str"},
+            "vertical_range": {"type": "int"},
+            "waterlogged": {"type": "bool"}
+        }
+    },
+    "feature.weighted_random_feature": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "features": {"type": "list", "subcomponent": "feature.weighted_random_feature:features"}
+        }
+    },
+    "feature.weighted_random_feature:features": {
+        "type": "List",
+        "field": "feature",
+        "normalizer": "fix_weighted_random_features",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "feature.weighted_random_feature:features.item"
+    },
+    "feature.weighted_random_feature:features.item": {
+        "type": "Keymap",
+        "keys": {
+            "feature": {"type": "str"},
+            "weight": {"type": "decimal"}
+        }
+    }
+}
