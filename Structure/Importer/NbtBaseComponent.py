@@ -121,13 +121,15 @@ class NbtBaseComponent(StructureComponent.StructureComponent):
         assert self.subcomponent.final is not None
         self.final.structure = self.subcomponent.final
     
-    def check(self) -> list[Exception] | None:
+    def check(self) -> list[Exception]:
         assert self.final is not None
         assert self.subcomponent is not None
         self.final.check_initialization_parameters()
         for value_type in self.types_final:
             if not issubclass(value_type, NbtTypes.TAG):
                 return [TypeError("%s \"%s\" cannot except non-NbtTag type %s!" % (self.class_name, self.name, value_type.__name__))]
-            if value_type not in self.subcomponent.my_type:
-                its_types = ", ".join(type_item.__name__ for type_item in self.subcomponent.my_type)
-                return [TypeError("%s \"%s\" accepts type %s, but its Subcomponent, \"%s\", only accepts type [%s]!" % (self.class_name, self.name, value_type.__name__, self.subcomponent.name, its_types))]
+        if set(self.types_final) != set(self.subcomponent.my_type):
+            my_types = ", ".join(type_item.__name__ for type_item in self.types_final)
+            its_types = ", ".join(type_item.__name__ for type_item in self.subcomponent.my_type)
+            return [TypeError("%s \"%s\" accepts types [%s], but its Subcomponent, \"%s\", only accepts type [%s]!" % (self.class_name, self.name, my_types, self.subcomponent.name, its_types))]
+        return []

@@ -40,9 +40,9 @@ class Component():
         '''Links this Component's final object to other final objects.'''
         pass
 
-    def check(self) -> list[Exception]|None:
+    def check(self) -> list[Exception]:
         '''Make sure that this Component's types are all in order; no error could occur.'''
-        pass
+        ...
 
     def finalize_finals(self) -> None:
         '''Can be used to call a method on the final object.'''

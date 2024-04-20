@@ -70,12 +70,13 @@ class NbtTagListComponent(ListComponent.ListComponent):
                 return [TypeError("%s \"%s\" accepts type %s instead of only [%s]!" % (self.class_name, self.name, type, ", ".join(required_type.__name__ for required_type in self.required_types)))]
         return []
 
-    def check(self) -> list[Exception]|None:
+    def check(self) -> list[Exception]:
         assert self.final is not None
         exceptions:list[Exception] = []
         self.final.check_initialization_parameters()
         exceptions.extend(self.check_components())
         exceptions.extend(self.check_required_type())
+        return exceptions
 
 class NbtTagByteArrayComponent(NbtTagListComponent):
 

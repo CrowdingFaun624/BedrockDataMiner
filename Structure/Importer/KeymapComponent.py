@@ -209,7 +209,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
         for key, tags in self.tags.items():
             self.tags_final[key] = sorted({tag.name for tag in tags} | tags_for_all_set)
 
-    def check(self) -> list[Exception]|None:
+    def check(self) -> list[Exception]:
         assert self.final is not None
         self.final.check_initialization_parameters()
         exceptions:list[Exception] = []

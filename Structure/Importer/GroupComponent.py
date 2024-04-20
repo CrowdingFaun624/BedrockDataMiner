@@ -92,7 +92,7 @@ class GroupComponent(Component.Component):
                 self.final[valid_type] = structure
             self.check_types_final.append((valid_types, subcomponent))
 
-    def check(self) -> list[Exception]|None:
+    def check(self) -> list[Exception]:
         assert self.check_types_final is not None
         for index, (types, subcomponent) in enumerate(self.check_types_final):
             if subcomponent is None:
@@ -104,3 +104,4 @@ class GroupComponent(Component.Component):
                     if type_item not in subcomponent.my_type:
                         its_types = ", ".join(its_type.__name__ for its_type in subcomponent.my_type)
                         return [TypeError("Item %i of %s \"%s\" accepts type %s, but its Subcomponent, \"%s\", only accepts type [%s]!" % (index, self.class_name, self.name, type_item.__name__, subcomponent.name, its_types))]
+        return []
