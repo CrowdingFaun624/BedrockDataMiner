@@ -1,0 +1,51 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "material_groups",
+        "subcomponent": "material_groups"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_without_defined_in"
+    },
+    "material_groups": {
+        "type": "Dict",
+        "field": "material group",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["list"],
+        "measure_length": true,
+        "normalizer": "collapse_resource_packs",
+        "subcomponent": "material_group"
+    },
+    "material_group": {
+        "type": "List",
+        "field": "material",
+        "types": ["dict"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "material"
+    },
+    "material": {
+        "type": "Keymap",
+        "keys": {
+            "path": {"type": "str"},
+            "+defines": {"type": "list", "subcomponent": "defines"}
+        }
+    },
+    "defines": {
+        "type": "List",
+        "field": "definition",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    }
+}
