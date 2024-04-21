@@ -1,0 +1,184 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "cameras",
+        "subcomponent": "cameras"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "empty_dict": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "rotation_decimal": {
+        "type": "List",
+        "field": "axis",
+        "types": ["decimal"],
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "measure_length": false,
+        "subcomponent": null
+    },
+    "vector_decimal": {
+        "type": "List",
+        "field": "vector item",
+        "types": ["decimal"],
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "measure_length": false,
+        "subcomponent": null
+    },
+    "cameras": {
+        "type": "Dict",
+        "field": "camera",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "normalizer": "collapse_resource_packs",
+        "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "subcomponent": "camera"
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": null
+    },
+    "camera": {
+        "type": "Keymap",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "format_version": {"type": "str"},
+            "minecraft:camera_entity": {"type": "dict", "subcomponent": "minecraft:camera_entity"}
+        }
+    },
+    "minecraft:camera_entity": {
+        "type": "Keymap",
+        "keys": {
+            "components": {"type": "dict", "subcomponent": "components"},
+            "description": {"type": "dict", "subcomponent": "description"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"type": "str"}
+        }
+    },
+    "components": {
+        "type": "Keymap",
+        "measure_length": true,
+        "keys": {
+            "minecraft:allow_inside_block": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:camera": {"type": "dict", "subcomponent": "component.camera"},
+            "minecraft:camera_attach_to_player": {"type": "dict", "subcomponent": "component.camera_attach_to_player"},
+            "minecraft:camera_avoidance": {"type": "dict", "subcomponent": "component.camera_avoidance"},
+            "minecraft:camera_direct_look": {"type": "dict", "subcomponent": "component.camera_direct_look"},
+            "minecraft:camera_first_person": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:camera_liquid_offset": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:camera_look_at_player": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:camera_orbit": {"type": "dict", "subcomponent": "component.camera_orbit"},
+            "minecraft:camera_perspective_option": {"type": "dict", "subcomponent": "component.camera_perspective_option"},
+            "minecraft:camera_player_bob": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:camera_player_sleep_vignette": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:camera_portal_distortion": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:camera_render_first_person_objects": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:camera_render_player_model": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:camera_shake": {"type": "dict", "subcomponent": "component.camera_shake"},
+            "minecraft:camera_third_person": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:death_camera_component": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:default_input_camera": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:extend_player_rendering": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:gameplay_affects_fov": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:player_state_affects_rendering": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:redirect_camera_input": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:stationary_camera": {"type": "dict", "subcomponent": "component.stationary_camera"},
+            "minecraft:update_player_from_camera": {"type": "dict", "subcomponent": "component.update_player_from_camera"},
+            "minecraft:vr_comfort_move": {"type": "dict", "subcomponent": "empty_dict"}
+        }
+    },
+    "component.camera": {
+        "type": "Keymap",
+        "keys": {
+            "far_clipping_plane": {"type": "decimal"},
+            "field_of_view": {"type": "decimal"},
+            "near_clipping_plane": {"type": "decimal"}
+        }
+    },
+    "component.camera_attach_to_player": {
+        "type": "Keymap",
+        "keys": {
+            "offset": {"type": "list", "subcomponent": "vector_decimal"}
+        }
+    },
+    "component.camera_avoidance": {
+        "type": "Keymap",
+        "keys": {
+            "relax_distance_smoothing_spring": {"type": "decimal"},
+            "distance_constraint_min": {"type": "decimal"}
+        }
+    },
+    "component.camera_direct_look": {
+        "type": "Keymap",
+        "keys": {
+            "pitch_max": {"type": "decimal"},
+            "pitch_min": {"type": "decimal"}
+        }
+    },
+    "component.camera_orbit": {
+        "type": "Keymap",
+        "keys": {
+            "azimuth_smoothing_spring": {"type": "int"},
+            "distance_smoothing_spring": {"type": "int"},
+            "invert_x_input": {"type": "bool"},
+            "polar_angle_min": {"type": "decimal"},
+            "polar_angle_max": {"type": "decimal"},
+            "polar_angle_smoothing_spring": {"type": "int"},
+            "radius": {"type": "decimal"}
+        }
+    },
+    "component.camera_perspective_option": {
+        "type": "Keymap",
+        "keys": {
+            "view_mode": {"type": "str"}
+        }
+    },
+    "component.camera_shake": {
+        "type": "Keymap",
+        "keys": {
+            "amplitude": {"type": "decimal"},
+            "frequency": {"type": "decimal"},
+            "noise_multiplier": {"type": "decimal"}
+        }
+    },
+    "component.stationary_camera": {
+        "type": "Keymap",
+        "keys": {
+            "pos": {"type": "list", "subcomponent": "vector_decimal"},
+            "rot": {"type": "list", "subcomponent": "rotation_decimal"}
+        }
+    },
+    "component.update_player_from_camera": {
+        "type": "Keymap",
+        "keys": {
+            "look_mode": {"type": "str"}
+        }
+    }
+}
