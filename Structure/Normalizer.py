@@ -45,7 +45,7 @@ class Normalizer(Generic[IN, OUT]):
             if len(data_string) > 500:
                 exception.args = tuple(list(exception.args) + ["Normalizer excepted!"])
             else:
-                exception.args = tuple(list(exception.args) + ["Normalizer excepted at %s on data: %s" % (data_string)])
+                exception.args = tuple(list(exception.args) + ["Normalizer excepted on data: %s" % (data_string)])
         if exception is not None:
             raise exception
 
