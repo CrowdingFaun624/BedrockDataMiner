@@ -1,0 +1,100 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "spawn_groups",
+        "subcomponent": "spawn_groups"
+    },
+    "empty_dict": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "spawn_groups": {
+        "type": "Dict",
+        "field": "spawn group",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "spawn_group"
+    },
+    "spawn_group": {
+        "type": "Keymap",
+        "keys": {
+            "format_version": {"type": "str"},
+            "minecraft:spawn_groups": {"type": "dict", "subcomponent": "minecraft:spawn_groups"}
+        }
+    },
+    "minecraft:spawn_groups": {
+        "type": "Keymap",
+        "keys": {
+            "conditions": {"type": "list", "subcomponent": "conditions"},
+            "description": {"type": "dict", "subcomponent": "description"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"type": "str"}
+        }
+    },
+    "conditions": {
+        "type": "List",
+        "field": "condition",
+        "types": ["dict"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "condition"
+    },
+    "condition": {
+        "type": "Keymap",
+        "keys": {
+            "minecraft:difficulty_filter": {"type": "dict", "subcomponent": "component.difficulty_filter"},
+            "minecraft:distance_filter": {"type": "dict", "subcomponent": "component.distance_filter"},
+            "minecraft:herd": {"type": "dict", "subcomponent": "component.herd"},
+            "minecraft:mob_event_filter": {"type": "dict", "subcomponent": "component.mob_event_filter"},
+            "minecraft:permute_type": {"type": "list", "subcomponent": "component.permute_type"},
+            "minecraft:spawns_on_surface": {"type": "dict", "subcomponent": "empty_dict"}
+        }
+    },
+    "component.difficulty_filter": {
+        "type": "Keymap",
+        "keys": {
+            "max": {"type": "str"},
+            "min": {"type": "str"}
+        }
+    },
+    "component.distance_filter": {
+        "type": "Keymap",
+        "keys": {
+            "max": {"type": "int"},
+            "min": {"type": "int"}
+        }
+    },
+    "component.herd": {
+        "type": "Keymap",
+        "keys": {
+            "event": {"type": "str"},
+            "max_size": {"type": "int"},
+            "min_size": {"type": "int"}
+        }
+    },
+    "component.mob_event_filter": {
+        "type": "Keymap",
+        "keys": {
+            "event": {"type": "str"}
+        }
+    },
+    "component.permute_type": {
+        "type": "List",
+        "field": "permute type",
+        "types": ["dict"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "component.permute_type:item"
+    },
+    "component.permute_type:item": {
+        "type": "Keymap",
+        "keys": {
+            "entity_type": {"type": "str"},
+            "weight": {"type": "int"}
+        }
+    }
+}
