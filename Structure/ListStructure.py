@@ -109,7 +109,9 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             for exception in new_exceptions: exception.add(self.name, index)
             output.extend(new_exceptions)
             if structure is not None:
-                output.extend(structure.check_all_types(item))
+                new_exceptions = structure.check_all_types(item)
+                for exception in new_exceptions: exception.add(self.name, index)
+                output.extend(new_exceptions)
         return output
 
     def normalize(self, data:list[d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int) -> tuple[Any|None,list[Trace.ErrorTrace]]:

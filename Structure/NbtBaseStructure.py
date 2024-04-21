@@ -80,7 +80,9 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         for exception in new_exceptions: exception.add(self.name, None)
         output.extend(new_exceptions)
         if structure is not None:
-            output.extend(structure.check_all_types(data))
+            new_exceptions = structure.check_all_types(data)
+            for exception in new_exceptions: exception.add(self.name, None)
+            output.extend(new_exceptions)
         return output
 
     def choose_structure_flat(self, key:Literal[""], value:type[NbtTypes.TAG]) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:

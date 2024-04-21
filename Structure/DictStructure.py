@@ -124,7 +124,9 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             for exception in new_exceptions: exception.add(self.name, key)
             output.extend(new_exceptions)
             if structure is not None:
-                output.extend(structure.check_all_types(value))
+                new_exceptions = structure.check_all_types(value)
+                for exception in new_exceptions: exception.add(self.name, key)
+                output.extend(new_exceptions)
         return output
 
     def normalize(self, data:dict[str,d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int) -> tuple[Any|None,list[Trace.ErrorTrace]]:
