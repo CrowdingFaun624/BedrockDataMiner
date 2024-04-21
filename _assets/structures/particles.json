@@ -1,0 +1,553 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "particles",
+        "subcomponent": "particles"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "normalize_component_particle_appearance_tinting_color": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "particles_normalize_component_particle_appearance_tinting_color"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "not_in_documentation": {
+        "type": "Tag"
+    },
+    "block_list": {
+        "type": "List",
+        "field": "block",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "color": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "color.list",
+            "str": null
+        }
+    },
+    "color.list": {
+        "type": "List",
+        "field": "channel",
+        "types": ["decimal", "str"],
+        "ordered": true,
+        "print_flat": true,
+        "print_all": true,
+        "subcomponent": null
+    },
+    "empty_dict": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "event_list": {
+        "type": "List",
+        "field": "event",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "event_list_or_event": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "event_list",
+            "str": null
+        }
+    },
+    "vector_decimal_molang": {
+        "type": "List",
+        "field": "vector_item",
+        "types": ["decimal", "str"],
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "measure_length": false,
+        "subcomponent": null
+    },
+    "vector_decimal_molang_or_decimal_molang": {
+        "type": "Group",
+        "subcomponents": {
+            "decimal": null,
+            "list": "vector_decimal_molang",
+            "str": null
+        }
+    },
+    "particles": {
+        "type": "Dict",
+        "field": "particle",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "normalizer": "collapse_resource_packs",
+        "detect_key_moves": true,
+        "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "subcomponent": "particle"
+    },
+    "particle": {
+        "type": "Keymap",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "format_version": {"type": "str"},
+            "particle_effect": {"type": "dict", "subcomponent": "particle_effect"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "particle_effect": {
+        "type": "Keymap",
+        "keys": {
+            "components": {"type": "dict", "subcomponent": "components"},
+            "curves": {"type": "dict", "subcomponent": "curves"},
+            "description": {"type": "dict", "subcomponent": "description"},
+            "events": {"type": "dict", "subcomponent": "events"}
+        }
+    },
+    "curves": {
+        "type": "Dict",
+        "field": "curve",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "curve"
+    },
+    "curve": {
+        "type": "Keymap",
+        "keys": {
+            "horizontal_range": {"type": "str"},
+            "input": {"type": "str"},
+            "nodes": {"type": "list", "subcomponent": "curve.nodes"},
+            "type": {"type": "str"}
+        }
+    },
+    "curve.nodes": {
+        "type": "List",
+        "field": "node",
+        "types": ["int"],
+        "ordered": true,
+        "measure_length": false,
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"type": "str"},
+            "basic_render_parameters": {"type": "dict", "subcomponent": "description.basic_render_parameters"}
+        }
+    },
+    "description.basic_render_parameters": {
+        "type": "Keymap",
+        "keys": {
+            "material": {"type": "str"},
+            "texture": {"type": "str"}
+        }
+    },
+    "events": {
+        "type": "Dict",
+        "field": "event",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "event"
+    },
+    "event": {
+        "type": "Keymap",
+        "keys": {
+            "particle_effect": {"type": "dict", "subcomponent": "event.particle_effect"},
+            "sound_effect": {"type": "dict", "subcomponent": "event.sound_effect"}
+        }
+    },
+    "event.particle_effect": {
+        "type": "Keymap",
+        "keys": {
+            "effect": {"type": "str"},
+            "type": {"type": "str"}
+        }
+    },
+    "event.sound_effect": {
+        "type": "Keymap",
+        "keys": {
+            "event_name": {"type": "str"}
+        }
+    },
+    "components": {
+        "type": "Keymap",
+        "measure_length": true,
+        "keys": {
+            "minecraft:emitter_initialization": {"type": "dict", "subcomponent": "component.emitter_initialization"},
+            "minecraft:emitter_local_space": {"type": "dict", "subcomponent": "component.emitter_local_space"},
+            "minecraft:emitter_lifetime_expression": {"type": "dict", "subcomponent": "component.emitter_lifetime_expression"},
+            "minecraft:emitter_lifetime_events": {"type": "dict", "subcomponent": "component.emitter_lifetime_events"},
+            "minecraft:emitter_lifetime_looping": {"type": "dict", "subcomponent": "component.emitter_lifetime_looping"},
+            "minecraft:emitter_lifetime_once": {"type": "dict", "subcomponent": "component.emitter_lifetime_once"},
+            "minecraft:emitter_rate_instant": {"type": "dict", "subcomponent": "component.emitter_rate_instant"},
+            "minecraft:emitter_rate_manual": {"type": "dict", "subcomponent": "component.emitter_rate_manual"},
+            "minecraft:emitter_rate_steady": {"type": "dict", "subcomponent": "component.emitter_rate_steady"},
+            "minecraft:emitter_shape_box": {"type": "dict", "subcomponent": "component.emitter_shape_box"},
+            "minecraft:emitter_shape_custom": {"type": "dict", "subcomponent": "component.emitter_shape_custom"},
+            "minecraft:emitter_shape_disc": {"type": "dict", "subcomponent": "component.emitter_shape_disc"},
+            "minecraft:emitter_shape_entity_aabb": {"type": "dict", "subcomponent": "component.emitter_shape_entity_aabb"},
+            "minecraft:emitter_shape_point": {"type": "dict", "subcomponent": "component.emitter_shape_point"},
+            "minecraft:emitter_shape_sphere": {"type": "dict", "subcomponent": "component.emitter_shape_sphere"},
+            "minecraft:particle_appearance_billboard": {"type": "dict", "subcomponent": "component.particle_appearance_billboard"},
+            "minecraft:particle_appearance_lighting": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:particle_appearance_tinting": {"type": "dict", "subcomponent": "component.particle_appearance_tinting"},
+            "minecraft:particle_expire_if_in_blocks": {"type": "list", "subcomponent": "block_list"},
+            "minecraft:particle_expire_if_not_in_blocks": {"type": "list", "subcomponent": "block_list"},
+            "minecraft:particle_initial_speed": {"type": ["decimal", "list", "str"], "subcomponent": "vector_decimal_molang_or_decimal_molang"},
+            "minecraft:particle_initial_spin": {"type": "dict", "subcomponent": "component.particle_initial_spin"},
+            "minecraft:particle_initialization": {"type": "dict", "subcomponent": "component.particle_initialization"},
+            "minecraft:particle_lifetime_events": {"type": "dict", "subcomponent": "component.particle_lifetime_events"},
+            "minecraft:particle_lifetime_expression": {"type": "dict", "subcomponent": "component.particle_lifetime_expression"},
+            "minecraft:particle_kill_plane": {"type": "list", "subcomponent": "component.particle_kill_plane"},
+            "minecraft:particle_motion_collision": {"type": "dict", "subcomponent": "component.particle_motion_collision"},
+            "minecraft:particle_motion_dynamic": {"type": "dict", "subcomponent": "component.particle_motion_dynamic"},
+            "minecraft:particle_motion_parametric": {"type": "dict", "subcomponent": "component.particle_motion_parametric"}
+        }
+    },
+    "component.emitter_initialization": {
+        "type": "Keymap",
+        "keys": {
+            "creation_expression": {"type": "str"},
+            "per_update_expression": {"type": "str"}
+        }
+    },
+    "component.emitter_lifetime_events": {
+        "type": "Keymap",
+        "keys": {
+            "creation_event": {"type": ["list", "str"], "subcomponent": "event_list_or_event"},
+            "expiration_event": {"type": ["list", "str"], "subcomponent": "event_list_or_event"},
+            "looping_travel_distance_events": {"type": "dict", "subcomponent": "component.emitter_lifetime_events:looping_travel_distance_events"},
+            "timeline": {"type": "dict", "subcomponent": "component.emitter_lifetime_events:timeline"},
+            "travel_distance_events": {"type": "dict", "subcomponent": "component.emitter_lifetime_events:travel_distance_events"}
+        }
+    },
+    "component.emitter_lifetime_events:looping_travel_distance_events": {
+        "type": "Dict",
+        "field": "distance",
+        "types": ["list", "str"],
+        "measure_length": true,
+        "subcomponent": "event_list_or_event"
+    },
+    "component.emitter_lifetime_events:timeline": {
+        "type": "Dict",
+        "field": "timestamp",
+        "types": ["list", "str"],
+        "measure_length": true,
+        "subcomponent": "event_list_or_event"
+    },
+    "component.emitter_lifetime_events:travel_distance_events": {
+        "type": "Dict",
+        "field": "distance",
+        "types": ["list", "str"],
+        "measure_length": true,
+        "subcomponent": "event_list_or_event"
+    },
+    "component.emitter_lifetime_expression": {
+        "type": "Keymap",
+        "keys": {
+            "activation_expression": {"type": ["decimal", "str"]},
+            "expiration_expression": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.emitter_lifetime_looping": {
+        "type": "Keymap",
+        "keys": {
+            "active_time": {"type": ["decimal", "str"]},
+            "sleep_time": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.emitter_lifetime_once": {
+        "type": "Keymap",
+        "keys": {
+            "active_time": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.emitter_local_space": {
+        "type": "Keymap",
+        "keys": {
+            "position": {"type": "bool"},
+            "rotation": {"type": "bool"},
+            "velocity": {"type": "bool"}
+        }
+    },
+    "component.emitter_rate_instant": {
+        "type": "Keymap",
+        "keys": {
+            "num_particles": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.emitter_rate_manual": {
+        "type": "Keymap",
+        "keys": {
+            "max_particles": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.emitter_rate_steady": {
+        "type": "Keymap",
+        "keys": {
+            "spawn_rate": {"type": ["decimal", "str"]},
+            "max_particles": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.emitter_shape:direction": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "vector_decimal_molang",
+            "str": null
+        }
+    },
+    "component.emitter_shape_box": {
+        "type": "Keymap",
+        "keys": {
+            "direction": {"type": ["list", "str"], "subcomponent": "component.emitter_shape:direction"},
+            "half_dimensions": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "offset": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "surface_only": {"type": "bool"}
+        }
+    },
+    "component.emitter_shape_custom": {
+        "type": "Keymap",
+        "keys": {
+            "direction": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "offset": {"type": "list", "subcomponent": "vector_decimal_molang"}
+        }
+    },
+    "component.emitter_shape_disc": {
+        "type": "Keymap",
+        "keys": {
+            "direction": {"type": ["list", "str"], "subcomponent": "component.emitter_shape:direction"},
+            "offset": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "plane_normal": {"type": ["list", "str"], "subcomponent": "component.emitter_shape:direction"},
+            "radius": {"type": ["decimal", "str"]},
+            "surface_only": {"type": "bool"}
+        }
+    },
+    "component.emitter_shape_entity_aabb": {
+        "type": "Keymap",
+        "keys": {
+            "direction": {"type": ["list", "str"], "subcomponent": "component.emitter_shape:direction"},
+            "surface_only": {"type": "bool"}
+        }
+    },
+    "component.emitter_shape_point": {
+        "type": "Keymap",
+        "keys": {
+            "direction": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "offset": {"type": "list", "subcomponent": "vector_decimal_molang"}
+        }
+    },
+    "component.emitter_shape_sphere": {
+        "type": "Keymap",
+        "keys": {
+            "direction": {"type": ["list", "str"], "subcomponent": "component.emitter_shape:direction"},
+            "offset": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "radius": {"type": ["decimal", "str"]},
+            "surface_only": {"type": "bool"}
+        }
+    },
+    "component.particle_appearance_billboard": {
+        "type": "Keymap",
+        "keys": {
+            "custom_direction": {"type": "null"},
+            "derive_from_velocity": {"type": "null"},
+            "direction": {"type": "dict", "subcomponent": "component.particle_appearance_billboard:direction"},
+            "direction_x": {"type": "null"},
+            "direction_y": {"type": "null"},
+            "direction_z": {"type": "null"},
+            "facing_camera_mode": {"type": "str", "tags": ["not_in_documentation"]},
+            "rotate_xyz": {"type": "null"},
+            "lookat_y": {"type": "null"},
+            "lookat_xyz": {"type": "null"},
+            "rotate_y": {"type": "null"},
+            "size": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "uv": {"type": "dict", "subcomponent": "component.particle_appearance_billboard:uv"}
+        }
+    },
+    "component.particle_appearance_billboard:direction": {
+        "type": "Keymap",
+        "keys": {
+            "custom_direction": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "min_speed_threshold": {"type": "decimal"},
+            "mode": {"type": "str"}
+        }
+    },
+    "component.particle_appearance_billboard:uv": {
+        "type": "Keymap",
+        "keys": {
+            "base_UV": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "flipbook": {"type": "dict", "subcomponent": "component.particle_appearance_billboard:uv", "tags": ["not_in_documentation"]},
+            "frames_per_second": {"type": "decimal"},
+            "loop": {"type": "bool"},
+            "max_frame": {"type": ["decimal", "str"]},
+            "size_UV": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "step_UV": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "stretch_to_lifetime": {"type": "bool"},
+            "texture_height": {"type": "int", "tags": ["not_in_documentation"]},
+            "texture_width": {"type": "int", "tags": ["not_in_documentation"]},
+            "uv": {"type": "list", "subcomponent": "vector_decimal_molang", "tags": ["not_in_documentation"]},
+            "uv_size": {"type": "list", "subcomponent": "vector_decimal_molang", "tags": ["not_in_documentation"]}
+        }
+    },
+    "component.particle_appearance_tinting": {
+        "type": "Keymap",
+        "normalizer": "normalize_component_particle_appearance_tinting_color",
+        "keys": {
+            "color": {"type": ["dict", "list"], "subcomponent": "component.particle_appearance_tinting:color.group"},
+            "interpolant": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.particle_appearance_tinting:color.group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "component.particle_appearance_tinting:color.dict",
+            "list": "component.particle_appearance_tinting:color.list"
+        }
+    },
+    "component.particle_appearance_tinting:color.dict": {
+        "type": "Keymap",
+        "keys": {
+            "gradient": {"type": ["dict", "list"], "subcomponent": "component.particle_appearance_tinting:color.gradient.group"},
+            "interpolant": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.particle_appearance_tinting:color.gradient.group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "component.particle_appearance_tinting:color.group.dict",
+            "list": "component.particle_appearance_tinting:color.list"
+        }
+    },
+    "component.particle_appearance_tinting:color.group.dict": {
+        "type": "Dict",
+        "field": "value",
+        "types": ["list", "str"],
+        "measure_length": true,
+        "subcomponent": "color"
+    },
+    "component.particle_appearance_tinting:color.list": {
+        "type": "List",
+        "field": "color",
+        "types": ["list", "str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "color"
+    },
+    "component.particle_initial_spin": {
+        "type": "Keymap",
+        "keys": {
+            "rotation": {"type": ["decimal", "str"]},
+            "rotation_rate": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.particle_initialization": {
+        "type": "Keymap",
+        "keys": {
+            "per_render_expression": {"type": "str"},
+            "per_update_expression": {"type": "str", "tags": ["not_in_documentation"]}
+        }
+    },
+    "component.particle_kill_plane": {
+        "type": "List",
+        "field": "variable",
+        "types": ["decimal"],
+        "ordered": true,
+        "measure_length": false,
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    },
+    "component.particle_lifetime_events": {
+        "type": "Keymap",
+        "keys": {
+            "creation_event": {"type": ["list", "str"], "subcomponent": "event_list_or_event"},
+            "expiration_event": {"type": ["list", "str"], "subcomponent": "event_list_or_event"},
+            "timeline": {"type": "dict", "subcomponent": "component.particle_lifetime_events:timeline"}
+        }
+    },
+    "component.particle_lifetime_events:timeline": {
+        "type": "Dict",
+        "field": "timestamp",
+        "types": ["list", "str"],
+        "measure_length": true,
+        "subcomponent": "event_list_or_event"
+    },
+    "component.particle_lifetime_expression": {
+        "type": "Keymap",
+        "keys": {
+            "expiration_expression": {"type": ["decimal", "str"]},
+            "max_lifetime": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.particle_motion_collision": {
+        "type": "Keymap",
+        "keys": {
+            "coefficient_of_restitution": {"type": "decimal"},
+            "collision_drag": {"type": "decimal"},
+            "collision_radius": {"type": "decimal"},
+            "enabled": {"type": ["bool", "int", "str"]},
+            "events": {"type": ["dict", "list"], "subcomponent": "component.particle_motion_collision:events.group"},
+            "expire_on_contact": {"type": "bool"}
+        }
+    },
+    "component.particle_motion_collision:events.group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "component.particle_motion_collision:events.item",
+            "list": "component.particle_motion_collision:events"
+        }
+    },
+    "component.particle_motion_collision:events": {
+        "type": "List",
+        "field": "event",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "component.particle_motion_collision:events.item"
+    },
+    "component.particle_motion_collision:events.item": {
+        "type": "Keymap",
+        "keys": {
+            "event": {"type": "str"},
+            "min_speed": {"type": "decimal"}
+        }
+    },
+    "component.particle_motion_dynamic": {
+        "type": "Keymap",
+        "keys": {
+            "linear_acceleration": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "linear_drag_coefficient": {"type": ["decimal", "str"]},
+            "rotation_acceleration": {"type": ["decimal", "str"]},
+            "rotation_drag_coefficient": {"type": ["decimal", "str"]}
+        }
+    },
+    "component.particle_motion_parametric": {
+        "type": "Keymap",
+        "keys": {
+            "direction": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "relative_position": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "rotation": {"type": ["decimal", "str"]}
+        }
+    }
+}

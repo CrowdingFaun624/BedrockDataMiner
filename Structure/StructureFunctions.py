@@ -282,6 +282,12 @@ def models_normalize_bones(data:DataMinerTyping.ModelGeometryTypedDict, dependen
             output[name] = bone
         data["bones"] = output
 
+is_valid_color:Callable[[Any],bool] = lambda color: (isinstance(color, list) and len(color) in (3, 4) and all(isinstance(channel, (int, float, str)) for channel in color)) or isinstance(color, str)
+def particles_normalize_component_particle_appearance_tinting_color(data:dict[str,str|list[int]|dict[str,str|list[int]]|list[str|list[int]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "color" not in data: return
+    if is_valid_color(data["color"]):
+        data["color"] = [data["color"]]
+
 def recipes_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()
     del output["defined_in"]
@@ -444,6 +450,7 @@ functions:dict[str,Callable] = {
     "materials_normalize_material": materials_normalize_material,
     "models_model_normalize": models_model_normalize,
     "models_normalize_bones": models_normalize_bones,
+    "particles_normalize_component_particle_appearance_tinting_color": particles_normalize_component_particle_appearance_tinting_color,
     "recipes_behavior_pack_comparison_move_function": recipes_behavior_pack_comparison_move_function,
     "resource_packs_normalize": resource_packs_normalize,
     "render_controllers_fix_old": render_controllers_fix_old,
