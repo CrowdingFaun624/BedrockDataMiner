@@ -90,15 +90,15 @@ class StructureBase():
         self.print_exception_list(new_exceptions)
         return output
 
-    def store(self, report:str) -> None:
-        if self.structure_name in file_counts:
-            store_number = file_counts[self.structure_name] + 1
+    def store(self, report:str, name:str) -> None:
+        if name in file_counts:
+            store_number = file_counts[name] + 1
         else:
             store_number = 0
-        comparison_path = FileManager.get_comparison_file_path(self.structure_name, store_number)
+        comparison_path = FileManager.get_comparison_file_path(name, store_number)
         if not comparison_path.parent.exists(): # type: ignore # >:(
             comparison_path.parent.mkdir() # type: ignore
-        file_counts[self.structure_name] = store_number
+        file_counts[name] = store_number
         with open(comparison_path, "wt", encoding="UTF8") as f:
             f.write(report)
 

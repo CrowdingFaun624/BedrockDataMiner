@@ -321,7 +321,7 @@ class DataMinerCollection():
             version2_data = self.get_data_file(version2)
         report, had_changes = self.structure.comparison_report(version1_data, version2_data, version1, version2, versions_between, normalizer_dependencies)
         if store and had_changes:
-            self.structure.store(report)
+            self.structure.store(report, self.name)
         return report
 
     def __repr__(self) -> str:
