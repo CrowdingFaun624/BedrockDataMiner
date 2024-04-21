@@ -1,0 +1,121 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "font_metadata",
+        "subcomponent": "resource_packs"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "fix_font_aliases": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "fonts_fix_font_aliases"
+    },
+    "fix_font_references": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "fonts_fix_font_references"
+    },
+    "fix_fonts": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "fonts_fix_fonts"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "normalizer": "collapse_resource_packs",
+        "subcomponent": "font_metadata"
+    },
+    "font_metadata": {
+        "type": "Keymap",
+        "normalizer": ["fix_fonts", "fix_font_aliases"],
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "font_aliases": {"type": "dict", "subcomponent": "font_aliases"},
+            "fonts": {"type": "dict", "subcomponent": "fonts"},
+            "version": {"type": "int"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "fonts": {
+        "type": "Dict",
+        "field": "font",
+        "types": ["dict"],
+        "measure_length": true,
+        "comparison_move_function": "fonts_font_comparison_move_function",
+        "detect_key_moves": true,
+        "subcomponent": "font"
+    },
+    "font": {
+        "type": "Keymap",
+        "keys": {
+            "font_file": {"type": "str"},
+            "font_format": {"type": "str"},
+            "font_name": {"type": "str"},
+            "lowPerformanceCompatible": {"type": "bool"},
+            "version": {"type": "int"}
+        }
+    },
+    "font_aliases": {
+        "type": "Dict",
+        "field": "font alias",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "font_alias"
+    },
+    "font_alias": {
+        "type": "Keymap",
+        "normalizer": "fix_font_references",
+        "keys": {
+            "alias": {"type": "str"},
+            "font_scale_factor_override": {"type": "int"},
+            "fonts": {"type": "dict", "subcomponent": "font_references"}
+        }
+    },
+    "font_references": {
+        "type": "Dict",
+        "field": "font reference",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "font_reference"
+    },
+    "font_reference": {
+        "type": "Keymap",
+        "keys": {
+            "font_reference": {"type": "str"},
+            "font_scale": {"type": ["float", "int"]},
+            "font_ranges": {"type": "list", "subcomponent": "font_ranges"}
+        }
+    },
+    "font_ranges": {
+        "type": "List",
+        "field": "range",
+        "types": ["dict"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "font_range"
+    },
+    "font_range": {
+        "type": "Keymap",
+        "print_all": true,
+        "keys": {
+            "first": {"type": "int"},
+            "last": {"type": "int"}
+        }
+    }
+}

@@ -118,6 +118,30 @@ def features_fix_weighted_random_features(data:list[list[Any]], dependencies:Dat
         assert len(item) == 2
         data[index] = {"feature": item[0], "weight": item[1]}
 
+def fonts_fix_font_aliases(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "font_aliases" not in data: return
+    output:dict[str,dict[str,str]] = {}
+    for font in data["font_aliases"]:
+        output[font["alias"]] = font
+    data["font_aliases"] = output
+
+def fonts_fix_font_references(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "fonts" not in data: return
+    output:dict[str,dict[str,str]] = {}
+    for font in data["fonts"]:
+        output[font["font_reference"]] = font
+    data["fonts"] = output
+
+def fonts_fix_fonts(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "fonts" not in data: return
+    output:dict[str,dict[str,str]] = {}
+    for font in data["fonts"]:
+        output[font["font_name"]] = font
+    data["fonts"] = output
+
+def fonts_font_comparison_move_function(key:str, value:dict[str,str]) -> str|None:
+    return value.get("font_file", None)
+
 def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
     output:dict[str,dict[str,Any]] = {}
     for resource_pack_name, item_textures_data in data.items():
@@ -390,6 +414,10 @@ functions:dict[str,Callable] = {
     "features_fix_growing_plant_feature_height_distribution": features_fix_growing_plant_feature_height_distribution,
     "features_fix_tree_feature_canopy_leaf_blocks": features_fix_tree_feature_canopy_leaf_blocks,
     "features_fix_weighted_random_features": features_fix_weighted_random_features,
+    "fonts_fix_font_aliases": fonts_fix_font_aliases,
+    "fonts_fix_font_references": fonts_fix_font_references,
+    "fonts_fix_fonts": fonts_fix_fonts,
+    "fonts_font_comparison_move_function": fonts_font_comparison_move_function,
     "item_textures_normalize": item_textures_normalize,
     "items_behavior_pack_comparison_move_function": items_behavior_pack_comparison_move_function,
     "items_fix_old": items_fix_old,
