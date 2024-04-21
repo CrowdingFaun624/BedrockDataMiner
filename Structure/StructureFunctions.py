@@ -219,6 +219,21 @@ def loot_tables_normalize_functions(data:DataMinerTyping.LootTableHasFunctions, 
         del function["function"]
     data["functions"] = output
 
+def materials_normalize_material(data:dict[str,dict[str,Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "materials" in data:
+        assert set(data.keys()) == {"defined_in", "materials"}
+        version:str = data["materials"]["version"]
+        data["version"] = version
+        del data["materials"]["version"]
+    else:
+        materials = data.copy()
+        data.clear()
+        data["materials"] = materials
+        if "defined_in" in data["materials"]:
+            defined_in = data["materials"]["defined_in"]
+            del data["materials"]["defined_in"]
+            data["defined_in"] = defined_in
+
 def models_model_normalize(data:dict[str,dict[str,dict[str,Any]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
     output:dict[str,Any] = {}
     for model_file_name, resource_packs in data.items():
@@ -426,6 +441,7 @@ functions:dict[str,Callable] = {
     "loot_tables_behavior_pack_comparison_move_function": loot_tables_behavior_pack_comparison_move_function,
     "loot_tables_normalize_conditions": loot_tables_normalize_conditions,
     "loot_tables_normalize_functions": loot_tables_normalize_functions,
+    "materials_normalize_material": materials_normalize_material,
     "models_model_normalize": models_model_normalize,
     "models_normalize_bones": models_normalize_bones,
     "recipes_behavior_pack_comparison_move_function": recipes_behavior_pack_comparison_move_function,

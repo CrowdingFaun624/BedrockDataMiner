@@ -1,0 +1,163 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "materials",
+        "subcomponent": "materials"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "normalize_material": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "materials_normalize_material"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "materials": {
+        "type": "Dict",
+        "field": "material",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "normalizer": "collapse_resource_packs",
+        "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "subcomponent": "material"
+    },
+    "material": {
+        "type": "Keymap",
+        "normalizer": "normalize_material",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "materials": {"type": "dict", "subcomponent": "material.materials"},
+            "version": {"type": "str"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "material.materials": {
+        "type": "Dict",
+        "field": "material",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "material.material"
+    },
+    "material.material": {
+        "type": "Keymap",
+        "keys": {
+            "+defines": {"type": "list", "subcomponent": "defines"},
+            "+samplerStates": {"type": "list", "subcomponent": "sampler_states"},
+            "+states": {"type": "list", "subcomponent": "states"},
+            "+variants": {"type": "list", "subcomponent": "variants"},
+            "-defines": {"type": "list", "subcomponent": "defines"},
+            "-states": {"type": "list", "subcomponent": "states"},
+            "alphaDst": {"type": "str"},
+            "backFace": {"type": "dict", "subcomponent": "face"},
+            "blendDst": {"type": "str"},
+            "blendSrc": {"type": "str"},
+            "defines": {"type": "list", "subcomponent": "defines"},
+            "depthBias": {"type": "decimal"},
+            "depthBiasOGL": {"type": "decimal"},
+            "depthFunc": {"type": "str"},
+            "fragmentShader": {"type": "str"},
+            "frontFace": {"type": "dict", "subcomponent": "face"},
+            "isAnimatedTexture": {"type": "int"},
+            "msaaSupport": {"type": "str"},
+            "primitiveMode": {"type": "str"},
+            "samplerStates": {"type": "list", "subcomponent": "sampler_states"},
+            "slopeScaledDepthBias": {"type": "decimal"},
+            "slopeScaledDepthBiasOGL": {"type": "decimal"},
+            "states": {"type": "list", "subcomponent": "states"},
+            "stencilReadMask": {"type": "int"},
+            "stencilRef": {"type": "int"},
+            "stencilRefOverride": {"type": "int"},
+            "stencilWriteMask": {"type": "int"},
+            "variants": {"type": "list", "subcomponent": "variants"},
+            "vertexFields": {"type": "list", "subcomponent": "vertex_fields"},
+            "vertexShader": {"type": "str"},
+            "vrGeometryShader": {"type": "str"}
+        }
+    },
+    "defines": {
+        "type": "List",
+        "field": "definition",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "face": {
+        "type": "Keymap",
+        "keys": {
+            "stencilDepthFailOp": {"type": "str"},
+            "stencilFailOp": {"type": "str"},
+            "stencilFunc": {"type": "str"},
+            "stencilPass": {"type": "str"},
+            "stencilPassOp": {"type": "str"}
+        }
+    },
+    "sampler_states": {
+        "type": "List",
+        "field": "sampler state",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "sampler_states.item"
+    },
+    "sampler_states.item": {
+        "type": "Keymap",
+        "keys": {
+            "samplerIndex": {"type": "int"},
+            "textureFilter": {"type": "str"},
+            "textureWrap": {"type": "str"}
+        }
+    },
+    "states": {
+        "type": "List",
+        "field": "statement",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "variants": {
+        "type": "List",
+        "field": "variant",
+        "types": ["dict"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": "material.materials"
+    },
+    "vertex_fields": {
+        "type": "List",
+        "field": "vertex field",
+        "types": ["dict"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "vertex_fields.item"
+    },
+    "vertex_fields.item": {
+        "type": "Keymap",
+        "keys": {
+            "field": {"type": "str"}
+        }
+    }
+}
