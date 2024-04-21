@@ -35,7 +35,7 @@ class StructureSet(Generic[d]):
 
     def print_text(self, key:D.DiffType|int, data:d) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
         if  isinstance(key, D.DiffType) and key not in self:
-            return [], [Trace.ErrorTrace(RuntimeError("KeyError on \"%s\" for data %s!" % (key, data)), None, None)]
+            return [], [Trace.ErrorTrace(RuntimeError("KeyError on \"%s\" for data %s!" % (key, data)), None, None, data)]
         structure = self[key]
         if structure is None:
             return [SU.Line(SU.stringify(data))], []

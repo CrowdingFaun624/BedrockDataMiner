@@ -63,9 +63,9 @@ class StructureBase():
                 output = self.normalizer(data, normalizer_dependencies, version_number)
             except Exception as e:
                 output = None
-                exceptions.append(Trace.ErrorTrace(e, self.component_name, None))
+                exceptions.append(Trace.ErrorTrace(e, self.component_name, None, data))
             if output is None:
-                exceptions.append(Trace.ErrorTrace(RuntimeError("Output of normalizer is None!"), self.component_name, None))
+                exceptions.append(Trace.ErrorTrace(RuntimeError("Output of normalizer is None!"), self.component_name, None, data))
                 output = data
 
         # other normalizers
@@ -157,7 +157,7 @@ class StructureBase():
     def print_exception_list(self, traces:list[Trace.ErrorTrace]) -> None:
         '''Prints all exceptions and traces in list and raises an exception at the end if the list has any items.'''
         for trace in traces:
-            trace.add(self.structure_name, None)
+            trace.add(self.structure_name, None, force=True)
             trace.finalize()
             print(trace.stringify())
             print()

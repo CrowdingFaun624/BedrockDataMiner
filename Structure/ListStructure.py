@@ -94,7 +94,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             raise TypeError("`check_all_types` was given data containing Diffs!")
         if not isinstance(item, self.types):
             item_types_string = ", ".join(type_key.__name__ for type_key in self.types)
-            return Trace.ErrorTrace(TypeError("Index, item %i: %s in %s excepted is %s instead of [%s]!" % (index, SU.stringify(item), self.name, item.__class__.__name__, item_types_string)), self.name, None)
+            return Trace.ErrorTrace(TypeError("Index, item %i: %s in %s excepted is %s instead of [%s]!" % (index, SU.stringify(item), self.name, item.__class__.__name__, item_types_string)), self.name, None, item)
 
     def check_all_types(self, data:list[d]) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
@@ -105,7 +105,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 output.append(check_type_output)
                 continue
 
-            structure, new_exceptions = self.choose_structure_flat(index, type(item))
+            structure, new_exceptions = self.choose_structure_flat(index, type(item), item)
             for exception in new_exceptions: exception.add(self.name, index)
             output.extend(new_exceptions)
             if structure is not None:
@@ -121,10 +121,10 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 try:
                     normalizer(data, normalizer_dependencies, version_number)
                 except Exception as e:
-                    return None, [Trace.ErrorTrace(e, self.name, None)]
+                    return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
         for index, item in enumerate(data):
-            structure, new_exceptions = self.choose_structure_flat(index, type(item))
+            structure, new_exceptions = self.choose_structure_flat(index, type(item), item)
             for exception in new_exceptions: exception.add(self.name, index)
             exceptions.extend(new_exceptions)
             if structure is not None:
@@ -142,7 +142,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         if tag in self.tags:
             output.extend(data_path.copy((index, type(value))).embed(value) for index, value in enumerate(data))
         for index, value in enumerate(data):
-            structure, new_exceptions = self.choose_structure_flat(index, type(value))
+            structure, new_exceptions = self.choose_structure_flat(index, type(value), value)
             for exception in new_exceptions: exception.add(self.name, index)
             exceptions.extend(new_exceptions)
             if structure is not None:
@@ -214,11 +214,11 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     output.append(D.Diff(new=item))
             return output, exceptions
 
-    def choose_structure_flat(self, key:int, value:type[d]) -> tuple[Structure.Structure|None,list[Trace.ErrorTrace]]:
+    def choose_structure_flat(self, key:int, value_type:type[d], value:d|None) -> tuple[Structure.Structure|None,list[Trace.ErrorTrace]]:
         if isinstance(self.structure, dict):
-            output = self.structure.get(value, Structure.StructureFailure.choose_structure_failure)
+            output = self.structure.get(value_type, Structure.StructureFailure.choose_structure_failure)
             if output is Structure.StructureFailure.choose_structure_failure:
-                return None, [Trace.ErrorTrace(KeyError("Failed to get Structure of item %i: %s" % (key, value)), self.name, key)]
+                return None, [Trace.ErrorTrace(KeyError("Failed to get Structure of item %i: %s" % (key, value_type)), self.name, key, value)]
             return output, []
         else:
             return self.structure, []
@@ -230,7 +230,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             if isinstance(self.structure, dict):
                 structure = self.structure.get(type(item_iter), Structure.StructureFailure.choose_structure_failure)
                 if structure is Structure.StructureFailure.choose_structure_failure:
-                    exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure of item %i: %s" % (index, item_iter)), self.name, index))
+                    exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure of item %i: %s" % (index, item_iter)), self.name, index, item))
                     continue
                 output[diff_type] = structure
             else:
@@ -261,7 +261,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         exceptions:list[Trace.ErrorTrace] = []
         items_str:list[str] = [] # print_flat only
         if not isinstance(data, Iterable):
-            return [], [Trace.ErrorTrace(TypeError("`data` is not an Iterable, but instead type %s!" % (type(data))), self.name, None)]
+            return [], [Trace.ErrorTrace(TypeError("`data` is not an Iterable, but instead type %s!" % (type(data))), self.name, None, data)]
         for index, item in enumerate(data):
             structure_set, new_exceptions = self.choose_structure(index, item)
             for exception in new_exceptions: exception.add(self.name, index)
@@ -274,7 +274,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 if len(substructure_output) == 1:
                     items_str.append(substructure_output[0].text)
                 else:
-                    exceptions.append(Trace.ErrorTrace(RuntimeError("Substructure of flat-printing returned multiple lines!"), self.name, index))
+                    exceptions.append(Trace.ErrorTrace(RuntimeError("Substructure of flat-printing returned multiple lines!"), self.name, index, item))
             else:
                 output.extend(self.print_item(index, item, substructure_output))
         if self.print_flat:
@@ -286,7 +286,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         exceptions:list[Trace.ErrorTrace] = []
         any_changes = False
         if not isinstance(data, Iterable):
-            return [], False, [Trace.ErrorTrace(TypeError("`data` is not an Iterable, but instead type %s!" % (type(data))), self.name, None)]
+            return [], False, [Trace.ErrorTrace(TypeError("`data` is not an Iterable, but instead type %s!" % (type(data))), self.name, None, data)]
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
         for index, item in enumerate(data):

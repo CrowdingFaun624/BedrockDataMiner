@@ -74,9 +74,9 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             raise TypeError("`check_all_types` was given data containing Diffs!")
         if not isinstance(data, self.types):
             item_types_string = ", ".join(type_key.__name__ for type_key in self.types)
-            output.append(Trace.ErrorTrace(TypeError("Data %s in %s excepted is %s instead of [%s]!" % (SU.stringify(data), self.name, data.__class__.__name__, item_types_string)), self.name, None))
+            output.append(Trace.ErrorTrace(TypeError("Data %s in %s excepted is %s instead of [%s]!" % (SU.stringify(data), self.name, data.__class__.__name__, item_types_string)), self.name, None, data))
             return output
-        structure, new_exceptions = self.choose_structure_flat("", type(data))
+        structure, new_exceptions = self.choose_structure_flat("", type(data), data)
         for exception in new_exceptions: exception.add(self.name, None)
         output.extend(new_exceptions)
         if structure is not None:
@@ -85,13 +85,13 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             output.extend(new_exceptions)
         return output
 
-    def choose_structure_flat(self, key:Literal[""], value:type[NbtTypes.TAG]) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+    def choose_structure_flat(self, key:Literal[""], value_type:type[NbtTypes.TAG], value:NbtTypes.TAG|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         if key != "":
-            return None, [Trace.ErrorTrace(RuntimeError("Nbt root tag name at %s is not an empty string, but instead \"%s\"!" % (key)), self.name, key)]
+            return None, [Trace.ErrorTrace(RuntimeError("Nbt root tag name at %s is not an empty string, but instead \"%s\"!" % (key)), self.name, key, value_type)]
         if isinstance(self.structure, dict):
-            output = self.structure.get(value, Structure.StructureFailure.choose_structure_failure)
+            output = self.structure.get(value_type, Structure.StructureFailure.choose_structure_failure)
             if output is Structure.StructureFailure.choose_structure_failure:
-                return None, [Trace.ErrorTrace(KeyError("Failed to get Structure at: %s" % (value)), self.name, key)]
+                return None, [Trace.ErrorTrace(KeyError("Failed to get Structure at: %s" % (value_type)), self.name, key, value)]
             return output, []
         else:
             return self.structure, []
@@ -103,7 +103,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             if isinstance(self.structure, dict):
                 structure = self.structure.get(type(item_iter), Structure.StructureFailure.choose_structure_failure)
                 if structure is Structure.StructureFailure.choose_structure_failure:
-                    exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure at: %s" % (item_iter)), self.name, None))
+                    exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure at: %s" % (item_iter)), self.name, None, item))
                     continue
                 output[diff_type] = structure
             else:
@@ -114,16 +114,16 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         try:
             data_parsed = NbtReader.unpack_bytes(data.value, gzipped=False, endianness=self.endianness)[1]
         except Exception as e:
-            return None, [Trace.ErrorTrace(e, self.name, None)]
+            return None, [Trace.ErrorTrace(e, self.name, None, data)]
         if not self.children_has_normalizer: return data_parsed, []
         if self.normalizer is not None:
             for normalizer in self.normalizer:
                 try:
                     normalizer(data_parsed, normalizer_dependencies, version_number)
                 except Exception as e:
-                    return None, [Trace.ErrorTrace(e, self.name, None)]
+                    return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.choose_structure_flat("", type(data_parsed))
+        structure, new_exceptions = self.choose_structure_flat("", type(data_parsed), data_parsed)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if structure is not None:
@@ -137,7 +137,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
     def get_tag_paths(self, data: NbtTypes.TAG, tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
         exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.choose_structure_flat("", type(data))
+        structure, new_exceptions = self.choose_structure_flat("", type(data), data)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if structure is None: return [], exceptions

@@ -106,13 +106,13 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):
             raise TypeError("`check_type` was given data containing Diffs!")
         if not isinstance(value, self.types):
-            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (SU.stringify(key), SU.stringify(value), self.name, self.types)) ,self.name, key)
+            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (SU.stringify(key), SU.stringify(value), self.name, self.types)), self.name, key, value)
 
     def check_all_types(self, data:MutableMapping[str,d]) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.valid_types):
-            output.append(Trace.ErrorTrace(TypeError("`data` has the wrong type, %s instead of [%s]!" % (type(data), ", ".join(valid_type.__name__ for valid_type in self.valid_types))), self.name, None))
+            output.append(Trace.ErrorTrace(TypeError("`data` has the wrong type, %s instead of [%s]!" % (type(data), ", ".join(valid_type.__name__ for valid_type in self.valid_types))), self.name, None, data))
             return output
         for key, value in data.items():
             check_type_output = self.check_type(key, value)
@@ -120,7 +120,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                 output.append(check_type_output)
                 continue
 
-            structure, new_exceptions = self.choose_structure_flat(key, type(value))
+            structure, new_exceptions = self.choose_structure_flat(key, type(value), value)
             for exception in new_exceptions: exception.add(self.name, key)
             output.extend(new_exceptions)
             if structure is not None:
@@ -136,10 +136,10 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                 try:
                     normalizer(data, normalizer_dependencies, version_number)
                 except Exception as e:
-                    return None, [Trace.ErrorTrace(e, self.name, None)]
+                    return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
-            structure, new_exceptions = self.choose_structure_flat(key, type(value))
+            structure, new_exceptions = self.choose_structure_flat(key, type(value), value)
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
             if structure is not None:
@@ -157,7 +157,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             output.extend(data_path.copy((key, type(value))).embed(value) for key, value in data.items())
         exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
-            structure, new_exceptions = self.choose_structure_flat(key, type(value))
+            structure, new_exceptions = self.choose_structure_flat(key, type(value), value)
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
             if structure is not None:
@@ -266,11 +266,11 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             sorted_output[key] = value
         return sorted_output, exceptions
 
-    def choose_structure_flat(self, key:str, value: type[d]) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+    def choose_structure_flat(self, key:str, value_type: type[d], value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         if isinstance(self.structure, dict):
-            output:Structure.Structure[d]|None|Literal[Structure.StructureFailure.choose_structure_failure] = self.structure.get(value, Structure.StructureFailure.choose_structure_failure)
+            output:Structure.Structure[d]|None|Literal[Structure.StructureFailure.choose_structure_failure] = self.structure.get(value_type, Structure.StructureFailure.choose_structure_failure)
             if output is Structure.StructureFailure.choose_structure_failure:
-                return None, [Trace.ErrorTrace(KeyError("Failed to get Structure of key, value: %s: %s" % (key, value)), self.name, key)]
+                return None, [Trace.ErrorTrace(KeyError("Failed to get Structure of key, value: %s: %s" % (key, value_type)), self.name, key, value)]
             return output, []
         else:
             return self.structure, []
@@ -282,7 +282,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             if isinstance(self.structure, dict):
                 structure = self.structure.get(type(value_iter), Structure.StructureFailure.choose_structure_failure)
                 if structure is Structure.StructureFailure.choose_structure_failure:
-                    exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure of key, value: %s: %s" % (key, value)), self.name, D.first_existing_property(key)))
+                    exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure of key, value: %s: %s" % (key, value)), self.name, D.first_existing_property(key), value_iter))
                     continue
                     # errors might not be caught by the type checker.
                 output[value_diff_type] = structure
@@ -306,7 +306,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
     def print_text(self, data:MutableMapping[str, d]) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         output:list[SU.Line] = []
         if not isinstance(data, self.valid_types):
-            return output, [Trace.ErrorTrace(TypeError("`data` is not [%s], but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), type(data))), self.name, None)]
+            return output, [Trace.ErrorTrace(TypeError("`data` is not [%s], but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), type(data))), self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
             structure_set, new_exceptions = self.choose_structure(key, value)
@@ -322,7 +322,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
         output:list[SU.Line] = []
         any_changes = False
         if not isinstance(data, self.valid_types):
-            return [], False, [Trace.ErrorTrace(TypeError("`data` is not [%s], but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), type(data))), self.name, None)]
+            return [], False, [Trace.ErrorTrace(TypeError("`data` is not [%s], but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), type(data))), self.name, None, data)]
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
         exceptions:list[Trace.ErrorTrace] = []

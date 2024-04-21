@@ -88,15 +88,15 @@ class KeymapStructure(DictStructure.DictStructure[d]):
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):
             raise TypeError("`check_all_types` was given data containing Diffs!")
         if key not in self.key_types:
-            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because key is not recognized!" % (SU.stringify(key), SU.stringify(value), self.name)), self.name, key)
+            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because key is not recognized!" % (SU.stringify(key), SU.stringify(value), self.name)), self.name, key, value)
         if type(value) not in self.key_types[key]:
             value_types_string = ", ".join(type_key.__name__ for type_key in self.key_types[key])
-            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because value is %s instead of [%s]!" % (SU.stringify(key), SU.stringify(value), self.name, value.__class__.__name__, value_types_string)), self.name, key)
+            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because value is %s instead of [%s]!" % (SU.stringify(key), SU.stringify(value), self.name, value.__class__.__name__, value_types_string)), self.name, key, value)
 
-    def choose_structure_flat(self, key: str, value:type[d]) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        output = self.keys.get((key, value), Structure.StructureFailure.choose_structure_failure)
+    def choose_structure_flat(self, key: str, value_type:type[d], value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+        output = self.keys.get((key, value_type), Structure.StructureFailure.choose_structure_failure)
         if output is Structure.StructureFailure.choose_structure_failure:
-            return None, [Trace.ErrorTrace(KeyError("Failed to get Structure in %s for key, value %s: %s" % (self.name, key, value)), self.name, key)]
+            return None, [Trace.ErrorTrace(KeyError("Failed to get Structure in %s for key, value %s: %s" % (self.name, key, value_type)), self.name, key, value)]
         return output, []
 
     def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
@@ -106,7 +106,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
         for key, value in data.items():
             if tag in self.tags[key]:
                 output.append(data_path.copy((key, type(value))).embed(value))
-            structure, new_exceptions = self.choose_structure_flat(key, type(value))
+            structure, new_exceptions = self.choose_structure_flat(key, type(value), value)
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
             if structure is not None:
@@ -127,7 +127,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
         for key_iter, value_iter, key_diff_type, value_diff_type in iterator:
             structure = self.keys.get((key_iter, type(value_iter)), Structure.StructureFailure.choose_structure_failure)
             if structure is Structure.StructureFailure.choose_structure_failure:
-                exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure in %s for key, value: %s: %s" % (self.name, key_iter, value_iter)), self.name, key_iter))
+                exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure in %s for key, value: %s: %s" % (self.name, key_iter, value_iter)), self.name, key_iter, value_iter))
                 continue
             output[value_diff_type] = structure
         return StructureSet.StructureSet(output), exceptions

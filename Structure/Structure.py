@@ -25,7 +25,7 @@ class Structure(Generic[a]):
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.name)
 
-    def choose_structure_flat(self, key, value:type) -> Union["Structure",None]: ...
+    def choose_structure_flat(self, key, value_type:type, value) -> Union["Structure",None]: ...
 
     def print_single(self, key_str:str|int|None, data:a, message:str, output:list[SU.Line], printer:Union["Structure[a]",None]) -> list[Trace.ErrorTrace]:
         exceptions:list[Trace.ErrorTrace] = []
