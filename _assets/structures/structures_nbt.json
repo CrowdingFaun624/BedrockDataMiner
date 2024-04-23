@@ -14,6 +14,9 @@
         "dependencies": [],
         "function_name": "structures_nbt_normalize_text"
     },
+    "outdated": {
+        "type": "Tag"
+    },
     "structures": {
         "type": "Dict",
         "field": "structure",
@@ -142,6 +145,8 @@
             "CookingTotalTimes": {"type": "TAG_Int_Array", "subcomponent": "nbt:cooking_times"},
             "CookTime": {"type": "TAG_Short"},
             "CookTimeTotal": {"type": "TAG_Short"},
+            "cooldown_ends_at": {"type": "TAG_Long", "tags": ["outdated"]},
+            "current_mobs": {"type": "TAG_List", "subcomponent": "nbt:current_mobs", "tags": ["outdated"]},
             "Data": {"type": "TAG_Int"},
             "Delay": {"type": "TAG_Short"},
             "final_state": {"type": "TAG_String"},
@@ -154,7 +159,9 @@
             "Items": {"type": "TAG_List", "subcomponent": "nbt:items"},
             "joint": {"type": "TAG_String"},
             "Lock": {"type": "TAG_String"},
+            "loot_tables_to_eject": {"type": "TAG_List", "subcomponent": "nbt:ominous_config.loot_tables_to_eject", "tags": ["outdated"]},
             "LootTable": {"type": "TAG_String"},
+            "LootTableSeed": {"type": "TAG_Long", "tags": ["outdated"]},
             "MaxNearbyEntities": {"type": "TAG_Short"},
             "MaxSpawnDelay": {"type": "TAG_Short"},
             "metadata": {"type": "TAG_String"},
@@ -162,6 +169,7 @@
             "mirror": {"type": "TAG_String"},
             "mode": {"type": "TAG_String"},
             "name": {"type": "TAG_String"},
+            "next_mob_spawns_at": {"type": "TAG_Long", "tags": ["outdated"]},
             "normal_config": {"type": "TAG_Compound", "subcomponent": "nbt:normal_config"},
             "ominous_config": {"type": "TAG_Compound", "subcomponent": "nbt:ominous_config"},
             "OutputSignal": {"type": "TAG_Int"},
@@ -174,6 +182,8 @@
             "powered": {"type": "TAG_Byte"},
             "RecipesUsed": {"type": "TAG_Compound", "subcomponent": "nbt:recipes_used"},
             "RecipesUsedSize": {"type": "TAG_Short"},
+            "registered_players": {"type": "TAG_List", "subcomponent": "nbt:registered_players", "tags": ["outdated"]},
+            "required_player_range": {"type": "TAG_Int", "tags": ["outdated"]},
             "RequiredPlayerRange": {"type": "TAG_Short"},
             "Rot": {"type": "TAG_Byte"},
             "rotation": {"type": "TAG_String"},
@@ -182,20 +192,29 @@
             "sherds": {"type": "TAG_List", "subcomponent": "nbt:sherds"},
             "showair": {"type": "TAG_Byte"},
             "showboundingbox": {"type": "TAG_Byte"},
+            "simultaneous_mobs": {"type": "TAG_Float", "tags": ["outdated"]},
+            "simultaneous_mobs_added_per_player": {"type": "TAG_Float", "tags": ["outdated"]},
             "sizeX": {"type": "TAG_Int"},
             "sizeY": {"type": "TAG_Int"},
             "sizeZ": {"type": "TAG_Int"},
             "SkullType": {"type": "TAG_Byte"},
+            "spawn_potentials": {"type": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials", "tags": ["outdated"]},
+            "spawn_range": {"type": "TAG_Int", "tags": ["outdated"]},
             "SpawnCount": {"type": "TAG_Short"},
             "SpawnData": {"type": "TAG_Compound", "subcomponent": "entity_nbt"},
             "SpawnPotentials": {"type": "TAG_List", "subcomponent": "nbt:spawn_potentials"},
             "SpawnRange": {"type": "TAG_Short"},
             "target": {"type": "TAG_String"},
+            "target_cooldown_length": {"type": "TAG_Int", "tags": ["outdated"]},
             "target_pool": {"type": "TAG_String"},
             "Text1": {"type": "dict", "subcomponent": "nbt:text"},
             "Text2": {"type": "dict", "subcomponent": "nbt:text"},
             "Text3": {"type": "dict", "subcomponent": "nbt:text"},
-            "Text4": {"type": "dict", "subcomponent": "nbt:text"}
+            "Text4": {"type": "dict", "subcomponent": "nbt:text"},
+            "ticks_between_spawn": {"type": "TAG_Int", "tags": ["outdated"]},
+            "total_mobs": {"type": "TAG_Float", "tags": ["outdated"]},
+            "total_mobs_added_per_player": {"type": "TAG_Float", "tags": ["outdated"]},
+            "total_mobs_spawned": {"type": "TAG_Int", "tags": ["outdated"]}
         }
     },
     "nbt:config": {
@@ -209,6 +228,14 @@
         "type": "NbtTagIntArray",
         "field": "time",
         "types": ["TAG_Int"],
+        "measure_length": true,
+        "ordered": false,
+        "subcomponent": null
+    },
+    "nbt:current_mobs": {
+        "type": "NbtTagList",
+        "field": "mob",
+        "types": ["null"],
         "measure_length": true,
         "ordered": false,
         "subcomponent": null
@@ -330,6 +357,14 @@
         "field": "recipe",
         "types": ["TAG_Int"],
         "measure_length": true,
+        "subcomponent": null
+    },
+    "nbt:registered_players": {
+        "type": "NbtTagList",
+        "field": "player",
+        "types": ["null"],
+        "measure_length": true,
+        "ordered": false,
         "subcomponent": null
     },
     "nbt:sherds": {
