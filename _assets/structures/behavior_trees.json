@@ -1,0 +1,161 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "behavior_trees",
+        "subcomponent": "behavior_trees"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "empty_dict": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "vector_int": {
+        "type": "List",
+        "field": "vector item",
+        "types": ["int"],
+        "ordered": true,
+        "print_all": true,
+        "print_flat": true,
+        "subcomponent": null
+    },
+    "behavior_trees": {
+        "type": "Dict",
+        "field": "behavior tree",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "subcomponent": "behavior_tree"
+    },
+    "behavior_tree": {
+        "type": "Keymap",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "minecraft:behavior_tree": {"type": "dict", "subcomponent": "minecraft:behavior_tree"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "resource pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "minecraft:behavior_tree": {
+        "type": "Keymap",
+        "keys": {
+            "minecraft:name": {"type": "str"},
+            "minecraft:root": {"type": "dict", "subcomponent": "root"}
+        }
+    },
+    "root": {
+        "type": "Keymap",
+        "keys": {
+            "minecraft:sequence": {"type": "dict", "subcomponent": "root.sequence"}
+        }
+    },
+    "root.sequence": {
+        "type": "Keymap",
+        "keys": {
+            "children": {"type": "list", "subcomponent": "root.sequence.children"}
+        }
+    },
+    "root.sequence.children": {
+        "type": "List",
+        "field": "child",
+        "types": ["dict"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "root.sequence.children.item"
+    },
+    "root.sequence.children.item": {
+        "type": "Keymap",
+        "keys": {
+            "minecraft:activate_tool": {"type": "dict", "subcomponent": "behavior.activate_tool"},
+            "minecraft:attack": {"type": "dict", "subcomponent": "behavior.attack"},
+            "minecraft:break_block": {"type": "dict", "subcomponent": "behavior.break_block"},
+            "minecraft:consume_item": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:find_block": {"type": "dict", "subcomponent": "behavior.find_block"},
+            "minecraft:interact": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:find_entity": {"type": "dict", "subcomponent": "behavior.find_entity"},
+            "minecraft:look_at": {"type": "dict", "subcomponent": "behavior.look_at"},
+            "minecraft:look_at_entity": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:move": {"type": "dict", "subcomponent": "behavior.move"},
+            "minecraft:move_to": {"type": "dict", "subcomponent": "behavior.move_to"},
+            "minecraft:place_block": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:shoot_bow": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:use_entity": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:wait": {"type": "dict", "subcomponent": "behavior.wait"},
+            "minecraft:wait_ticks": {"type": "dict", "subcomponent": "empty_dict"}
+        }
+    },
+    "behavior.activate_tool": {
+        "type": "Keymap",
+        "keys": {
+            "block_pos": {"type": "list", "subcomponent": "vector_int"}
+        }
+    },
+    "behavior.attack": {
+        "type": "Keymap",
+        "keys": {
+            "num_of_ticks": {"type": "int"}
+        }
+    },
+    "behavior.break_block": {
+        "type": "Keymap",
+        "keys": {
+            "block_pos": {"type": "list", "subcomponent": "vector_int"},
+            "num_of_ticks": {"type": "int"}
+        }
+    },
+    "behavior.find_block": {
+        "type": "Keymap",
+        "keys": {
+            "block_name": {"type": "str"}
+        }
+    },
+    "behavior.find_entity": {
+        "type": "Keymap",
+        "keys": {
+            "entity_name": {"type": "str"}
+        }
+    },
+    "behavior.look_at": {
+        "type": "Keymap",
+        "keys": {
+            "block_pos": {"type": "list", "subcomponent": "vector_int"}
+        }
+    },
+    "behavior.move": {
+        "type": "Keymap",
+        "keys": {
+            "desired_direction": {"type": "str"},
+            "max_number_of_ticks": {"type": "int"}
+        }
+    },
+    "behavior.move_to": {
+        "type": "Keymap",
+        "keys": {
+            "block_pos_id": {"type": "str"},
+            "distance_epsilon": {"type": "decimal"}
+        }
+    },
+    "behavior.wait": {
+        "type": "Keymap",
+        "keys": {
+            "wait_duration": {"type": "int"}
+        }
+    }
+}
