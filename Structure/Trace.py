@@ -35,7 +35,7 @@ class ErrorTrace():
             return "Exception at %s:\n%s" % (trace_string, "\n".join(exception_lines))
         else:
             data_string = str(self.data)
-            return "Exception at %s from data %s:\n%s" % (trace_string, data_string, "\n".join(exception_lines))
+            return "Exception at %s from data %s:\n%s" % (trace_string, data_string, "".join(exception_lines))
 
     def __repr__(self) -> str:
         finalized_str = "finalized" if self.is_final else "unfinalized"
