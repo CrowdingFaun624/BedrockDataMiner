@@ -64,11 +64,13 @@ class StructureBase():
             except Exception as e:
                 output = None
                 exceptions.append(Trace.ErrorTrace(e, self.component_name, None, data))
-            if output is None:
-                exceptions.append(Trace.ErrorTrace(RuntimeError("Output of normalizer is None!"), self.component_name, None, data))
-                output = data
+            else:
+                if output is None:
+                    exceptions.append(Trace.ErrorTrace(RuntimeError("Output of normalizer is None!"), self.component_name, None, data))
+                    output = None
 
         # other normalizers
+        self.print_exception_list(exceptions)
         assert self.structure is not None
         normalizer_output, new_exceptions = self.structure.normalize(output, normalizer_dependencies, version_number)
         exceptions.extend(new_exceptions)
