@@ -7,10 +7,10 @@ import Downloader.VersionsParser as VersionsParser
 import Structure.StructureBase as StructureBase
 import Structure.Importer.Importer as Importer
 import Utilities.FileManager as FileManager
-from Utilities.FunctionCaller import WaitValue
 import Utilities.TypeVerifier as TypeVerifier
 import Utilities.Version as Version
 
+import DataMiners.AllFiles.AllFilesDataMiners as AllFilesDataMiners
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
 import DataMiners.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
@@ -36,6 +36,7 @@ import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEv
 
 all_dataminers:Sequence[type[DataMiner.DataMiner]] = []
 dataminer_collections:list[Sequence[type[DataMiner.DataMiner]]] = [
+    AllFilesDataMiners.dataminers,
     BehaviorPacksDataMiners.dataminers,
     BlocksClientDataMiners.dataminers,
     DuplicateSoundsDataMiners.dataminers,
@@ -57,7 +58,7 @@ dataminer_collections:list[Sequence[type[DataMiner.DataMiner]]] = [
     TagSearcherDataMiners.dataminers,
     TextureListDataMiners.dataminers,
     UndefinedSoundEventsDataMiners.dataminers,
-    UnusedSoundEventsDataMiners.dataminers
+    UnusedSoundEventsDataMiners.dataminers,
 ]
 for dataminer_collection in dataminer_collections:
     all_dataminers.extend(dataminer_collection)
