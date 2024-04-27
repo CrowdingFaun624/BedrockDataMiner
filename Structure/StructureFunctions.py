@@ -1,5 +1,5 @@
 import json
-from typing import Any, Callable, cast
+from typing import Any, Callable, cast, TypedDict
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
@@ -414,6 +414,25 @@ def structures_nbt_normalize_text(data:dict[str,NbtTypes.TAG_String], dependenci
 
 texture_list_comparison_move_function = lambda key, value: key
 
+terrain_textures_normalize_typed_dict = TypedDict("terrain_textures_normalize_typed_dict", {"resource_pack_name": str, "texture_name": str, "padding": int, "num_mip_levels": int, "texture_data": dict[str,dict[str,str]]})
+def terrain_textures_normalize(data:dict[str,terrain_textures_normalize_typed_dict], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
+    normal_keys = set(["resource_pack_name", "texture_name", "padding", "num_mip_levels", "texture_data"])
+    other_keys = {"texture_name": {}, "padding": {}, "num_mip_levels": {}}
+    texture_data:dict[str,dict[str,Any]] = {}
+    for resource_pack_name, terrain_textures_data in data.items():
+        assert set(terrain_textures_data.keys()) == normal_keys
+        for other_key_key, other_key_values in other_keys.items():
+            if other_key_key in terrain_textures_data:
+                other_key_values[resource_pack_name] = terrain_textures_data[other_key_key]
+        for terrain, terrain_data in terrain_textures_data["texture_data"].items():
+            if terrain in texture_data:
+                texture_data[terrain][resource_pack_name] = terrain_data
+            else:
+                texture_data[terrain] = {resource_pack_name: terrain_data}
+    output = other_keys
+    output["texture_data"] = texture_data
+    return output
+
 def texture_list_normalize(data:dict[str,list[str]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,list[str]]:
     output:dict[str,list[str]] = {}
     for resource_pack, textures in data.items():
@@ -492,6 +511,7 @@ functions:dict[str,Callable] = {
     "structures_resource_pack_move": structures_resource_pack_move,
     "structures_structure_move": structures_structure_move,
     "structures_nbt_normalize_text": structures_nbt_normalize_text,
+    "terrain_textures_normalize": terrain_textures_normalize,
     "texture_list_comparison_move_function": texture_list_comparison_move_function,
     "texture_list_normalize": texture_list_normalize,
 }
