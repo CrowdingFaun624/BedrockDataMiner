@@ -151,6 +151,18 @@ def fonts_fix_fonts(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTy
 def fonts_font_comparison_move_function(key:str, value:dict[str,str]) -> str|None:
     return value.get("font_file", None)
 
+def gui_routes_normalize(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    assert "routes" in data
+    data["routes"] = {route["fileName"]: route for route in data["routes"]}
+
+def gui_routes_supported_routes_normalize(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    assert "supportedRoutes" in data
+    data["supportedRoutes"] = {route["route"]: route for route in data["supportedRoutes"]}
+
+def gui_routes_params_normalize(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    assert "params" in data
+    data["params"] = {route["name"]: route for route in data["params"]}
+
 def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
     output:dict[str,dict[str,Any]] = {}
     for resource_pack_name, item_textures_data in data.items():
@@ -478,6 +490,9 @@ functions:dict[str,Callable] = {
     "fonts_fix_font_references": fonts_fix_font_references,
     "fonts_fix_fonts": fonts_fix_fonts,
     "fonts_font_comparison_move_function": fonts_font_comparison_move_function,
+    "gui_routes_normalize": gui_routes_normalize,
+    "gui_routes_supported_routes_normalize": gui_routes_supported_routes_normalize,
+    "gui_routes_params_normalize": gui_routes_params_normalize,
     "item_textures_normalize": item_textures_normalize,
     "items_behavior_pack_comparison_move_function": items_behavior_pack_comparison_move_function,
     "items_fix_old": items_fix_old,

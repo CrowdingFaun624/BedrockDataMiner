@@ -1,0 +1,100 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "gui_routes",
+        "subcomponent": "parent"
+    },
+    "normalize_routes": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "gui_routes_normalize"
+    },
+    "normalize_supported_routes": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "gui_routes_supported_routes_normalize"
+    },
+    "normalize_params": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "gui_routes_params_normalize"
+    },
+    "parent": {
+        "type": "Keymap",
+        "normalizer": "normalize_routes",
+        "keys": {
+            "routes": {"type": "dict", "subcomponent": "routes"}
+        }
+    },
+    "routes": {
+        "type": "Dict",
+        "field": "route",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "route"
+    },
+    "route": {
+        "type": "Keymap",
+        "normalizer": "normalize_supported_routes",
+        "keys": {
+            "defaultRoute": {"type": "str"},
+            "fileName": {"type": "str"},
+            "scope": {"type": "list", "subcomponent": "scope"},
+            "supportedRoutes": {"type": "dict", "subcomponent": "supported_routes"}
+        }
+    },
+    "scope": {
+        "type": "List",
+        "field": "scope",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "supported_routes": {
+        "type": "Dict",
+        "field": "supported route",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "supported_route"
+    },
+    "supported_route": {
+        "type": "Keymap",
+        "normalizer": "normalize_params",
+        "keys": {
+            "modes": {"type": "list", "subcomponent": "modes"},
+            "params": {"type": "dict", "subcomponent": "parameters"},
+            "regexp": {"type": "str"},
+            "route": {"type": "str"}
+        }
+    },
+    "modes": {
+        "type": "List",
+        "field": "mode",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "parameters": {
+        "type": "Dict",
+        "field": "parameter",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "parameter"
+    },
+    "parameter": {
+        "type": "Keymap",
+        "keys": {
+            "delimiter": {"type": "str"},
+            "name": {"type": "str"},
+            "optional": {"type": "bool"},
+            "pattern": {"type": "str"},
+            "prefix": {"type": "str"},
+            "repeat": {"type": "bool"}
+        }
+    }
+}
