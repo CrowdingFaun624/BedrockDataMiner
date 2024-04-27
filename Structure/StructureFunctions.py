@@ -118,6 +118,15 @@ def features_fix_weighted_random_features(data:list[list[Any]], dependencies:Dat
         assert len(item) == 2
         data[index] = {"feature": item[0], "weight": item[1]}
 
+def flipbook_textures_fix_flipbook_textures(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    for resource_pack_name, resource_pack_data in data.items():
+        start_length = len(resource_pack_data)
+        data[resource_pack_name] = {flipbook_texture["atlas_tile"]: flipbook_texture for flipbook_texture in resource_pack_data}
+        if len(resource_pack_data) != start_length:
+            raise RuntimeError("Duplicate `atlas_tile` keys detected!")
+
+flipbook_textures_texture_move_function:Callable[[str, dict[str,str]],str] = lambda key, value: value["flipbook_texture"]
+
 def fonts_fix_font_aliases(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     if "font_aliases" not in data: return
     output:dict[str,dict[str,str]] = {}
@@ -444,6 +453,8 @@ functions:dict[str,Callable] = {
     "features_fix_growing_plant_feature_height_distribution": features_fix_growing_plant_feature_height_distribution,
     "features_fix_tree_feature_canopy_leaf_blocks": features_fix_tree_feature_canopy_leaf_blocks,
     "features_fix_weighted_random_features": features_fix_weighted_random_features,
+    "flipbook_textures_fix_flipbook_textures": flipbook_textures_fix_flipbook_textures,
+    "flipbook_textures_texture_move_function": flipbook_textures_texture_move_function,
     "fonts_fix_font_aliases": fonts_fix_font_aliases,
     "fonts_fix_font_references": fonts_fix_font_references,
     "fonts_fix_fonts": fonts_fix_fonts,

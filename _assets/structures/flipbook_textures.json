@@ -1,0 +1,57 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "flipbook_textures",
+        "subcomponent": "resource_packs"
+    },
+    "collapse_resource_packs": {
+        "type": "Normalizer",
+        "dependencies": ["resource_packs"],
+        "function_name": "collapse_resource_packs_without_defined_in"
+    },
+    "fix_flipbook_textures": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "flipbook_textures_fix_flipbook_textures"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "field": "resource pack",
+        "types": ["dict"],
+        "normalizer": ["fix_flipbook_textures", "collapse_resource_packs"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "subcomponent": "flipbook_textures"
+    },
+    "flipbook_textures": {
+        "type": "Dict",
+        "field": "flipbook texture",
+        "types": ["dict"],
+        "detect_key_moves": true,
+        "comparison_move_function": "flipbook_textures_texture_move_function",
+        "measure_length": true,
+        "subcomponent": "flipbook_texture"
+    },
+    "flipbook_texture": {
+        "type": "Keymap",
+        "keys": {
+            "atlas_index": {"type": "int"},
+            "atlas_tile": {"type": "str"},
+            "atlas_tile_variant": {"type": "int"},
+            "blend_frames": {"type": "bool"},
+            "flipbook_texture": {"type": "str"},
+            "frames": {"type": "list", "subcomponent": "frames"},
+            "replicate": {"type": "int"},
+            "ticks_per_frame": {"type": "int"}
+        }
+    },
+    "frames": {
+        "type": "List",
+        "field": "frame",
+        "types": ["int"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": null
+    }
+}
