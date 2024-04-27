@@ -384,6 +384,15 @@ def sounds_json_fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict, depend
 
 sounds_json_sound_collections_comparison_move_function = lambda key, value: None if len(value) == 0 else value
 
+def spawn_rules_normalize_herd(data:dict[str,dict[str,Any]|list[dict[str,Any]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "minecraft:herd" not in data: return
+    if isinstance(data["minecraft:herd"], dict):
+        data["minecraft:herd"] = {"": data["minecraft:herd"]} # placing it into a nested dict is easier since the base case with the max_size and min_size has the same type as what I'm normalizing it to.
+    else:
+        data["minecraft:herd"] = {item["event"]: item for item in data["minecraft:herd"]}
+        for item in data["minecraft:herd"].values():
+            del item["event"]
+
 structures_resource_pack_move = lambda key, value: value["hash"]
 
 structures_structure_move = lambda key, value: [resource_pack["hash"] for resource_pack in value.values()]
@@ -468,6 +477,7 @@ functions:dict[str,Callable] = {
     "sounds_json_remove_bad_interactive_entity_events": sounds_json_remove_bad_interactive_entity_events,
     "sounds_json_fix_sounds": sounds_json_fix_sounds,
     "sounds_json_sound_collections_comparison_move_function": sounds_json_sound_collections_comparison_move_function,
+    "spawn_rules_normalize_herd": spawn_rules_normalize_herd,
     "structures_resource_pack_move": structures_resource_pack_move,
     "structures_structure_move": structures_structure_move,
     "structures_nbt_normalize_text": structures_nbt_normalize_text,

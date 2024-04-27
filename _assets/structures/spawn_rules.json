@@ -1,0 +1,280 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "spawn_rules",
+        "subcomponent": "spawn_rules"
+    },
+    "collapse_behavior_packs": {
+        "type": "Normalizer",
+        "dependencies": ["behavior_packs"],
+        "function_name": "collapse_behavior_packs_with_defined_in"
+    },
+    "normalize_herd": {
+        "type": "Normalizer",
+        "dependencies": [],
+        "function_name": "spawn_rules_normalize_herd"
+    },
+    "block": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "block_dict",
+            "str": null
+        }
+    },
+    "block_dict": {
+        "type": "Keymap",
+        "keys": {
+            "name": {"type": "str"},
+            "states": {"type": "dict", "subcomponent": "block.states"}
+        }
+    },
+    "block.states": {
+        "type": "Keymap",
+        "keys": {
+            "dirt_type": {"type": "str"},
+            "sand_type": {"type": "str"}
+        }
+    },
+    "block_list": {
+        "type": "List",
+        "field": "block",
+        "types": ["dict", "str"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "block"
+    },
+    "block_list_or_block": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "block_dict",
+            "list": "block_list",
+            "str": null
+        }
+    },
+    "empty_dict": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "filter": {
+        "type": "Keymap",
+        "field": "filter property",
+        "keys": {
+            "all_of": {"type": ["dict", "list"], "subcomponent": "filter_or_filter_list"},
+            "any_of": {"type": ["dict", "list"], "subcomponent": "filter_or_filter_list"},
+            "none_of": {"type": ["dict", "list"], "subcomponent": "filter_or_filter_list"},
+            "operator": {"type": "str"},
+            "subject": {"type": "str"},
+            "test": {"type": "str"},
+            "value": {"type": ["bool", "float", "int", "str"]}
+        }
+    },
+    "filter_list": {
+        "type": "List",
+        "field": "filter",
+        "ordered": false,
+        "measure_length": true,
+        "types": ["dict"],
+        "subcomponent": "filter"
+    },
+    "filter_or_filter_list": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "filter",
+            "list": "filter_list"
+        }
+    },
+    "spawn_rules": {
+        "type": "Dict",
+        "field": "spawn rules",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": true,
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "field": "behavior pack",
+        "types": ["dict"],
+        "normalizer": "collapse_behavior_packs",
+        "measure_length": true,
+        "detect_key_moves": true,
+        "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "subcomponent": "spawn_rules_item"
+    },
+    "spawn_rules_item": {
+        "type": "Keymap",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "format_version": {"type": "str"},
+            "minecraft:spawn_rules": {"type": "dict", "subcomponent": "minecraft:spawn_rules"}
+        }
+    },
+    "defined_in": {
+        "type": "List",
+        "field": "behavior pack",
+        "types": ["str"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "minecraft:spawn_rules": {
+        "type": "Keymap",
+        "keys": {
+            "conditions": {"type": "list", "subcomponent": "condition_sets"},
+            "description": {"type": "dict", "subcomponent": "description"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"type": "str"},
+            "population_control": {"type": "str"}
+        }
+    },
+    "condition_sets": {
+        "type": "List",
+        "field": "condition set",
+        "types": ["dict"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "condition_set"
+    },
+    "condition_set": {
+        "type": "Keymap",
+        "normalizer": "normalize_herd",
+        "keys": {
+            "minecraft:biome_filter": {"type": ["dict", "list"], "subcomponent": "filter_or_filter_list"},
+            "minecraft:brightness_filter": {"type": "dict", "subcomponent": "condition.brightness_filter"},
+            "minecraft:delay_filter": {"type": "dict", "subcomponent": "condition.delay_filter"},
+            "minecraft:density_limit": {"type": "dict", "subcomponent": "condition.density_limit"},
+            "minecraft:difficulty_filter": {"type": "dict", "subcomponent": "condition.difficulty_filter"},
+            "minecraft:disallow_spawns_in_bubble": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:distance_filter": {"type": "dict", "subcomponent": "condition.distance_filter"},
+            "minecraft:height_filter": {"type": "dict", "subcomponent": "condition.height_filter"},
+            "minecraft:herd": {"type": "dict", "subcomponent": "condition.herd"},
+            "minecraft:mob_event_filter": {"type": "dict", "subcomponent": "condition.mob_event_filter"},
+            "minecraft:permute_type": {"type": "list", "subcomponent": "condition.permute_type"},
+            "minecraft:player_in_village_filter": {"type": "dict", "subcomponent": "condition.player_in_village_filter"},
+            "minecraft:spawn_event": {"type": "dict", "subcomponent": "condition.spawn_event"},
+            "minecraft:spawns_lava": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:spawns_on_block_filter": {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "minecraft:spawns_on_block_prevented_filter": {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "minecraft:spawns_on_surface": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:spawns_underground": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:spawns_underwater": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:weight": {"type": "dict", "subcomponent": "condition.weight"},
+            "minecraft:world_age_filter": {"type": "dict", "subcomponent": "condition.world_age_filter"}
+        }
+    },
+    "condition.brightness_filter": {
+        "type": "Keymap",
+        "keys": {
+            "adjust_for_weather": {"type": "bool"},
+            "max": {"type": "int"},
+            "min": {"type": "int"}
+        }
+    },
+    "condition.delay_filter": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"type": "str"},
+            "max": {"type": "int"},
+            "min": {"type": "int"},
+            "spawn_chance": {"type": "int"}
+        }
+    },
+    "condition.density_limit": {
+        "type": "Keymap",
+        "keys": {
+            "surface": {"type": "int"},
+            "underground": {"type": "int"}
+        }
+    },
+    "condition.difficulty_filter": {
+        "type": "Keymap",
+        "keys": {
+            "max": {"type": "str"},
+            "min": {"type": "str"}
+        }
+    },
+    "condition.distance_filter": {
+        "type": "Keymap",
+        "keys": {
+            "max": {"type": "int"},
+            "min": {"type": "int"}
+        }
+    },
+    "condition.height_filter": {
+        "type": "Keymap",
+        "keys": {
+            "max": {"type": "int"},
+            "min": {"type": "int"}
+        }
+    },
+    "condition.herd": {
+        "type": "Dict",
+        "field": "event",
+        "types": ["dict"],
+        "measure_length": true,
+        "detect_key_moves": false,
+        "subcomponent": "condition.herd:item"
+    },
+    "condition.herd:item": {
+        "type": "Keymap",
+        "keys": {
+            "event": {"type": "str"},
+            "event_skip_count": {"type": "int"},
+            "initial_event": {"type": "str"},
+            "initial_event_count": {"type": "int"},
+            "max_size": {"type": "int"},
+            "min_size": {"type": "int"}
+        }
+    },
+    "condition.mob_event_filter": {
+        "type": "Keymap",
+        "keys": {
+            "event": {"type": "str"}
+        }
+    },
+    "condition.permute_type": {
+        "type": "List",
+        "field": "permute type",
+        "types": ["dict"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "condition.permute_type:item"
+    },
+    "condition.permute_type:item": {
+        "type": "Keymap",
+        "keys": {
+            "entity_type": {"type": "str"},
+            "weight": {"type": "int"}
+        }
+    },
+    "condition.player_in_village_filter": {
+        "type": "Keymap",
+        "keys": {
+            "distance": {"type": "int"},
+            "village_border_tolerance": {"type": "int"}
+        }
+    },
+    "condition.spawn_event": {
+        "type": "Keymap",
+        "keys": {
+            "event": {"type": "str"}
+        }
+    },
+    "condition.weight": {
+        "type": "Keymap",
+        "keys": {
+            "default": {"type": "int"},
+            "rarity": {"type": "int"}
+        }
+    },
+    "condition.world_age_filter": {
+        "type": "Keymap",
+        "keys": {
+            "min": {"type": "int"}
+        }
+    }
+}
