@@ -1,8 +1,3 @@
-import os
-
-if __name__ == "__main__":
-    os.path.split(os.path.split(__file__)[0])
-
 # import cProfile
 # from pathlib2 import Path
 # import pstats
