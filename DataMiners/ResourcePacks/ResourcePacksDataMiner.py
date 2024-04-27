@@ -62,6 +62,8 @@ def get_resource_pack_order(message:str="resource pack") -> ResourcePackDataType
     data["types"] = new_types # I'm not insane you are
     return data
 
+resource_pack_order = get_resource_pack_order()
+
 class ResourcePacksDataMiner(DataMiner.DataMiner):
     
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.ResourcePackTypedDict]:

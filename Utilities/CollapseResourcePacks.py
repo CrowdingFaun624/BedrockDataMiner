@@ -1,5 +1,7 @@
 from typing import Any, Callable, TYPE_CHECKING, TypeVar
 
+import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
+
 if TYPE_CHECKING:
     import DataMiners.DataMinerTyping as DataMinerTyping
 
@@ -17,7 +19,7 @@ def make_interface(has_defined_in_key:bool=True, pack_key:str|list[str]="resourc
                 resource_packs = dependencies[key]
                 break
         if resource_packs is None:
-            resource_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}]
+            resource_packs = [{"name": "vanilla", "path": "resource_packs/vanilla/"}]
         collapse_resource_packs(data, resource_packs, has_defined_in_key)
     return collapse_resource_packs_interface
 
@@ -25,7 +27,7 @@ def make_interface_list(pack_key:str="resource_packs") -> Callable[[list[str],"D
     def collapse_resource_packs_interface(data:list[str], dependencies:"DataMinerTyping.DependenciesTypedDict") -> None:
         resource_packs = dependencies[pack_key]
         if resource_packs is None:
-            resource_packs:DataMinerTyping.ResourcePacks = [{"name": "vanilla", "tags": ["core"], "id": 1}]
+            resource_packs:DataMinerTyping.ResourcePacks = [{"name": "vanilla", "path": "resource_packs/vanilla/"}]
         collapse_resource_pack_list(data, resource_packs)
     return collapse_resource_packs_interface
 
@@ -40,7 +42,7 @@ def collapse_resource_packs(data:dict[str,a], resource_packs:list["DataMinerTypi
     for resource_pack in resource_packs:
         resource_pack_name = resource_pack["name"]
         if resource_pack_name not in data: continue
-        tags_str = ",".join(resource_pack["tags"])
+        tags_str = ",".join(ResourcePacksDataMiner.resource_pack_order["types"][resource_pack_name])
         # tags_str is used as the new key
         if tags_str in output:
             output_location = output[tags_str]
@@ -76,7 +78,7 @@ def collapse_resource_pack_list(data:list[str], resource_packs:list["DataMinerTy
         properties_resource_pack = data.pop()
         if properties_resource_pack not in resource_pack_names:
             raise KeyError("Unknown resource pack \"%s\"!" % (properties_resource_pack))
-        tags_str = ",".join(resource_pack_names[properties_resource_pack]["tags"])
+        tags_str = ",".join(ResourcePacksDataMiner.resource_pack_order["types"][resource_pack_names[properties_resource_pack]["name"]])
         if tags_str not in exists_in_output:
             output.append(tags_str)
             exists_in_output.add(tags_str)

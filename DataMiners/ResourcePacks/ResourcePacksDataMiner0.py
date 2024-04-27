@@ -12,7 +12,7 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
         self.resource_packs_folder:str = kwargs["resource_packs_folder"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.ResourcePackTypedDict]:
-        resource_pack_data = ResourcePacksDataMiner.get_resource_pack_order()
+        resource_pack_data = ResourcePacksDataMiner.resource_pack_order
         resource_pack_order, resource_pack_tags = resource_pack_data["order"], resource_pack_data["types"]
         resource_pack_order_dict = {name: index for index, name in enumerate(resource_pack_order)} # So I don't have to index it a whole twelve times
         file_list = self.get_file_list()
@@ -29,8 +29,8 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
                     raise RuntimeError("Unknown resource pack name in \"%s\": \"%s\"" % (self.version.name, name))
                 if name in resource_pack_names: continue # so they aren't recorded multiple times - wonky behavior
                 resource_pack_names.add(name)
-                resource_packs.append({"name": name, "tags": resource_pack_tags[name], "id": resource_pack_order_dict[name]})
+                resource_packs.append({"name": name, "path": "%s/%s/" % (self.resource_packs_folder, name)})
         
         if len(resource_packs) == 0:
             raise RuntimeError("No resource packs found in \"%s\"!" % self.version.name)
-        return sorted(resource_packs, key=lambda pack: pack["id"])
+        return sorted(resource_packs, key=lambda pack: resource_pack_order_dict[pack["name"]])

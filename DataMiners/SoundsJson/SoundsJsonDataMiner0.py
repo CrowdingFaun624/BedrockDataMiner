@@ -44,10 +44,10 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.MySoundsJsonTypedDict:
         resource_packs = dependency_data["resource_packs"]
-        resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
+        resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for sounds_json_location in self.sounds_json_locations:
-            resource_pack_files.update({sounds_json_location % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names})
+            resource_pack_files.update({resource_pack_path + sounds_json_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names})
         files_request = [(resource_pack_file, "t", pyjson5.load) for resource_pack_file in resource_pack_files.keys()]
         files:dict[str,DataMinerTyping.SoundsJsonTypedDict] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:

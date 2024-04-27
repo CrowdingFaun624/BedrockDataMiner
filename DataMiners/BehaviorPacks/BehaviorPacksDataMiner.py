@@ -3,7 +3,7 @@ import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePackDataMiner
 from Utilities.FunctionCaller import FunctionCaller
 
-get_behavior_pack_order = FunctionCaller(ResourcePackDataMiner.get_resource_pack_order, ["behavior pack"])
+behavior_pack_order = ResourcePackDataMiner.resource_pack_order
 
 class BehaviorPacksDataMiner(DataMiner.DataMiner):
 

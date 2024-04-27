@@ -16,10 +16,10 @@ class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.MyBlocksJsonClientBlockTypedDict]:
         resource_packs = dependency_data["resource_packs"]
         assert resource_packs is not None
-        resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
+        resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for blocks_location in self.blocks_locations:
-            resource_pack_files.update({blocks_location % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names})
+            resource_pack_files.update({resource_pack_path + blocks_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names})
         files_request = [(resource_pack_file, "t", cast(Callable[[IO[str]],Any], pyjson5.load)) for resource_pack_file in resource_pack_files.keys()]
         files:dict[str,dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:

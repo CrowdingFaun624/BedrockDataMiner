@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Literal
 
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
@@ -29,7 +29,7 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
         self.location:str = kwargs["location"]
         if not self.location.endswith("/"):
             raise ValueError("\"location\" \"%s\" does not end in \"/\"!" % (self.location))
-        self.pack_type:str = kwargs["pack_type"]
+        self.pack_type:Literal["resource_packs", "behavior_packs"] = kwargs["pack_type"]
         if "suffixes" in kwargs:
             self.suffixes:list[str]|None = kwargs["suffixes"]
         else:
@@ -38,9 +38,10 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         packs = dependency_data[self.pack_type]
+        assert packs is not None
         files:dict[tuple[str,str],str] = {}
         for pack in packs:
-            path_base = self.location % pack["name"]
+            path_base = pack["path"] + self.location
             for path in self.get_files_in(path_base):
                 if self.ignore_suffixes is not None and any(path.endswith("." + ignore_suffix) for ignore_suffix in self.ignore_suffixes):
                     continue

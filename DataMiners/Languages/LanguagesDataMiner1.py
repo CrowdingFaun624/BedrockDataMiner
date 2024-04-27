@@ -16,8 +16,8 @@ class LanguagesDataMiner1(LanguagesDataMiner.LanguagesDataMiner):
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
         resource_packs = dependency_data["resource_packs"]
         assert resource_packs is not None
-        resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
-        languages_files = {self.languages_location % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
+        resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
+        languages_files = {resource_pack_path + self.languages_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names}
         languages_files_request = [(resource_pack_file, "t", json.load) for resource_pack_file in languages_files.keys()]
         files:dict[str,list[str]] = {key: value for key, value in self.read_files(languages_files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:

@@ -10,7 +10,7 @@ class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
         self.behavior_packs_folder:str = kwargs["behavior_packs_folder"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.BehaviorPackTypedDict]:
-        behavior_pack_data = BehaviorPacksDataMiner.get_behavior_pack_order()
+        behavior_pack_data = BehaviorPacksDataMiner.behavior_pack_order
         behavior_pack_order, behavior_pack_tags = behavior_pack_data["order"], behavior_pack_data["types"]
         behavior_pack_order_dict = {name: index for index, name in enumerate(behavior_pack_order)} # So I don't have to index it a whole twelve times
         file_list = self.get_file_list()
@@ -27,8 +27,8 @@ class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
                     raise RuntimeError("Unknown behavior pack name in \"%s\": \"%s\"" % (self.version.name, name))
                 if name in behavior_pack_names: continue # so they aren't recorded multiple times - wonky behavior
                 behavior_pack_names.add(name)
-                behavior_packs.append({"name": name, "tags": behavior_pack_tags[name], "id": behavior_pack_order_dict[name]})
+                behavior_packs.append({"name": name, "path": "%s/%s/" % (self.behavior_packs_folder, name)})
 
         if len(behavior_packs) == 0:
             raise RuntimeError("No behavior packs found in \"%s\"!" % self.version.name)
-        return sorted(behavior_packs, key=lambda pack: pack["id"])
+        return sorted(behavior_packs, key=lambda pack: behavior_pack_order_dict[pack["name"]])

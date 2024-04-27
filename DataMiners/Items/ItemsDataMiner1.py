@@ -19,10 +19,10 @@ class ItemsDataMiner1(ItemsDataMiner.ItemsDataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Items:
         resource_packs = dependency_data[self.pack_type]
-        resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
+        resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for items_location in self.locations:
-            resource_pack_files.update({items_location % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names})
+            resource_pack_files.update({resource_pack_path + items_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names})
         files_request = [(resource_pack_file, "t", cast(Callable[[IO[str]],Any], pyjson5.load)) for resource_pack_file in resource_pack_files.keys()]
         files:dict[str,list[dict[str,Any]]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:

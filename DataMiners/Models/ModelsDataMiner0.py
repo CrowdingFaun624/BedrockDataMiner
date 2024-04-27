@@ -24,7 +24,7 @@ class ModelsDataMiner0(ModelsDataMiner.ModelsDataMiner):
         assert packs is not None
         files:dict[tuple[str,str],str] = {}
         for pack in packs:
-            path_base = self.location % pack["name"]
+            path_base = pack["path"] + self.location
             for path in self.get_files_in(path_base):
                 if not path.endswith(".json"):
                     raise ValueError("Unrecognized suffix on path \"%s\"!" % path)

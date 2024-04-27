@@ -31,9 +31,8 @@ class DependenciesTypedDict(TypedDict):
 # behavior packs
 
 class BehaviorPackTypedDict(TypedDict):
-    id: int
     name: str
-    tags: list[str]
+    path: str
 
 BehaviorPacks = list[BehaviorPackTypedDict]
 
@@ -222,9 +221,8 @@ Recipes = dict[str,dict[str,Any]] # TODO: fill this out
 # resource packs
 
 class ResourcePackTypedDict(TypedDict):
-    id: int
     name: str
-    tags: list[str]
+    path: str
 
 ResourcePacks = list[ResourcePackTypedDict]
 

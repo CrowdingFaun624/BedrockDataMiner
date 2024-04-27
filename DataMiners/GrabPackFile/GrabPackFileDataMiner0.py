@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Literal
 
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
@@ -21,15 +21,16 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
         else:
             self.data_type = DataTypes.DataTypes[kwargs["data_type"]]
         self.locations:list[str] = kwargs["locations"]
-        self.pack_type:str = kwargs["pack_type"]
+        self.pack_type:Literal["resource_packs", "behavior_packs"] = kwargs["pack_type"]
         self.file_display_name:str|None = kwargs["file_display_name"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         packs = dependency_data[self.pack_type]
-        pack_names = [pack["name"] for pack in packs]
+        assert packs is not None
+        pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {}
         for blocks_location in self.locations:
-            pack_files.update({blocks_location % pack_name: pack_name for pack_name in pack_names})
+            pack_files.update({pack_path + blocks_location: pack_name for pack_name, pack_path in pack_names})
         files_request = DataTypes.get_file_request(pack_files.keys(), self.data_type)
         files:dict[str,Any] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:

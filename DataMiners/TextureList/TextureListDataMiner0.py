@@ -18,10 +18,10 @@ class TextureListDataMiner0(TextureListDataMiner.TextureListDataMiner):
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,list[str]]:
         packs = dependency_data["resource_packs"]
         assert packs is not None
-        pack_names = [pack["name"] for pack in packs]
+        pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {}
         for blocks_location in self.locations:
-            pack_files.update({blocks_location % pack_name: pack_name for pack_name in pack_names})
+            pack_files.update({pack_path + blocks_location: pack_name for pack_name, pack_path in pack_names})
         files_request = [(file, "t", None) for file in pack_files.keys()]
         files:dict[str,str] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
