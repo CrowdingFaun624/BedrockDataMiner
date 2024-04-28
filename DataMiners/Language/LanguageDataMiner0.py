@@ -34,8 +34,10 @@ class LanguageDataMiner0(LanguageDataMiner.LanguageDataMiner):
             resource_pack_name = pack_files[pack_file]
             lines = language_file.splitlines()
             resource_pack_output:dict[str,DataMinerTyping.LanguageTypedDict] = {}
-            for index, line in enumerate(lines):
+            for line in lines:
                 line = line.lstrip("\ufeff")
+                if len(line.lstrip()) == 0:
+                    continue # empty line
                 if line.lstrip().startswith("##") or len(line) == 0:
                     continue # comment-only line, which I don't care about.
                 if "##" in line:
