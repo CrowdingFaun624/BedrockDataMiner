@@ -344,3 +344,14 @@ class DataMinerCollection():
             if version in dataminer_setting.version_range:
                 return dataminer_setting.dataminer_class(version, dataminer_setting)
         else: return NullDataMiner(version, self.get_null_dataminer_settings())
+
+    def supports_version(self, version:Version.Version) -> bool:
+        for dataminer_settings in self.dataminer_settings:
+            if version in dataminer_settings.version_range:
+                return True
+        else: return False
+
+    def get_data_file_path(self, version:Version.Version) -> Path:
+        if version.version_folder is None:
+            raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % version.name)
+        return FileManager.get_version_data_path(version.version_folder, self.file_name)

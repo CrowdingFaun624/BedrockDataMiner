@@ -9,6 +9,13 @@ import Utilities.Version as Version
 
 dataminers = DataMinerCollectionImporter.load_dataminers()
 
+def dataminable_files(version:Version.Version) -> list[str]:
+    '''Returns the names of all data files that this Version supports.'''
+    return [dataminer.file_name for dataminer in dataminers if dataminer.supports_version(version)]
+
+def currently_has_data_files_from(version:Version.Version) -> list[str]:
+    return [dataminer.file_name for dataminer in dataminers if dataminer.get_data_file_path(version).exists()]
+
 def run_with_dependencies(version:Version.Version, name:str, recalculate_this:bool=False, recalculate_everything:bool=False) -> None:
     data:DataMinerTyping.DependenciesTypedDict = {}
     dataminers_dict = {dataminer.name: dataminer.get_version(version) for dataminer in dataminers}
