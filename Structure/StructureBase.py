@@ -8,7 +8,6 @@ import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
-import Utilities.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Utilities.Version as Version
@@ -72,7 +71,7 @@ class StructureBase():
         # other normalizers
         self.print_exception_list(exceptions)
         assert self.structure is not None
-        normalizer_output, new_exceptions = self.structure.normalize(output, normalizer_dependencies, version_number)
+        normalizer_output, new_exceptions = self.structure.normalize(output, normalizer_dependencies, version_number) # type: ignore
         exceptions.extend(new_exceptions)
         if normalizer_output is not None:
             output = normalizer_output
@@ -117,8 +116,8 @@ class StructureBase():
         header:list[str] = []
         beta_texts:list[str] = ["", ""]
         for index, version in enumerate((version1, version2)):
-            if version is not None and version.ordering_tag is VersionTags.VersionTag.beta and version.parent is not None:
-                beta_texts[index] = " (beta of \"%s\")" % version.parent.name
+            if version is not None and version.ordering_tag is not None and version.ordering_tag.is_development_tag and version.parent is not None:
+                beta_texts[index] = " (%s of \"%s\")" % (version.ordering_tag.development_name, version.parent.name)
         if version1 is None:
             header.append("Addition of \"%s\"%s at \"%s\"%s." % (self.structure_name, beta_texts[0], version2.name, beta_texts[1]))
         else:

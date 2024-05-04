@@ -149,7 +149,7 @@ def parse_date(dates_string:str, version:Version.Version) -> list[str]:
         warning_messages.append("Version \"%s\" (page \"%s\") does not have any valid dates!" % (version.name, version.wiki_page))
     return warning_messages
 
-def parse_betas(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI) -> list[str]:
+def parse_betas(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI, version_tags:VersionTags.VersionTags) -> list[str]:
     '''Verifies information about the version's betas. Returns a list of warning messages.'''
     warning_messages:list[str] = []
     development_category_pages:list[mediawikiapi.WikipediaPage] = []
@@ -163,7 +163,7 @@ def parse_betas(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI) -> lis
     for development_category_page in development_category_pages:
         wiki_betas.extend(get_category_members(development_category_page))
     wiki_betas_set = set(wiki_betas)
-    my_betas = set(child.wiki_page for child in version.children if child.ordering_tag is VersionTags.VersionTag.beta)
+    my_betas = set(child.wiki_page for child in version.children if child.ordering_tag is version_tags["beta"])
     if wiki_betas_set != my_betas:
         for my_beta in my_betas:
             if my_beta not in wiki_betas_set:
@@ -234,7 +234,7 @@ def parse_main_list(versions:list[Version.Version], mwapi:mediawikiapi.MediaWiki
             warning_messages.append("Wiki page \"%s\" does not exist in the versions file!" % (wiki_version))
     return warning_messages
 
-def validate(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI) -> list[str]:
+def validate(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI, version_tags:VersionTags.VersionTags) -> list[str]:
     '''Prints a message if the wiki page of the version does not agree with the Version object.'''
     if version.wiki_page is None: raise ValueError("Wiki page of \"%s\" is None!" % version.name)
     page = mwapi.page(version.wiki_page, auto_suggest=False)
@@ -242,7 +242,7 @@ def validate(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI) -> list[s
     infobox_data = get_infobox_data(wikitext, version)
     warning_messages:list[str] = []
     if "date" in infobox_data: warning_messages.extend(parse_date(infobox_data["date"], version))
-    warning_messages.extend(parse_betas(version, mwapi))
+    warning_messages.extend(parse_betas(version, mwapi, version_tags))
     if "clientdl" in infobox_data: warning_messages.extend(parse_client_downloads(infobox_data["clientdl"], version))
     return warning_messages
 
@@ -250,6 +250,7 @@ def main() -> None:
     config = mediawikiapi.config.Config(mediawiki_url="http://minecraft.wiki/api.php")
     mwapi = mediawikiapi.MediaWikiAPI(config)
     versions = VersionsParser.versions
+    version_tags = VersionsParser.version_tags
     start_version = input("What version to start from? ")
     with open(FileManager.WIKI_VALIDATOR_WARNINGS_FILE, "wt") as f:
         f.write("")
@@ -257,7 +258,7 @@ def main() -> None:
         scanning = True
     else: scanning = False
     versions_to_scan:list[Version.Version] = []
-    for version in versions:
+    for version in versions.values():
         if not scanning and version.name == start_version:
             scanning = True
         if scanning:
@@ -266,6 +267,6 @@ def main() -> None:
         print("No version found with name \"%s\"." % start_version)
     for version in versions_to_scan:
         print("Scanning \"%s\"..." % version.name)
-        warnings = validate(version, mwapi)
+        warnings = validate(version, mwapi, version_tags)
         with open(FileManager.WIKI_VALIDATOR_WARNINGS_FILE, "at") as f:
             f.write("\n" + "\n".join(sorted(list(set(warnings)))))

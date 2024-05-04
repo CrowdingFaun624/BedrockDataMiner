@@ -18,7 +18,7 @@ class DownloadManager(InstallManager.InstallManager):
 
     current_open_connections:int = 0
 
-    def prepare_for_install(self) -> None:
+    def prepare_for_install(self, version_tags:VersionTags.VersionTags) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
         self.installed = WaitValue(self.apk_location.exists)
 
@@ -31,7 +31,7 @@ class DownloadManager(InstallManager.InstallManager):
 
         assert self.version.download_link is not None
         self.url = self.version.download_link
-        self.set_file_prepension()
+        self.set_file_prepension(version_tags)
 
     def open_zip_file(self) -> None:
         '''Opens the zip file if it hasn't already.'''
@@ -42,12 +42,12 @@ class DownloadManager(InstallManager.InstallManager):
             self.members = {member.filename: member for member in self.zip_file.filelist}
             self.has_zip_file_opened = True
 
-    def set_file_prepension(self) -> None:
+    def set_file_prepension(self, version_tags:VersionTags.VersionTags) -> None:
         tags = self.version.tags
-        if VersionTags.VersionTag.ipa in tags:
+        if version_tags["ipa"] in tags:
             prepend = "Payload/minecraftpe.app/data/"
         else:
-            if VersionTags.VersionTag.double_assets in self.version.tags:
+            if version_tags["double_assets"] in self.version.tags:
                 prepend = "assets/assets/"
             else:
                 prepend = "assets/"

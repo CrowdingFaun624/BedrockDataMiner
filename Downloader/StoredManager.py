@@ -7,10 +7,11 @@ import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
 import Utilities.Version as Version
+import Utilities.VersionTags as VersionTags
 
 class StoredManager(InstallManager.InstallManager):
 
-    def prepare_for_install(self) -> None:
+    def prepare_for_install(self, version_tags:VersionTags.VersionTags) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
         assert self.version.download_link is not None
         self.name = self.version.download_link[1:]

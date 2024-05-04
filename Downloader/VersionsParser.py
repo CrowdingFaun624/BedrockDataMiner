@@ -68,19 +68,14 @@ def assign_parents(versions:dict[str,Version.Version]) -> None:
     for version in versions.values():
         version.assign_parent(versions)
 
-def verify_ordering(versions:dict[str,Version.Version]) -> None:
+def verify_ordering(versions:dict[str,Version.Version], version_tags:VersionTags.VersionTags) -> None:
     '''Raises a ValueError if the ordering of the versions is incorrect in any way.'''
-    ORDERING_TAGS = set(VersionTags.order_tags)
-    ORDER = [VersionTags.VersionTag.beta, VersionTags.VersionTag.major, {VersionTags.VersionTag.minor, VersionTags.VersionTag.patch, VersionTags.VersionTag.reupload}]
-    ALLOWED_CHILDREN = {
-        VersionTags.VersionTag.beta: [VersionTags.VersionTag.reupload],
-        VersionTags.VersionTag.major: [VersionTags.VersionTag.beta, VersionTags.VersionTag.minor, VersionTags.VersionTag.patch, VersionTags.VersionTag.reupload],
-        VersionTags.VersionTag.minor: [VersionTags.VersionTag.beta, VersionTags.VersionTag.patch, VersionTags.VersionTag.reupload],
-        VersionTags.VersionTag.patch: [VersionTags.VersionTag.reupload],
-        VersionTags.VersionTag.reupload: []}
-    TOP_LEVEL_TAG = VersionTags.VersionTag.major
-    BEFORE_TAGS = [VersionTags.VersionTag.beta]
-    AFTER_TAGS = [VersionTags.VersionTag.minor, VersionTags.VersionTag.patch, VersionTags.VersionTag.reupload]
+    ORDERING_TAGS = version_tags.order.order_tags
+    ORDER = version_tags.order.order
+    ALLOWED_CHILDREN = version_tags.order.allowed_children
+    TOP_LEVEL_TAG = version_tags.order.top_level_tag
+    BEFORE_TAGS = version_tags.order.tags_before_top_level_tag
+    AFTER_TAGS = version_tags.order.tags_after_top_level_tag
 
     top_level_versions:list[Version.Version] = [] # versions with no parents
     for version in versions.values():
@@ -112,7 +107,11 @@ def verify_ordering(versions:dict[str,Version.Version]) -> None:
                 raise ValueError("Version \"%s\" (type \"%s\"), child of \"%s\" (type \"%s\") is not a valid child type of a \"%s\"!"% (child.name, child_order_tag, version.name, version_order_tag, version_order_tag))
 
     def order_contains_at_index(ordering_tag:VersionTags.VersionTag) -> bool:
-        return (not isinstance(ORDER[order_index], Iterable) and ordering_tag == ORDER[order_index]) or (isinstance(ORDER[order_index], Iterable) and ordering_tag in ORDER[order_index])
+        order_at_index = ORDER[order_index]
+        if isinstance(order_at_index, set):
+            return ordering_tag in order_at_index
+        else:
+            return ordering_tag == order_at_index
 
     for version in versions.values():
         order_index = 0
@@ -140,12 +139,12 @@ def verify_ordering(versions:dict[str,Version.Version]) -> None:
             previous_time = child.time
             previous_child = child
 
-def assign_wiki_pages(versions:dict[str,Version.Version]) -> None:
+def assign_wiki_pages(versions:dict[str,Version.Version], version_tags:VersionTags.VersionTags) -> None:
     '''Calls `assign_wiki_page` on all versions.'''
     for version in versions.values():
-        version.assign_wiki_page()
+        version.assign_wiki_page(version_tags)
 
-def assign_install_managers(versions:dict[str,Version.Version]) -> None:
+def assign_install_managers(versions:dict[str,Version.Version], version_tags:VersionTags.VersionTags) -> None:
     '''Sets the `install_manager` attribute to its corresponding InstallManager.'''
     for version in versions.values():
         assert version.download_method is not None
@@ -154,38 +153,29 @@ def assign_install_managers(versions:dict[str,Version.Version]) -> None:
             version.install_manager = None
         else:
             assert version.version_folder is not None
-            version.install_manager = install_manager_type(version, FileManager.get_version_install_path(version.version_folder))
+            version.install_manager = install_manager_type(version, FileManager.get_version_install_path(version.version_folder), version_tags)
 
-def assign_latest(versions:dict[str,Version.Version]) -> None:
-    for version in reversed(versions.values()):
-        if version.ordering_tag is VersionTags.VersionTag.beta and version.download_link is not Version.DownloadMethod.DOWNLOAD_NONE:
-            version.latest = True
-            if version.parent is not None:
-                version.parent.latest = True
-            break
-    for version in reversed(versions.values()):
-        if version.ordering_tag in (VersionTags.VersionTag.major, VersionTags.VersionTag.minor, VersionTags.VersionTag.patch) and version.download_link is not Version.DownloadMethod.DOWNLOAD_NONE:
-            version.latest = True
-            break
+def assign_latest(versions:dict[str,Version.Version], version_tags:VersionTags.VersionTags) -> None:
+    for latest_slot, latest_slot_tags in version_tags.latest.latest_tags.items():
+        for version in reversed(versions.values()):
+            if version.ordering_tag in latest_slot_tags and version.download_method is not Version.DownloadMethod.DOWNLOAD_NONE:
+                version.latest = True
+                if version.parent is not None:
+                    version.parent.latest = True
+                break
 
-def assign_additional_tags(versions:dict[str,Version.Version]) -> None:
+def assign_additional_tags(versions:dict[str,Version.Version], version_tags:VersionTags.VersionTags) -> None:
     '''Assigns tags that are assigned by the VersionsParser'''
-    double_assets_range = VersionRange.VersionRange(versions["1.20.50.21"], None)
-    pocket_edition_ranges = VersionRange.VersionRange(None, versions["1.1.7"])
-    pocket_edition_alpha_before = VersionRange.VersionRange(versions["a0.17.0.1"], versions["1.1.7"])
     for version in versions.values():
-        if version in double_assets_range and VersionTags.VersionTag.ipa not in version.tags:
-            version.add_tag(VersionTags.VersionTag.double_assets)
-        if version in pocket_edition_ranges:
-            version.add_tag(VersionTags.VersionTag.pocket_edition)
-        if version in pocket_edition_alpha_before:
-            version.add_tag(VersionTags.VersionTag.pocket_edition_alpha_before)
+        for tag in version_tags.auto_assign_tags:
+            tag.auto_assign(version, versions)
 
-def parse() -> dict[str,Version.Version]:
+def parse() -> tuple[dict[str,Version.Version], VersionTags.VersionTags]:
     data = read_versions_file()
     verify_data_types(data)
     versions:dict[str,Version.Version] = {}
     already_downloads:set[str] = set()
+    version_tags = VersionTags.parse()
     for index, version_dict in enumerate(data):
         id = version_dict["id"]
         download = version_dict["download"]
@@ -193,11 +183,11 @@ def parse() -> dict[str,Version.Version]:
         time = version_dict["time"]
         tags = version_dict["tags"]
         wiki_page = version_dict.get("wiki_page", None)
-        development_categories = version_dict["development_categories"] if "development_categories" in version_dict else None
+        development_categories = version_dict.get("development_categories")
         if id in versions:
             raise KeyError("Version named \"%s\" already exists!" % id)
 
-        versions[id] = Version.Version(id, download, parent, time, tags, index, wiki_page, development_categories)
+        versions[id] = Version.Version(id, download, parent, time, tags, index, version_tags, wiki_page, development_categories)
 
         if download is not None and download in already_downloads:
             already_downloads.add(download)
@@ -205,13 +195,13 @@ def parse() -> dict[str,Version.Version]:
                 raise KeyError("Version with download \"%s\" already exists!" % download)
 
     assign_parents(versions)
-    verify_ordering(versions)
-    assign_additional_tags(versions)
-    assign_wiki_pages(versions)
-    assign_install_managers(versions)
-    assign_latest(versions)
+    verify_ordering(versions, version_tags)
+    assign_additional_tags(versions, version_tags)
+    assign_wiki_pages(versions, version_tags)
+    assign_install_managers(versions, version_tags)
+    assign_latest(versions, version_tags)
     fix_folders(versions)
-    return versions
+    return versions, version_tags
 
 def fix_folders(versions:dict[str,Version.Version]) -> None:
     '''Makes folders that are empty and don't exist disappear.
@@ -227,7 +217,7 @@ def fix_folders(versions:dict[str,Version.Version]) -> None:
                 continue
 
 
-versions = parse()
+versions, version_tags = parse()
 
 def main() -> None:
     parse()

@@ -1,13 +1,15 @@
 from pathlib2 import Path
 from typing import Iterable, Literal, overload, TYPE_CHECKING
 
+import Utilities.VersionTags as VersionTags
+
 if TYPE_CHECKING:
     import Utilities.FileManager as FileManager
     import Utilities.Version as Version
 
 class InstallManager():
 
-    def __init__(self, version:"Version.Version", location:Path) -> None:
+    def __init__(self, version:"Version.Version", location:Path, version_tags:VersionTags.VersionTags) -> None:
         '''
         :version: Version object this manager is based on.
         :location: File location to the folder containing extracted files.'''
@@ -17,7 +19,7 @@ class InstallManager():
 
         self.version = version
         self.location = location
-        self.prepare_for_install()
+        self.prepare_for_install(version_tags)
 
     def __repr__(self) -> str:
         return "<%s for %s>" % (self.__class__.__name__, self.version.name)
@@ -26,7 +28,7 @@ class InstallManager():
         '''Returns the full file path within the archive needed to find the given asset.'''
         raise NotImplementedError("`get_full_file_name` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
-    def prepare_for_install(self) -> None:
+    def prepare_for_install(self, version_tags:VersionTags.VersionTags) -> None:
         '''Any actions that can take place before grabbing files can happen.'''
         raise NotImplementedError("`prepare_for_install` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 

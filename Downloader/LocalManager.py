@@ -6,10 +6,11 @@ import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller
 import Utilities.Version as Version
+import Utilities.VersionTags as VersionTags
 
 class LocalManager(InstallManager.InstallManager):
 
-    def prepare_for_install(self) -> None:
+    def prepare_for_install(self, version_tags:VersionTags.VersionTags) -> None:
         self.file_list:list[str]|None = None
         if not self.version.download_method is Version.DownloadMethod.DOWNLOAD_LOCAL:
             raise ValueError("Version \"%s\" is using a LocalManager while having a \"%s\" download type!" % (self.version.name, self.version.download_method))

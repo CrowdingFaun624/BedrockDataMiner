@@ -19,7 +19,7 @@ class DownloadMethod(enum.Enum):
 
 class Version():
 
-    def __init__(self, name:str, download_link:str|None, parent_str:str|None, time_str:str|None, tags_str:list[str], index:int, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
+    def __init__(self, name:str, download_link:str|None, parent_str:str|None, time_str:str|None, tags_str:list[str], index:int, version_tags:VersionTags.VersionTags, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
         self.name = name
         self.download_link = download_link
         self.parent_str = parent_str
@@ -47,23 +47,23 @@ class Version():
         self.validate_download_link()
         self.validate_parent()
         self.validate_time()
-        self.validate_tags()
+        self.validate_tags(version_tags)
 
-    def assign_wiki_page(self) -> None:
+    def assign_wiki_page(self, version_tags:VersionTags.VersionTags) -> None:
         '''Sets this Version's `wiki_page` attribute.'''
         alpha = ""
-        if VersionTags.VersionTag.pocket_edition not in self.tags:
+        if version_tags["pocket_edition"] not in self.tags:
             edition = "Bedrock Edition"
             alpha_positioned_before = True
-            if self.ordering_tag is VersionTags.VersionTag.beta:
+            if self.ordering_tag is version_tags["beta"]:
                 alpha = " beta"
             development_category_suffix = " betas"
         else:
             edition = "Pocket Edition"
-            alpha_positioned_before = VersionTags.VersionTag.pocket_edition_alpha_before in self.tags
-            if VersionTags.VersionTag.alpha in self.tags or self.ordering_tag is VersionTags.VersionTag.beta:
+            alpha_positioned_before = version_tags["pocket_edition_alpha_before"] in self.tags
+            if version_tags["alpha"] in self.tags or self.ordering_tag is version_tags["beta"]:
                 alpha = " alpha"
-            elif self.ordering_tag is VersionTags.VersionTag.beta:
+            elif self.ordering_tag is version_tags["beta"]:
                 alpha = " beta"
             development_category_suffix = " builds"
 
@@ -131,15 +131,15 @@ class Version():
         if self.time > datetime.date.today(): raise ValueError("`time` is after today!")
         if self.time.year < 2011: raise ValueError("`time` is before year 2011!")
 
-    def validate_tags(self) -> None:
+    def validate_tags(self, version_tags:VersionTags.VersionTags) -> None:
         '''Raises a ValueError if this Version's tags are not valid.'''
-        self.tags = [VersionTags.VersionTag[tag_str] for tag_str in self.tags_str]
+        self.tags = [version_tags[tag_str] for tag_str in self.tags_str]
         if not all(isinstance(tag, VersionTags.VersionTag) for tag in self.tags):
             raise ValueError("Version \"%s\" does not have valid VersionTags: \"%s\"!" % (self.name, str(self.tags)))
         self.ordering_tag = VersionTags.get_ordering_tag(self.tags)
-        if VersionTags.VersionTag.unreleased in self.tags:
+        if version_tags["unreleased"] in self.tags:
             if self.download_method is not DownloadMethod.DOWNLOAD_NONE:
-                raise ValueError("Version \"%s\" has the \"%s\" tag but has a download method!" % (self.name, VersionTags.VersionTag.unreleased))
+                raise ValueError("Version \"%s\" has the \"%s\" tag but has a download method!" % (self.name, version_tags["unreleased"]))
 
     def get_children_recursive(self) -> list["Version"]:
         children = self.children[:]
