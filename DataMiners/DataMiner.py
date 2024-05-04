@@ -17,15 +17,13 @@ import Utilities.VersionRange as VersionRange
 
 EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
 
-def str_to_version(version_str:str|None) -> Version.Version|Literal["-"]:
-    if version_str is None: return "-"
-    if version_str == "-": raise RuntimeError("Version range \"-\" is not supported!")
-    else:
-        versions = VersionsParser.versions
-        if version_str in versions:
-            return versions[version_str]
-        else:
-            raise KeyError("Version \"%s\" does not exist!" % version_str)
+def str_to_version(version_str:str|None) -> Version.Version|None:
+    if version_str is None: return None
+    versions = VersionsParser.versions
+    output = versions.get(version_str)
+    if output is None:
+        raise KeyError("Version \"%s\" does not exist!" % version_str)
+    return output
 
 class DataMinerSettings():
 

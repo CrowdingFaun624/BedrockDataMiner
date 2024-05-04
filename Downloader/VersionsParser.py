@@ -170,8 +170,8 @@ def assign_latest(versions:dict[str,Version.Version]) -> None:
 
 def assign_additional_tags(versions:dict[str,Version.Version]) -> None:
     '''Assigns tags that are assigned by the VersionsParser'''
-    double_assets_range = VersionRange.VersionRange(versions["1.20.50.21"], "-")
-    pocket_edition_ranges = VersionRange.VersionRange("-", versions["1.1.7"])
+    double_assets_range = VersionRange.VersionRange(versions["1.20.50.21"], None)
+    pocket_edition_ranges = VersionRange.VersionRange(None, versions["1.1.7"])
     pocket_edition_alpha_before = VersionRange.VersionRange(versions["a0.17.0.1"], versions["1.1.7"])
     for version in versions.values():
         if version in double_assets_range and VersionTags.VersionTag.ipa not in version.tags:
