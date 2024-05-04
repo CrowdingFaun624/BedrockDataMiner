@@ -96,7 +96,11 @@ class KeymapStructure(DictStructure.DictStructure[d]):
     def choose_structure_flat(self, key: str, value_type:type[d], value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         output = self.keys.get((key, value_type), Structure.StructureFailure.choose_structure_failure)
         if output is Structure.StructureFailure.choose_structure_failure:
-            return None, [Trace.ErrorTrace(KeyError("Failed to get Structure in %s for key, value %s: %s" % (self.name, key, value_type)), self.name, key, value)]
+            accepted_types = [keys_key[1] for keys_key in self.keys.keys() if keys_key[0] == key]
+            if len(accepted_types) == 0:
+                return None, [Trace.ErrorTrace(KeyError("Unrecognized key %s for key, value %s: %s" % (self.name, key, value_type)), self.name, key, value)]
+            else:
+                return None, [Trace.ErrorTrace(KeyError("Unrecognized key type %s for key %s in %s (can only be [%s])" % (value_type, key, self.name, ", ".join(accepted_type.__name__ for accepted_type in accepted_types))), self.name, key, value)]
         return output, []
 
     def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
@@ -127,7 +131,11 @@ class KeymapStructure(DictStructure.DictStructure[d]):
         for key_iter, value_iter, key_diff_type, value_diff_type in iterator:
             structure = self.keys.get((key_iter, type(value_iter)), Structure.StructureFailure.choose_structure_failure)
             if structure is Structure.StructureFailure.choose_structure_failure:
-                exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure in %s for key, value: %s: %s" % (self.name, key_iter, value_iter)), self.name, key_iter, value_iter))
+                accepted_types = [keys_key[1] for keys_key in self.keys.keys() if keys_key[0] == key]
+                if len(accepted_types) == 0:
+                    exceptions.append(Trace.ErrorTrace(KeyError("Unrecognized key %s for key, value %s: %s" % (self.name, key, type(value))), self.name, key, value))
+                else:
+                    exceptions.append(Trace.ErrorTrace(KeyError("Unrecognized key type %s for key %s in %s (can only be [%s])" % (type(value), key, self.name, ", ".join(accepted_type.__name__ for accepted_type in accepted_types))), self.name, key, value))
                 continue
             output[value_diff_type] = structure
         return StructureSet.StructureSet(output), exceptions
