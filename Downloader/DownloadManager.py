@@ -24,7 +24,8 @@ class DownloadManager(InstallManager.InstallManager):
 
         self.has_zip_file_opened = False
 
-        self.file_list = None
+        self.file_list:list[str]|None = None
+        self.file_set:set[str]|None = None
         self.installation_lock = threading.Lock()
         self.get_file_list_lock = threading.Lock()
 
@@ -82,7 +83,7 @@ class DownloadManager(InstallManager.InstallManager):
     def get_files_in(self, parent: str) -> Iterable[str]:
         return [file for file in self.get_file_list() if file.startswith(parent)]
 
-    def get_file_list(self) -> Iterable[str]:
+    def get_file_list(self) -> list[str]:
         if not self.installed.get():
             self.install_all()
         self.open_zip_file()
@@ -93,7 +94,14 @@ class DownloadManager(InstallManager.InstallManager):
                 strip_string = self.get_full_file_name("")
                 assert self.zip_file is not None
                 self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string) and not file.filename.endswith("/")]
+            self.file_set = set(self.file_list)
         return self.file_list
+
+    def get_file_set(self) -> set[str]:
+        if self.file_set is None:
+            self.get_file_list()
+        assert self.file_set is not None
+        return self.file_set
 
     def get_full_file_list(self) -> list[str]:
         if not self.installed.get():
@@ -105,7 +113,7 @@ class DownloadManager(InstallManager.InstallManager):
     def file_exists(self, name:str) -> bool:
         if not self.installed.get():
             self.install_all()
-        return name in self.get_file_list()
+        return name in self.get_file_set()
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
 
