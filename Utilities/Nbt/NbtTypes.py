@@ -188,7 +188,10 @@ class TAG_String(TAG[str]):
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_String":
         size:int = data_reader.unpack_tuple("H", 2, endianness)
         output2:tuple[bytes] = data_reader.unpack("c" * size, size, endianness)
-        return cls(mutf8.decode_modified_utf8(b"".join(output2)))
+        try: # because of VibrationTests/event_splash_boat_on_bubble_column.mcstructure in 1.19.40.20
+            return cls(mutf8.decode_modified_utf8(b"".join(output2)))
+        except UnicodeDecodeError:
+            return cls("")
 
     def __str__(self) -> str:
         return "\"%s\"" % escape_string(self.value)
