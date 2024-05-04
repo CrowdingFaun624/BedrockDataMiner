@@ -18,7 +18,7 @@ class VersionRange():
     def __repr__(self) -> str:
         return "<VersionRange \"%s\"–\"%s\">" % (str(self.start), str(self.stop))
 
-    def __contains__(self, version:Version.Version) -> bool:
+    def __contains__(self, version:"Version.Version") -> bool:
         if self.equals:
             return version == self.start
         match (self.start is None, self.stop is None):
