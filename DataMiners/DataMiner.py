@@ -1,6 +1,5 @@
 import json
 from pathlib2 import Path
-import threading
 import traceback
 from typing import Any, Callable, IO, Iterable, Literal, Mapping, overload, Sequence, TypeVar
 
@@ -145,24 +144,22 @@ class DataMiner():
 
     read_files_typevar = TypeVar("read_files_typevar")
 
-    def read_async(self, files:Iterable[tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], file_results:dict[str,str|bytes|read_files_typevar|Exception], non_exist_ok:bool, lock:threading.Lock) -> None:
-        with lock:
-            for file_name, mode, callable in files:
-                try:
-                    if not non_exist_ok or self.file_exists(file_name):
-                        if callable is None:
-                            file_results[file_name] = self.read_file(file_name, mode)
-                        else:
-                            file = self.get_file(file_name, mode)
-                            with file.open() as f:
-                                file_results[file_name] = callable(f)
-                            file.all_done()
-                    else: # file does not exist
-                        file_results[file_name] = EMPTY_FILE
-                except Exception as e:
-                    e.args = tuple(list(e.args) + ["Failed to get file \"%s\"!" % (file_name)])
-                    file_results[file_name] = e
-                    return
+    def _read_file(self, file_name:str, mode:Literal["b", "t"], callable:None|Callable[[IO],read_files_typevar], non_exist_ok:bool) -> str|bytes|Any:
+        try:
+            if not non_exist_ok or self.file_exists(file_name):
+                if callable is None:
+                    return self.read_file(file_name, mode)
+                else:
+                    file = self.get_file(file_name, mode)
+                    with file.open() as f:
+                        output = callable(f)
+                    file.all_done()
+                    return output
+            else: # file does not exist
+                return EMPTY_FILE
+        except Exception as e:
+            e.args = tuple(list(e.args) + ["Failed to get file \"%s\"!" % (file_name)])
+            return e
 
     @overload
     def read_files(self, files:Sequence[str], non_exist_ok:bool=False) -> dict[str,str]: ...
@@ -177,53 +174,40 @@ class DataMiner():
     @overload
     def read_files(self, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]: ...
     def read_files(self, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]:
-        '''Asynchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
+        '''Synchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
 
         if self.version.install_manager is None:
             raise RuntimeError("Attempted to call `read_files` on version (\"%s\") with no download available!" % self.version.name)
 
         DEFAULT_MODE = "t"
-        LIMIT = 16 # how many threads can be created.
-        normalized_files:list[tuple[str,str,None|Callable[[IO],Any]]] = [(file, DEFAULT_MODE, None) if isinstance(file, str) else file for file in files]
-        file_names = [file[0] for file in normalized_files]
+        normalized_files:list[tuple[str,Literal["b", "t"],None|Callable[[IO],Any]]] = [(file, DEFAULT_MODE, None) if isinstance(file, str) else file for file in files]
 
-        if any(count >= 2 for count in (file_names.count(file_name) for file_name in file_names)): # duplicate item tester
-            duplicate_files = [file for file in file_names if file_names.count(file) >= 2]
-            raise ValueError("Duplicated files: %s" % str(duplicate_files))
+        exceptions:list[tuple[str, Exception]] = []
+        file_results:dict[str,str|bytes|DataMiner.read_files_typevar] = {}
+        for file_name, file_mode, callable in normalized_files:
+            try:
+                if not non_exist_ok or self.file_exists(file_name):
+                    if callable is None:
+                        file_result = self.read_file(file_name, file_mode)
+                    else:
+                        file = self.get_file(file_name, file_mode)
+                        with file.open() as f:
+                            file_result = callable(f)
+                        file.all_done()
+                    file_results[file_name] = file_result
+                else: # file does not exist
+                    pass
+            except Exception as e:
+                exceptions.append((file_name, e))
 
-        thread_count = len(normalized_files) if len(normalized_files) < LIMIT else LIMIT
-        thread_responsibilities:list[list[tuple[str,str,None|Callable[[IO],Any]]]] = [[] for index in range(thread_count)] # keeps track of what each thread will do.
-        file_results:dict[str,str|bytes|Any] = {}
-        for index, (file_name, mode, callable) in enumerate(normalized_files):
-            file_results[file_name] = None
-            thread_responsibilities[index % thread_count].append((file_name, mode, callable))
+        for file_name, exception in exceptions:
+            print("Failed to get file \"%s\"!" % file_name)
+            traceback.print_exception(exception)
+            print()
+        if len(exceptions) > 0:
+            raise RuntimeError("Failed to read files!")
 
-        locks = [threading.Lock() for index in range(LIMIT)]
-        for lock, thread_responsibility in zip(locks, thread_responsibilities):
-            thread = threading.Thread(target=self.read_async, args=[thread_responsibility, file_results, non_exist_ok, lock])
-            thread.start()
-        for lock in locks:
-            lock.acquire() # wait for every thread to finish
-
-        exceptions:dict[str,Exception|None] = {} # Exception if the thread had an exception; None if the file returned None (should not happen)
-        all_complete = True
-        for file_name, file_result in file_results.items():
-            if file_result is None or isinstance(file_result, Exception):
-                exceptions[file_name] = file_result
-                all_complete = False
-        for file_name, exception in exceptions.items():
-            print("File \"%s\" from \"%s\" errored!" % (file_name, self.version.name))
-            if exception is None:
-                print("File \"%s\" returned None! This should not happen!" % file_name)
-            else:
-                traceback.print_exception(exception)
-        if not all_complete:
-            raise RuntimeError("File fetching failed due to Exception or incompletion.")
-
-        for file_name, file_result in file_results.items(): # sets files that don't exist to None.
-            if file_result is EMPTY_FILE:
-                file_results[file_name] = None
         return file_results
 
     def file_exists(self, file_name:str) -> bool:
@@ -256,7 +240,6 @@ class NullDataMiner(DataMiner):
 
     def read_files(self, files:list[str|tuple[str,str,Callable[[IO],Any]|None]]) -> dict[str,str|bytes|Any]:
         raise RuntimeError("Attempted to use `read_files` from a NullDataMiner!")
-
 
 class DataMinerCollection():
 
