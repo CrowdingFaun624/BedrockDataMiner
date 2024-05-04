@@ -6,6 +6,7 @@ import time
 from typing import Iterable, Literal
 import zipfile
 
+import Downloader.DownloadLog as DownloadLog
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
@@ -183,7 +184,9 @@ class DownloadManager(InstallManager.InstallManager):
                 while self.current_open_connections >= CONNECTION_LIMITS_DEFAULT:
                     time.sleep(0.1)
                 self.current_open_connections += 1
-                f.write(requests.get(self.url).content)
+                with requests.get(self.url) as response:
+                    f.write(response.content)
+                    DownloadLog.log(self.version, response)
                 self.current_open_connections -= 1
             self.installed.set(True)
             self.open_zip_file()
