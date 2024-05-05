@@ -15,7 +15,7 @@ class NormalizerComponent(Component.Component):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+            TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
             TypeVerifier.TypedDictKeyTypeVerifier("function_name", "a str", True, str),
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
         )),
@@ -27,7 +27,7 @@ class NormalizerComponent(Component.Component):
         self.type_verifier.base_verify({"data": data, "name": name, "index": index}, ["%s \"%s\"" % (self.class_name, name)])
 
         self.name = name
-        self.dependencies = data["dependencies"]
+        self.dependencies = data.get("dependencies", [])
         self.function_name = data["function_name"]
 
         self.final:Normalizer.Normalizer|None = None
