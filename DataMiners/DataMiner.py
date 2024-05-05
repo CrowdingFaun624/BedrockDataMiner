@@ -5,21 +5,21 @@ from typing import Any, Callable, IO, Iterable, Literal, Mapping, overload, Sequ
 
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
-import Downloader.VersionsParser as VersionsParser
+import Version.VersionParser as VersionParser
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
 import Structure.StructureBase as StructureBase
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
-import Utilities.Version as Version
-import Utilities.VersionRange as VersionRange
+import Version.Version as Version
+import Version.VersionRange as VersionRange
 
 EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
 
 def str_to_version(version_str:str|None) -> Version.Version|None:
     if version_str is None: return None
-    versions = VersionsParser.versions
+    versions = VersionParser.versions
     output = versions.get(version_str)
     if output is None:
         raise KeyError("Version \"%s\" does not exist!" % version_str)

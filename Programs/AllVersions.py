@@ -1,8 +1,8 @@
 import traceback
 
 import DataMiners.DataMiners as DataMiners
-import Downloader.VersionsParser as VersionsParser
-import Utilities.Version as Version
+import Version.VersionParser as VersionParser
+import Version.Version as Version
 
 def datamine_version(version:Version.Version, dataminer_names:list[str], print_messages:bool=True) -> bool:
     supported_files = set(DataMiners.dataminable_files(version))
@@ -26,7 +26,7 @@ def datamine_version(version:Version.Version, dataminer_names:list[str], print_m
 
 def main() -> None:
     dataminer_names = [dataminer_collection.name for dataminer_collection in DataMiners.dataminers]
-    for version in reversed(VersionsParser.versions.values()):
+    for version in reversed(VersionParser.versions.values()):
         if version.download_method is Version.DownloadMethod.DOWNLOAD_NONE:
             print("Skipped \"%s\" due to being unarchived." % (version.name))
         else:

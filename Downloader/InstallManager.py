@@ -1,11 +1,11 @@
 from pathlib2 import Path
 from typing import Iterable, Literal, overload, TYPE_CHECKING
 
-import Utilities.VersionTags as VersionTags
+import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Utilities.FileManager as FileManager
-    import Utilities.Version as Version
+    import Version.Version as Version
 
 class InstallManager():
 

@@ -1,10 +1,10 @@
 import datetime
 import time
 
-import Downloader.VersionsParser as VersionsParser
+import Version.VersionParser as VersionParser
 import Utilities.FileManager as FileManager
-import Utilities.Version as Version
-import Utilities.VersionTags as VersionTags
+import Version.Version as Version
+import Version.VersionTags as VersionTags
 
 try:
     import mediawikiapi
@@ -249,8 +249,8 @@ def validate(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI, version_t
 def main() -> None:
     config = mediawikiapi.config.Config(mediawiki_url="http://minecraft.wiki/api.php")
     mwapi = mediawikiapi.MediaWikiAPI(config)
-    versions = VersionsParser.versions
-    version_tags = VersionsParser.version_tags
+    versions = VersionParser.versions
+    version_tags = VersionParser.version_tags
     start_version = input("What version to start from? ")
     with open(FileManager.WIKI_VALIDATOR_WARNINGS_FILE, "wt") as f:
         f.write("")

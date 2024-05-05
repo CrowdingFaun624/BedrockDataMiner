@@ -4,8 +4,8 @@ import traceback
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMinerCollectionImporter as DataMinerCollectionImporter
 import DataMiners.DataMinerTyping as DataMinerTyping
-import Downloader.VersionsParser as VersionsParser
-import Utilities.Version as Version
+import Version.VersionParser as VersionParser
+import Version.Version as Version
 
 dataminers = DataMinerCollectionImporter.load_dataminers()
 
@@ -98,7 +98,7 @@ def test_structures() -> None:
     print("All structures successfully parsed.")
 
 def user_interface() -> None:
-    version_names = VersionsParser.versions
+    version_names = VersionParser.versions
     version = None
     while version not in version_names and version != "*":
         version = input("What version will be datamined? ")

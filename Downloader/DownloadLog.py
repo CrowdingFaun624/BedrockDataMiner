@@ -3,7 +3,7 @@ import json
 import requests
 
 import Utilities.FileManager as FileManager
-import Utilities.Version as Version
+import Version.Version as Version
 
 def log(version:Version.Version, response:requests.Response) -> None:
     with open(FileManager.DOWNLOAD_LOG, "at") as f:

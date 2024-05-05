@@ -330,6 +330,11 @@ def render_controllers_remove_texures(data:dict[str,Any], dependencies:DataMiner
     if "texures" in data:
         del data["texures"]
 
+def renderer_platform_configuration_normalize_shadow_config(data:dict[str,str], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "file" in data:
+        data["shadow_config"] = {"file": data["file"]}
+        del data["file"]
+
 def sound_definitions_fix_MCPE_153558(data:DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-153558
     if "pitch" in data:
@@ -509,6 +514,7 @@ functions:dict[str,Callable] = {
     "resource_packs_normalize": resource_packs_normalize,
     "render_controllers_fix_old": render_controllers_fix_old,
     "render_controllers_remove_texures": render_controllers_remove_texures,
+    "renderer_platform_configuration_normalize_shadow_config": renderer_platform_configuration_normalize_shadow_config,
     "sound_definitions_fix_MCPE_153558": sound_definitions_fix_MCPE_153558,
     "sound_definitions_fix_MCPE_178265": sound_definitions_fix_MCPE_178265,
     "sound_definitions_make_sounds_dict": sound_definitions_make_sounds_dict,

@@ -6,7 +6,7 @@ import validators
 
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
-import Utilities.VersionTags as VersionTags
+import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Downloader.InstallManager as InstallManager

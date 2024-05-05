@@ -10,7 +10,7 @@ import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
-    import Utilities.Version as Version
+    import Version.Version as Version
 
 a = TypeVar("a")
 b = TypeVar("b")

@@ -10,7 +10,7 @@ import Downloader.DownloadLog as DownloadLog
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
-import Utilities.VersionTags as VersionTags
+import Version.VersionTags as VersionTags
 
 CONNECTION_LIMITS:dict[str,int] = {}
 CONNECTION_LIMITS_DEFAULT = 1

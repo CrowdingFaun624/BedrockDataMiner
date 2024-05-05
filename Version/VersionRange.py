@@ -1,7 +1,7 @@
 from typing import Literal, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
-    import Utilities.Version as Version
+    import Version.Version as Version
 
 class VersionRange():
     '''Used for detecting if a Version is within a range of versions.

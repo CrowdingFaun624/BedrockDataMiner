@@ -3,12 +3,12 @@ import traceback
 from typing import Any, Generator, Mapping, Sequence, TypedDict, TypeVar
 
 import DataMiners.DataMiner as DataMiner
-import Downloader.VersionsParser as VersionsParser
+import Version.VersionParser as VersionParser
 import Structure.StructureBase as StructureBase
 import Structure.Importer.Importer as Importer
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
-import Utilities.Version as Version
+import Version.Version as Version
 
 import DataMiners.AllFiles.AllFilesDataMiners as AllFilesDataMiners
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
@@ -238,7 +238,7 @@ def load_dataminers() -> list[DataMiner.DataMinerCollection]:
     for name, dataminer_collection_data in data.items():
         dataminer_collection_intermediates[name] = DataMinerCollectionIntermediate(dataminer_collection_data, name, structures)
     finals = [dataminer_collection_intermediate.create_final(all_dataminers_dict) for dataminer_collection_intermediate in dataminer_collection_intermediates.values() if not dataminer_collection_intermediate.disabled]
-    versions = VersionsParser.versions
+    versions = VersionParser.versions
     all_used_versions:set["Version.Version"] = set()
     for dataminer_collection_intermediate in dataminer_collection_intermediates.values():
         used_versions = dataminer_collection_intermediate.check(dataminer_collection_intermediates, versions)

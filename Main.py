@@ -5,26 +5,28 @@
 # profile.run('''
 # import Programs.CompareAll as CompareAll
 # import DataMiners.DataMiners as DataMiners
-# import Downloader.AllVersions as AllVersions
-# import Downloader.VersionsParser as VersionsParser
-# import Downloader.WikiValidator as WikiValidator
+# import Programs.AllVersions as AllVersions
+# import Version.VersionParser as VersionParser
+# import Programs.UrlValidator as UrlValidator
+# import Programs.WikiValidator as WikiValidator
 # import Programs.Cleaner as Cleaner
 # import Programs.FileSummary as FileSummary
 # import Programs.GetFile as GetFile
 # import Utilities.CustomJson as CustomJson
 # import Utilities.FileManager as FileManager
 # import Utilities.Nbt.NbtReader as NbtReader
-# import Utilities.StoredVersionsManager as StoredVersionsManager''')
+# import Utilities.StoredVersionsManager as StoredVersionsManager
+# ''')
 # with open(Path("./time_report.txt"), "wt") as stream:
 #     stats = pstats.Stats(profile, stream=stream)
 #     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
 
 import Programs.CompareAll as CompareAll
 import DataMiners.DataMiners as DataMiners
-import Downloader.AllVersions as AllVersions
-import Downloader.VersionsParser as VersionsParser
-import Downloader.UrlValidator as UrlValidator
-import Downloader.WikiValidator as WikiValidator
+import Programs.AllVersions as AllVersions
+import Version.VersionParser as VersionParser
+import Programs.UrlValidator as UrlValidator
+import Programs.WikiValidator as WikiValidator
 import Programs.Cleaner as Cleaner
 import Programs.FileSummary as FileSummary
 import Programs.GetFile as GetFile
@@ -45,7 +47,7 @@ PROGRAM_NAMES = {
     "StoredVersions": StoredVersionsManager.main,
     "TestStructures": DataMiners.test_structures,
     "UrlValidator": UrlValidator.main,
-    "VersionsParser": VersionsParser.main,
+    "VersionParser": VersionParser.main,
     "WikiValidator": WikiValidator.main,
 }
 

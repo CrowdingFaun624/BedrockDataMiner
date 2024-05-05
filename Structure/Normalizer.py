@@ -3,7 +3,7 @@ from typing import Any, Callable, cast, Generic, TYPE_CHECKING, TypeVar
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Structure.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
-import Utilities.Version as Version
+import Version.Version as Version
 
 if TYPE_CHECKING:
     import DataMiners.DataMiner as DataMiner

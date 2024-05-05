@@ -1,10 +1,10 @@
 import datetime
 from typing import Callable
 
-import Downloader.VersionsParser as VersionsParser
+import Version.VersionParser as VersionParser
 import Utilities.FileManager as FileManager
-import Utilities.Version as Version
-import Utilities.VersionTags as VersionTags
+import Version.Version as Version
+import Version.VersionTags as VersionTags
 
 def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version,VersionTags.VersionTags],list[str]]:
 
@@ -104,8 +104,8 @@ def validate(version:Version.Version, version_tags:VersionTags.VersionTags) -> l
 
 def main() -> None:
     '''Writes a list of warning strings to "./_assets/version_parser_warnings.txt"'''
-    versions = VersionsParser.versions
-    version_tags = VersionsParser.version_tags
+    versions = VersionParser.versions
+    version_tags = VersionParser.version_tags
     warnings_list:list[str] = []
     for version in versions.values():
         if version.download_method is not Version.DownloadMethod.DOWNLOAD_URL: continue

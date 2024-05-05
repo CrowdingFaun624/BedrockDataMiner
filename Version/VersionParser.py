@@ -7,9 +7,9 @@ import Downloader.LocalManager as LocalManager
 import Downloader.StoredManager as StoredManager
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
-import Utilities.Version as Version
-import Utilities.VersionRange as VersionRange
-import Utilities.VersionTags as VersionTags
+import Version.Version as Version
+import Version.VersionRange as VersionRange
+import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Downloader.InstallManager as InstallManager
@@ -165,7 +165,7 @@ def assign_latest(versions:dict[str,Version.Version], version_tags:VersionTags.V
                 break
 
 def assign_additional_tags(versions:dict[str,Version.Version], version_tags:VersionTags.VersionTags) -> None:
-    '''Assigns tags that are assigned by the VersionsParser'''
+    '''Assigns tags that are assigned by the VersionParser'''
     for version in versions.values():
         for tag in version_tags.auto_assign_tags:
             tag.auto_assign(version, versions)

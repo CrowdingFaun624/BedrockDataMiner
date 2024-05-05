@@ -6,8 +6,8 @@ from typing import Iterable, Literal
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
-import Utilities.Version as Version
-import Utilities.VersionTags as VersionTags
+import Version.Version as Version
+import Version.VersionTags as VersionTags
 
 class StoredManager(InstallManager.InstallManager):
 

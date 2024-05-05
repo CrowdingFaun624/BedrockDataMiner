@@ -3,11 +3,11 @@ from typing import Generator, Iterable, TypeVar
 
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMiners as DataMiners
-import Downloader.VersionsParser as VersionsParser
+import Version.VersionParser as VersionParser
 import Structure.Normalizer as Normalizer
 import Utilities.FileManager as FileManager
-import Utilities.Version as Version
-import Utilities.VersionTags as VersionTags
+import Version.Version as Version
+import Version.VersionTags as VersionTags
 
 FlattenType = TypeVar("FlattenType")
 def flatten(matrix:Iterable[Iterable[FlattenType]]) -> Generator[FlattenType, None, None]:
@@ -80,8 +80,8 @@ def select_dataminers(dataminers:list["DataMiner.DataMinerCollection"]) -> list[
 def main() -> None:
     dataminers = DataMiners.dataminers
     selected_dataminers = select_dataminers(dataminers)
-    versions = VersionsParser.versions
-    version_tags = VersionsParser.version_tags
+    versions = VersionParser.versions
+    version_tags = VersionParser.version_tags
     major_tags = {tag for tag in version_tags.tags.values() if tag.is_major_tag}
     minor_tags_before = {tag for tag in version_tags.tags.values() if not tag.is_major_tag and tag in version_tags.order.tags_before_top_level_tag}
     minor_tags_after  = {tag for tag in version_tags.tags.values() if not tag.is_major_tag and tag in version_tags.order.tags_after_top_level_tag }

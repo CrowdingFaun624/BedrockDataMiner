@@ -4,10 +4,10 @@ from typing_extensions import NotRequired, Required
 
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
-import Utilities.VersionRange as VersionRange
+import Version.VersionRange as VersionRange
 
 if TYPE_CHECKING:
-    import Utilities.Version as Version
+    import Version.Version as Version
 
 # is_development_tag: Used when comparing to make versions say what they are a development version of.
 # is_fork_tag: The version after this one is not a descended from this one. Can be used for April Fools' versions

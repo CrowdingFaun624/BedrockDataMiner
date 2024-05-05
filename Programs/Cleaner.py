@@ -2,7 +2,7 @@ from pathlib2 import Path
 from typing import Iterable
 
 import DataMiners.DataMiners as DataMiners
-import Downloader.VersionsParser as VersionsParser
+import Version.VersionParser as VersionParser
 
 def __remove_files(files:Iterable[Path]) -> None:
     for file in files:
@@ -10,11 +10,11 @@ def __remove_files(files:Iterable[Path]) -> None:
 
 def main() -> None:
     version_selected_str = None
-    versions = VersionsParser.versions
+    versions = VersionParser.versions
     while version_selected_str != "*" and version_selected_str not in versions:
         version_selected_str = input("Select a version to remove data from (or \"*\" for all): ")
     if version_selected_str == "*":
-        versions_selected = VersionsParser.versions.values()
+        versions_selected = VersionParser.versions.values()
     else:
         versions_selected = [versions[version_selected_str]]
 
