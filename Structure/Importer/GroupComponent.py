@@ -3,6 +3,7 @@ from typing import Callable
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.Structure as Structure
@@ -92,7 +93,7 @@ class GroupComponent(Component.Component):
                 self.final[valid_type] = structure
             self.check_types_final.append((valid_types, subcomponent))
 
-    def check(self) -> list[Exception]:
+    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         assert self.check_types_final is not None
         for index, (types, subcomponent) in enumerate(self.check_types_final):
             if subcomponent is None:

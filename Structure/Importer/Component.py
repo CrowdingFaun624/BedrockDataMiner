@@ -2,6 +2,7 @@ from typing import Any, Callable, Iterable, Union
 
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.ImporterConfig as ImporterConfig
 import Utilities.TypeVerifier as TypeVerifier
 
 class Component():
@@ -40,7 +41,7 @@ class Component():
         '''Links this Component's final object to other final objects.'''
         pass
 
-    def check(self) -> list[Exception]:
+    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         '''Make sure that this Component's types are all in order; no error could occur.'''
         ...
 

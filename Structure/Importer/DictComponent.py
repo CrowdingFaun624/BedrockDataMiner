@@ -5,6 +5,7 @@ import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.GroupComponent as GroupComponent
+import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Importer.TagComponent as TagComponent
@@ -173,7 +174,7 @@ class DictComponent(StructureComponent.StructureComponent):
         for tag in self.tags:
             self.tags_final.append(tag.name)
 
-    def check(self) -> list[Exception]:
+    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         assert self.final is not None
         assert self.types_final is not None
         self.final.check_initialization_parameters()

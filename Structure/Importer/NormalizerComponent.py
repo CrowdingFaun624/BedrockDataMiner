@@ -3,6 +3,7 @@ from typing import Callable
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Normalizer as Normalizer
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -40,3 +41,9 @@ class NormalizerComponent(Component.Component):
         if self.function_name not in functions:
             raise KeyError("Function \"%s\", referenced in key \"function_name\" of %s \"%s\", does not exist!" % (self.function_name, self.class_name, self.name))
         self.final = Normalizer.Normalizer(functions[self.function_name], self.dependencies)
+
+    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
+        exceptions:list[Exception] = []
+        if not config.allow_normalizer_dependencies and len(self.dependencies) > 0:
+            exceptions.append(ValueError("Normalizer \"%s\" has dependencies in an environment with no allowed normalizer dependencies!" % (self.name,)))
+        return exceptions

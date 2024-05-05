@@ -4,6 +4,7 @@ import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.GroupComponent as GroupComponent
+import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Importer.TagComponent as TagComponent
@@ -209,7 +210,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
         for key, tags in self.tags.items():
             self.tags_final[key] = sorted({tag.name for tag in tags} | tags_for_all_set)
 
-    def check(self) -> list[Exception]:
+    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         assert self.final is not None
         self.final.check_initialization_parameters()
         exceptions:list[Exception] = []

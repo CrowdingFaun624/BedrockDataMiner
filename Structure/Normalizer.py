@@ -111,7 +111,20 @@ class LocalNormalizerDependencies():
         return self.parent.get_data(version, dataminer_name)
 
     def __repr__(self) -> str:
-        return "<LocalNormalizerDependencies (%s, %s)>" % (str(self.version1), str(self.version2))
+        return "<%s (%s, %s)>" % (self.__class__.__name__, str(self.version1), str(self.version2))
+
+class NullNormalizerDependencies(LocalNormalizerDependencies):
+    '''Does not actually contain any normalizer dependencies, and raises an exception if you try to do anything with it.'''
+    def __init__(self):
+        self.parent = None
+        self.version1 = None
+        self.version2 = None
+
+    def get_data(self, version: Version.Version, dataminer_name: str) -> Any:
+        raise RuntimeError("Attempted to get data from NullNormalizerDependencies!")
+    
+    def __repr__(self) -> str:
+        return "<%s>" % (self.__class__.__name__)
 
 class SimpleNormalizerDependencies(LocalNormalizerDependencies):
 

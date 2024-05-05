@@ -4,6 +4,7 @@ import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.GroupComponent as GroupComponent
+import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Importer.TagComponent as TagComponent
@@ -169,7 +170,7 @@ class ListComponent(StructureComponent.StructureComponent):
                 return [TypeError("%s \"%s\" accepts types [%s], but its Subcomponent, \"%s\", only accepts type [%s]!" % (self.class_name, self.name, my_types, self.subcomponent.name, its_types))]
         return []
 
-    def check(self) -> list[Exception]:
+    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         assert self.final is not None
         exceptions:list[Exception] = []
         self.final.check_initialization_parameters()

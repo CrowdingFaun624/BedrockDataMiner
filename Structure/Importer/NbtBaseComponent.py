@@ -4,6 +4,7 @@ import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.GroupComponent as GroupComponent
+import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
@@ -121,7 +122,7 @@ class NbtBaseComponent(StructureComponent.StructureComponent):
         assert self.subcomponent.final is not None
         self.final.structure = self.subcomponent.final
     
-    def check(self) -> list[Exception]:
+    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         assert self.final is not None
         assert self.subcomponent is not None
         self.final.check_initialization_parameters()
