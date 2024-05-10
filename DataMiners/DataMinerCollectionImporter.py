@@ -170,10 +170,10 @@ class DataMinerCollectionIntermediate():
         # check dependencies
         used_versions:list["Version.Version"] = []
         for index, dataminer_settings in enumerate(self.dataminer_settings_strs):
-            if "dependencies" not in dataminer_settings: continue
-            for dependency in dataminer_settings["dependencies"]:
-                if dependency not in intermediates:
-                    raise KeyError("DataMinerSettings %i of DataMinerCollection \"%s\" references non-existent DataMinerCollection \"%s\"!" % (index, self.name, dependency))
+            if "dependencies" in dataminer_settings:
+                for dependency in dataminer_settings["dependencies"]:
+                    if dependency not in intermediates:
+                        raise KeyError("DataMinerSettings %i of DataMinerCollection \"%s\" references non-existent DataMinerCollection \"%s\"!" % (index, self.name, dependency))
 
             # ending DataMinerSettings must have null versions on corresponding versions; middle ones cannot be null.
             if index == 0:
