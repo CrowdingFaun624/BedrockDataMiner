@@ -1,0 +1,57 @@
+{
+    "file_types": {
+        "client": {
+            "allowed_managers": ["download", "stored", "local"],
+            "install_location": "client.zip",
+            "must_exist": true
+        }
+    },
+    "managers": {
+        "download": {
+            "script_location": "managers/downloader.lua",
+            "permissions": ["requests", "zipfile"],
+            "argument_structure": {
+                "base": {
+                    "type": "Base",
+                    "name": "download",
+                    "subcomponent": "download"
+                },
+                "download": {
+                    "type": "Keymap",
+                    "keys": {
+                        "url": {"type": "str"}
+                    }
+                }
+            }
+        },
+        "stored": {
+            "script_location": "",
+            "argument_structure": {
+                "base": {
+                    "type": "Base",
+                    "name": "stored",
+                    "subcomponent": "stored"
+                },
+                "stored": {
+                    "type": "Keymap",
+                    "keys": {
+                        "stored_name": {"type": "str"}
+                    }
+                }
+            }
+        },
+        "local": {
+            "script_location": "",
+            "argument_structure": {
+                "base": {
+                    "type": "Base",
+                    "name": "local",
+                    "subcomponent": "local"
+                },
+                "local": {
+                    "is_preview": {"type": "bool"}
+                }
+            }
+        }
+    }
+}
