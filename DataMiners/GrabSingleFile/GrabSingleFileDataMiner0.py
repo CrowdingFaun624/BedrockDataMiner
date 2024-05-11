@@ -12,6 +12,7 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
         "data_type": (DataMinerParameters.LiteralParameters(DataTypes.DataTypes.data_types()), False),
         "location": (str, True),
         "file_display_name": (str, True),
+        "insert_pack": (str, False),
     })
 
     def initialize(self, **kwargs) -> None:
@@ -21,6 +22,7 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
             self.data_type = DataTypes.DataTypes[kwargs["data_type"]]
         self.location:str = kwargs["location"]
         self.file_display_name:str|None = kwargs["file_display_name"]
+        self.insert_pack:str|None = kwargs.get("insert_pack", None)
 
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> Any:
 
@@ -38,4 +40,6 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
             raise exception
 
         file_data = DataTypes.get_data_from_content(file, self.data_type)
+        if self.insert_pack is not None:
+            file_data = {self.insert_pack: file_data}
         return Sorting.sort_everything(file_data)
