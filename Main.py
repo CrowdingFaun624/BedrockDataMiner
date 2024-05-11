@@ -74,6 +74,8 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
+# TODO: dataminers for:
+#   renderer/vanilla_lights.json in 1.20.20.23
 # TODO: fix meta-dataminers relating to the usage of sound events (use all available sources)
-# TODO: make more dataminers
+# TODO: merge dict and list structures
 # TODO: make more domains
