@@ -15,6 +15,7 @@
 # import Utilities.CustomJson as CustomJson
 # import Utilities.FileManager as FileManager
 # import Utilities.Nbt.NbtReader as NbtReader
+# import Utilities.Scripts as Scripts
 # import Utilities.StoredVersionsManager as StoredVersionsManager
 # ''')
 # with open(Path("./time_report.txt"), "wt") as stream:
@@ -33,6 +34,7 @@ import Programs.GetFile as GetFile
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 import Utilities.Nbt.NbtReader as NbtReader
+import Utilities.Scripts as Scripts
 import Utilities.StoredVersionsManager as StoredVersionsManager
 
 PROGRAM_NAMES = {
@@ -44,6 +46,7 @@ PROGRAM_NAMES = {
     "FileSummary": FileSummary.main,
     "GetFile": GetFile.main,
     "NbtReader": NbtReader.main,
+    "Scripts": Scripts.main,
     "StoredVersions": StoredVersionsManager.main,
     "TestStructures": DataMiners.test_structures,
     "UrlValidator": UrlValidator.main,
