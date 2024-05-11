@@ -1,0 +1,50 @@
+Difference of "particles" between "1.20.70.20" (beta of "1.20.71") and "1.20.70.21" (beta of "1.20.71").
+
+Total particle: 148 (+1, -0)
+Changed particle "small_flame":
+	Changed resource pack "experimental":
+		Changed field "particle_effect":
+			Changed field "components":
+				Total field: 10 (+2, -2)
+				Removed field "minecraft:emitter_lifetime_looping" of field "active_time": 1.
+				Added field "minecraft:emitter_lifetime_once" of field "active_time": 0.15.
+				Added field "minecraft:emitter_rate_instant" of field "num_particles": 1.
+				Removed field "minecraft:emitter_rate_steady":
+					field "max_particles": 8
+					field "spawn_rate": "Math.random(1,3)"
+				Changed field "minecraft:emitter_shape_box":
+					Changed field "direction":
+						Changed vector_item 0 from 0 to "variable.direction.x".
+						Changed vector_item 1 from 0 to "variable.direction.y".
+						Changed vector_item 2 from 0 to "variable.direction.z".
+				Changed field "minecraft:particle_initial_speed" from 0 to "variable.particle_initial_speed".
+				Changed field "minecraft:particle_lifetime_expression":
+					Changed field "max_lifetime" from "Math.random(0.6,2.2)" to "Math.random(0.6, 2.2)".
+				Changed field "minecraft:particle_motion_dynamic":
+					Added field "linear_acceleration" of [0.0, 0.0, 0.0].
+					Added field "linear_drag_coefficient" of 0.96.
+Added particle "vault_connection":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_point": empty
+				field "minecraft:particle_appearance_billboard":
+					field "facing_camera_mode": "lookat_xyz"
+					field "size": ["variable.particle_random_1 * 0.075 + 0.03", "variable.particle_random_1 * 0.075 + 0.03"]
+					field "uv":
+						field "texture_height": 8
+						field "texture_width": 8
+						field "uv": [0, 0]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_3 * 0.54 + 0.36", "variable.particle_random_3 * 0.54 + 0.36", "variable.particle_random_3 * 0.6 + 0.4", "math.lerp((math.clamp(variable.particle_age / variable.particle_lifetime, 0.2, 0.8) - 0.2) / 0.6, 0.0, 0.6)"]
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.5, 2.5)"
+				field "minecraft:particle_motion_parametric": field "relative_position": ["variable.pos = 1 - (variable.particle_age / variable.particle_lifetime); return variable.direction.x * variable.pos;", "variable.direction.y * variable.pos - Math.pow((1 - variable.pos), 3) * 1.2", "variable.direction.z * variable.pos"]
+			field "description":
+				field "basic_render_parameters":
+					field "material": "particles_blend"
+					field "texture": "textures/particle/vault_connection"
+				field "identifier": "minecraft:vault_connection_particle"
+		field "defined_in": resource pack 0: "experimental_update_announced_live2023"

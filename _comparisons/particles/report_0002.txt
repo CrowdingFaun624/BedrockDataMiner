@@ -1,0 +1,209 @@
+Difference of "particles" between "1.8.0.11" (beta of "1.8.0") and "1.8.0.13" (beta of "1.8.0").
+
+Changed particle "basic_flame":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_appearance_billboard":
+					Changed field "size":
+						Changed vector_item 0 from "(0.1 + Entity.ParticleRandom1*0.1) - (0.1 * Entity.ParticleAge)" to "(0.1 + variable.ParticleRandom1*0.1) - (0.1 * variable.ParticleAge)".
+						Changed vector_item 1 from "(0.1 + Entity.ParticleRandom1*0.1) - (0.1 * Entity.ParticleAge)" to "(0.1 + variable.ParticleRandom1*0.1) - (0.1 * variable.ParticleAge)".
+Changed particle "basic_smoke":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_appearance_tinting":
+					Changed field "color":
+						Total color: 1 (+1, -1)
+						Removed color ["Entity.ParticleRandom1*0.5", "Entity.ParticleRandom1*0.5", "Entity.ParticleRandom1*0.5", 1.0].
+						Added color ["variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", 1.0].
+Changed particle "block_destruct":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Total field: 10 (+0, -0)
+				Changed field "minecraft:emitter_rate_instant":
+					Changed field "num_particles" from "entity.emitter_intensity * entity.emitter_intensity * (entity.emitter_intensity)" to "variable.emitter_intensity * variable.emitter_intensity * (variable.emitter_intensity)".
+				Changed field "minecraft:emitter_shape_point":
+					Changed field "offset":
+						Changed vector_item 0 from "Math.random(-entity.emitter_radius, entity.emitter_radius)" to "Math.random(-variable.emitter_radius, variable.emitter_radius)".
+						Changed vector_item 1 from "Math.random(-entity.emitter_radius, entity.emitter_radius)" to "Math.random(-variable.emitter_radius, variable.emitter_radius)".
+						Changed vector_item 2 from "Math.random(-entity.emitter_radius, entity.emitter_radius)" to "Math.random(-variable.emitter_radius, variable.emitter_radius)".
+				Changed field "minecraft:particle_appearance_billboard":
+					Changed field "size":
+						Changed vector_item 0 from "Entity.ParticleRandom1 * 0.0375 + 0.0375" to "variable.ParticleRandom1 * 0.0375 + 0.0375".
+						Changed vector_item 1 from "Entity.ParticleRandom1 * 0.0375 + 0.0375" to "variable.ParticleRandom1 * 0.0375 + 0.0375".
+					Changed field "uv":
+						Changed field "uv":
+							Changed vector_item 0 from "entity.EmitterTextureCoord.u + (entity.EmitterTextureSize.u/4) * (Entity.ParticleRandom1*3)" to "variable.EmitterTextureCoord.u + (variable.EmitterTextureSize.u/4) * (variable.ParticleRandom1*3)".
+							Changed vector_item 1 from "entity.EmitterTextureCoord.v + (entity.EmitterTextureSize.v/4) * (Entity.ParticleRandom2*3)" to "variable.EmitterTextureCoord.v + (variable.EmitterTextureSize.v/4) * (variable.ParticleRandom2*3)".
+						Changed field "uv_size":
+							Changed vector_item 0 from "entity.EmitterTextureSize.u/4" to "variable.EmitterTextureSize.u/4".
+							Changed vector_item 1 from "entity.EmitterTextureSize.v/4" to "variable.EmitterTextureSize.v/4".
+				Changed field "minecraft:particle_appearance_tinting":
+					Changed field "color":
+						Total color: 1 (+1, -1)
+						Removed color ["entity.color.r", "entity.color.g", "entity.color.b", "entity.color.a"].
+						Added color ["variable.color.r", "variable.color.g", "variable.color.b", "variable.color.a"].
+				Changed field "minecraft:particle_initial_speed" from "Math.random(0, 4) * entity.velocity_scalar" to "Math.random(0, 4) * variable.velocity_scalar".
+Changed particle "heart":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_appearance_billboard":
+					Changed field "size":
+						Changed vector_item 0 from "(0.2 + Entity.ParticleRandom1*0.1)" to "(0.2 + variable.ParticleRandom1*0.1)".
+						Changed vector_item 1 from "(0.2 + Entity.ParticleRandom1*0.1)" to "(0.2 + variable.ParticleRandom1*0.1)".
+Changed particle "mobflame":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:emitter_lifetime_expression":
+					Changed field "activation_expression" from "Entity.Flags.CHARGED" to "query.is_charged".
+Changed particle "test/test_beziercurve":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_appearance_tinting":
+					Changed field "color":
+						Changed field "interpolant" from "entity.colorcurve" to "variable.colorcurve".
+			Changed field "curves":
+				Total curve: 1 (+1, -1)
+				Removed curve "entity.colorcurve":
+					field "horizontal_range": "entity.particlelifetime"
+					field "input": "entity.particleage"
+					field "nodes": [0.0, 0.1, 1.0, 0.8]
+					field "type": "bezier"
+				Added curve "variable.colorcurve":
+					field "horizontal_range": "variable.particlelifetime"
+					field "input": "variable.particleage"
+					field "nodes": [0.0, 0.1, 1.0, 0.8]
+					field "type": "bezier"
+Changed particle "test/test_catmullromcurve":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_appearance_billboard":
+					Changed field "size":
+						Changed vector_item 0 from "entity.sizecurve" to "variable.sizecurve".
+						Changed vector_item 1 from "entity.sizecurve" to "variable.sizecurve".
+			Changed field "curves":
+				Total curve: 1 (+1, -1)
+				Removed curve "entity.sizecurve":
+					field "horizontal_range": "entity.particlelifetime"
+					field "input": "entity.particleage"
+					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.0, 0.3]
+					field "type": "catmull_rom"
+				Added curve "variable.sizecurve":
+					field "horizontal_range": "variable.particlelifetime"
+					field "input": "variable.particleage"
+					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.0, 0.3]
+					field "type": "catmull_rom"
+Changed particle "test/test_colorcurve":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_appearance_tinting":
+					Changed field "color":
+						Changed field "interpolant" from "entity.particleage/entity.particlelifetime" to "variable.particleage/variable.particlelifetime".
+Changed particle "test/test_combocurve":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_appearance_billboard":
+					Changed field "size":
+						Changed vector_item 0 from "entity.sizecurve" to "variable.sizecurve".
+						Changed vector_item 1 from "entity.sizecurve" to "variable.sizecurve".
+				Changed field "minecraft:particle_appearance_tinting":
+					Changed field "color":
+						Changed field "interpolant" from "entity.colorcurve" to "variable.colorcurve".
+				Changed field "minecraft:particle_motion_dynamic":
+					Changed field "rotation_acceleration" from "entity.rotation_acceleration" to "variable.rotation_acceleration".
+			Changed field "curves":
+				Total curve: 3 (+3, -3)
+				Removed curve "entity.colorcurve":
+					field "horizontal_range": "entity.particlelifetime"
+					field "input": "entity.particleage"
+					field "nodes": [0.0, 0.1, 1.0, 0.8]
+					field "type": "bezier"
+				Removed curve "entity.rotation_acceleration":
+					field "horizontal_range": "entity.particlelifetime"
+					field "input": "entity.particleage"
+					field "nodes": [1000.0, -2000.0, 4000.0, -8000.0, 16000.0, -32000.0]
+					field "type": "linear"
+				Removed curve "entity.sizecurve":
+					field "horizontal_range": "entity.particlelifetime"
+					field "input": "entity.particleage"
+					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.1, 0.3]
+					field "type": "catmull_rom"
+				Added curve "variable.colorcurve":
+					field "horizontal_range": "variable.particlelifetime"
+					field "input": "variable.particleage"
+					field "nodes": [0.0, 0.1, 1.0, 0.8]
+					field "type": "bezier"
+				Added curve "variable.rotation_acceleration":
+					field "horizontal_range": "variable.particlelifetime"
+					field "input": "variable.particleage"
+					field "nodes": [1000.0, -2000.0, 4000.0, -8000.0, 16000.0, -32000.0]
+					field "type": "linear"
+				Added curve "variable.sizecurve":
+					field "horizontal_range": "variable.particlelifetime"
+					field "input": "variable.particleage"
+					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.1, 0.3]
+					field "type": "catmull_rom"
+Changed particle "test/test_linearcurve":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_appearance_tinting":
+					Changed field "color":
+						Total color: 1 (+1, -1)
+						Removed color ["Entity.ParticleRandom1*0.5", "Entity.ParticleRandom1*0.5", "Entity.ParticleRandom1*0.5", 1.0].
+						Added color ["variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", 1.0].
+				Changed field "minecraft:particle_motion_dynamic":
+					Changed field "rotation_acceleration" from "entity.rotation_acceleration" to "variable.rotation_acceleration".
+			Changed field "curves":
+				Total curve: 1 (+1, -1)
+				Removed curve "entity.rotation_acceleration":
+					field "horizontal_range": "entity.particlelifetime"
+					field "input": "entity.particleage"
+					field "nodes": [1000.0, -2000.0, 4000.0, -8000.0, 16000.0, -32000.0]
+					field "type": "linear"
+				Added curve "variable.rotation_acceleration":
+					field "horizontal_range": "variable.particlelifetime"
+					field "input": "variable.particleage"
+					field "nodes": [1000.0, -2000.0, 4000.0, -8000.0, 16000.0, -32000.0]
+					field "type": "linear"
+Changed particle "test/test_smoke_puff":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_appearance_billboard":
+					Changed field "size":
+						Changed vector_item 0 from "0.1 + Entity.ParticleAge * 0.3f" to "0.1 + variable.ParticleAge * 0.3f".
+						Changed vector_item 1 from "0.1 + Entity.ParticleAge * 0.3f" to "0.1 + variable.ParticleAge * 0.3f".
+				Changed field "minecraft:particle_appearance_tinting":
+					Changed field "color":
+						Total color: 1 (+1, -1)
+						Removed color ["Entity.ParticleRandom1*0.5", "Entity.ParticleRandom1*0.5", "Entity.ParticleRandom1*0.5", 1.0].
+						Added color ["variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", 1.0].
+Changed particle "test/test_sphere":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_motion_parametric":
+					Changed field "rotation" from "Entity.ParticleRandom1 * 360 + Entity.ParticleAge * 500" to "variable.ParticleRandom1 * 360 + variable.ParticleAge * 500".
+Changed particle "test/test_spiral":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_appearance_tinting":
+					Changed field "color":
+						Total color: 1 (+1, -1)
+						Removed color ["Entity.ParticleRandom1", "0", "Entity.ParticleRandom2", 1.0].
+						Added color ["variable.ParticleRandom1", "0", "variable.ParticleRandom2", 1.0].
+				Changed field "minecraft:particle_motion_parametric":
+					Changed field "relative_position":
+						Changed vector_item 0 from "Math.cos((Entity.ParticleAge * 360) + (Entity.ParticleRandom1 * 360))" to "Math.cos((variable.ParticleAge * 360) + (variable.ParticleRandom1 * 360))".
+						Changed vector_item 1 from "Entity.ParticleAge*3" to "variable.ParticleAge*3".
+						Changed vector_item 2 from "Math.sin((Entity.ParticleAge * 360) + (Entity.ParticleRandom1 * 360))" to "Math.sin((variable.ParticleAge * 360) + (variable.ParticleRandom1 * 360))".

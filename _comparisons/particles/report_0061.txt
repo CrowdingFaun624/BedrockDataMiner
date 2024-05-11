@@ -1,0 +1,107 @@
+Difference of "particles" between "1.20.51" and "1.20.60.20" (beta of "1.20.60").
+
+Total particle: 146 (+3, -0)
+Added particle "breeze_ground_particle":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0.1
+				field "minecraft:emitter_rate_instant": field "num_particles": "variable.ground_particle_amount"
+				field "minecraft:emitter_shape_point":
+					field "direction": ["math.random( -0.1, 0.1 )", "math.random( 0.1, 0.2 )", "math.random( -0.1, 0.1 )"]
+					field "offset": [0, 0.1, 0]
+				field "minecraft:particle_appearance_billboard":
+					field "facing_camera_mode": "lookat_xyz"
+					field "size": ["variable.particle_random_1 * 0.0375 + 0.0375", "variable.particle_random_1 * 0.0375 + 0.0375"]
+					field "uv":
+						field "texture_height": 1
+						field "texture_width": 1
+						field "uv": ["variable.ground_particle_texture_coordinate.u + (variable.ground_particle_texture_size.u/4) * (variable.particle_random_1*3)", "variable.ground_particle_texture_coordinate.v + (variable.ground_particle_texture_size.v/4) * (variable.particle_random_2*3)"]
+						field "uv_size": ["variable.ground_particle_texture_size.u/4", "variable.ground_particle_texture_size.v/4"]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: [0.7, 0.7, 0.7]
+				field "minecraft:particle_initial_speed": "variable.ground_particle_initial_speed"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random( 1, 1.1 )"
+				field "minecraft:particle_motion_collision":
+					field "coefficient_of_restitution": 0.1
+					field "collision_drag": 5
+					field "collision_radius": 0.1
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, -9.8, 0]
+					field "linear_drag_coefficient": 0.5
+			field "description":
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "atlas.terrain"
+				field "identifier": "minecraft:breeze_ground_particle"
+		field "defined_in": resource pack 0: "experimental_update_announced_live2023"
+Added particle "trial_spawner_detection.particle":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_initialization": field "creation_expression": "variable.player_count = 1;"
+				field "minecraft:emitter_lifetime_once": field "active_time": 1
+				field "minecraft:emitter_rate_instant": field "num_particles": "30 + math.min(variable.player_count, 10) * 5"
+				field "minecraft:emitter_shape_box":
+					field "direction": [0, 1, 0]
+					field "half_dimensions": [0, 0, 0]
+					field "offset": ["0.5 + math.random(-0.65, 0.65)", "0.1 + math.random(0.0, 0.8)", "0.5 + math.random(-0.65, 0.65)"]
+				field "minecraft:particle_appearance_billboard":
+					field "facing_camera_mode": "lookat_y"
+					field "size": ["variable.quadSize = (variable.particle_random_1 * 0.1125) + 0.11; return variable.quadSize * math.clamp(variable.particle_age / variable.particle_lifetime * 32, 0, 1) / 6.0;", "variable.quadSize = (variable.particle_random_1 * 0.1125) + 0.11; return variable.quadSize * math.clamp(variable.particle_age / variable.particle_lifetime * 32, 0, 1);"]
+					field "uv":
+						field "flipbook":
+							field "base_UV": [0, 0]
+							field "frames_per_second": 5
+							field "max_frame": 5
+							field "size_UV": [1, 6]
+							field "step_UV": [1, 0]
+							field "stretch_to_lifetime": true
+						field "texture_height": 8
+						field "texture_width": 8
+				field "minecraft:particle_appearance_tinting": field "color": color: [1, 1, 1, 1]
+				field "minecraft:particle_initial_speed": "math.random(1,4)"
+				field "minecraft:particle_initialization": field "per_render_expression": "variable.quadSize = (variable.particle_random_1 * 0.1125) + 0.11;"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "variable.lifetime = math.ceil(8.0 / math.random(0.75, 1.5)); return math.max(variable.lifetime, 1.0)/10.0;"
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": [0, "math.random(1.0,1.5)", 0]
+			field "description":
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particles/trial_spawner_atlas"
+				field "identifier": "minecraft:trial_spawner_detection"
+		field "defined_in": resource pack 0: "experimental_update_announced_live2023"
+Added particle "wind_explosion":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0.4
+				field "minecraft:emitter_rate_steady":
+					field "max_particles": 50
+					field "spawn_rate": 120
+				field "minecraft:emitter_shape_custom": field "offset": ["Math.random(-4, 4)", "Math.random(-4, 4)", "Math.random(-4, 4)"]
+				field "minecraft:particle_appearance_billboard":
+					field "facing_camera_mode": "lookat_xyz"
+					field "size": [1.0, 1.0]
+					field "uv":
+						field "flipbook":
+							field "base_UV": [0, 0]
+							field "frames_per_second": 12
+							field "loop": false
+							field "max_frame": 12
+							field "size_UV": [32, 32]
+							field "step_UV": [32, 0]
+							field "stretch_to_lifetime": true
+						field "texture_height": 32
+						field "texture_width": 384
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.6 + 0.4", "variable.particle_random_1 * 0.6 + 0.4", "variable.particle_random_1 * 0.6 + 0.4"]
+				field "minecraft:particle_initial_speed": 0.0
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random( 0.8, 0.9 )"
+			field "description":
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/gust"
+				field "identifier": "minecraft:wind_explosion_emitter"
+		field "defined_in": resource pack 0: "experimental_update_announced_live2023"

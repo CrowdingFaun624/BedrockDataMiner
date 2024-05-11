@@ -1,0 +1,35 @@
+Difference of "particles" between "1.16.210.51" (beta of "1.16.210") and "1.16.210.53" (beta of "1.16.210").
+
+Total particle: 122 (+1, -0)
+Added particle "snowflake":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_expression":
+					field "activation_expression": 1
+					field "expiration_expression": 0
+				field "minecraft:emitter_rate_manual": field "max_particles": 9
+				field "minecraft:emitter_shape_custom":
+					field "direction": ["Math.random(-1.0, 1.0)", 0.2, "Math.random(-1.0, 1.0)"]
+					field "offset": ["0.5 + math.random(-0.2, 0.2)", 1.2, "0.5 + math.random(-0.2, 0.2)"]
+				field "minecraft:particle_appearance_billboard":
+					field "facing_camera_mode": "lookat_xyz"
+					field "size": ["variable.size", "variable.size"]
+					field "uv":
+						field "texture_height": 4
+						field "texture_width": 4
+						field "uv": ["1.25 - (Math.floor(5 * variable.particle_age / variable.particle_lifetime) / 4)", 0]
+						field "uv_size": [0.25, 0.25]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: "#dfe5ed"
+				field "minecraft:particle_initial_speed": "Math.random(2.0, 2.5)"
+				field "minecraft:particle_initialization": field "per_render_expression": "variable.size = 0.25 * math.pow(1.0-(variable.particle_age / variable.particle_lifetime), 0.08);"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "0.5"
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": [0, -9.8, 0]
+			field "description":
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+				field "identifier": "minecraft:snowflake_particle"
+		field "defined_in": resource pack 0: "experimental_caves_and_cliffs"
