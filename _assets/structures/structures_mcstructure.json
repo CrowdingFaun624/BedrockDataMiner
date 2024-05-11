@@ -9,6 +9,16 @@
         "dependencies": ["behavior_packs"],
         "function_name": "collapse_behavior_packs_without_defined_in"
     },
+    "empty_compound": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {}
+    },
+    "empty_list": {
+        "type": "NbtTagList",
+        "types": ["null"],
+        "ordered": false,
+        "subcomponent": null
+    },
     "structures": {
         "type": "Dict",
         "field": "structure",
@@ -75,6 +85,7 @@
         "type": "NbtKeymapTagCompound",
         "keys": {
             "Count": {"type": "TAG_Byte"},
+            "Block": {"type": "TAG_Compound", "subcomponent": "palette.default.block_palette.item"},
             "Damage": {"type": "TAG_Short"},
             "Name": {"type": "TAG_String"},
             "Slot": {"type": "TAG_Byte"},
@@ -85,7 +96,24 @@
     "item.tag": {
         "type": "NbtKeymapTagCompound",
         "keys": {
-            "Damage": {"type": "TAG_Int"}
+            "Damage": {"type": "TAG_Int"},
+            "ench": {"type": "TAG_List", "subcomponent": "item.tag.ench"},
+            "RepairCost": {"type": "TAG_Int"}
+        }
+    },
+    "item.tag.ench": {
+        "type": "NbtTagList",
+        "field": "enchantment",
+        "types": ["TAG_Compound"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "item.tag.ench.item"
+    },
+    "item.tag.ench.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "id": {"type": "TAG_Short"},
+            "lvl": {"type": "TAG_Short"}
         }
     },
     "item_list": {
@@ -115,6 +143,7 @@
     "entity": {
         "type": "NbtKeymapTagCompound",
         "keys": {
+            "Age": {"type": "TAG_Short"},
             "Air": {"type": "TAG_Short"},
             "Armor": {"type": "TAG_List", "subcomponent": "item_list"},
             "AttackTime": {"type": "TAG_Short"},
@@ -129,18 +158,26 @@
             "Chested": {"type": "TAG_Byte"},
             "Color": {"type": "TAG_Byte"},
             "Color2": {"type": "TAG_Byte"},
+            "Command": {"type": "TAG_String"},
+            "CurrentTickCount": {"type": "TAG_Int"},
+            "CustomName": {"type": "TAG_String"},
             "Dead": {"type": "TAG_Byte"},
             "DeathTime": {"type": "TAG_Short"},
             "definitions": {"type": "TAG_List", "subcomponent": "entity.definitions"},
+            "DwellingUniqueID": {"type": "TAG_String"},
+            "ExecuteOnFirstTick": {"type": "TAG_Byte"},
             "FallDistance": {"type": "TAG_Float"},
             "Fire": {"type": "TAG_Short"},
             "hasBoundOrigin": {"type": "TAG_Byte"},
             "hasSetCanPickupItems": {"type": "TAG_Byte"},
+            "Health": {"type": "TAG_Short"},
+            "HighTierCuredDiscount": {"type": "TAG_Int"},
             "HomeDimensionId": {"type": "TAG_Int"},
             "HomePos": {"type": "TAG_List", "subcomponent": "vector_tag_float"},
             "HurtTime": {"type": "TAG_Short"},
             "identifier": {"type": "TAG_String"},
             "InLove": {"type": "TAG_Int"},
+            "internalComponents": {"type": "TAG_Compound", "subcomponent": "entity.internal_components"},
             "InventoryVersion": {"type": "TAG_String"},
             "Invulnerable": {"type": "TAG_Byte"},
             "IsAngry": {"type": "TAG_Byte"},
@@ -150,7 +187,9 @@
             "IsGliding": {"type": "TAG_Byte"},
             "IsGlobal": {"type": "TAG_Byte"},
             "IsIllagerCaptain": {"type": "TAG_Byte"},
+            "IsInRaid": {"type": "TAG_Byte"},
             "IsOrphaned": {"type": "TAG_Byte"},
+            "IsOutOfControl": {"type": "TAG_Byte"},
             "IsPregnant": {"type": "TAG_Byte"},
             "IsRoaring": {"type": "TAG_Byte"},
             "IsScared": {"type": "TAG_Byte"},
@@ -158,21 +197,36 @@
             "IsSwimming": {"type": "TAG_Byte"},
             "IsTamed": {"type": "TAG_Byte"},
             "IsTrusting": {"type": "TAG_Byte"},
+            "Item": {"type": "TAG_Compound", "subcomponent": "entity.item"},
             "ItemInHand": {"type": "TAG_Compound", "subcomponent": "item"},
             "LastDimensionId": {"type": "TAG_Int"},
+            "LastExecution": {"type": "TAG_Long"},
+            "LastOutput": {"type": "TAG_String"},
+            "LastOutputParams": {"type": "TAG_List", "subcomponent": "block_entity_data.last_output_params"},
             "LeasherID": {"type": "TAG_Long"},
             "limitedLife": {"type": "TAG_Int"},
             "LootDropped": {"type": "TAG_Byte"},
             "LoveCause": {"type": "TAG_Long"},
+            "LowTierCuredDiscount": {"type": "TAG_Int"},
             "Mainhand": {"type": "TAG_List", "subcomponent": "item_list"},
             "MarkVariant": {"type": "TAG_Int"},
+            "Motion": {"type": "TAG_List", "subcomponent": "vector_tag_float"},
             "NaturalSpawn": {"type": "TAG_Byte"},
+            "NearbyCuredDiscount": {"type": "TAG_Int"},
+            "NearbyCuredDiscountTimeStamp": {"type": "TAG_Int"},
+            "Offers": {"type": "TAG_Compound", "subcomponent": "block_entity_data.offers"},
             "Offhand": {"type": "TAG_List", "subcomponent": "item_list"},
             "OnGround": {"type": "TAG_Byte"},
+            "OwnerID": {"type": "TAG_Long"},
             "OwnerNew": {"type": "TAG_Long"},
             "Persistent": {"type": "TAG_Byte"},
             "PortalCooldown": {"type": "TAG_Int"},
             "Pos": {"type": "TAG_List", "subcomponent": "vector_tag_float"},
+            "Pose": {"type": "TAG_Compound", "subcomponent": "entity.pose"},
+            "PreferredProfession": {"type": "TAG_String"},
+            "ReactToBell": {"type": "TAG_Byte"},
+            "RewardPlayersOnFirstFounding": {"type": "TAG_Byte"},
+            "Riches": {"type": "TAG_Int"},
             "Rotation": {"type": "TAG_List", "subcomponent": "entity.rotation"},
             "Saddled": {"type": "TAG_Byte"},
             "Sheared": {"type": "TAG_Byte"},
@@ -182,13 +236,20 @@
             "SpawnedByNight": {"type": "TAG_Byte"},
             "Strength": {"type": "TAG_Int"},
             "StrengthMax": {"type": "TAG_Int"},
+            "SuccessCount": {"type": "TAG_Int"},
             "Surface": {"type": "TAG_Byte"},
             "Tags": {"type": "TAG_List", "subcomponent": "entity.tags"},
             "TargetID": {"type": "TAG_Long"},
+            "TickDelay": {"type": "TAG_Int"},
+            "Ticking": {"type": "TAG_Byte"},
+            "TrackOutput": {"type": "TAG_Byte"},
             "TradeExperience": {"type": "TAG_Int"},
+            "TradeTablePath": {"type": "TAG_String"},
             "TradeTier": {"type": "TAG_Int"},
             "UniqueID": {"type": "TAG_Long"},
-            "Variant": {"type": "TAG_Int"}
+            "Variant": {"type": "TAG_Int"},
+            "Version": {"type": "TAG_Int"},
+            "Willing": {"type": "TAG_Byte"}
         }
     },
     "entity.attributes": {
@@ -204,8 +265,31 @@
         "keys": {
             "Base": {"type": "TAG_Float"},
             "Current": {"type": "TAG_Float"},
+            "DefaultMax": {"type": "TAG_Float"},
+            "DefaultMin": {"type": "TAG_Float"},
             "Max": {"type": "TAG_Float"},
+            "Min": {"type": "TAG_Float"},
+            "Modifiers": {"type": "TAG_List", "subcomponent": "entity.attributes.item.modifiers"},
             "Name": {"type": "TAG_String"}
+        }
+    },
+    "entity.attributes.item.modifiers": {
+        "type": "NbtTagList",
+        "field": "modifier",
+        "types": ["TAG_Compound"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "entity.attributes.item.modifiers.item"
+    },
+    "entity.attributes.item.modifiers.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "Amount": {"type": "TAG_Float"},
+            "Name": {"type": "TAG_String"},
+            "Operand": {"type": "TAG_Int"},
+            "Operation": {"type": "TAG_Int"},
+            "UUIDLeast": {"type": "TAG_Long"},
+            "UUIDMost": {"type": "TAG_Long"}
         }
     },
     "entity.definitions": {
@@ -215,6 +299,35 @@
         "ordered": false,
         "measure_length": true,
         "subcomponent": null
+    },
+    "entity.internal_components": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "EntityStorageKeyComponent": {"type": "TAG_Compound", "subcomponent": "entity.internal_components.entity_storage_key_component"}
+        }
+    },
+    "entity.internal_components.entity_storage_key_component": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "StorageKey": {"type": "TAG_String"}
+        }
+    },
+    "entity.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "Block": {"type": "TAG_Compound", "subcomponent": "palette.default.block_palette.item"},
+            "Count": {"type": "TAG_Byte"},
+            "Damage": {"type": "TAG_Short"},
+            "Name": {"type": "TAG_String"}, 
+            "WasPickedUp": {"type": "TAG_Byte"}
+        }
+    },
+    "entity.pose": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "LastSignal": {"type": "TAG_Int"},
+            "PoseIndex": {"type": "TAG_Int"}
+        }
     },
     "entity.rotation": {
         "type": "NbtTagList",
@@ -259,15 +372,101 @@
         "type": "NbtKeymapTagCompound",
         "keys": {
             "name": {"type": "TAG_String"},
-            "states": {"type": "TAG_Compound", "subcomponent": "palette.default.block_palette.item.states"},
-            "version": {"type": "TAG_Int"}
+            "states": {"type": "TAG_Compound", "subcomponent": "block_states"},
+            "version": {"type": ["TAG_Int", "TAG_Long"]}
         }
     },
-    "palette.default.block_palette.item.states": {
+    "block_states": {
         "type": "NbtKeymapTagCompound",
         "keys": {
+            "age": {"type": "TAG_Int"},
+            "allow_underwater_bit": {"type": "TAG_Byte"},
+            "attached_bit": {"type": "TAG_Byte"},
+            "attachment": {"type": "TAG_String"},
+            "bite_counter": {"type": "TAG_Int"},
+            "bloom": {"type": "TAG_Byte"},
+            "brewing_stand_slot_a_bit": {"type": "TAG_Byte"},
+            "brewing_stand_slot_b_bit": {"type": "TAG_Byte"},
+            "brewing_stand_slot_c_bit": {"type": "TAG_Byte"},
+            "button_pressed_bit": {"type": "TAG_Byte"},
+            "candles": {"type": "TAG_Int"},
+            "cauldron_liquid": {"type": "TAG_String"},
+            "chisel_type": {"type": "TAG_String"},
+            "color": {"type": "TAG_String"},
+            "conditional_bit": {"type": "TAG_Byte"},
+            "coral_color": {"type": "TAG_String"},
+            "cracked_state": {"type": "TAG_String"},
+            "dead_bit": {"type": "TAG_Byte"},
+            "deprecated": {"type": "TAG_Int"},
+            "direction": {"type": "TAG_Int"},
+            "dirt_type": {"type": "TAG_String"},
+            "disarmed_bit": {"type": "TAG_Byte"},
+            "door_hinge_bit": {"type": "TAG_Byte"},
+            "double_plant_type": {"type": "TAG_String"},
+            "drag_down": {"type": "TAG_Byte"},
+            "dripstone_thickness": {"type": "TAG_String"},
+            "end_portal_eye_bit": {"type": "TAG_Byte"},
+            "explode_bit": {"type": "TAG_Byte"},
+            "extinguished": {"type": "TAG_Byte"},
             "facing_direction": {"type": "TAG_Int"},
-            "rotation": {"type": "TAG_Int"}
+            "fill_level": {"type": "TAG_Int"},
+            "flower_type": {"type": "TAG_String"},
+            "ground_sign_direction": {"type": "TAG_Int"},
+            "hanging": {"type": "TAG_Byte"},
+            "head_piece_bit": {"type": "TAG_Byte"},
+            "in_wall_bit": {"type": "TAG_Byte"},
+            "infiniburn_bit": {"type": "TAG_Byte"},
+            "item_frame_map_bit": {"type": "TAG_Byte"},
+            "lever_direction": {"type": "TAG_String"},
+            "liquid_depth": {"type": "TAG_Int"},
+            "lit": {"type": "TAG_Byte"},
+            "monster_egg_stone_type": {"type": "TAG_String"},
+            "multi_face_direction_bits": {"type": "TAG_Int"},
+            "no_drop_bit": {"type": "TAG_Byte"},
+            "occupied_bit": {"type": "TAG_Byte"},
+            "old_leaf_type": {"type": "TAG_String"},
+            "old_log_type": {"type": "TAG_String"},
+            "open_bit": {"type": "TAG_Byte"},
+            "output_lit_bit": {"type": "TAG_Byte"},
+            "output_subtract_bit": {"type": "TAG_Byte"},
+            "persistent_bit": {"type": "TAG_Byte"},
+            "pillar_axis": {"type": "TAG_String"},
+            "powered_bit": {"type": "TAG_Byte"},
+            "rail_data_bit": {"type": "TAG_Byte"},
+            "rail_direction": {"type": "TAG_Int"},
+            "redstone_signal": {"type": "TAG_Int"},
+            "repeater_delay": {"type": "TAG_Int"},
+            "respawn_anchor_charge": {"type": "TAG_Int"},
+            "rotation": {"type": "TAG_Int"},
+            "sand_stone_type": {"type": "TAG_String"},
+            "sand_type": {"type": "TAG_String"},
+            "sponge_type": {"type": "TAG_String"},
+            "stability": {"type": "TAG_Int"},
+            "stability_check": {"type": "TAG_Byte"},
+            "stone_slab_type": {"type": "TAG_String"},
+            "stone_slab_type_3": {"type": "TAG_String"},
+            "stone_slab_type_4": {"type": "TAG_String"},
+            "stone_type": {"type": "TAG_String"},
+            "structure_block_type": {"type": "TAG_String"},
+            "suspended_bit": {"type": "TAG_Byte"},
+            "tall_grass_type": {"type": "TAG_String"},
+            "toggle_bit": {"type": "TAG_Byte"},
+            "top_slot_bit": {"type": "TAG_Byte"},
+            "torch_facing_direction": {"type": ["TAG_Int", "TAG_String"]},
+            "triggered_bit": {"type": "TAG_Byte"},
+            "turtle_egg_count": {"type": "TAG_String"},
+            "update_bit": {"type": "TAG_Byte"},
+            "upper_block_bit": {"type": "TAG_Byte"},
+            "upside_down_bit": {"type": "TAG_Byte"},
+            "vine_direction_bits": {"type": "TAG_Int"},
+            "wall_block_type": {"type": "TAG_String"},
+            "wall_connection_type_east": {"type": "TAG_String"},
+            "wall_connection_type_north": {"type": "TAG_String"},
+            "wall_connection_type_south": {"type": "TAG_String"},
+            "wall_connection_type_west": {"type": "TAG_String"},
+            "wall_post_bit": {"type": "TAG_Byte"},
+            "weirdo_direction": {"type": "TAG_Int"},
+            "wood_type": {"type": "TAG_String"}
         }
     },
     "palette.default.block_position_data": {
@@ -280,22 +479,186 @@
     "palette.default.block_position_data.item": {
         "type": "NbtKeymapTagCompound",
         "keys": {
-            "block_entity_data": {"type": "TAG_Compound", "subcomponent": "palette.default.block_position_data.item.block_entity_data"}
+            "block_entity_data": {"type": "TAG_Compound", "subcomponent": "block_entity_data"},
+            "tick_delay": {"type": "TAG_List", "subcomponent": "palette.default.block_position_data.item.tick_delay"},
+            "tick_queue_data": {"type": "TAG_List", "subcomponent": "palette.default.block_position_data.item.tick_queue_data"}
         }
     },
-    "palette.default.block_position_data.item.block_entity_data": {
+    "palette.default.block_position_data.item.tick_delay": {
+        "type": "NbtTagList",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "palette.default.block_position_data.item.tick_delay.item"
+    },
+    "palette.default.block_position_data.item.tick_delay.item": {
         "type": "NbtKeymapTagCompound",
         "keys": {
+            "tick_delay": {"type": "TAG_Int"}
+        }
+    },
+    "palette.default.block_position_data.item.tick_queue_data": {
+        "type": "NbtTagList",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "palette.default.block_position_data.item.tick_queue_data.item"
+    },
+    "palette.default.block_position_data.item.tick_queue_data.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "tick_delay": {"type": "TAG_Int"}
+        }
+    },
+    "block_entity_data": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "animationMode": {"type": "TAG_Byte"},
+            "animationSeconds": {"type": "TAG_Float"},
+            "AttachedBlocks": {"type": "TAG_List", "subcomponent": "empty_list"},
+            "auto": {"type": "TAG_Byte"},
+            "Base": {"type": "TAG_Int"},
+            "BreakBlocks": {"type": "TAG_List", "subcomponent": "vector_tag_int"},
+            "color": {"type": ["TAG_Byte", "TAG_Int"]},
+            "conditionalMode": {"type": "TAG_Byte"},
+            "conditionMet": {"type": "TAG_Byte"},
+            "CookTime": {"type": "TAG_Short"},
+            "Command": {"type": "TAG_String"},
+            "CustomName": {"type": "TAG_String"},
+            "data": {"type": "TAG_Int"},
+            "dataField": {"type": "TAG_String"},
+            "ExecuteOnFirstTick": {"type": "TAG_Byte"},
             "final_state": {"type": "TAG_String"},
+            "Findable": {"type": "TAG_Byte"},
+            "FuelAmount": {"type": "TAG_Short"},
+            "FuelTotal": {"type": "TAG_Short"},
             "id": {"type": "TAG_String"},
-            "isMovable": {"type": "TAG_Byte"},
+            "ignoreEntities": {"type": "TAG_Byte"},
+            "IgnoreLighting": {"type": "TAG_Byte"},
+            "includePlayers": {"type": "TAG_Byte"},
+            "integrity": {"type": "TAG_Float"},
+            "isMovable": {"type": ["TAG_Byte", "TAG_Int"]},
+            "isPowered": {"type": "TAG_Byte"},
+            "Item": {"type": "TAG_Compound", "subcomponent": "item"},
+            "ItemDropChance": {"type": "TAG_Float"},
+            "ItemRotation": {"type": "TAG_Float"},
+            "Items": {"type": "TAG_List", "subcomponent": "item_list"},
             "joint": {"type": "TAG_String"},
+            "LastExecution": {"type": "TAG_Long"},
+            "LastOutput": {"type": "TAG_String"},
+            "LastOutputParams": {"type": "TAG_List", "subcomponent": "block_entity_data.last_output_params"},
+            "LastProgress": {"type": "TAG_Float"},
+            "LPCommandMode": {"type": "TAG_Int"},
+            "LPCondionalMode": {"type": "TAG_Byte"},
+            "LPRedstoneMode": {"type": "TAG_Byte"},
+            "mirror": {"type": "TAG_Byte"},
+            "MouthMoving": {"type": "TAG_Byte"},
+            "MouthTickCount": {"type": "TAG_Int"},
             "name": {"type": "TAG_String"},
+            "NewState": {"type": "TAG_Byte"},
+            "OutputSignal": {"type": "TAG_Int"},
+            "PersistFormatting": {"type": "TAG_Byte"},
+            "PotionId": {"type": "TAG_Short"},
+            "PotionType": {"type": "TAG_Short"},
+            "powered": {"type": "TAG_Byte"},
+            "Progress": {"type": "TAG_Float"},
+            "RecordItem": {"type": "TAG_Compound", "subcomponent": "item"},
+            "redstoneSaveMode": {"type": "TAG_Int"},
+            "removeBlocks": {"type": "TAG_Byte"},
+            "rotation": {"type": "TAG_Byte"},
+            "Rotation": {"type": "TAG_Float"},
+            "rott": {"type": "TAG_Float"},
+            "seed": {"type": "TAG_Long"},
+            "showBoundingBox": {"type": "TAG_Byte"},
+            "SignTextColor": {"type": "TAG_Int"},
+            "SkullType": {"type": "TAG_Byte"},
+            "State": {"type": "TAG_Byte"},
+            "Sticky": {"type": "TAG_Byte"},
+            "structureName": {"type": "TAG_String"},
+            "SuccessCount": {"type": "TAG_Int"},
             "target": {"type": "TAG_String"},
             "target_pool": {"type": "TAG_String"},
+            "Text": {"type": "TAG_String"},
+            "TextIgnoreLegacyBugResolved": {"type": "TAG_Byte"},
+            "TextOwner": {"type": "TAG_String"},
+            "TickDelay": {"type": "TAG_Int"},
+            "TrackOutput": {"type": "TAG_Byte"},
+            "TransferCooldown": {"type": "TAG_Int"},
+            "Type": {"type": "TAG_Int"},
+            "Version": {"type": "TAG_Int"},
+            "VibrationListener": {"type": "TAG_Compound", "subcomponent": "block_entity_data.vibration_listener"},
             "x": {"type": "TAG_Int"},
+            "xStructureOffset": {"type": "TAG_Int"},
+            "xStructureSize": {"type": "TAG_Int"},
             "y": {"type": "TAG_Int"},
-            "z": {"type": "TAG_Int"}
+            "yStructureOffset": {"type": "TAG_Int"},
+            "yStructureSize": {"type": "TAG_Int"},
+            "z": {"type": "TAG_Int"},
+            "zStructureOffset": {"type": "TAG_Int"},
+            "zStructureSize": {"type": "TAG_Int"}
+        }
+    },
+    "block_entity_data.last_output_params": {
+        "type": "NbtTagList",
+        "field": "parameter",
+        "types": ["TAG_String"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "block_entity_data.offers": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "Recipes": {"type": "TAG_List", "subcomponent": "block_entity_data.offers:recipes"},
+            "TierExpRequirements": {"type": "TAG_List", "subcomponent": "block_entity_data.offers:tier_exp_requirements"}
+        }
+    },
+    "block_entity_data.offers:recipes": {
+        "type": "NbtTagList",
+        "field": "offer",
+        "types": ["TAG_Compound"],
+        "ordered": false,
+        "measure_length": true,
+        "subcomponent": "block_entity_data.offers:recipes.item"
+    },
+    "block_entity_data.offers:recipes.item": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "buyA": {"type": "TAG_Compound", "subcomponent": "item"},
+            "buyB": {"type": "TAG_Compound", "subcomponent": "item"},
+            "buyCountA": {"type": "TAG_Int"},
+            "buyCountB": {"type": "TAG_Int"},
+            "demand": {"type": "TAG_Int"},
+            "maxUses": {"type": "TAG_Int"},
+            "priceMultiplierA": {"type": "TAG_Float"},
+            "priceMultiplierB": {"type": "TAG_Float"},
+            "rewardExp": {"type": "TAG_Byte"},
+            "sell": {"type": "TAG_Compound", "subcomponent": "item"},
+            "tier": {"type": "TAG_Int"},
+            "traderExp": {"type": "TAG_Int"},
+            "uses": {"type": "TAG_Int"}
+        }
+    },
+    "block_entity_data.offers:tier_exp_requirements": {
+        "type": "NbtTagList",
+        "field": "requirement",
+        "types": ["TAG_Compound"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "block_entity_data.offers:tier_exp_requirements.item"
+    },
+    "block_entity_data.offers:tier_exp_requirements.item": {
+        "type": "NbtTagCompound",
+        "field": "key",
+        "types": ["TAG_Int"],
+        "measure_length": true,
+        "subcomponent": null
+    },
+    "block_entity_data.vibration_listener": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "event": {"type": "TAG_Int"},
+            "selector": {"type": "TAG_Compound", "subcomponent": "empty_compound"}
         }
     }
 }

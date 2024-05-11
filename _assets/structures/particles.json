@@ -4,10 +4,21 @@
         "name": "particles",
         "subcomponent": "particles"
     },
+    "outdated": {
+        "type": "Tag"
+    },
     "collapse_resource_packs": {
         "type": "Normalizer",
         "dependencies": ["resource_packs"],
         "function_name": "collapse_resource_packs_with_defined_in"
+    },
+    "remove_weird_components": {
+        "type": "Normalizer",
+        "function_name": "particles_remove_weird_components"
+    },
+    "normalize_old": {
+        "type": "Normalizer",
+        "function_name": "particles_normalize_old"
     },
     "normalize_component_particle_appearance_tinting_color": {
         "type": "Normalizer",
@@ -100,6 +111,7 @@
     },
     "particle": {
         "type": "Keymap",
+        "normalizer": "normalize_old",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
@@ -116,6 +128,7 @@
     },
     "particle_effect": {
         "type": "Keymap",
+        "normalizer": "remove_weird_components",
         "keys": {
             "components": {"type": "dict", "subcomponent": "components"},
             "curves": {"type": "dict", "subcomponent": "curves"},
@@ -142,7 +155,7 @@
     "curve.nodes": {
         "type": "List",
         "field": "node",
-        "types": ["int"],
+        "types": ["decimal"],
         "ordered": true,
         "measure_length": false,
         "print_all": true,
@@ -375,6 +388,7 @@
             "direction_x": {"type": "null"},
             "direction_y": {"type": "null"},
             "direction_z": {"type": "null"},
+            "face_camera_mode": {"type": "str", "tags": ["outdated"]},
             "facing_camera_mode": {"type": "str", "tags": ["not_in_documentation"]},
             "rotate_xyz": {"type": "null"},
             "lookat_y": {"type": "null"},
@@ -405,6 +419,8 @@
             "stretch_to_lifetime": {"type": "bool"},
             "texture_height": {"type": "int", "tags": ["not_in_documentation"]},
             "texture_width": {"type": "int", "tags": ["not_in_documentation"]},
+            "textureheight": {"type": "int", "tags": ["outdated"]},
+            "texturewidth": {"type": "int", "tags": ["outdated"]},
             "uv": {"type": "list", "subcomponent": "vector_decimal_molang", "tags": ["not_in_documentation"]},
             "uv_size": {"type": "list", "subcomponent": "vector_decimal_molang", "tags": ["not_in_documentation"]}
         }
@@ -536,6 +552,7 @@
         "type": "Keymap",
         "keys": {
             "linear_acceleration": {"type": "list", "subcomponent": "vector_decimal_molang"},
+            "linear_drag": {"type": "decimal", "tags": ["outdated"]},
             "linear_drag_coefficient": {"type": ["decimal", "str"]},
             "rotation_acceleration": {"type": ["decimal", "str"]},
             "rotation_drag_coefficient": {"type": ["decimal", "str"]}

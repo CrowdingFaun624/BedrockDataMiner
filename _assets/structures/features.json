@@ -4,6 +4,9 @@
         "name": "features",
         "subcomponent": "features"
     },
+    "outdated": {
+        "type": "Tag"
+    },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
@@ -72,6 +75,7 @@
             "direction": {"type": "int"},
             "dirt_type": {"type": "str"},
             "double_plant_type": {"type": "str"},
+            "facing_direction": {"type": "int", "tags": ["outdated"]},
             "moisturized_amount":{ "type": "int"},
             "new_leaf_type": {"type": "str"},
             "new_log_type": {"type": "str"},
@@ -183,6 +187,7 @@
             "minecraft:fossil_feature": {"type": "dict", "subcomponent": "feature.fossil_feature"},
             "minecraft:geode_feature": {"type": "dict", "subcomponent": "feature.geode_feature"},
             "minecraft:growing_plant_feature": {"type": "dict", "subcomponent": "feature.growing_plant_feature"},
+            "minecraft:hell_cave_carver_feature": {"type": "dict", "subcomponent": "feature.nether_cave_carver_feature", "tags": ["outdated"]},
             "minecraft:multiface_feature": {"type": "dict", "subcomponent": "feature.multiface_feature"},
             "minecraft:nether_cave_carver_feature": {"type": "dict", "subcomponent": "feature.nether_cave_carver_feature"},
             "minecraft:ore_feature": {"type": "dict", "subcomponent": "feature.ore_feature"},
@@ -350,6 +355,8 @@
             "count": {"type": "int"},
             "description": {"type": "dict", "subcomponent": "description"},
             "discard_chance_on_air_exposure": {"type": "decimal"},
+            "may_replace": {"type": ["list", "dict", "str"], "subcomponent": "block_list_or_block", "tags": ["outdated"]},
+            "places_block": {"type": ["dict", "str"], "subcomponent": "block_reference", "tags": ["outdated"]},
             "replace_rules": {"type": "list", "subcomponent": "feature.ore_feature:replace_rules"}
         }
     },
@@ -514,6 +521,7 @@
         "type": "Keymap",
         "imports": "feature.tree_feature:canopy",
         "keys": {
+            "can_be_submerged": {"type": "dict", "subcomponent": "feature.tree_feature:can_be_submerged", "tags": ["outdated"]},
             "description": {"type": "dict", "subcomponent": "description"},
             "base_block": {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
             "base_cluster": {"type": "dict", "subcomponent": "feature.tree_feature:base_cluster"},
@@ -536,6 +544,12 @@
             "cluster_radius": {"type": "int"},
             "may_replace": {"type": "list", "subcomponent": "block_list"},
             "num_clusters": {"type": "int"}
+        }
+    },
+    "feature.tree_feature:can_be_submerged": {
+        "type": "Keymap",
+        "keys": {
+            "max_depth": {"type": "int"}
         }
     },
     "feature.tree_feature:acacia_trunk": {

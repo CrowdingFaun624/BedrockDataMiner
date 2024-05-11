@@ -4,6 +4,9 @@
         "name": "renderer_shadow_configs",
         "subcomponent": "files"
     },
+    "outdated": {
+        "type": "Tag"
+    },
     "files": {
         "type": "Dict",
         "field": "file",
@@ -25,20 +28,23 @@
         "type": "Keymap",
         "keys": {
             "cascade_bias": {"type": "list", "subcomponent": "vector_float"},
-            "cascade_slope_bias": {"type": "list", "subcomponent": "vector_float"},
-            "cascade_resolution": {"type": "list", "subcomponent": "vector_int"},
-            "num_cascade_levels": {"type": "int"},
-            "num_variable_cascade_levels": {"type": "int"},
-            "shadow_range": {"type": "dict", "subcomponent": "shadow_range"},
-            "max_shadow_distance": {"type": "float"},
-            "cascade_range": {"type": "list", "subcomponent": "vector_float"},
             "cascade_pcf_width": {"type": "list", "subcomponent": "vector_float"},
-            "shadow_clamp_angle": {"type": "int"},
+            "cascade_range": {"type": "list", "subcomponent": "vector_float"},
+            "cascade_resolution": {"type": "list", "subcomponent": "vector_int"},
+            "cascade_slope_bias": {"type": "list", "subcomponent": "vector_float"},
             "cloud_shadow_contribution": {"type": "float"},
             "cloud_shadow_pcf_width": {"type": "float"},
-            "sun_shadows": {"type": "bool"},
+            "cloud_shadows": {"type": "bool"},
+            "directional_light_shadow": {"type": "dict", "subcomponent": "shadow_config", "tags": ["outdated"]},
+            "max_shadow_distance": {"type": "float"},
             "moon_shadows": {"type": "bool"},
-            "cloud_shadows": {"type": "bool"}
+            "num_cascades": {"type": "int", "tags": ["outdated"]},
+            "num_cascade_levels": {"type": "int"},
+            "num_variable_cascade_levels": {"type": "int"},
+            "point_light_shadow": {"type": "dict", "subcomponent": "point_light_shadow", "tags": ["outdated"]},
+            "shadow_clamp_angle": {"type": "int"},
+            "shadow_range": {"type": "dict", "subcomponent": "shadow_range"},
+            "sun_shadows": {"type": "bool"}
         }
     },
     "shadow_range": {
@@ -46,6 +52,18 @@
         "keys": {
             "near": {"type": "float"},
             "far": {"type": "float"}
+        }
+    },
+    "point_light_shadow": {
+        "type": "Keymap",
+        "keys": {
+            "bias": {"type": "float"},
+            "slope_bias": {"type": "float"},
+            "far_plane": {"type": "float"},
+            "near_plane": {"type": "float"},
+            "max_point_light_shadows": {"type": "int"},
+            "resolution": {"type": "int"},
+            "enabled": {"type": "bool"}
         }
     },
     "vector_float": {

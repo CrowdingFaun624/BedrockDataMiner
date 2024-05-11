@@ -27,8 +27,30 @@ def animations_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.Dependen
         del data[key]
     data["animations"] = output
 
+def attachables_normalize_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "minecraft:attachable" in data:
+        return
+    attachable_identifier = list(data.keys())[0]
+    result = {"description": data[attachable_identifier]}
+    del data[attachable_identifier]
+    result["description"]["identifier"] = attachable_identifier
+
 def behavior_packs_normalize(data:DataMinerTyping.BehaviorPacks, dependencies:DataMinerTyping.DependenciesTypedDict) -> list[str]:
     return [behavior_pack["name"] for behavior_pack in data]
+
+def biomes_normalize_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "minecraft:biome" in data: return
+    if len(data) != 1:
+        raise RuntimeError("Expected 1 key, but got [%s]" % (list(data.keys()),))
+    biome_name = list(data.keys())[0]
+    format_version = data[biome_name].get("format_version")
+    result = {}
+    if format_version is not None:
+        del data[biome_name]["format_version"]
+        result["format_version"] = format_version
+    result["minecraft:biome"] = {"components": data[biome_name], "description": {"identifier": biome_name}}
+    del data[biome_name]
+    data.update(result)
 
 def blocks_client_fix_MCPE_76182(data:DataMinerTyping.BlocksJsonClientBlockTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-76182
@@ -309,6 +331,22 @@ def particles_normalize_component_particle_appearance_tinting_color(data:dict[st
     if is_valid_color(data["color"]):
         data["color"] = [data["color"]]
 
+def particles_normalize_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "particles" not in data:
+        return
+    assert len(data["particles"]) == 1
+    particle_identifier:str = list(data["particles"].keys())[0]
+    data["particle_effect"] = data["particles"][particle_identifier]
+    del data["particles"]
+    data["particle_effect"]["description"] = {"basic_render_parameters": data["particle_effect"]["basic_render_parameters"], "identifier": particle_identifier}
+    del data["particle_effect"]["basic_render_parameters"]
+
+def particles_remove_weird_components(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "minecraft:particle_appearance_tinting" in data:
+        del data["minecraft:particle_appearance_tinting"]
+    if "minecraft:particle_appearance_lighting" in data:
+        del data["minecraft:particle_appearance_lighting"]
+
 def recipes_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()
     del output["defined_in"]
@@ -450,6 +488,23 @@ def terrain_textures_normalize(data:dict[str,terrain_textures_normalize_typed_di
     output["texture_data"] = texture_data
     return output
 
+def terrain_meta_normalize(data:list[dict[str,Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,Any]]:
+    output:dict[str,dict[str,Any]] = {}
+    for item in data:
+        output[item["name"]] = item
+        del item["name"]
+    return output
+
+terrain_meta_normalize_uvs_keys = ("x1", "y1", "x2", "y2", "1", "2")
+def terrain_meta_normalize_uv(data:dict[str,list[int]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "uv" not in data: return
+    data["uv"] = {key: value for key, value in zip(terrain_meta_normalize_uvs_keys, data["uv"])}
+
+def terrain_meta_normalize_uvs(data:list[list[int]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    for index, uv in enumerate(data):
+        assert len(uv) == 6
+        data[index] = {key: value for key, value in zip(terrain_meta_normalize_uvs_keys, uv)}
+
 def texture_list_normalize(data:dict[str,list[str]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,list[str]]:
     output:dict[str,list[str]] = {}
     for resource_pack, textures in data.items():
@@ -470,7 +525,9 @@ functions:dict[str,Callable] = {
     "collapse_resource_packs_without_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=False, pack_key="resource_packs"),
     "animation_controllers_fix_old": animation_controllers_fix_old,
     "animations_fix_old": animations_fix_old,
+    "attachables_normalize_old": attachables_normalize_old,
     "behavior_packs_normalize": behavior_packs_normalize,
+    "biomes_normalize_old": biomes_normalize_old,
     "blocks_client_fix_MCPE_76182": blocks_client_fix_MCPE_76182,
     "blocks_client_normalize": blocks_client_normalize,
     "blocks_client_resource_pack_comparison_move_function": blocks_client_resource_pack_comparison_move_function,
@@ -510,6 +567,8 @@ functions:dict[str,Callable] = {
     "models_model_normalize": models_model_normalize,
     "models_normalize_bones": models_normalize_bones,
     "particles_normalize_component_particle_appearance_tinting_color": particles_normalize_component_particle_appearance_tinting_color,
+    "particles_normalize_old": particles_normalize_old,
+    "particles_remove_weird_components": particles_remove_weird_components,
     "recipes_behavior_pack_comparison_move_function": recipes_behavior_pack_comparison_move_function,
     "resource_packs_normalize": resource_packs_normalize,
     "render_controllers_fix_old": render_controllers_fix_old,
@@ -533,6 +592,9 @@ functions:dict[str,Callable] = {
     "structures_structure_move": structures_structure_move,
     "structures_nbt_normalize_text": structures_nbt_normalize_text,
     "terrain_textures_normalize": terrain_textures_normalize,
+    "terrain_meta_normalize": terrain_meta_normalize,
+    "terrain_meta_normalize_uv": terrain_meta_normalize_uv,
+    "terrain_meta_normalize_uvs": terrain_meta_normalize_uvs,
     "texture_list_comparison_move_function": texture_list_comparison_move_function,
     "texture_list_normalize": texture_list_normalize,
 }

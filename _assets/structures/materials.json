@@ -4,6 +4,9 @@
         "name": "materials",
         "subcomponent": "materials"
     },
+    "outdated": {
+        "type": "Tag"
+    },
     "collapse_resource_packs": {
         "type": "Normalizer",
         "dependencies": ["resource_packs"],
@@ -69,6 +72,7 @@
             "-defines": {"type": "list", "subcomponent": "defines"},
             "-states": {"type": "list", "subcomponent": "states"},
             "alphaDst": {"type": "str"},
+            "alphaSrc": {"type": "str", "tags": ["outdated"]},
             "backFace": {"type": "dict", "subcomponent": "face"},
             "blendDst": {"type": "str"},
             "blendSrc": {"type": "str"},
@@ -78,9 +82,12 @@
             "depthFunc": {"type": "str"},
             "fragmentShader": {"type": "str"},
             "frontFace": {"type": "dict", "subcomponent": "face"},
+            "geometryShader": {"type": "str", "tags": ["outdated"]},
             "isAnimatedTexture": {"type": "int"},
             "msaaSupport": {"type": "str"},
+            "polygonOffsetLevel": {"type": "decimal", "tags": ["outdated"]},
             "primitiveMode": {"type": "str"},
+            "renderTargetFormats": {"type": "list", "subcomponent": "render_target_formats"},
             "samplerStates": {"type": "list", "subcomponent": "sampler_states"},
             "slopeScaledDepthBias": {"type": "decimal"},
             "slopeScaledDepthBiasOGL": {"type": "decimal"},
@@ -89,6 +96,7 @@
             "stencilRef": {"type": "int"},
             "stencilRefOverride": {"type": "int"},
             "stencilWriteMask": {"type": "int"},
+            "textures": {"type": "list", "subcomponent": "textures", "tags": ["outdated"]},
             "variants": {"type": "list", "subcomponent": "variants"},
             "vertexFields": {"type": "list", "subcomponent": "vertex_fields"},
             "vertexShader": {"type": "str"},
@@ -126,8 +134,26 @@
         "keys": {
             "samplerIndex": {"type": "int"},
             "textureFilter": {"type": "str"},
+            "textureIndex": {"type": "int", "tags": ["outdated"]},
+            "textureLocation": {"type": "str", "tags": ["outdated"]},
+            "textureName": {"type": "str", "tags": ["outdated"]},
             "textureWrap": {"type": "str"}
         }
+    },
+    "render_target_formats": {
+        "type": "List",
+        "field": "format",
+        "types": ["list"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "render_target_formats.item"
+    },
+    "render_target_formats.item": {
+        "type": "List",
+        "types": ["null"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": null
     },
     "states": {
         "type": "List",
@@ -136,6 +162,22 @@
         "ordered": false,
         "measure_length": true,
         "subcomponent": null
+    },
+    "textures": {
+        "type": "List",
+        "field": "texture",
+        "types": ["dict"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "texture"
+    },
+    "texture": {
+        "type": "Keymap",
+        "keys": {
+            "textureIndex": {"type": "int"},
+            "textureLocation": {"type": "str"},
+            "textureName": {"type": "str"}
+        }
     },
     "variants": {
         "type": "List",

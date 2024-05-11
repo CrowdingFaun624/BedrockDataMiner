@@ -1,0 +1,56 @@
+{
+    "base": {
+        "type": "Base",
+        "name": "terrain_meta",
+        "normalizer": "normalize",
+        "subcomponent": "images"
+    },
+    "normalize": {
+        "type": "Normalizer",
+        "function_name": "terrain_meta_normalize"
+    },
+    "normalize_uv": {
+        "type": "Normalizer",
+        "function_name": "terrain_meta_normalize_uv"
+    },
+    "normalize_uvs": {
+        "type": "Normalizer",
+        "function_name": "terrain_meta_normalize_uvs"
+    },
+    "images": {
+        "type": "Dict",
+        "field": "image",
+        "types": ["dict"],
+        "measure_length": true,
+        "subcomponent": "image"
+    },
+    "image": {
+        "type": "Keymap",
+        "normalizer": "normalize_uv",
+        "keys": {
+            "additonal_textures": {"type": "list", "subcomponent": "uvs"},
+            "uv": {"type": "dict", "subcomponent": "uv"},
+            "uvs": {"type": "list", "subcomponent": "uvs"}
+        }
+    },
+    "uvs": {
+        "type": "List",
+        "field": "uv",
+        "types": ["dict"],
+        "ordered": true,
+        "normalizer": "normalize_uvs",
+        "measure_length": true,
+        "subcomponent": "uv"
+    },
+    "uv": {
+        "type": "Keymap",
+        "keys": {
+            "x1": {"type": ["float", "int"]},
+            "y1": {"type": ["float", "int"]},
+            "x2": {"type": ["float", "int"]},
+            "y2": {"type": ["float", "int"]},
+            "1":  {"type": ["float", "int"]},
+            "2":  {"type": ["float", "int"]}
+        }
+    }
+}

@@ -4,6 +4,9 @@
         "name": "cameras",
         "subcomponent": "cameras"
     },
+    "outdated": {
+        "type": "Tag"
+    },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
@@ -90,10 +93,13 @@
             "minecraft:camera": {"type": "dict", "subcomponent": "component.camera"},
             "minecraft:camera_attach_to_player": {"type": "dict", "subcomponent": "component.camera_attach_to_player"},
             "minecraft:camera_avoidance": {"type": "dict", "subcomponent": "component.camera_avoidance"},
+            "minecraft:camera_blend_in_default": {"type": "dict", "subcomponent": "component.camera_blend_in_default"},
+            "minecraft:camera_bob": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
             "minecraft:camera_direct_look": {"type": "dict", "subcomponent": "component.camera_direct_look"},
             "minecraft:camera_first_person": {"type": "dict", "subcomponent": "empty_dict"},
             "minecraft:camera_liquid_offset": {"type": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera_look_at_player": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:camera_look_at_player": {"type": "dict", "subcomponent": "component.camera_look_at_player", "tags": ["outdated"]},
+            "minecraft:camera_option_activation": {"type": "dict", "subcomponent": "component.camera_option_activation"},
             "minecraft:camera_orbit": {"type": "dict", "subcomponent": "component.camera_orbit"},
             "minecraft:camera_perspective_option": {"type": "dict", "subcomponent": "component.camera_perspective_option"},
             "minecraft:camera_player_bob": {"type": "dict", "subcomponent": "empty_dict"},
@@ -102,6 +108,8 @@
             "minecraft:camera_render_first_person_objects": {"type": "dict", "subcomponent": "empty_dict"},
             "minecraft:camera_render_player_model": {"type": "dict", "subcomponent": "empty_dict"},
             "minecraft:camera_shake": {"type": "dict", "subcomponent": "component.camera_shake"},
+            "minecraft:camera_sleep_vignette": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "minecraft:camera_sneak_offset": {"type": "dict", "subcomponent": "component.camera_sneak_offset", "tags": ["outdated"]},
             "minecraft:camera_third_person": {"type": "dict", "subcomponent": "empty_dict"},
             "minecraft:death_camera_component": {"type": "dict", "subcomponent": "empty_dict"},
             "minecraft:default_input_camera": {"type": "dict", "subcomponent": "empty_dict"},
@@ -135,11 +143,33 @@
             "distance_constraint_min": {"type": "decimal"}
         }
     },
+    "component.camera_blend_in_default": {
+        "type": "Keymap",
+        "keys": {
+            "blend_time": {"type": "decimal"},
+            "camera_from_accepts_input": {"type": "bool"},
+            "camera_to_accepts_input": {"type": "bool"}
+        }
+    },
     "component.camera_direct_look": {
         "type": "Keymap",
         "keys": {
             "pitch_max": {"type": "decimal"},
             "pitch_min": {"type": "decimal"}
+        }
+    },
+    "component.camera_look_at_player": {
+        "type": "Keymap",
+        "keys": {
+            "hard_bounds": {"type": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
+            "soft_bounds": {"type": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
+            "soft_bounds_smoothing_spring": {"type": "int", "tags": ["outdated"]}
+        }
+    },
+    "component.camera_option_activation": {
+        "type": "Keymap",
+        "keys": {
+            "view_mode": {"type": "str"}
         }
     },
     "component.camera_orbit": {
@@ -166,6 +196,13 @@
             "amplitude": {"type": "decimal"},
             "frequency": {"type": "decimal"},
             "noise_multiplier": {"type": "decimal"}
+        }
+    },
+    "component.camera_sneak_offset": {
+        "type": "Keymap",
+        "keys": {
+            "interpolation_rate": {"type": "decimal"},
+            "offset": {"type": "decimal"}
         }
     },
     "component.stationary_camera": {

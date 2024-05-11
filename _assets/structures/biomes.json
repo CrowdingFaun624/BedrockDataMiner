@@ -4,6 +4,13 @@
         "name": "biomes",
         "subcomponent": "biomes"
     },
+    "outdated": {
+        "type": "Tag"
+    },
+    "normalize_old": {
+        "type": "Normalizer",
+        "function_name": "biomes_normalize_old"
+    },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
@@ -20,6 +27,7 @@
     },
     "biome": {
         "type": "Keymap",
+        "normalizer": "normalize_old",
         "keys": {
             "format_version": {"type": "str"},
             "minecraft:biome": {"type": "dict", "subcomponent": "minecraft:biome"}
@@ -73,7 +81,7 @@
     "range_decimal": {
         "type": "List",
         "field": "range item",
-        "types": ["decimal"],
+        "types": ["decimal", "str"],
         "ordered": true,
         "print_all": true,
         "print_flat": true,
@@ -93,6 +101,7 @@
     "components": {
         "type": "Keymap",
         "field": "component",
+        "imports": "old_components",
         "measure_length": true,
         "tags": ["biome_component"],
         "keys": {
@@ -106,14 +115,92 @@
             "minecraft:mesa_surface": {"type": "dict", "subcomponent": "component.mesa_surface"},
             "minecraft:mountain_parameters": {"type": "dict", "subcomponent": "component.mountain_parameters"},
             "minecraft:multinoise_generation_rules": {"type": "dict", "subcomponent": "component.multinoise_generation_rules"},
+            "minecraft:nether_generation_rules": {"type": "dict", "subcomponent": "component.nether_generation_rules", "tags": ["outdated"]},
             "minecraft:nether_surface": {"type": "dict", "subcomponent": "empty_dict"},
             "minecraft:overworld_generation_rules": {"type": "dict", "subcomponent": "component.overworld_generation_rules"},
             "minecraft:overworld_height": {"type": "dict", "subcomponent": "component.overworld_height"},
+            "minecraft:overworld_surface": {"type": "dict", "subcomponent": "component.surface_parameters", "tags": ["outdated"]},
             "minecraft:surface_material_adjustments": {"type": "dict", "subcomponent": "component.surface_material_adjustments"},
             "minecraft:surface_parameters": {"type": "dict", "subcomponent": "component.surface_parameters"},
             "minecraft:swamp_surface": {"type": "dict", "subcomponent": "component.surface_parameters"},
             "minecraft:tags": {"type": "dict", "subcomponent": "component.tags"},
-            "minecraft:the_end_surface": {"type": "dict", "subcomponent": "empty_dict"}
+            "minecraft:the_end_surface": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:world_generation_rules": {"type": "dict", "subcomponent": "component.world_generation_rules", "tags": ["outdated"]}
+        }
+    },
+    "old_components": {
+        "type": "Keymap",
+        "keys": {
+            "animal": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "bamboo": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "basalt_deltas": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "beach": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "bee_habitat": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "birch": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "caves": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "cherry_grove": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "cold": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "crimson_forest": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "deep": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "deep_dark": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "desert": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "dripstone_caves": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "edge": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "extreme_hills": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "flower_forest": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "forest": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "forest_generation": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "frozen": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "frozen_peaks": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "grove": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "hills": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "ice": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "ice_plains": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "jagged_peaks": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "jungle": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "lukewarm": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "lush_caves": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "mangrove_swamp": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "meadow": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "mega": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "mesa": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "monster": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "mooshroom_island": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "mountain": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "mountain_grove": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "mountain_meadow": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "mountains": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "mutated": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "nether": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "nether_wastes": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "netherwart_forest": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "no_legacy_worldgen": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "ocean": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "overworld": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "overworld_generation": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "plains": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "plateau": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "rare": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "river": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "roofed": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "savanna": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "shore": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "snowy_slopes": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "soulsand_valley": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "spawn_endermen": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "spawn_few_piglins": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "spawn_few_zombified_piglins": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "spawn_ghast": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "spawn_magma_cubes": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "spawn_many_magma_cubes": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "spawn_piglin": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "spawn_zombified_piglin": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "stone": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "swamp": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "taiga": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "the_end": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "warm": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
+            "warped_forest": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]}
         }
     },
     "component.capped_surface": {
@@ -143,6 +230,8 @@
         "keys": {
             "bryce_pillars": {"type": "bool"},
             "clay_material": {"type": ["dict", "str"], "subcomponent": "block"},
+            "floor_depth": {"type": "int", "tags": ["outdated"]},
+            "floor_material": {"type": ["dict", "str"], "subcomponent": "block", "tags": ["outdated"]},
             "foundation_material": {"type": ["dict", "str"], "subcomponent": "block"},
             "hard_clay_material": {"type": ["dict", "str"], "subcomponent": "block"},
             "has_forest": {"type": "bool"},
@@ -178,6 +267,16 @@
         }
     },
     "component.multinoise_generation_rules": {
+        "type": "Keymap",
+        "keys": {
+            "target_altitude": {"type": "decimal"},
+            "target_humidity": {"type": "decimal"},
+            "target_temperature": {"type": "decimal"},
+            "target_weirdness": {"type": "decimal"},
+            "weight": {"type": "decimal"}
+        }
+    },
+    "component.nether_generation_rules": {
         "type": "Keymap",
         "keys": {
             "target_altitude": {"type": "decimal"},
@@ -270,6 +369,8 @@
     "component.surface_parameters":{ 
         "type": "Keymap",
         "keys": {
+            "floor_depth": {"type": "int", "tags": ["outdated"]},
+            "floor_material": {"type": "str", "tags": ["outdated"]},
             "foundation_material": {"type": ["dict", "str"], "subcomponent": "block"},
             "mid_material": {"type": ["dict", "str"], "subcomponent": "block"},
             "sea_floor_depth": {"type": "int"},
@@ -292,6 +393,43 @@
         "ordered": false,
         "print_all": true,
         "print_flat": true,
+        "subcomponent": null
+    },
+    "component.world_generation_rules": {
+        "type": "Keymap",
+        "keys": {
+            "generate_for_climates": {"type": ["list", "str"], "subcomponent": "component.world_generation_rules:item.group"},
+            "hills_transformation": {"type": ["list", "str"], "subcomponent": "component.world_generation_rules:item.group"},
+            "mutate_transformation": {"type": ["list", "str"], "subcomponent": "component.world_generation_rules:item.group"}
+        }
+    },
+    "component.world_generation_rules:item.group": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "component.world_generation_rules:item",
+            "str": null
+        }
+    },
+    "component.world_generation_rules:item": {
+        "type": "List",
+        "field": "climate",
+        "types": ["list", "str"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "component.world_generation_rules:item.item.group"
+    },
+    "component.world_generation_rules:item.item.group": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "component.world_generation_rules:item.item",
+            "str": null
+        }
+    },
+    "component.world_generation_rules:item.item": {
+        "type": "List",
+        "types": ["str", "int"],
+        "ordered": true,
+        "measure_length": true,
         "subcomponent": null
     }
 }

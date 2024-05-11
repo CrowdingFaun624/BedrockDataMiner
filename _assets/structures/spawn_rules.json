@@ -13,6 +13,9 @@
         "type": "Normalizer",
         "function_name": "spawn_rules_normalize_herd"
     },
+    "outdated": {
+        "type": "Tag"
+    },
     "block": {
         "type": "Group",
         "subcomponents": {
@@ -151,11 +154,13 @@
             "minecraft:distance_filter": {"type": "dict", "subcomponent": "condition.distance_filter"},
             "minecraft:height_filter": {"type": "dict", "subcomponent": "condition.height_filter"},
             "minecraft:herd": {"type": "dict", "subcomponent": "condition.herd"},
+            "minecraft:is_persistent": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
             "minecraft:mob_event_filter": {"type": "dict", "subcomponent": "condition.mob_event_filter"},
             "minecraft:permute_type": {"type": "list", "subcomponent": "condition.permute_type"},
             "minecraft:player_in_village_filter": {"type": "dict", "subcomponent": "condition.player_in_village_filter"},
             "minecraft:spawn_event": {"type": "dict", "subcomponent": "condition.spawn_event"},
             "minecraft:spawns_lava": {"type": "dict", "subcomponent": "empty_dict"},
+            "minecraft:spawns_above_block_filter": {"type": "dict", "subcomponent": "condition.spawns_above_block_filter", "tags": ["outdated"]},
             "minecraft:spawns_on_block_filter": {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
             "minecraft:spawns_on_block_prevented_filter": {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
             "minecraft:spawns_on_surface": {"type": "dict", "subcomponent": "empty_dict"},
@@ -261,6 +266,13 @@
         "type": "Keymap",
         "keys": {
             "event": {"type": "str"}
+        }
+    },
+    "condition.spawns_above_block_filter": {
+        "type": "Keymap",
+        "keys": {
+            "blocks": {"type": ["dict", "list", "str"], "subcomponent": "block_list_or_block"},
+            "distance": {"type": "int"}
         }
     },
     "condition.weight": {

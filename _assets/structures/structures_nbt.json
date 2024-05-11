@@ -158,6 +158,7 @@
             "Item": {"type": "TAG_String"},
             "Items": {"type": "TAG_List", "subcomponent": "nbt:items"},
             "joint": {"type": "TAG_String"},
+            "last_vibration_frequency": {"type": "TAG_Int", "tags": ["outdated"]},
             "Lock": {"type": "TAG_String"},
             "loot_tables_to_eject": {"type": "TAG_List", "subcomponent": "nbt:ominous_config.loot_tables_to_eject", "tags": ["outdated"]},
             "LootTable": {"type": "TAG_String"},
@@ -198,6 +199,10 @@
             "sizeY": {"type": "TAG_Int"},
             "sizeZ": {"type": "TAG_Int"},
             "SkullType": {"type": "TAG_Byte"},
+            "Slot0": {"type": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
+            "Slot1": {"type": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
+            "Slot2": {"type": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
+            "Slot3": {"type": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
             "spawn_potentials": {"type": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials", "tags": ["outdated"]},
             "spawn_range": {"type": "TAG_Int", "tags": ["outdated"]},
             "SpawnCount": {"type": "TAG_Short"},
@@ -268,12 +273,17 @@
     "nbt:item": {
         "type": "NbtKeymapTagCompound",
         "keys": {
+            "buy": {"type": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
             "count": {"type": ["TAG_Byte", "TAG_Int"]},
-            "Count": {"type": "TAG_Byte"},
+            "Count": {"type": ["TAG_Byte", "TAG_Int"]},
             "Damage": {"type": "TAG_Short"},
-            "Slot": {"type": "TAG_Byte"},
             "id": {"type": "TAG_String"},
-            "tag": {"type": "TAG_Compound", "subcomponent": "nbt:item.tag"}
+            "maxUses": {"type": "TAG_Int", "tags": ["outdated"]},
+            "rewardExp": {"type": "TAG_Byte", "tags": ["outdated"]},
+            "sell": {"type": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
+            "Slot": {"type": "TAG_Byte"},
+            "tag": {"type": "TAG_Compound", "subcomponent": "nbt:item.tag"},
+            "uses": {"type": "TAG_Int", "tags": ["outdated"]}
         }
     },
     "nbt:item.tag": {
@@ -431,9 +441,11 @@
             "ArmorDropChances": {"type": "TAG_List", "subcomponent": "nbt:armor_drop_chances"},
             "ArmorItems": {"type": "TAG_List", "subcomponent": "nbt:armor_items"},
             "Attributes": {"type": "TAG_List", "subcomponent": "nbt:attributes"},
+            "CanBreakDoors": {"type": "TAG_Byte", "tags": ["outdated"]},
             "CanPickUpLoot": {"type": "TAG_Byte"},
             "Career": {"type": "TAG_Int"},
             "CareerLevel": {"type": "TAG_Int"},
+            "ConversionTime": {"type": "TAG_Int", "tags": ["outdated"]},
             "DeathTime": {"type": "TAG_Short"},
             "Dimension": {"type": "TAG_Int"},
             "FallDistance": {"type": "TAG_Float"},
@@ -449,6 +461,7 @@
             "Inventory": {"type": "TAG_List", "subcomponent": "nbt:inventory"},
             "Invulnerable": {"type": "TAG_Byte"},
             "IsBaby": {"type": "TAG_Byte"},
+            "IsVillager": {"type": "TAG_Byte"},
             "Leashed": {"type": "TAG_Byte"},
             "LeftHanded": {"type": "TAG_Byte"},
             "Motion": {"type": "TAG_List", "subcomponent": "vector_tag_double"},
@@ -463,6 +476,7 @@
             "Rotation": {"type": "TAG_List", "subcomponent": "nbt:rotation"},
             "UUIDLeast": {"type": "TAG_Long"},
             "UUIDMost": {"type": "TAG_Long"},
+            "VillagerProfession": {"type": "TAG_Int", "tags": ["outdated"]},
             "Willing": {"type": "TAG_Byte"}
         }
     },
@@ -494,7 +508,26 @@
         "type": "NbtKeymapTagCompound",
         "keys": {
             "Base": {"type": "TAG_Double"},
+            "Modifiers": {"type": "TAG_List", "subcomponent": "nbt:attributes.item.modifiers", "tags": ["outdated"]},
             "Name": {"type": "TAG_String"}
+        }
+    },
+    "nbt:attributes.item.modifiers": {
+        "type": "NbtTagList",
+        "field": "modifier",
+        "types": ["TAG_Compound"],
+        "ordered": true,
+        "measure_length": true,
+        "subcomponent": "nbt:attributes.item.modifiers.modifier"
+    },
+    "nbt:attributes.item.modifiers.modifier": {
+        "type": "NbtKeymapTagCompound",
+        "keys": {
+            "Name": {"type": "TAG_String"},
+            "Operation": {"type": "TAG_Int"},
+            "Amount": {"type": "TAG_Double"},
+            "UUIDLeast": {"type": "TAG_Long"},
+            "UUIDMost": {"type": "TAG_Long"}
         }
     },
     "nbt:hand_drop_chances": {
