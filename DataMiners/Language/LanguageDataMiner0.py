@@ -16,24 +16,6 @@ class LanguageDataMiner0(LanguageDataMiner.LanguageDataMiner):
         self.location:str = kwargs["location"]
         self.file_display_name:str|None = kwargs["file_display_name"]
 
-    def process_line(self, line:str) -> tuple[str|None, DataMinerTyping.LanguageTypedDict|None]:
-        line = line.lstrip("\ufeff")
-        if len(line.lstrip()) == 0:
-            return None, None # empty line
-        if line.lstrip().startswith("#") or len(line) == 0:
-            return None, None # comment-only line, which I don't care about.
-        if "##" in line:
-            key_value, comment = line.split("##", maxsplit=1)
-        else:
-            key_value = line
-            comment = None
-        key_value = key_value.rstrip("\t")
-        key, value = key_value.split("=", maxsplit=1)
-        if comment is None:
-            return key, {"value": value}
-        else:
-            return key, {"comment": comment, "value": value}
-
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Language:
         packs = dependency_data["resource_packs"]
         assert packs is not None
