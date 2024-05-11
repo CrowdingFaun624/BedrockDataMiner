@@ -459,9 +459,18 @@ def spawn_rules_normalize_herd(data:dict[str,dict[str,Any]|list[dict[str,Any]]],
         for item in data["minecraft:herd"].values():
             del item["event"]
 
-structures_resource_pack_move = lambda key, value: value["hash"]
+def structures_nbt_normalize_blocks(data:dict[str,list[dict[str,Any]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+    if "blocks" not in data: return
+    output:dict[str,dict[str,Any]] = {}
+    for block in data["blocks"]:
+        coords = str(block["pos"])
+        del block["pos"]
+        output[coords] = block
+    data["blocks"] = output
 
-structures_structure_move = lambda key, value: [resource_pack["hash"] for resource_pack in value.values()]
+structures_resource_pack_move:Callable[[str, NbtTypes.TAG_Compound],int|None] = lambda key, value: value.hash
+
+structures_structure_move:Callable[[str, dict[str,NbtTypes.TAG_Compound]],list[int|None]] = lambda key, value: [resource_pack.hash for resource_pack in value.values()]
 
 structures_nbt_normalize_text_keys = ["Text%i" % i for i in range(1, 5)]
 def structures_nbt_normalize_text(data:dict[str,NbtTypes.TAG_String], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
@@ -591,6 +600,7 @@ functions:dict[str,Callable] = {
     "sounds_json_fix_sounds": sounds_json_fix_sounds,
     "sounds_json_sound_collections_comparison_move_function": sounds_json_sound_collections_comparison_move_function,
     "spawn_rules_normalize_herd": spawn_rules_normalize_herd,
+    "structures_nbt_normalize_blocks": structures_nbt_normalize_blocks,
     "structures_resource_pack_move": structures_resource_pack_move,
     "structures_structure_move": structures_structure_move,
     "structures_nbt_normalize_text": structures_nbt_normalize_text,

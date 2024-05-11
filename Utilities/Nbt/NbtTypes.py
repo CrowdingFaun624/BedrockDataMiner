@@ -27,8 +27,9 @@ class TAG(Generic[a]):
 
     value:a
 
-    def __init__(self, value:a) -> None:
+    def __init__(self, value:a, *, hash:int|None=None) -> None:
         self.value = value
+        self.hash = hash
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG": ...
@@ -45,6 +46,10 @@ class TAG_End(TAG[None]):
 
     value = None
 
+    def __init__(self, value:None=None, *, hash:int|None=None) -> None:
+        self.value = value
+        self.hash = hash
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_End":
         return cls(None)
@@ -57,6 +62,10 @@ class TAG_End(TAG[None]):
 
 class TAG_Byte(TAG[int]):
 
+    def __init__(self, value:int=int(), *, hash:int|None=None) -> None:
+        self.value = value
+        self.hash = hash
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Byte":
         return cls(data_reader.unpack_tuple("b", 1, endianness))
@@ -65,6 +74,10 @@ class TAG_Byte(TAG[int]):
         return "%ib" % self.value
 
 class TAG_Short(TAG[int]):
+
+    def __init__(self, value:int=int(), *, hash:int|None=None) -> None:
+        self.value = value
+        self.hash = hash
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Short":
@@ -75,6 +88,10 @@ class TAG_Short(TAG[int]):
 
 class TAG_Int(TAG[int]):
 
+    def __init__(self, value:int=int(), *, hash:int|None=None) -> None:
+        self.value = value
+        self.hash = hash
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Int":
         return cls(data_reader.unpack_tuple("i", 4, endianness))
@@ -83,6 +100,10 @@ class TAG_Int(TAG[int]):
         return "%i" % self.value
 
 class TAG_Long(TAG[int]):
+
+    def __init__(self, value:int=int(), *, hash:int|None=None) -> None:
+        self.value = value
+        self.hash = hash
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Long":
@@ -93,6 +114,10 @@ class TAG_Long(TAG[int]):
 
 class TAG_Float(TAG[float]):
 
+    def __init__(self, value:float=float(), *, hash:int|None=None) -> None:
+        self.value = value
+        self.hash = hash
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Float":
         return cls(data_reader.unpack_tuple("f", 4, endianness))
@@ -102,6 +127,10 @@ class TAG_Float(TAG[float]):
 
 class TAG_Double(TAG[float]):
 
+    def __init__(self, value:float=float(), *, hash:int|None=None) -> None:
+        self.value = value
+        self.hash = hash
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Double":
         return cls(data_reader.unpack_tuple("d", 8, endianness))
@@ -110,6 +139,13 @@ class TAG_Double(TAG[float]):
         return "%f" % self.value
 
 class TAG_Byte_Array(TAG[list[TAG_Byte]]):
+
+    def __init__(self, value:list[TAG_Byte]|None=None, *, hash:int|None=None) -> None:
+        if value is None:
+            self.value = []
+        else:
+            self.value = value
+        self.hash = hash
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Byte_Array":
@@ -184,6 +220,10 @@ class TAG_Byte_Array(TAG[list[TAG_Byte]]):
 
 class TAG_String(TAG[str]):
 
+    def __init__(self, value:str=str(), *, hash:int|None=None) -> None:
+        self.value = value
+        self.hash = hash
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_String":
         size:int = data_reader.unpack_tuple("H", 2, endianness)
@@ -197,6 +237,13 @@ class TAG_String(TAG[str]):
         return "\"%s\"" % escape_string(self.value)
 
 class TAG_List(TAG[list[TAG]]):
+
+    def __init__(self, value:list[TAG]|None=None, *, hash:int|None=None) -> None:
+        if value is None:
+            self.value = []
+        else:
+            self.value = value
+        self.hash = hash
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_List":
@@ -271,6 +318,13 @@ class TAG_List(TAG[list[TAG]]):
         self.value.sort(key=lambda item: item.value)
 
 class TAG_Compound(TAG[dict[str,TAG]]):
+
+    def __init__(self, value:dict[str,TAG]|None=None, *, hash:int|None=None) -> None:
+        if value is None:
+            self.value = {}
+        else:
+            self.value = value
+        self.hash = hash
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Compound":
@@ -357,6 +411,13 @@ class TAG_Compound(TAG[dict[str,TAG]]):
 
 class TAG_Int_Array(TAG[list[TAG_Int]]):
 
+    def __init__(self, value:list[TAG_Int]|None=None, *, hash:int|None=None) -> None:
+        if value is None:
+            self.value = []
+        else:
+            self.value = value
+        self.hash = hash
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Int_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
@@ -429,6 +490,13 @@ class TAG_Int_Array(TAG[list[TAG_Int]]):
         self.value.sort(key=lambda item: item.value)
 
 class TAG_Long_Array(TAG[list[TAG_Long]]):
+
+    def __init__(self, value:list[TAG_Long]|None=None, *, hash:int|None=None) -> None:
+        if value is None:
+            self.value = []
+        else:
+            self.value = value
+        self.hash = hash
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Long_Array":

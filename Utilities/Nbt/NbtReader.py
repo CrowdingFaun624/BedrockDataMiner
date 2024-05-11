@@ -11,6 +11,13 @@ class NbtBytes():
 
     def __init__(self, value:bytes) -> None:
         self.value = value
+        self.hash = hash(value)
+
+    def __eq__(self, other:"NbtBytes") -> bool:
+        return self is other or self.value == other.value
+
+    def __hash__(self) -> int:
+        return self.hash
 
     def __repr__(self) -> str:
         return "<%s len %i>" % (self.__class__.__name__, len(self.value))
