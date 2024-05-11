@@ -1,14 +1,19 @@
 import gzip
 from pathlib2 import Path
 import threading
-from typing import IO, Literal
+from typing import IO, Literal, overload
 
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller
 
-COMPRESSIBLE_FILES = ["json", "fsb", "nbt", "txt", "lang", "tga", "xml", "bin", "fragment", "h", "vertex", "properties", "material", "ttf", "otf", "fontdata", "mcstructure", "css", "js", "html", "dat", "wlist", "pdn", "so", "dex", "sf", "mf"]
+COMPRESSIBLE_FILES = ["json", "fsb", "txt", "lang", "tga", "xml", "bin", "fragment", "h", "vertex", "properties", "material", "ttf", "otf", "fontdata", "css", "js", "html", "dat", "wlist", "pdn", "so", "dex", "sf", "mf"]
 
 index_lock = threading.Lock()
+
+CACHE_LIMIT = 2 # how many times it has to miss the cache in order to cache the file.
+
+cache_counts:dict[str,int] = {}
+cache_data:dict[str,bytes|str] = {}
 
 def read_index() -> dict[str, tuple[bool, str]]:
     '''Returns a dictionary of hex string hashes, and the file's zippability and a name it has.
@@ -101,15 +106,33 @@ def open_archived(hex_string:str, mode:Literal["t", "b"]) -> FileManager.FilePro
     else:
         return FileManager.FilePromise(FunctionCaller(open, [archived_path, "r" + mode]), hex_string, "b")
 
+@overload
+def read_archived(hex_string:str, mode:Literal["b"]) -> bytes: ...
+@overload
+def read_archived(hex_string:str, mode:Literal["t"]) -> str: ...
 def read_archived(hex_string:str, mode:Literal["t", "b"]) -> bytes|str:
+    cache_name = hex_string + "-" + mode
+    cached_file = cache_data.get(cache_name)
+    if cached_file is not None:
+        return cached_file
+    try:
+        cache_counts[cache_name] += 1
+    except KeyError:
+        cache_counts[cache_name] = 1
+    should_cache = cache_counts[cache_name] >= CACHE_LIMIT and cache_name not in cache_data
+
     archived_path = get_file_path(hex_string)
     is_zipped, name = index[hex_string]
+    output:str|bytes
     if is_zipped and mode == "t":
         with open(archived_path, "rb") as f:
-            return gzip.decompress(f.read()).decode()
+            output = gzip.decompress(f.read()).decode()
     elif is_zipped and mode == "b":
         with open(archived_path, "rb") as f:
-            return gzip.decompress(f.read())
+            output = gzip.decompress(f.read())
     else:
         with open(archived_path, "r" + mode) as f:
-            return f.read()
+            output = f.read()
+    if should_cache:
+        cache_data[cache_name] = output
+    return output

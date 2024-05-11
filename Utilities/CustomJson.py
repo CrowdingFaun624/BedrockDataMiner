@@ -47,7 +47,7 @@ class NbtBytesCoder(Coder[NbtBytesTypedDict, NbtReader.NbtBytes]):
 
     @classmethod
     def decode(cls, data: NbtBytesTypedDict) -> NbtReader.NbtBytes:
-        file = cast(bytes, FileStorageManager.read_archived(data["hash"], "b"))
+        file = FileStorageManager.read_archived(data["hash"], "b")
         return NbtReader.NbtBytes(file)
 
     @classmethod
