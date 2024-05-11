@@ -2,7 +2,6 @@ from pathlib2 import Path
 import requests
 import shutil
 import threading
-import time
 from typing import Iterable, Literal
 import zipfile
 
@@ -12,12 +11,7 @@ import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
 import Version.VersionTags as VersionTags
 
-CONNECTION_LIMITS:dict[str,int] = {}
-CONNECTION_LIMITS_DEFAULT = 1
-
 class DownloadManager(InstallManager.InstallManager):
-
-    current_open_connections:int = 0
 
     def prepare_for_install(self, version_tags:VersionTags.VersionTags) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
@@ -180,14 +174,19 @@ class DownloadManager(InstallManager.InstallManager):
         self.installation_lock.acquire()
         if destination is None: destination = self.apk_location
         if not self.installed.get():
-            with open(destination, "wb") as f:
-                while self.current_open_connections >= CONNECTION_LIMITS_DEFAULT:
-                    time.sleep(0.1)
-                self.current_open_connections += 1
-                with requests.get(self.url) as response:
-                    f.write(response.content)
-                    DownloadLog.log(self.version, response)
-                self.current_open_connections -= 1
+            response_supposed_length = None
+            response_length = 0
+            tries = 0
+            while response_supposed_length is None or response_supposed_length != response_length:
+                with open(destination, "wb") as f:
+                    with requests.get(self.url) as response:
+                        response_length = len(response.content)
+                        response_supposed_length = int(response.headers["Content-Length"])
+                        DownloadLog.log(self.version, response, response_length)
+                        f.write(response.content)
+                tries += 1
+                if tries >= 5:
+                    raise RuntimeError("Failed to correctly download file!")
             self.installed.set(True)
             self.open_zip_file()
         self.installation_lock.release()
