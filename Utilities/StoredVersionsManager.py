@@ -232,10 +232,9 @@ def clear_objects() -> None:
 def extract_user() -> None:
     '''Provides a user interface for extraction.'''
     file_list = get_version_list()
-    print("Select a version from the list: %s" % list(file_list))
     user_input = None
     while user_input not in file_list:
-        user_input = input()
+        user_input = input("Select a version from the list: %s " % list(file_list))
     extract(user_input)
     print("Extracted \"%s\"" % user_input)
 
