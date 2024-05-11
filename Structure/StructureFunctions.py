@@ -185,6 +185,8 @@ def gui_routes_params_normalize(data:dict[str,list[dict[str,str]]], dependencies
     assert "params" in data
     data["params"] = {route["name"]: route for route in data["params"]}
 
+identity_move_function = lambda key, value: value
+
 def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
     output:dict[str,dict[str,Any]] = {}
     for resource_pack_name, item_textures_data in data.items():
@@ -555,6 +557,7 @@ functions:dict[str,Callable] = {
     "gui_routes_normalize": gui_routes_normalize,
     "gui_routes_supported_routes_normalize": gui_routes_supported_routes_normalize,
     "gui_routes_params_normalize": gui_routes_params_normalize,
+    "identity_move_function": identity_move_function,
     "item_textures_normalize": item_textures_normalize,
     "items_behavior_pack_comparison_move_function": items_behavior_pack_comparison_move_function,
     "items_fix_old": items_fix_old,
