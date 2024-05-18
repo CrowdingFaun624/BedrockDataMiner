@@ -9,6 +9,8 @@ NoneType = type(None)
 def stringify(data:Any) -> str:
     '''Returns the string of data containing no Diffs. Is used in the comparison reporter.'''
     match data:
+        case NbtTypes.TAG():
+            return str(data)
         case str():
             return "\"%s\"" % data
         case bool():
@@ -17,8 +19,6 @@ def stringify(data:Any) -> str:
             return str(data)
         case NoneType():
             return "null"
-        case NbtTypes.TAG():
-            return str(data)
         case NbtReader.NbtBytes():
             try:
                 return str(NbtReader.unpack_bytes(data.value, gzipped=False, endianness=Endianness.End.BIG)[1])
