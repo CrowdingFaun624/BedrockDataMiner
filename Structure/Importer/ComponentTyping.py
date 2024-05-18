@@ -85,8 +85,20 @@ class TypeAliasTypedDict(TypedDict):
     type: Required[Literal["TypeAlias"]]
     types: Required[list[str]]
 
-ComponentTypedDicts = DictComponentTypedDict|GroupComponentTypedDict|ListComponentTypedDict|BaseComponentTypedDict|NbtBaseTypedDict|NormalizerTypedDict|TypeAliasTypedDict|KeymapComponentTypedDict
-StructureComponentTypedDicts = DictComponentTypedDict|ListComponentTypedDict|KeymapComponentTypedDict
+class VolumeTypedDict(TypedDict):
+    field: NotRequired[str]
+    normalizer: NotRequired[str|list[str]]
+    position_key: Required[str]
+    print_additional_data: NotRequired[bool]
+    state_key: Required[str]
+    subcomponent: Required[str|None]
+    tags: NotRequired[list[str]]
+    this_type: Required[str]
+    type: Required[Literal["Volume"]]
+    types: Required[list[str]]
+
+ComponentTypedDicts = BaseComponentTypedDict|DictComponentTypedDict|GroupComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|NbtBaseTypedDict|NormalizerTypedDict|TypeAliasTypedDict|VolumeTypedDict
+StructureComponentTypedDicts = DictComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|VolumeTypedDict
 StructureFileType = dict[str,ComponentTypedDicts]
 
 DEFAULT_TYPES:dict[str,type] = {
@@ -97,6 +109,7 @@ DEFAULT_TYPES:dict[str,type] = {
     "list": list,
     "null": type(None),
     "str": str,
+    "volume_base": tuple, # Volume becomes a tuple with various contents upon being normalized
     "nbt_base": NbtReader.NbtBytes,
     "TAG_Byte": NbtTypes.TAG_Byte,
     "TAG_Short": NbtTypes.TAG_Short,

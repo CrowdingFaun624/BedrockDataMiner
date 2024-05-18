@@ -15,6 +15,7 @@ import Structure.Importer.NbtTagComponent as NbtTagComponent
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.TagComponent as TagComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
+import Structure.Importer.VolumeComponent as VolumeComponent
 import Structure.StructureBase as StructureBase
 import Structure.StructureFunctions as StructureFunctions
 import Utilities.FileManager as FileManager
@@ -28,6 +29,7 @@ component_types:list[type[Component.Component]] = [
     BaseComponent.BaseComponent,
     TypeAliasComponent.TypeAliasComponent,
     KeymapComponent.KeymapComponent,
+    VolumeComponent.VolumeComponent,
     NbtBaseComponent.NbtBaseComponent,
     NbtTagComponent.NbtTagByteArrayComponent,
     NbtTagComponent.NbtTagCompoundComponent,
