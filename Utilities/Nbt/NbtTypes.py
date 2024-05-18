@@ -1,10 +1,13 @@
+import copy
 import enum
-import mutf8
 import re
 from typing import Generic, Iterable, Mapping, TypeVar
 
+import mutf8
+
 import Utilities.Nbt.DataReader as DataReader
 import Utilities.Nbt.Endianness as Endianness
+
 
 class IdEnum(enum.IntEnum):
     TAG_End = 0
@@ -41,6 +44,9 @@ class TAG(Generic[a]):
 
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, str(self))
+    
+    def __deepcopy__(self, memo) -> "TAG":
+        return type(self)(copy.deepcopy(self.value))
 
 class TAG_End(TAG[None]):
 
@@ -70,6 +76,21 @@ class TAG_Byte(TAG[int], int):
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Byte":
         return cls(data_reader.unpack_tuple("b", 1, endianness))
 
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __gt__(self, value: int) -> bool:
+        return self.value > value
+
+    def __lt__(self, value: int) -> bool:
+        return self.value < value
+
+    def __eq__(self, __value: object) -> bool:
+        return self.value == __value
+    
+    def __index__(self) -> int:
+        return self.value.__index__()
+
     def __str__(self) -> str:
         return "%ib" % self.value
 
@@ -83,10 +104,25 @@ class TAG_Short(TAG[int], int):
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Short":
         return cls(data_reader.unpack_tuple("h", 2, endianness))
 
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __gt__(self, value: int) -> bool:
+        return self.value > value
+
+    def __lt__(self, value: int) -> bool:
+        return self.value < value
+
+    def __eq__(self, __value: object) -> bool:
+        return self.value == __value
+    
+    def __index__(self) -> int:
+        return self.value.__index__()
+
     def __str__(self) -> str:
         return "%is" % self.value
 
-class TAG_Int(TAG[int]):
+class TAG_Int(TAG[int], int):
 
     def __init__(self, value:int=int(), *, hash:int|None=None) -> None:
         self.value = value
@@ -95,6 +131,21 @@ class TAG_Int(TAG[int]):
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Int":
         return cls(data_reader.unpack_tuple("i", 4, endianness))
+
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __gt__(self, value: int) -> bool:
+        return self.value > value
+
+    def __lt__(self, value: int) -> bool:
+        return self.value < value
+
+    def __eq__(self, __value: object) -> bool:
+        return self.value == __value
+    
+    def __index__(self) -> int:
+        return self.value.__index__()
 
     def __str__(self) -> str:
         return "%i" % self.value
@@ -109,6 +160,21 @@ class TAG_Long(TAG[int], int):
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Long":
         return cls(data_reader.unpack_tuple("q", 8, endianness))
 
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __gt__(self, value: int) -> bool:
+        return self.value > value
+
+    def __lt__(self, value: int) -> bool:
+        return self.value < value
+
+    def __eq__(self, __value: object) -> bool:
+        return self.value == __value
+    
+    def __index__(self) -> int:
+        return self.value.__index__()
+
     def __str__(self) -> str:
         return "%il" % self.value
 
@@ -122,6 +188,18 @@ class TAG_Float(TAG[float], float):
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Float":
         return cls(data_reader.unpack_tuple("f", 4, endianness))
 
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __gt__(self, value: int) -> bool:
+        return self.value > value
+
+    def __lt__(self, value: int) -> bool:
+        return self.value < value
+
+    def __eq__(self, __value: object) -> bool:
+        return self.value == __value
+
     def __str__(self) -> str:
         return "%ff" % self.value
 
@@ -134,6 +212,18 @@ class TAG_Double(TAG[float], float):
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Double":
         return cls(data_reader.unpack_tuple("d", 8, endianness))
+
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __gt__(self, value: int) -> bool:
+        return self.value > value
+
+    def __lt__(self, value: int) -> bool:
+        return self.value < value
+
+    def __eq__(self, __value: object) -> bool:
+        return self.value == __value
 
     def __str__(self) -> str:
         return "%f" % self.value
