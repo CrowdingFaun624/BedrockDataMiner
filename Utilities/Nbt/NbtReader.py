@@ -10,6 +10,7 @@ import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.Nbt.SnbtParser as SnbtParser
 
 cache:dict[int,tuple[str|None,NbtTypes.TAG]] = {}
+USE_CACHE = True
 
 class NbtBytes():
 
@@ -28,14 +29,16 @@ class NbtBytes():
 
 def unpack_bytes(data:bytes, gzipped:bool=True, endianness:Endianness.End|None=None) -> tuple[str|None,NbtTypes.TAG]:
     if endianness is None: endianness = Endianness.End.BIG
-    data_hash = hash(data)
-    if data_hash in cache:
+    if USE_CACHE:
+        data_hash = hash(data)
+    if USE_CACHE and data_hash in cache:
         return copy.deepcopy(cache[data_hash])
     if gzipped:
         data = gzip.decompress(data)
     data_reader = DataReader.DataBytesReader(data)
     name, output = NbtTypes.parse_compound_item_from_bytes(data_reader, endianness)
-    cache[data_hash] = copy.deepcopy((name, output))
+    if USE_CACHE:
+        cache[data_hash] = copy.deepcopy((name, output))
     return name, output
 
 def unpack_file(data:BinaryIO, gzipped:bool=True, endianness:Endianness.End|None=None) -> tuple[str|None,NbtTypes.TAG]:
