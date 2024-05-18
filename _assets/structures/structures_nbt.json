@@ -9,10 +9,6 @@
         "dependencies": ["behavior_packs"],
         "function_name": "collapse_behavior_packs_without_defined_in"
     },
-    "normalize_blocks": {
-        "type": "Normalizer",
-        "function_name": "structures_nbt_normalize_blocks"
-    },
     "normalize_text": {
         "type": "Normalizer",
         "function_name": "structures_nbt_normalize_text"
@@ -67,10 +63,9 @@
     },
     "structure": {
         "type": "NbtKeymapTagCompound",
-        "normalizer": "normalize_blocks",
         "keys": {
             "author": {"type": "TAG_String"},
-            "blocks": {"type": "dict", "subcomponent": "blocks"},
+            "blocks": {"type": "volume_base", "subcomponent": "blocks"},
             "DataVersion": {"type": "TAG_Int"},
             "entities": {"type": "TAG_List", "subcomponent": "entities"},
             "palette": {"type": "TAG_List", "subcomponent": "palettes"},
@@ -79,17 +74,18 @@
         }
     },
     "blocks": {
-        "type": "Dict",
+        "type": "Volume",
         "field": "block",
         "types": ["TAG_Compound"],
-        "measure_length": true,
+        "this_type": "TAG_List",
+        "position_key": "pos",
+        "state_key": "state",
         "subcomponent": "block"
     },
     "block": {
         "type": "NbtKeymapTagCompound",
         "keys": {
-            "nbt": {"type": "TAG_Compound", "subcomponent": "block_nbt"},
-            "state": {"type": "TAG_Int"}
+            "nbt": {"type": "TAG_Compound", "subcomponent": "block_nbt"}
         }
     },
     "entities": {
