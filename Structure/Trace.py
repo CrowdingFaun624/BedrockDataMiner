@@ -1,10 +1,10 @@
-from typing import Any
-
 import traceback
+from typing import Any, Hashable
+
 
 class ErrorTrace():
 
-    def __init__(self, exception:Exception, current_pos_name:str|None, current_pos_key:str|int|None, data:Any|None) -> None:
+    def __init__(self, exception:Exception, current_pos_name:str|None, current_pos_key:Hashable|None, data:Any|None) -> None:
         self.exception = exception
         self.is_final = False
         self.trace:list[_TraceItem] = []
@@ -13,7 +13,7 @@ class ErrorTrace():
         if current_pos_name is not None:
             self.add(current_pos_name, current_pos_key)
 
-    def add(self, current_pos_name:str, current_pos_key:str|int|None, force:bool=False) -> None:
+    def add(self, current_pos_name:str, current_pos_key:Hashable|None, force:bool=False) -> None:
         if self.is_final:
             raise RuntimeError("Attempted to add to a finalized Trace!")
         if force or current_pos_name not in self.already_added_names:
@@ -43,7 +43,7 @@ class ErrorTrace():
 
 class _TraceItem():
 
-    def __init__(self, name:str, key:str|int|None) -> None:
+    def __init__(self, name:str, key:Hashable|None) -> None:
         self.name = name
         self.key = key
 
