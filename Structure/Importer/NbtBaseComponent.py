@@ -11,6 +11,7 @@ import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.NbtBaseStructure as NbtBaseStructure
 import Structure.Normalizer as Normalizer
 import Utilities.Nbt.Endianness as Endianness
+import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -18,12 +19,12 @@ COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_n
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
 TYPE_ALIAS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
 
-class NbtBaseComponent(StructureComponent.StructureComponent):
+class NbtBaseComponent(GroupComponent.GroupComponent):
 
     class_name_article = "an NbtBase"
     class_name = "NbtBase"
 
-    my_properties = ComponentCapabilities.Capabilities(is_structure=True, is_nbt_base=True)
+    my_properties = ComponentCapabilities.Capabilities(is_group=True, is_nbt_base=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
@@ -50,7 +51,8 @@ class NbtBaseComponent(StructureComponent.StructureComponent):
         self.parents:list[Component.Component] = []
         self.types:list[type|TypeAliasComponent.TypeAliasComponent]|None = None
         self.types_final:list[type] = []
-        self.final:NbtBaseStructure.NbtBaseStructure|None = None
+        self.final:dict[type,NbtBaseStructure.NbtBaseStructure]|None = None
+        self.final_structure:NbtBaseStructure.NbtBaseStructure|None=None
         self.subcomponent:StructureComponent.StructureComponent|GroupComponent.GroupComponent|None = None
 
         self.children_has_normalizer = True # All NbtBases have built-in normalizers that unpack the NBT
@@ -99,8 +101,8 @@ class NbtBaseComponent(StructureComponent.StructureComponent):
             case "little": return Endianness.End.LITTLE
             case _: raise ValueError("Invalid endianness \"%s\"!" % endianness)
 
-    def create_final_get_final(self, normalizers_final:list[Normalizer.Normalizer]|None) -> NbtBaseStructure.NbtBaseStructure:
-        return NbtBaseStructure.NbtBaseStructure(
+    def create_final_get_final(self, normalizers_final:list[Normalizer.Normalizer]|None, my_types:set[type]) -> tuple[dict[type,NbtBaseStructure.NbtBaseStructure],NbtBaseStructure.NbtBaseStructure]:
+        final = NbtBaseStructure.NbtBaseStructure(
             name = self.name,
             structure = None,
             endianness=self.get_endianness(self.endianness),
@@ -109,23 +111,26 @@ class NbtBaseComponent(StructureComponent.StructureComponent):
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
+        output:dict[type,NbtBaseStructure.NbtBaseStructure] = {NbtReader.NbtBytes: final}
+        for my_type in my_types: output[my_type] = final
+        return output, final
 
     def create_final(self) -> None:
         self.types_final = self.create_final_get_types_final(self.types)
-        self.my_type = self.types_final
+        self.my_type = set(self.types_final)
         normalizers_final = self.create_final_get_normalizers(self.normalizers)
-        self.final = self.create_final_get_final(normalizers_final)
+        self.final, self.final_structure = self.create_final_get_final(normalizers_final, self.my_type)
 
     def link_finals(self) -> None:
-        assert self.final is not None
+        assert self.final_structure is not None
         assert self.subcomponent is not None
         assert self.subcomponent.final is not None
-        self.final.structure = self.subcomponent.final
+        self.final_structure.structure = self.subcomponent.final
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
-        assert self.final is not None
+        assert self.final_structure is not None
         assert self.subcomponent is not None
-        self.final.check_initialization_parameters()
+        self.final_structure.check_initialization_parameters()
         for value_type in self.types_final:
             if not issubclass(value_type, NbtTypes.TAG):
                 return [TypeError("%s \"%s\" cannot except non-NbtTag type %s!" % (self.class_name, self.name, value_type.__name__))]
