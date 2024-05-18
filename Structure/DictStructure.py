@@ -171,31 +171,35 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             self,
             data1:MutableMapping[str,d],
             data2:MutableMapping[str,d],
-        ) -> tuple[MutableMapping[str|D.Diff[str,str],d|D.Diff[d,d]],list[Trace.ErrorTrace]]:
+        ) -> tuple[MutableMapping[str|D.Diff[str,str],d|D.Diff[d,d]],bool,list[Trace.ErrorTrace]]:
         if type(data1) != type(data2):
             raise TypeError("Attempted to compare type %s with type %s!" % (data1.__class__.__name__, data2.__class__.__name__))
 
-        key_occurences:dict[str,list[D.DiffType]] = {}
+        if data1 is data2 or data1 == data2:
+            return data1, False, [] # type: ignore
+
+        has_changes = False
+        key_occurrences:dict[str,list[D.DiffType]] = {}
         exceptions:list[Trace.ErrorTrace] = []
 
-        # get occurence counts
+        # get occurrence counts
         data1_iterator = zip(infinite_generator(D.DiffType.old), data1.items()) # since zip stops at the shortest iterator, this will not run forever.
         data2_iterator = zip(infinite_generator(D.DiffType.new), data2.items())
         for diff_type, (key, value) in glue_iterables(data1_iterator, data2_iterator):
             if (check_type_exception := self.check_type(key, value)) is not None:
                 exceptions.append(check_type_exception)
-            if key in key_occurences:
-                key_occurences[key].append(diff_type)
+            if key in key_occurrences:
+                key_occurrences[key].append(diff_type)
             else:
-                key_occurences[key] = [diff_type]
+                key_occurrences[key] = [diff_type]
 
         data_for_add_remove_change_compare:dict[str|D.Diff[str,str],tuple[tuple[D.DiffType, d],...]] = {}
         # assemble key change dicts.
         old_comparison_values:list[tuple[str,d]] = []
         new_comparison_values:list[tuple[str,d]] = []
-        for key, occurences in key_occurences.items():
-            if len(occurences) == 1:
-                match self.detect_key_moves, occurences[0]:
+        for key, occurrences in key_occurrences.items():
+            if len(occurrences) == 1:
+                match self.detect_key_moves, occurrences[0]:
                     case True, D.DiffType.old:
                         comparison_move_function_return = self.comparison_move_function(key, data1[key])
                         # If `comparison_move_function_return` is None, do not detect key change.
@@ -209,7 +213,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                         data_for_add_remove_change_compare[key] = ((D.DiffType.old, data1[key]),)
                     case False, D.DiffType.new:
                         data_for_add_remove_change_compare[key] = ((D.DiffType.new, data2[key]),)
-            elif len(occurences) == 2:
+            elif len(occurrences) == 2:
                 data_for_add_remove_change_compare[key] = ((D.DiffType.old, data1[key]), (D.DiffType.new, data2[key]))
             else:
                 raise RuntimeError("Illegal state!")
@@ -234,10 +238,10 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                 data_for_add_remove_change_compare[new_key] = ((D.DiffType.new, data2[new_key]),)
 
         output:dict[str|D.Diff,d|D.Diff] = {}
-        for key, occurences in data_for_add_remove_change_compare.items():
-            if len(occurences) == 2:
-                value1, value2 = occurences[0][1], occurences[1][1]
-                if value1 == value2:
+        for key, occurrences in data_for_add_remove_change_compare.items():
+            if len(occurrences) == 2:
+                value1, value2 = occurrences[0][1], occurrences[1][1]
+                if value1 is value2 or value1 == value2:
                     # no change occurred, so nothing needs to be done whatsoever on this data. If the previous, identical data was
                     # verified, then this would be correct data too.
                     output[key] = value1
@@ -245,26 +249,28 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                     structure_set, new_exceptions = self.choose_structure(key, D.Diff(value1, value2))
                     for exception in new_exceptions: exception.add(self.name, D.first_existing_property(key))
                     exceptions.extend(new_exceptions)
-                    output[key], new_exceptions = structure_set.compare(value1, value2)
+                    output[key], subcomponent_has_changes, new_exceptions = structure_set.compare(value1, value2)
+                    has_changes = has_changes or subcomponent_has_changes
                     for exception in new_exceptions: exception.add(self.name, D.first_existing_property(key))
                     exceptions.extend(new_exceptions)
                     continue
-            elif len(occurences) == 1:
+            elif len(occurrences) == 1:
                 # since there's now only one value, there's no more comparing to do.
-                # key can only be a D.Diff when len(occurences) == 2
+                # key can only be a D.Diff when len(occurrences) == 2
                 assert not isinstance(key, D.Diff)
-                if occurences[0][0] == D.DiffType.old: diff_key, diff_value = D.Diff(old=key), D.Diff(old=occurences[0][1])
-                elif occurences[0][0] == D.DiffType.new: diff_key, diff_value = D.Diff(new=key), D.Diff(new=occurences[0][1])
+                if occurrences[0][0] == D.DiffType.old: diff_key, diff_value = D.Diff(old=key), D.Diff(old=occurrences[0][1])
+                elif occurrences[0][0] == D.DiffType.new: diff_key, diff_value = D.Diff(new=key), D.Diff(new=occurrences[0][1])
                 else: raise RuntimeError("Illegal state!")
+                has_changes = True
                 output[diff_key] = diff_value
                 continue
             else:
-                raise RuntimeError("Illegal state: %s, %s" % (key, occurences))
+                raise RuntimeError("Illegal state: %s, %s" % (key, occurrences))
 
         sorted_output:dict[str|D.Diff,d|D.Diff] = type(data1)() # type: ignore # why does it even error anyways
         for key, value in sorted(output.items()):
             sorted_output[key] = value
-        return sorted_output, exceptions
+        return sorted_output, has_changes, exceptions
 
     def choose_structure_flat(self, key:str, value_type: type[d], value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         if isinstance(self.structure, dict):

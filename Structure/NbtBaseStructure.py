@@ -146,15 +146,15 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         exceptions.extend(new_exceptions)
         return output, exceptions
 
-    def compare(self, data1: NbtTypes.TAG, data2: NbtTypes.TAG) -> tuple[NbtTypes.TAG|D.Diff[NbtTypes.TAG, NbtTypes.TAG], list[Trace.ErrorTrace]]:
+    def compare(self, data1: NbtTypes.TAG, data2: NbtTypes.TAG) -> tuple[NbtTypes.TAG|D.Diff[NbtTypes.TAG, NbtTypes.TAG], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure_set, new_exceptions = self.choose_structure(D.Diff(data1, data2))
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
-        output, new_exceptions = structure_set.compare(data1, data2)
+        output, has_changes, new_exceptions = structure_set.compare(data1, data2)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
-        return output, exceptions
+        return output, has_changes, exceptions
 
     def print_text(self, data: NbtTypes.TAG) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []

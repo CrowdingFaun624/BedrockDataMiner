@@ -156,9 +156,12 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             self,
             data1:Sequence[d],
             data2:Sequence[d],
-        ) -> tuple[Sequence[d|D.Diff[d|D.NoExist,d|D.NoExist]],list[Trace.ErrorTrace]]:
+        ) -> tuple[Sequence[d|D.Diff[d|D.NoExist,d|D.NoExist]],bool,list[Trace.ErrorTrace]]:
         if type(data1) != type(data2):
             raise TypeError("Attempted to compare type %s with type %s!" % (data1.__class__.__name__, data2.__class__.__name__))
+        if data1 is data2 or data1 == data2:
+            return data1, False, []
+        has_changes = False
         exceptions:list[Trace.ErrorTrace] = []
 
         output:list[d|D.Diff[d|D.NoExist,d|D.NoExist]] = type(data1)() # type: ignore
@@ -178,7 +181,8 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     structure_set, new_exceptions = self.choose_structure(index, D.Diff(item1, item2))
                     for exception in new_exceptions: exception.add(self.name, index)
                     exceptions.extend(new_exceptions)
-                    compare_output, new_exceptions = structure_set.compare(item1, item2)
+                    compare_output, subcomponent_has_changes, new_exceptions = structure_set.compare(item1, item2)
+                    has_changes = has_changes or subcomponent_has_changes
                     output.append(compare_output)
                     for exception in new_exceptions: exception.add(self.name, index)
                     exceptions.extend(new_exceptions)
@@ -195,8 +199,9 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     if (check_type_exception := self.check_type(index + i + 1, item)) is not None:
                         exceptions.append(check_type_exception)
                     output.append((D.Diff(old=item) if data1_is_bigger else D.Diff(new=item)))
+                    has_changes = True
             else: pass
-            return output, exceptions
+            return output, has_changes, exceptions
         else: # unordered can only have additions or removals, no changes.
             for index, item in enumerate(data1):
                 if (check_type_exception := self.check_type(index, item)) is not None:
@@ -205,6 +210,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     output.append(item) # item in both
                 else:
                     output.append(D.Diff(old=item))
+                    has_changes = True
             for index, item in enumerate(data2):
                 if (check_type_exception := self.check_type(index, item)) is not None:
                     exceptions.append(check_type_exception)
@@ -212,7 +218,8 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     pass # ignore; already added.
                 else:
                     output.append(D.Diff(new=item))
-            return output, exceptions
+                    has_changes = True
+            return output, has_changes, exceptions
 
     def choose_structure_flat(self, key:int, value_type:type[d], value:d|None) -> tuple[Structure.Structure|None,list[Trace.ErrorTrace]]:
         if isinstance(self.structure, dict):

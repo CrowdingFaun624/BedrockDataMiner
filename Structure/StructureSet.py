@@ -49,15 +49,15 @@ class StructureSet(Generic[d]):
         else:
             return structure.compare_text(data)
 
-    def compare(self, data1:d, data2:d) -> tuple[d|D.Diff[d,d],list[Trace.ErrorTrace]]:
+    def compare(self, data1:d, data2:d) -> tuple[d|D.Diff[d,d],bool,list[Trace.ErrorTrace]]:
         if (len(self) == 1) or (len(self) == 2 and self[0] == self[1]):
             # both items have the same Structure.
             structure = self[0]
             if structure is None:
-                return D.Diff(data1, data2), []
+                return D.Diff(data1, data2), True, []
             else:
                 # items must be not equal because then the D.Diff could not be created.
                 return structure.compare(data1, data2)
         else:
             # items have different data types.
-            return D.Diff(data1, data2), []
+            return D.Diff(data1, data2), True, []

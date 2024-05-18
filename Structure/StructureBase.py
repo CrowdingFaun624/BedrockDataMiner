@@ -139,7 +139,9 @@ class StructureBase():
             normalized_data1 = self.normalize(data1, local_normalizer_dependencies, 1)
             normalized_data2 = self.normalize(data2, local_normalizer_dependencies, 2)
 
-        data_comparison = self.compare(normalized_data1, normalized_data2)
+        data_comparison, has_changes = self.compare(normalized_data1, normalized_data2)
+        if not has_changes: # skip compare_text part
+            return "", False
 
         lines, any_changes = self.compare_text(data_comparison)
 
@@ -165,12 +167,12 @@ class StructureBase():
         if len(traces) > 0:
             raise TypeError("Type checking on %s failed!" % (self.structure_name))
 
-    def compare(self, data1:Any, data2:Any) -> Any:
+    def compare(self, data1:Any, data2:Any) -> tuple[Any,bool]:
         if self.structure is None:
             raise RuntimeError("`structure` was never initialized!")
-        output, traces = self.structure.compare(data1, data2)
+        output, has_changes, traces = self.structure.compare(data1, data2)
         self.print_exception_list(traces)
-        return output
+        return output, has_changes
 
     def compare_text(self, data:Any) -> tuple[list[SU.Line],bool]:
         '''Returns a list of lines and if there were any changes'''
