@@ -13,7 +13,7 @@ class NbtTagCompoundComponent(DictComponent.DictComponent):
 
     my_type = [NbtTypes.TAG_Compound]
 
-    my_properties = ComponentCapabilities.Capabilities(is_nbt_tag=True, is_structure=True)
+    my_properties = ComponentCapabilities.Capabilities(has_keys=True, is_nbt_tag=True, is_structure=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
@@ -110,7 +110,7 @@ class NbtKeymapTagCompoundComponent(KeymapComponent.KeymapComponent):
 
     my_type = [NbtTypes.TAG_Compound]
 
-    my_properties = ComponentCapabilities.Capabilities(has_importable_keys=True, is_nbt_tag=True, is_structure=True)
+    my_properties = ComponentCapabilities.Capabilities(has_importable_keys=True, has_keys=True, is_nbt_tag=True, is_structure=True)
     children_has_normalizer_default = True
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(

@@ -1,5 +1,6 @@
 ALLOWED_PROPERTIES = set([
-    "has_importable_keys", # i.e. TypedDict's importable keys
+    "has_importable_keys", # i.e. Keymap's importable keys
+    "has_keys",
     "is_base",
     "is_function",
     "is_group",

@@ -26,7 +26,7 @@ class DictComponent(StructureComponent.StructureComponent):
 
     my_type = [dict]
 
-    my_properties = ComponentCapabilities.Capabilities(is_structure=True)
+    my_properties = ComponentCapabilities.Capabilities(has_keys=True, is_structure=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
