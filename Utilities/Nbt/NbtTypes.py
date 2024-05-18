@@ -60,7 +60,7 @@ class TAG_End(TAG[None]):
     def __eq__(self, __value: object) -> bool:
         return isinstance(__value, TAG_End)
 
-class TAG_Byte(TAG[int]):
+class TAG_Byte(TAG[int], int):
 
     def __init__(self, value:int=int(), *, hash:int|None=None) -> None:
         self.value = value
@@ -73,7 +73,7 @@ class TAG_Byte(TAG[int]):
     def __str__(self) -> str:
         return "%ib" % self.value
 
-class TAG_Short(TAG[int]):
+class TAG_Short(TAG[int], int):
 
     def __init__(self, value:int=int(), *, hash:int|None=None) -> None:
         self.value = value
@@ -99,7 +99,7 @@ class TAG_Int(TAG[int]):
     def __str__(self) -> str:
         return "%i" % self.value
 
-class TAG_Long(TAG[int]):
+class TAG_Long(TAG[int], int):
 
     def __init__(self, value:int=int(), *, hash:int|None=None) -> None:
         self.value = value
@@ -112,7 +112,7 @@ class TAG_Long(TAG[int]):
     def __str__(self) -> str:
         return "%il" % self.value
 
-class TAG_Float(TAG[float]):
+class TAG_Float(TAG[float], float):
 
     def __init__(self, value:float=float(), *, hash:int|None=None) -> None:
         self.value = value
@@ -125,7 +125,7 @@ class TAG_Float(TAG[float]):
     def __str__(self) -> str:
         return "%ff" % self.value
 
-class TAG_Double(TAG[float]):
+class TAG_Double(TAG[float], float):
 
     def __init__(self, value:float=float(), *, hash:int|None=None) -> None:
         self.value = value
@@ -218,7 +218,7 @@ class TAG_Byte_Array(TAG[list[TAG_Byte]]):
     def sort(self) -> None:
         self.value.sort(key=lambda item: item.value)
 
-class TAG_String(TAG[str]):
+class TAG_String(TAG[str], str):
 
     def __init__(self, value:str=str(), *, hash:int|None=None) -> None:
         self.value = value
@@ -385,8 +385,8 @@ class TAG_Compound(TAG[dict[str,TAG]]):
     def fromkeys(cls, __iterable: Iterable[str], __value:TAG[a]|None = None) -> "TAG_Compound":
         return TAG_Compound(dict.fromkeys(__iterable, __value)) # type: ignore
 
-    def get(self, __key:str) -> TAG|None:
-        return self.value.get(__key)
+    def get(self, __key:str, default:a=None) -> TAG|a:
+        return self.value.get(__key, default)
 
     def items(self) -> Iterable[tuple[str,TAG]]:
         return self.value.items()
