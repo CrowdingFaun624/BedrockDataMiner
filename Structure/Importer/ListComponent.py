@@ -78,8 +78,8 @@ class ListComponent(StructureComponent.StructureComponent):
             subcomponent = self.choose_component(subcomponent_str, COMPONENT_REQUEST_PROPERTIES, components, ["subcomponent"])
             self.link_components(subcomponent)
             return subcomponent
-    
-    def set_types(self, components:dict[str,Component.Component], types_strs:list[str]) -> list[type|TypeAliasComponent.TypeAliasComponent]|None:
+
+    def set_types(self, components:dict[str,Component.Component], types_strs:list[str]) -> list[type|TypeAliasComponent.TypeAliasComponent]:
         types:list[type|TypeAliasComponent.TypeAliasComponent] = []
         for index, type_str in enumerate(types_strs):
             if type_str in ComponentTyping.DEFAULT_TYPES:
@@ -89,7 +89,7 @@ class ListComponent(StructureComponent.StructureComponent):
                 types.append(type_alias_component)
                 self.link_components(type_alias_component)
         return types
-    
+
     def set_normalizers(self, components:dict[str,Component.Component], normalizer_strs:list[str]|None) -> list[NormalizerComponent.NormalizerComponent]|None:
         if normalizer_strs is None:
             return None
@@ -145,7 +145,7 @@ class ListComponent(StructureComponent.StructureComponent):
     def create_final(self) -> None:
         self.types_final:list[type] = self.create_final_get_final_types(self.types)
         normalizer_final = self.create_final_get_final_normalizers()
-        self.final = self.create_final_get_final(normalizer_final, )
+        self.final = self.create_final_get_final(normalizer_final)
 
     def link_finals(self) -> None:
         assert self.final is not None
@@ -153,7 +153,7 @@ class ListComponent(StructureComponent.StructureComponent):
             self.final.structure = None
         else:
             self.final.structure = self.subcomponent.final
-        
+
         assert self.tags is not None
         for tag in self.tags:
             self.tags_final.append(tag.name)

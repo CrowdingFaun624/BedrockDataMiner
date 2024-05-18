@@ -115,13 +115,13 @@ class NbtBaseComponent(StructureComponent.StructureComponent):
         self.my_type = self.types_final
         normalizers_final = self.create_final_get_normalizers(self.normalizers)
         self.final = self.create_final_get_final(normalizers_final)
-    
+
     def link_finals(self) -> None:
         assert self.final is not None
         assert self.subcomponent is not None
         assert self.subcomponent.final is not None
         self.final.structure = self.subcomponent.final
-    
+
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         assert self.final is not None
         assert self.subcomponent is not None
