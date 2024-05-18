@@ -448,7 +448,7 @@ class TupleTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
             self,
             data_type:type[Sequence]|tuple[type[Sequence],...]=tuple,
             data_type_str:str="a tuple",
-            *items:TupleItemTypeVerifier[item_typevar],
+            *items:TupleItemTypeVerifier[Any],
             function:Callable[[Sequence[item_typevar]],tuple[bool,str|None]]|None=None,
             type_check:bool=True,
         ) -> None:
