@@ -1,10 +1,12 @@
+from typing import IO, Any, Callable, cast
+
 import pyjson5 # supports comments
-from typing import Any, Callable, cast, IO
 
 import DataMiners.BlocksClient.BlocksClientDataMiner as BlocksDataMiner
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Sorting as Sorting
+
 
 class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
 
@@ -21,7 +23,8 @@ class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
         for blocks_location in self.blocks_locations:
             resource_pack_files.update({resource_pack_path + blocks_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names})
         files_request = [(resource_pack_file, "t", cast(Callable[[IO[str]],Any], pyjson5.load)) for resource_pack_file in resource_pack_files.keys()]
-        files:dict[str,dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
+        accessor = self.get_accessor("client")
+        files:dict[str,dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"blocks.json\" files found in \"%s\"" % self.version)
 

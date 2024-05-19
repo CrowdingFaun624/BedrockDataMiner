@@ -6,6 +6,7 @@ import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabPackFile.GrabPackFileDataMiner as GrabPackFileDataMiner
 import Utilities.Sorting as Sorting
 
+
 class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
@@ -32,7 +33,8 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
         for blocks_location in self.locations:
             pack_files.update({pack_path + blocks_location: pack_name for pack_name, pack_path in pack_names})
         files_request = DataTypes.get_file_request(pack_files.keys(), self.data_type)
-        files:dict[str,Any] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
+        accessor = self.get_accessor("client")
+        files:dict[str,Any] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             if self.file_display_name is None:
                 raise FileNotFoundError("No files found in \"%s\"" % self.version)

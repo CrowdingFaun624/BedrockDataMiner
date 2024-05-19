@@ -19,7 +19,7 @@ class SplashesDataMiner1(SplashesDataMiner.SplashesDataMiner):
 
         exception = None
         try:
-            file = self.read_file(self.splashes_location)
+            file = self.get_accessor("client").read(self.splashes_location, "t")
         except FileNotFoundError as e:
             exception = e
             exception.args = tuple(list(exception.args) + ["No splashes file found in \"%s\"!" % (self.version)])

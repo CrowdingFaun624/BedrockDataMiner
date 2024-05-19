@@ -1,6 +1,7 @@
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiner as DuplicateSoundsDataMiner
 
+
 class DuplicateSoundsDataMiner0(DuplicateSoundsDataMiner.DuplicateSoundsDataMiner):
 
     def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> dict[str,list[DataMinerTyping.DuplicateSoundsTypedDict]]:

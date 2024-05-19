@@ -19,7 +19,7 @@ class LanguageDataMiner1(LanguageDataMiner.LanguageDataMiner):
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Language:
         exception = None
         try:
-            file = self.read_file(self.location % self.language_code)
+            file = self.get_accessor("client").read(self.location % self.language_code, "t")
         except FileNotFoundError as e:
             exception = e
             if self.file_display_name is None:

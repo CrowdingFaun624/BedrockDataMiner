@@ -2,17 +2,12 @@ import json
 import traceback
 from typing import Any, Generator, Mapping, Sequence, TypedDict, TypeVar
 
-import DataMiners.DataMiner as DataMiner
-import Version.VersionParser as VersionParser
-import Structure.StructureBase as StructureBase
-import Structure.Importer.Importer as Importer
-import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier as TypeVerifier
-import Version.Version as Version
+from typing_extensions import NotRequired, Required
 
 import DataMiners.AllFiles.AllFilesDataMiners as AllFilesDataMiners
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
 import DataMiners.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
+import DataMiners.DataMiner as DataMiner
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
 import DataMiners.GrabMultipleFiles.GrabMultipleFilesDataMiners as GrabMultipleFilesDataMiners
 import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiners as GrabMultiplePackFilesDataMiners
@@ -33,6 +28,13 @@ import DataMiners.TagSearcher.TagSearcherDataMiners as TagSearcherDataMiners
 import DataMiners.TextureList.TextureListDataMiners as TextureListDataMiners
 import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as UndefinedSoundEventsDataMiners
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
+import Structure.Importer.Importer as Importer
+import Structure.StructureBase as StructureBase
+import Utilities.FileManager as FileManager
+import Utilities.TypeVerifier as TypeVerifier
+import Version.Version as Version
+import Version.VersionFileType as VersionFileType
+import Version.VersionParser as VersionParser
 
 all_dataminers:Sequence[type[DataMiner.DataMiner]] = []
 dataminer_collections:list[Sequence[type[DataMiner.DataMiner]]] = [
@@ -64,17 +66,18 @@ for dataminer_collection in dataminer_collections:
     all_dataminers.extend(dataminer_collection)
 
 class DataMinerSettingsTypedDict(TypedDict):
-    new: str|None
-    old: str|None
-    name: str|None
-    dependencies: list[str]
-    parameters: dict[str,Any]
+    new: Required[str|None]
+    old: Required[str|None]
+    name: Required[str|None]
+    files: NotRequired[list[str]]
+    dependencies: NotRequired[list[str]]
+    parameters: NotRequired[dict[str,Any]]
 
 class DataMinerCollectionTypedDict(TypedDict):
-    file_name: str
-    structure: str
-    disabled: bool
-    dataminers: list[DataMinerSettingsTypedDict]
+    file_name: Required[str]
+    structure: Required[str]
+    disabled: NotRequired[bool]
+    dataminers: Required[list[DataMinerSettingsTypedDict]]
 
 DataMinersCollections = dict[str,DataMinerCollectionTypedDict]
 
@@ -94,6 +97,7 @@ class DataMinerCollectionIntermediate():
                 TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
                 TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
                 TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
+                TypeVerifier.TypedDictKeyTypeVerifier("files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
                 TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
                 TypeVerifier.TypedDictKeyTypeVerifier("parameters", "a dict", False, dict),
             ), list, "a dict", "a list")),
@@ -104,7 +108,7 @@ class DataMinerCollectionIntermediate():
     )
 
     def __init__(self, data:DataMinerCollectionTypedDict, name:str, structures:dict[str,StructureBase.StructureBase]) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "structures": structures})
+        self.type_verifier.base_verify({"data": data, "name": name, "structures": structures}, [name])
 
         self.name = name
         self.file_name = data["file_name"]
@@ -139,6 +143,7 @@ class DataMinerCollectionIntermediate():
                 end_version_str = dataminer_settings_str["new"],
                 dataminer_class = dataminer_class,
                 name = self.name,
+                files = dataminer_settings_str.get("files", []),
                 dependencies = dataminer_settings_str.get("dependencies", None),
                 kwargs = dataminer_settings_str.get("parameters", {}),
             ))
@@ -150,9 +155,24 @@ class DataMinerCollectionIntermediate():
             dataminers = dataminer_settings,
         )
 
-    def check(self, intermediates:dict[str,"DataMinerCollectionIntermediate"], versions:dict[str,"Version.Version"]) -> list["Version.Version"]:
-        # check parameters
+    def check(self, intermediates:dict[str,"DataMinerCollectionIntermediate"], versions:dict[str,"Version.Version"], version_files:dict[str,VersionFileType.VersionFileType]) -> list["Version.Version"]:
         exceptions:list[Exception] = []
+
+        # check for invalid usage of "files" key
+        for index, dataminer_settings in enumerate(self.dataminer_settings_strs):
+            if dataminer_settings["name"] is None:
+                if "files" in dataminer_settings:
+                    exceptions.append(KeyError("Key \"files\" cannot exist when \"name\" is null!"))
+                    continue
+            else:
+                if "files" not in dataminer_settings:
+                    exceptions.append(KeyError("Key \"files\" must exist when \"name\" is not null!"))
+                    continue
+                for file in dataminer_settings["files"]:
+                    if file not in version_files:
+                        exceptions.append(KeyError("Version file \"%s\" does not exist!" % (file)))
+
+        # check parameters
         for index, dataminer_settings in enumerate(self.dataminer_settings_strs):
             if "parameters" not in dataminer_settings: continue
             if dataminer_settings["name"] is None: continue
@@ -231,6 +251,7 @@ def load_dataminers() -> list[DataMiner.DataMinerCollection]:
     data = open_file()
     if not isinstance(data, dict):
         raise TypeError("dataminer_collections.json is not a dict!")
+    version_file_types = VersionFileType.version_file_types
 
     structures:dict[str,StructureBase.StructureBase] = Importer.structures
     all_dataminers_dict = {dataminer.__name__: dataminer for dataminer in all_dataminers}
@@ -240,8 +261,9 @@ def load_dataminers() -> list[DataMiner.DataMinerCollection]:
     finals = [dataminer_collection_intermediate.create_final(all_dataminers_dict) for dataminer_collection_intermediate in dataminer_collection_intermediates.values() if not dataminer_collection_intermediate.disabled]
     versions = VersionParser.versions
     all_used_versions:set["Version.Version"] = set()
+
     for dataminer_collection_intermediate in dataminer_collection_intermediates.values():
-        used_versions = dataminer_collection_intermediate.check(dataminer_collection_intermediates, versions)
+        used_versions = dataminer_collection_intermediate.check(dataminer_collection_intermediates, versions, version_file_types)
         all_used_versions.update(used_versions)
     check_for_loops(all_used_versions, finals)
     return finals

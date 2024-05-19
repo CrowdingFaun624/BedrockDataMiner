@@ -1,8 +1,9 @@
 import json
-from typing import Any, IO
+from typing import IO, Any
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
+
 
 def decode(io:IO[bytes]) -> Any:
     # for decoding json files with foreign characters
@@ -13,10 +14,11 @@ class LanguagesDataMiner0(LanguagesDataMiner.LanguagesDataMiner):
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
         resource_packs = dependency_data["resource_packs"]
         assert resource_packs is not None
+        accessor = self.get_accessor("client")
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         languages_files = {"resource_packs/%s/texts/languages.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         languages_files_request = [(resource_pack_file, "t", json.load) for resource_pack_file in languages_files.keys()]
-        language_file_contents:dict[str,list[str]] = {key: value for key, value in self.read_files(languages_files_request, non_exist_ok=True).items() if value is not None}
+        language_file_contents:dict[str,list[str]] = {key: value for key, value in self.read_files(accessor, languages_files_request, non_exist_ok=True).items() if value is not None}
         if len(language_file_contents) == 0:
             raise FileNotFoundError("No \"languages.json\" files found in \"%s\"" % self.version)
 
@@ -35,7 +37,7 @@ class LanguagesDataMiner0(LanguagesDataMiner.LanguagesDataMiner):
 
         language_names_files = {"resource_packs/%s/texts/language_names.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         language_names_files_request = [(resource_pack_file, "b", decode) for resource_pack_file in language_names_files.keys()]
-        language_names_file_contents:dict[str,list[list[str]]] = {key: value for key, value in self.read_files(language_names_files_request, non_exist_ok=True).items() if value is not None}
+        language_names_file_contents:dict[str,list[list[str]]] = {key: value for key, value in self.read_files(accessor, language_names_files_request, non_exist_ok=True).items() if value is not None}
         if len(language_names_file_contents) == 0:
             raise FileNotFoundError("No \"language_names.json\" files found in \"%s\"" % self.version)
 

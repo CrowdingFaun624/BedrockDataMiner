@@ -1,27 +1,32 @@
 import os
+from typing import Iterable, Literal, TypedDict
+
 from pathlib2 import Path
-from typing import Iterable, Literal
 
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
-from Utilities.FunctionCaller import FunctionCaller
-import Version.Version as Version
 import Version.VersionTags as VersionTags
+from Utilities.FunctionCaller import FunctionCaller
+import Utilities.TypeVerifier as TypeVerifier
+
+
+class LocalManagerTypedDict(TypedDict):
+    is_preview: bool
 
 class LocalManager(InstallManager.InstallManager):
 
-    def prepare_for_install(self, version_tags:VersionTags.VersionTags) -> None:
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("is_preview", "a bool", True, bool),
+    )
+
+    def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:LocalManagerTypedDict) -> None:
         self.file_list:list[str]|None = None
-        if not self.version.download_method is Version.DownloadMethod.DOWNLOAD_LOCAL:
-            raise ValueError("Version \"%s\" is using a LocalManager while having a \"%s\" download type!" % (self.version.name, self.version.download_method))
         if os.name == "nt": # TODO: Make this part less sucky
             windows_apps = Path("C:\\Program Files\\WindowsApps")
-            if self.version.download_link == "beta_local":
+            if file_type_arguments["is_preview"]:
                 search_file = "Microsoft.MinecraftWindowsBeta"
-            elif self.version.download_link == "release_local":
-                search_file = "Microsoft.MinecraftUWP"
             else:
-                raise ValueError("Version \"%s\" does not have a valid download link for type \"local\"!" % (self.version.name))
+                search_file = "Microsoft.MinecraftUWP"
             for window_file in windows_apps.iterdir():
                 window_file:Path
                 if window_file.name.startswith(search_file):

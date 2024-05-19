@@ -2,6 +2,7 @@ import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
 
+
 class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
@@ -15,7 +16,7 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
         resource_pack_data = ResourcePacksDataMiner.resource_pack_order
         resource_pack_order, resource_pack_tags = resource_pack_data["order"], resource_pack_data["types"]
         resource_pack_order_dict = {name: index for index, name in enumerate(resource_pack_order)} # So I don't have to index it a whole twelve times
-        file_list = self.get_file_list()
+        file_list = self.get_accessor("client").get_file_list()
         resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = []
         resource_pack_names:set[str] = set()
 

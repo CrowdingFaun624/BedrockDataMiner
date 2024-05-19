@@ -270,3 +270,5 @@ def get_ordering_tag(tags:list[VersionTag]) -> VersionTag:
 def parse() -> VersionTags:
     with open(FileManager.VERSION_TAGS_FILE, "rt") as f:
         return VersionTags(json.load(f))
+
+version_tags = parse()

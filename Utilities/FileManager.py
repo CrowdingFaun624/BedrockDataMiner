@@ -1,15 +1,16 @@
 import errno
 import hashlib
 import os
-from pathlib2 import Path
 import shutil
 import sys
 import threading
-from typing import Any, Callable, IO, Literal
 import uuid
+from typing import IO, Any, Callable, Literal
 
-from Utilities.FunctionCaller import FunctionCaller
+from pathlib2 import Path
+
 import Utilities.TypeVerifier as TypeVerifier
+from Utilities.FunctionCaller import FunctionCaller
 
 PARENT_FOLDER          = Path("./").absolute()
 ASSETS_FOLDER          = Path(PARENT_FOLDER.joinpath("_assets"))
@@ -31,6 +32,7 @@ DATAMINER_COLLECTIONS_FILE = Path(ASSETS_FOLDER.joinpath("dataminer_collections.
 FSB_CACHE_FILE         = Path(ASSETS_FOLDER.joinpath("fsb_cache.json"))
 RESOUCE_PACK_DATA_FILE = Path(ASSETS_FOLDER.joinpath("resource_pack_data.json"))
 STRUCTURES_FILE        = Path(ASSETS_FOLDER.joinpath("structures.json"))
+VERSION_FILE_TYPES_FILE= Path(ASSETS_FOLDER.joinpath("version_file_types.json"))
 VERSION_TAGS_FILE      = Path(ASSETS_FOLDER.joinpath("version_tags.json"))
 VERSIONS_FILE          = Path(ASSETS_FOLDER.joinpath("versions.json"))
 COMPARISONS_FOLDER     = Path(PARENT_FOLDER.joinpath("_comparisons"))

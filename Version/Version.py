@@ -1,27 +1,21 @@
 import datetime
-import enum
+from typing import TYPE_CHECKING, Any
+
 from pathlib2 import Path
-from typing import TYPE_CHECKING
-import validators
 
 import Utilities.FileManager as FileManager
-import Utilities.StoredVersionsManager as StoredVersionsManager
+import Version.VersionFile as VersionFile
+import Version.VersionFileType as VersionFileType
 import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Downloader.InstallManager as InstallManager
 
-class DownloadMethod(enum.Enum):
-    DOWNLOAD_NONE = None
-    DOWNLOAD_URL = "url"
-    DOWNLOAD_FILE = "file"
-    DOWNLOAD_LOCAL = "local"
-
 class Version():
 
-    def __init__(self, name:str, download_link:str|None, parent_str:str|None, time_str:str|None, tags_str:list[str], index:int, version_tags:VersionTags.VersionTags, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
+    def __init__(self, name:str, files:dict[str,dict[str,dict[str,Any]]], parent_str:str|None, time_str:str|None, tags_str:list[str], index:int, version_tags:VersionTags.VersionTags, version_file_types:dict[str,VersionFileType.VersionFileType], wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
         self.name = name
-        self.download_link = download_link
+        self.files_str = files
         self.parent_str = parent_str
         self.time_str = time_str
         self.tags_str = tags_str
@@ -30,24 +24,24 @@ class Version():
         self.development_category_names = development_categories
 
         # attributes set in this __init__ function.
-        self.download_method:DownloadMethod|None = None
         self.version_folder:Path|None = None
+        self.version_files:dict[str,VersionFile.VersionFile] = {}
 
         # attributes to be set after finished creating version list.
-
         self.children:list[Version] = []
         self.siblings:list[Version]|None = None
         self.parent:"Version|None" = None
         self.time:datetime.date|None = None
         self.ordering_tag:VersionTags.VersionTag|None = None
-        self.install_manager:InstallManager.InstallManager|None = None
         self.latest = False
 
         self.validate_name()
-        self.validate_download_link()
+        self.validate_tags(version_tags)
         self.validate_parent()
         self.validate_time()
-        self.validate_tags(version_tags)
+
+    def get_accessor(self, file_type:str) -> "InstallManager.InstallManager":
+        return self.version_files[file_type].get_accessor()
 
     def assign_wiki_page(self, version_tags:VersionTags.VersionTags) -> None:
         '''Sets this Version's `wiki_page` attribute.'''
@@ -88,32 +82,14 @@ class Version():
 
     def validate_version_name(self, name:str) -> None:
         '''Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''
-        if not isinstance(name, str): raise TypeError("`name` is not a `str`!")
         version_folder = Path(FileManager.VERSIONS_FOLDER.joinpath(name))
         if version_folder.parent != FileManager.VERSIONS_FOLDER: raise ValueError("Invalid Version name \"%s\"!" % str(name))
 
     def validate_name(self) -> None:
         '''Sets this Version's `version_folder` attribute based off of the value of `name`. Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''
-        if not isinstance(self.name, str): raise TypeError("`name` is not a `str`!")
         self.version_folder = FileManager.get_version_path(self.name)
         self.validate_version_name(self.name)
         self.version_folder.mkdir(exist_ok=True)
-
-    def validate_download_link(self) -> None:
-        '''Sets this Version's `download_method` attribute based off of the value of `download_link`.
-        Raises a ValueError if it is not valid, or a TypeError if `download_link` is the wrong type.'''
-        if self.download_link is None:
-            self.download_method = DownloadMethod.DOWNLOAD_NONE
-            return
-        if not isinstance(self.download_link, str): raise TypeError("`download_link` is not a `str`!")
-        if validators.url(self.download_link):
-            self.download_method = DownloadMethod.DOWNLOAD_URL
-        elif self.download_link.startswith("/") and StoredVersionsManager.version_exists(self.download_link[1:]):
-            self.download_method = DownloadMethod.DOWNLOAD_FILE
-        elif self.download_link in ("release_local", "beta_local"):
-            self.download_method = DownloadMethod.DOWNLOAD_LOCAL
-        else:
-            raise ValueError("Download link \"%s\" is not valid!" % self.download_link)
 
     def validate_parent(self) -> None:
         '''Raises a ValueError if it is not valid, or a TypeError if it is the wrong type.'''
@@ -126,7 +102,6 @@ class Version():
         if self.time_str is None:
             self.time = None
             return
-        if not isinstance(self.time_str, str): raise TypeError("`time_str` is not a `str`!")
         self.time = datetime.date.fromisoformat(self.time_str)
         if self.time > datetime.date.today(): raise ValueError("`time` is after today!")
         if self.time.year < 2011: raise ValueError("`time` is before year 2011!")
@@ -137,9 +112,6 @@ class Version():
         if not all(isinstance(tag, VersionTags.VersionTag) for tag in self.tags):
             raise ValueError("Version \"%s\" does not have valid VersionTags: \"%s\"!" % (self.name, str(self.tags)))
         self.ordering_tag = VersionTags.get_ordering_tag(self.tags)
-        if version_tags["unreleased"] in self.tags:
-            if self.download_method is not DownloadMethod.DOWNLOAD_NONE:
-                raise ValueError("Version \"%s\" has the \"%s\" tag but has a download method!" % (self.name, version_tags["unreleased"]))
 
     def get_children_recursive(self) -> list["Version"]:
         children = self.children[:]
@@ -150,8 +122,21 @@ class Version():
     def add_child(self, child:"Version") -> None:
         self.children.append(child)
 
+    def assign_files(self, version_file_types:dict[str,VersionFileType.VersionFileType], version_tags:VersionTags.VersionTags) -> None:
+        for file_type_name, accessors in self.files_str.items():
+            file_type = version_file_types.get(file_type_name, None)
+            if file_type is None:
+                raise ValueError("Unrecognized file type \"%s\" in version \"%s\"!" % (file_type_name, self.name))
+            self.version_files[file_type_name] = VersionFile.VersionFile(self, file_type, accessors, version_tags)
+        for file_type_name, file_type in version_file_types.items():
+            if file_type.must_exist and file_type_name not in self.version_files:
+                raise KeyError("Required file type \"%s\" is not in version \"%s\"!" % (file_type_name, self.name))
+
+        if version_tags["unreleased"] in self.tags:
+            if len(self.version_files) == 0:
+                raise ValueError("Version \"%s\" has the \"%s\" tag but has a download method!" % (self.name, version_tags["unreleased"]))
+
     def assign_parent(self, version_dict:dict[str,"Version"]) -> None:
-        if not isinstance(version_dict, dict): raise TypeError("`version_dict` is not a dict for version \"%s\"!" % self.name)
         if self.parent_str is None:
             self.parent = None
             return
@@ -168,7 +153,7 @@ class Version():
         return "<Version %s>" % self.name
 
     def __hash__(self) -> int:
-        return hash((self.index, self.name, self.download_link, self.parent_str, self.time_str))
+        return hash(self.name)
 
     def __lt__(self, other:"Version") -> bool:
         if not isinstance(other, Version):

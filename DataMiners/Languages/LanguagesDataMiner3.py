@@ -4,7 +4,7 @@ import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 class LanguagesDataMiner3(LanguagesDataMiner.LanguagesDataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
-        language_files = [file.split("/")[-1] for file in self.get_file_list() if file.startswith("lang")]
+        language_files = [file.split("/")[-1] for file in self.get_accessor("client").get_file_list() if file.startswith("lang")]
         if len(language_files) == 0:
             raise FileNotFoundError("No language files found in \"%s\"!" % self.version.name)
         language_codes = [language_file.split(".")[0] for language_file in language_files]

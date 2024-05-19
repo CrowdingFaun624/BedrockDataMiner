@@ -1,10 +1,12 @@
-import pyjson5 # supports comments
-from typing import Any, Callable, cast, IO
+from typing import IO, Any, Callable, cast
+
+import pyjson5  # supports comments
 
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
 import Utilities.Sorting as Sorting
+
 
 class SplashesDataMiner0(SplashesDataMiner.SplashesDataMiner):
 
@@ -22,9 +24,9 @@ class SplashesDataMiner0(SplashesDataMiner.SplashesDataMiner):
         resource_pack_files:dict[str,str] = {}
         for splashes_location in self.splashes_locations:
             resource_pack_files.update({resource_pack_path + splashes_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names})
-        loader:Callable[[IO[bytes]],dict] = lambda file: pyjson5.loads(file.read().decode())
         files_request = [(resource_pack_file, "b", cast(Callable[[IO[bytes]],Any], pyjson5.load)) for resource_pack_file in resource_pack_files.keys()]
-        files:dict[str,DataMinerTyping.SplashesFile] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
+        accessor = self.get_accessor("client")
+        files:dict[str,DataMinerTyping.SplashesFile] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"splashes.json\" files found in \"%s\"" % self.version)
         

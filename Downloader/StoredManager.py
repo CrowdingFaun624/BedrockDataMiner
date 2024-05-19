@@ -1,25 +1,31 @@
-from pathlib2 import Path
 import shutil
 import threading
-from typing import Iterable, Literal
+from typing import Iterable, Literal, TypedDict
+
+from pathlib2 import Path
 
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
-import Version.Version as Version
 import Version.VersionTags as VersionTags
+import Utilities.TypeVerifier as TypeVerifier
+
+
+class StoredManagerTypedDict(TypedDict):
+    stored_name: str
 
 class StoredManager(InstallManager.InstallManager):
 
-    def prepare_for_install(self, version_tags:VersionTags.VersionTags) -> None:
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("stored_name", "a str", True, str),
+    )
+
+    def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:StoredManagerTypedDict) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
-        assert self.version.download_link is not None
-        self.name = self.version.download_link[1:]
+        self.name = file_type_arguments["stored_name"]
         self.index_read_lock = threading.Lock()
         self.file_list:list[str]|None = None
         self.index = None
-        if not self.version.download_method is Version.DownloadMethod.DOWNLOAD_FILE:
-            raise ValueError("Version \"%s\" is using a StoredManager while having a \"%s\" download type!" % (self.version.name, self.version.download_method))
 
     def read_index(self) -> None:
         if self.index is not None: return

@@ -1,29 +1,17 @@
 import json
-from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING, TypedDict
+from typing import Any, Mapping, Sequence, TypedDict
 from typing_extensions import NotRequired, Required
 
-import Downloader.DownloadManager as DownloadManager
-import Downloader.LocalManager as LocalManager
-import Downloader.StoredManager as StoredManager
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
-import Version.VersionRange as VersionRange
+import Version.VersionFileType as VersionFileType
 import Version.VersionTags as VersionTags
 
-if TYPE_CHECKING:
-    import Downloader.InstallManager as InstallManager
-
-INSTALL_MANAGERS:dict[Version.DownloadMethod,type["InstallManager.InstallManager"]|None] = {
-    Version.DownloadMethod.DOWNLOAD_FILE: StoredManager.StoredManager,
-    Version.DownloadMethod.DOWNLOAD_LOCAL: LocalManager.LocalManager,
-    Version.DownloadMethod.DOWNLOAD_NONE: None,
-    Version.DownloadMethod.DOWNLOAD_URL: DownloadManager.DownloadManager,
-}
 
 class VersionTypedDict(TypedDict):
     id: Required[str]
-    download: Required[str|None]
+    files: Required[dict[str,dict[str,dict[str,Any]]]]
     parent: Required[str|None]
     time: Required[str|None]
     tags: Required[list[str]]
@@ -38,13 +26,13 @@ def is_sorted_and_not_empty(data:Sequence[str]) -> tuple[bool, str]:
         return False, "data is empty!"
     return all(a <= b for a, b in zip(data, data[1:])), "data is not sorted!"
 
-KEY_ORDER = ["id", "download", "parent", "time", "tags", "wiki_page", "development_categories"]
+KEY_ORDER = ["id", "files", "parent", "time", "tags", "wiki_page", "development_categories"]
 def keys_in_order(data:Mapping[Any, Any]) -> tuple[bool, str]:
     return list(data.keys()) == [key for key in KEY_ORDER if key in data], "keys are not in order of %s!" % (KEY_ORDER)
 
 versions_type_verifier = TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
     TypeVerifier.TypedDictKeyTypeVerifier("id", "a str", True, str),
-    TypeVerifier.TypedDictKeyTypeVerifier("download", "a str or None", True, (str, type(None))),
+    TypeVerifier.TypedDictKeyTypeVerifier("files", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.DictTypeVerifier(dict, str, dict, "a dict", "a str", "a dict"), "a dict", "a str", "a dict")),
     TypeVerifier.TypedDictKeyTypeVerifier("parent", "a str or None", True, (str, type(None))),
     TypeVerifier.TypedDictKeyTypeVerifier("time", "a str or None", True, (str, type(None))),
     TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=is_sorted)),
@@ -58,7 +46,7 @@ def verify_data_types(data:list[VersionTypedDict]) -> None:
     versions_type_verifier.base_verify(data)
 
 def read_versions_file() -> list[VersionTypedDict]:
-    '''Returns the contents of '''
+    '''Returns the contents of versions.json'''
     path = FileManager.VERSIONS_FILE
     with open(path, "rt") as f:
         return json.load(f)
@@ -144,21 +132,10 @@ def assign_wiki_pages(versions:dict[str,Version.Version], version_tags:VersionTa
     for version in versions.values():
         version.assign_wiki_page(version_tags)
 
-def assign_install_managers(versions:dict[str,Version.Version], version_tags:VersionTags.VersionTags) -> None:
-    '''Sets the `install_manager` attribute to its corresponding InstallManager.'''
-    for version in versions.values():
-        assert version.download_method is not None
-        install_manager_type = INSTALL_MANAGERS[version.download_method]
-        if install_manager_type is None:
-            version.install_manager = None
-        else:
-            assert version.version_folder is not None
-            version.install_manager = install_manager_type(version, FileManager.get_version_install_path(version.version_folder), version_tags)
-
 def assign_latest(versions:dict[str,Version.Version], version_tags:VersionTags.VersionTags) -> None:
     for latest_slot, latest_slot_tags in version_tags.latest.latest_tags.items():
         for version in reversed(versions.values()):
-            if version.ordering_tag in latest_slot_tags and version.download_method is not Version.DownloadMethod.DOWNLOAD_NONE:
+            if version.ordering_tag in latest_slot_tags and len(version.version_files) > 0:
                 version.latest = True
                 if version.parent is not None:
                     version.parent.latest = True
@@ -170,15 +147,19 @@ def assign_additional_tags(versions:dict[str,Version.Version], version_tags:Vers
         for tag in version_tags.auto_assign_tags:
             tag.auto_assign(version, versions)
 
+def assign_accessors(versions:dict[str,Version.Version], version_file_types:dict[str,VersionFileType.VersionFileType], version_tags:VersionTags.VersionTags) -> None:
+    for version in versions.values():
+        version.assign_files(version_file_types, version_tags)
+
 def parse() -> tuple[dict[str,Version.Version], VersionTags.VersionTags]:
     data = read_versions_file()
     verify_data_types(data)
     versions:dict[str,Version.Version] = {}
-    already_downloads:set[str] = set()
-    version_tags = VersionTags.parse()
+    version_tags = VersionTags.version_tags
+    version_file_types = VersionFileType.version_file_types
     for index, version_dict in enumerate(data):
         id = version_dict["id"]
-        download = version_dict["download"]
+        files = version_dict["files"]
         parent = version_dict["parent"]
         time = version_dict["time"]
         tags = version_dict["tags"]
@@ -187,19 +168,14 @@ def parse() -> tuple[dict[str,Version.Version], VersionTags.VersionTags]:
         if id in versions:
             raise KeyError("Version named \"%s\" already exists!" % id)
 
-        versions[id] = Version.Version(id, download, parent, time, tags, index, version_tags, wiki_page, development_categories)
-
-        if download is not None and download in already_downloads:
-            already_downloads.add(download)
-            if download in already_downloads:
-                raise KeyError("Version with download \"%s\" already exists!" % download)
+        versions[id] = Version.Version(id, files, parent, time, tags, index, version_tags, version_file_types, wiki_page, development_categories)
 
     assign_parents(versions)
     verify_ordering(versions, version_tags)
     assign_additional_tags(versions, version_tags)
     assign_wiki_pages(versions, version_tags)
-    assign_install_managers(versions, version_tags)
     assign_latest(versions, version_tags)
+    assign_accessors(versions, version_file_types, version_tags)
     fix_folders(versions)
     return versions, version_tags
 
@@ -215,7 +191,6 @@ def fix_folders(versions:dict[str,Version.Version]) -> None:
             except OSError:
                 print("Version folder \"%s\" does not exist in versions.json and contains files!" % version_folder.name)
                 continue
-
 
 versions, version_tags = parse()
 

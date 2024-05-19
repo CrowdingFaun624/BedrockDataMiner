@@ -119,7 +119,7 @@ def user_interface() -> None:
     if len(versions) > 1:
         cannot_datamine:list[Version.Version] = []
         for version in versions:
-            if version.download_link is None: continue
+            if len(version.version_files) == 0: continue
             for dataminer_name in dataminer_names:
                 try:
                     run_with_dependencies(version, dataminer_name, recalculate_this=True, recalculate_everything=False)

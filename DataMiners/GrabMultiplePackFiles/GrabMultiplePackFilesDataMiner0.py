@@ -6,6 +6,7 @@ import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiner as GrabMultiplePackFilesDataMiner
 import Utilities.Sorting as Sorting
 
+
 class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultiplePackFilesDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
@@ -40,9 +41,10 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
         packs = dependency_data[self.pack_type]
         assert packs is not None
         files:dict[tuple[str,str],str] = {}
+        accessor = self.get_accessor("client")
         for pack in packs:
             path_base = pack["path"] + self.location
-            for path in self.get_files_in(path_base):
+            for path in accessor.get_files_in(path_base):
                 if self.ignore_suffixes is not None and any(path.endswith("." + ignore_suffix) for ignore_suffix in self.ignore_suffixes):
                     continue
                 if self.suffixes is None:
@@ -59,7 +61,7 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
 
         output:dict[str,dict[str,Any]] = {}
         for (file_name, pack_name), path in files.items():
-            file_data = DataTypes.get_data(self, path, self.data_type)
+            file_data = DataTypes.get_data(self, path, self.data_type, accessor)
             if file_name not in output:
                 output[file_name] = {pack_name: file_data}
             else:

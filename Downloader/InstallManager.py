@@ -1,6 +1,8 @@
-from pathlib2 import Path
-from typing import Iterable, Literal, overload, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Iterable, Literal, overload
 
+from pathlib2 import Path
+
+import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
@@ -9,7 +11,9 @@ if TYPE_CHECKING:
 
 class InstallManager():
 
-    def __init__(self, version:"Version.Version", location:Path, version_tags:VersionTags.VersionTags) -> None:
+    type_verifier:TypeVerifier.TypeVerifier
+
+    def __init__(self, version:"Version.Version", file_type_arguments:dict[str,Any], location:Path, version_tags:VersionTags.VersionTags) -> None:
         '''
         :version: Version object this manager is based on.
         :location: File location to the folder containing extracted files.'''
@@ -19,16 +23,21 @@ class InstallManager():
 
         self.version = version
         self.location = location
-        self.prepare_for_install(version_tags)
+        self.prepare_for_install(version_tags, file_type_arguments)
 
     def __repr__(self) -> str:
         return "<%s for %s>" % (self.__class__.__name__, self.version.name)
+
+    @classmethod
+    def validate_arguments(cls, file_type_arguments:dict[str,Any], version_name:str, file_type:str, accessor_name:str) -> None:
+        '''Raises an exception if the file type arguments are invalid for this InstallManager'''
+        cls.type_verifier.base_verify(file_type_arguments, [version_name, file_type, accessor_name])
 
     def get_full_file_name(self, asset_name:str) -> str:
         '''Returns the full file path within the archive needed to find the given asset.'''
         raise NotImplementedError("`get_full_file_name` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
-    def prepare_for_install(self, version_tags:VersionTags.VersionTags) -> None:
+    def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_parameters:dict[str,Any]) -> None:
         '''Any actions that can take place before grabbing files can happen.'''
         raise NotImplementedError("`prepare_for_install` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 

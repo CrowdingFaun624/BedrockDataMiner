@@ -1,9 +1,12 @@
-import pyjson5 # supports comments
+from typing import IO, Any, Callable, cast
+
+import pyjson5  # supports comments
 
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.SoundsJson.SoundsJsonDataMiner as SoundsJsonDataMiner
 import Utilities.Sorting as Sorting
+
 
 class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
 
@@ -48,8 +51,9 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
         resource_pack_files:dict[str,str] = {}
         for sounds_json_location in self.sounds_json_locations:
             resource_pack_files.update({resource_pack_path + sounds_json_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names})
-        files_request = [(resource_pack_file, "t", pyjson5.load) for resource_pack_file in resource_pack_files.keys()]
-        files:dict[str,DataMinerTyping.SoundsJsonTypedDict] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
+        files_request = [(resource_pack_file, "t", cast(Callable[[IO[str]],Any], pyjson5.load)) for resource_pack_file in resource_pack_files.keys()]
+        accessor = self.get_accessor("client")
+        files:dict[str,DataMinerTyping.SoundsJsonTypedDict] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"sounds.json\" files found in \"%s\"" % self.version)
 

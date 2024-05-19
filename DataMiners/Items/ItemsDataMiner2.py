@@ -19,7 +19,7 @@ class ItemsDataMiner2(ItemsDataMiner.ItemsDataMiner):
 
         exception = None
         try:
-            file = self.read_file(self.location)
+            file = self.get_accessor("client").read(self.location, "t")
         except FileNotFoundError as e:
             exception = e
             exception.args = tuple(list(exception.args) + ["No items file found in \"%s\"!" % (self.version)])

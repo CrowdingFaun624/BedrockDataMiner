@@ -1,9 +1,10 @@
 import datetime
 import time
 
-import Version.VersionParser as VersionParser
+import Downloader.DownloadManager as DownloadManager
 import Utilities.FileManager as FileManager
 import Version.Version as Version
+import Version.VersionParser as VersionParser
 import Version.VersionTags as VersionTags
 
 try:
@@ -181,9 +182,10 @@ def parse_client_downloads(client_dl_string:str, version:Version.Version) -> lis
     for link in links:
         if not (link.startswith("http://") or link.startswith("https://")):
             warning_messages.append("Link \"%s\" on \"%s\" is invalid!" % (link, version.wiki_page))
-    if version.download_method is Version.DownloadMethod.DOWNLOAD_URL:
-        if version.download_link not in links:
-            warning_messages.append("Link \"%s\" on \"%s\" is not in the page's links!" % (version.download_link, version.wiki_page))
+    if "download" in version.version_files["client"].accessors:
+        accessor:DownloadManager.DownloadManager = version.version_files["client"].accessors["download"]
+        if accessor.url not in links:
+            warning_messages.append("Link \"%s\" on \"%s\" is not in the page's links!" % (accessor.url, version.wiki_page))
     return warning_messages
 
 def parse_main_list(versions:list[Version.Version], mwapi:mediawikiapi.MediaWikiAPI) -> list[str]:

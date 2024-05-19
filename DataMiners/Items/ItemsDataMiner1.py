@@ -24,7 +24,8 @@ class ItemsDataMiner1(ItemsDataMiner.ItemsDataMiner):
         for items_location in self.locations:
             resource_pack_files.update({resource_pack_path + items_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names})
         files_request = [(resource_pack_file, "t", cast(Callable[[IO[str]],Any], pyjson5.load)) for resource_pack_file in resource_pack_files.keys()]
-        files:dict[str,list[dict[str,Any]]] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
+        accessor = self.get_accessor("client")
+        files:dict[str,list[dict[str,Any]]] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"items.json\" files found in \"%s\"" % self.version)
 

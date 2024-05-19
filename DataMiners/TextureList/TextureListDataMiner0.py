@@ -1,10 +1,8 @@
-import pyjson5 # supports comments
-from typing import Any
-
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.TextureList.TextureListDataMiner as TextureListDataMiner
 import Utilities.Sorting as Sorting
+
 
 class TextureListDataMiner0(TextureListDataMiner.TextureListDataMiner):
 
@@ -23,7 +21,8 @@ class TextureListDataMiner0(TextureListDataMiner.TextureListDataMiner):
         for blocks_location in self.locations:
             pack_files.update({pack_path + blocks_location: pack_name for pack_name, pack_path in pack_names})
         files_request = [(file, "t", None) for file in pack_files.keys()]
-        files:dict[str,str] = {key: value for key, value in self.read_files(files_request, non_exist_ok=True).items() if value is not None}
+        accessor = self.get_accessor("client")
+        files:dict[str,str] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No texture_list files found in \"%s\"" % (self.version))
 

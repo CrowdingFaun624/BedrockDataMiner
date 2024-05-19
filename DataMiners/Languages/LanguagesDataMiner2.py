@@ -4,6 +4,7 @@ import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 
+
 class LanguagesDataMiner2(LanguagesDataMiner.LanguagesDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
@@ -11,12 +12,13 @@ class LanguagesDataMiner2(LanguagesDataMiner.LanguagesDataMiner):
     })
 
     def initialize(self, **kwargs) -> None:
-        self.languages_location = kwargs["languages_location"]
+        self.languages_location:str = kwargs["languages_location"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
-        if not self.file_exists(self.languages_location):
+        accessor = self.get_accessor("client")
+        if not accessor.file_exists(self.languages_location):
             raise FileNotFoundError("Language file \"%s\" does not exist in \"%s\"!" % (self.languages_location, self.version.name))
-        language_file:list[str] = json.loads(self.read_file(self.languages_location, "t"))
+        language_file:list[str] = json.loads(accessor.read(self.languages_location, "t"))
         languages:list[DataMinerTyping.LanguagesTypedDict] = []
         already_codes:set[str] = set()
         for language_code in language_file:

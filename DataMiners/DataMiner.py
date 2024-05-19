@@ -5,7 +5,7 @@ from typing import Any, Callable, IO, Iterable, Literal, Mapping, overload, Sequ
 
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
-import Version.VersionParser as VersionParser
+import Downloader.InstallManager as InstallManager
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
 import Structure.StructureBase as StructureBase
@@ -13,6 +13,7 @@ import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
+import Version.VersionParser as VersionParser
 import Version.VersionRange as VersionRange
 
 EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
@@ -39,7 +40,7 @@ class DataMinerSettings():
         ))
     )
 
-    def __init__(self, start_version_str:str|None, end_version_str:str|None, dataminer_class:type["DataMiner"], name:str, dependencies:list[str]|None, kwargs:dict[str,Any]) -> None:
+    def __init__(self, start_version_str:str|None, end_version_str:str|None, dataminer_class:type["DataMiner"], name:str, files:list[str], dependencies:list[str]|None, kwargs:dict[str,Any]) -> None:
         self.type_verifier.base_verify({"start_version_str": start_version_str, "end_version_str": end_version_str, "dataminer_class": dataminer_class, "name": name, "dependencies": dependencies})
 
         self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
@@ -47,6 +48,7 @@ class DataMinerSettings():
         self.name:str|None = name
         self.structure:StructureBase.StructureBase|None = None
         self.dataminer_class = dataminer_class
+        self.files = files
         self.dependencies = dependencies if dependencies is not None else []
         self.kwargs = kwargs
 
@@ -72,6 +74,7 @@ class DataMiner():
         self.settings = settings
         self.file_name = self.settings.file_name
         self.name = self.settings.name
+        self.files = set(self.settings.files)
         self.dependencies = self.settings.dependencies
         if not isinstance(self, NullDataMiner) and self.version not in self.settings.version_range:
             raise ValueError("Version \"%s\" is not a valid version for this dataminer!" % self.version.name)
@@ -119,36 +122,35 @@ class DataMiner():
         with open(self.get_data_file_path(), "rt") as f:
             return json.load(f, cls=CustomJson.decoder)
 
-    def get_files_in(self, parent:str) -> Iterable[str]:
-        if self.version.install_manager is None:
-            raise RuntimeError("Attempted to call `get_files_in` on version (\"%s\") with no download available!" % self.version.name)
-        return self.version.install_manager.get_files_in(parent)
+    def get_accessor(self, file_type:str) -> InstallManager.InstallManager:
+        if file_type not in self.files:
+            raise RuntimeError("Attempted to get accessor of file type \"%s\" from %s; this dataminer only has permission to take files from [%s]!" % (file_type, self, ", ".join(sorted(self.files))))
+        return self.version.get_accessor(file_type)
 
-    def get_file_list(self) -> list[str]:
-        if self.version.install_manager is None:
-            raise RuntimeError("Attempted to call `get_file_list` on version (\"%s\") with no download available!" % self.version.name)
-        return self.version.install_manager.get_file_list()
+    def get_files_in(self, accessor:InstallManager.InstallManager, parent:str) -> Iterable[str]:
+        return accessor.get_files_in(parent)
+
+    def get_file_list(self, accessor:InstallManager.InstallManager) -> list[str]:
+        return accessor.get_file_list()
 
     @overload
-    def read_file(self, file_name:str, mode:Literal["b"]) -> bytes: ...
+    def read_file(self, accessor:InstallManager.InstallManager, file_name:str, mode:Literal["b"]) -> bytes: ...
     @overload
-    def read_file(self, file_name:str, mode:Literal["t"]) -> str: ...
+    def read_file(self, accessor:InstallManager.InstallManager, file_name:str, mode:Literal["t"]) -> str: ...
     @overload
-    def read_file(self, file_name:str) -> str: ...
-    def read_file(self, file_name:str, mode:Literal["b", "t"]="t") -> str|bytes:
-        if self.version.install_manager is None:
-            raise RuntimeError("Attempted to call `read_file` on version (\"%s\") with no download available!" % self.version.name)
-        return self.version.install_manager.read(file_name, mode)
+    def read_file(self, accessor:InstallManager.InstallManager, file_name:str) -> str: ...
+    def read_file(self, accessor:InstallManager.InstallManager, file_name:str, mode:Literal["b", "t"]="t") -> str|bytes:
+        return accessor.read(file_name, mode)
 
     read_files_typevar = TypeVar("read_files_typevar")
 
-    def _read_file(self, file_name:str, mode:Literal["b", "t"], callable:None|Callable[[IO],read_files_typevar], non_exist_ok:bool) -> str|bytes|Any:
+    def _read_file(self, accessor:InstallManager.InstallManager, file_name:str, mode:Literal["b", "t"], callable:None|Callable[[IO],read_files_typevar], non_exist_ok:bool) -> str|bytes|Any:
         try:
-            if not non_exist_ok or self.file_exists(file_name):
+            if not non_exist_ok or self.file_exists(accessor, file_name):
                 if callable is None:
-                    return self.read_file(file_name, mode)
+                    return self.read_file(accessor, file_name, mode)
                 else:
-                    file = self.get_file(file_name, mode)
+                    file = self.get_file(accessor, file_name, mode)
                     with file.open() as f:
                         output = callable(f)
                     file.all_done()
@@ -160,23 +162,20 @@ class DataMiner():
             return e
 
     @overload
-    def read_files(self, files:Sequence[str], non_exist_ok:bool=False) -> dict[str,str]: ...
+    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[str], non_exist_ok:bool=False) -> dict[str,str]: ...
     @overload
-    def read_files(self, files:Sequence[tuple[str,Literal["t"],None]], non_exist_ok:bool=False) -> dict[str,str]: ...
+    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[tuple[str,Literal["t"],None]], non_exist_ok:bool=False) -> dict[str,str]: ...
     @overload
-    def read_files(self, files:Sequence[tuple[str,Literal["b"],None]], non_exist_ok:bool=False) -> dict[str,bytes]: ...
+    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[tuple[str,Literal["b"],None]], non_exist_ok:bool=False) -> dict[str,bytes]: ...
     @overload
-    def read_files(self, files:Sequence[tuple[str,Literal["t"],Callable[[IO[str]],read_files_typevar]]], non_exist_ok:bool=False) -> dict[str,read_files_typevar]: ...
+    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[tuple[str,Literal["t"],Callable[[IO[str]],read_files_typevar]]], non_exist_ok:bool=False) -> dict[str,read_files_typevar]: ...
     @overload
-    def read_files(self, files:Sequence[tuple[str,Literal["b"],Callable[[IO[bytes]],read_files_typevar]]], non_exist_ok:bool=False) -> dict[str,read_files_typevar]: ...
+    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[tuple[str,Literal["b"],Callable[[IO[bytes]],read_files_typevar]]], non_exist_ok:bool=False) -> dict[str,read_files_typevar]: ...
     @overload
-    def read_files(self, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]: ...
-    def read_files(self, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]:
+    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]: ...
+    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]:
         '''Synchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
-
-        if self.version.install_manager is None:
-            raise RuntimeError("Attempted to call `read_files` on version (\"%s\") with no download available!" % self.version.name)
 
         DEFAULT_MODE = "t"
         normalized_files:list[tuple[str,Literal["b", "t"],None|Callable[[IO],Any]]] = [(file, DEFAULT_MODE, None) if isinstance(file, str) else file for file in files]
@@ -185,11 +184,11 @@ class DataMiner():
         file_results:dict[str,str|bytes|DataMiner.read_files_typevar] = {}
         for file_name, file_mode, callable in normalized_files:
             try:
-                if not non_exist_ok or self.file_exists(file_name):
+                if not non_exist_ok or self.file_exists(accessor, file_name):
                     if callable is None:
-                        file_result = self.read_file(file_name, file_mode)
+                        file_result = self.read_file(accessor, file_name, file_mode)
                     else:
-                        file = self.get_file(file_name, file_mode)
+                        file = self.get_file(accessor, file_name, file_mode)
                         with file.open() as f:
                             file_result = callable(f)
                         file.all_done()
@@ -208,21 +207,14 @@ class DataMiner():
 
         return file_results
 
-    def file_exists(self, file_name:str) -> bool:
-        if self.version.install_manager is None:
-            raise RuntimeError("Attempted to call `file_exists` on version (\"%s\") with no download available!" % self.version.name)
-        return self.version.install_manager.file_exists(file_name)
+    def file_exists(self, accessor:InstallManager.InstallManager, file_name:str) -> bool:
+        return accessor.file_exists(file_name)
 
-    def get_file(self, file_name:str, mode:Literal["b","t"]="t") -> FileManager.FilePromise:
-        if self.version.install_manager is None:
-            raise RuntimeError("Attempted to call `get_file` on version (\"%s\") with no download available!" % self.version.name)
-        return self.version.install_manager.get_file(file_name, mode)
+    def get_file(self, accessor:InstallManager.InstallManager, file_name:str, mode:Literal["b","t"]="t") -> FileManager.FilePromise:
+        return accessor.get_file(file_name, mode)
 
 class NullDataMiner(DataMiner):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
-
-    def get_file(self, file_name:str, mode:Literal["b","t"]="t") -> FileManager.FilePromise:
-        raise RuntimeError("Attempted to use `get_file` from a NullDataMiner!")
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         raise RuntimeError("Attempted to use `activate` from a NullDataMiner!")
@@ -233,11 +225,23 @@ class NullDataMiner(DataMiner):
     def get_file_list(self) -> Iterable[str]:
         raise RuntimeError("Attempted to use `get_file_list` from a NullDataMiner!")
 
+    def get_accessor(self, file_type:str) -> InstallManager.InstallManager:
+        raise RuntimeError("Attempted to use `get_accessor` from a NullDataMiner!")
+
+    def get_files_in(self, accessor:InstallManager.InstallManager, parent:str) -> Iterable[str]:
+        raise RuntimeError("Attempted to use `get_files_in` from a NullDataMiner!")
+
     def read_file(self, file_name: str, mode: Literal["b","t"] = "t") -> str | bytes:
         raise RuntimeError("Attempted to use `read_file` from a NullDataMiner!")
 
     def read_files(self, files:list[str|tuple[str,str,Callable[[IO],Any]|None]]) -> dict[str,str|bytes|Any]:
         raise RuntimeError("Attempted to use `read_files` from a NullDataMiner!")
+
+    def file_exists(self, accessor:InstallManager.InstallManager, file_name:str) -> bool:
+        raise RuntimeError("Attempted to use `file_exists` from a NullDataMiner!")
+
+    def get_file(self, file_name:str, mode:Literal["b","t"]="t") -> FileManager.FilePromise:
+        raise RuntimeError("Attempted to use `get_file` from a NullDataMiner!")
 
 class DataMinerCollection():
 
@@ -310,7 +314,7 @@ class DataMinerCollection():
 
     def get_null_dataminer_settings(self) -> DataMinerSettings:
         '''Returns an instance of DataMinerSettings that is usable on a NullDataMiner.'''
-        return DataMinerSettings(None, None, NullDataMiner, self.name, [], {})
+        return DataMinerSettings(None, None, NullDataMiner, self.name, [], [], {})
 
     def get_dataminer_settings(self, version:Version.Version) -> DataMinerSettings:
         '''Returns a DataMinerSettings such that `version` is in the dataminer's VersionRange'''

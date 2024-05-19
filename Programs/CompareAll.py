@@ -48,7 +48,7 @@ def compare_all_of(
         for already_existing_comparison_file in comparison_parent.iterdir():
             already_existing_comparison_file.unlink()
         for version in versions:
-            can_be_datamined = version.download_link is not None and not isinstance(dataminer_collection.get_version(version), DataMiner.NullDataMiner)
+            can_be_datamined = len(version.version_files["client"].accessors) > 0 and not isinstance(dataminer_collection.get_version(version), DataMiner.NullDataMiner)
             if can_be_datamined:
                 if previous_successful_version is not None:
                     compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between, normalizer_dependencies)

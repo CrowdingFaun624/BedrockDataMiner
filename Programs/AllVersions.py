@@ -20,14 +20,16 @@ def datamine_version(version:Version.Version, dataminer_names:list[str], print_m
             print("Version \"%s\" errored!" % version.name)
             traceback.print_exception(e)
             return False
-    if version.install_manager is not None and not version.latest:
-        version.install_manager.all_done() # remove all of the installed client files from the version folder so I don't have to clog my storage
+    if not version.latest:
+        for version_file in version.version_files.values():
+            for accessor in version_file.accessors.values():
+                accessor.all_done() # remove all of the installed client files from the version folder so I don't have to clog my storage
     return True
 
 def main() -> None:
     dataminer_names = [dataminer_collection.name for dataminer_collection in DataMiners.dataminers]
     for version in reversed(VersionParser.versions.values()):
-        if version.download_method is Version.DownloadMethod.DOWNLOAD_NONE:
+        if len(version.version_files) == 0:
             print("Skipped \"%s\" due to being unarchived." % (version.name))
         else:
             all_dataminers_success = datamine_version(version, dataminer_names)

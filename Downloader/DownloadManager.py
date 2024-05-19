@@ -1,19 +1,29 @@
-from pathlib2 import Path
-import requests
 import shutil
 import threading
-from typing import Iterable, Literal
 import zipfile
+from typing import Iterable, Literal, TypedDict
+
+import requests
+from pathlib2 import Path
 
 import Downloader.DownloadLog as DownloadLog
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
-from Utilities.FunctionCaller import FunctionCaller, WaitValue
 import Version.VersionTags as VersionTags
+from Utilities.FunctionCaller import FunctionCaller, WaitValue
+import Utilities.TypeVerifier as TypeVerifier
+
+
+class DownloadManagerTypedDict(TypedDict):
+    url: str
 
 class DownloadManager(InstallManager.InstallManager):
 
-    def prepare_for_install(self, version_tags:VersionTags.VersionTags) -> None:
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("url", "a str", True, str),
+    )
+
+    def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:DownloadManagerTypedDict) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
         self.installed = WaitValue(self.apk_location.exists)
 
@@ -24,8 +34,7 @@ class DownloadManager(InstallManager.InstallManager):
         self.installation_lock = threading.Lock()
         self.get_file_list_lock = threading.Lock()
 
-        assert self.version.download_link is not None
-        self.url = self.version.download_link
+        self.url = file_type_arguments["url"]
         self.set_file_prepension(version_tags)
 
     def open_zip_file(self) -> None:
@@ -42,7 +51,7 @@ class DownloadManager(InstallManager.InstallManager):
         if version_tags["ipa"] in tags:
             prepend = "Payload/minecraftpe.app/data/"
         else:
-            if version_tags["double_assets"] in self.version.tags:
+            if version_tags["double_assets"] in tags:
                 prepend = "assets/assets/"
             else:
                 prepend = "assets/"

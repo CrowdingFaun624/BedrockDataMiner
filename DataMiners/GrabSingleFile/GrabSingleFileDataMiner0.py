@@ -6,6 +6,7 @@ import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabSingleFile.GrabSingleFileDataMiner as GrabSingleFileDataMiner
 import Utilities.Sorting as Sorting
 
+
 class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
@@ -28,7 +29,7 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
 
         exception = None
         try:
-            file = self.read_file(self.location)
+            file = self.get_accessor("client").read(self.location, self.data_type.get_data_format())
         except FileNotFoundError as e:
             exception = e
             if self.file_display_name is None:

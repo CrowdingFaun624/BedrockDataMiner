@@ -6,6 +6,7 @@ import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabMultipleFiles.GrabMultipleFilesDataMiner as GrabMultipleFilesDataMiner
 import Utilities.Sorting as Sorting
 
+
 class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
@@ -42,7 +43,8 @@ class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDa
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
         files:dict[str,str] = {}
         path_base = self.location
-        for path in self.get_files_in(path_base):
+        accessor = self.get_accessor("client")
+        for path in accessor.get_files_in(path_base):
             if self.ignore_suffixes is not None and any(path.endswith("." + ignore_suffix) for ignore_suffix in self.ignore_suffixes):
                 continue
             if self.suffixes is None:
@@ -64,7 +66,7 @@ class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDa
 
         output:dict[str,dict[str,Any]] = {}
         for file_name, path in files.items():
-            file_data = DataTypes.get_data(self, path, self.data_type)
+            file_data = DataTypes.get_data(self, path, self.data_type, accessor)
             if self.insert_pack is None:
                 output[file_name] = file_data
             else:

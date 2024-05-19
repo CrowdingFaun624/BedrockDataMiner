@@ -1,12 +1,14 @@
 # The json is invalid in very old versions, this tries to correct that.
 
-import pyjson5 # supports comments
 from typing import Any
 
+import pyjson5  # supports comments
+
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.Models.ModelsDataMiner as ModelsDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.Models.ModelsDataMiner as ModelsDataMiner
 import Utilities.Sorting as Sorting
+
 
 class ModelsDataMiner0(ModelsDataMiner.ModelsDataMiner):
 
@@ -23,9 +25,10 @@ class ModelsDataMiner0(ModelsDataMiner.ModelsDataMiner):
         packs = dependency_data["resource_packs"]
         assert packs is not None
         files:dict[tuple[str,str],str] = {}
+        accessor = self.get_accessor("client")
         for pack in packs:
             path_base = pack["path"] + self.location
-            for path in self.get_files_in(path_base):
+            for path in accessor.get_files_in(path_base):
                 if not path.endswith(".json"):
                     raise ValueError("Unrecognized suffix on path \"%s\"!" % path)
                 file_name = path.replace(path_base, "", 1).replace(".json", "", 1)
@@ -35,7 +38,7 @@ class ModelsDataMiner0(ModelsDataMiner.ModelsDataMiner):
         output:dict[str,dict[str,Any]] = {}
         remove = "\r\n\r\n}\r\n"
         for (file_name, pack_name), path in files.items():
-            file_bits:str = self.read_file(path)
+            file_bits:str = accessor.read(path, "t")
             if not file_bits.endswith(remove):
                 raise RuntimeError("ModelsDataMiner0 is being used unnecessarily! File ends with: %s" % pyjson5.dumps(file_bits[-20:]))
             file_bits = file_bits[:-len(remove)]

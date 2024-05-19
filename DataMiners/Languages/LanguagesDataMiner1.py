@@ -4,6 +4,7 @@ import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 
+
 class LanguagesDataMiner1(LanguagesDataMiner.LanguagesDataMiner):
 
     parameters = DataMinerParameters.TypedDictParameters({
@@ -19,7 +20,8 @@ class LanguagesDataMiner1(LanguagesDataMiner.LanguagesDataMiner):
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         languages_files = {resource_pack_path + self.languages_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names}
         languages_files_request = [(resource_pack_file, "t", json.load) for resource_pack_file in languages_files.keys()]
-        files:dict[str,list[str]] = {key: value for key, value in self.read_files(languages_files_request, non_exist_ok=True).items() if value is not None}
+        accessor = self.get_accessor("client")
+        files:dict[str,list[str]] = {key: value for key, value in self.read_files(accessor, languages_files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise FileNotFoundError("No \"languages.json\" files found in \"%s\"" % self.version)
 
