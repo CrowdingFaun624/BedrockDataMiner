@@ -1,45 +1,78 @@
-Difference of "loot_tables" between "1.6.0.1" (beta of "1.6.0") and "1.6.0.5" (beta of "1.6.0").
+Difference of "loot_tables" between "1.7.0.2" (beta of "1.7.0") and "1.7.0.3" (beta of "1.7.0").
 
-Total loot table: 98 (+1, -0)
-Changed loot table "entities/elder_guardian":
+Changed loot table "entities/drowned":
 	Changed behavior pack "core":
 		Changed field "pools":
-			Total pool: 4 (+1, -1)
+			Total pool: 2 (+1, -1)
 			Removed pool:
-				field "conditions": condition "killed_by_player": empty
+				field "conditions":
+					condition "killed_by_player": empty
+					condition "random_chance_with_looting":
+						field "chance": 0.11
+						field "looting_multiplier": 0.01
 				field "entries":
 					entry:
-						field "name": "minecraft:sponge"
+						field "functions":
+							function "set_damage":
+								field "damage":
+									field "max": 0.9
+									field "min": 0.2
+						field "name": "minecraft:trident"
+						field "type": "item"
+						field "weight": 5
+					entry:
+						field "name": "minecraft:gold_ingot"
+						field "type": "item"
+						field "weight": 5
+				field "rolls": 1
+			Added pool:
+				field "conditions":
+					condition "killed_by_player": empty
+					condition "random_chance_with_looting":
+						field "chance": 0.11
+						field "looting_multiplier": 0.02
+				field "entries":
+					entry:
+						field "functions":
+							function "set_damage":
+								field "damage":
+									field "max": 0.9
+									field "min": 0.2
+						field "name": "minecraft:trident"
+						field "type": "item"
+						field "weight": 5
+					entry:
+						field "name": "minecraft:gold_ingot"
+						field "type": "item"
+						field "weight": 5
+				field "rolls": 1
+Changed loot table "entities/wither_skeleton":
+	Changed behavior pack "core":
+		Changed field "pools":
+			Total pool: 3 (+1, -1)
+			Removed pool:
+				field "conditions":
+					condition "killed_by_player": empty
+					condition "random_chance_with_looting":
+						field "chance": 0.025
+						field "looting_multiplier": 0.01
+				field "entries":
+					entry:
+						field "functions": function "set_data": field "data": 1
+						field "name": "minecraft:skull"
 						field "type": "item"
 						field "weight": 1
 				field "rolls": 1
 			Added pool:
-				field "conditions": condition "killed_by_player": empty
+				field "conditions":
+					condition "killed_by_player": empty
+					condition "random_chance_with_looting":
+						field "chance": 0.025
+						field "looting_multiplier": 0.02
 				field "entries":
 					entry:
 						field "functions": function "set_data": field "data": 1
-						field "name": "minecraft:sponge"
+						field "name": "minecraft:skull"
 						field "type": "item"
 						field "weight": 1
 				field "rolls": 1
-Added loot table "entities/phantom":
-	behavior pack "core":
-		field "pools":
-			pool:
-				field "conditions": condition "killed_by_player": empty
-				field "entries":
-					entry:
-						field "functions":
-							function "set_count":
-								field "count":
-									field "max": 1
-									field "min": 0
-							function "looting_enchant":
-								field "count":
-									field "max": 1
-									field "min": 0
-						field "name": "minecraft:phantom_membrane"
-						field "type": "item"
-						field "weight": 1
-				field "rolls": 1
-		field "defined_in": behavior pack: "vanilla"
