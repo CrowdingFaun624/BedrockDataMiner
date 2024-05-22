@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, Any
 
+from pathlib2 import Path
+
 import Downloader.DownloadManager as DownloadManager
 import Downloader.InstallManager as InstallManager
 import Downloader.LocalManager as LocalManager
@@ -33,7 +35,8 @@ class VersionFile():
             if allowed_accessor in accessors:
                 accessor_class = ACCESSORS[allowed_accessor]
                 accessor_class.validate_arguments(accessors[allowed_accessor], version.name, file_type.name, allowed_accessor)
-                self.accessors[allowed_accessor] = accessor_class(self.version, accessors[allowed_accessor], version.version_folder, version_tags)
+                self.accessors[allowed_accessor] = accessor_class(self.version, accessors[allowed_accessor], Path(version.version_folder.joinpath(self.file_type.install_location)), version_tags)
+                print(version.version_folder, self.accessors[allowed_accessor].location)
 
     def __repr__(self) -> str:
         return "<VersionFile %s of %s>" % (self.file_type.name, self.version.name)

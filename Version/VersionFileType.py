@@ -8,6 +8,7 @@ import Utilities.FileManager as FileManager
 
 class FileTypeTypedDict(TypedDict):
     allowed_accessors: Required[list[str]]
+    install_location: str
     must_exist: Required[bool]
 
 class VersionFileType():
@@ -15,6 +16,7 @@ class VersionFileType():
     def __init__(self, name:str, data:FileTypeTypedDict) -> None:
         self.name = name
         self.allowed_accessors = data["allowed_accessors"]
+        self.install_location = data["install_location"]
         self.must_exist = data["must_exist"]
     
     def __hash__(self) -> int:
