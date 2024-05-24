@@ -20,7 +20,7 @@ class GroupComponent(Component.Component):
     my_properties = ComponentCapabilities.Capabilities(is_group=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, type(None)), "a dict", "a str", "a str or None")),
     )
 

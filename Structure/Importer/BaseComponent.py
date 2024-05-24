@@ -30,7 +30,7 @@ class BaseComponent(Component.Component):
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
     )
 
     def __init__(self, data:ComponentTyping.BaseComponentTypedDict, name:str) -> None:

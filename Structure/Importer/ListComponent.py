@@ -36,7 +36,7 @@ class ListComponent(StructureComponent.StructureComponent):
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 

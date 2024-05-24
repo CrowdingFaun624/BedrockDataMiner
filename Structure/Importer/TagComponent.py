@@ -11,7 +11,7 @@ class TagComponent(Component.Component):
     class_name = "Tag"
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier(("Tag",))),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
     )
     my_properties = ComponentCapabilities.Capabilities(is_tag=True)
 
