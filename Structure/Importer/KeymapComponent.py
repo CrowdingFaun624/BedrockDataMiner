@@ -32,26 +32,22 @@ class KeymapComponent(StructureComponent.StructureComponent):
     my_properties = ComponentCapabilities.Capabilities(has_importable_keys=True, has_keys=True, is_structure=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("imports", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-            TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
-            TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-            TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("imports", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier("Keymap")),
+        TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
+            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+            TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", False, (str, type(None))),
             TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier("Keymap")),
-            TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
-                TypeVerifier.TypedDictKeyTypeVerifier("type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-                TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", False, (str, type(None))),
-                TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-            ), "a dict", "a str", "a dict")),
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("index", "an int", True, int),
+        ), "a dict", "a str", "a dict")),
     )
 
     def __init__(self, data:ComponentTyping.KeymapComponentTypedDict, name:str, index:int) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "index": index}, ["%s \"%s\"" % (self.class_name, name)])
+        self.verify_arguments(data, name)
 
         self.name = name
         self.field = data.get("field", "field")

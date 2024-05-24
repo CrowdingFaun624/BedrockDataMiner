@@ -13,16 +13,14 @@ class TypeAliasComponent(Component.Component):
     my_properties = ComponentCapabilities.Capabilities(is_type_alias=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
-            TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str, lambda key, value: (value not in ComponentTyping.DEFAULT_TYPES, "\"name\" cannot be one of [%s]!" % ", ".join(ComponentTyping.DEFAULT_TYPES.keys()))),
-        TypeVerifier.TypedDictKeyTypeVerifier("index", "an int", True, int),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
+        TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
     def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str, index:int) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "index": index}, ["%s \"%s\"" % (self.class_name, name)])
+        self.verify_arguments(data, name)
+        if name in ComponentTyping.DEFAULT_TYPES:
+            raise ValueError("A TypeAlias's name cannot be one of [%s]!" % ", ".join(ComponentTyping.DEFAULT_TYPES.keys()))
 
         self.name = name
         self.types_strs = data["types"]

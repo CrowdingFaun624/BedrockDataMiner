@@ -11,18 +11,14 @@ class TagComponent(Component.Component):
     class_name = "Tag"
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier(("Tag",))),
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("index", "an int", True, int),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier(("Tag",))),
     )
     my_properties = ComponentCapabilities.Capabilities(is_tag=True)
 
     children_has_normalizer = False
 
     def __init__(self, data: ComponentTyping.TagTypedDict, name: str, index: int) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "index": index})
+        self.verify_arguments(data, name)
         self.name = name
         self.final:str|None = None
 

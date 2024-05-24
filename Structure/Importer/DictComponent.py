@@ -29,24 +29,20 @@ class DictComponent(StructureComponent.StructureComponent):
     my_properties = ComponentCapabilities.Capabilities(has_keys=True, is_structure=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
-            TypeVerifier.TypedDictKeyTypeVerifier("comparison_move_function", "a str", False, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", False, bool),
-            TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
-            TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-            TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
-            TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
-            TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("index", "an int", True, int),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("comparison_move_function", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
+        TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
     def __init__(self, data:ComponentTyping.DictComponentTypedDict, name:str, index:int) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "index": index})
+        self.verify_arguments(data, name)
 
         self.name = name
         self.subcomponent_str = data["subcomponent"]

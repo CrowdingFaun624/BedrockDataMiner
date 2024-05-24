@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterable, Union
+from typing import Any, Callable, Iterable, Mapping, Union
 
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
@@ -28,6 +28,9 @@ class Component():
         self.links_to_other_components.extend(components)
         for component in components:
             component.parents.append(self)
+
+    def verify_arguments(self, data:Mapping[str,Any], name:str) -> None:
+        self.type_verifier.base_verify(data, ["%s \"%s\"" % (self.class_name, name)])
 
     def set_component(self, components:dict[str,"Component"], functions:dict[str,Callable]) -> None:
         '''Links this Component to other Components'''

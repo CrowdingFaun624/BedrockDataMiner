@@ -20,16 +20,12 @@ class GroupComponent(Component.Component):
     my_properties = ComponentCapabilities.Capabilities(is_group=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
-            TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, type(None)), "a dict", "a str", "a str or None")),
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("index", "an int", True, int),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, type(None)), "a dict", "a str", "a str or None")),
     )
 
     def __init__(self, data:ComponentTyping.GroupComponentTypedDict, name:str, index:int) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "index": index}, ["%s \"%s\"" % (self.class_name, name)])
+        self.verify_arguments(data, name)
 
         self.name = name
         self.subcomponents_strs = data["subcomponents"]

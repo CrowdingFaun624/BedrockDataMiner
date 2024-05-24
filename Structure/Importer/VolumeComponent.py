@@ -27,24 +27,20 @@ class VolumeComponent(GroupComponent.GroupComponent):
     my_properties = ComponentCapabilities.Capabilities(is_group=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-            TypeVerifier.TypedDictKeyTypeVerifier("position_key", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("print_additional_data", "a bool", False, bool),
-            TypeVerifier.TypedDictKeyTypeVerifier("state_key", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
-            TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-            TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
-            TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("index", "an int", True, int),
+        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("position_key", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("print_additional_data", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("state_key", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
+        TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
     def __init__(self, data:ComponentTyping.VolumeTypedDict, name: str, index: int) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "index": index}, ["%s \"%s\"" % (self.class_name, name)])
+        self.verify_arguments(data, name)
 
         self.name = name
         self.field = data.get("field", "block")

@@ -15,17 +15,13 @@ class NormalizerComponent(Component.Component):
     my_properties = ComponentCapabilities.Capabilities(is_function=True, is_normalizer=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-            TypeVerifier.TypedDictKeyTypeVerifier("function_name", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("index", "an int", True, int)
+        TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("function_name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
     )
 
     def __init__(self, data:ComponentTyping.NormalizerTypedDict, name:str, index:int) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "index": index}, ["%s \"%s\"" % (self.class_name, name)])
+        self.verify_arguments(data, name)
 
         self.name = name
         self.dependencies = data.get("dependencies", [])
