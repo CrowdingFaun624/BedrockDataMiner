@@ -34,7 +34,7 @@ class NbtBaseComponent(GroupComponent.GroupComponent):
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
-    def __init__(self, data:ComponentTyping.NbtBaseTypedDict, name: str, index: int) -> None:
+    def __init__(self, data:ComponentTyping.NbtBaseTypedDict, name: str) -> None:
         self.verify_arguments(data, name)
 
         self.name = name

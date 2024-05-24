@@ -40,7 +40,7 @@ class ListComponent(StructureComponent.StructureComponent):
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
-    def __init__(self, data:ComponentTyping.ListComponentTypedDict, name:str, index:int) -> None:
+    def __init__(self, data:ComponentTyping.ListComponentTypedDict, name:str) -> None:
         self.verify_arguments(data, name)
 
         self.name = name

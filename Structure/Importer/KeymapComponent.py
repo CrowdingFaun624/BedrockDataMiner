@@ -46,7 +46,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
         ), "a dict", "a str", "a dict")),
     )
 
-    def __init__(self, data:ComponentTyping.KeymapComponentTypedDict, name:str, index:int) -> None:
+    def __init__(self, data:ComponentTyping.KeymapComponentTypedDict, name:str) -> None:
         self.verify_arguments(data, name)
 
         self.name = name

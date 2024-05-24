@@ -24,7 +24,7 @@ class GroupComponent(Component.Component):
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, type(None)), "a dict", "a str", "a str or None")),
     )
 
-    def __init__(self, data:ComponentTyping.GroupComponentTypedDict, name:str, index:int) -> None:
+    def __init__(self, data:ComponentTyping.GroupComponentTypedDict, name:str) -> None:
         self.verify_arguments(data, name)
 
         self.name = name

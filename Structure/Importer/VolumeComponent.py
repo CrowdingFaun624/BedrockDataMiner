@@ -39,7 +39,7 @@ class VolumeComponent(GroupComponent.GroupComponent):
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
-    def __init__(self, data:ComponentTyping.VolumeTypedDict, name: str, index: int) -> None:
+    def __init__(self, data:ComponentTyping.VolumeTypedDict, name: str) -> None:
         self.verify_arguments(data, name)
 
         self.name = name

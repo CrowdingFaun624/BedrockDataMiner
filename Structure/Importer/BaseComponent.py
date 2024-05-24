@@ -19,26 +19,22 @@ class BaseComponent(Component.Component):
     my_properties = ComponentCapabilities.Capabilities(is_base=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("imports", "a list", False, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-                TypeVerifier.TypedDictKeyTypeVerifier("from", "a str", True, str),
-                TypeVerifier.TypedDictKeyTypeVerifier("components", "a dict", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-                    TypeVerifier.TypedDictKeyTypeVerifier("component", "a str", True, str),
-                    TypeVerifier.TypedDictKeyTypeVerifier("as", "a str", False, str),
-                ), list, "a dict", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("imports", "a list", False, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
+            TypeVerifier.TypedDictKeyTypeVerifier("from", "a str", True, str),
+            TypeVerifier.TypedDictKeyTypeVerifier("components", "a dict", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
+                TypeVerifier.TypedDictKeyTypeVerifier("component", "a str", True, str),
+                TypeVerifier.TypedDictKeyTypeVerifier("as", "a str", False, str),
             ), list, "a dict", "a list")),
-            TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str", False, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str", False, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
-        )),
+        ), list, "a dict", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("index", "an int", True, int),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
     )
 
-    def __init__(self, data:ComponentTyping.BaseComponentTypedDict, name:str, index:int) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "index": index}, ["%s \"%s\"" % (self.class_name, name)])
+    def __init__(self, data:ComponentTyping.BaseComponentTypedDict, name:str) -> None:
+        self.verify_arguments(data, name)
 
         self.name = name
         self.structure_name = data["name"]

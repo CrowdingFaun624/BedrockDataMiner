@@ -20,7 +20,7 @@ class Component():
     children_has_normalizer:bool
     children_tags:set[str]|None=None
 
-    def __init__(self, data:ComponentTyping.ComponentTypedDicts, name:str, index:int) -> None: ...
+    def __init__(self, data:ComponentTyping.ComponentTypedDicts, name:str) -> None: ...
 
     def link_components(self, components:"Component"|Iterable["Component"]) -> None:
         if isinstance(components, Component):

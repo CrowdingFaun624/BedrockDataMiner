@@ -79,7 +79,7 @@ def create_components(name:str, data:ComponentTyping.StructureFileType) -> tuple
             raise TypeError("Key \"type\" of Component \"%s\" is not a str!" % (component_name))
         for component_type in component_types:
             if component_type.class_name == component_data["type"]:
-                component = component_type(component_data, component_name, index)
+                component = component_type(component_data, component_name)
                 components[component_name] = component
                 if component_type is BaseComponent.BaseComponent:
                     assert isinstance(component, BaseComponent.BaseComponent)

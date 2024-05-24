@@ -20,7 +20,7 @@ class NormalizerComponent(Component.Component):
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier((class_name,))),
     )
 
-    def __init__(self, data:ComponentTyping.NormalizerTypedDict, name:str, index:int) -> None:
+    def __init__(self, data:ComponentTyping.NormalizerTypedDict, name:str) -> None:
         self.verify_arguments(data, name)
 
         self.name = name

@@ -17,7 +17,7 @@ class TagComponent(Component.Component):
 
     children_has_normalizer = False
 
-    def __init__(self, data: ComponentTyping.TagTypedDict, name: str, index: int) -> None:
+    def __init__(self, data: ComponentTyping.TagTypedDict, name: str) -> None:
         self.verify_arguments(data, name)
         self.name = name
         self.final:str|None = None

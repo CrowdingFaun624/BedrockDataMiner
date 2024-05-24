@@ -17,7 +17,7 @@ class TypeAliasComponent(Component.Component):
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
-    def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str, index:int) -> None:
+    def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str) -> None:
         self.verify_arguments(data, name)
         if name in ComponentTyping.DEFAULT_TYPES:
             raise ValueError("A TypeAlias's name cannot be one of [%s]!" % ", ".join(ComponentTyping.DEFAULT_TYPES.keys()))
