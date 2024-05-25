@@ -44,7 +44,7 @@ class TAG(Generic[a]):
 
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, str(self))
-    
+
     def __deepcopy__(self, memo) -> "TAG":
         return type(self)(copy.deepcopy(self.value))
 
@@ -65,6 +65,9 @@ class TAG_End(TAG[None]):
 
     def __eq__(self, __value: object) -> bool:
         return isinstance(__value, TAG_End)
+
+    def __deepcopy__(self, memo) -> TAG:
+        return self
 
 class TAG_Byte(TAG[int], int):
 
@@ -87,12 +90,15 @@ class TAG_Byte(TAG[int], int):
 
     def __eq__(self, __value: object) -> bool:
         return self.value == __value
-    
+
     def __index__(self) -> int:
         return self.value.__index__()
 
     def __str__(self) -> str:
         return "%ib" % self.value
+
+    def __deepcopy__(self, memo) -> TAG:
+        return self
 
 class TAG_Short(TAG[int], int):
 
@@ -115,12 +121,15 @@ class TAG_Short(TAG[int], int):
 
     def __eq__(self, __value: object) -> bool:
         return self.value == __value
-    
+
     def __index__(self) -> int:
         return self.value.__index__()
 
     def __str__(self) -> str:
         return "%is" % self.value
+
+    def __deepcopy__(self, memo) -> TAG:
+        return self
 
 class TAG_Int(TAG[int], int):
 
@@ -143,12 +152,15 @@ class TAG_Int(TAG[int], int):
 
     def __eq__(self, __value: object) -> bool:
         return self.value == __value
-    
+
     def __index__(self) -> int:
         return self.value.__index__()
 
     def __str__(self) -> str:
         return "%i" % self.value
+
+    def __deepcopy__(self, memo) -> TAG:
+        return self
 
 class TAG_Long(TAG[int], int):
 
@@ -171,12 +183,15 @@ class TAG_Long(TAG[int], int):
 
     def __eq__(self, __value: object) -> bool:
         return self.value == __value
-    
+
     def __index__(self) -> int:
         return self.value.__index__()
 
     def __str__(self) -> str:
         return "%il" % self.value
+
+    def __deepcopy__(self, memo) -> TAG:
+        return self
 
 class TAG_Float(TAG[float], float):
 
@@ -203,6 +218,9 @@ class TAG_Float(TAG[float], float):
     def __str__(self) -> str:
         return "%ff" % self.value
 
+    def __deepcopy__(self, memo) -> TAG:
+        return self
+
 class TAG_Double(TAG[float], float):
 
     def __init__(self, value:float=float(), *, hash:int|None=None) -> None:
@@ -227,6 +245,9 @@ class TAG_Double(TAG[float], float):
 
     def __str__(self) -> str:
         return "%f" % self.value
+
+    def __deepcopy__(self, memo) -> TAG:
+        return self
 
 class TAG_Byte_Array(TAG[list[TAG_Byte]]):
 
@@ -325,6 +346,9 @@ class TAG_String(TAG[str], str):
 
     def __str__(self) -> str:
         return "\"%s\"" % escape_string(self.value)
+
+    def __deepcopy__(self, memo) -> TAG:
+        return self
 
 class TAG_List(TAG[list[TAG]]):
 
