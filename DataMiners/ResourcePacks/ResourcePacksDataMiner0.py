@@ -1,6 +1,7 @@
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
+import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
 
 class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
@@ -13,8 +14,7 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
         self.resource_packs_folder:str = kwargs["resource_packs_folder"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.ResourcePackTypedDict]:
-        resource_pack_data = ResourcePacksDataMiner.resource_pack_order
-        resource_pack_order, resource_pack_tags = resource_pack_data["order"], resource_pack_data["types"]
+        resource_pack_order = CollapseResourcePacks.resource_pack_order
         resource_pack_order_dict = {name: index for index, name in enumerate(resource_pack_order)} # So I don't have to index it a whole twelve times
         file_list = self.get_accessor("client").get_file_list()
         resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = []

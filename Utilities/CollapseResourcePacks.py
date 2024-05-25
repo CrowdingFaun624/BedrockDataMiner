@@ -1,9 +1,39 @@
-from typing import Any, Callable, TYPE_CHECKING, TypeVar
+import enum
+import json
+from typing import TYPE_CHECKING, Any, Callable, TypedDict, TypeVar
 
 import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
+import Utilities.FileManager as FileManager
+import Utilities.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import DataMiners.DataMinerTyping as DataMinerTyping
+
+class ResourcePackTypedDict(TypedDict):
+    name: str
+    tags: list[str]
+
+class ResourcePackTag(enum.Enum):
+    core = "core"
+    education = "education"
+    experimental = "experimental"
+    extra = "extra"
+    vanity = "vanity"
+
+type_verifier = TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.EnumTypeVerifier(set(tag.name for tag in ResourcePackTag)), list, "a str", "a list"))
+), list, "a dict", "a list")
+
+def get_resource_pack_order() -> list[ResourcePackTypedDict]:
+    with FileManager.open_shared_file(FileManager.RESOUCE_PACK_DATA_FILE, "rt") as f:
+        data:list[ResourcePackTypedDict] = json.load(f)
+    type_verifier.base_verify(data)
+    return data
+
+resource_pack_data = get_resource_pack_order()
+resource_pack_order = [resource_pack["name"] for resource_pack in resource_pack_data]
+resource_pack_dict = {resource_pack_name: resource_pack for resource_pack_name, resource_pack in zip(resource_pack_order, resource_pack_data)}
 
 a = TypeVar("a")
 
@@ -42,7 +72,7 @@ def collapse_resource_packs(data:dict[str,a], resource_packs:list["DataMinerTypi
     for resource_pack in resource_packs:
         resource_pack_name = resource_pack["name"]
         if resource_pack_name not in data: continue
-        tags_str = ",".join(ResourcePacksDataMiner.resource_pack_order["types"][resource_pack_name])
+        tags_str = ",".join(resource_pack_dict[resource_pack_name]["tags"])
         # tags_str is used as the new key
         if tags_str in output:
             output_location = output[tags_str]
@@ -68,17 +98,16 @@ def collapse_resource_packs(data:dict[str,a], resource_packs:list["DataMinerTypi
     return output
 
 def collapse_resource_pack_list(data:list[str], resource_packs:list["DataMinerTyping.ResourcePackTypedDict"]) -> list[str]:
-    resource_pack_names = {resource_pack["name"]: resource_pack for resource_pack in resource_packs}
     for properties_resource_pack in data:
-        if properties_resource_pack not in resource_pack_names:
+        if properties_resource_pack not in resource_pack_dict:
             raise KeyError("Unknown resource pack \"%s\"!" % (properties_resource_pack))
     output:list[str] = []
     exists_in_output:set[str] = set()
     while len(data) > 0:
         properties_resource_pack = data.pop()
-        if properties_resource_pack not in resource_pack_names:
+        if properties_resource_pack not in resource_pack_dict:
             raise KeyError("Unknown resource pack \"%s\"!" % (properties_resource_pack))
-        tags_str = ",".join(ResourcePacksDataMiner.resource_pack_order["types"][resource_pack_names[properties_resource_pack]["name"]])
+        tags_str = ",".join(resource_pack_dict[properties_resource_pack]["tags"])
         if tags_str not in exists_in_output:
             output.append(tags_str)
             exists_in_output.add(tags_str)

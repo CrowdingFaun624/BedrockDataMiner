@@ -1,6 +1,7 @@
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiner as BehaviorPacksDataMiner
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
 
 class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
@@ -11,8 +12,7 @@ class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
         self.behavior_packs_folder:str = kwargs["behavior_packs_folder"]
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.BehaviorPackTypedDict]:
-        behavior_pack_data = BehaviorPacksDataMiner.behavior_pack_order
-        behavior_pack_order, behavior_pack_tags = behavior_pack_data["order"], behavior_pack_data["types"]
+        behavior_pack_order = CollapseResourcePacks.resource_pack_order
         behavior_pack_order_dict = {name: index for index, name in enumerate(behavior_pack_order)} # So I don't have to index it a whole twelve times
         file_list = self.get_accessor("client").get_file_list()
         behavior_packs:list[DataMinerTyping.BehaviorPackTypedDict] = []
