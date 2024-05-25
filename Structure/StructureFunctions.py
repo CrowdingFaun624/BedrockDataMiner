@@ -224,18 +224,13 @@ language_comparison_move_function:Callable[[str, DataMinerTyping.LanguageTypedDi
 
 def languages_normalize(data:DataMinerTyping.Languages, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedLanguages:
 
-    def fix_properties(unfixed_data:DataMinerTyping.LanguagesTypedDict, resource_packs:DataMinerTyping.ResourcePacks) -> dict[str,Any]:
+    def fix_properties(unfixed_data:DataMinerTyping.LanguagesTypedDict) -> dict[str,Any]:
         output:dict[str,DataMinerTyping.LanguagesPropertiesTypedDict] = unfixed_data["properties"]
         for resource_pack in unfixed_data["defined_in"]:
             if resource_pack not in output:
                 output[resource_pack] = {}
-        return CollapseResourcePacks.collapse_resource_packs(output, resource_packs)
-
-    resource_packs:DataMinerTyping.ResourcePacks|None = dependencies["resource_packs"]
-    if resource_packs is None:
-        resource_packs = [{"name": "vanilla", "tags": ["core"], "id": 1}]
-
-    return {language["code"]: fix_properties(language, resource_packs) for language in data}
+        return CollapseResourcePacks.collapse_resource_packs(output)
+    return {language["code"]: fix_properties(language) for language in data}
 
 def loot_tables_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
     output = value.copy()
@@ -518,13 +513,10 @@ def texture_list_normalize(data:dict[str,list[str]], dependencies:DataMinerTypin
     return output
 
 functions:dict[str,Callable] = {
-    "collapse_behavior_pack_list": CollapseResourcePacks.make_interface_list(pack_key="behavior_packs"),
-    "collapse_resource_pack_list": CollapseResourcePacks.make_interface_list(pack_key="resource_packs"),
-    "collapse_behavior_packs_or_resource_packs_with_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=True, pack_key=["behavior_packs", "resource_packs"]),
-    "collapse_behavior_packs_with_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=True, pack_key="behavior_packs"),
-    "collapse_behavior_packs_without_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=False, pack_key="behavior_packs"),
-    "collapse_resource_packs_with_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=True, pack_key="resource_packs"),
-    "collapse_resource_packs_without_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=False, pack_key="resource_packs"),
+    "collapse_behavior_pack_list": CollapseResourcePacks.collapse_resource_pack_list,
+    "collapse_resource_pack_list": CollapseResourcePacks.collapse_resource_pack_list,
+    "collapse_resource_packs_with_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=True),
+    "collapse_resource_packs_without_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=False),
     "animation_controllers_fix_old": animation_controllers_fix_old,
     "animations_fix_old": animations_fix_old,
     "attachables_normalize_old": attachables_normalize_old,

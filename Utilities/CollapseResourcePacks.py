@@ -2,7 +2,6 @@ import enum
 import json
 from typing import TYPE_CHECKING, Any, Callable, TypedDict, TypeVar
 
-import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -37,41 +36,21 @@ resource_pack_dict = {resource_pack_name: resource_pack for resource_pack_name, 
 
 a = TypeVar("a")
 
-def make_interface(has_defined_in_key:bool=True, pack_key:str|list[str]="resource_packs") -> Callable[[dict[str,a],"DataMinerTyping.DependenciesTypedDict"],None]:
-    def collapse_resource_packs_interface(data:dict[str,a], dependencies:"DataMinerTyping.DependenciesTypedDict") -> None:
-        resource_packs:DataMinerTyping.ResourcePacks|None = None
-        if isinstance(pack_key, str):
-            resource_packs = dependencies[pack_key]
-        else:
-            resource_packs = None
-            for key in pack_key:
-                if key not in dependencies or dependencies[key] is None: continue
-                resource_packs = dependencies[key]
-                break
-        if resource_packs is None:
-            resource_packs = [{"name": "vanilla", "path": "resource_packs/vanilla/"}]
-        collapse_resource_packs(data, resource_packs, has_defined_in_key)
+def make_interface(has_defined_in_key:bool=True) -> Callable[[dict[str,Any],"DataMinerTyping.DependenciesTypedDict"],None]:
+    def collapse_resource_packs_interface(data:dict[str,Any], dependencies:"DataMinerTyping.DependenciesTypedDict") -> None:
+        collapse_resource_packs(data, has_defined_in_key)
     return collapse_resource_packs_interface
 
-def make_interface_list(pack_key:str="resource_packs") -> Callable[[list[str],"DataMinerTyping.DependenciesTypedDict"],None]:
-    def collapse_resource_packs_interface(data:list[str], dependencies:"DataMinerTyping.DependenciesTypedDict") -> None:
-        resource_packs = dependencies[pack_key]
-        if resource_packs is None:
-            resource_packs:DataMinerTyping.ResourcePacks = [{"name": "vanilla", "path": "resource_packs/vanilla/"}]
-        collapse_resource_pack_list(data, resource_packs)
-    return collapse_resource_packs_interface
-
-def collapse_resource_packs(data:dict[str,a], resource_packs:list["DataMinerTyping.ResourcePackTypedDict"], add_defined_in:bool=True) -> dict[str,a]:
+def collapse_resource_packs(data:dict[str,a], add_defined_in:bool=True) -> dict[str,a]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
     Also adds a "defined_in" tag to each resource pack's properties unless `add_defined_in` is False.'''
-    resource_pack_names = {resource_pack["name"] for resource_pack in resource_packs}
-    for properties_resource_pack in data:
-        if properties_resource_pack not in resource_pack_names:
-            raise KeyError("Unknown resource pack \"%s\"!" % (properties_resource_pack))
+    data_resource_packs:list[str] = [] # resource packs that appear in data.
+    for data_resource_pack in data:
+        if data_resource_pack not in resource_pack_dict:
+            raise KeyError("Unknown resource pack \"%s\"!" % (data_resource_pack))
+        data_resource_packs.append(data_resource_pack)
     output:dict[str,Any] = {}
-    for resource_pack in resource_packs:
-        resource_pack_name = resource_pack["name"]
-        if resource_pack_name not in data: continue
+    for resource_pack_name in data_resource_packs:
         tags_str = ",".join(resource_pack_dict[resource_pack_name]["tags"])
         # tags_str is used as the new key
         if tags_str in output:
@@ -97,7 +76,7 @@ def collapse_resource_packs(data:dict[str,a], resource_packs:list["DataMinerTypi
         data[key] = value
     return output
 
-def collapse_resource_pack_list(data:list[str], resource_packs:list["DataMinerTyping.ResourcePackTypedDict"]) -> list[str]:
+def collapse_resource_pack_list(data:list[str], dependencies:"DataMinerTyping.DependenciesTypedDict") -> list[str]:
     for properties_resource_pack in data:
         if properties_resource_pack not in resource_pack_dict:
             raise KeyError("Unknown resource pack \"%s\"!" % (properties_resource_pack))
