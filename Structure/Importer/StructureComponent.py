@@ -1,6 +1,8 @@
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Structure as Structure
+
 
 class StructureComponent(Component.Component): # just for type hints lol
 
@@ -12,3 +14,8 @@ class StructureComponent(Component.Component): # just for type hints lol
     def __init__(self, data: ComponentTyping.StructureComponentTypedDicts, name: str, index: int) -> None:
         self.name = name
         self.final:Structure.Structure|None = None
+
+    def check(self, config: ImporterConfig.ImporterConfig) -> list[Exception]:
+        assert self.final is not None
+        self.final.check_initialization_parameters()
+        return super().check(config)

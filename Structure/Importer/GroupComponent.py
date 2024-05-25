@@ -1,16 +1,12 @@
-from typing import Callable
-
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.Field.FieldListField as FieldListField
+import Structure.Importer.Field.GroupItemField as GroupItemField
 import Structure.Importer.ImporterConfig as ImporterConfig
-import Structure.Importer.StructureComponent as StructureComponent
-import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.Structure as Structure
 import Utilities.TypeVerifier as TypeVerifier
 
-COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_structure": True}])
-TYPE_ALIAS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
 
 class GroupComponent(Component.Component):
 
@@ -28,77 +24,49 @@ class GroupComponent(Component.Component):
         self.verify_arguments(data, name)
 
         self.name = name
-        self.subcomponents_strs = data["subcomponents"]
-
-        self.subcomponents:list[tuple[type|TypeAliasComponent.TypeAliasComponent,StructureComponent.StructureComponent|None]]|None = None
         self.links_to_other_components:list[Component.Component] = []
         self.parents:list[Component.Component] = []
+
         self.my_type:set[type] = set()
-        self.check_types_final:list[tuple[list[type], StructureComponent.StructureComponent|None]]|None = None
         self.final:dict[type,Structure.Structure|None]|None = None
 
         self.children_has_normalizer = False
 
-    def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
-        self.subcomponents = []
-        already_types:set[str] = set()
-        for type_str, subcomponent_str in self.subcomponents_strs.items():
-            subcomponent:StructureComponent.StructureComponent|None
-            subcomponent_type:TypeAliasComponent.TypeAliasComponent|type
-            if type_str in already_types:
-                raise KeyError("Duplicate type \"%s\" of %s \"%s\"." % (type_str, self.class_name, self.name))
-            already_types.add(type_str)
-            if type_str in ComponentTyping.DEFAULT_TYPES:
-                subcomponent_type = ComponentTyping.DEFAULT_TYPES[type_str]
-                self.my_type.add(subcomponent_type)
-            else:
-                subcomponent_type = self.choose_component(type_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, ["subcomponents", type_str])
-                assert isinstance(subcomponent_type, TypeAliasComponent.TypeAliasComponent)
-                self.links_to_other_components.append(subcomponent_type)
-                subcomponent_type.parents.append(self)
-                assert subcomponent_type.types is not None
-                self.my_type.update(subcomponent_type.types)
-            if subcomponent_str is None:
-                subcomponent = None
-            else:
-                subcomponent = self.choose_component(subcomponent_str, COMPONENT_REQUEST_PROPERTIES, components, ["subcomponents", type_str])
-                assert subcomponent is not None
-                self.links_to_other_components.append(subcomponent)
-                subcomponent.parents.append(self)
-            self.subcomponents.append((subcomponent_type, subcomponent))
+        self.subcomponents_field:FieldListField.FieldListField[GroupItemField.GroupItemField] = FieldListField.FieldListField([
+            GroupItemField.GroupItemField(type_str, subcomponent_str, ["subcomponents", index])
+            for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())], ["subcomponents"])
+        self.fields = [self.subcomponents_field]
 
     def create_final(self) -> None:
         self.final = {}
 
     def link_finals(self) -> None:
-        assert self.subcomponents is not None
         assert self.final is not None
-        self.check_types_final = []
-        for subcomponent_type, subcomponent in self.subcomponents:
-            valid_types:list[type]
-            if isinstance(subcomponent_type, type):
-                valid_types = [subcomponent_type]
-            elif isinstance(subcomponent_type, TypeAliasComponent.TypeAliasComponent):
-                assert subcomponent_type.types is not None
-                valid_types = subcomponent_type.types
+        for group_field in self.subcomponents_field:
+            valid_types = group_field.get_types()
+            subcomponent = group_field.get_component()
+            self.my_type.update(valid_types)
             if subcomponent is None:
                 structure = None
             else:
                 structure = subcomponent.final
             for valid_type in valid_types:
                 self.final[valid_type] = structure
-            self.check_types_final.append((valid_types, subcomponent))
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
-        assert self.check_types_final is not None
-        for index, (types, subcomponent) in enumerate(self.check_types_final):
+        exceptions = super().check(config)
+        if self.__class__ != GroupComponent: return exceptions
+        # promise I'll fix this later
+        for index, group_field in enumerate(self.subcomponents_field):
+            subcomponent_types = group_field.get_types()
+            subcomponent = group_field.get_component()
             if subcomponent is None:
-                for type_item in types:
-                    if type_item in ComponentTyping.REQUIRES_SUBCOMPONENT_TYPES:
-                        return [TypeError("Item %i of %s \"%s\" accepts type %s, but has a null Subcomponent!" % (index, self.class_name, self.name, type_item.__name__))]
+                for subcomponent_type in subcomponent_types:
+                    if subcomponent_type in ComponentTyping.REQUIRES_SUBCOMPONENT_TYPES:
+                        exceptions.append(TypeError("Item %i of %s \"%s\" accepts type %s, but has a null Subcomponent!" % (index, self.class_name, self.name, subcomponent_type.__name__)))
             else:
-                for type_item in types:
-                    if type_item not in subcomponent.my_type:
+                for subcomponent_type in subcomponent_types:
+                    if subcomponent_type not in subcomponent.my_type:
                         its_types = ", ".join(its_type.__name__ for its_type in subcomponent.my_type)
-                        return [TypeError("Item %i of %s \"%s\" accepts type %s, but its Subcomponent, \"%s\", only accepts type [%s]!" % (index, self.class_name, self.name, type_item.__name__, subcomponent.name, its_types))]
-        return []
+                        exceptions.append(TypeError("Item %i of %s \"%s\" accepts type %s, but its Subcomponent, \"%s\", only accepts type [%s]!" % (index, self.class_name, self.name, subcomponent_type.__name__, subcomponent.name, its_types)))
+        return exceptions

@@ -1,9 +1,8 @@
-from typing import Callable
-
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Utilities.TypeVerifier as TypeVerifier
+
 
 class TagComponent(Component.Component):
 
@@ -24,12 +23,10 @@ class TagComponent(Component.Component):
 
         self.links_to_other_components:list[Component.Component] = []
         self.parents:list[Component.Component] = []
-    
-    def set_component(self, components: dict[str, Component.Component], functions: dict[str, Callable]) -> None:
-        pass
+        self.fields = []
 
     def create_final(self) -> None:
         self.final = self.name
-    
+
     def __hash__(self) -> int:
         return hash(self.name)

@@ -4,7 +4,7 @@ import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.KeymapComponent as KeymapComponent
 import Structure.Importer.ListComponent as ListComponent
 import Utilities.Nbt.NbtTypes as NbtTypes
-import Utilities.TypeVerifier as TypeVerifier
+
 
 class NbtTagCompoundComponent(DictComponent.DictComponent):
 
@@ -26,14 +26,14 @@ class NbtTagListComponent(ListComponent.ListComponent):
     my_properties = ComponentCapabilities.Capabilities(is_nbt_tag=True, is_structure=True)
 
     def check_required_type(self) -> list[Exception]:
-        assert self.types is not None
         if self.required_types is None: return []
-        for type in self.types:
+        for type in self.types_field.get_types():
             if type not in self.required_types:
                 return [TypeError("%s \"%s\" accepts type %s instead of only [%s]!" % (self.class_name, self.name, type, ", ".join(required_type.__name__ for required_type in self.required_types)))]
         return []
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
+        super().check(config)
         assert self.final is not None
         exceptions:list[Exception] = []
         self.final.check_initialization_parameters()

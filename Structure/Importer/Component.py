@@ -1,9 +1,12 @@
-from typing import Any, Callable, Iterable, Mapping, Union
+from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence, Union
 
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Utilities.TypeVerifier as TypeVerifier
+
+if TYPE_CHECKING:
+    import Structure.Importer.Field.Field as Field
 
 class Component():
 
@@ -15,6 +18,7 @@ class Component():
     type_verifier:TypeVerifier.TypeVerifier
 
     name: str
+    fields:list["Field.Field"]
     links_to_other_components:list["Component"]
     parents:list["Component"]
     children_has_normalizer:bool
@@ -22,9 +26,7 @@ class Component():
 
     def __init__(self, data:ComponentTyping.ComponentTypedDicts, name:str) -> None: ...
 
-    def link_components(self, components:"Component"|Iterable["Component"]) -> None:
-        if isinstance(components, Component):
-            components = [components]
+    def link_components(self, components:Sequence["Component"]) -> None:
         self.links_to_other_components.extend(components)
         for component in components:
             component.parents.append(self)
@@ -34,7 +36,9 @@ class Component():
 
     def set_component(self, components:dict[str,"Component"], functions:dict[str,Callable]) -> None:
         '''Links this Component to other Components'''
-        raise NotImplementedError("Class \"%s\" does not have its `set_component` function!" % (self.class_name,))
+        for field in self.fields:
+            linked_components = field.set(self.name, self.class_name, components, functions)
+            self.link_components(linked_components)
 
     def create_final(self) -> None:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''
@@ -46,7 +50,10 @@ class Component():
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         '''Make sure that this Component's types are all in order; no error could occur.'''
-        ...
+        exceptions:list[Exception] = []
+        for field in self.fields:
+            exceptions.extend(field.check(self.name, self.class_name, config))
+        return exceptions
 
     def finalize_finals(self) -> None:
         '''Can be used to call a method on the final object.'''
@@ -66,27 +73,6 @@ class Component():
         if has_changed or child is None:
             for parent in self.parents:
                 parent.propagate_variables(self)
-
-    def get_keys_strs(self, is_capital:bool, keys:list[str|int]) -> str:
-        return "".join(
-            ("%sey \"%s\" of " % ("K" if index == 0 and is_capital else "k", key)) if isinstance(key, str)
-            else ("%stem %i of " % ("I" if index == 0 and is_capital else "i", key))
-            for index, key in enumerate(reversed(keys))
-        )
-
-    def choose_component(
-            self,
-            name:str,
-            required_properties:ComponentCapabilities.CapabilitiesPattern,
-            components:dict[str,"Component"],
-            keys:list[str|int],
-        ) -> Any:
-        if name not in components:
-            raise KeyError("%s \"%s\", referenced in %s%s \"%s\", does not exist!" % (required_properties, name, self.get_keys_strs(False, keys), self.class_name, self.name))
-        component = components[name]
-        if component.my_properties not in required_properties:
-            raise ValueError("%s%s \"%s\" references object \"%s\", expecting %s but getting a %s!" % (self.get_keys_strs(True, keys), self.class_name, self.name, name, required_properties, component.my_properties))
-        return component
 
     def __hash__(self) -> int:
         return hash(self.name)

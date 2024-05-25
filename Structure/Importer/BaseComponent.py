@@ -1,8 +1,8 @@
-from typing import Callable
-
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.Field.ComponentField as ComponentField
+import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.StructureBase as StructureBase
@@ -38,14 +38,8 @@ class BaseComponent(Component.Component):
 
         self.name = name
         self.structure_name = data["name"]
-        self.subcomponent_str = data["subcomponent"]
-        self.normalizer_str = data.get("normalizer", None)
-        self.post_normalizer_str = data.get("post_normalizer", None)
         self.imports = data.get("imports", None)
 
-        self.subcomponent:StructureComponent.StructureComponent|None = None
-        self.normalizer:NormalizerComponent.NormalizerComponent|None = None
-        self.post_normalizer:NormalizerComponent.NormalizerComponent|None = None
         self.links_to_other_components:list[Component.Component] = []
         self.parents:list[Component.Component] = []
         self.final:StructureBase.StructureBase|None = None
@@ -53,29 +47,16 @@ class BaseComponent(Component.Component):
         self.children_has_normalizer = False
         self.children_tags:set[str] = set()
 
-    def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
-        self.subcomponent:StructureComponent.StructureComponent|None = self.choose_component(self.subcomponent_str, COMPONENT_REQUEST_PROPERTIES, components, ["subcomponent"])
-        assert self.subcomponent is not None
-        self.links_to_other_components.append(self.subcomponent)
-        self.subcomponent.parents.append(self)
-        if self.normalizer_str is None:
-            self.normalizer = None
-        else:
-            self.normalizer:NormalizerComponent.NormalizerComponent|None = self.choose_component(self.normalizer_str, NORMALIZER_REQUEST_PROPERTIES, components, ["normalizer"])
-            assert self.normalizer is not None
-            self.links_to_other_components.append(self.normalizer)
-            self.normalizer.parents.append(self)
-        if self.post_normalizer_str is None:
-            self.post_normalizer = None
-        else:
-            self.post_normalizer:NormalizerComponent.NormalizerComponent|None = self.choose_component(self.post_normalizer_str, NORMALIZER_REQUEST_PROPERTIES, components, ["post_normalizer"])
-            assert self.post_normalizer is not None
-            self.links_to_other_components.append(self.post_normalizer)
-            self.post_normalizer.parents.append(self)
+        self.subcomponent_field:ComponentField.ComponentField[StructureComponent.StructureComponent] = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.normalizer_field:OptionalComponentField.OptionalComponentField[NormalizerComponent.NormalizerComponent] = OptionalComponentField.OptionalComponentField(data.get("normalizer", None), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
+        self.post_normalizer_field:OptionalComponentField.OptionalComponentField[NormalizerComponent.NormalizerComponent] = OptionalComponentField.OptionalComponentField(data.get("post_normalizer", None), NORMALIZER_REQUEST_PROPERTIES, ["post_normalizer"])
+        self.fields = [self.subcomponent_field, self.normalizer_field, self.post_normalizer_field]
 
     def create_final(self) -> None:
-        normalizer_final = None if self.normalizer is None else self.normalizer.final
-        post_normalizer_final = None if self.post_normalizer is None else self.post_normalizer.final
+        normalizer_component = self.normalizer_field.get_component()
+        post_normalizer_component = self.post_normalizer_field.get_component()
+        normalizer_final = None if normalizer_component is None else normalizer_component.final
+        post_normalizer_final = None if post_normalizer_component is None else post_normalizer_component.final
         self.final = StructureBase.StructureBase(
             component_name=self.name,
             structure_name=self.structure_name,
@@ -87,5 +68,4 @@ class BaseComponent(Component.Component):
 
     def link_finals(self) -> None:
         assert self.final is not None
-        assert self.subcomponent is not None
-        self.final.structure = self.subcomponent.final
+        self.final.structure = self.subcomponent_field.get_component().final

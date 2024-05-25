@@ -1,13 +1,9 @@
-from typing import Literal, TYPE_CHECKING, TypedDict, Union
+from typing import Literal, TypedDict
+
 from typing_extensions import NotRequired, Required
 
-import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.Nbt.NbtReader as NbtReader
-
-if TYPE_CHECKING:
-    import Structure.Importer.StructureComponent as StructureComponent
-    import Structure.Importer.GroupComponent as GroupComponent
-    import Structure.Importer.TypeAliasComponent as TypeAliasComponent
+import Utilities.Nbt.NbtTypes as NbtTypes
 
 ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotRequired[str], "component": Required[str]})
 
@@ -39,11 +35,6 @@ class GroupComponentTypedDict(TypedDict):
 class KeymapKeyTypedDict(TypedDict):
     type: Required[str|list[str]]
     subcomponent: NotRequired[str|None]
-    tags: NotRequired[list[str]]
-
-class KeymapKeyFilledTypedDict(TypedDict):
-    type: Required[list[Union[type, "TypeAliasComponent.TypeAliasComponent"]]]
-    subcomponent: Required[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent", None]]
     tags: NotRequired[list[str]]
 
 class KeymapComponentTypedDict(TypedDict):
