@@ -24,7 +24,7 @@ class DownloadManager(InstallManager.InstallManager):
     )
 
     def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:DownloadManagerTypedDict) -> None:
-        self.apk_location = Path(str(self.location) + ".zip")
+        self.apk_location = self.location
         self.installed = WaitValue(self.apk_location.exists)
 
         self.has_zip_file_opened = False
