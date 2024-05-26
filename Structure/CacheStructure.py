@@ -109,6 +109,9 @@ class CacheStructure(Structure.Structure[d]):
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.compare_text:
             assert cache_item.compare_text_data is not None
+            assert cache_item.compare_text_indents is not None
+            for line, indents in zip(cache_item.compare_text_data[0], cache_item.compare_text_indents):
+                line.set_indent(indents)
             return cache_item.compare_text_data
         if cache_item is None:
             new_cache_item:CacheItem[d] = CacheItem()
@@ -127,6 +130,9 @@ class CacheStructure(Structure.Structure[d]):
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.print_text:
             assert cache_item.print_text_data is not None
+            assert cache_item.print_text_indents is not None
+            for line, indents in zip(cache_item.print_text_data[0], cache_item.print_text_indents):
+                line.set_indent(indents)
             return cache_item.print_text_data
         if cache_item is None:
             new_cache_item:CacheItem[d] = CacheItem()
@@ -177,8 +183,10 @@ class CacheItem(Generic[d]):
         self.get_tag_paths_data:tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]|None = None
         self.compare_text = False
         self.compare_text_data:tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]|None = None
+        self.compare_text_indents:list[int]|None=None
         self.print_text = False
         self.print_text_data:tuple[list[SU.Line], list[Trace.ErrorTrace]]|None = None
+        self.print_text_indents:list[int]|None=None
         self.compare = False
         self.compare_data:tuple[d, bool, list[Trace.ErrorTrace]]|None = None
 
@@ -197,10 +205,12 @@ class CacheItem(Generic[d]):
     def set_compare_text(self, data:tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]) -> None:
         self.compare_text = True
         self.compare_text_data = data
+        self.compare_text_indents = [line.indents for line in data[0]]
 
     def set_print_text(self, data:tuple[list[SU.Line], list[Trace.ErrorTrace]]) -> None:
         self.print_text = True
         self.print_text_data = data
+        self.print_text_indents = [line.indents for line in data[0]]
 
     def set_compare(self, data:tuple[d, bool, list[Trace.ErrorTrace]]) -> None:
         self.compare = True

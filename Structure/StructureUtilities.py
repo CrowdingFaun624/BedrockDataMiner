@@ -43,6 +43,13 @@ class Line():
         self.text = text
         self.indents = indent
 
+    def set_indent(self, indents:int) -> None:
+        '''
+        Forcefully sets the indent of this line.
+        :indents: The number of indents to set this Line to.
+        '''
+        self.indents = indents
+
     def indent(self, amount:int=1) -> "Line":
         self.indents += amount
         return self
