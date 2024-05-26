@@ -30,6 +30,11 @@ class Structure(Generic[a]):
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.name)
 
+    def clear_caches(self) -> None:
+        '''Clears all the caches of this Structure and of its children.'''
+        for substructure in self.iter_structures():
+            substructure.clear_caches()
+
     def choose_structure_flat(self, key, value_type:type, value) -> Union["Structure",None]: ...
 
     def print_single(self, key_str:str|int|None, data:a, message:str, output:list[SU.Line], printer:Union["Structure[a]",None], post_message:str="") -> list[Trace.ErrorTrace]:
