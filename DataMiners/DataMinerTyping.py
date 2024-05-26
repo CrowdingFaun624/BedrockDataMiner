@@ -1,32 +1,33 @@
-from typing import Any, Literal, Optional, TypedDict
+from typing import Any, Literal, TypedDict
+
 from typing_extensions import NotRequired, Required
 
 DependenciesLiterals = Literal["behavior_packs", "blocks", "credits", "duplicate_sounds", "entities", "entities_client", "items", "language", "languages", "loading_tips", "loot_tables", "models", "music_definitions", "non_existent_sounds", "recipes", "resource_packs", "sound_definitions", "sound_files", "sounds_json", "splashes", "trade_tables", "undefined_sound_events", "unused_sound_events"]
 
 class DependenciesTypedDict(TypedDict):
-    behavior_packs: Optional["BehaviorPacks"]
-    blocks: Optional["MyBlocksClient"]
-    credits: Optional["Credits"]
-    duplicate_sounds: Optional["DuplicateSounds"]
-    entities: Optional["Entities"]
-    entities_client: Optional["EntitiesClient"]
-    items: Optional["Items"]
-    language: Optional["Language"]
-    languages: Optional["Languages"]
-    loading_tips: Optional["LoadingTips"]
-    loot_tables: Optional["LootTables"]
-    models: Optional["Models"]
-    music_definitions: Optional["MyMusicDefinitions"]
-    non_existent_sounds: Optional["NonExistentSounds"]
-    recipes: Optional["Recipes"]
-    resource_packs: Optional["ResourcePacks"]
-    sound_definitions: Optional["MySoundDefinitionsJson"]
-    sound_files: Optional["SoundFiles"]
-    sounds_json: Optional["MySoundsJson"]
-    splashes: Optional["Splashes"]
-    trade_tables: Optional["TradeTables"]
-    undefined_sound_events: Optional["UndefinedSoundEvents"]
-    unused_sound_events: Optional["UnusedSoundEvents"]
+    behavior_packs: NotRequired["BehaviorPacks"]
+    blocks: NotRequired["MyBlocksClient"]
+    credits: NotRequired["Credits"]
+    duplicate_sounds: NotRequired["DuplicateSounds"]
+    entities: NotRequired["Entities"]
+    entities_client: NotRequired["EntitiesClient"]
+    items: NotRequired["Items"]
+    language: NotRequired["Language"]
+    languages: NotRequired["Languages"]
+    loading_tips: NotRequired["LoadingTips"]
+    loot_tables: NotRequired["LootTables"]
+    models: NotRequired["Models"]
+    music_definitions: NotRequired["MyMusicDefinitions"]
+    non_existent_sounds: NotRequired["NonExistentSounds"]
+    recipes: NotRequired["Recipes"]
+    resource_packs: NotRequired["ResourcePacks"]
+    sound_definitions: NotRequired["MySoundDefinitionsJson"]
+    sound_files: NotRequired["SoundFiles"]
+    sounds_json: NotRequired["MySoundsJson"]
+    splashes: NotRequired["Splashes"]
+    trade_tables: NotRequired["TradeTables"]
+    undefined_sound_events: NotRequired["UndefinedSoundEvents"]
+    unused_sound_events: NotRequired["UnusedSoundEvents"]
 
 # behavior packs
 
