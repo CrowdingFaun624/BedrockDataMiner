@@ -290,6 +290,13 @@ class DataMinerCollection():
         if data_path.exists():
             data_path.unlink()
 
+    def has_tag(self, tag:str) -> bool:
+        '''
+        Returns True if the given tag could potentially be in this Version.
+        :tag: The tag to test for.
+        '''
+        return self.structure.has_tag(tag)
+
     def get_tag_paths(self, version:Version.Version, tag:str, normalizer_dependencies:Normalizer.NormalizerDependencies, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
         if not self.structure.has_tag(tag):
             return []
