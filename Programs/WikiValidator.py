@@ -1,5 +1,6 @@
 import datetime
 import time
+from typing import cast
 
 import Downloader.DownloadManager as DownloadManager
 import Utilities.FileManager as FileManager
@@ -183,7 +184,7 @@ def parse_client_downloads(client_dl_string:str, version:Version.Version) -> lis
         if not (link.startswith("http://") or link.startswith("https://")):
             warning_messages.append("Link \"%s\" on \"%s\" is invalid!" % (link, version.wiki_page))
     if "download" in version.version_files["client"].accessors:
-        accessor:DownloadManager.DownloadManager = version.version_files["client"].accessors["download"]
+        accessor = cast(DownloadManager.DownloadManager, version.version_files["client"].accessors["download"])
         if accessor.url not in links:
             warning_messages.append("Link \"%s\" on \"%s\" is not in the page's links!" % (accessor.url, version.wiki_page))
     return warning_messages

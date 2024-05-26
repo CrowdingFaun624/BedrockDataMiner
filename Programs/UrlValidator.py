@@ -1,5 +1,5 @@
 import datetime
-from typing import Callable
+from typing import Callable, cast
 
 import Downloader.DownloadManager as DownloadManager
 import Utilities.FileManager as FileManager
@@ -90,7 +90,7 @@ KNOWN_URLS:dict[str,tuple[str,Callable[[Version.Version,str,VersionTags.VersionT
 def validate(version:Version.Version, version_tags:VersionTags.VersionTags) -> list[str]:
     '''Returns a list of warning strings about the given version.'''
     if "download" not in version.version_files["client"].accessors: return []
-    accessor:DownloadManager.DownloadManager = version.version_files["client"].accessors["download"]
+    accessor = cast(DownloadManager.DownloadManager, version.version_files["client"].accessors["download"])
     url = accessor.url
     for url_id, url_data in KNOWN_URLS.items():
         url_start, url_function = url_data
