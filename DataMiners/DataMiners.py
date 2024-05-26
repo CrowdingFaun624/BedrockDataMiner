@@ -1,95 +1,102 @@
-import threading
 import traceback
 
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMinerCollectionImporter as DataMinerCollectionImporter
-import DataMiners.DataMinerTyping as DataMinerTyping
-import Version.VersionParser as VersionParser
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
+import Structure.StructureEnvironment as StructureEnvironment
 import Version.Version as Version
+import Version.VersionParser as VersionParser
 
 dataminers = DataMinerCollectionImporter.load_dataminers()
 
-def dataminable_files(version:Version.Version) -> list[str]:
-    '''Returns the names of all data files that this Version supports.'''
-    return [dataminer.file_name for dataminer in dataminers if dataminer.supports_version(version)]
+SINGLE_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.datamining)
+MANY_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
 
-def currently_has_data_files_from(version:Version.Version) -> list[str]:
-    return [dataminer.file_name for dataminer in dataminers if dataminer.get_data_file_path(version).exists()]
+def get_dataminable_dataminers(version:Version.Version, all_dataminers:dict[str,DataMiner.DataMinerCollection]) -> list[DataMiner.DataMinerCollection]:
+    '''
+    Returns the names of all data files that this Version supports.
+    :version: The version to test.
+    :all_dataminers: A dict of all DataMinerCollections.
+    '''
+    output = [dataminer for dataminer in dataminers if dataminer.supports_version(version, all_dataminers)]
+    return output
 
-def run_with_dependencies(version:Version.Version, name:str, recalculate_this:bool=False, recalculate_everything:bool=False) -> None:
-    data:DataMinerTyping.DependenciesTypedDict = {}
-    dataminers_dict = {dataminer.name: dataminer.get_version(version) for dataminer in dataminers}
-    locks = {dataminer.name: threading.Lock() for dataminer in dataminers}
-    if detect_cycle(name, dataminers_dict, []):
-        raise RuntimeError("Dataminer \"%s\" for \"%s\" has a dependency cycle!" % (dataminers_dict[name], version))
-    __run_with_dependencies_child(data, locks, name, dataminers_dict, recalculate_this, recalculate_everything, dataminers_dict[name])
-    exceptions:dict[str,Exception] = {}
-    for dependency, datum in data.items():
-        if isinstance(datum, Exception):
-            exceptions[dependency] = datum
-    if len(exceptions) > 0:
-        for dependency, error in exceptions.items():
-            print("File \"%s\" from \"%s\" errored!" % (name, version.name))
-            traceback.print_exception(error)
-        raise RuntimeError("Running dataminer \"%s\" on \"%s\" failed." % (name, version.name))
+def currently_has_data_files_from(version:Version.Version) -> list[DataMiner.DataMinerCollection]:
+    return [dataminer for dataminer in dataminers if dataminer.get_data_file_path(version).exists()]
 
-def detect_cycle(name:str, dataminers_dict:dict[str,DataMiner.DataMiner], already_found:list[str]) -> bool:
-    '''Returns True if there is a cycle in the DataMiner's dependencies.'''
-    if name not in dataminers_dict:
-        raise KeyError("DataMiner \"%s\" does not exist!" % name)
-    dependencies = dataminers_dict[name].dependencies
-    for dependency in dependencies:
-        if dependency not in dataminers_dict:
-            raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminers_dict[name], dependency))
-        this_already_found = already_found.copy()
-        if dependency in this_already_found:
-            return True
-        this_already_found.append(dependency)
-        if detect_cycle(dependency, dataminers_dict, this_already_found):
-            return True
+def get_dataminer_order(version:Version.Version, unordered_dataminers:list[DataMiner.DataMinerCollection], all_dataminers:dict[str,DataMiner.DataMinerCollection]) -> list[DataMiner.DataMinerCollection]:
+    '''
+    Sorts the dataminers such that they can be completed in order. Does not change the original list.
+    :unordered_dataminers: The unordered list of DataMinerCollections to sort.
+    '''
+    ordered_dataminers:list[DataMiner.DataMinerCollection] = []
+    already_added:set[DataMiner.DataMinerCollection] = set()
+    for dataminer in unordered_dataminers:
+        if dataminer not in already_added:
+            resolve_dataminer_order(ordered_dataminers, already_added, dataminer, version, all_dataminers)
+    return ordered_dataminers
+
+def resolve_dataminer_order(dataminers:list[DataMiner.DataMinerCollection], already_added:set[DataMiner.DataMinerCollection], current_dataminer:DataMiner.DataMinerCollection, version:Version.Version, all_dataminers:dict[str,DataMiner.DataMinerCollection]) -> None:
+    for dependency in current_dataminer.get_version(version).dependencies:
+        if all_dataminers[dependency] not in already_added:
+            resolve_dataminer_order(dataminers, already_added, all_dataminers[dependency], version, all_dataminers)
+    dataminers.append(current_dataminer)
+    already_added.add(current_dataminer)
+
+def run(
+        version:Version.Version,
+        dataminer_collections:list[DataMiner.DataMinerCollection],
+        structure_environment:StructureEnvironment.StructureEnvironment,
+        all_dataminers:dict[str,DataMiner.DataMinerCollection],
+        *,
+        recalculate_everything:bool=False,
+        print_messages:bool=False
+    ) -> list[tuple[DataMiner.DataMinerCollection, Exception]]:
+    '''
+    Runs and stores the output of multiple DataMiners. Returns the DataMinerCollections that it failed to datamine and the corresponding exception.
+    :version: The Version to run the DataMiners on.
+    :dataminer_collections: The list of DataMinerCollections to use for datamining.
+    :structure_environment: The StructureEnvironment to use when checking types.
+    :all_dataminers: Every DataMinerCollection.
+    :recalculate_everything: If True, forces all dependencies to be recalculated.
+    :print_messages: If True, messages will be printed after each DataMiner finishes.
+    '''
+    dataminers_list = list(all_dataminers.values())
+    for dataminer in dataminer_collections:
+        dataminer.remove_data_file(version)
+    dataminer_order = get_dataminer_order(version, dataminer_collections, all_dataminers)
+    dataminer_environment = DataMinerEnvironment.DataMinerEnvironment({}, structure_environment)
+    if recalculate_everything:
+        for dataminer in dataminer_order:
+            dataminer.remove_data_file(version)
     else:
-        return False
-
-def __run_with_dependencies_child(data:DataMinerTyping.DependenciesTypedDict, locks:dict[str,threading.Lock], name:str, dataminers_dict:dict[str,DataMiner.DataMiner], recalculate:bool, recalculate_everything:bool, parent:DataMiner.DataMiner) -> None:
-    lock = locks[name]
-    with lock:
-        if name in data:
-            if isinstance(data[name], Exception):
-                # don't need to do anything with this exception because data[name] is already an exception.
-                raise RuntimeError("Another copy of DataMiner \"%s\" errored!" % name)
-            else:
-                pass # Return values do not do anything; this function just needs to end to complete.
+        # remove dataminers that are already stored if recalculate everything is False
+        i = 0 
+        while i < len(dataminer_order):
+            if dataminer_order[i].get_data_file_path(version).exists():
+                dataminer_environment.dependency_data[dataminer_order[i].name] = dataminer_order[i].get_data_file(version)
+                del dataminer_order[i]
+            else: i += 1
+    failure_dataminers:list[tuple[DataMiner.DataMinerCollection, Exception]] = []
+    failure_dataminers_set:set[str] = set()
+    for dataminer_collection in dataminer_order:
         try:
-            dataminer = dataminers_dict[name]
-
-            if isinstance(dataminer, DataMiner.NullDataMiner):
-                return # If it is a null dataminer, then there is nothing else to do.
-
-            if not recalculate and dataminer.get_data_file_path().exists(): # get the data file if it already exists.
-                data[name] = dataminer.get_data_file()
-                return # Return so it doesn't try to datamine the data file anyways.
-
-            # Dependencies (if none, then nothing will happen)
-            threads:list[threading.Thread] = []
+            dataminer = dataminer_collection.get_version(version)
             for dependency in dataminer.dependencies:
-                if dependency not in dataminers_dict: # I've been misspelling existent the whole time
-                    raise KeyError("DataMiner \"%s\" lists non-existent DataMiner \"%s\" as a dependency!" % (dataminer, dependency))
-                if isinstance(dataminers_dict[dependency], DataMiner.NullDataMiner):
-                    raise RuntimeError("DataMiner \"%s\" on Version \"%s\" references a NullDataMiner for \"%s\"!" % (name, dataminer.version.name, dependency))
-                thread = threading.Thread(target=__run_with_dependencies_child, args=[data, locks, dependency, dataminers_dict, recalculate_everything, recalculate_everything, parent])
-                thread.start()
-                threads.append(thread)
-            for thread in threads: # wait for all child threads
-                thread.join()
-
-            for dependency in dataminer.dependencies:
-                if dependency not in data:
-                    raise KeyError("DataMiner \"%s\" failed to create child process of \"%s\"!" % (name, dependency))
-                if isinstance(data[dependency], Exception):
-                    raise RuntimeError("DataMiner \"%s\" cannot run because \"%s\" has raised an exception!" % (name, dependency))
-            data[name] = dataminer.store(data, dataminers)
+                if dependency in failure_dataminers_set:
+                    continue # no use trying to datamine this if any of its dependencies excepted.
+            dataminer_output = dataminer.store(dataminer_environment, dataminers_list)
+            dataminer_environment.dependency_data[dataminer_collection.name] = dataminer_output
         except Exception as e:
-            data[name] = e
+            failure_dataminers_set.add(dataminer_collection.name)
+            failure_dataminers.append((dataminer_collection, e))
+            if print_messages:
+                traceback.print_exception(e)
+                print("Failed to store %s for %s." % (dataminer_collection.name, version))
+        else:
+            if print_messages:
+                print("Successfully stored %s for %s." % (dataminer.name, version))
+    return failure_dataminers
 
 def test_structures() -> None:
     for dataminer in dataminers:
@@ -99,36 +106,40 @@ def test_structures() -> None:
 
 def user_interface() -> None:
     version_names = VersionParser.versions
+    all_dataminers_dict = {dataminer.name: dataminer for dataminer in dataminers}
     version = None
     while version not in version_names and version != "*":
         version = input("What version will be datamined? ")
     if version == "*":
         versions = list(version_names.values())
+        dataminable_file_names = sorted(dataminer.name for dataminer in dataminers)
+        dataminable_dataminers_set = set(dataminers)
     else:
         versions = [version_names[version]]
+        dataminable_dataminers_set:set[DataMiner.DataMinerCollection] = set()
+        for version in versions:
+            dataminable_dataminers_set.update(get_dataminable_dataminers(version, all_dataminers_dict))
+        dataminable_file_names = sorted(dataminer.name for dataminer in dataminable_dataminers_set)
 
-    dataminer_names = {dataminer.name: dataminer for dataminer in dataminers}
     dataminer_collection = None
-    while dataminer_collection not in dataminer_names and dataminer_collection != "*":
-        dataminer_collection = input("What will be datamined (* for all)? %s " % str([dataminer.name for dataminer in dataminers]))
+    while dataminer_collection not in dataminable_file_names and dataminer_collection != "*":
+        dataminer_collection = input("What will be datamined (* for all)? %s " % (dataminable_file_names))
     if dataminer_collection == "*":
-        dataminer_names = [dataminer.name for dataminer in dataminers]
+        dataminers_to_datamine = [dataminer for dataminer in dataminers if dataminer in dataminable_dataminers_set]
     else:
-        dataminer_names = [dataminer_collection]
+        dataminers_to_datamine = [dataminer for dataminer in dataminers if dataminer.name == dataminer_collection]
+
 
     if len(versions) > 1:
-        cannot_datamine:list[Version.Version] = []
-        for version in versions:
-            if len(version.version_files) == 0: continue
-            for dataminer_name in dataminer_names:
-                try:
-                    run_with_dependencies(version, dataminer_name, recalculate_this=True, recalculate_everything=False)
-                except Exception:
-                    cannot_datamine.append(version)
-                print("Successfully stored %s for %s." % (dataminer_name, version))
-        print("Failed to datamine %i versions:\n%s" % (len(cannot_datamine), cannot_datamine))
+        structure_environment = MANY_VERSION_ENVIRONMENT
     else:
-        for dataminer_name in dataminer_names:
-            run_with_dependencies(versions[0], dataminer_name, recalculate_this=True, recalculate_everything=False)
-            print("Successfully stored %s for %s." % (dataminer_name, versions[0]))
-
+        structure_environment = SINGLE_VERSION_ENVIRONMENT
+    recalculate_everything = False # if all dependencies should be recalculated too
+    cannot_datamine:list[Version.Version] = []
+    for version in versions:
+        if len(version.version_files) == 0: continue
+        failure_dataminers = run(version, dataminers_to_datamine, structure_environment, all_dataminers_dict, recalculate_everything=recalculate_everything, print_messages=True)
+        if len(failure_dataminers) > 0:
+            cannot_datamine.append(version)
+    if len(versions) > 1:
+        print("Failed to datamine %i versions:\n%s")

@@ -1,14 +1,18 @@
 import json
-from pathlib2 import Path
 import traceback
-from typing import Any, Callable, IO, Iterable, Literal, Mapping, overload, Sequence, TypeVar
+from typing import (IO, Any, Callable, Iterable, Literal, Mapping, Sequence,
+                    TypeVar, overload)
 
+from pathlib2 import Path
+
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Downloader.InstallManager as InstallManager
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
 import Structure.StructureBase as StructureBase
+import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
@@ -89,7 +93,7 @@ class DataMiner():
         if len(kwargs) > 0:
             raise NotImplementedError("`initialize` was called with %i non-empty parameters by %s without being defined by a subclass:\n%s" % (len(kwargs), repr(self), kwargs))
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         '''Makes the dataminer get the file. Returns the output.'''
         raise NotImplementedError("`activate` was called by %s without being defined by a subclass." % repr(self))
 
@@ -98,9 +102,9 @@ class DataMiner():
             raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % self.version.name)
         return FileManager.get_version_data_path(self.version.version_folder, self.file_name)
 
-    def store(self, dependency_data:DataMinerTyping.DependenciesTypedDict, dataminer_collections:list["DataMinerCollection"]) -> Any:
+    def store(self, environment:DataMinerEnvironment.DataMinerEnvironment, dataminer_collections:list["DataMinerCollection"]) -> Any:
         '''Makes the dataminer get the file. Returns the output and stores it in a file.'''
-        data = self.activate(dependency_data)
+        data = self.activate(environment)
         if data is None:
             raise RuntimeError("DataMiner %s returned None!" % self)
         if self.version.version_folder is None:
@@ -113,8 +117,8 @@ class DataMiner():
 
         normalizer_dependencies = Normalizer.LocalNormalizerDependencies(Normalizer.NormalizerDependencies({}, dataminer_collections), self.version, None)
         if self.settings.structure is not None:
-            normalized_data = self.settings.structure.normalize(data, normalizer_dependencies)
-            self.settings.structure.check_types(normalized_data)
+            normalized_data = self.settings.structure.normalize(data, normalizer_dependencies, environment.structure_environment)
+            self.settings.structure.check_types(normalized_data, environment.structure_environment)
 
         return self.get_data_file() # since the normalizing immediately before may modify it.
 
@@ -216,7 +220,7 @@ class DataMiner():
 class NullDataMiner(DataMiner):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
+    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict, structure_environment:StructureEnvironment.StructureEnvironment) -> Any:
         raise RuntimeError("Attempted to use `activate` from a NullDataMiner!")
 
     def store(self, dependency_data:DataMinerTyping.DependenciesTypedDict, dataminer_collections:list["DataMinerCollection"]) -> Any:
@@ -279,14 +283,21 @@ class DataMinerCollection():
         with open(data_path, "rt") as f:
             return json.load(f, cls=CustomJson.decoder)
 
-    def get_tag_paths(self, version:Version.Version, tag:str, normalizer_dependencies:Normalizer.NormalizerDependencies) -> list[DataPath.DataPath]:
+    def remove_data_file(self, version:Version.Version) -> None:
+        if version.version_folder is None:
+            raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % version.name)
+        data_path = FileManager.get_version_data_path(version.version_folder, self.file_name)
+        if data_path.exists():
+            data_path.unlink()
+
+    def get_tag_paths(self, version:Version.Version, tag:str, normalizer_dependencies:Normalizer.NormalizerDependencies, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
         if not self.structure.has_tag(tag):
             return []
         dataminer = self.get_version(version)
         if isinstance(dataminer, NullDataMiner):
             return []
         data = dataminer.get_data_file()
-        return self.structure.get_tag_paths(data, tag, version, normalizer_dependencies)
+        return self.structure.get_tag_paths(data, tag, version, normalizer_dependencies, environment)
 
     def compare(
             self,
@@ -294,6 +305,8 @@ class DataMinerCollection():
             version2:Version.Version,
             versions_between:list[Version.Version],
             normalizer_dependencies:Normalizer.NormalizerDependencies,
+            environment:StructureEnvironment.StructureEnvironment,
+            *,
             store:bool=True,
         ) -> str:
         '''Stores the comparison generated by this DataMinerCollection's Structure between two Versions, and returns the report.
@@ -304,10 +317,13 @@ class DataMinerCollection():
         else:
             version1_data = self.get_data_file(version1)
             version2_data = self.get_data_file(version2)
-        report, had_changes = self.structure.comparison_report(version1_data, version2_data, version1, version2, versions_between, normalizer_dependencies)
+        report, had_changes = self.structure.comparison_report(version1_data, version2_data, version1, version2, versions_between, normalizer_dependencies, environment)
         if store and had_changes:
             self.structure.store(report, self.name)
         return report
+
+    def __hash__(self) -> int:
+        return hash(self.name)
 
     def __repr__(self) -> str:
         return "<DataMinerCollection %s>" % self.name
@@ -334,11 +350,18 @@ class DataMinerCollection():
                 return dataminer_setting.dataminer_class(version, dataminer_setting)
         else: return NullDataMiner(version, self.get_null_dataminer_settings())
 
-    def supports_version(self, version:Version.Version) -> bool:
+    def supports_version(self, version:Version.Version, all_dataminers:dict[str,"DataMinerCollection"]) -> bool:
+        version_dataminer_settings:DataMinerSettings
         for dataminer_settings in self.dataminer_settings:
             if version in dataminer_settings.version_range:
-                return True
+                version_dataminer_settings = dataminer_settings
+                break
         else: return False
+        for version_file in version_dataminer_settings.files:
+            if len(version.version_files[version_file].accessors) == 0:
+                return False # cannot datamine it if its files are inaccessible
+        else:
+            return all(all_dataminers[dependency].supports_version(version, all_dataminers) for dependency in version_dataminer_settings.dependencies)
 
     def get_data_file_path(self, version:Version.Version) -> Path:
         if version.version_folder is None:

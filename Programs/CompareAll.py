@@ -4,9 +4,12 @@ from typing import Generator, Iterable, TypeVar
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMiners as DataMiners
 import Structure.Normalizer as Normalizer
+import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.FileManager as FileManager
 import Version.Version as Version
 import Version.VersionParser as VersionParser
+
+COMPARING_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing)
 
 FlattenType = TypeVar("FlattenType")
 def flatten(matrix:Iterable[Iterable[FlattenType]]) -> Generator[FlattenType, None, None]:
@@ -28,7 +31,7 @@ def compare(
         undataminable_versions_between:list[Version.Version],
         normalizer_dependencies:Normalizer.NormalizerDependencies,
     ) -> None:
-    dataminer_collection.compare(version1, version2, undataminable_versions_between, normalizer_dependencies)
+    dataminer_collection.compare(version1, version2, undataminable_versions_between, normalizer_dependencies, COMPARING_ENVIRONMENT)
 
 def compare_all_of(
         dataminer_collection:DataMiner.DataMinerCollection,
