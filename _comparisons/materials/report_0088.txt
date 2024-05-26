@@ -1,14 +1,47 @@
-Difference of "materials" between "1.16.100.56" (beta of "1.16.100") and "1.16.100.57" (beta of "1.16.100").
+Difference of "materials" between "1.16.210.59" (beta of "1.16.210") and "1.16.210.60" (beta of "1.16.210").
 
 Changed material "entity":
-	Changed resource pack "core":
-		Changed field "materials":
-			Total material: 188 (+1, -1)
-			Added material "experience_orb:entity":
-				field "+defines":
-					definition: "USE_UV_ANIM"
-					definition: "ALPHA_TEST"
-					definition: "Blending"
-					definition: "USE_OVERLAY"
-					definition: "USE_MASK"
-			Removed material "experience_orb:entity_custom" of field "+defines": definition: "USE_UV_ANIM".
+	Total resource pack: 2 (+0, -1)
+	Removed resource pack "experimental":
+		field "materials":
+			material "entity:entity_static":
+				field "+defines": definition: "USE_OVERLAY"
+				field "msaaSupport": "Both"
+			material "entity_emissive:entity": field "+defines": definition: "USE_EMISSIVE"
+			material "entity_static":
+				field "+samplerStates":
+					sampler state:
+						field "samplerIndex": 0
+						field "textureFilter": "Point"
+				field "fragmentShader": "shaders/entity.fragment"
+				field "msaaSupport": "Both"
+				field "variants":
+					variant:
+						material "skinning":
+							field "+defines": definition: "USE_SKINNING"
+							field "vertexFields":
+								vertex field: field "field": "Position"
+								vertex field: field "field": "BoneId0"
+								vertex field: field "field": "Normal"
+								vertex field: field "field": "UV0"
+					variant:
+						material "skinning_color":
+							field "+defines":
+								definition: "USE_SKINNING"
+								definition: "USE_OVERLAY"
+							field "+states": statement: "Blending"
+							field "vertexFields":
+								vertex field: field "field": "Position"
+								vertex field: field "field": "BoneId0"
+								vertex field: field "field": "Color"
+								vertex field: field "field": "Normal"
+								vertex field: field "field": "UV0"
+				field "vertexFields":
+					vertex field: field "field": "Position"
+					vertex field: field "field": "Normal"
+					vertex field: field "field": "UV0"
+				field "vertexShader": "shaders/entity.vertex"
+				field "vrGeometryShader": "shaders/entity.geometry"
+			material "glow_squid:entity_emissive": empty
+		field "defined_in": resource pack: "experimental_caves_and_cliffs"
+		field "version": "1.0.0"

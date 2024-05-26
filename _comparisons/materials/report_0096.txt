@@ -1,55 +1,63 @@
-Difference of "materials" between "1.16.220.51" (beta of "1.16.220") and "1.16.220.52" (beta of "1.16.220").
+Difference of "materials" between "1.17.20.21" (beta of "1.17.30") and "1.17.20.22" (beta of "1.17.30").
 
-Changed material "ui3D":
-	Total resource pack: 1 (+0, -1)
-	Changed resource pack "core":
-		Changed field "materials":
-			Total material: 32 (+1, -0)
-			Added material "glow_sign_text":
-				field "+defines":
-					definition: "ALPHA_TEST"
-					definition: "USE_EMISSIVE"
-				field "+samplerStates":
-					sampler state:
-						field "samplerIndex": 0
-						field "textureFilter": "Point"
-				field "+states": statement: "Blending"
-				field "depthBias": 10.0
-				field "depthBiasOGL": 10.0
-				field "depthFunc": "LessEqual"
-				field "fragmentShader": "shaders/text.fragment"
-				field "msaaSupport": "Both"
-				field "slopeScaledDepthBias": 2.0
-				field "slopeScaledDepthBiasOGL": 10.0
-				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
-				field "vertexShader": "shaders/color_uv.vertex"
-				field "vrGeometryShader": "shaders/color_uv.geometry"
-	Removed resource pack "experimental":
+Total material: 14 (+1, -1)
+Removed material "barrier":
+	resource pack "core":
 		field "materials":
-			material "glow_sign_text":
+			material "barrier":
 				field "+defines":
 					definition: "ALPHA_TEST"
-					definition: "USE_EMISSIVE"
+					definition: "TEXEL_AA"
+					definition: "ATLAS_TEXTURE"
 				field "+samplerStates":
 					sampler state:
 						field "samplerIndex": 0
-						field "textureFilter": "Point"
-				field "+states": statement: "Blending"
-				field "depthBias": 10.0
-				field "depthBiasOGL": 10.0
+						field "textureFilter": "TexelAA"
+					sampler state:
+						field "samplerIndex": 1
+						field "textureFilter": "Bilinear"
+				field "+states": statement: "DisableAlphaWrite"
+				field "blendDst": "OneMinusSrcAlpha"
+				field "blendSrc": "SourceAlpha"
 				field "depthFunc": "LessEqual"
-				field "fragmentShader": "shaders/text.fragment"
+				field "fragmentShader": "shaders/renderchunk.fragment"
 				field "msaaSupport": "Both"
-				field "slopeScaledDepthBias": 2.0
-				field "slopeScaledDepthBiasOGL": 10.0
 				field "vertexFields":
 					vertex field: field "field": "Position"
+					vertex field: field "field": "UV1"
 					vertex field: field "field": "Color"
 					vertex field: field "field": "UV0"
-				field "vertexShader": "shaders/color_uv.vertex"
-				field "vrGeometryShader": "shaders/color_uv.geometry"
-		field "defined_in": resource pack: "experimental_caves_and_cliffs"
+				field "vertexShader": "shaders/barrier.vertex"
+				field "vrGeometryShader": "shaders/uv.geometry"
+		field "defined_in": resource pack: "vanilla"
+		field "version": "1.0.0"
+Added material "cameraFacingSprite":
+	resource pack "core":
+		field "materials":
+			material "camera_facing_sprite":
+				field "+defines":
+					definition: "ALPHA_TEST"
+					definition: "TEXEL_AA"
+					definition: "ATLAS_TEXTURE"
+				field "+samplerStates":
+					sampler state:
+						field "samplerIndex": 0
+						field "textureFilter": "TexelAA"
+					sampler state:
+						field "samplerIndex": 1
+						field "textureFilter": "Bilinear"
+				field "+states": statement: "DisableAlphaWrite"
+				field "blendDst": "OneMinusSrcAlpha"
+				field "blendSrc": "SourceAlpha"
+				field "depthFunc": "LessEqual"
+				field "fragmentShader": "shaders/renderchunk.fragment"
+				field "msaaSupport": "Both"
+				field "vertexFields":
+					vertex field: field "field": "Position"
+					vertex field: field "field": "UV1"
+					vertex field: field "field": "Color"
+					vertex field: field "field": "UV0"
+				field "vertexShader": "shaders/cameraFacingSprite.vertex"
+				field "vrGeometryShader": "shaders/uv.geometry"
+		field "defined_in": resource pack: "vanilla"
 		field "version": "1.0.0"
