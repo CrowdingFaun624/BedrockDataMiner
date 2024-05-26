@@ -26,8 +26,6 @@ class Structure(Generic[a]):
 
     def check_initialization_parameters(self) -> None: ...
 
-    def modifier_modify(self, data:Any) -> None: ...
-
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.name)
 
