@@ -89,7 +89,8 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
-# TODO: figure out why comparison reports are wrong
+# TODO: make CompareAll clear caches upon completing.
+# TODO: Don't make Caches cache anything when simply datamining and not comparing
 # TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions
 # TODO: dataminers for:
 #   renderer/vanilla_lights.json in 1.20.20.23
