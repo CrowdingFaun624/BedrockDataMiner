@@ -12,7 +12,6 @@ class Component():
 
     class_name_article = "a Component"
     class_name = "Component"
-
     my_properties:ComponentCapabilities.Capabilities
     children_has_normalizer_default = False
     type_verifier:TypeVerifier.TypeVerifier

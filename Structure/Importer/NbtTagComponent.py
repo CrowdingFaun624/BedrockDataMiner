@@ -10,19 +10,15 @@ class NbtTagCompoundComponent(DictComponent.DictComponent):
 
     class_name_article = "an NbtTagCompound"
     class_name = "NbtTagCompound"
-
     my_type = [NbtTypes.TAG_Compound]
-
     my_properties = ComponentCapabilities.Capabilities(has_keys=True, is_nbt_tag=True, is_structure=True)
 
 class NbtTagListComponent(ListComponent.ListComponent):
 
     class_name_article = "an NbtTagList"
     class_name = "NbtTagList"
-
     my_type = [NbtTypes.TAG_List]
     required_types:list[type]|None = None
-
     my_properties = ComponentCapabilities.Capabilities(is_nbt_tag=True, is_structure=True)
 
     def check_required_type(self) -> list[Exception]:
@@ -66,8 +62,6 @@ class NbtKeymapTagCompoundComponent(KeymapComponent.KeymapComponent):
 
     class_name_article = "an NbtKeymapTagCompound"
     class_name = "NbtKeymapTagCompound"
-
     my_type = [NbtTypes.TAG_Compound]
-
     my_properties = ComponentCapabilities.Capabilities(has_importable_keys=True, has_keys=True, is_nbt_tag=True, is_structure=True)
     children_has_normalizer_default = True

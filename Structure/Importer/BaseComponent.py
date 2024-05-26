@@ -15,9 +15,7 @@ class BaseComponent(Component.Component):
 
     class_name_article = "a Base"
     class_name = "Base"
-
     my_properties = ComponentCapabilities.Capabilities(is_base=True)
-
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("imports", "a list", False, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(

@@ -8,9 +8,7 @@ class TypeAliasComponent(Component.Component):
 
     class_name_article = "a TypeAlias"
     class_name = "TypeAlias"
-
     my_properties = ComponentCapabilities.Capabilities(is_type_alias=True)
-
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),

@@ -23,12 +23,9 @@ class ListComponent(StructureComponent.StructureComponent):
 
     class_name_article = "a List"
     class_name = "List"
-
     my_type = [list]
-
     my_properties = ComponentCapabilities.Capabilities(is_structure=True)
     final:ListStructure.ListStructure
-
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),

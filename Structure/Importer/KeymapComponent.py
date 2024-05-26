@@ -23,12 +23,9 @@ class KeymapComponent(StructureComponent.StructureComponent):
 
     class_name_article = "a Keymap"
     class_name = "Keymap"
-
     my_type = [dict]
-
     my_properties = ComponentCapabilities.Capabilities(has_importable_keys=True, has_keys=True, is_structure=True)
     final:KeymapStructure.KeymapStructure
-
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("imports", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),

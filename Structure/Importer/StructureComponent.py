@@ -7,7 +7,6 @@ class StructureComponent(Component.Component):
 
     class_name_article = "a StructureComponent"
     class_name = "StructureComponent"
-
     my_type:list[type]
 
     def __init__(self, name: str) -> None:

@@ -24,9 +24,7 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
 
     class_name_article = "an NbtBase"
     class_name = "NbtBase"
-
     my_properties = ComponentCapabilities.Capabilities(is_group=True, is_nbt_base=True)
-
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("endianness", "a str", True, TypeVerifier.EnumTypeVerifier(("big", "little"))),

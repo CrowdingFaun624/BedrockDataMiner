@@ -25,12 +25,9 @@ class DictComponent(StructureComponent.StructureComponent):
 
     class_name_article = "a Dict"
     class_name = "Dict"
-
     my_type = [dict]
-
     my_properties = ComponentCapabilities.Capabilities(has_keys=True, is_structure=True)
     final:DictStructure.DictStructure
-
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("comparison_move_function", "a str", False, str),

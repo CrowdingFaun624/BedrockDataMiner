@@ -11,9 +11,7 @@ class GroupComponent(AbstractGroupComponent.AbstractGroupComponent):
 
     class_name_article = "a Group"
     class_name = "Group"
-
     my_properties = ComponentCapabilities.Capabilities(is_group=True)
-
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, type(None)), "a dict", "a str", "a str or None")),

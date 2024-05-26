@@ -26,9 +26,7 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
     class_name_article = "a Volume"
     class_name = "Volume"
     my_type = {tuple}
-
     my_properties = ComponentCapabilities.Capabilities(is_group=True)
-
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
