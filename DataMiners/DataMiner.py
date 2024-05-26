@@ -312,6 +312,10 @@ class DataMinerCollection():
     def __repr__(self) -> str:
         return "<DataMinerCollection %s>" % self.name
 
+    def clear_caches(self) -> None:
+        '''Clears all caches of this DataMinerCollection's Structure.'''
+        self.structure.clear_caches()
+
     def get_null_dataminer_settings(self) -> DataMinerSettings:
         '''Returns an instance of DataMinerSettings that is usable on a NullDataMiner.'''
         return DataMinerSettings(None, None, NullDataMiner, self.name, [], [], {})

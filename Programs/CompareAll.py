@@ -3,11 +3,10 @@ from typing import Generator, Iterable, TypeVar
 
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMiners as DataMiners
-import Version.VersionParser as VersionParser
 import Structure.Normalizer as Normalizer
 import Utilities.FileManager as FileManager
 import Version.Version as Version
-import Version.VersionTags as VersionTags
+import Version.VersionParser as VersionParser
 
 FlattenType = TypeVar("FlattenType")
 def flatten(matrix:Iterable[Iterable[FlattenType]]) -> Generator[FlattenType, None, None]:
@@ -66,6 +65,8 @@ def compare_all_of(
     else:
         print("Compared all of %s." % dataminer_collection.name)
         exception_holder[dataminer_collection.name] = True
+    finally:
+        dataminer_collection.clear_caches()
 
 def select_dataminers(dataminers:list["DataMiner.DataMinerCollection"]) -> list["DataMiner.DataMinerCollection"]:
     dataminer_names = {dataminer.name: dataminer for dataminer in dataminers}
