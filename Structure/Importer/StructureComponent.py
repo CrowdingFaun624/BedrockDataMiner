@@ -14,6 +14,4 @@ class StructureComponent(Component.Component):
         self.final:Structure.Structure|None = None
 
     def check(self, config: ImporterConfig.ImporterConfig) -> list[Exception]:
-        assert self.final is not None
-        self.final.check_initialization_parameters()
         return super().check(config)

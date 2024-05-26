@@ -91,8 +91,6 @@ class DictComponent(StructureComponent.StructureComponent):
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         exceptions = super().check(config)
-        assert self.final is not None
-        self.final.check_initialization_parameters()
         subcomponent = self.subcomponent_field.get_component()
         types = self.types_field.get_types()
         if subcomponent is None:

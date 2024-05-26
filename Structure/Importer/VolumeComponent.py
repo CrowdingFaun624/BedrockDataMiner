@@ -105,8 +105,6 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
         return exceptions
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
-        assert self.final_structure is not None
         exceptions:list[Exception] = []
-        self.final_structure.check_initialization_parameters()
         exceptions.extend(self.check_components())
         return exceptions

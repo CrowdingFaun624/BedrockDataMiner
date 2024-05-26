@@ -102,8 +102,6 @@ class ListComponent(StructureComponent.StructureComponent):
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         super().check(config)
-        assert self.final is not None
         exceptions:list[Exception] = []
-        self.final.check_initialization_parameters()
         exceptions.extend(self.check_components())
         return exceptions

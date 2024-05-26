@@ -73,10 +73,8 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         super().check(config)
-        assert self.final_structure is not None
         subcomponent = self.subcomponent_field.get_component()
         component_types = self.types_field.get_types()
-        self.final_structure.check_initialization_parameters()
         for value_type in component_types:
             if not issubclass(value_type, NbtTypes.TAG):
                 return [TypeError("%s \"%s\" cannot except non-NbtTag type %s!" % (self.class_name, self.name, value_type.__name__))]
