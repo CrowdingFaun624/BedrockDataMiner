@@ -26,10 +26,13 @@ class TagSearcherDataMiner0(TagSearcherDataMiner.TagSearcherDataMiner):
 
         tag_function, tag_names = TagSearcherDataMiner.parse(self.tags)
         mentioned_tags:dict[str,set[DataPath.DataPath]] = {}
+        dependencies = set(self.dependencies)
         for tag in tag_names:
             mentioned_tags[tag] = set()
             for dataminer_collection in DataMiners.dataminers:
-                mentioned_tags[tag].update(dataminer_collection.get_tag_paths(self.version, tag, normalizer_dependencies))
+                if dataminer_collection.has_tag(tag) and dataminer_collection.name not in dependencies:
+                    raise RuntimeError("DataMiner %s could find tag \"%s\" in DataMiner %s, but it is not a dependency!" % (self, tag, dataminer_collection))
+                mentioned_tags[tag].update(dataminer_collection.get_tag_paths(self.version, tag, normalizer_dependencies, environment.structure_environment))
         output = tag_function(mentioned_tags)
 
         if not self.none_okay and len(output) == 0:
