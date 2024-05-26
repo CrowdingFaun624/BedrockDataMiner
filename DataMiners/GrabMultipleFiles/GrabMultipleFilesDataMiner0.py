@@ -1,7 +1,7 @@
 from typing import Any
 
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabMultipleFiles.GrabMultipleFilesDataMiner as GrabMultipleFilesDataMiner
 import Utilities.Sorting as Sorting
@@ -40,7 +40,7 @@ class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDa
         else:
             self.insert_pack = None
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         files:dict[str,str] = {}
         path_base = self.location
         accessor = self.get_accessor("client")

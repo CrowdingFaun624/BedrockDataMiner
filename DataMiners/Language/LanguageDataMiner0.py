@@ -1,7 +1,9 @@
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Language.LanguageDataMiner as LanguageDataMiner
 import Utilities.Sorting as Sorting
+
 
 class LanguageDataMiner0(LanguageDataMiner.LanguageDataMiner):
 
@@ -16,8 +18,8 @@ class LanguageDataMiner0(LanguageDataMiner.LanguageDataMiner):
         self.location:str = kwargs["location"]
         self.file_display_name:str|None = kwargs["file_display_name"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Language:
-        packs = dependency_data["resource_packs"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Language:
+        packs = environment.dependency_data["resource_packs"]
         assert packs is not None
         pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {pack_path + self.location % (self.language_code,): pack_name for pack_name, pack_path in pack_names}

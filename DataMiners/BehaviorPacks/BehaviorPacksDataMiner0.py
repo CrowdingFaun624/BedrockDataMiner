@@ -1,4 +1,5 @@
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiner as BehaviorPacksDataMiner
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
@@ -11,7 +12,7 @@ class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
     def initialize(self, **kwargs) -> None:
         self.behavior_packs_folder:str = kwargs["behavior_packs_folder"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.BehaviorPackTypedDict]:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.BehaviorPackTypedDict]:
         behavior_pack_order = CollapseResourcePacks.resource_pack_order
         file_list = self.get_accessor("client").get_file_list()
         behavior_packs:list[DataMinerTyping.BehaviorPackTypedDict] = []

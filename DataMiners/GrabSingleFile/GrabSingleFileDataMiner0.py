@@ -1,7 +1,7 @@
 from typing import Any
 
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabSingleFile.GrabSingleFileDataMiner as GrabSingleFileDataMiner
 import Utilities.Sorting as Sorting
@@ -25,7 +25,7 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
         self.file_display_name:str|None = kwargs["file_display_name"]
         self.insert_pack:str|None = kwargs.get("insert_pack", None)
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> Any:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
 
         exception = None
         try:

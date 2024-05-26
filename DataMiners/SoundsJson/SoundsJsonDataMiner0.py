@@ -2,6 +2,7 @@ from typing import IO, Any, Callable, cast
 
 import pyjson5  # supports comments
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.SoundsJson.SoundsJsonDataMiner as SoundsJsonDataMiner
@@ -45,8 +46,8 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
                 else:
                     destination["events"][event_name][resource_pack_name] = event_properties
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.MySoundsJsonTypedDict:
-        resource_packs = dependency_data["resource_packs"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.MySoundsJsonTypedDict:
+        resource_packs = environment.dependency_data["resource_packs"]
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for sounds_json_location in self.sounds_json_locations:

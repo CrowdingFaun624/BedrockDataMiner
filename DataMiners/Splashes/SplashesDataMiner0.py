@@ -2,6 +2,7 @@ from typing import IO, Any, Callable, cast
 
 import pyjson5  # supports comments
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
@@ -17,8 +18,8 @@ class SplashesDataMiner0(SplashesDataMiner.SplashesDataMiner):
     def initialize(self, **kwargs) -> None:
         self.splashes_locations = kwargs["splashes_locations"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Splashes:
-        resource_packs = dependency_data["resource_packs"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Splashes:
+        resource_packs = environment.dependency_data["resource_packs"]
         assert resource_packs is not None
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}

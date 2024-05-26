@@ -1,11 +1,12 @@
 from typing import Any
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
+import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMiners as DataMiners
-import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.TagSearcher.TagSearcherDataMiner as TagSearcherDataMiner
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
-import DataMiners.DataMinerParameters as DataMinerParameters
+
 
 class TagSearcherDataMiner0(TagSearcherDataMiner.TagSearcherDataMiner):
 
@@ -21,7 +22,7 @@ class TagSearcherDataMiner0(TagSearcherDataMiner.TagSearcherDataMiner):
         # self.record_type = RecordType[kwargs["record_type"]]
         self.none_okay = kwargs.get("none_okay", False)
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> list[DataPath.DataPath|Any]:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataPath.DataPath|Any]:
         normalizer_dependencies = Normalizer.NormalizerDependencies({}, DataMiners.dataminers)
 
         tag_function, tag_names = TagSearcherDataMiner.parse(self.tags)

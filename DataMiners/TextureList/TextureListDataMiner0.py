@@ -1,3 +1,4 @@
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.TextureList.TextureListDataMiner as TextureListDataMiner
@@ -13,8 +14,8 @@ class TextureListDataMiner0(TextureListDataMiner.TextureListDataMiner):
     def initialize(self, **kwargs) -> None:
         self.locations:list[str] = kwargs["locations"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,list[str]]:
-        packs = dependency_data["resource_packs"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,list[str]]:
+        packs = environment.dependency_data["resource_packs"]
         assert packs is not None
         pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {}

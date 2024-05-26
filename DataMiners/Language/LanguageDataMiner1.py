@@ -1,7 +1,9 @@
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Language.LanguageDataMiner as LanguageDataMiner
 import Utilities.Sorting as Sorting
+
 
 class LanguageDataMiner1(LanguageDataMiner.LanguageDataMiner):
 
@@ -16,7 +18,7 @@ class LanguageDataMiner1(LanguageDataMiner.LanguageDataMiner):
         self.location:str = kwargs["location"]
         self.file_display_name:str|None = kwargs["file_display_name"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Language:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Language:
         exception = None
         try:
             file = self.get_accessor("client").read(self.location % self.language_code, "t")

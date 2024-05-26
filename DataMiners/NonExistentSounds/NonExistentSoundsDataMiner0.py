@@ -1,8 +1,10 @@
 from typing import Generator
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.NonExistentSounds.NonExistentSoundsDataMiner as NonExistentSoundsDataMiner
+
 
 def strip_file_name(file_name:str, resource_packs_location:str|None) -> str|None:
     '''Removes the resource pack info and file extension from the file name.
@@ -41,8 +43,8 @@ class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDa
     def initialize(self, **kwargs) -> None:
         self.resource_packs_location:str|None = kwargs["resource_packs_location"]
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NonExistentSounds:
-        sound_files_data = dependency_data["sound_files"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.NonExistentSounds:
+        sound_files_data = environment.dependency_data["sound_files"]
         assert sound_files_data is not None
         sound_files = {strip_file_name(sound_file, self.resource_packs_location) for sound_file in sound_files_data.keys()}
         sound_files.discard(None)
@@ -50,7 +52,7 @@ class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDa
             raise RuntimeError("There are no sound files in a resource pack folder!")
 
         non_existent_sounds:dict[str,dict[str,list[str]]] = {}
-        sound_definitions = dependency_data["sound_definitions"]
+        sound_definitions = environment.dependency_data["sound_definitions"]
         assert sound_definitions is not None
         total_sound_locations = 0
         total_non_existent_sound_locations = 0

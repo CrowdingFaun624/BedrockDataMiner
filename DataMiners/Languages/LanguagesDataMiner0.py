@@ -1,6 +1,7 @@
 import json
 from typing import IO, Any
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
 
@@ -11,8 +12,8 @@ def decode(io:IO[bytes]) -> Any:
 
 class LanguagesDataMiner0(LanguagesDataMiner.LanguagesDataMiner):
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
-        resource_packs = dependency_data["resource_packs"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.LanguagesTypedDict]:
+        resource_packs = environment.dependency_data["resource_packs"]
         assert resource_packs is not None
         accessor = self.get_accessor("client")
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]

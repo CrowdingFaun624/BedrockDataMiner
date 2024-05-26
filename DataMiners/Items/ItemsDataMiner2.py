@@ -1,10 +1,13 @@
-import pyjson5
 from typing import Any
 
+import pyjson5
+
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.Items.ItemsDataMiner as ItemsDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.Items.ItemsDataMiner as ItemsDataMiner
 import Utilities.Sorting as Sorting
+
 
 class ItemsDataMiner2(ItemsDataMiner.ItemsDataMiner):
 
@@ -15,7 +18,7 @@ class ItemsDataMiner2(ItemsDataMiner.ItemsDataMiner):
     def initialize(self, **kwargs) -> None:
         self.location:str = kwargs["location"]
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> Any:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
 
         exception = None
         try:

@@ -1,7 +1,7 @@
 from typing import Any, Literal
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabPackFile.GrabPackFileDataMiner as GrabPackFileDataMiner
 import Utilities.Sorting as Sorting
@@ -25,8 +25,8 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
         self.pack_type:Literal["resource_packs", "behavior_packs"] = kwargs["pack_type"]
         self.file_display_name:str|None = kwargs["file_display_name"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
-        packs = dependency_data[self.pack_type]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+        packs = environment.dependency_data[self.pack_type]
         assert packs is not None
         pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {}

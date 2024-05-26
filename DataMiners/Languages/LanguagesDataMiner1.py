@@ -1,5 +1,6 @@
 import json
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
@@ -14,8 +15,8 @@ class LanguagesDataMiner1(LanguagesDataMiner.LanguagesDataMiner):
     def initialize(self, **kwargs) -> None:
         self.languages_location:str = kwargs["languages_location"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
-        resource_packs = dependency_data["resource_packs"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.LanguagesTypedDict]:
+        resource_packs = environment.dependency_data["resource_packs"]
         assert resource_packs is not None
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         languages_files = {resource_pack_path + self.languages_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names}

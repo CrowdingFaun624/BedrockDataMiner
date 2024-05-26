@@ -1,5 +1,6 @@
 import json
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.MusicDefinitions.MusicDefinitionsDataMiner as MusicDefinitionsDataMiner
 import Utilities.Sorting as Sorting
@@ -7,8 +8,8 @@ import Utilities.Sorting as Sorting
 
 class MusicDefinitionsDataMiner0(MusicDefinitionsDataMiner.MusicDefinitionsDataMiner):
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.MyMusicDefinitions:
-        resource_packs = dependency_data["resource_packs"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.MyMusicDefinitions:
+        resource_packs = environment.dependency_data["resource_packs"]
         assert resource_packs is not None
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         resource_pack_files = {"resource_packs/%s/sounds/music_definitions.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}

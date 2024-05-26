@@ -1,10 +1,13 @@
-import pyjson5 # supports comments
-from typing import Any, Callable, cast, IO
+from typing import IO, Any, Callable, cast
 
-import DataMiners.Items.ItemsDataMiner as ItemsDataMiner
+import pyjson5  # supports comments
+
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.Items.ItemsDataMiner as ItemsDataMiner
 import Utilities.Sorting as Sorting
+
 
 class ItemsDataMiner1(ItemsDataMiner.ItemsDataMiner):
 
@@ -17,8 +20,8 @@ class ItemsDataMiner1(ItemsDataMiner.ItemsDataMiner):
         self.locations:list[str] = kwargs["locations"]
         self.pack_type:str = kwargs["pack_type"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Items:
-        resource_packs = dependency_data[self.pack_type]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Items:
+        resource_packs = environment.dependency_data[self.pack_type]
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for items_location in self.locations:

@@ -1,3 +1,4 @@
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.SoundFiles.SoundFilesDataMiner as SoundFilesDataMiner
 import Programs.EvilFSBExtractor as EvilFSBExtractor
@@ -6,7 +7,7 @@ import Utilities.Sorting as Sorting
 
 class SoundFilesDataMiner0(SoundFilesDataMiner.SoundFilesDataMiner):
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
         accessor = self.get_accessor("client")
         file_list = accessor.get_file_list()
         assert not any("\\" in file for file in file_list) # can't trust it, you see.

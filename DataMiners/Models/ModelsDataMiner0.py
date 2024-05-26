@@ -4,6 +4,7 @@ from typing import Any
 
 import pyjson5  # supports comments
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Models.ModelsDataMiner as ModelsDataMiner
@@ -21,8 +22,8 @@ class ModelsDataMiner0(ModelsDataMiner.ModelsDataMiner):
         if not self.location.endswith("/"):
             raise ValueError("\"location\" \"%s\" does not end in \"/\"!" % (self.location))
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
-        packs = dependency_data["resource_packs"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+        packs = environment.dependency_data["resource_packs"]
         assert packs is not None
         files:dict[tuple[str,str],str] = {}
         accessor = self.get_accessor("client")

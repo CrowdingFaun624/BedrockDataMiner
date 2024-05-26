@@ -1,5 +1,7 @@
 import DataMiners.DataMiner as DataMiner
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
+
 
 class LanguageDataMiner(DataMiner.DataMiner):
 
@@ -35,5 +37,5 @@ class LanguageDataMiner(DataMiner.DataMiner):
         else:
             return key, {"comment": comment, "value": value}
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Language:
-        return super().activate(dependency_data)
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Language:
+        return super().activate(environment)

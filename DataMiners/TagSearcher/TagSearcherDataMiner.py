@@ -3,6 +3,7 @@ import re
 from typing import Any, Callable
 
 import DataMiners.DataMiner as DataMiner
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Structure.DataPath as DataPath
 
@@ -131,5 +132,5 @@ def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath.DataPath|Any]]],
 
 class TagSearcherDataMiner(DataMiner.DataMiner):
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> list[DataPath.DataPath]:
-        return super().activate(dependency_data)
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataPath.DataPath]:
+        return super().activate(environment)

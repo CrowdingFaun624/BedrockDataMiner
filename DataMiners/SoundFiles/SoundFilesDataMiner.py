@@ -1,8 +1,10 @@
-import audio_metadata
 import enum
-from typing import Any, IO
+from typing import IO, Any
+
+import audio_metadata
 
 import DataMiners.DataMiner as DataMiner
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.FileManager as FileManager
 
@@ -67,5 +69,5 @@ def serialize(data:Any) -> Any:
 
 class SoundFilesDataMiner(DataMiner.DataMiner):
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
-        return super().activate(dependency_data)
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
+        return super().activate(environment)

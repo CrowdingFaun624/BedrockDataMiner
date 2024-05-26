@@ -1,8 +1,9 @@
 from typing import IO, Any, Callable, cast
 
-import pyjson5 # supports comments
+import pyjson5  # supports comments
 
 import DataMiners.BlocksClient.BlocksClientDataMiner as BlocksDataMiner
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Sorting as Sorting
@@ -15,8 +16,8 @@ class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
     def initialize(self, **kwargs) -> None:
         self.blocks_locations:list[str] = kwargs["blocks_locations"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.MyBlocksJsonClientBlockTypedDict]:
-        resource_packs = dependency_data["resource_packs"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.MyBlocksJsonClientBlockTypedDict]:
+        resource_packs = environment.dependency_data["resource_packs"]
         assert resource_packs is not None
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}

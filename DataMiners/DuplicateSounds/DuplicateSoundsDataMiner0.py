@@ -1,11 +1,12 @@
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiner as DuplicateSoundsDataMiner
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 
 
 class DuplicateSoundsDataMiner0(DuplicateSoundsDataMiner.DuplicateSoundsDataMiner):
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> dict[str,list[DataMinerTyping.DuplicateSoundsTypedDict]]:
-        sound_files = dependency_data["sound_files"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,list[DataMinerTyping.DuplicateSoundsTypedDict]]:
+        sound_files = environment.dependency_data["sound_files"]
         assert sound_files is not None
 
         hash_dict:dict[str,list[DataMinerTyping.DuplicateSoundsTypedDict]] = {}

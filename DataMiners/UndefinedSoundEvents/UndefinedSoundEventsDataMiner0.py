@@ -1,5 +1,6 @@
 from typing import Generator, Iterable, TypeVar
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiner as UndefinedSoundEventsDataMiner
@@ -18,17 +19,17 @@ class UndefinedSoundEventsDataMiner0(UndefinedSoundEventsDataMiner.UndefinedSoun
     def initialize(self, **kwargs) -> None:
         self.use_music_definitions:bool = kwargs["use_music_definitions"]
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.UndefinedSoundEvents:
-        sounds_json = dependency_data["sounds_json"]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.UndefinedSoundEvents:
+        sounds_json = environment.dependency_data["sounds_json"]
         assert sounds_json is not None
         sounds_json_sound_events = UndefinedSoundEventsDataMiner.get_sounds_json_sound_events(sounds_json)
 
-        sound_definitions = dependency_data["sound_definitions"]
+        sound_definitions = environment.dependency_data["sound_definitions"]
         assert sound_definitions is not None
         sound_definitions_sound_events = set(sound_definitions.keys())
 
         if self.use_music_definitions:
-            music_definitions = dependency_data["music_definitions"]
+            music_definitions = environment.dependency_data["music_definitions"]
             assert music_definitions is not None
             music_definitions_sound_events = UndefinedSoundEventsDataMiner.get_music_definitions_sound_events(music_definitions)
 

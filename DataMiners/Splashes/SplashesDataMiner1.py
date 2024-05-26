@@ -1,10 +1,11 @@
 import json
-from typing import Any
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
 import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
 import Utilities.Sorting as Sorting
+
 
 class SplashesDataMiner1(SplashesDataMiner.SplashesDataMiner):
 
@@ -15,7 +16,7 @@ class SplashesDataMiner1(SplashesDataMiner.SplashesDataMiner):
     def initialize(self, **kwargs) -> None:
         self.splashes_location:str = kwargs["splashes_location"]
     
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.Splashes:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Splashes:
 
         exception = None
         try:

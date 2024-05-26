@@ -1,5 +1,7 @@
 import DataMiners.DataMiner as DataMiner
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
+
 
 def get_new_trace(trace:list[str], new_items:list[str]|str) -> list[str]:
     new_trace = trace.copy()
@@ -60,5 +62,5 @@ def get_music_definitions_sound_events(music_definitions:DataMinerTyping.MyMusic
 
 class UnusedSoundEventsDataMiner(DataMiner.DataMiner):
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.UnusedSoundEvents:
-        return super().activate(dependency_data)
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.UnusedSoundEvents:
+        return super().activate(environment)

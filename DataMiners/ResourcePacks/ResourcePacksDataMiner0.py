@@ -1,3 +1,4 @@
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
@@ -13,7 +14,7 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
     def initialize(self, **kwargs) -> None:
         self.resource_packs_folder:str = kwargs["resource_packs_folder"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.ResourcePackTypedDict]:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.ResourcePackTypedDict]:
         resource_pack_order = CollapseResourcePacks.resource_pack_order
         file_list = self.get_accessor("client").get_file_list()
         resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = []

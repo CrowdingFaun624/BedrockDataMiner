@@ -1,5 +1,6 @@
 import json
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
@@ -14,7 +15,7 @@ class LanguagesDataMiner2(LanguagesDataMiner.LanguagesDataMiner):
     def initialize(self, **kwargs) -> None:
         self.languages_location:str = kwargs["languages_location"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.LanguagesTypedDict]:
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.LanguagesTypedDict]:
         accessor = self.get_accessor("client")
         if not accessor.file_exists(self.languages_location):
             raise FileNotFoundError("Language file \"%s\" does not exist in \"%s\"!" % (self.languages_location, self.version.name))

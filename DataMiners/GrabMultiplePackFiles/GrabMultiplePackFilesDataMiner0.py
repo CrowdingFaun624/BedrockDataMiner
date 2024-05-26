@@ -1,7 +1,7 @@
 from typing import Any, Literal
 
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiner as GrabMultiplePackFilesDataMiner
 import Utilities.Sorting as Sorting
@@ -37,8 +37,8 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
             self.suffixes = None
         self.file_display_name:str|None = kwargs["file_display_name"]
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> Any:
-        packs = dependency_data[self.pack_type]
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+        packs = environment.dependency_data[self.pack_type]
         assert packs is not None
         files:dict[tuple[str,str],str] = {}
         accessor = self.get_accessor("client")

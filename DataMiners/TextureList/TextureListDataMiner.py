@@ -1,9 +1,8 @@
-from typing import Any
-
 import DataMiners.DataMiner as DataMiner
-import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
+
 
 class TextureListDataMiner(DataMiner.DataMiner):
 
-    def activate(self, dependency_data: DataMinerTyping.DependenciesTypedDict) -> dict[str,list[str]]:
-        return super().activate(dependency_data)
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,list[str]]:
+        return super().activate(environment)
