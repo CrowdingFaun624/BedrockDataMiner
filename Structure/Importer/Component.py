@@ -23,6 +23,7 @@ class Component():
         self.parents:list[Component] = []
         self.final:StructureBase.StructureBase|None = None
         self.children_has_normalizer = False
+        self.children_has_normalizer_dependencies = False
         self.children_tags:set[str] = set()
         self.fields:list["Field.Field"] = []
 
@@ -65,6 +66,9 @@ class Component():
         if child is not None:
             if child.children_has_normalizer and not self.children_has_normalizer:
                 self.children_has_normalizer = True
+                has_changed = True
+            if child.children_has_normalizer_dependencies and not self.children_has_normalizer_dependencies:
+                self.children_has_normalizer_dependencies = True
                 has_changed = True
             if self.children_tags is not None and child.children_tags is not None:
                 tags_length_before = len(self.children_tags)

@@ -28,6 +28,7 @@ class NormalizerComponent(Component.Component):
 
         self.dependencies = data.get("dependencies", [])
         self.children_has_normalizer = True
+        self.children_has_normalizer_dependencies = (len(self.dependencies) > 0)
         self.final:Normalizer.Normalizer|None = None
 
         self.function_field = FunctionField.FunctionField(data["function_name"], ["function_name"])
