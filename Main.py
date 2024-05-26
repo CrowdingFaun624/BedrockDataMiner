@@ -29,12 +29,12 @@ PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "CustomJson", "DataMine
 def get_user_input() -> None:
     output = ""
     while output not in PROGRAM_NAMES:
-        output = input("Choose a program (%s)" % (PROGRAM_NAMES))
+        output = input("Choose a program (%s):\n" % (PROGRAM_NAMES))
     user_input[0] = output
 user_input:list[Any] = [None]
 if __name__ == "__main__":
     import threading
-    user_thread = threading.Thread(target=get_user_input)
+    user_thread = threading.Thread(target=get_user_input, daemon=True)
     user_thread.start()
 
 import DataMiners.DataMiners as DataMiners
