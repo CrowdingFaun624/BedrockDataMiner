@@ -1,5 +1,6 @@
 from typing import Any, Callable, cast
 
+import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
@@ -20,7 +21,7 @@ COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"has_
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
 TAG_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_tag": True}])
 
-class VolumeComponent(GroupComponent.GroupComponent):
+class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
 
     class_name_article = "a Volume"
     class_name = "Volume"
@@ -42,28 +43,24 @@ class VolumeComponent(GroupComponent.GroupComponent):
     )
 
     def __init__(self, data:ComponentTyping.VolumeTypedDict, name: str) -> None:
+        super().__init__(name)
         self.verify_arguments(data, name)
 
-        self.name = name
         self.field = data.get("field", "block")
         self.position_key = data["position_key"]
         self.print_additional_data = data.get("print_additional_data", True)
         self.state_key = data["state_key"]
-
         self.children_has_normalizer = True # has to turn into tuple that the thing recognizes.
-        self.children_tags:set[str] = set()
-        self.links_to_other_components:list[Component.Component] = []
-        self.parents:list[Component.Component] = []
-
         self.final:dict[type,VolumeStructure.VolumeStructure]|None=None
         self.final_structure:VolumeStructure.VolumeStructure|None=None
+        self.my_type.add(tuple)
 
         self.subcomponent_field:OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent] = OptionalComponentField.OptionalComponentField(data.get("subcomponent"), COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.this_type_field = TypeField.TypeField(data["this_type"], ["this_type"])
         self.tags_field:ComponentListField.ComponentListField[TagComponent.TagComponent] = ComponentListField.ComponentListField(data.get("tags", []), TAG_REQUEST_PROPERTIES, ["tags"])
-        self.fields = [self.subcomponent_field, self.normalizer_field, self.types_field, self.this_type_field, self.tags_field]
+        self.fields.extend([self.subcomponent_field, self.normalizer_field, self.types_field, self.this_type_field, self.tags_field])
 
     def set_component(self, components: dict[str, Component.Component], functions: dict[str, Callable[..., Any]]) -> None:
         super().set_component(components, functions)

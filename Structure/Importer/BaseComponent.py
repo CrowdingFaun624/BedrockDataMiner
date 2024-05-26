@@ -34,23 +34,17 @@ class BaseComponent(Component.Component):
     )
 
     def __init__(self, data:ComponentTyping.BaseComponentTypedDict, name:str) -> None:
+        super().__init__(name)
         self.verify_arguments(data, name)
 
-        self.name = name
         self.structure_name = data["name"]
         self.imports = data.get("imports", None)
-
-        self.links_to_other_components:list[Component.Component] = []
-        self.parents:list[Component.Component] = []
         self.final:StructureBase.StructureBase|None = None
-
-        self.children_has_normalizer = False
-        self.children_tags:set[str] = set()
 
         self.subcomponent_field:ComponentField.ComponentField[StructureComponent.StructureComponent] = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.normalizer_field:OptionalComponentField.OptionalComponentField[NormalizerComponent.NormalizerComponent] = OptionalComponentField.OptionalComponentField(data.get("normalizer", None), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
         self.post_normalizer_field:OptionalComponentField.OptionalComponentField[NormalizerComponent.NormalizerComponent] = OptionalComponentField.OptionalComponentField(data.get("post_normalizer", None), NORMALIZER_REQUEST_PROPERTIES, ["post_normalizer"])
-        self.fields = [self.subcomponent_field, self.normalizer_field, self.post_normalizer_field]
+        self.fields.extend([self.subcomponent_field, self.normalizer_field, self.post_normalizer_field])
 
     def create_final(self) -> None:
         normalizer_component = self.normalizer_field.get_component()

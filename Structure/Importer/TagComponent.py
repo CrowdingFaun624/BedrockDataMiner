@@ -17,13 +17,10 @@ class TagComponent(Component.Component):
     children_has_normalizer = False
 
     def __init__(self, data: ComponentTyping.TagTypedDict, name: str) -> None:
+        super().__init__(name)
         self.verify_arguments(data, name)
-        self.name = name
-        self.final:str|None = None
 
-        self.links_to_other_components:list[Component.Component] = []
-        self.parents:list[Component.Component] = []
-        self.fields = []
+        self.final:str|None = None
 
     def create_final(self) -> None:
         self.final = self.name

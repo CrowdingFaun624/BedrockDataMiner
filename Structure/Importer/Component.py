@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence, Union
 
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
-import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.ImporterConfig as ImporterConfig
+import Structure.StructureBase as StructureBase
 import Utilities.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
@@ -17,14 +17,14 @@ class Component():
     children_has_normalizer_default = False
     type_verifier:TypeVerifier.TypeVerifier
 
-    name: str
-    fields:list["Field.Field"]
-    links_to_other_components:list["Component"]
-    parents:list["Component"]
-    children_has_normalizer:bool
-    children_tags:set[str]|None=None
-
-    def __init__(self, data:ComponentTyping.ComponentTypedDicts, name:str) -> None: ...
+    def __init__(self, name:str) -> None:
+        self.name = name
+        self.links_to_other_components:list[Component] = []
+        self.parents:list[Component] = []
+        self.final:StructureBase.StructureBase|None = None
+        self.children_has_normalizer = False
+        self.children_tags:set[str] = set()
+        self.fields:list["Field.Field"] = []
 
     def link_components(self, components:Sequence["Component"]) -> None:
         self.links_to_other_components.extend(components)

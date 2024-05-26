@@ -1,18 +1,17 @@
 import Structure.Importer.Component as Component
-import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Structure as Structure
 
 
-class StructureComponent(Component.Component): # just for type hints lol
+class StructureComponent(Component.Component):
 
     class_name_article = "a StructureComponent"
     class_name = "StructureComponent"
 
     my_type:list[type]
 
-    def __init__(self, data: ComponentTyping.StructureComponentTypedDicts, name: str, index: int) -> None:
-        self.name = name
+    def __init__(self, name: str) -> None:
+        super().__init__(name)
         self.final:Structure.Structure|None = None
 
     def check(self, config: ImporterConfig.ImporterConfig) -> list[Exception]:

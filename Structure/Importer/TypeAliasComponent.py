@@ -17,18 +17,13 @@ class TypeAliasComponent(Component.Component):
     )
 
     def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str) -> None:
+        super().__init__(name)
         self.verify_arguments(data, name)
         if name in ComponentTyping.DEFAULT_TYPES:
             raise ValueError("A TypeAlias's name cannot be one of [%s]!" % ", ".join(ComponentTyping.DEFAULT_TYPES.keys()))
 
-        self.name = name
         self.types_strs = data["types"]
-
         self.types:list[type] = self.get_types()
-        self.links_to_other_components:list[Component.Component] = []
-        self.parents:list[Component.Component] = []
-        self.children_has_normalizer = False
-        self.fields = []
 
     def get_types(self) -> list[type]:
         types:list[type] = []

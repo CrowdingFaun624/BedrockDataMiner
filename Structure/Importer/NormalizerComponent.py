@@ -23,19 +23,15 @@ class NormalizerComponent(Component.Component):
     )
 
     def __init__(self, data:ComponentTyping.NormalizerTypedDict, name:str) -> None:
+        super().__init__(name)
         self.verify_arguments(data, name)
 
-        self.name = name
         self.dependencies = data.get("dependencies", [])
-
-        self.final:Normalizer.Normalizer|None = None
-        self.links_to_other_components:list[Component.Component] = []
-        self.parents:list[Component.Component] = []
-
         self.children_has_normalizer = True
+        self.final:Normalizer.Normalizer|None = None
 
         self.function_field = FunctionField.FunctionField(data["function_name"], ["function_name"])
-        self.fields = [self.function_field]
+        self.fields.extend([self.function_field])
 
     def set_component(self, components: dict[str, Component.Component], functions: dict[str, Callable]) -> None:
         super().set_component(components, functions)

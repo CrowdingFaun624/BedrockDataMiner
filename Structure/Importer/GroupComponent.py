@@ -1,14 +1,13 @@
-import Structure.Importer.Component as Component
+import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.GroupItemField as GroupItemField
 import Structure.Importer.ImporterConfig as ImporterConfig
-import Structure.Structure as Structure
 import Utilities.TypeVerifier as TypeVerifier
 
 
-class GroupComponent(Component.Component):
+class GroupComponent(AbstractGroupComponent.AbstractGroupComponent):
 
     class_name_article = "a Group"
     class_name = "Group"
@@ -21,21 +20,13 @@ class GroupComponent(Component.Component):
     )
 
     def __init__(self, data:ComponentTyping.GroupComponentTypedDict, name:str) -> None:
+        super().__init__(name)
         self.verify_arguments(data, name)
-
-        self.name = name
-        self.links_to_other_components:list[Component.Component] = []
-        self.parents:list[Component.Component] = []
-
-        self.my_type:set[type] = set()
-        self.final:dict[type,Structure.Structure|None]|None = None
-
-        self.children_has_normalizer = False
 
         self.subcomponents_field:FieldListField.FieldListField[GroupItemField.GroupItemField] = FieldListField.FieldListField([
             GroupItemField.GroupItemField(type_str, subcomponent_str, ["subcomponents", index])
             for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())], ["subcomponents"])
-        self.fields = [self.subcomponents_field]
+        self.fields.extend([self.subcomponents_field])
 
     def create_final(self) -> None:
         self.final = {}
@@ -55,8 +46,6 @@ class GroupComponent(Component.Component):
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         exceptions = super().check(config)
-        if self.__class__ != GroupComponent: return exceptions
-        # promise I'll fix this later
         for index, group_field in enumerate(self.subcomponents_field):
             subcomponent_types = group_field.get_types()
             subcomponent = group_field.get_component()

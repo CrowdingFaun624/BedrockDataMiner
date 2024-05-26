@@ -1,6 +1,6 @@
 from typing import cast
 
-import Structure.Importer.Component as Component
+import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.ComponentField as ComponentField
@@ -20,7 +20,7 @@ import Utilities.TypeVerifier as TypeVerifier
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
 
-class NbtBaseComponent(GroupComponent.GroupComponent):
+class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
 
     class_name_article = "an NbtBase"
     class_name = "NbtBase"
@@ -36,23 +36,17 @@ class NbtBaseComponent(GroupComponent.GroupComponent):
     )
 
     def __init__(self, data:ComponentTyping.NbtBaseTypedDict, name: str) -> None:
+        super().__init__(name)
         self.verify_arguments(data, name)
 
-        self.name = name
         self.endianness = data["endianness"]
-
-        self.links_to_other_components:list[Component.Component] = []
-        self.parents:list[Component.Component] = []
-        self.final:dict[type,NbtBaseStructure.NbtBaseStructure]|None = None
         self.final_structure:NbtBaseStructure.NbtBaseStructure|None=None
-
-        self.children_has_normalizer = True # All NbtBases have built-in normalizers that unpack the NBT
-        self.children_tags:set[str] = set()
+        self.children_has_normalizer = True
 
         self.subcomponent_field:ComponentField.ComponentField[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
-        self.fields = [self.subcomponent_field, self.types_field, self.normalizer_field]
+        self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field])
 
     def get_endianness(self, endianness:str) -> Endianness.End:
         match endianness:

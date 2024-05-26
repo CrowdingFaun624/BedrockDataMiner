@@ -29,6 +29,7 @@ class DictComponent(StructureComponent.StructureComponent):
     my_type = [dict]
 
     my_properties = ComponentCapabilities.Capabilities(has_keys=True, is_structure=True)
+    final:DictStructure.DictStructure
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
@@ -44,29 +45,20 @@ class DictComponent(StructureComponent.StructureComponent):
     )
 
     def __init__(self, data:ComponentTyping.DictComponentTypedDict, name:str) -> None:
+        super().__init__(name)
         self.verify_arguments(data, name)
-
-        self.name = name
-
 
         self.detect_key_moves = data.get("detect_key_moves", False)
         self.field = data.get("field", "field")
         self.measure_length = data.get("measure_length", False)
         self.print_all = data.get("print_all", False)
 
-        self.links_to_other_components:list[Component.Component] = []
-        self.parents:list[Component.Component] = []
-        self.final:DictStructure.DictStructure|None = None
-        self.children_tags:set[str] = set()
-
-        self.children_has_normalizer = False
-
         self.subcomponent_field:OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.comparison_move_function_field = OptionalFunctionField.OptionalFunctionField(data.get("comparison_move_function", None), ["comparison_move_function"])
         self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.tags_field:ComponentListField.ComponentListField[TagComponent.TagComponent] = ComponentListField.ComponentListField(data.get("tags", []), TAG_REQUEST_PROPERTIES, ["tags"])
-        self.fields = [self.subcomponent_field, self.comparison_move_function_field, self.normalizer_field, self.types_field, self.tags_field]
+        self.fields.extend([self.subcomponent_field, self.comparison_move_function_field, self.normalizer_field, self.types_field, self.tags_field])
 
     def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
         super().set_component(components, functions)
