@@ -42,6 +42,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
 
     def finalize(self) -> None:
         # During __init__, not all finals have been created yet, so self.types is not filled out yet. In finalize, it is filled out.
+        self.check_initialization_parameters()
         for allowed_key, key_type in self.keys:
             if allowed_key not in self.key_types:
                 self.key_types[allowed_key] = {key_type}
