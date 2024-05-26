@@ -4,6 +4,7 @@ import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
+import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Nbt.NbtReader as NbtReader
@@ -47,10 +48,10 @@ class CacheStructure(Structure.Structure[d]):
         else:
             return self.structure
 
-    def check_all_types(self, data: d) -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data: d, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         structure = self.choose_structure_flat(None, type(data), None)
-        if not self.cache_check_all_types:
-            return structure.check_all_types(data)
+        if not environment.should_cache or not self.cache_check_all_types:
+            return structure.check_all_types(data, environment)
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.check_all_types:
@@ -61,14 +62,14 @@ class CacheStructure(Structure.Structure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.check_all_types(data)
+        output = structure.check_all_types(data, environment)
         cache_item.set_check_all_types(output)
         return output
 
-    def normalize(self, data:d, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:d, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         structure = self.choose_structure_flat(None, type(data), None)
-        if not self.cache_normalize:
-            return structure.normalize(data, normalizer_dependencies, version_number)
+        if not environment.should_cache or not self.cache_normalize:
+            return structure.normalize(data, normalizer_dependencies, version_number, environment)
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.normalize:
@@ -79,14 +80,14 @@ class CacheStructure(Structure.Structure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.normalize(data, normalizer_dependencies, version_number)
+        output = structure.normalize(data, normalizer_dependencies, version_number, environment)
         cache_item.set_normalize(output)
         return output
 
-    def get_tag_paths(self, data:d, tag:str, data_path:DataPath.DataPath) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data:d, tag:str, data_path:DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
         structure = self.choose_structure_flat(None, type(data), None)
-        if not self.cache_get_tag_paths:
-            return structure.get_tag_paths(data, tag, data_path)
+        if not environment.should_cache or not self.cache_get_tag_paths:
+            return structure.get_tag_paths(data, tag, data_path, environment)
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.get_tag_paths:
@@ -97,14 +98,14 @@ class CacheStructure(Structure.Structure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.get_tag_paths(data, tag, data_path)
+        output = structure.get_tag_paths(data, tag, data_path, environment)
         cache_item.set_get_tag_paths(output)
         return output
 
-    def compare_text(self, data: d) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data: d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
         structure = self.choose_structure_flat(None, type(data), None)
-        if not self.cache_compare_text:
-            return structure.compare_text(data)
+        if not environment.should_cache or not self.cache_compare_text:
+            return structure.compare_text(data, environment)
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.compare_text:
@@ -118,14 +119,14 @@ class CacheStructure(Structure.Structure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.compare_text(data)
+        output = structure.compare_text(data, environment)
         cache_item.set_compare_text(output)
         return output
 
-    def print_text(self, data: d) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def print_text(self, data: d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         structure = self.choose_structure_flat(None, type(data), None)
-        if not self.cache_print_text:
-            return structure.print_text(data)
+        if environment.should_cache or not self.cache_print_text:
+            return structure.print_text(data, environment)
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.print_text:
@@ -139,14 +140,14 @@ class CacheStructure(Structure.Structure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.print_text(data)
+        output = structure.print_text(data, environment)
         cache_item.set_print_text(output)
         return output
 
-    def compare(self, data1: d, data2: d) -> tuple[d, bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1: d, data2: d, environment:StructureEnvironment.StructureEnvironment) -> tuple[d, bool, list[Trace.ErrorTrace]]:
         structure = self.choose_structure_flat(None, type(data1), None)
-        if not self.cache_compare:
-            return structure.compare(data1, data2)
+        if environment.should_cache or not self.cache_compare:
+            return structure.compare(data1, data2, environment)
         data_hash = hash((hash_data(data1), hash_data(data2)))
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.compare:
@@ -157,7 +158,7 @@ class CacheStructure(Structure.Structure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.compare(data1, data2)
+        output = structure.compare(data1, data2, environment)
         cache_item.set_compare(output)
         return output
 

@@ -4,6 +4,7 @@ import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
+import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
@@ -69,7 +70,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         elif isinstance(self.structure, dict): return (substructure for substructure in self.structure.values() if substructure is not None)
         else: return [self.structure]
 
-    def check_all_types(self, data: NbtTypes.TAG) -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data: NbtTypes.TAG, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         output:list[Trace.ErrorTrace] = []
         if isinstance(data, D.Diff):
             raise TypeError("`check_all_types` was given data containing Diffs!")
@@ -81,7 +82,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         for exception in new_exceptions: exception.add(self.name, None)
         output.extend(new_exceptions)
         if structure is not None:
-            new_exceptions = structure.check_all_types(data)
+            new_exceptions = structure.check_all_types(data, environment)
             for exception in new_exceptions: exception.add(self.name, None)
             output.extend(new_exceptions)
         return output
@@ -111,7 +112,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
                 output[diff_type] = self.structure
         return StructureSet.StructureSet(output), exceptions
 
-    def normalize(self, data: NbtReader.NbtBytes, normalizer_dependencies: Normalizer.LocalNormalizerDependencies, version_number: int) -> tuple[NbtTypes.TAG|None, list[Trace.ErrorTrace]]:
+    def normalize(self, data: NbtReader.NbtBytes, normalizer_dependencies: Normalizer.LocalNormalizerDependencies, version_number: int, environment:StructureEnvironment.StructureEnvironment) -> tuple[NbtTypes.TAG|None, list[Trace.ErrorTrace]]:
         try:
             data_parsed = NbtReader.unpack_bytes(data.open(), gzipped=False, endianness=self.endianness)[1]
         except Exception as e:
@@ -128,46 +129,46 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if structure is not None:
-            normalize_output, new_exceptions = structure.normalize(data_parsed, normalizer_dependencies, version_number)
+            normalize_output, new_exceptions = structure.normalize(data_parsed, normalizer_dependencies, version_number, environment)
             for exception in new_exceptions: exception.add(self.name, None)
             exceptions.extend(new_exceptions)
             if normalize_output is not None:
                 data_parsed = normalize_output
         return data_parsed, exceptions
 
-    def get_tag_paths(self, data: NbtTypes.TAG, tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data: NbtTypes.TAG, tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.choose_structure_flat("", type(data), data)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if structure is None: return [], exceptions
-        output, new_exceptions = structure.get_tag_paths(data, tag, data_path.copy(("", type(data))))
+        output, new_exceptions = structure.get_tag_paths(data, tag, data_path.copy(("", type(data))), environment)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         return output, exceptions
 
-    def compare(self, data1: NbtTypes.TAG, data2: NbtTypes.TAG) -> tuple[NbtTypes.TAG|D.Diff[NbtTypes.TAG, NbtTypes.TAG], bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1: NbtTypes.TAG, data2: NbtTypes.TAG, environment:StructureEnvironment.StructureEnvironment) -> tuple[NbtTypes.TAG|D.Diff[NbtTypes.TAG, NbtTypes.TAG], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure_set, new_exceptions = self.choose_structure(D.Diff(data1, data2))
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
-        output, has_changes, new_exceptions = structure_set.compare(data1, data2)
+        output, has_changes, new_exceptions = structure_set.compare(data1, data2, environment)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         return output, has_changes, exceptions
 
-    def print_text(self, data: NbtTypes.TAG) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def print_text(self, data: NbtTypes.TAG, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.choose_structure(data)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
-        output, new_exceptions = structure.print_text(D.DiffType.not_diff, data)
+        output, new_exceptions = structure.print_text(D.DiffType.not_diff, data, environment)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         return output, exceptions
 
-    def compare_text(self, data:NbtTypes.TAG|D.Diff[NbtTypes.TAG,NbtTypes.TAG]) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:NbtTypes.TAG|D.Diff[NbtTypes.TAG,NbtTypes.TAG], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure_set, new_exceptions = self.choose_structure(data)
         for exception in new_exceptions: exception.add(self.name, None)
@@ -176,16 +177,16 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             output:list[SU.Line] = []
             match data.change_type:
                 case D.ChangeType.addition:
-                    new_exceptions = self.print_single(None, data.new, "Added", output, structure_set[D.DiffType.new])
+                    new_exceptions = self.print_single(None, data.new, "Added", output, structure_set[D.DiffType.new], environment)
                 case D.ChangeType.change:
-                    new_exceptions = self.print_double(None, data.old, data.new, "Changed", output, structure_set)
+                    new_exceptions = self.print_double(None, data.old, data.new, "Changed", output, structure_set, environment)
                 case D.ChangeType.removal:
-                    new_exceptions = self.print_single(None, data.old, "Removed", output, structure_set[D.DiffType.old])
+                    new_exceptions = self.print_single(None, data.old, "Removed", output, structure_set[D.DiffType.old], environment)
             for exception in new_exceptions: exception.add(self.name, None)
             exceptions.extend(new_exceptions)
             return output, True, exceptions
         else:
-            output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, data)
+            output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, data, environment)
             for exception in new_exceptions: exception.add(self.name, None)
             exceptions.extend(new_exceptions)
             return output, has_changes, exceptions

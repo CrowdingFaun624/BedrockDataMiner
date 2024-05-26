@@ -4,6 +4,7 @@ import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
+import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
@@ -96,7 +97,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             item_types_string = ", ".join(type_key.__name__ for type_key in self.types)
             return Trace.ErrorTrace(TypeError("Index, item %i: %s in %s excepted is %s instead of [%s]!" % (index, SU.stringify(item), self.name, item.__class__.__name__, item_types_string)), self.name, None, item)
 
-    def check_all_types(self, data:list[d]) -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data:list[d], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[Trace.ErrorTrace] = []
         for index, item in enumerate(data):
@@ -109,12 +110,12 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             for exception in new_exceptions: exception.add(self.name, index)
             output.extend(new_exceptions)
             if structure is not None:
-                new_exceptions = structure.check_all_types(item)
+                new_exceptions = structure.check_all_types(item, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 output.extend(new_exceptions)
         return output
 
-    def normalize(self, data:list[d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:list[d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
         if self.normalizer is not None:
             for normalizer in self.normalizer:
@@ -128,14 +129,14 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             for exception in new_exceptions: exception.add(self.name, index)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                normalizer_output, new_exceptions = structure.normalize(item, normalizer_dependencies, version_number)
+                normalizer_output, new_exceptions = structure.normalize(item, normalizer_dependencies, version_number, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
                 if normalizer_output is not None:
                     data[index] = normalizer_output
         return None, exceptions
 
-    def get_tag_paths(self, data: list[d], tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data: list[d], tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
@@ -146,7 +147,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             for exception in new_exceptions: exception.add(self.name, index)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((index, type(value))))
+                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((index, type(value))), environment)
                 output.extend(new_tags)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
@@ -156,6 +157,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             self,
             data1:Sequence[d],
             data2:Sequence[d],
+            environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[Sequence[d|D.Diff[d|D.NoExist,d|D.NoExist]],bool,list[Trace.ErrorTrace]]:
         if type(data1) != type(data2):
             raise TypeError("Attempted to compare type %s with type %s!" % (data1.__class__.__name__, data2.__class__.__name__))
@@ -181,7 +183,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     structure_set, new_exceptions = self.choose_structure(index, D.Diff(item1, item2))
                     for exception in new_exceptions: exception.add(self.name, index)
                     exceptions.extend(new_exceptions)
-                    compare_output, subcomponent_has_changes, new_exceptions = structure_set.compare(item1, item2)
+                    compare_output, subcomponent_has_changes, new_exceptions = structure_set.compare(item1, item2, environment)
                     has_changes = has_changes or subcomponent_has_changes
                     output.append(compare_output)
                     for exception in new_exceptions: exception.add(self.name, index)
@@ -263,7 +265,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 output.extend(line.indent() for line in substructure_output)
                 return output
 
-    def print_text(self, data:Iterable[d]) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
+    def print_text(self, data:Iterable[d], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
         output:list[SU.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         items_str:list[str] = [] # print_flat only
@@ -274,7 +276,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             for exception in new_exceptions: exception.add(self.name, index)
             exceptions.extend(new_exceptions)
 
-            substructure_output, new_exceptions = structure_set.print_text(D.DiffType.not_diff, item)
+            substructure_output, new_exceptions = structure_set.print_text(D.DiffType.not_diff, item, environment)
             for exception in new_exceptions: exception.add(self.name, index)
             exceptions.extend(new_exceptions)
             if self.print_flat:
@@ -288,7 +290,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             output.append(SU.Line("[" + ", ".join(items_str) + "]"))
         return output, exceptions
 
-    def compare_text(self, data:Iterable[d]) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:Iterable[d], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
         output:list[SU.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         any_changes = False
@@ -308,26 +310,26 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 match item.change_type:
                     case D.ChangeType.addition:
                         current_length += 1; addition_length += 1
-                        new_exceptions = self.print_single(print_key_str, item.new, "Added", output, structure_set[D.DiffType.new])
+                        new_exceptions = self.print_single(print_key_str, item.new, "Added", output, structure_set[D.DiffType.new], environment)
                     case D.ChangeType.change:
                         current_length += 1
-                        new_exceptions = self.print_double(print_key_str, item.old, item.new, "Changed", output, structure_set)
+                        new_exceptions = self.print_double(print_key_str, item.old, item.new, "Changed", output, structure_set, environment)
                     case D.ChangeType.removal:
                         removal_length += 1
-                        new_exceptions = self.print_single(print_key_str, item.old, "Removed", output, structure_set[D.DiffType.old])
+                        new_exceptions = self.print_single(print_key_str, item.old, "Removed", output, structure_set[D.DiffType.old], environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
             else:
                 current_length += 1
                 if structure_set[D.DiffType.not_diff] is None:
                     if self.print_all:
-                        substructure_output, new_exceptions = structure_set.print_text(D.DiffType.not_diff, item)
+                        substructure_output, new_exceptions = structure_set.print_text(D.DiffType.not_diff, item, environment)
                         for exception in new_exceptions: exception.add(self.name, index)
                         exceptions.extend(new_exceptions)
                         output.extend(self.print_item(index, item, substructure_output, message="Unchanged "))
                     pass # This means that it is not a Diff and does not contains Diffs, so there is no text to write.
                 else:
-                    substructure_output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, item)
+                    substructure_output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, item, environment)
                     for exception in new_exceptions: exception.add(self.name, index)
                     exceptions.extend(new_exceptions)
                     if has_changes:
@@ -338,7 +340,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                             output.append(SU.Line("Changed %s:") % (self.field))
                         output.extend(line.indent() for line in substructure_output)
                     elif self.print_all:
-                        substructure_output, new_exceptions = structure_set.print_text(D.DiffType.not_diff, item)
+                        substructure_output, new_exceptions = structure_set.print_text(D.DiffType.not_diff, item, environment)
                         for exception in new_exceptions: exception.add(self.name, index)
                         exceptions.extend(new_exceptions)
                         output.extend(self.print_item(index, item, substructure_output, message="Unchanged "))

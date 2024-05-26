@@ -5,6 +5,7 @@ import Structure.DictStructure as DictStructure
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
+import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
@@ -99,7 +100,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
                 return None, [Trace.ErrorTrace(KeyError("Unrecognized key type %s for key %s in %s (can only be [%s])" % (value_type, key, self.name, ", ".join(accepted_type.__name__ for accepted_type in accepted_types))), self.name, key, value)]
         return output, []
 
-    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
@@ -110,7 +111,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((key, type(value))))
+                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((key, type(value))), environment)
                 output.extend(new_tags)
                 for exception in new_exceptions: exception.add(self.name, key)
                 exceptions.extend(new_exceptions)

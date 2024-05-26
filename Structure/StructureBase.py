@@ -1,9 +1,10 @@
-from typing import Any, TypeVar, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, TypeVar, Union, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
+import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.FileManager as FileManager
@@ -51,7 +52,7 @@ class StructureBase():
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.structure_name)
 
-    def normalize(self, data:Any, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int=1) -> Any:
+    def normalize(self, data:Any, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, environment:StructureEnvironment.StructureEnvironment, *, version_number:int=1) -> Any:
         '''Manipulates the data before comparison.'''
         # base normalizer
         exceptions:list[Trace.ErrorTrace] = []
@@ -71,7 +72,7 @@ class StructureBase():
         # other normalizers
         self.print_exception_list(exceptions)
         assert self.structure is not None
-        normalizer_output, new_exceptions = self.structure.normalize(output, normalizer_dependencies, version_number) # type: ignore
+        normalizer_output, new_exceptions = self.structure.normalize(cast(Any, output), normalizer_dependencies, version_number, environment)
         exceptions.extend(new_exceptions)
         if normalizer_output is not None:
             output = normalizer_output
@@ -86,13 +87,13 @@ class StructureBase():
     def has_tag(self, tag:str) -> bool:
         return tag in self.children_tags
 
-    def get_tag_paths(self, data:Any, tag:str, version:"Version.Version", normalizer_dependencies:Normalizer.NormalizerDependencies) -> list[DataPath.DataPath]:
+    def get_tag_paths(self, data:Any, tag:str, version:"Version.Version", normalizer_dependencies:Normalizer.NormalizerDependencies, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
         if not self.has_tag(tag):
             return []
         assert self.structure is not None
         local_normalizer_dependencies = Normalizer.LocalNormalizerDependencies(normalizer_dependencies, version, None)
-        normalized_data = self.normalize(data, local_normalizer_dependencies, 1)
-        output, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.component_name))
+        normalized_data = self.normalize(data, local_normalizer_dependencies, environment, version_number=1)
+        output, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.component_name), environment)
         self.print_exception_list(new_exceptions)
         return output
 
@@ -116,6 +117,7 @@ class StructureBase():
             version2:"Version.Version",
             versions_between:list["Version.Version"],
             normalizer_dependencies:Normalizer.NormalizerDependencies,
+            environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[str,bool]:
         '''Returns a final string of the comparison report and a boolean if there were any changes.'''
         header:list[str] = []
@@ -138,28 +140,28 @@ class StructureBase():
 
         local_normalizer_dependencies = Normalizer.LocalNormalizerDependencies(normalizer_dependencies, version1, version2)
         if version1 is None:
-            normalized_data2 = self.normalize(data2, local_normalizer_dependencies, 2)
+            normalized_data2 = self.normalize(data2, local_normalizer_dependencies, environment, version_number=2)
             normalized_data1 = type(normalized_data2)() # create new empty.
         else:
-            normalized_data1 = self.normalize(data1, local_normalizer_dependencies, 1)
-            normalized_data2 = self.normalize(data2, local_normalizer_dependencies, 2)
+            normalized_data1 = self.normalize(data1, local_normalizer_dependencies, environment, version_number=1)
+            normalized_data2 = self.normalize(data2, local_normalizer_dependencies, environment, version_number=2)
 
-        data_comparison, has_changes = self.compare(normalized_data1, normalized_data2)
+        data_comparison, has_changes = self.compare(normalized_data1, normalized_data2, environment)
         if not has_changes: # skip compare_text part
             return "", False
 
-        lines, any_changes = self.compare_text(data_comparison)
+        lines, any_changes = self.compare_text(data_comparison, environment)
 
         final = header
         final.extend(str(line) for line in lines)
 
         return "\n".join(final), any_changes
 
-    def check_types(self, data:Any) -> None:
+    def check_types(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> None:
         '''Raises an exception with data about what went wrong if an error occurs.'''
         if self.structure is None:
             raise RuntimeError("`structure` was never initialized!")
-        traces = self.structure.check_all_types(data)
+        traces = self.structure.check_all_types(data, environment)
         self.print_exception_list(traces)
 
     def print_exception_list(self, traces:list[Trace.ErrorTrace]) -> None:
@@ -172,24 +174,24 @@ class StructureBase():
         if len(traces) > 0:
             raise TypeError("Type checking on %s failed!" % (self.structure_name))
 
-    def compare(self, data1:Any, data2:Any) -> tuple[Any,bool]:
+    def compare(self, data1:Any, data2:Any, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any,bool]:
         if self.structure is None:
             raise RuntimeError("`structure` was never initialized!")
-        output, has_changes, traces = self.structure.compare(data1, data2)
+        output, has_changes, traces = self.structure.compare(data1, data2, environment)
         self.print_exception_list(traces)
         return output, has_changes
 
-    def compare_text(self, data:Any) -> tuple[list[SU.Line],bool]:
+    def compare_text(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool]:
         '''Returns a list of lines and if there were any changes'''
         if self.structure is None:
             raise RuntimeError("`structure` was never initialized!")
-        output, has_changes, traces = self.structure.compare_text(data)
+        output, has_changes, traces = self.structure.compare_text(data, environment)
         self.print_exception_list(traces)
         return output, has_changes
 
-    def print_text(self, data:Any) -> list[SU.Line]:
+    def print_text(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> list[SU.Line]:
         if self.structure is None:
             raise RuntimeError("`structure` was never initialized!")
-        output, traces = self.structure.print_text(data)
+        output, traces = self.structure.print_text(data, environment)
         self.print_exception_list(traces)
         return output

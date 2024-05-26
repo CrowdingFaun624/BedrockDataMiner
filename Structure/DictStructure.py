@@ -4,6 +4,7 @@ import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
+import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
@@ -108,7 +109,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
         if not isinstance(value, self.types):
             return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (SU.stringify(key), SU.stringify(value), self.name, self.types)), self.name, key, value)
 
-    def check_all_types(self, data:MutableMapping[str,d]) -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data:MutableMapping[str,d], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.valid_types):
@@ -124,12 +125,12 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             for exception in new_exceptions: exception.add(self.name, key)
             output.extend(new_exceptions)
             if structure is not None:
-                new_exceptions = structure.check_all_types(value)
+                new_exceptions = structure.check_all_types(value, environment)
                 for exception in new_exceptions: exception.add(self.name, key)
                 output.extend(new_exceptions)
         return output
 
-    def normalize(self, data:dict[str,d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:dict[str,d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
         if self.normalizer is not None:
             for normalizer in self.normalizer:
@@ -143,14 +144,14 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                normalizer_output, new_exceptions = structure.normalize(value, normalizer_dependencies, version_number)
+                normalizer_output, new_exceptions = structure.normalize(value, normalizer_dependencies, version_number, environment)
                 for exception in new_exceptions: exception.add(self.name, key)
                 exceptions.extend(new_exceptions)
                 if normalizer_output is not None:
                     data[key] = normalizer_output
         return None, exceptions
 
-    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         if tag in self.tags:
@@ -161,7 +162,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((key, type(value))))
+                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((key, type(value))), environment)
                 output.extend(new_tags)
                 for exception in new_exceptions: exception.add(self.name, key)
                 exceptions.extend(new_exceptions)
@@ -171,6 +172,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             self,
             data1:MutableMapping[str,d],
             data2:MutableMapping[str,d],
+            environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[MutableMapping[str|D.Diff[str,str],d|D.Diff[d,d]],bool,list[Trace.ErrorTrace]]:
         if type(data1) != type(data2):
             raise TypeError("Attempted to compare type %s with type %s!" % (data1.__class__.__name__, data2.__class__.__name__))
@@ -249,7 +251,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                     structure_set, new_exceptions = self.choose_structure(key, D.Diff(value1, value2))
                     for exception in new_exceptions: exception.add(self.name, D.first_existing_property(key))
                     exceptions.extend(new_exceptions)
-                    output[key], subcomponent_has_changes, new_exceptions = structure_set.compare(value1, value2)
+                    output[key], subcomponent_has_changes, new_exceptions = structure_set.compare(value1, value2, environment)
                     has_changes = has_changes or subcomponent_has_changes
                     for exception in new_exceptions: exception.add(self.name, D.first_existing_property(key))
                     exceptions.extend(new_exceptions)
@@ -296,8 +298,8 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                 output[value_diff_type] = self.structure
         return StructureSet.StructureSet(output), exceptions
 
-    def print_item(self, key:str, value:d, structure_set:StructureSet.StructureSet[d], message:str="") -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
-        substructure_output, exceptions = structure_set.print_text(D.DiffType.not_diff, value)
+    def print_item(self, key:str, value:d, structure_set:StructureSet.StructureSet[d], environment:StructureEnvironment.StructureEnvironment, *,message:str="") -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
+        substructure_output, exceptions = structure_set.print_text(D.DiffType.not_diff, value, environment)
         match len(substructure_output):
             case 0:
                 return [SU.Line("%s%s %s: empty") % (message, self.field, SU.stringify(key))], exceptions
@@ -309,7 +311,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                 output.extend(line.indent() for line in substructure_output)
                 return output, exceptions
 
-    def print_text(self, data:MutableMapping[str, d]) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def print_text(self, data:MutableMapping[str, d], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         output:list[SU.Line] = []
         if not isinstance(data, self.valid_types):
             return output, [Trace.ErrorTrace(TypeError("`data` is not [%s], but instead type %s!" % (", ".join(valid_type.__name__ for valid_type in self.valid_types), type(data))), self.name, None, data)]
@@ -318,13 +320,13 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             structure_set, new_exceptions = self.choose_structure(key, value)
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
-            new_lines, new_exceptions = self.print_item(key, value, structure_set)
+            new_lines, new_exceptions = self.print_item(key, value, structure_set, environment)
             output.extend(new_lines)
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
         return output, exceptions
 
-    def compare_text(self, data:MutableMapping[str, d]) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:MutableMapping[str, d], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
         output:list[SU.Line] = []
         any_changes = False
         if not isinstance(data, self.valid_types):
@@ -349,26 +351,26 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                 match value.change_type:
                     case D.ChangeType.addition:
                         current_length += 1; addition_length += 1
-                        new_exceptions = self.print_single(key_str, value.new, "Added", output, structure_set[D.DiffType.new])
+                        new_exceptions = self.print_single(key_str, value.new, "Added", output, structure_set[D.DiffType.new], environment)
                     case D.ChangeType.change:
                         current_length += 1
-                        new_exceptions = self.print_double(key_str, value.old, value.new, "Changed", output, structure_set)
+                        new_exceptions = self.print_double(key_str, value.old, value.new, "Changed", output, structure_set, environment)
                     case D.ChangeType.removal:
                         removal_length += 1
-                        new_exceptions = self.print_single(key_str, value.old, "Removed", output, structure_set[D.DiffType.old])
+                        new_exceptions = self.print_single(key_str, value.old, "Removed", output, structure_set[D.DiffType.old], environment)
                 for exception in new_exceptions: exception.add(self.name, key)
                 exceptions.extend(new_exceptions)
             else:
                 current_length += 1
                 if structure_set[D.DiffType.not_diff] is None:
                     if self.print_all and can_print_print_all:
-                        new_lines, new_exceptions = self.print_item(key_str, value, structure_set, message="Unchanged ")
+                        new_lines, new_exceptions = self.print_item(key_str, value, structure_set, environment, message="Unchanged ")
                         output.extend(new_lines)
                         for exception in new_exceptions: exception.add(self.name, key)
                         exceptions.extend(new_exceptions)
                     pass # This means that it is not a difference and does not contain differences.
                 else:
-                    substructure_output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, value)
+                    substructure_output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, value, environment)
                     for exception in new_exceptions: exception.add(self.name, key)
                     exceptions.extend(new_exceptions)
                     if has_changes:
@@ -376,7 +378,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                         output.append(SU.Line("Changed %s %s:") % (self.field, SU.stringify(key_str)))
                         output.extend(line.indent() for line in substructure_output)
                     elif self.print_all and can_print_print_all:
-                        new_lines, new_exceptions = self.print_item(key_str, value, structure_set, message="Unchanged ")
+                        new_lines, new_exceptions = self.print_item(key_str, value, structure_set, environment, message="Unchanged ")
                         output.extend(new_lines)
                         for exception in new_exceptions: exception.add(self.name, key)
                         exceptions.extend(new_exceptions)

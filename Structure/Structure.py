@@ -3,6 +3,7 @@ from typing import Any, Generic, Iterable, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
+import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
@@ -37,7 +38,7 @@ class Structure(Generic[a]):
 
     def choose_structure_flat(self, key, value_type:type, value) -> Union["Structure",None]: ...
 
-    def print_single(self, key_str:str|int|None, data:a, message:str, output:list[SU.Line], printer:Union["Structure[a]",None], post_message:str="") -> list[Trace.ErrorTrace]:
+    def print_single(self, key_str:str|int|None, data:a, message:str, output:list[SU.Line], printer:Union["Structure[a]",None], environment:StructureEnvironment.StructureEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
         exceptions:list[Trace.ErrorTrace] = []
         if printer is None:
             stringified_data = SU.stringify(data)
@@ -46,7 +47,7 @@ class Structure(Generic[a]):
             else:
                 output.append(SU.Line("%s %s%s %s of %s.") % (message, self.field, post_message, SU.stringify(key_str), stringified_data))
         else:
-            substructure_output, new_exceptions = printer.print_text(data)
+            substructure_output, new_exceptions = printer.print_text(data, environment)
             for exception in new_exceptions: exception.add(self.name, key_str)
             exceptions.extend(new_exceptions)
             match len(substructure_output), key_str is None:
@@ -66,12 +67,12 @@ class Structure(Generic[a]):
                     output.extend(line.indent() for line in substructure_output)
         return exceptions
 
-    def print_double(self, key_str:str|int|None, data1:a, data2:a, message:str, output:list[SU.Line], printers:"StructureSet.StructureSet", post_message:str="") -> list[Trace.ErrorTrace]:
+    def print_double(self, key_str:str|int|None, data1:a, data2:a, message:str, output:list[SU.Line], printers:"StructureSet.StructureSet", environment:StructureEnvironment.StructureEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
         exceptions:list[Trace.ErrorTrace] = []
-        substructure_output1, new_exceptions = printers.print_text(0, data1)
+        substructure_output1, new_exceptions = printers.print_text(0, data1, environment)
         for exception in new_exceptions: exception.add(self.name, key_str)
         exceptions.extend(new_exceptions)
-        substructure_output2, new_exceptions = printers.print_text(-1, data2) # [-1] because it must be the last item anyways.
+        substructure_output2, new_exceptions = printers.print_text(-1, data2, environment) # [-1] because it must be the last item anyways.
         for exception in new_exceptions: exception.add(self.name, key_str)
         exceptions.extend(new_exceptions)
         if len(substructure_output1) == 0: substructure_output1 = [SU.Line("empty")]
@@ -105,18 +106,18 @@ class Structure(Generic[a]):
                 output.extend(line.indent() for line in substructure_output2)
         return exceptions
 
-    def check_all_types(self, data:a) -> list[Trace.ErrorTrace]: ...
+    def check_all_types(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]: ...
 
-    def compare_text(self, data:a) -> tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]: ...
+    def compare_text(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]: ...
 
-    def print_text(self, data:a) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]: ...
+    def print_text(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]: ...
 
-    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         raise NotImplementedError()
 
-    def get_tag_paths(self, data:a, tag:str, data_path:DataPath.DataPath) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]: ...
+    def get_tag_paths(self, data:a, tag:str, data_path:DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]: ...
 
-    def compare(self, data1:a, data2:a) -> tuple[a,bool,list[Trace.ErrorTrace]]: ...
+    def compare(self, data1:a, data2:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[a,bool,list[Trace.ErrorTrace]]: ...
 
     def iter_structures(self) -> Iterable["Structure"]:
         '''Returns in Iterable of this Structure's substructures.'''

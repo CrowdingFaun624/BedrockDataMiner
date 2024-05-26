@@ -5,6 +5,7 @@ import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
+import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 
@@ -42,7 +43,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
     def choose_structure_flat(self, key:int, value_type:type, value:Any|None) -> tuple[Structure.Structure|None,list[Trace.ErrorTrace]]:
         return self.structure, []
 
-    def check_all_types(self, data:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]]) -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[Trace.ErrorTrace] = []
         # most of this stuff was checked in `normalize`
@@ -53,7 +54,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             if structure is None and len(additional_data) > 0:
                 output.append(Trace.ErrorTrace(KeyError("Unrecognized keys [%s]!" % (list(additional_data.keys()),)), self.name, index, additional_data))
             if structure is not None:
-                new_exceptions = structure.check_all_types(additional_data)
+                new_exceptions = structure.check_all_types(additional_data, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 output.extend(new_exceptions)
         return output
@@ -99,7 +100,13 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
                 additional_data[position] = {key: value for key, value in block.items() if key != self.position_key and key != self.state_key}
         return (states, additional_data, (max_x + 1, max_y + 1, max_z + 1)), exceptions
 
-    def normalize(self, data:MutableSequence[MutableMapping[str,Any]], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int) -> tuple[tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],list[Trace.ErrorTrace]]:
+    def normalize(
+            self,
+            data:MutableSequence[MutableMapping[str,Any]],
+            normalizer_dependencies:Normalizer.LocalNormalizerDependencies,
+            version_number:int,
+            environment:StructureEnvironment.StructureEnvironment,
+        ) -> tuple[tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         data_output, new_exceptions = self.normalize_data(data)
         for exception in new_exceptions: exception.add(self.name, None)
@@ -116,14 +123,20 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             for exception in new_exceptions: exception.add(self.name, index)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                normalizer_output, new_exceptions = structure.normalize(item, normalizer_dependencies, version_number)
+                normalizer_output, new_exceptions = structure.normalize(item, normalizer_dependencies, version_number, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
                 if normalizer_output is not None:
                     data_output[1][coordinate] = normalizer_output
         return data_output, exceptions
 
-    def get_tag_paths(self, data:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]], tag: str, data_path: DataPath.DataPath) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+    def get_tag_paths(
+            self, 
+            data:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],
+            tag: str,
+            data_path: DataPath.DataPath,
+            environment:StructureEnvironment.StructureEnvironment,
+        ) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
@@ -134,7 +147,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             for exception in new_exceptions: exception.add(self.name, index)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((index, type(value))))
+                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((index, type(value))), environment)
                 output.extend(new_tags)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
@@ -144,6 +157,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             self,
             data1:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],
             data2:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],
+            environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[
             tuple[
                 Mapping[tuple[int,int,int],int|D.Diff[int,int]],
@@ -185,7 +199,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             if block_data2 is None:
                 additional_data_output[coordinate1] = D.Diff(old=block_data1)
             elif block_data1 != block_data2:
-                additional_data_output[coordinate1], subcomponent_has_changes, new_exceptions = self.structure.compare(block_data1, block_data2)
+                additional_data_output[coordinate1], subcomponent_has_changes, new_exceptions = self.structure.compare(block_data1, block_data2, environment)
                 has_changes = has_changes or subcomponent_has_changes
                 for exception in new_exceptions: exception.add(self.name, coordinate1)
                 exceptions.extend(new_exceptions)
@@ -218,7 +232,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
                 output.extend(line.indent() for line in substructure_output)
                 return output
 
-    def print_layer(self, data:dict[tuple[int,int,int],int], additional_data:dict[tuple[int,int,int],dict[str,Any]], layer:int, size:tuple[int,int,int]) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def print_layer(self, data:dict[tuple[int,int,int],int], additional_data:dict[tuple[int,int,int],dict[str,Any]], layer:int, size:tuple[int,int,int], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         layer_2d = [[" " for j in range(size[0])] for i in range(size[2])]
         for x in range(size[0]):
@@ -250,7 +264,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
 
             for position, block_data in additional_data.items():
                 if position[1] != layer: continue
-                substructure_output, new_exceptions = structure.print_text(block_data)
+                substructure_output, new_exceptions = structure.print_text(block_data, environment)
                 for exception in new_exceptions: exception.add(self.name, position)
                 exceptions.extend(new_exceptions)
                 output.extend(self.print_item(substructure_output, position))
@@ -262,14 +276,15 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
                 dict[tuple[int,int,int],int],
                 dict[tuple[int,int,int],dict[str,Any]],
                 tuple[int,int,int]
-            ]
+            ],
+            environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         states, additional_data, size = data
         output:list[SU.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         for layer in range(size[1]):
             output.append(SU.Line("Layer %i/%i:" % (layer, size[1])))
-            new_lines, new_exceptions = self.print_layer(states, additional_data, layer, size)
+            new_lines, new_exceptions = self.print_layer(states, additional_data, layer, size, environment)
             output.extend(line.indent() for line in new_lines)
             for exception in new_exceptions: exception.add(self.name, layer)
             exceptions.extend(new_exceptions)
@@ -285,7 +300,13 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             any_changes = True
         return output, any_changes, []
 
-    def compare_text_layer(self, data:dict[tuple[int,int,int],int|D.Diff[int,int]], block_data_comparisons:list[list[SU.Line]], layer:int, size:tuple[int,int,int]) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def compare_text_layer(
+            self,
+            data:dict[tuple[int,int,int],int|D.Diff[int,int]],
+            block_data_comparisons:list[list[SU.Line]],
+            layer:int, size:tuple[int,int,int],
+            environment:StructureEnvironment.StructureEnvironment
+        ) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         output:list[SU.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         layer_2d = {position: state for position, state in data.items() if position[1] == layer}
@@ -308,18 +329,18 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
                 new_layer[position] = state
 
         if layers_are_same:
-            new_lines, new_exceptions = self.print_layer(new_layer, {}, layer, size)
+            new_lines, new_exceptions = self.print_layer(new_layer, {}, layer, size, environment)
             output.extend(new_lines)
             for exception in new_exceptions: exception.add(self.name, None)
             exceptions.extend(new_exceptions)
         else:
             output.append(SU.Line("Old layer:"))
-            new_lines, new_exceptions = self.print_layer(old_layer, {}, layer, size)
+            new_lines, new_exceptions = self.print_layer(old_layer, {}, layer, size, environment)
             output.extend(line.indent() for line in new_lines)
             for exception in new_exceptions: exception.add(self.name, None)
             exceptions.extend(new_exceptions)
             output.append(SU.Line("New layer:"))
-            new_lines, new_exceptions = self.print_layer(new_layer, {}, layer, size)
+            new_lines, new_exceptions = self.print_layer(new_layer, {}, layer, size, environment)
             output.extend(line.indent() for line in new_lines)
             for exception in new_exceptions: exception.add(self.name, None)
             exceptions.extend(new_exceptions)
@@ -327,7 +348,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             output.extend(block_data_comparison)
         return output, exceptions
 
-    def compare_text_block(self, position:tuple[int,int,int], block_data:dict[str,Any]|D.Diff[dict[str,Any],dict[str,Any]]) -> tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]:
+    def compare_text_block(self, position:tuple[int,int,int], block_data:dict[str,Any]|D.Diff[dict[str,Any],dict[str,Any]], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]:
         output:list[SU.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         any_changes = False
@@ -344,7 +365,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             exceptions.extend(new_exceptions)
         else:
             assert self.structure is not None
-            substructure_output, has_changes, new_exceptions = self.structure.compare_text(block_data)
+            substructure_output, has_changes, new_exceptions = self.structure.compare_text(block_data, environment)
             for exception in new_exceptions: exception.add(self.name, position)
             exceptions.extend(new_exceptions)
             if has_changes:
@@ -359,7 +380,8 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
                 dict[tuple[int,int,int],int|D.Diff[int,int]],
                 dict[tuple[int,int,int],dict[str,Any]|D.Diff[dict[str,Any],dict[str,Any]]],
                 tuple[int|D.Diff[int,int],int|D.Diff[int,int],int|D.Diff[int,int]]
-            ]
+            ],
+            environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
         states, additional_data, size = data
         output:list[SU.Line] = []
@@ -381,7 +403,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             block_data = additional_data.get(position)
             if block_data is not None:
                 assert self.structure is not None
-                block_data_comparison, block_data_has_changes, new_exceptions = self.compare_text_block(position, block_data)
+                block_data_comparison, block_data_has_changes, new_exceptions = self.compare_text_block(position, block_data, environment)
                 if block_data_has_changes:
                     block_data_comparisons[position[1]].append(block_data_comparison)
                 for exception in new_exceptions: exception.add(self.name, position)
@@ -396,7 +418,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
 
         for layer in sorted(layers_to_print):
             output.append(SU.Line("Changed layer %i/%i:" % (layer, max_size[1])))
-            new_lines, new_exceptions = self.compare_text_layer(states, block_data_comparisons[layer], layer, max_size)
+            new_lines, new_exceptions = self.compare_text_layer(states, block_data_comparisons[layer], layer, max_size, environment)
             for exception in new_exceptions: exception.add(self.name, layer)
             exceptions.extend(new_exceptions)
             output.extend(line.indent() for line in new_lines)
