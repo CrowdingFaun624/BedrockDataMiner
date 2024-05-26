@@ -22,6 +22,21 @@
 #     stats = pstats.Stats(profile, stream=stream)
 #     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
 
+from typing import Any, Callable
+
+PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "CustomJson", "DataMiners", "FileSummary", "GetFile", "NbtReader", "Scripts", "StoredVersions", "TestStructures", "UrlValidator", "VersionParser", "WikiValidator"]
+
+def get_user_input() -> None:
+    output = ""
+    while output not in PROGRAM_NAMES:
+        output = input("Choose a program (%s)" % (PROGRAM_NAMES))
+    user_input[0] = output
+user_input:list[Any] = [None]
+if __name__ == "__main__":
+    import threading
+    user_thread = threading.Thread(target=get_user_input)
+    user_thread.start()
+
 import DataMiners.DataMiners as DataMiners
 import Programs.AllVersions as AllVersions
 import Programs.Cleaner as Cleaner
@@ -37,7 +52,7 @@ import Utilities.Scripts as Scripts
 import Utilities.StoredVersionsManager as StoredVersionsManager
 import Version.VersionParser as VersionParser
 
-PROGRAM_NAMES = {
+PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "AllVersions": AllVersions.main,
     "Cleaner": Cleaner.main,
     "CompareAll": CompareAll.main,
@@ -55,10 +70,10 @@ PROGRAM_NAMES = {
 }
 
 def main() -> None:
-    user_input = None
-    while user_input not in PROGRAM_NAMES:
-        user_input = input("Choose a program (%s):\n" % str(list(PROGRAM_NAMES.keys())))
-    PROGRAM_NAMES[user_input]()
+    import time
+    while user_input[0] is None:
+        time.sleep(0.05)
+    PROGRAM_FUNCTIONS[user_input[0]]()
 
 if __name__ == "__main__":
     main()
