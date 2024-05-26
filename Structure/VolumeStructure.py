@@ -26,16 +26,13 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             children_tags:set[str],
             layer_characters:str=LAYER_CHARACTERS_DEFAULT,
         ) -> None:
-        self.name = name
-        self.field = field
+        super().__init__(name, field, normalizer, children_has_normalizer, children_tags)
+
         self.position_key = position_key
         self.state_key = state_key
         self.structure = structure
         self.print_additional_data = print_additional_data
         self.tags = tags
-        self.normalizer = normalizer
-        self.children_has_normalizer = children_has_normalizer
-        self.children_tags = children_tags
         self.layer_characters = layer_characters
 
     def choose_structure_flat(self, key:int, value_type:type, value:Any|None) -> tuple[Structure.Structure|None,list[Trace.ErrorTrace]]:

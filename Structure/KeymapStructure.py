@@ -34,18 +34,10 @@ class KeymapStructure(DictStructure.DictStructure[d]):
          * If `measure_length` is True, then it will show how the length of the data changed when comparing.
          * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.
          * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
+        super().__init__(name, field, None, None, False, None, measure_length, print_all, normalizer, [], children_has_normalizer, children_tags)
 
-        self.name = name
-        self.field = field
         self.keys = keys
-        self.detect_key_moves = False
-        self.measure_length = measure_length
-        self.print_all = print_all
         self.tags = tags
-        self.normalizer = normalizer
-        self.children_has_normalizer = children_has_normalizer
-        self.children_tags = children_tags
-        self.check_initialization_parameters()
         self.key_types:dict[str,set[type]] = {}
 
     def finalize(self) -> None:

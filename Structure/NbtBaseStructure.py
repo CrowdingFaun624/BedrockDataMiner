@@ -47,15 +47,10 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             children_has_normalizer:bool,
             children_tags:set[str]
         ) -> None:
-        self.name = name
-        self.field = name
+        super().__init__(name, name, normalizer, children_has_normalizer, children_tags)
         self.structure = structure
         self.types = (object,) if types is None else types
-        self.normalizer = normalizer
-        self.children_has_normalizer = children_has_normalizer
         self.endianness=endianness
-        self.children_tags = children_tags
-        self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
         self.type_verifier.base_verify({

@@ -38,20 +38,15 @@ class ListStructure(Structure.Structure[Iterable[d]]):
          * If `measure_length` is True, then it will show how the length of the data changed when comparing.
          * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.
          * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
+        super().__init__(name, field, normalizer, children_has_normalizer, children_tags)
 
-        self.name = name
-        self.field = field
         self.structure = structure
         self.types = (object,) if types is None else types
         self.print_flat = print_flat
         self.ordered = ordered
         self.measure_length = measure_length
         self.print_all = print_all
-        self.normalizer = normalizer
         self.tags = tags
-        self.children_has_normalizer = children_has_normalizer
-        self.children_tags = children_tags
-        self.check_initialization_parameters()
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),

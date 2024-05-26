@@ -71,20 +71,15 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
          * If `measure_length` is True, then it will show how the length of the data changed when comparing.
          * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.
          * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
+        super().__init__(name, field, normalizer, children_has_normalizer, children_tags)
 
-        self.name = name
-        self.field = field
         self.structure = structure
         self.types = (object,) if types is None else types
         self.detect_key_moves = detect_key_moves
         self.comparison_move_function = (lambda key, value: value) if comparison_move_function is None else comparison_move_function
         self.measure_length = measure_length
         self.print_all = print_all
-        self.normalizer = normalizer
         self.tags = tags
-        self.children_has_normalizer = children_has_normalizer
-        self.children_tags = children_tags
-        self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None:
         self.type_verifier.base_verify({

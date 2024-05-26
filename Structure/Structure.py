@@ -14,9 +14,15 @@ a = TypeVar("a")
 
 class Structure(Generic[a]):
 
-    name:str
-    field:str
-    normalizer:list[Normalizer.Normalizer]|None
+    def __init__(self, name:str, field:str, normalizer:list[Normalizer.Normalizer]|None, children_has_normalizer:bool, children_tags:set[str]) -> None:
+        self.name = name
+        self.field = field
+        self.normalizer = normalizer
+        self.children_has_normalizer = children_has_normalizer
+        self.children_tags = children_tags
+
+    def finalize(self) -> None:
+        self.check_initialization_parameters()
 
     def check_initialization_parameters(self) -> None: ...
 
