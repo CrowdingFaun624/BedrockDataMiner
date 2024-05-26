@@ -17,6 +17,17 @@ class BaseComponentTypedDict(TypedDict):
     post_normalizer: NotRequired[str]
     type: Required[Literal["Base"]]
 
+class CacheComponentTypedDict(TypedDict):
+    type: Required[Literal["Cache"]]
+    types: Required[list[str]]
+    subcomponent: Required[str|None]
+    cache_check_all_types: NotRequired[bool]
+    cache_normalize: NotRequired[bool]
+    cache_get_tag_paths: NotRequired[bool]
+    cache_compare_text: NotRequired[bool]
+    cache_print_text: NotRequired[bool]
+    cache_compare: NotRequired[bool]
+
 class DictComponentTypedDict(TypedDict):
     subcomponent: Required[str|None]
     comparison_move_function: NotRequired[str]

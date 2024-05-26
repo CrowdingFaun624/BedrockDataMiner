@@ -3,6 +3,7 @@ import traceback
 from typing import Callable, Generator, Iterable
 
 import Structure.Importer.BaseComponent as BaseComponent
+import Structure.Importer.CacheComponent as CacheComponent
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.DictComponent as DictComponent
@@ -24,6 +25,7 @@ component_types:list[type[Component.Component]] = [
     GroupComponent.GroupComponent, # near the top so they are created first
     NormalizerComponent.NormalizerComponent,
     TagComponent.TagComponent,
+    CacheComponent.CacheComponent,
     DictComponent.DictComponent,
     ListComponent.ListComponent,
     BaseComponent.BaseComponent,
@@ -79,7 +81,7 @@ def create_components(name:str, data:ComponentTyping.StructureFileType) -> tuple
             raise TypeError("Key \"type\" of Component \"%s\" is not a str!" % (component_name))
         for component_type in component_types:
             if component_type.class_name == component_data["type"]:
-                component = component_type(component_data, component_name)
+                component = component_type(component_data, component_name) # type:ignore All subclasses have this sort of __init__.
                 components[component_name] = component
                 if component_type is BaseComponent.BaseComponent:
                     assert isinstance(component, BaseComponent.BaseComponent)
