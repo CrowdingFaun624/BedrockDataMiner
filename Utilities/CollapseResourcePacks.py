@@ -1,6 +1,6 @@
 import enum
 import json
-from typing import TYPE_CHECKING, Any, Callable, TypedDict, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, TypedDict, TypeVar, cast
 
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
@@ -31,50 +31,54 @@ def get_resource_pack_order() -> list[ResourcePackTypedDict]:
     return data
 
 resource_pack_data = get_resource_pack_order()
-resource_pack_order = [resource_pack["name"] for resource_pack in resource_pack_data]
+resource_pack_order = {resource_pack["name"]: index for index, resource_pack in enumerate(resource_pack_data)}
 resource_pack_dict = {resource_pack_name: resource_pack for resource_pack_name, resource_pack in zip(resource_pack_order, resource_pack_data)}
 
 a = TypeVar("a")
 
-def make_interface(has_defined_in_key:bool=True) -> Callable[[dict[str,Any],"DataMinerTyping.DependenciesTypedDict"],None]:
+def make_interface(has_defined_in_key:bool=True, extend:bool=True) -> Callable[[dict[str,Any],"DataMinerTyping.DependenciesTypedDict"],None]:
     def collapse_resource_packs_interface(data:dict[str,Any], dependencies:"DataMinerTyping.DependenciesTypedDict") -> None:
-        collapse_resource_packs(data, has_defined_in_key)
+        collapse_resource_packs(data, has_defined_in_key, extend)
     return collapse_resource_packs_interface
 
-def collapse_resource_packs(data:dict[str,a], add_defined_in:bool=True) -> dict[str,a]:
+def collapse_resource_packs(data:dict[str,a], add_defined_in:bool=True, extend:bool=True) -> dict[str,a]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
     Also adds a "defined_in" tag to each resource pack's properties unless `add_defined_in` is False.'''
-    data_resource_packs:list[str] = [] # resource packs that appear in data.
-    for data_resource_pack in data:
-        if data_resource_pack not in resource_pack_dict:
-            raise KeyError("Unknown resource pack \"%s\"!" % (data_resource_pack))
-        data_resource_packs.append(data_resource_pack)
-    output:dict[str,Any] = {}
-    for resource_pack_name in data_resource_packs:
-        tags_str = ",".join(resource_pack_dict[resource_pack_name]["tags"])
-        # tags_str is used as the new key
-        if tags_str in output:
-            output_location = output[tags_str]
-            match output_location:
-                case dict():
-                    output_location.update(data[resource_pack_name])
-                case list():
-                    output_location.extend(data[resource_pack_name])
-                case _:
-                    output[tags_str] = data[resource_pack_name]
-            if add_defined_in:
-                output[tags_str]["defined_in"].append(resource_pack_name)
+    resource_packs_by_tag:dict[str,list[str]] = {}
+    for resource_pack in data.keys():
+        if resource_pack not in resource_pack_order:
+            raise KeyError("Unrecognized resource pack \"%s\"" % (resource_pack))
+        tag_string = ",".join(resource_pack_dict[resource_pack]["tags"])
+        if tag_string in resource_packs_by_tag:
+            resource_packs_by_tag[tag_string].append(resource_pack)
         else:
-            output[tags_str] = data[resource_pack_name]
+            resource_packs_by_tag[tag_string] = [resource_pack]
+    output:dict[str,a] = {}
+    for tag_string, resource_pack_list in resource_packs_by_tag.items():
+        resource_pack_list.sort(key=lambda item: resource_pack_order[item])
+        for resource_pack in resource_pack_list:
+            data_item = data[resource_pack]
+            if extend and isinstance(data_item, dict):
+                if tag_string in output:
+                    output[tag_string].update(data_item)
+                else:
+                    output[tag_string] = data_item
+            elif extend and isinstance(data_item, list):
+                if tag_string in output:
+                    output[tag_string].extend(data_item)
+                else:
+                    output[tag_string] = data_item
+            else:
+                output[tag_string] = data_item
             if add_defined_in:
-                output[tags_str]["defined_in"] = [resource_pack_name]
-        del data[resource_pack_name]
-    for key, value in output.items():
-        # this weird thing with output is because tags_str can be the same as resource_pack.
-        # if they are the same, then it thinks that a resource pack with the education
-        # tag has already been in here, so it assumes that and KeyErrors on defined_in
-        data[key] = value
-    return output
+                defined_in_key = cast(list[str]|None, cast(dict, output[tag_string]).get("defined_in", None))
+                if defined_in_key is None:
+                    output[tag_string]["defined_in"] = [resource_pack] # type:ignore
+                else:
+                    defined_in_key.append(resource_pack)
+    data.clear()
+    data.update(output)
+    return data
 
 def collapse_resource_pack_list(data:list[str], dependencies:"DataMinerTyping.DependenciesTypedDict") -> list[str]:
     for properties_resource_pack in data:

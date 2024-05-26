@@ -15,7 +15,6 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.ResourcePackTypedDict]:
         resource_pack_order = CollapseResourcePacks.resource_pack_order
-        resource_pack_order_dict = {name: index for index, name in enumerate(resource_pack_order)} # So I don't have to index it a whole twelve times
         file_list = self.get_accessor("client").get_file_list()
         resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = []
         resource_pack_names:set[str] = set()
@@ -34,4 +33,4 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
         
         if len(resource_packs) == 0:
             raise RuntimeError("No resource packs found in \"%s\"!" % self.version.name)
-        return sorted(resource_packs, key=lambda pack: resource_pack_order_dict[pack["name"]])
+        return sorted(resource_packs, key=lambda pack: resource_pack_order[pack["name"]])

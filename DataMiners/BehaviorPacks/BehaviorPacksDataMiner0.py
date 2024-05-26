@@ -13,7 +13,6 @@ class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
 
     def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict) -> list[DataMinerTyping.BehaviorPackTypedDict]:
         behavior_pack_order = CollapseResourcePacks.resource_pack_order
-        behavior_pack_order_dict = {name: index for index, name in enumerate(behavior_pack_order)} # So I don't have to index it a whole twelve times
         file_list = self.get_accessor("client").get_file_list()
         behavior_packs:list[DataMinerTyping.BehaviorPackTypedDict] = []
         behavior_pack_names:set[str] = set()
@@ -32,4 +31,4 @@ class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
 
         if len(behavior_packs) == 0:
             raise RuntimeError("No behavior packs found in \"%s\"!" % self.version.name)
-        return sorted(behavior_packs, key=lambda pack: behavior_pack_order_dict[pack["name"]])
+        return sorted(behavior_packs, key=lambda pack: behavior_pack_order[pack["name"]])
