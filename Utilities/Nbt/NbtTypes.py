@@ -1,7 +1,7 @@
 import copy
 import enum
 import re
-from typing import Generic, Iterable, Mapping, TypeVar
+from typing import Generic, Iterable, Iterator, Mapping, TypeVar
 
 import mutf8
 
@@ -62,6 +62,9 @@ class TAG_End(TAG[None]):
 
     def __str__(self) -> str:
         return "<END>"
+
+    def __hash__(self) -> int:
+        return hash(self.value)
 
     def __eq__(self, __value: object) -> bool:
         return isinstance(__value, TAG_End)
@@ -284,7 +287,7 @@ class TAG_Byte_Array(TAG[list[TAG_Byte]]):
     def __imul__(self, len:int) -> None:
         self.value *= len
 
-    def __iter__(self) -> Iterable[TAG_Byte]:
+    def __iter__(self) -> Iterator[TAG_Byte]:
         return iter(self.value)
 
     def __len__(self) -> int:
@@ -347,6 +350,9 @@ class TAG_String(TAG[str], str):
     def __str__(self) -> str:
         return "\"%s\"" % escape_string(self.value)
 
+    def __hash__(self) -> int:
+        return hash(self.value)
+
     def __deepcopy__(self, memo) -> TAG:
         return self
 
@@ -386,7 +392,7 @@ class TAG_List(TAG[list[TAG]]):
     def __imul__(self, len:int) -> None:
         self.value *= len
 
-    def __iter__(self) -> Iterable[TAG]:
+    def __iter__(self) -> Iterator[TAG]:
         return iter(self.value)
 
     def __len__(self) -> int:
@@ -480,7 +486,7 @@ class TAG_Compound(TAG[dict[str,TAG]]):
     def __getitem__(self, __key:str) -> TAG:
         return self.value[__key]
 
-    def __iter__(self) -> Iterable[str]:
+    def __iter__(self) -> Iterator[str]:
         return iter(self.value)
 
     def __len__(self) -> int:
@@ -558,7 +564,7 @@ class TAG_Int_Array(TAG[list[TAG_Int]]):
     def __imul__(self, len:int) -> None:
         self.value *= len
 
-    def __iter__(self) -> Iterable[TAG_Int]:
+    def __iter__(self) -> Iterator[TAG_Int]:
         return iter(self.value)
 
     def __len__(self) -> int:
@@ -638,7 +644,7 @@ class TAG_Long_Array(TAG[list[TAG_Long]]):
     def __imul__(self, len:int) -> None:
         self.value *= len
 
-    def __iter__(self) -> Iterable[TAG_Long]:
+    def __iter__(self) -> Iterator[TAG_Long]:
         return iter(self.value)
 
     def __len__(self) -> int:
