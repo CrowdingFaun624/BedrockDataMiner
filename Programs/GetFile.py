@@ -7,7 +7,7 @@ def main() -> None:
         version = input("Version: ")
     version = versions[version]
     file = input("File: ")
-    install_manager = version.install_manager
+    install_manager = version.version_files["client"].accessors["download"]
     if install_manager is not None:
         destination = install_manager.install(file)
         print("File is in %s" % destination)
