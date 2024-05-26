@@ -133,6 +133,18 @@ def stringify_sha1_hash(sha1_hash:bytes) -> str:
     '''Returns a hexadecimal string with length 40.'''
     return hex(int.from_bytes(sha1_hash, "big"))[2:].zfill(40)
 
+def get_hash_from_bytes(data:bytes) -> bytes:
+    '''Returns the sha1 hash of a bytes object.'''
+    sha1_hash = hashlib.sha1()
+    data_length = len(data)
+    BUFFER_SIZE = 65536
+    for i in range(0, data_length, BUFFER_SIZE):
+        if i + BUFFER_SIZE >= data_length:
+            sha1_hash.update(data[i:])
+        else:
+            sha1_hash.update(data[i:i+BUFFER_SIZE])
+    return sha1_hash.digest()
+
 def get_hash(file:IO) -> bytes:
     '''Returns the sha1 hash of a file opened in binary mode.'''
     BUFFER_SIZE = 65536 # 64kb

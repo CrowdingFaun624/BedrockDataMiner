@@ -1,9 +1,10 @@
 import copy
 import gzip
-import time
 import traceback
 from typing import BinaryIO
 
+import Utilities.FileStorageManager as FileStorageManager
+import Utilities.FileManager as FileManager
 import Utilities.Nbt.DataReader as DataReader
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtTypes as NbtTypes
@@ -14,25 +15,42 @@ USE_CACHE = True
 
 class NbtBytes():
 
-    def __init__(self, value:bytes) -> None:
-        self.value = value
-        self.hash = hash(value)
+    def __init__(self, *, data_hash:str|None=None, value:bytes|None=None) -> None:
+        if data_hash is not None and value is not None:
+            self.value = value
+            self.hash = data_hash
+        elif data_hash is not None and value is None:
+            self.hash = data_hash
+            self.value = None
+        elif data_hash is None and value is not None:
+            self.value = value
+            self.hash = FileManager.stringify_sha1_hash(FileManager.get_hash_from_bytes(value))
+        elif data_hash is None and value is None:
+            raise RuntimeError("Must provide data_hash and/or value")
+
+    def open(self) -> bytes:
+        if self.value is None:
+            self.value = FileStorageManager.read_archived(self.hash, "b")
+        return self.value
 
     def __eq__(self, other:"NbtBytes") -> bool:
         return self is other or self.value == other.value
 
     def __hash__(self) -> int:
-        return self.hash
+        return hash(self.hash)
 
     def __repr__(self) -> str:
-        return "<%s len %i>" % (self.__class__.__name__, len(self.value))
+        if self.value is None:
+            return "<%s hash %s>" % (self.__class__.__name__, self.hash)
+        else:
+            return "<%s len %i hash %s>" % (self.__class__.__name__, len(self.value), self.hash)
 
 def unpack_bytes(data:bytes, gzipped:bool=True, endianness:Endianness.End|None=None) -> tuple[str|None,NbtTypes.TAG]:
     if endianness is None: endianness = Endianness.End.BIG
     if USE_CACHE:
         data_hash = hash(data)
-    if USE_CACHE and data_hash in cache:
-        return copy.deepcopy(cache[data_hash])
+        if data_hash in cache:
+            return copy.deepcopy(cache[data_hash])
     if gzipped:
         data = gzip.decompress(data)
     data_reader = DataReader.DataBytesReader(data)
@@ -55,9 +73,9 @@ def unpack_snbt(data:str) -> NbtTypes.TAG:
 def get_nbt_bytes(data:bytes) -> NbtBytes:
     '''Returns an NbtBytes of the data. The data inside will be un-gzipped'''
     try:
-        return NbtBytes(gzip.decompress(data))
+        return NbtBytes(value=gzip.decompress(data))
     except gzip.BadGzipFile:
-        return NbtBytes(data)
+        return NbtBytes(value=data)
 
 def main_read_file() -> None:
     from pathlib2 import Path

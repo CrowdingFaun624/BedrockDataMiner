@@ -21,10 +21,10 @@ def stringify(data:Any) -> str:
             return "null"
         case NbtReader.NbtBytes():
             try:
-                return str(NbtReader.unpack_bytes(data.value, gzipped=False, endianness=Endianness.End.BIG)[1])
+                return str(NbtReader.unpack_bytes(data.open(), gzipped=False, endianness=Endianness.End.BIG)[1])
             except Exception:
                 try:
-                    return str(NbtReader.unpack_bytes(data.value, gzipped=False, endianness=Endianness.End.LITTLE)[1])
+                    return str(NbtReader.unpack_bytes(data.open(), gzipped=False, endianness=Endianness.End.LITTLE)[1])
                 except Exception:
                     return "Unencodable Nbt Object"
         case _:

@@ -47,12 +47,11 @@ class NbtBytesCoder(Coder[NbtBytesTypedDict, NbtReader.NbtBytes]):
 
     @classmethod
     def decode(cls, data: NbtBytesTypedDict) -> NbtReader.NbtBytes:
-        file = FileStorageManager.read_archived(data["hash"], "b")
-        return NbtReader.NbtBytes(file)
+        return NbtReader.NbtBytes(data_hash=data["hash"])
 
     @classmethod
     def encode(cls, data: NbtReader.NbtBytes) -> NbtBytesTypedDict:
-        file_hash = FileStorageManager.archive_data(data.value, ".nbt")
+        file_hash = FileStorageManager.archive_data(data.open(), ".nbt")
         return {"$special_type": "nbt_bytes", "hash": file_hash}
 
 class SpecialEncoder(json.JSONEncoder):

@@ -112,7 +112,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
 
     def normalize(self, data: NbtReader.NbtBytes, normalizer_dependencies: Normalizer.LocalNormalizerDependencies, version_number: int) -> tuple[NbtTypes.TAG|None, list[Trace.ErrorTrace]]:
         try:
-            data_parsed = NbtReader.unpack_bytes(data.value, gzipped=False, endianness=self.endianness)[1]
+            data_parsed = NbtReader.unpack_bytes(data.open(), gzipped=False, endianness=self.endianness)[1]
         except Exception as e:
             return None, [Trace.ErrorTrace(e, self.name, None, data)]
         if not self.children_has_normalizer: return data_parsed, []
