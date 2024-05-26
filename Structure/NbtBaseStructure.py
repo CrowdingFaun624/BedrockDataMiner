@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Iterable, Literal
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -11,6 +11,7 @@ import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.TypeVerifier as TypeVerifier
+
 
 class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
 
@@ -62,6 +63,11 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             "children_has_normalizers": self.children_has_normalizer,
             "children_tags": self.children_tags,
         })
+
+    def iter_structures(self) -> Iterable[Structure.Structure]:
+        if self.structure is None: return []
+        elif isinstance(self.structure, dict): return (substructure for substructure in self.structure.values() if substructure is not None)
+        else: return [self.structure]
 
     def check_all_types(self, data: NbtTypes.TAG) -> list[Trace.ErrorTrace]:
         output:list[Trace.ErrorTrace] = []

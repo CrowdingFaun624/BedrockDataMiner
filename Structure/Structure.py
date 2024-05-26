@@ -1,11 +1,12 @@
 import enum
-from typing import Any, Generic, TypeVar, Union
+from typing import Any, Generic, Iterable, TypeVar, Union
 
 import Structure.DataPath as DataPath
+import Structure.Normalizer as Normalizer
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
-import Structure.Normalizer as Normalizer
 import Structure.Trace as Trace
+
 
 class StructureFailure(enum.Enum):
     choose_structure_failure = 0
@@ -112,3 +113,6 @@ class Structure(Generic[a]):
 
     def compare(self, data1:a, data2:a) -> tuple[a,bool,list[Trace.ErrorTrace]]: ...
 
+    def iter_structures(self) -> Iterable["Structure"]:
+        '''Returns in Iterable of this Structure's substructures.'''
+        ...

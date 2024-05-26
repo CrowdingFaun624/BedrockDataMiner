@@ -84,6 +84,11 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             "children_tags": self.children_tags,
         })
 
+    def iter_structures(self) -> Iterable[Structure.Structure]:
+        if self.structure is None: return []
+        elif isinstance(self.structure, dict): return (substructure for substructure in self.structure.values() if substructure is not None)
+        else: return [self.structure]
+
     def check_type(self, index:int, item:d) -> Trace.ErrorTrace|None:
         if isinstance(item, D.Diff):
             raise TypeError("`check_all_types` was given data containing Diffs!")

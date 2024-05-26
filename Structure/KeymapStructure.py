@@ -1,4 +1,4 @@
-from typing import MutableMapping, TypeVar
+from typing import Iterable, MutableMapping, TypeVar
 
 import Structure.DataPath as DataPath
 import Structure.DictStructure as DictStructure
@@ -76,6 +76,9 @@ class KeymapStructure(DictStructure.DictStructure[d]):
             "children_has_normalizer": self.children_has_normalizer,
             "children_tags": self.children_tags,
         })
+
+    def iter_structures(self) -> Iterable[Structure.Structure]:
+        return (substructure for substructure in self.keys.values() if substructure is not None)
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):

@@ -97,6 +97,11 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             "children_tags": self.children_tags,
         })
 
+    def iter_structures(self) -> Iterable[Structure.Structure]:
+        if self.structure is None: return []
+        elif isinstance(self.structure, dict): return (substructure for substructure in self.structure.values() if substructure is not None)
+        else: return [self.structure]
+
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):
             raise TypeError("`check_type` was given data containing Diffs!")

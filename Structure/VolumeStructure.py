@@ -1,5 +1,5 @@
 import math
-from typing import Any, Mapping, MutableMapping, MutableSequence, cast
+from typing import Any, Iterable, Mapping, MutableMapping, MutableSequence, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -34,6 +34,10 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         self.print_additional_data = print_additional_data
         self.tags = tags
         self.layer_characters = layer_characters
+
+    def iter_structures(self) -> Iterable[Structure.Structure]:
+        if self.structure is None: return []
+        else: return [self.structure]
 
     def choose_structure_flat(self, key:int, value_type:type, value:Any|None) -> tuple[Structure.Structure|None,list[Trace.ErrorTrace]]:
         return self.structure, []
