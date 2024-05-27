@@ -54,34 +54,6 @@ class KeymapStructure(DictStructure.DictStructure[d]):
             else:
                 self.key_types[allowed_key].add(key_type)
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, TypeVerifier.TupleTypeVerifier(tuple, "a tuple",
-            TypeVerifier.TupleItemTypeVerifier(str, "a str"),
-            TypeVerifier.TupleItemTypeVerifier(type, "a type"),
-        ), (Structure.Structure, type(None)), "a dict", "a tuple", "a Structure or None")),
-        TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"), "a dict", "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list", True, TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
-    )
-
-    def check_initialization_parameters(self) -> None:
-        self.type_verifier.base_verify({
-            "name": self.name,
-            "field": self.field,
-            "keys": self.keys,
-            "measure_length": self.measure_length,
-            "print_all": self.print_all,
-            "tags": self.tags,
-            "normalizer": self.normalizer,
-            "children_has_normalizer": self.children_has_normalizer,
-            "children_tags": self.children_tags,
-        })
-
     def iter_structures(self) -> Iterable[Structure.Structure]:
         assert self.keys is not None
         return (substructure for substructure in self.keys.values() if substructure is not None)

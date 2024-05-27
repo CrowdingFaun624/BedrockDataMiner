@@ -13,15 +13,9 @@ OUT = TypeVar("OUT")
 
 class Normalizer(Generic[IN, OUT]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("function", "a Callable", True, Callable),
-        TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))
-    )
-
     def __init__(self, function:Callable[[IN, DataMinerTyping.DependenciesTypedDict], OUT], dependencies:list[str]):
         '''`function` is a Callable that modifies the original object and returns nothing.
         `dependencies` is a list of DataMinerCollection names.'''
-        self.type_verifier.base_verify({"function": function, "dependencies": dependencies})
 
         self.function = function
         self.dependencies = cast(list[DataMinerTyping.DependenciesLiterals], dependencies)

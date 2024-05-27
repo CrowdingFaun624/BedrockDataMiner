@@ -27,25 +27,6 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
 
     valid_types = (dict, NbtTypes.TAG_Compound)
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a Structure, None, or a dict", True, TypeVerifier.UnionTypeVerifier("a Structure, None, or a dict",
-            Structure.Structure,
-            type(None),
-            TypeVerifier.DictTypeVerifier(dict, type, (Structure.Structure, type(None)), "a dict", "a type", "a Structure or None")
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("types", "a tuple", True, TypeVerifier.ListTypeVerifier(type, tuple, "a type", "a tuple")),
-        TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("comparison_move_function", "a Callable or None", True, (Callable, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list", True, TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
-    )
-
     def __init__(
             self,
             name:str,
@@ -80,22 +61,6 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
         self.structure:Structure.Structure[d]|dict[type,Structure.Structure[d]|None]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.tags:list[str]|None = None
-
-    def check_initialization_parameters(self) -> None:
-        self.type_verifier.base_verify({
-            "name": self.name,
-            "field": self.field,
-            "structure": self.structure,
-            "types": self.types,
-            "detect_key_moves": self.detect_key_moves,
-            "comparison_move_function": self.comparison_move_function,
-            "measure_length": self.measure_length,
-            "print_all": self.print_all,
-            "normalizer": self.normalizer,
-            "tags": self.tags,
-            "children_has_normalizer": self.children_has_normalizer,
-            "children_tags": self.children_tags,
-        })
 
     def link_substructures(
         self,

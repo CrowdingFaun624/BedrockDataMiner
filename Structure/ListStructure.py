@@ -58,42 +58,6 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         self.normalizer = normalizer
         self.tags = tags
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a Structure, dict, or None", True, TypeVerifier.UnionTypeVerifier(
-            "a Structure, dict, or None",
-            type(None),
-            Structure.Structure,
-            TypeVerifier.DictTypeVerifier(dict, type, (type(None), Structure.Structure), "a dict", "a type", "a Structure or None")
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("types", "a tuple or None", True, TypeVerifier.UnionTypeVerifier("a tuple or None", type(None), TypeVerifier.ListTypeVerifier(type, tuple, "a type", "a tuple"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("ordered", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list", True, TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
-    )
-
-    def check_initialization_parameters(self) -> None:
-        self.type_verifier.base_verify({
-            "name": self.name,
-            "field": self.field,
-            "structure": self.structure,
-            "types": self.types,
-            "print_flat": self.print_flat,
-            "ordered": self.ordered,
-            "measure_length": self.measure_length,
-            "print_all": self.print_all,
-            "tags": self.tags,
-            "normalizer": self.normalizer,
-            "children_has_normalizer": self.children_has_normalizer,
-            "children_tags": self.children_tags,
-        })
-
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.structure is None: return []
         elif isinstance(self.structure, dict): return (substructure for substructure in self.structure.values() if substructure is not None)

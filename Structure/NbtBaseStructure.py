@@ -16,25 +16,6 @@ import Utilities.TypeVerifier as TypeVerifier
 
 class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a Structure, a dict, or None", True, TypeVerifier.UnionTypeVerifier(
-            "a Structure, a dict, or None",
-            Structure.Structure,
-            type(None),
-            TypeVerifier.DictTypeVerifier(dict, type, (Structure.Structure, type(None)), "a dict", "a type", "a Structure or None"),
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("types", "a tuple or None", True, TypeVerifier.UnionTypeVerifier(
-            "a tuple or None",
-            type(None),
-            TypeVerifier.ListTypeVerifier(type, tuple, "a type", "a tuple"),
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("endianness", "an End", True, Endianness.End),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list", True, TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizers", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
-    )
-
     def __init__(
             self,
             name:str,
@@ -58,17 +39,6 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
     ) -> None:
         self.structure = structure
         self.normalizer = normalizer
-
-    def check_initialization_parameters(self) -> None:
-        self.type_verifier.base_verify({
-            "name": self.name,
-            "structure": self.structure,
-            "types": self.types,
-            "endianness": self.endianness,
-            "normalizer": self.normalizer,
-            "children_has_normalizers": self.children_has_normalizer,
-            "children_tags": self.children_tags,
-        })
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.structure is None: return []
