@@ -73,5 +73,5 @@ class KeymapComponent(StructureComponent.StructureComponent):
         self.final.link_substructures(
             keys=keys_final,
             normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
-            tags={keymap_field.key: [tag_component.name for tag_component in keymap_field.tags_field.get_components()] for keymap_field in self.keys}
+            tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys}
         )

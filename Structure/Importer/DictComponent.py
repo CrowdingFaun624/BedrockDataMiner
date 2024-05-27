@@ -73,5 +73,5 @@ class DictComponent(StructureComponent.StructureComponent):
         self.final.link_substructures(
             structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
             normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
-            tags=[cast(str, tag.final) for tag in self.tags_field.get_components()]
+            tags=self.tags_field.get_finals()
         )

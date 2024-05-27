@@ -49,3 +49,14 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         Can only be called after `set_field`.
         '''
         return [tag.name for tag in self.get_components()]
+
+    def get_finals(self) -> list[str]:
+        '''
+        Returns the `final` attribute of all tags in this TagListField.
+        Can only be called after `set_field`.
+        '''
+        output:list[str] = []
+        for tag in self.get_components():
+            assert tag.final is not None
+            output.append(tag.final)
+        return output
