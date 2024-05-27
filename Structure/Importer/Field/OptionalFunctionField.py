@@ -31,8 +31,8 @@ class OptionalFunctionField(Field.Field):
     def get_function(self) -> Callable|None:
         '''
         Returns the function this Field refers to.
-        Can only be called after `set`.
+        Can only be called after `set_field`.
         '''
         if not self.has_set_function:
-            raise RuntimeError("Cannot call `get_function` before `set`!")
+            raise RuntimeError("Cannot call `get_function` before `set_field`!")
         return self.function

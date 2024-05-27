@@ -35,6 +35,6 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
     def get_tags(self) -> list[str]:
         '''
         Returns the tags that this TagListField refers to in the form of strings.
-        Can only be called after `set`.
+        Can only be called after `set_field`.
         '''
         return [tag.name for tag in self.get_components()]

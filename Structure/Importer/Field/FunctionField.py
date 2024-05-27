@@ -26,8 +26,8 @@ class FunctionField(Field.Field):
     def get_function(self) -> Callable:
         '''
         Returns the function this Field refers to.
-        Can only be called after `set`.
+        Can only be called after `set_field`.
         '''
         if self.function is None:
-            raise RuntimeError("Cannot call `get_function` before `set`!")
+            raise RuntimeError("Cannot call `get_function` before `set_field`!")
         return self.function

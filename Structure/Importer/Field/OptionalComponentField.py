@@ -34,8 +34,8 @@ class OptionalComponentField(Field.Field, Generic[a]):
     def get_component(self) -> a|None:
         '''
         Returns the Component that this Field refers to.
-        Can only be called after `set`.
+        Can only be called after `set_field`.
         '''
         if not self.has_set_component:
-            raise RuntimeError("Cannot call `get_component` before `set`!")
+            raise RuntimeError("Cannot call `get_component` before `set_field`!")
         return self.subcomponent # type: ignore

@@ -37,5 +37,5 @@ class TypeField(AbstractTypeField.AbstractTypeField):
 
     def get_types(self) -> list[type]:
         if self.types is None:
-            raise RuntimeError("Cannot call `get_types` before `set`!")
+            raise RuntimeError("Cannot call `get_types` before `set_field`!")
         return self.types

@@ -28,8 +28,8 @@ class ComponentField(Field.Field, Generic[a]):
     def get_component(self) -> a:
         '''
         Returns the Component that this Field refers to.
-        Can only be called after `set`.
+        Can only be called after `set_field`.
         '''
         if self.subcomponent is None:
-            raise RuntimeError("Cannot call `get_component` before `set`!")
+            raise RuntimeError("Cannot call `get_component` before `set_field`!")
         return self.subcomponent # type: ignore

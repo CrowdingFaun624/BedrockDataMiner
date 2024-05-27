@@ -34,7 +34,7 @@ class ComponentListField(Field.Field, Generic[a]):
         :new_components: The sequence of Components to add.
         '''
         if self.subcomponents is None:
-            raise RuntimeError("Cannot call `extend` before `set`!")
+            raise RuntimeError("Cannot call `extend` before `set_field`!")
         self.subcomponents.extend(new_components)
 
     b = TypeVar("b")
@@ -45,7 +45,7 @@ class ComponentListField(Field.Field, Generic[a]):
         :function: The function to use.
         '''
         if self.subcomponents is None:
-            raise RuntimeError("Cannot call `for_each` before `set`!")
+            raise RuntimeError("Cannot call `for_each` before `set_field`!")
         for subcomponent in self.subcomponents:
             function(subcomponent)
 
@@ -55,16 +55,16 @@ class ComponentListField(Field.Field, Generic[a]):
         :function: The function to use.
         '''
         if self.subcomponents is None:
-            raise RuntimeError("Cannot call `map` before `set`!")
+            raise RuntimeError("Cannot call `map` before `set_field`!")
         return (function(subcomponent) for subcomponent in self.subcomponents)
 
     def get_components(self) -> list[a]:
         '''
         Returns the Components that this Field refers to.
-        Can only be called after `set`.
+        Can only be called after `set_field`.
         '''
         if self.subcomponents is None:
-            raise RuntimeError("Cannot call `get_components` before `set`!")
+            raise RuntimeError("Cannot call `get_components` before `set_field`!")
         return self.subcomponents # type: ignore
 
     def __repr__(self) -> str:

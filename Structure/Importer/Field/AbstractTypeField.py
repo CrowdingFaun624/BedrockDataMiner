@@ -44,6 +44,6 @@ class AbstractTypeField(Field.Field):
     def get_types(self) -> list[type]:
         '''
         Returns a list of types that this TypeField references.
-        Can only be called after `set`.
+        Can only be called after `set_field`.
         '''
         ...

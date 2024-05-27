@@ -26,7 +26,7 @@ class KeymapKeyField(MetaField.MetaField[Field.Field]):
         '''
         :data: A dictionary containing the keys {"type": str|list[str], "subcomponent": str|None, tags:list[str]}
         :key: The key that this Field corresponds to.
-        :tag_set: The set of tags to update when `set` is called.
+        :tag_set: The set of tags to update when `set_field` is called.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
         '''
         self.key = key
