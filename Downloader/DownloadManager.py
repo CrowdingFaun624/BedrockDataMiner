@@ -1,5 +1,4 @@
 import shutil
-import threading
 import zipfile
 from typing import Iterable, Literal, TypedDict
 
@@ -9,9 +8,9 @@ from pathlib2 import Path
 import Downloader.DownloadLog as DownloadLog
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
+import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
-import Utilities.TypeVerifier as TypeVerifier
 
 
 class DownloadManagerTypedDict(TypedDict):
@@ -31,8 +30,6 @@ class DownloadManager(InstallManager.InstallManager):
 
         self.file_list:list[str]|None = None
         self.file_set:set[str]|None = None
-        self.installation_lock = threading.Lock()
-        self.get_file_list_lock = threading.Lock()
 
         self.url = file_type_arguments["url"]
         self.set_file_prepension(version_tags)
@@ -92,12 +89,11 @@ class DownloadManager(InstallManager.InstallManager):
             self.install_all()
         self.open_zip_file()
         if self.file_list is None:
-            with self.get_file_list_lock:
-                if self.file_list is not None:
-                    return self.file_list # If it started waiting and then it's complete when it's done waiting.
-                strip_string = self.get_full_file_name("")
-                assert self.zip_file is not None
-                self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string) and not file.filename.endswith("/")]
+            if self.file_list is not None:
+                return self.file_list # If it started waiting and then it's complete when it's done waiting.
+            strip_string = self.get_full_file_name("")
+            assert self.zip_file is not None
+            self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string) and not file.filename.endswith("/")]
             self.file_set = set(self.file_list)
         return self.file_list
 
@@ -180,7 +176,6 @@ class DownloadManager(InstallManager.InstallManager):
         if destination is not None and not isinstance(destination, Path):
             raise TypeError("Parameter `destination` is not a `Path`!")
 
-        self.installation_lock.acquire()
         if destination is None: destination = self.apk_location
         if not self.installed.get():
             response_supposed_length = None
@@ -198,10 +193,8 @@ class DownloadManager(InstallManager.InstallManager):
                     raise RuntimeError("Failed to correctly download file!")
             self.installed.set(True)
             self.open_zip_file()
-        self.installation_lock.release()
 
     def all_done(self) -> None:
-        self.installation_lock.acquire() # So it doesn't do anything under my nose
         self.installed.set(False)
         self.zip_file = None
         self.members = None
@@ -211,4 +204,3 @@ class DownloadManager(InstallManager.InstallManager):
         assert self.location.name != self.version.name # self.location refers to the `client` subdirectory of the version folder.
         if self.location.exists():
             shutil.rmtree(self.location)
-        self.installation_lock.release()

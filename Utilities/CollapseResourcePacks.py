@@ -25,7 +25,7 @@ type_verifier = TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier
 ), list, "a dict", "a list")
 
 def get_resource_pack_order() -> list[ResourcePackTypedDict]:
-    with FileManager.open_shared_file(FileManager.RESOUCE_PACK_DATA_FILE, "rt") as f:
+    with open(FileManager.RESOUCE_PACK_DATA_FILE, "rt") as f:
         data:list[ResourcePackTypedDict] = json.load(f)
     type_verifier.base_verify(data)
     return data

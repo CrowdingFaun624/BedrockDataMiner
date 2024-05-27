@@ -1,5 +1,4 @@
 import shutil
-import threading
 from typing import Iterable, Literal, TypedDict
 
 from pathlib2 import Path
@@ -7,8 +6,8 @@ from pathlib2 import Path
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
-import Version.VersionTags as VersionTags
 import Utilities.TypeVerifier as TypeVerifier
+import Version.VersionTags as VersionTags
 
 
 class StoredManagerTypedDict(TypedDict):
@@ -23,15 +22,12 @@ class StoredManager(InstallManager.InstallManager):
     def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:StoredManagerTypedDict) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
         self.name = file_type_arguments["stored_name"]
-        self.index_read_lock = threading.Lock()
         self.file_list:list[str]|None = None
         self.index = None
 
     def read_index(self) -> None:
         if self.index is not None: return
-        with self.index_read_lock:
-            if self.index is not None: return
-            self.index = StoredVersionsManager.read_index(self.name)
+        self.index = StoredVersionsManager.read_index(self.name)
 
     def install(self, file_name:str, destination:Path|None=None) -> Path:
 

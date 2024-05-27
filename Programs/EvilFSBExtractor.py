@@ -1,25 +1,23 @@
 import json
-from pathlib2 import Path
 import subprocess
-import threading
 from typing import Generator, Iterable
+
+from pathlib2 import Path
 
 import Utilities.FileManager as FileManager
 import Utilities.FileStorageManager as FileStorageManager
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
-fsb_exe_lock = threading.Lock()
-cache_file_lock = threading.Lock()
 
 def read_cache() -> dict[str,dict[str,str]]:
     if not FileManager.FSB_CACHE_FILE.exists():
-        with open(FileManager.FSB_CACHE_FILE, "wt") as f, cache_file_lock:
+        with open(FileManager.FSB_CACHE_FILE, "wt") as f:
             json.dump({}, f)
-    with open(FileManager.FSB_CACHE_FILE, "rt") as f, cache_file_lock:
+    with open(FileManager.FSB_CACHE_FILE, "rt") as f:
         return json.load(f)
 
 def write_cache(cache_data:dict[str,dict[str,str]]) -> None:
-    with open(FileManager.FSB_CACHE_FILE, "wt") as f, cache_file_lock:
+    with open(FileManager.FSB_CACHE_FILE, "wt") as f:
         json.dump(cache_data, f)
 
 def cache_new_item(fsb_hash:str, data:dict[str,str]) -> None:
@@ -38,8 +36,7 @@ def cache_new_item(fsb_hash:str, data:dict[str,str]) -> None:
             raise ValueError("A value in `data` is len %i isntead of 40: \"%s\": \"%s\"!" % (len(value), key, value))
 
     cache = fsb_cache.get()
-    with cache_file_lock:
-        cache[fsb_hash] = data
+    cache[fsb_hash] = data
     write_cache(cache)
 
 def cache_read_item(fsb_hash:str) -> dict[str,str]|None:
@@ -76,8 +73,7 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
             dest.write(fsb_file_io.read())
         input_file.all_done()
         # run fsb extractor on fsb file.
-        with fsb_exe_lock as lock: # They raise an error code of 67 if started at exactly the same time.
-            exe_return = subprocess.run([FileManager.LIB_FSB_EXE_FILE, temp_file], shell=True, cwd=temp_directory, capture_output=True)
+        exe_return = subprocess.run([FileManager.LIB_FSB_EXE_FILE, temp_file], shell=True, cwd=temp_directory, capture_output=True)
         if exe_return.returncode != 0:
             raise RuntimeError("EvilFSBExtractor returned a code of %i on file \"%s\"!" % (exe_return.returncode, input_file.name))
 

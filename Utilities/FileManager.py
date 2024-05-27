@@ -3,7 +3,6 @@ import hashlib
 import os
 import shutil
 import sys
-import threading
 import uuid
 from typing import IO, Any, Callable, Literal
 
@@ -41,8 +40,6 @@ LIB_FSB_FOLDER         = Path(LIB_FOLDER.joinpath("fsb"))
 LIB_FSB_EXE_FILE       = Path(LIB_FSB_FOLDER.joinpath("fsb_aud_extr.exe"))
 TEMP_FOLDER            = Path(PARENT_FOLDER.joinpath("_temp"))
 VERSIONS_FOLDER        = Path(PARENT_FOLDER.joinpath("_versions"))
-
-opened_shared_files:dict[Path,threading.Lock] = {}
 
 def get_comparison_file_path(name:str, number:int|None=None) -> Path:
     if number is None:
@@ -93,16 +90,6 @@ def get_version_index_path(version_folder:Path) -> Path:
 def get_temp_file_path() -> Path:
     '''Returns a path such as `./_temp/a6f780a3-83d0-4afd-a654-dc28df0b9831`.'''
     return Path(TEMP_FOLDER.joinpath(str(uuid.uuid4())))
-
-def open_shared_file(path:Path, mode:str="r", *args, **kwargs) -> IO:
-    if path not in opened_shared_files:
-        opened_shared_files[path] = threading.Lock()
-    opened_shared_files[path].acquire()
-    try:
-        open_file = open(path, mode, *args, **kwargs)
-    finally:
-        opened_shared_files[path].release()
-    return open_file
 
 def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
     '''Returns True if the path name is valid on this OS.'''

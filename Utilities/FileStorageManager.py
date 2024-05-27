@@ -1,14 +1,12 @@
 import gzip
-from pathlib2 import Path
-import threading
 from typing import IO, Literal, overload
+
+from pathlib2 import Path
 
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller
 
 COMPRESSIBLE_FILES = ["json", "fsb", "txt", "lang", "tga", "xml", "bin", "fragment", "h", "vertex", "properties", "material", "ttf", "otf", "fontdata", "css", "js", "html", "dat", "wlist", "pdn", "so", "dex", "sf", "mf"]
-
-index_lock = threading.Lock()
 
 CACHE_LIMIT = 2 # how many times it has to miss the cache in order to cache the file.
 
@@ -18,10 +16,8 @@ cache_data:dict[str,bytes|str] = {}
 def read_index() -> dict[str, tuple[bool, str]]:
     '''Returns a dictionary of hex string hashes, and the file's zippability and a name it has.
     Should only be called once at the start of the program, and then the `index` variable should be used.'''
-    index_lock.acquire()
     with open(FileManager.FILE_STORAGE_INDEX_FILE, "rt") as index_file_io:
         index_lines = index_file_io.readlines()
-    index_lock.release()
     return {line[:40]: (bool(int(line[41])), line[43:].rstrip()) for line in index_lines}
 
 index = read_index()
@@ -74,11 +70,9 @@ def archive(file:FileManager.FilePromise) -> str:
         else:
             destination.write(source.read())
 
-    index_lock.acquire()
     with open(FileManager.FILE_STORAGE_INDEX_FILE, "at") as index_file:
         index_file.write("%s %i %s\n" % (hex_string, zipped, file.name))
     index[hex_string] = (zipped, file.name)
-    index_lock.release()
 
     return hex_string
 
