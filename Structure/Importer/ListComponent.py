@@ -1,23 +1,20 @@
-from typing import Callable, cast
+from typing import cast
 
-import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
+import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.Field.TypeListField as TypeListField
 import Structure.Importer.GroupComponent as GroupComponent
-import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
-import Structure.Importer.TagComponent as TagComponent
 import Structure.ListStructure as ListStructure
 import Structure.Normalizer as Normalizer
 import Utilities.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
-TAG_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_tag": True}])
 
 class ListComponent(StructureComponent.StructureComponent):
 
@@ -52,13 +49,10 @@ class ListComponent(StructureComponent.StructureComponent):
         self.subcomponent_field:OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
-        self.tags_field:ComponentListField.ComponentListField[TagComponent.TagComponent] = ComponentListField.ComponentListField(data.get("tags", []), TAG_REQUEST_PROPERTIES, ["tags"])
+        self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.types_field.verify_with(self.subcomponent_field)
+        self.tags_field.add_to_tag_set(self.children_tags)
         self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.tags_field])
-
-    def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
-        super().set_component(components, functions)
-        self.children_tags.update(self.tags_field.map(lambda tag_component: tag_component.name))
 
     def create_final_get_final_normalizers(self) -> list[Normalizer.Normalizer]|None:
         return None if len(self.normalizer_field) == 0 else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()]

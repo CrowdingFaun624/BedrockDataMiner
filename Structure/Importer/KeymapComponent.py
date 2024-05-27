@@ -7,9 +7,9 @@ import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.KeymapKeyField as KeymapKeyField
+import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
-import Structure.Importer.TagComponent as TagComponent
 import Structure.KeymapStructure as KeymapStructure
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
@@ -17,7 +17,6 @@ import Utilities.TypeVerifier as TypeVerifier
 
 IMPORTABLE_KEYS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"has_importable_keys": True}])
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
-TAG_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_tag": True}])
 
 class KeymapComponent(StructureComponent.StructureComponent):
 
@@ -51,9 +50,10 @@ class KeymapComponent(StructureComponent.StructureComponent):
         self.print_all = data.get("print_all", False)
         self.keys_final:dict[tuple[str,type],Structure.Structure|None] = {}
 
-        self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(key_data, key, ["keys", key]) for key, key_data in data["keys"].items()], ["keys"])
+        self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(key_data, key, self.children_tags, ["keys", key]) for key, key_data in data["keys"].items()], ["keys"])
         self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
-        self.tags_for_all_field:ComponentListField.ComponentListField[TagComponent.TagComponent] = ComponentListField.ComponentListField(data.get("tags", []), TAG_REQUEST_PROPERTIES, ["tags"])
+        self.tags_for_all_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
+        self.tags_for_all_field.add_to_tag_set(self.children_tags)
         self.fields.extend([self.keys, self.normalizer_field, self.tags_for_all_field])
 
     def set_imports(self, components:dict[str,Component.Component], imports:list[str]) -> None:
@@ -68,9 +68,6 @@ class KeymapComponent(StructureComponent.StructureComponent):
         self.set_imports(components, self.imports)
         super().set_component(components, functions)
         self.keys.for_each(lambda keymap_key_field: keymap_key_field.add_tag_fields(self.tags_for_all_field))
-        self.children_tags.update(self.tags_for_all_field.map(lambda tag_component: tag_component.name))
-        for tag_list in self.keys.map(lambda keymap_key_field: (tag_component.name for tag_component in keymap_key_field.tags_field.get_components())):
-            self.children_tags.update(tag_list)
 
     def create_final_get_final_normalizers(self) -> list[Normalizer.Normalizer]|None:
         return None if len(self.normalizer_field) == 0 else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()]

@@ -4,10 +4,10 @@ import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.Field.Field as Field
+import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.Field.MetaField as MetaField
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.Field.TypeListField as TypeListField
-from Structure.Importer.Component import Component
 from Structure.Importer.ImporterConfig import ImporterConfig
 
 if TYPE_CHECKING:
@@ -19,20 +19,22 @@ if TYPE_CHECKING:
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 IMPORTABLE_KEYS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"has_importable_keys": True}])
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
-TAG_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_tag": True}])
 
 class KeymapKeyField(MetaField.MetaField[Field.Field]):
 
-    def __init__(self, data:ComponentTyping.KeymapKeyTypedDict, key:str, path:list[str|int]) -> None:
+    def __init__(self, data:ComponentTyping.KeymapKeyTypedDict, key:str, tag_set:set[str], path:list[str|int]) -> None:
         '''
         :data: A dictionary containing the keys {"type": str|list[str], "subcomponent": str|None, tags:list[str]}
         :key: The key that this Field corresponds to.
+        :tag_set: The set of tags to update when `set` is called.
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
         '''
         self.key = key
         self.types_field = TypeListField.TypeListField(data["type"] if isinstance(data["type"], list) else [data["type"]], ["keys", key, "type"])
         self.subcomponent_field:OptionalComponentField.OptionalComponentField[Union["StructureComponent.StructureComponent","GroupComponent.GroupComponent"]] = OptionalComponentField.OptionalComponentField(data.get("subcomponent", None), COMPONENT_REQUEST_PROPERTIES, ["keys", key, "subcomponent"])
-        self.tags_field:ComponentListField.ComponentListField["TagComponent.TagComponent"] = ComponentListField.ComponentListField(data.get("tags", []), TAG_REQUEST_PROPERTIES, ["keys", key, "tags"])
+        self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["keys", key, "tags"])
         self.types_field.verify_with(self.subcomponent_field)
+        self.tags_field.add_to_tag_set(tag_set)
         fields:list[Field.Field] = [self.types_field, self.subcomponent_field, self.tags_field]
         super().__init__(fields, path)
 
