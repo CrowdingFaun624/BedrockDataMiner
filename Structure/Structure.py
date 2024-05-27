@@ -22,8 +22,6 @@ class Structure(Generic[a]):
         self.children_has_normalizer = children_has_normalizer
         self.children_tags = children_tags
 
-    def finalize(self) -> None: ...
-
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.name)
 

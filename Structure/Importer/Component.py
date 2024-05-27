@@ -55,10 +55,6 @@ class Component():
             exceptions.extend(field.check(self.name, self.class_name, config))
         return exceptions
 
-    def finalize_finals(self) -> None:
-        '''Can be used to call a method on the final object.'''
-        pass
-
     def propagate_variables(self, child:Union["Component",None]=None) -> None:
         '''Calls `propagates_variables` on the parents of this Component with the child.'''
         has_changed = False
