@@ -53,6 +53,7 @@ class ListComponent(StructureComponent.StructureComponent):
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
         self.tags_field:ComponentListField.ComponentListField[TagComponent.TagComponent] = ComponentListField.ComponentListField(data.get("tags", []), TAG_REQUEST_PROPERTIES, ["tags"])
+        self.types_field.verify_with(self.subcomponent_field)
         self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.tags_field])
 
     def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
@@ -85,23 +86,3 @@ class ListComponent(StructureComponent.StructureComponent):
             self.final.structure = None
         else:
             self.final.structure = subcomponent.final
-
-    def check_components(self) -> list[Exception]:
-        subcomponent = self.subcomponent_field.get_component()
-        component_types = self.types_field.get_types()
-        if subcomponent is None:
-            for value_type in component_types:
-                if value_type in ComponentTyping.REQUIRES_SUBCOMPONENT_TYPES:
-                    return [TypeError("%s \"%s\" accepts type %s, but has a null Subcomponent!" % (self.class_name, self.name, value_type.__name__))]
-        else:
-            if set(component_types) != set(subcomponent.my_type):
-                my_types = ", ".join(type_item.__name__ for type_item in component_types)
-                its_types = ", ".join(type_item.__name__ for type_item in subcomponent.my_type)
-                return [TypeError("%s \"%s\" accepts types [%s], but its Subcomponent, \"%s\", only accepts type [%s]!" % (self.class_name, self.name, my_types, subcomponent.name, its_types))]
-        return []
-
-    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
-        super().check(config)
-        exceptions:list[Exception] = []
-        exceptions.extend(self.check_components())
-        return exceptions

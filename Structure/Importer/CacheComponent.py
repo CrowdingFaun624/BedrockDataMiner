@@ -40,6 +40,7 @@ class CacheComponent(StructureComponent.StructureComponent):
 
         self.subcomponent_field:OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent] = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
+        self.types_field.verify_with(self.subcomponent_field)
         self.fields.extend([self.subcomponent_field, self.types_field])
 
     def create_final(self) -> None:
@@ -64,18 +65,3 @@ class CacheComponent(StructureComponent.StructureComponent):
         structure = self.subcomponent_field.get_component()
         assert structure is not None
         self.final.structure = structure.final
-
-    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
-        exceptions = super().check(config)
-        subcomponent = self.subcomponent_field.get_component()
-        types = self.types_field.get_types()
-        if subcomponent is None:
-            for value_type in types:
-                if value_type in ComponentTyping.REQUIRES_SUBCOMPONENT_TYPES:
-                    exceptions.append((TypeError("%s \"%s\" accepts type %s, but has a null Subcomponent!" % (self.class_name, self.name, value_type.__name__))))
-        else:
-            if set(types) != set(subcomponent.my_type):
-                my_types = ", ".join(type_item.__name__ for type_item in types)
-                its_types = ", ".join(type_item.__name__ for type_item in subcomponent.my_type)
-                exceptions.append(TypeError("%s \"%s\" accepts types [%s], but its Subcomponent, \"%s\", only accepts type [%s]!" % (self.class_name, self.name, my_types, subcomponent.name, its_types)))
-        return exceptions

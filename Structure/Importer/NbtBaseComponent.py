@@ -44,6 +44,7 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
         self.subcomponent_field:ComponentField.ComponentField[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
+        self.types_field.verify_with(self.subcomponent_field)
         self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field])
 
     def get_endianness(self, endianness:str) -> Endianness.End:

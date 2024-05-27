@@ -31,7 +31,6 @@ class NbtTagListComponent(ListComponent.ListComponent):
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         super().check(config)
         exceptions:list[Exception] = []
-        exceptions.extend(self.check_components())
         exceptions.extend(self.check_required_type())
         return exceptions
 

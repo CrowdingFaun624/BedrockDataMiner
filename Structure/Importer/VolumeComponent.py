@@ -58,6 +58,7 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.this_type_field = TypeField.TypeField(data["this_type"], ["this_type"])
         self.tags_field:ComponentListField.ComponentListField[TagComponent.TagComponent] = ComponentListField.ComponentListField(data.get("tags", []), TAG_REQUEST_PROPERTIES, ["tags"])
+        self.types_field.verify_with(self.subcomponent_field)
         self.fields.extend([self.subcomponent_field, self.normalizer_field, self.types_field, self.this_type_field, self.tags_field])
 
     def set_component(self, components: dict[str, Component.Component], functions: dict[str, Callable[..., Any]]) -> None:

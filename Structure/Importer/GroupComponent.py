@@ -41,19 +41,3 @@ class GroupComponent(AbstractGroupComponent.AbstractGroupComponent):
                 structure = subcomponent.final
             for valid_type in valid_types:
                 self.final[valid_type] = structure
-
-    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
-        exceptions = super().check(config)
-        for index, group_field in enumerate(self.subcomponents_field):
-            subcomponent_types = group_field.get_types()
-            subcomponent = group_field.get_component()
-            if subcomponent is None:
-                for subcomponent_type in subcomponent_types:
-                    if subcomponent_type in ComponentTyping.REQUIRES_SUBCOMPONENT_TYPES:
-                        exceptions.append(TypeError("Item %i of %s \"%s\" accepts type %s, but has a null Subcomponent!" % (index, self.class_name, self.name, subcomponent_type.__name__)))
-            else:
-                for subcomponent_type in subcomponent_types:
-                    if subcomponent_type not in subcomponent.my_type:
-                        its_types = ", ".join(its_type.__name__ for its_type in subcomponent.my_type)
-                        exceptions.append(TypeError("Item %i of %s \"%s\" accepts type %s, but its Subcomponent, \"%s\", only accepts type [%s]!" % (index, self.class_name, self.name, subcomponent_type.__name__, subcomponent.name, its_types)))
-        return exceptions

@@ -11,6 +11,7 @@ class GroupItemField(MetaField.MetaField):
     def __init__(self, key:str, value:str|None, path:list[str|int]) -> None:
         self.type_field = TypeField.TypeField(key, path)
         self.subcomponent_field:OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent] = OptionalComponentField.OptionalComponentField(value, COMPONENT_REQUEST_PROPERTIES, path)
+        self.type_field.verify_with(self.subcomponent_field)
         super().__init__([self.type_field, self.subcomponent_field], path)
 
     def get_types(self) -> list[type]:

@@ -32,6 +32,7 @@ class KeymapKeyField(MetaField.MetaField[Field.Field]):
         self.types_field = TypeListField.TypeListField(data["type"] if isinstance(data["type"], list) else [data["type"]], ["keys", key, "type"])
         self.subcomponent_field:OptionalComponentField.OptionalComponentField[Union["StructureComponent.StructureComponent","GroupComponent.GroupComponent"]] = OptionalComponentField.OptionalComponentField(data.get("subcomponent", None), COMPONENT_REQUEST_PROPERTIES, ["keys", key, "subcomponent"])
         self.tags_field:ComponentListField.ComponentListField["TagComponent.TagComponent"] = ComponentListField.ComponentListField(data.get("tags", []), TAG_REQUEST_PROPERTIES, ["keys", key, "tags"])
+        self.types_field.verify_with(self.subcomponent_field)
         fields:list[Field.Field] = [self.types_field, self.subcomponent_field, self.tags_field]
         super().__init__(fields, path)
 
