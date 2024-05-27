@@ -82,7 +82,7 @@ class StructureBase():
     def clear_caches(self) -> None:
         '''Clears all the caches of this Structure and of its children.'''
         assert self.structure is not None
-        self.structure.clear_caches()
+        self.structure.clear_caches(set())
 
     def has_tag(self, tag:str) -> bool:
         return tag in self.children_tags

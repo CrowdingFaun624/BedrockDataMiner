@@ -162,8 +162,8 @@ class CacheStructure(Structure.Structure[d]):
         cache_item.set_compare(output)
         return output
 
-    def clear_caches(self) -> None:
-        super().clear_caches()
+    def clear_caches(self, memo:set[Structure.Structure]) -> None:
+        super().clear_caches(memo)
         self.cache.clear()
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
