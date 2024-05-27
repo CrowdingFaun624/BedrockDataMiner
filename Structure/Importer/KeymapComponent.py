@@ -56,9 +56,6 @@ class KeymapComponent(StructureComponent.StructureComponent):
         self.keys.for_each(lambda key: key.add_tag_fields(self.tags_for_all_field))
         self.fields.extend([self.import_field, self.tags_for_all_field, self.keys, self.normalizer_field])
 
-    def create_final_get_final_normalizers(self) -> list[Normalizer.Normalizer]|None:
-        return None if len(self.normalizer_field) == 0 else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()]
-
     def create_final_get_tags_final(self) -> dict[str,list[str]]:
         return {key: [tag_component.name for tag_component in tag_components] for key, tag_components in self.keys.map(lambda keymap_field: (keymap_field.key, keymap_field.tags_field.get_components()))}
 
@@ -70,7 +67,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
             field=self.field,
             keys=self.keys_final,
             measure_length=self.measure_length,
-            normalizer=self.create_final_get_final_normalizers(),
+            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
             print_all=self.print_all,
             tags=tags_final,
             children_has_normalizer=self.children_has_normalizer,

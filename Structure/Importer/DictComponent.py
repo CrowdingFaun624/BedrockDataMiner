@@ -56,9 +56,6 @@ class DictComponent(StructureComponent.StructureComponent):
         self.tags_field.add_to_tag_set(self.children_tags)
         self.fields.extend([self.subcomponent_field, self.comparison_move_function_field, self.normalizer_field, self.types_field, self.tags_field])
 
-    def create_final_get_final_normalizers(self) -> list[Normalizer.Normalizer]|None:
-        return None if len(self.normalizer_field) == 0 else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()]
-
     def create_final(self) -> None:
         self.final = DictStructure.DictStructure(
             name=self.name,
@@ -68,7 +65,7 @@ class DictComponent(StructureComponent.StructureComponent):
             detect_key_moves=self.detect_key_moves,
             comparison_move_function=self.comparison_move_function_field.get_function(),
             measure_length=self.measure_length,
-            normalizer=self.create_final_get_final_normalizers(),
+            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
             print_all=self.print_all,
             tags=[tag.name for tag in self.tags_field.get_components()],
             children_has_normalizer=self.children_has_normalizer,

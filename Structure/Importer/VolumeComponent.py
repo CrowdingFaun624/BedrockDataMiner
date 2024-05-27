@@ -59,9 +59,6 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
         self.tags_field.add_to_tag_set(self.children_tags)
         self.fields.extend([self.subcomponent_field, self.normalizer_field, self.types_field, self.this_type_field, self.tags_field])
 
-    def create_final_get_final_normalizers(self) -> list[Normalizer.Normalizer]|None:
-        return None if len(self.normalizer_field) == 0 else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()]
-
     def create_final(self) -> None:
         self.final_structure = VolumeStructure.VolumeStructure(
             name=self.name,
@@ -71,7 +68,7 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
             structure=None,
             print_additional_data=self.print_additional_data,
             tags=list(self.tags_field.map(lambda tag_component: tag_component.name)),
-            normalizer=self.create_final_get_final_normalizers(),
+            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )

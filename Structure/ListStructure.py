@@ -25,7 +25,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             measure_length:bool,
             print_all:bool,
             tags:list[str],
-            normalizer:list[Normalizer.Normalizer]|None,
+            normalizer:list[Normalizer.Normalizer],
             children_has_normalizer:bool,
             children_tags:set[str]
         ) -> None:
@@ -64,7 +64,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list", additional_function=lambda data: (len(data) > 0, "empty"))))),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list", True, TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
     )
@@ -117,12 +117,11 @@ class ListStructure(Structure.Structure[Iterable[d]]):
 
     def normalize(self, data:list[d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
-        if self.normalizer is not None:
-            for normalizer in self.normalizer:
-                try:
-                    normalizer(data, normalizer_dependencies, version_number)
-                except Exception as e:
-                    return None, [Trace.ErrorTrace(e, self.name, None, data)]
+        for normalizer in self.normalizer:
+            try:
+                normalizer(data, normalizer_dependencies, version_number)
+            except Exception as e:
+                return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
         for index, item in enumerate(data):
             structure, new_exceptions = self.choose_structure_flat(index, type(item), item)

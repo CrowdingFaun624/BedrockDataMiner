@@ -30,11 +30,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             TypeVerifier.ListTypeVerifier(type, tuple, "a type", "a tuple"),
         )),
         TypeVerifier.TypedDictKeyTypeVerifier("endianness", "an End", True, Endianness.End),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier(
-            "a list or None",
-            type(None),
-            TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list"),
-        )),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list", True, TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizers", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
     )
@@ -45,7 +41,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             structure:Structure.Structure|dict[type,Structure.Structure|None]|None,
             types:tuple[type,...]|None,
             endianness:Endianness.End,
-            normalizer:list[Normalizer.Normalizer]|None,
+            normalizer:list[Normalizer.Normalizer],
             children_has_normalizer:bool,
             children_tags:set[str]
         ) -> None:
@@ -118,12 +114,11 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         except Exception as e:
             return None, [Trace.ErrorTrace(e, self.name, None, data)]
         if not self.children_has_normalizer: return data_parsed, []
-        if self.normalizer is not None:
-            for normalizer in self.normalizer:
-                try:
-                    normalizer(data_parsed, normalizer_dependencies, version_number)
-                except Exception as e:
-                    return None, [Trace.ErrorTrace(e, self.name, None, data)]
+        for normalizer in self.normalizer:
+            try:
+                normalizer(data_parsed, normalizer_dependencies, version_number)
+            except Exception as e:
+                return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.choose_structure_flat("", type(data_parsed), data_parsed)
         for exception in new_exceptions: exception.add(self.name, None)

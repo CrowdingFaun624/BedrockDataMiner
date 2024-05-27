@@ -29,7 +29,7 @@ class CacheStructure(Structure.Structure[d]):
             children_has_normalizer:bool,
             children_tags:set[str]
         ) -> None:
-        super().__init__(name, name, None, children_has_normalizer, children_tags)
+        super().__init__(name, name, [], children_has_normalizer, children_tags)
 
         self.types = types
         self.structure = structure

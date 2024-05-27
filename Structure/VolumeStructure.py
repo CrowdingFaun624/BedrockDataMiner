@@ -1,5 +1,6 @@
 import math
-from typing import Any, Iterable, Mapping, MutableMapping, MutableSequence, cast
+from typing import (Any, Iterable, Mapping, MutableMapping, MutableSequence,
+                    cast)
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -22,7 +23,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             structure:Structure.Structure[MutableMapping[str,Any]]|None, # structure is for looking at other keys besides position and state
             print_additional_data:bool, # whether to print the extra data like the nbt key in structures_nbt
             tags:list[str],
-            normalizer:list[Normalizer.Normalizer]|None,
+            normalizer:list[Normalizer.Normalizer],
             children_has_normalizer:bool,
             children_tags:set[str],
             layer_characters:str=LAYER_CHARACTERS_DEFAULT,
@@ -112,12 +113,11 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if not self.children_has_normalizer: return data_output, []
-        if self.normalizer is not None:
-            for normalizer in self.normalizer:
-                try:
-                    normalizer(data_output, normalizer_dependencies, version_number)
-                except Exception as e:
-                    return data_output, [Trace.ErrorTrace(e, self.name, None, data_output)]
+        for normalizer in self.normalizer:
+            try:
+                normalizer(data_output, normalizer_dependencies, version_number)
+            except Exception as e:
+                return data_output, [Trace.ErrorTrace(e, self.name, None, data_output)]
         for index, (coordinate, item) in enumerate(data_output[1].items()):
             structure, new_exceptions = self.choose_structure_flat(index, type(item), item)
             for exception in new_exceptions: exception.add(self.name, index)

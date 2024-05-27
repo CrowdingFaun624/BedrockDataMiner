@@ -23,7 +23,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
             measure_length:bool,
             print_all:bool,
             tags:dict[str,list[str]],
-            normalizer:list[Normalizer.Normalizer]|None,
+            normalizer:list[Normalizer.Normalizer],
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
@@ -60,7 +60,7 @@ class KeymapStructure(DictStructure.DictStructure[d]):
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"), "a dict", "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list or None", True, TypeVerifier.UnionTypeVerifier("a list or None", TypeVerifier.UnionTypeVerifier("a list or None", type(None), TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list", additional_function=lambda data: (sum(1 for item in data) > 0, "empty"))))),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a list", True, TypeVerifier.ListTypeVerifier(Normalizer.Normalizer, list, "a Normalizer", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("children_has_normalizer", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("children_tags", "a set", True, TypeVerifier.IterableTypeVerifier(str, set, "a str", "a set")),
     )

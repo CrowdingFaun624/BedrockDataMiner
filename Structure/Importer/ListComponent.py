@@ -54,9 +54,6 @@ class ListComponent(StructureComponent.StructureComponent):
         self.tags_field.add_to_tag_set(self.children_tags)
         self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.tags_field])
 
-    def create_final_get_final_normalizers(self) -> list[Normalizer.Normalizer]|None:
-        return None if len(self.normalizer_field) == 0 else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()]
-
     def create_final(self) -> None:
         self.final = ListStructure.ListStructure(
             name=self.name,
@@ -66,7 +63,7 @@ class ListComponent(StructureComponent.StructureComponent):
             print_flat=self.print_flat,
             print_all=self.print_all,
             measure_length=self.measure_length,
-            normalizer=self.create_final_get_final_normalizers(),
+            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
             ordered=self.ordered,
             tags=list(self.tags_field.map(lambda tag_component: tag_component.name)),
             children_has_normalizer=self.children_has_normalizer,
