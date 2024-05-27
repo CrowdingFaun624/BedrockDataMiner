@@ -17,20 +17,31 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
         '''
         super().__init__(subcomponents_strs, TAG_REQUEST_PROPERTIES, path)
-        self.tag_set:set[str]|None = None
+        self.tag_sets:list[set[str]] = []
+        self.import_from_field:TagListField|None = None
 
     def set_field(self, component_name: str, component_class_name: str, components: dict[str, Component.Component], functions: dict[str, Callable]) -> Sequence[Component.Component]:
         output = super().set_field(component_name, component_class_name, components, functions)
-        if self.tag_set is not None:
-            self.tag_set.update(self.get_tags())
+        if self.import_from_field is not None:
+            self.import_from_field.set_field(component_name, component_class_name, components, functions)
+            self.extend(self.import_from_field.get_components())
+        for tag_set in self.tag_sets:
+            tag_set.update(self.get_tags())
         return output
+
+    def import_from(self, tag_list_field:"TagListField") -> None:
+        '''
+        Makes this TagListField import from another TagListField when `set_field` is called.
+        :tag_list_field: The TagListField to import from.
+        '''
+        self.import_from_field = tag_list_field
 
     def add_to_tag_set(self, tag_set:set[str]) -> None:
         '''
         Makes this TagListField add its tags (in string form) to the given tag set.
         :tag_set: The set of strings to add to.
         '''
-        self.tag_set = tag_set
+        self.tag_sets.append(tag_set)
 
     def get_tags(self) -> list[str]:
         '''

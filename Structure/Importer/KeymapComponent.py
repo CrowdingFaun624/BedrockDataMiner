@@ -1,11 +1,10 @@
-from typing import Callable, cast
+from typing import cast
 
-import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.ComponentListField as ComponentListField
-import Structure.Importer.Field.Field as Field
 import Structure.Importer.Field.FieldListField as FieldListField
+import Structure.Importer.Field.KeymapImportField as KeymapImportField
 import Structure.Importer.Field.KeymapKeyField as KeymapKeyField
 import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.NormalizerComponent as NormalizerComponent
@@ -15,7 +14,6 @@ import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Utilities.TypeVerifier as TypeVerifier
 
-IMPORTABLE_KEYS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"has_importable_keys": True}])
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
 
 class KeymapComponent(StructureComponent.StructureComponent):
@@ -45,29 +43,18 @@ class KeymapComponent(StructureComponent.StructureComponent):
         self.verify_arguments(data, name)
 
         self.field = data.get("field", "field")
-        self.imports = [] if "imports" not in data else ([data["imports"]] if isinstance(data["imports"], str) else data["imports"])
         self.measure_length = data.get("measure_length", False)
         self.print_all = data.get("print_all", False)
         self.keys_final:dict[tuple[str,type],Structure.Structure|None] = {}
 
-        self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(key_data, key, self.children_tags, ["keys", key]) for key, key_data in data["keys"].items()], ["keys"])
+        self.import_field = KeymapImportField.KeymapImportField([] if "imports" not in data else ([data["imports"]] if isinstance(data["imports"], str) else data["imports"]), ["imports"])
+        self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(data=key_data, key=key, tag_set=self.children_tags, path=["keys", key]) for key, key_data in data["keys"].items()], ["keys"])
         self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
         self.tags_for_all_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.tags_for_all_field.add_to_tag_set(self.children_tags)
-        self.fields.extend([self.keys, self.normalizer_field, self.tags_for_all_field])
-
-    def set_imports(self, components:dict[str,Component.Component], imports:list[str]) -> None:
-        keymap_components:list[KeymapComponent] = []
-        for index, imported_component_str in enumerate(imports):
-            keymap_component = Field.choose_component(imported_component_str, IMPORTABLE_KEYS_REQUEST_PROPERTIES, components, ["imports", index], self.name, self.class_name, KeymapComponent)
-            keymap_components.append(keymap_component)
-            self.keys.extend_from_field_list(keymap_component.keys)
-        self.link_components(keymap_components)
-
-    def set_component(self, components:dict[str,Component.Component], functions:dict[str,Callable]) -> None:
-        self.set_imports(components, self.imports)
-        super().set_component(components, functions)
-        self.keys.for_each(lambda keymap_key_field: keymap_key_field.add_tag_fields(self.tags_for_all_field))
+        self.import_field.import_into(self.keys)
+        self.keys.for_each(lambda key: key.add_tag_fields(self.tags_for_all_field))
+        self.fields.extend([self.import_field, self.tags_for_all_field, self.keys, self.normalizer_field])
 
     def create_final_get_final_normalizers(self) -> list[Normalizer.Normalizer]|None:
         return None if len(self.normalizer_field) == 0 else [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()]
@@ -89,6 +76,8 @@ class KeymapComponent(StructureComponent.StructureComponent):
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
+        # if self.name == "components":
+            # print(tags_final)
 
     def link_finals(self) -> None:
         for key in self.keys:
