@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Callable, Sequence
 
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.Field.AbstractTypeField as AbstractTypeField
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 
@@ -10,7 +11,7 @@ if TYPE_CHECKING:
 
 TYPE_ALIAS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
 
-class TypeField(Field.Field):
+class TypeField(AbstractTypeField.AbstractTypeField):
     '''A link to a TypeAliasComponent or type.'''
 
     def __init__(self, subcomponent_str:str, path:list[str|int]) -> None:
@@ -35,10 +36,6 @@ class TypeField(Field.Field):
             return [self.subcomponent]
 
     def get_types(self) -> list[type]:
-        '''
-        Returns a list of types that this TypeField references.
-        Can only be called after `set`.
-        '''
         if self.types is None:
             raise RuntimeError("Cannot call `get_types` before `set`!")
         return self.types

@@ -1,22 +1,29 @@
-from typing import TYPE_CHECKING, Callable, Sequence
+from typing import TYPE_CHECKING, Callable, Sequence, TypeAlias, Union
 
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.Field.AbstractTypeField as AbstractTypeField
+import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Field.Field as Field
+import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
+from Structure.Importer.ImporterConfig import ImporterConfig
 
 if TYPE_CHECKING:
     import Structure.Importer.Component as Component
+    import Structure.Importer.GroupComponent as GroupComponent
+    import Structure.Importer.StructureComponent as StructureComponent
 
 TYPE_ALIAS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
+VerifyComponentType:TypeAlias = ComponentField.ComponentField[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent"]]|OptionalComponentField.OptionalComponentField[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent"]]
 
-class TypeListField(Field.Field):
+class TypeListField(AbstractTypeField.AbstractTypeField):
     '''A link to multiple TypeAliasComponents and/or types.'''
 
     def __init__(self, subcomponents_strs:list[str], path:list[str|int]) -> None:
         '''
         :subcomponents_strs: List of string representing a default type or Component.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         super().__init__(path)
         self.subcomponents_strs = subcomponents_strs
@@ -40,10 +47,6 @@ class TypeListField(Field.Field):
         return components_used
 
     def get_types(self) -> list[type]:
-        '''
-        Returns a list of types that this TypeField references.
-        Can only be called after `set`.
-        '''
         if self.types is None:
             raise RuntimeError("Cannot call `get_types` before `set`!")
         return self.types
