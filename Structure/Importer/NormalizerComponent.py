@@ -39,8 +39,7 @@ class NormalizerComponent(Component.Component):
         self.final = Normalizer.Normalizer(self.function_field.get_function(), self.dependencies)
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
-        super().check(config)
-        exceptions:list[Exception] = []
+        exceptions = super().check(config)
         if not config.allow_normalizer_dependencies and len(self.dependencies) > 0:
             exceptions.append(ValueError("Normalizer \"%s\" has dependencies in an environment with no allowed normalizer dependencies!" % (self.name,)))
         return exceptions

@@ -97,6 +97,6 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
         return exceptions
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
-        exceptions:list[Exception] = []
+        exceptions = super().check(config)
         exceptions.extend(self.check_components())
         return exceptions
