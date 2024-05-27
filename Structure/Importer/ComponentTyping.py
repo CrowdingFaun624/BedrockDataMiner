@@ -20,7 +20,7 @@ class BaseComponentTypedDict(TypedDict):
 class CacheComponentTypedDict(TypedDict):
     type: Required[Literal["Cache"]]
     types: Required[list[str]]
-    subcomponent: Required[str|None]
+    subcomponent: Required[str]
     cache_check_all_types: NotRequired[bool]
     cache_normalize: NotRequired[bool]
     cache_get_tag_paths: NotRequired[bool]

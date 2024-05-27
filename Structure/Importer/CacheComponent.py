@@ -1,9 +1,8 @@
 import Structure.CacheStructure as CacheStructure
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
-import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
+import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Field.TypeListField as TypeListField
-import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.StructureComponent as StructureComponent
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -38,7 +37,7 @@ class CacheComponent(StructureComponent.StructureComponent):
         self.cache_print_text = data.get("cache_print_text", True)
         self.cache_compare = data.get("cache_compare", True)
 
-        self.subcomponent_field:OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent] = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.subcomponent_field:ComponentField.ComponentField[StructureComponent.StructureComponent] = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.types_field.verify_with(self.subcomponent_field)
         self.fields.extend([self.subcomponent_field, self.types_field])
