@@ -20,22 +20,31 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             field:str,
             position_key:str,
             state_key:str,
-            structure:Structure.Structure[MutableMapping[str,Any]]|None, # structure is for looking at other keys besides position and state
             print_additional_data:bool, # whether to print the extra data like the nbt key in structures_nbt
-            tags:list[str],
-            normalizer:list[Normalizer.Normalizer],
             children_has_normalizer:bool,
             children_tags:set[str],
             layer_characters:str=LAYER_CHARACTERS_DEFAULT,
         ) -> None:
-        super().__init__(name, field, normalizer, children_has_normalizer, children_tags)
+        super().__init__(name, field, children_has_normalizer, children_tags)
 
         self.position_key = position_key
         self.state_key = state_key
-        self.structure = structure
         self.print_additional_data = print_additional_data
-        self.tags = tags
         self.layer_characters = layer_characters
+
+        self.structure:Structure.Structure[MutableMapping[str,Any]]|None = None
+        self.normalizer:list[Normalizer.Normalizer]|None = None
+        self.tags:list[str]|None = None
+
+    def link_substructures(
+        self,
+        structure:Structure.Structure[MutableMapping[str,Any]]|None,
+        normalizer:list[Normalizer.Normalizer],
+        tags:list[str]
+    ) -> None:
+        self.structure = structure
+        self.normalizer = normalizer
+        self.tags = tags
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.structure is None: return []
@@ -113,6 +122,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if not self.children_has_normalizer: return data_output, []
+        assert self.normalizer is not None
         for normalizer in self.normalizer:
             try:
                 normalizer(data_output, normalizer_dependencies, version_number)
@@ -131,7 +141,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         return data_output, exceptions
 
     def get_tag_paths(
-            self, 
+            self,
             data:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],
             tag: str,
             data_path: DataPath.DataPath,
@@ -140,6 +150,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
+        assert self.tags is not None
         if tag in self.tags:
             output.extend(data_path.copy((index, type(value))).embed(value) for index, value in enumerate(data))
         for index, value in enumerate(data):

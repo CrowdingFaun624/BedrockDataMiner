@@ -36,7 +36,7 @@ class NormalizerComponent(Component.Component):
 
     def set_component(self, components: dict[str, Component.Component], functions: dict[str, Callable]) -> None:
         super().set_component(components, functions)
-        self.final = Normalizer.Normalizer(self.function_field.get_function(), self.dependencies)
+        self.final = Normalizer.Normalizer(self.function_field.get_function(), self.dependencies) # TODO: fix this
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         exceptions = super().check(config)

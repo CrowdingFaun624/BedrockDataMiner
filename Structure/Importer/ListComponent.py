@@ -58,22 +58,19 @@ class ListComponent(StructureComponent.StructureComponent):
         self.final = ListStructure.ListStructure(
             name=self.name,
             field=self.field,
-            structure=None,
             types=tuple(self.types_field.get_types()),
             print_flat=self.print_flat,
             print_all=self.print_all,
             measure_length=self.measure_length,
-            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
             ordered=self.ordered,
-            tags=list(self.tags_field.map(lambda tag_component: tag_component.name)),
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
 
     def link_finals(self) -> None:
         assert self.final is not None
-        subcomponent = self.subcomponent_field.get_component()
-        if subcomponent is None:
-            self.final.structure = None
-        else:
-            self.final.structure = subcomponent.final
+        self.final.link_substructures(
+            structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
+            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
+            tags=[cast(str, tag.final) for tag in self.tags_field.get_components()]
+        )

@@ -23,31 +23,30 @@ file_counts:dict[str,int] = {}
 class StructureBase():
     '''Can be created by a DataMinerCollection to compare the output of the DataMiners with each other.'''
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a Structure or None", True, (Structure.Structure, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("component_name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure_name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a Normalizer or None", True, (Normalizer.Normalizer, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a Normalizer or None", True, (Normalizer.Normalizer, type(None))),
-    )
-
     def __init__(
             self,
             component_name:str,
             structure_name:str,
-            normalizer:Normalizer.Normalizer|None,
-            structure:Structure.Structure[b]|None,
-            post_normalizer:Normalizer.Normalizer|None,
             children_tags:set[str],
         ) -> None:
-        self.type_verifier.base_verify({"component_name": component_name, "structure_name": structure_name, "normalizer": normalizer, "structure": structure, "post_normalizer": post_normalizer})
 
         self.component_name = component_name
         self.structure_name = structure_name
+        self.children_tags = children_tags
+
+        self.structure:Structure.Structure|None = None
+        self.normalizer:Normalizer.Normalizer|None = None
+        self.post_normalizer:Normalizer.Normalizer|None = None
+
+    def link_substructures(
+        self,
+        structure:Structure.Structure,
+        normalizer:Normalizer.Normalizer|None,
+        post_normalizer:Normalizer.Normalizer|None,
+    ) -> None:
+        self.structure = structure
         self.normalizer = normalizer
         self.post_normalizer = post_normalizer
-        self.structure = structure
-        self.children_tags = children_tags
 
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.structure_name)

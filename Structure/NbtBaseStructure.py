@@ -38,17 +38,26 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
     def __init__(
             self,
             name:str,
-            structure:Structure.Structure|dict[type,Structure.Structure|None]|None,
             types:tuple[type,...]|None,
             endianness:Endianness.End,
-            normalizer:list[Normalizer.Normalizer],
             children_has_normalizer:bool,
             children_tags:set[str]
         ) -> None:
-        super().__init__(name, name, normalizer, children_has_normalizer, children_tags)
-        self.structure = structure
+        super().__init__(name, name, children_has_normalizer, children_tags)
+
         self.types = (object,) if types is None else types
         self.endianness=endianness
+
+        self.structure:Structure.Structure|dict[type,Structure.Structure|None]|None = None
+        self.normalizer:list[Normalizer.Normalizer]|None = None
+
+    def link_substructures(
+        self,
+        structure:Structure.Structure|dict[type,Structure.Structure|None],
+        normalizer:list[Normalizer.Normalizer],
+    ) -> None:
+        self.structure = structure
+        self.normalizer = normalizer
 
     def check_initialization_parameters(self) -> None:
         self.type_verifier.base_verify({
@@ -114,6 +123,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         except Exception as e:
             return None, [Trace.ErrorTrace(e, self.name, None, data)]
         if not self.children_has_normalizer: return data_parsed, []
+        assert self.normalizer is not None
         for normalizer in self.normalizer:
             try:
                 normalizer(data_parsed, normalizer_dependencies, version_number)

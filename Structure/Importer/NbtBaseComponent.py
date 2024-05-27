@@ -58,10 +58,8 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
         self.my_type = set(types)
         self.final_structure = NbtBaseStructure.NbtBaseStructure(
             name = self.name,
-            structure = None,
             endianness=self.get_endianness(self.endianness),
             types = tuple(types),
-            normalizer = [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
@@ -70,7 +68,10 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
 
     def link_finals(self) -> None:
         assert self.final_structure is not None
-        self.final_structure.structure = self.subcomponent_field.get_component().final
+        self.final_structure.link_substructures(
+            structure=self.subcomponent_field.get_component().final,
+            normalizer = [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
+        )
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         exceptions = super().check(config)

@@ -65,10 +65,7 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
             field=self.field,
             position_key=self.position_key,
             state_key=self.state_key,
-            structure=None,
             print_additional_data=self.print_additional_data,
-            tags=list(self.tags_field.map(lambda tag_component: tag_component.name)),
-            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
@@ -77,11 +74,11 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
 
     def link_finals(self) -> None:
         assert self.final_structure is not None
-        subcomponent = self.subcomponent_field.get_component()
-        if subcomponent is None:
-            self.final_structure.structure = None
-        else:
-            self.final_structure.structure = subcomponent.final
+        self.final_structure.link_substructures(
+            structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
+            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
+            tags=[cast(str, tag.final) for tag in self.tags_field.get_components()]
+        )
 
     def check_components(self) -> list[Exception]:
         exceptions:list[Exception] = []

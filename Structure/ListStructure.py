@@ -18,14 +18,11 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             self,
             name:str,
             field:str,
-            structure:Structure.Structure[d]|None|dict[type,Structure.Structure[d]|None],
             types:tuple[type,...]|None,
             print_flat:bool,
             ordered:bool,
             measure_length:bool,
             print_all:bool,
-            tags:list[str],
-            normalizer:list[Normalizer.Normalizer],
             children_has_normalizer:bool,
             children_tags:set[str]
         ) -> None:
@@ -39,14 +36,26 @@ class ListStructure(Structure.Structure[Iterable[d]]):
          * If `measure_length` is True, then it will show how the length of the data changed when comparing.
          * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.
          * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
-        super().__init__(name, field, normalizer, children_has_normalizer, children_tags)
+        super().__init__(name, field, children_has_normalizer, children_tags)
 
-        self.structure = structure
         self.types = (object,) if types is None else types
         self.print_flat = print_flat
         self.ordered = ordered
         self.measure_length = measure_length
         self.print_all = print_all
+
+        self.structure:Structure.Structure[d]|dict[type,Structure.Structure[d]|None]|None = None
+        self.normalizer:list[Normalizer.Normalizer]|None = None
+        self.tags:list[str]|None = None
+
+    def link_substructures(
+        self,
+        structure:Structure.Structure[d]|None|dict[type,Structure.Structure[d]|None],
+        normalizer:list[Normalizer.Normalizer],
+        tags:list[str],
+    ) -> None:
+        self.structure = structure
+        self.normalizer = normalizer
         self.tags = tags
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
@@ -117,6 +126,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
 
     def normalize(self, data:list[d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
+        assert self.normalizer is not None
         for normalizer in self.normalizer:
             try:
                 normalizer(data, normalizer_dependencies, version_number)
@@ -139,6 +149,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
+        assert self.tags is not None
         if tag in self.tags:
             output.extend(data_path.copy((index, type(value))).embed(value) for index, value in enumerate(data))
         for index, value in enumerate(data):

@@ -1,3 +1,5 @@
+from typing import cast
+
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
@@ -5,6 +7,7 @@ import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
+import Structure.Structure as Structure
 import Structure.StructureBase as StructureBase
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -45,19 +48,18 @@ class BaseComponent(Component.Component):
         self.fields.extend([self.subcomponent_field, self.normalizer_field, self.post_normalizer_field])
 
     def create_final(self) -> None:
-        normalizer_component = self.normalizer_field.get_component()
-        post_normalizer_component = self.post_normalizer_field.get_component()
-        normalizer_final = None if normalizer_component is None else normalizer_component.final
-        post_normalizer_final = None if post_normalizer_component is None else post_normalizer_component.final
         self.final = StructureBase.StructureBase(
             component_name=self.name,
             structure_name=self.structure_name,
-            normalizer=normalizer_final,
-            post_normalizer=post_normalizer_final,
-            structure=None,
             children_tags=self.children_tags,
         )
 
     def link_finals(self) -> None:
         assert self.final is not None
-        self.final.structure = self.subcomponent_field.get_component().final
+        normalizer_component = self.normalizer_field.get_component()
+        post_normalizer_component = self.post_normalizer_field.get_component()
+        self.final.link_substructures(
+            structure=cast(Structure.Structure, self.subcomponent_field.get_component().final),
+            normalizer=None if normalizer_component is None else normalizer_component.final,
+            post_normalizer=None if post_normalizer_component is None else post_normalizer_component.final
+        )

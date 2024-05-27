@@ -12,7 +12,6 @@ import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Normalizer as Normalizer
-import Structure.Structure as Structure
 import Utilities.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
@@ -60,23 +59,19 @@ class DictComponent(StructureComponent.StructureComponent):
         self.final = DictStructure.DictStructure(
             name=self.name,
             field=self.field,
-            structure=None,
             types=tuple(self.types_field.get_types()),
             detect_key_moves=self.detect_key_moves,
             comparison_move_function=self.comparison_move_function_field.get_function(),
             measure_length=self.measure_length,
-            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
             print_all=self.print_all,
-            tags=[tag.name for tag in self.tags_field.get_components()],
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
 
     def link_finals(self) -> None:
         assert self.final is not None
-        subcomponent = self.subcomponent_field.get_component()
-        if subcomponent is None:
-            self.final.structure = None
-        else:
-            assert subcomponent.final is not None
-            self.final.structure = cast(Structure.Structure|None|dict[type,Structure.Structure|None], subcomponent.final)
+        self.final.link_substructures(
+            structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
+            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
+            tags=[cast(str, tag.final) for tag in self.tags_field.get_components()]
+        )
