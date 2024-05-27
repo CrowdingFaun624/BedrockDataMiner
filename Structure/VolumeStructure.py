@@ -355,11 +355,11 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         if isinstance(block_data, D.Diff):
             match block_data.change_type:
                 case D.ChangeType.addition:
-                    new_exceptions = self.print_single(None, block_data.new, "Added", output, self.structure, post_message=" at %i, %i, %i" % position) # type: ignore
+                    new_exceptions = self.print_single(None, cast(Any, block_data.new), "Added", output, cast(Any, self.structure), environment, post_message=" at %i, %i, %i" % position)
                 case D.ChangeType.change:
-                    new_exceptions = self.print_double(None, block_data.old, block_data.new, "Changed", output, self.structure, post_message=" at %i, %i, %i" % position) # type: ignore
+                    new_exceptions = self.print_double(None, cast(Any, block_data.old), cast(Any, block_data.new), "Changed", output, cast(Any, self.structure), environment, post_message=" at %i, %i, %i" % position)
                 case D.ChangeType.removal:
-                    new_exceptions = self.print_single(None, block_data.old, "Removed", output, self.structure, post_message=" at %i, %i, %i" % position) # type: ignore
+                    new_exceptions = self.print_single(None, cast(Any, block_data.old), "Removed", output, cast(Any, self.structure), environment, post_message=" at %i, %i, %i" % position)
             any_changes = True
             for exception in new_exceptions: exception.add(self.name, position)
             exceptions.extend(new_exceptions)
