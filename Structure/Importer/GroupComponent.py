@@ -3,7 +3,6 @@ import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.GroupItemField as GroupItemField
-import Structure.Importer.ImporterConfig as ImporterConfig
 import Utilities.TypeVerifier as TypeVerifier
 
 
