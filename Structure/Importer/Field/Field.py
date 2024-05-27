@@ -39,7 +39,7 @@ class Field():
         '''
         self.error_path = path
 
-    def set(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         '''
         Links this Component to other Components.
         :component_name: The name of this Component.

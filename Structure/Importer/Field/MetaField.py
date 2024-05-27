@@ -15,10 +15,10 @@ class MetaField(Field.Field, Generic[a]):
         super().__init__(path)
         self.fields = fields
         
-    def set(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         linked_components:list["Component.Component"] = []
         for field in self.fields:
-            linked_components.extend(field.set(component_name, component_class_name, components, functions))
+            linked_components.extend(field.set_field(component_name, component_class_name, components, functions))
         return linked_components
     
     def check(self, component_name:str, component_class_name:str, config:ImporterConfig.ImporterConfig) -> list[Exception]:

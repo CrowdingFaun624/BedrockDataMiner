@@ -37,7 +37,7 @@ class Component():
     def set_component(self, components:dict[str,"Component"], functions:dict[str,Callable]) -> None:
         '''Links this Component to other Components'''
         for field in self.fields:
-            linked_components = field.set(self.name, self.class_name, components, functions)
+            linked_components = field.set_field(self.name, self.class_name, components, functions)
             self.link_components(linked_components)
 
     def create_final(self) -> None:

@@ -20,7 +20,7 @@ class OptionalComponentField(Field.Field, Generic[a]):
         self.capabilities_pattern = capabilities_pattern
         self.has_set_component = False
 
-    def set(self, component_name:str, component_class_name:str, components:dict[str,Component.Component], functions:dict[str,Callable]) -> Sequence[Component.Component]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,Component.Component], functions:dict[str,Callable]) -> Sequence[Component.Component]:
         self.has_set_component = True
         if self.subcomponent_str is None:
             self.subcomponent = None

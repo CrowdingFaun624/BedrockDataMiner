@@ -17,7 +17,7 @@ class OptionalFunctionField(Field.Field):
         self.function:Callable|None = None
         self.has_set_function = False
 
-    def set(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         self.has_set_function = True
         if self.function_name is None:
             self.function = None

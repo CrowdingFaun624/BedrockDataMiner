@@ -19,7 +19,7 @@ class ComponentField(Field.Field, Generic[a]):
         self.subcomponent:Union[a,None] = None
         self.capabilities_pattern = capabilities_pattern
     
-    def set(self, component_name:str, component_class_name:str, components:dict[str,Component.Component], functions:dict[str,Callable]) -> Sequence[Component.Component]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,Component.Component], functions:dict[str,Callable]) -> Sequence[Component.Component]:
         subcomponent:"Component.Component" = Field.choose_component(self.subcomponent_str, self.capabilities_pattern, components, self.error_path, component_name, component_class_name)
         self.subcomponent = subcomponent # type: ignore
         assert self.subcomponent is not None

@@ -29,7 +29,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         self.subcomponents_strs = subcomponents_strs
         self.types:list[type]|None = None
 
-    def set(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         components_used:list["Component.Component"] = []
         self.types = []
         already_types:set[str] = set()

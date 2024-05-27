@@ -16,7 +16,7 @@ class FunctionField(Field.Field):
         self.function_name = function_name
         self.function:Callable|None = None
 
-    def set(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         function = functions.get(self.function_name)
         if function is None:
             raise KeyError("Function \"%s\" does not exist in %s \"%s\"!" % (self.function_name, component_class_name, component_name))

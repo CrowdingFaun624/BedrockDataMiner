@@ -19,7 +19,7 @@ class ComponentListField(Field.Field, Generic[a]):
         self.subcomponents:list[a]|None = None
         self.capabilities_pattern = capabilities_pattern
 
-    def set(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         self.subcomponents = []
         for subcomponent_str in self.subcomponents_strs:
             subcomponent = Field.choose_component(subcomponent_str, self.capabilities_pattern, components, self.error_path, component_name, component_class_name)
