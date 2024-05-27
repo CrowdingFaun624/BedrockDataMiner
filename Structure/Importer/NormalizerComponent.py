@@ -1,5 +1,3 @@
-from typing import Callable
-
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
@@ -34,9 +32,8 @@ class NormalizerComponent(Component.Component):
         self.function_field = FunctionField.FunctionField(data["function_name"], ["function_name"])
         self.fields.extend([self.function_field])
 
-    def set_component(self, components: dict[str, Component.Component], functions: dict[str, Callable]) -> None:
-        super().set_component(components, functions)
-        self.final = Normalizer.Normalizer(self.function_field.get_function(), self.dependencies) # TODO: fix this
+    def create_final(self) -> None:
+        self.final = Normalizer.Normalizer(self.function_field.get_function(), self.dependencies)
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         exceptions = super().check(config)

@@ -1,20 +1,15 @@
-from typing import cast
-
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
-import Structure.Importer.Field.ComponentListField as ComponentListField
+import Structure.Importer.Field.NormalizerListField as NormalizerListField
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.Field.TypeListField as TypeListField
 import Structure.Importer.GroupComponent as GroupComponent
-import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.ListStructure as ListStructure
-import Structure.Normalizer as Normalizer
 import Utilities.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
-NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
 
 class ListComponent(StructureComponent.StructureComponent):
 
@@ -48,7 +43,7 @@ class ListComponent(StructureComponent.StructureComponent):
 
         self.subcomponent_field:OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
-        self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
+        self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), ["normalizer"])
         self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)
@@ -71,6 +66,6 @@ class ListComponent(StructureComponent.StructureComponent):
         assert self.final is not None
         self.final.link_substructures(
             structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
-            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
+            normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()
         )

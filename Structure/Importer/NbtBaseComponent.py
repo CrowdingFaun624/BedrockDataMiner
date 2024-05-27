@@ -4,11 +4,10 @@ import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.ComponentField as ComponentField
-import Structure.Importer.Field.ComponentListField as ComponentListField
+import Structure.Importer.Field.NormalizerListField as NormalizerListField
 import Structure.Importer.Field.TypeListField as TypeListField
 import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.ImporterConfig as ImporterConfig
-import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.NbtBaseStructure as NbtBaseStructure
 import Structure.Normalizer as Normalizer
@@ -19,7 +18,6 @@ import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
-NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
 
 class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
 
@@ -44,7 +42,7 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
 
         self.subcomponent_field:ComponentField.ComponentField[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
-        self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
+        self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), ["normalizer"])
         self.types_field.verify_with(self.subcomponent_field)
         self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field])
 
@@ -69,9 +67,11 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
 
     def link_finals(self) -> None:
         assert self.final_structure is not None
+        subcomponent = self.subcomponent_field.get_component()
+        assert subcomponent.final is not None
         self.final_structure.link_substructures(
-            structure=cast(Structure.Structure|dict[type,Structure.Structure|None], self.subcomponent_field.get_component().final),
-            normalizer = [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
+            structure=subcomponent.final,
+            normalizer=self.normalizer_field.get_finals(),
         )
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:

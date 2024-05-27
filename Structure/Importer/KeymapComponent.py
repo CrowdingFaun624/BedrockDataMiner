@@ -1,20 +1,15 @@
-from typing import cast
-
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
-import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.KeymapImportField as KeymapImportField
 import Structure.Importer.Field.KeymapKeyField as KeymapKeyField
+import Structure.Importer.Field.NormalizerListField as NormalizerListField
 import Structure.Importer.Field.TagListField as TagListField
-import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.KeymapStructure as KeymapStructure
-import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Utilities.TypeVerifier as TypeVerifier
 
-NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
 
 class KeymapComponent(StructureComponent.StructureComponent):
 
@@ -48,7 +43,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
 
         self.import_field = KeymapImportField.KeymapImportField([] if "imports" not in data else ([data["imports"]] if isinstance(data["imports"], str) else data["imports"]), ["imports"])
         self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(data=key_data, key=key, tag_set=self.children_tags, path=["keys", key]) for key, key_data in data["keys"].items()], ["keys"])
-        self.normalizer_field:ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent] = ComponentListField.ComponentListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
+        self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), ["normalizer"])
         self.tags_for_all_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.tags_for_all_field.add_to_tag_set(self.children_tags)
         self.import_field.import_into(self.keys)
@@ -72,6 +67,6 @@ class KeymapComponent(StructureComponent.StructureComponent):
             keys_final.update(key.get_subcomponent_final())
         self.final.link_substructures(
             keys=keys_final,
-            normalizer=[cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
+            normalizer=self.normalizer_field.get_finals(),
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys}
         )
