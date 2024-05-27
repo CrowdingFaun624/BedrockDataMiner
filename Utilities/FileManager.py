@@ -8,7 +8,6 @@ from typing import IO, Any, Callable, Literal
 
 from pathlib2 import Path
 
-import Utilities.TypeVerifier as TypeVerifier
 from Utilities.FunctionCaller import FunctionCaller
 
 PARENT_FOLDER          = Path("./").absolute()
@@ -92,7 +91,9 @@ def get_temp_file_path() -> Path:
     return Path(TEMP_FOLDER.joinpath(str(uuid.uuid4())))
 
 def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
-    '''Returns True if the path name is valid on this OS.'''
+    '''
+    Returns True if the path name is valid on this OS.
+    '''
     ERROR_INVALID_NAME = 123
     try:
         if not isinstance(pathname, str) or not pathname:
@@ -117,11 +118,15 @@ def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questio
         return True
 
 def stringify_sha1_hash(sha1_hash:bytes) -> str:
-    '''Returns a hexadecimal string with length 40.'''
+    '''
+    Returns a hexadecimal string with length 40.
+    '''
     return hex(int.from_bytes(sha1_hash, "big"))[2:].zfill(40)
 
 def get_hash_from_bytes(data:bytes) -> bytes:
-    '''Returns the sha1 hash of a bytes object.'''
+    '''
+    Returns the sha1 hash of a bytes object.
+    '''
     sha1_hash = hashlib.sha1()
     data_length = len(data)
     BUFFER_SIZE = 65536
@@ -133,7 +138,9 @@ def get_hash_from_bytes(data:bytes) -> bytes:
     return sha1_hash.digest()
 
 def get_hash(file:IO) -> bytes:
-    '''Returns the sha1 hash of a file opened in binary mode.'''
+    '''
+    Returns the sha1 hash of a file opened in binary mode.
+    '''
     BUFFER_SIZE = 65536 # 64kb
     sha1_hash = hashlib.sha1()
     while True:
@@ -143,6 +150,9 @@ def get_hash(file:IO) -> bytes:
     return sha1_hash.digest()
 
 def clear_temp() -> None:
+    '''
+    Removes every file and recursively removes every folder from the temp directory.
+    '''
     for file in TEMP_FOLDER.iterdir():
         file:Path
         if file.is_file():
@@ -154,6 +164,12 @@ class FilePromise():
     '''An abstraction for a file that can return an IO object multiple times with FilePromise.open()'''
 
     def __init__(self, open_callable:FunctionCaller[IO], name:str, mode:Literal["b", "t"], all_done_callable:FunctionCaller|Callable[[],Any]|None=None) -> None:
+        '''
+        :open_callable: Function that takes no arguments and returns an IO object.
+        :name: Name of the file, but has no real meaning.
+        :mode: Describes if the IO returned by open_callable is in binary or text mode.
+        :all_done_callable: Function that takes no arguments and cleans up everything related to the file.
+        '''
 
         self.open_callable = open_callable
         self.all_done_callable = all_done_callable
@@ -162,11 +178,19 @@ class FilePromise():
         self.is_all_done = False
 
     def open(self) -> IO:
+        '''
+        Calls open_callable used to create this FilePromise and returns its IO object.
+        Cannot be called if `all_done` has been called on this FilePromise.
+        '''
         if self.is_all_done:
             raise RuntimeError("Attempted to open FilePromise \"%s\" that has been marked as all done!" % self.name)
         return self.open_callable()
 
     def all_done(self) -> None:
+        '''
+        Cleans up everything related to the file.
+        Cannot be opened again afte rthis is called.
+        '''
         self.is_all_done = True
         if self.all_done_callable is not None:
             self.all_done_callable()
