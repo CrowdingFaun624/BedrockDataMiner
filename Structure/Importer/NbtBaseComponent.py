@@ -12,6 +12,7 @@ import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.NbtBaseStructure as NbtBaseStructure
 import Structure.Normalizer as Normalizer
+import Structure.Structure as Structure
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
@@ -69,7 +70,7 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
     def link_finals(self) -> None:
         assert self.final_structure is not None
         self.final_structure.link_substructures(
-            structure=self.subcomponent_field.get_component().final,
+            structure=cast(Structure.Structure|dict[type,Structure.Structure|None], self.subcomponent_field.get_component().final),
             normalizer = [cast(Normalizer.Normalizer, normalizer.final) for normalizer in self.normalizer_field.get_components()],
         )
 
