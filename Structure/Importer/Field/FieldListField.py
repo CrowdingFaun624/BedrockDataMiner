@@ -1,4 +1,4 @@
-from typing import Callable, Iterator, MutableSequence, Sequence, TypeVar
+from typing import Callable, Iterator, MutableSequence, TypeVar
 
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Field.MetaField as MetaField
@@ -13,7 +13,7 @@ class FieldListField(MetaField.MetaField[a]):
     def __init__(self, fields:MutableSequence[a], path:list[str|int]) -> None:
         super().__init__(fields, path)
 
-    def extend(self, new_fields:Sequence[a]) -> None:
+    def extend(self, new_fields:Iterator[a]) -> None:
         '''
         Adds new Fields to this Field.
         :new_fields: The sequence of Fields to add.
