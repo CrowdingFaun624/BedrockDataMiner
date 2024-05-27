@@ -18,7 +18,6 @@ class CacheStructure(Structure.Structure[d]):
     def __init__(
             self,
             name:str,
-            types:tuple[type,...]|None,
             cache_check_all_types:bool,
             cache_normalize:bool,
             cache_get_tag_paths:bool,
@@ -30,7 +29,6 @@ class CacheStructure(Structure.Structure[d]):
         ) -> None:
         super().__init__(name, name, children_has_normalizer, children_tags)
 
-        self.types = types
         self.cache:dict[int,CacheItem[d]] = {}
         self.cache_check_all_types = cache_check_all_types
         self.cache_normalize = cache_normalize
@@ -40,12 +38,15 @@ class CacheStructure(Structure.Structure[d]):
         self.cache_compare = cache_compare
 
         self.structure:Structure.Structure[d]|dict[type,Structure.Structure[d]]|None = None
+        self.types:tuple[type,...]|None = None
 
     def link_substructures(
         self,
         structure:Structure.Structure[d]|dict[type,Structure.Structure[d]],
+        types:list[type],
     ) -> None:
         self.structure = structure
+        self.types = tuple(types)
 
     def choose_structure_flat(self, key:None, value_type:type, value:None) -> Structure.Structure:
         assert self.structure is not None

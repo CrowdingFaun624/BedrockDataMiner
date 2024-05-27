@@ -19,25 +19,26 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
     def __init__(
             self,
             name:str,
-            types:tuple[type,...]|None,
             endianness:Endianness.End,
             children_has_normalizer:bool,
             children_tags:set[str]
         ) -> None:
         super().__init__(name, name, children_has_normalizer, children_tags)
 
-        self.types = (object,) if types is None else types
         self.endianness=endianness
 
         self.structure:Structure.Structure|dict[type,Structure.Structure|None]|None = None
+        self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
 
     def link_substructures(
         self,
         structure:Structure.Structure|dict[type,Structure.Structure|None],
+        types:list[type],
         normalizer:list[Normalizer.Normalizer],
     ) -> None:
         self.structure = structure
+        self.types = tuple(types)
         self.normalizer = normalizer
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
@@ -49,6 +50,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         output:list[Trace.ErrorTrace] = []
         if isinstance(data, D.Diff):
             raise TypeError("`check_all_types` was given data containing Diffs!")
+        assert self.types is not None
         if not isinstance(data, self.types):
             item_types_string = ", ".join(type_key.__name__ for type_key in self.types)
             output.append(Trace.ErrorTrace(TypeError("Data %s in %s excepted is %s instead of [%s]!" % (SU.stringify(data), self.name, data.__class__.__name__, item_types_string)), self.name, None, data))

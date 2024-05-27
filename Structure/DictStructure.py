@@ -31,7 +31,6 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             self,
             name:str,
             field:str,
-            types:tuple[type,...]|None,
             detect_key_moves:bool,
             comparison_move_function:Callable[[str, d], Any]|None,
             measure_length:bool,
@@ -52,23 +51,25 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
          * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
         super().__init__(name, field, children_has_normalizer, children_tags)
 
-        self.types = (object,) if types is None else types
         self.detect_key_moves = detect_key_moves
         self.comparison_move_function = (lambda key, value: value) if comparison_move_function is None else comparison_move_function
         self.measure_length = measure_length
         self.print_all = print_all
 
         self.structure:Structure.Structure[d]|dict[type,Structure.Structure[d]|None]|None = None
+        self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.tags:list[str]|None = None
 
     def link_substructures(
         self,
         structure:Structure.Structure[d]|None|dict[type,Structure.Structure[d]|None],
+        types:list[type],
         normalizer:list[Normalizer.Normalizer],
         tags:list[str],
     ) -> None:
         self.structure = structure
+        self.types = tuple(types)
         self.normalizer = normalizer
         self.tags = tags
 
@@ -80,6 +81,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
         if isinstance(key, D.Diff) or isinstance(value, D.Diff):
             raise TypeError("`check_type` was given data containing Diffs!")
+        assert self.types is not None
         if not isinstance(value, self.types):
             return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because value is not %s!" % (SU.stringify(key), SU.stringify(value), self.name, self.types)), self.name, key, value)
 

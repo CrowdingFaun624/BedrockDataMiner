@@ -21,17 +21,16 @@ class TypeAliasComponent(Component.Component):
             raise ValueError("A TypeAlias's name cannot be one of [%s]!" % ", ".join(ComponentTyping.DEFAULT_TYPES.keys()))
 
         self.types_strs = data["types"]
-        self.types:list[type] = self.get_types()
+        self.types:list[type]|None = None
 
-    def get_types(self) -> list[type]:
-        types:list[type] = []
+    def create_final(self) -> None:
+        self.types = []
         already_types:set[str] = set()
         for type_str in self.types_strs:
             if type_str in already_types:
                 raise KeyError("Duplicate type \"%s\" of %s \"%s\"." % (type_str, self.class_name, self.name))
             already_types.add(type_str)
             if type_str in ComponentTyping.DEFAULT_TYPES:
-                types.append(ComponentTyping.DEFAULT_TYPES[type_str])
+                self.types.append(ComponentTyping.DEFAULT_TYPES[type_str])
             else:
                 raise KeyError("%s \"%s\" refers to type \"%s\", which is not a valid default type!" % (self.class_name, self.name, type_str))
-        return types

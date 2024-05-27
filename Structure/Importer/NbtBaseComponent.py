@@ -49,26 +49,29 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
             case _: raise ValueError("Invalid endianness \"%s\"!" % endianness)
 
     def create_final(self) -> None:
-        types = self.types_field.get_types()
-        self.my_type = set(types)
         self.final_structure = NbtBaseStructure.NbtBaseStructure(
             name = self.name,
             endianness=self.get_endianness(self.endianness),
-            types = tuple(types),
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
-        self.final = {NbtReader.NbtBytes: self.final_structure}
-        for my_type in self.my_type: self.final[my_type] = self.final_structure
+        self.final = {}
 
     def link_finals(self) -> None:
+        super().link_finals()
+        assert self.final is not None
         assert self.final_structure is not None
         subcomponent = self.subcomponent_field.get_component()
         assert subcomponent.final is not None
+        types = self.types_field.get_types()
+        self.my_type = set(types)
         self.final_structure.link_substructures(
             structure=subcomponent.final,
+            types=types,
             normalizer=self.normalizer_field.get_finals(),
         )
+        self.final[NbtReader.NbtBytes] = self.final_structure
+        for my_type in self.my_type: self.final[my_type] = self.final_structure
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         exceptions = super().check(config)

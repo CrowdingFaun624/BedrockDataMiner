@@ -27,15 +27,22 @@ class TypeField(AbstractTypeField.AbstractTypeField):
     def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         if self.subcomponent_str in ComponentTyping.DEFAULT_TYPES:
             self.subcomponent = ComponentTyping.DEFAULT_TYPES[self.subcomponent_str]
-            self.types = [self.subcomponent]
             return []
         else:
             self.subcomponent = Field.choose_component(self.subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, self.error_path, component_name, component_class_name, TypeAliasComponent.TypeAliasComponent)
             assert self.subcomponent is not None and not isinstance(self.subcomponent, type)
-            self.types = self.subcomponent.types
             return [self.subcomponent]
+
+    def resolve(self) -> None:
+        if self.subcomponent is None:
+            raise RuntimeError("Cannot call `resolve` before `set_field`!")
+        if isinstance(self.subcomponent, type):
+            self.types = [self.subcomponent]
+        else:
+            assert self.subcomponent.types is not None
+            self.types = self.subcomponent.types
 
     def get_types(self) -> list[type]:
         if self.types is None:
-            raise RuntimeError("Cannot call `get_types` before `set_field`!")
+            raise RuntimeError("Cannot call `get_types` before `resolve`!")
         return self.types

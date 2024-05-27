@@ -54,7 +54,6 @@ class DictComponent(StructureComponent.StructureComponent):
         self.final = DictStructure.DictStructure(
             name=self.name,
             field=self.field,
-            types=tuple(self.types_field.get_types()),
             detect_key_moves=self.detect_key_moves,
             comparison_move_function=self.comparison_move_function_field.get_function(),
             measure_length=self.measure_length,
@@ -64,9 +63,11 @@ class DictComponent(StructureComponent.StructureComponent):
         )
 
     def link_finals(self) -> None:
+        super().link_finals()
         assert self.final is not None
         self.final.link_substructures(
             structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
+            types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()
         )

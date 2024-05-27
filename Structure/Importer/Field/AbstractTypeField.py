@@ -34,6 +34,14 @@ class AbstractTypeField(Field.Field):
                     exceptions.append(TypeError("%s \"%s\" accepts types [%s], but its Subcomponent, \"%s\", only accepts type [%s]!" % (component_class_name, component_name, my_types, subcomponent.name, its_types)))
         return exceptions
 
+    def resolve(self) -> None:
+        '''
+        Resolves all TypeAliases into types.
+        Cannot be called before all TypeAliases are set.
+        Cannot be called before `set_field`.
+        '''
+        super().resolve()
+
     def verify_with(self, component_field:VerifyComponentType) -> None:
         '''
         Makes this TypeField verify using this component field when `check` is called.

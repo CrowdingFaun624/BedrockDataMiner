@@ -53,7 +53,6 @@ class ListComponent(StructureComponent.StructureComponent):
         self.final = ListStructure.ListStructure(
             name=self.name,
             field=self.field,
-            types=tuple(self.types_field.get_types()),
             print_flat=self.print_flat,
             print_all=self.print_all,
             measure_length=self.measure_length,
@@ -63,9 +62,11 @@ class ListComponent(StructureComponent.StructureComponent):
         )
 
     def link_finals(self) -> None:
+        super().link_finals()
         assert self.final is not None
         self.final.link_substructures(
             structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
+            types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()
         )

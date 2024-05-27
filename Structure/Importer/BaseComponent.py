@@ -55,6 +55,7 @@ class BaseComponent(Component.Component):
         )
 
     def link_finals(self) -> None:
+        super().link_finals()
         assert self.final is not None
         normalizer_component = self.normalizer_field.get_component()
         post_normalizer_component = self.post_normalizer_field.get_component()

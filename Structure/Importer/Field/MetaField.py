@@ -14,13 +14,17 @@ class MetaField(Field.Field, Generic[a]):
     def __init__(self, fields:MutableSequence[a], path: list[str | int]) -> None:
         super().__init__(path)
         self.fields = fields
-        
+
     def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         linked_components:list["Component.Component"] = []
         for field in self.fields:
             linked_components.extend(field.set_field(component_name, component_class_name, components, functions))
         return linked_components
-    
+
+    def resolve(self) -> None:
+        for field in self.fields:
+            field.resolve()
+
     def check(self, component_name:str, component_class_name:str, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         exceptions:list[Exception] = []
         for field in self.fields:

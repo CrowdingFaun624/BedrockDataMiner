@@ -46,7 +46,8 @@ class Component():
 
     def link_finals(self) -> None:
         '''Links this Component's final object to other final objects.'''
-        pass
+        for field in self.fields:
+            field.resolve()
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         '''Make sure that this Component's types are all in order; no error could occur.'''

@@ -64,16 +64,19 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
-        self.final = {tuple: self.final_structure}
-        for my_type in self.this_type_field.get_types(): self.final[my_type] = self.final_structure
+        self.final = {}
 
     def link_finals(self) -> None:
+        super().link_finals()
         assert self.final_structure is not None
+        assert self.final is not None
         self.final_structure.link_substructures(
             structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()
         )
+        self.final[tuple] = self.final_structure
+        for my_type in self.this_type_field.get_types(): self.final[my_type] = self.final_structure
 
     def check_components(self) -> list[Exception]:
         exceptions:list[Exception] = []

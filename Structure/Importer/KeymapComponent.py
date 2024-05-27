@@ -61,6 +61,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
         )
 
     def link_finals(self) -> None:
+        super().link_finals()
         assert self.final is not None
         keys_final:dict[tuple[str,type],Structure.Structure|None] = {}
         for key in self.keys:

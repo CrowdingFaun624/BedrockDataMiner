@@ -49,6 +49,12 @@ class Field():
         '''
         return []
 
+    def resolve(self) -> None:
+        '''
+        Used for setting an attribute of this Field that requires a linked Component to be set.
+        '''
+        ...
+
     def check(self, component_name:str, component_class_name:str, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         '''
         Make sure that this Component's types are all in order; no error could occur.

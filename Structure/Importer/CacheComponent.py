@@ -43,11 +43,8 @@ class CacheComponent(StructureComponent.StructureComponent):
         self.fields.extend([self.subcomponent_field, self.types_field])
 
     def create_final(self) -> None:
-        types_final = self.types_field.get_types()
-        self.my_type = types_final
         self.final = CacheStructure.CacheStructure(
             name=self.name,
-            types=tuple(types_final),
             cache_check_all_types=self.cache_check_all_types,
             cache_normalize=self.cache_normalize,
             cache_get_tag_paths=self.cache_get_tag_paths,
@@ -59,9 +56,13 @@ class CacheComponent(StructureComponent.StructureComponent):
         )
 
     def link_finals(self) -> None:
+        super().link_finals()
         assert self.final is not None
         subcomponent = self.subcomponent_field.get_component()
         assert subcomponent.final is not None
+        types = self.types_field.get_types()
+        self.my_type = types
         self.final.link_substructures(
-            structure=subcomponent.final
+            structure=subcomponent.final,
+            types=types,
         )

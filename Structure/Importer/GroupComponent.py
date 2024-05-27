@@ -29,6 +29,7 @@ class GroupComponent(AbstractGroupComponent.AbstractGroupComponent):
         self.final = {}
 
     def link_finals(self) -> None:
+        super().link_finals()
         assert self.final is not None
         for group_field in self.subcomponents_field:
             valid_types = group_field.get_types()

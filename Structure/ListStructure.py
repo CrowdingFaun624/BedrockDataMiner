@@ -18,7 +18,6 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             self,
             name:str,
             field:str,
-            types:tuple[type,...]|None,
             print_flat:bool,
             ordered:bool,
             measure_length:bool,
@@ -38,23 +37,25 @@ class ListStructure(Structure.Structure[Iterable[d]]):
          * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
         super().__init__(name, field, children_has_normalizer, children_tags)
 
-        self.types = (object,) if types is None else types
         self.print_flat = print_flat
         self.ordered = ordered
         self.measure_length = measure_length
         self.print_all = print_all
 
         self.structure:Structure.Structure[d]|dict[type,Structure.Structure[d]|None]|None = None
+        self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.tags:list[str]|None = None
 
     def link_substructures(
         self,
         structure:Structure.Structure[d]|None|dict[type,Structure.Structure[d]|None],
+        types:list[type],
         normalizer:list[Normalizer.Normalizer],
         tags:list[str],
     ) -> None:
         self.structure = structure
+        self.types = tuple(types)
         self.normalizer = normalizer
         self.tags = tags
 
@@ -66,6 +67,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
     def check_type(self, index:int, item:d) -> Trace.ErrorTrace|None:
         if isinstance(item, D.Diff):
             raise TypeError("`check_all_types` was given data containing Diffs!")
+        assert self.types is not None
         if not isinstance(item, self.types):
             item_types_string = ", ".join(type_key.__name__ for type_key in self.types)
             return Trace.ErrorTrace(TypeError("Index, item %i: %s in %s excepted is %s instead of [%s]!" % (index, SU.stringify(item), self.name, item.__class__.__name__, item_types_string)), self.name, None, item)
