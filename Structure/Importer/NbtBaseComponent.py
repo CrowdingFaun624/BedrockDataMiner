@@ -1,5 +1,3 @@
-from typing import cast
-
 import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
@@ -10,8 +8,6 @@ import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.NbtBaseStructure as NbtBaseStructure
-import Structure.Normalizer as Normalizer
-import Structure.Structure as Structure
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
