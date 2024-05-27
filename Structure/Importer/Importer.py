@@ -1,6 +1,6 @@
 import json
 import traceback
-from typing import Callable, Generator, Iterable
+from typing import Callable
 
 import Structure.Importer.BaseComponent as BaseComponent
 import Structure.Importer.CacheComponent as CacheComponent
@@ -22,11 +22,9 @@ import Structure.StructureFunctions as StructureFunctions
 import Utilities.FileManager as FileManager
 
 component_types:list[type[Component.Component]] = [
-    GroupComponent.GroupComponent, # near the top so they are created first
-    NormalizerComponent.NormalizerComponent,
-    TagComponent.TagComponent,
     CacheComponent.CacheComponent,
     DictComponent.DictComponent,
+    GroupComponent.GroupComponent,
     ListComponent.ListComponent,
     BaseComponent.BaseComponent,
     TypeAliasComponent.TypeAliasComponent,
@@ -39,6 +37,8 @@ component_types:list[type[Component.Component]] = [
     NbtTagComponent.NbtTagListComponent,
     NbtTagComponent.NbtTagLongArrayComponent,
     NbtTagComponent.NbtKeymapTagCompoundComponent,
+    NormalizerComponent.NormalizerComponent,
+    TagComponent.TagComponent,
 ]
 
 def get_file(name:str) -> ComponentTyping.StructureFileType:
@@ -58,13 +58,6 @@ def get_used_components(base_component:BaseComponent.BaseComponent) -> set[Compo
                 unvisited_nodes.append(neighbor)
         visited_nodes.add(unvisited_node)
     return visited_nodes
-
-def get_link_final_order(components:Iterable[tuple[str,Component.Component]]) -> Generator[tuple[str,Component.Component], None, None]:
-    component_usages:dict[type[Component.Component], list[tuple[str,Component.Component]]] = {component_type: [] for component_type in component_types}
-    for component_name, component in components:
-        component_usages[type(component)].append((component_name, component))
-    for used_components in component_usages.values():
-        yield from used_components
 
 def create_components(name:str, data:ComponentTyping.StructureFileType) -> tuple[list[tuple[str,BaseComponent.BaseComponent]], dict[str,Component.Component]]:
     '''Returns a list of BaseComponents and a dict of all Components.'''
@@ -139,7 +132,7 @@ def create_final_components(components:dict[str,Component.Component], exclude:se
         component.create_final()
 
 def link_final_components(components:dict[str,Component.Component], exclude:set[str]) -> None:
-    for component_name, component in get_link_final_order(components.items()):
+    for component_name, component in components.items():
         if component_name in exclude: continue
         component.link_finals()
 
