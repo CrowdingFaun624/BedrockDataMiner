@@ -166,15 +166,7 @@ def clear_temp() -> None:
 class FilePromise():
     '''An abstraction for a file that can return an IO object multiple times with FilePromise.open()'''
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("open_callable", "a Callable", True, Callable),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("mode", "a str", True, TypeVerifier.EnumTypeVerifier(("b", "t"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("all_done_callable", "a Callable or None", True, (Callable, type(None)))
-    )
-
     def __init__(self, open_callable:FunctionCaller[IO], name:str, mode:Literal["b", "t"], all_done_callable:FunctionCaller|Callable[[],Any]|None=None) -> None:
-        self.type_verifier.base_verify({"open_callable": open_callable, "name": name, "mode": mode, "all_done_callable": all_done_callable})
 
         self.open_callable = open_callable
         self.all_done_callable = all_done_callable
