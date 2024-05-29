@@ -36,17 +36,25 @@ class KeymapStructure(DictStructure.DictStructure[d]):
 
         self.keys:dict[tuple[str,type],Structure.Structure[d]|None]|None = None
         self.tags:dict[str,list[str]]|None = None
+        self.keys_intermediate:dict[str,dict[type,Structure.Structure|None]]|None = None
         self.key_types:dict[str,set[type]]|None = None
 
     def link_substructures(
             self,
-            keys:dict[tuple[str,type],Structure.Structure[d]|None],
+            keys_intermediate:dict[str,dict[type,Structure.Structure|None]],
             normalizer:list[Normalizer.Normalizer],
             tags:dict[str,list[str]],
             ) -> None:
-        self.keys = keys
+        self.keys_intermediate = keys_intermediate
         self.normalizer = normalizer
         self.tags = tags
+
+    def finalize(self) -> None:
+        assert self.keys_intermediate is not None
+        self.keys = {}
+        for key, substructure in self.keys_intermediate.items():
+            for value_type, type_substructure in substructure.items():
+                self.keys[key, value_type] = type_substructure
         self.key_types = {}
         for allowed_key, key_type in self.keys:
             if allowed_key not in self.key_types:

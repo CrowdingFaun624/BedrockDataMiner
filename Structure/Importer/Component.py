@@ -56,6 +56,10 @@ class Component():
             exceptions.extend(field.check(self.name, self.class_name, config))
         return exceptions
 
+    def finalize(self) -> None:
+        '''Used to call on the structure once all structures and components are guaranteed to be linked.'''
+        ...
+
     def propagate_variables(self, child:Union["Component",None]=None) -> None:
         '''Calls `propagates_variables` on the parents of this Component with the child.'''
         has_changed = False

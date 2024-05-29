@@ -149,6 +149,11 @@ def check_components(components:dict[str,Component.Component], config:ImporterCo
     if len(exceptions) > 0:
         raise RuntimeError("Failed to parse structure!")
 
+def finalize_components(components:dict[str,Component.Component], exclude:set[str]) -> None:
+    for component_name, component in components.items():
+        if component_name in exclude: continue
+        component.finalize()
+
 def parse_structure_file(name:str, data:ComponentTyping.StructureFileType, functions:dict[str,Callable], config:ImporterConfig.ImporterConfig=ImporterConfig.DEFAULT) -> StructureBase.StructureBase:
     if not isinstance(data, dict):
         raise TypeError("Structure file \"%s\" is not a dict!" % (name))
@@ -176,6 +181,7 @@ def parse_structure_file(name:str, data:ComponentTyping.StructureFileType, funct
     create_final_components(components, exclude=set(imported_components.keys()))
     link_final_components(components, exclude=set(imported_components.keys()))
     check_components(components, config, exclude=set(imported_components.keys()))
+    finalize_components(components, exclude=set(imported_components.keys()))
 
     assert base_component.final is not None
     return base_component.final
@@ -201,6 +207,7 @@ def parse_structure_file_for_import(name:str, data:ComponentTyping.StructureFile
     create_final_components(components, exclude=set(imported_components.keys()))
     link_final_components(components, exclude=set(imported_components.keys()))
     check_components(components, config, exclude=set(imported_components.keys()))
+    finalize_components(components, exclude=set(imported_components.keys()))
     partially_imported.remove(name)
     return components
 

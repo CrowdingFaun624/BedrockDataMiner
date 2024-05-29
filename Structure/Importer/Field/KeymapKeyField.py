@@ -92,18 +92,18 @@ class KeymapKeyField(MetaField.MetaField[Field.Field]):
         '''
         self.tags_field.add_to_tag_set(tag_set)
 
-    def get_subcomponent_final(self) -> dict[tuple[str,type],Union["Structure.Structure",None]]:
+    def get_subcomponent_final(self) -> dict[type,Union["Structure.Structure",None]]:
+        '''Extracts the data about the structure of this field's components without changing the identity of the data structures.'''
         subcomponent = self.subcomponent_field.get_component()
+        value_types = self.types_field.get_types()
         if subcomponent is None:
-            return {(self.key, keymap_type): None for keymap_type in self.types_field.get_types()}
+            return {value_type: None for value_type in value_types}
         else:
-            keymap_types = self.types_field.get_types()
-            structure = subcomponent.final
             assert subcomponent.final is not None
-            if isinstance(structure, dict):
-                return {(self.key, structure_type): substructure for structure_type, substructure in structure.items()}
+            if isinstance(subcomponent.final, dict):
+                return subcomponent.final
             else:
-                return {(self.key, keymap_type): structure for keymap_type in keymap_types}
+                return {value_type: subcomponent.final for value_type in value_types}
 
     def check(self, component_name:str, component_class_name:str, config: ImporterConfig) -> list[Exception]:
         exceptions = super().check(component_name, component_class_name, config)

@@ -63,11 +63,11 @@ class KeymapComponent(StructureComponent.StructureComponent):
     def link_finals(self) -> None:
         super().link_finals()
         assert self.final is not None
-        keys_final:dict[tuple[str,type],Structure.Structure|None] = {}
-        for key in self.keys:
-            keys_final.update(key.get_subcomponent_final())
         self.final.link_substructures(
-            keys=keys_final,
+            keys_intermediate={key.key: key.get_subcomponent_final() for key in self.keys},
             normalizer=self.normalizer_field.get_finals(),
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys}
         )
+
+    def finalize(self) -> None:
+        self.final.finalize()
