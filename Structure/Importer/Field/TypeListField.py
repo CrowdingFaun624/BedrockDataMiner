@@ -19,13 +19,13 @@ VerifyComponentType:TypeAlias = ComponentField.ComponentField[Union["StructureCo
 class TypeListField(AbstractTypeField.AbstractTypeField):
     '''A link to multiple TypeAliasComponents and/or types.'''
 
-    def __init__(self, subcomponents_strs:list[str], path:list[str|int]) -> None:
+    def __init__(self, subcomponents_strs:list[str]|str, path:list[str|int]) -> None:
         '''
         :subcomponents_strs: List of string representing a default type or Component.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         super().__init__(path)
-        self.subcomponents_strs = subcomponents_strs
+        self.subcomponents_strs = [subcomponents_strs] if isinstance(subcomponents_strs, str) else subcomponents_strs
         self.primitive_types:list[type]|None = None
         self.type_aliases:list[TypeAliasComponent.TypeAliasComponent]|None = None
         self.types:list[type]|None = None

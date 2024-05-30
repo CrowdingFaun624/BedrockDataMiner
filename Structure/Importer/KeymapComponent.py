@@ -40,9 +40,9 @@ class KeymapComponent(StructureComponent.StructureComponent):
         self.measure_length = data.get("measure_length", False)
         self.print_all = data.get("print_all", False)
 
-        self.import_field = KeymapImportField.KeymapImportField([] if "imports" not in data else ([data["imports"]] if isinstance(data["imports"], str) else data["imports"]), ["imports"])
+        self.import_field = KeymapImportField.KeymapImportField(data.get("imports", []), ["imports"])
         self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(data=key_data, key=key, tag_set=self.children_tags, path=["keys", key]) for key, key_data in data["keys"].items()], ["keys"])
-        self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), ["normalizer"])
+        self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_for_all_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.tags_for_all_field.add_to_tag_set(self.children_tags)
         self.import_field.import_into(self.keys)

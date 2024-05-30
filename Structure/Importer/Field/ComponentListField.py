@@ -9,14 +9,14 @@ a = TypeVar("a", bound=Component.Component, covariant=True)
 class ComponentListField(Field.Field, Generic[a]):
     '''A link to multiple other Components.'''
 
-    def __init__(self, subcomponents_strs:list[str], capabilities_pattern:ComponentCapabilities.CapabilitiesPattern, path:list[str|int]) -> None:
+    def __init__(self, subcomponents_strs:list[str]|str, capabilities_pattern:ComponentCapabilities.CapabilitiesPattern, path:list[str|int]) -> None:
         '''
         :subcomponents_strs: The names of the Components this Field refers to.
         :capabilities_pattern: The pattern to use when searching for Components.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
         '''
         super().__init__(path)
-        self.subcomponents_strs = subcomponents_strs
+        self.subcomponents_strs = [subcomponents_strs] if isinstance(subcomponents_strs, str) else subcomponents_strs
         self.subcomponents:list[a]|None = None
         self.capabilities_pattern = capabilities_pattern
 

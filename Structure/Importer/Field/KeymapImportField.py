@@ -13,7 +13,7 @@ IMPORTABLE_KEYS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([
 
 class KeymapImportField(ComponentListField.ComponentListField):
 
-    def __init__(self, subcomponents_strs:list[str], path:list[str|int]) -> None:
+    def __init__(self, subcomponents_strs:list[str]|str, path:list[str|int]) -> None:
         '''
         :subcomponents_strs: The names of the Components this Field refers to.
         :capabilities_pattern: The pattern to use when searching for Components.

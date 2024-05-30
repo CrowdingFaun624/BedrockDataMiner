@@ -46,7 +46,7 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
         self.my_type.add(tuple)
 
         self.subcomponent_field:OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent] = OptionalComponentField.OptionalComponentField(data.get("subcomponent"), COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
-        self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField([] if "normalizer" not in data else ([data["normalizer"]] if isinstance(data["normalizer"], str) else data["normalizer"]), ["normalizer"])
+        self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.this_type_field = TypeField.TypeField(data["this_type"], ["this_type"])
         self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
