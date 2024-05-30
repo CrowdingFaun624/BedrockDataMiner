@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     import Structure.Importer.StructureComponent as StructureComponent
     import Structure.Structure as Structure
 
-COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
+COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent"]] = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 
 class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     import Structure.Importer.DictComponent as DictComponent
     import Structure.Importer.KeymapComponent as KeymapComponent
 
-COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[DictComponent.DictComponent|KeymapComponent.KeymapComponent] = ComponentCapabilities.CapabilitiesPattern([{"has_keys": True}])
+COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[Union["DictComponent.DictComponent", "KeymapComponent.KeymapComponent"]] = ComponentCapabilities.CapabilitiesPattern([{"has_keys": True}])
 
 class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
 
