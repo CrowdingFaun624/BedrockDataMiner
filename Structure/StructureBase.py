@@ -35,17 +35,14 @@ class StructureBase():
 
         self.structure:Structure.Structure|None = None
         self.normalizer:Normalizer.Normalizer|None = None
-        self.post_normalizer:Normalizer.Normalizer|None = None
 
     def link_substructures(
         self,
         structure:Structure.Structure,
         normalizer:Normalizer.Normalizer|None,
-        post_normalizer:Normalizer.Normalizer|None,
     ) -> None:
         self.structure = structure
         self.normalizer = normalizer
-        self.post_normalizer = post_normalizer
 
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.structure_name)

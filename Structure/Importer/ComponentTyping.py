@@ -14,7 +14,6 @@ class BaseComponentTypedDict(TypedDict):
     imports: NotRequired[list[ImportTypedDict]]
     name: Required[str]
     normalizer: NotRequired[str]
-    post_normalizer: NotRequired[str]
     type: Required[Literal["Base"]]
 
 class CacheComponentTypedDict(TypedDict):

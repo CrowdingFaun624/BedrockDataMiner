@@ -30,7 +30,6 @@ class BaseComponent(Component.Component):
         ), list, "a dict", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
     )
 
@@ -44,8 +43,7 @@ class BaseComponent(Component.Component):
 
         self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.normalizer_field = OptionalComponentField.OptionalComponentField(data.get("normalizer", None), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
-        self.post_normalizer_field = OptionalComponentField.OptionalComponentField(data.get("post_normalizer", None), NORMALIZER_REQUEST_PROPERTIES, ["post_normalizer"])
-        self.fields.extend([self.subcomponent_field, self.normalizer_field, self.post_normalizer_field])
+        self.fields.extend([self.subcomponent_field, self.normalizer_field])
 
     def create_final(self) -> None:
         self.final = StructureBase.StructureBase(
@@ -58,9 +56,7 @@ class BaseComponent(Component.Component):
         super().link_finals()
         assert self.final is not None
         normalizer_component = self.normalizer_field.get_component()
-        post_normalizer_component = self.post_normalizer_field.get_component()
         self.final.link_substructures(
             structure=cast(Structure.Structure, self.subcomponent_field.get_component().final),
             normalizer=None if normalizer_component is None else normalizer_component.final,
-            post_normalizer=None if post_normalizer_component is None else post_normalizer_component.final
         )
