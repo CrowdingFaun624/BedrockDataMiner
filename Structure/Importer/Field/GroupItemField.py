@@ -1,12 +1,12 @@
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
-import Structure.Importer.Field.MetaField as MetaField
+import Structure.Importer.Field.FieldContainer as FieldContainer
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.Field.TypeField as TypeField
 import Structure.Importer.StructureComponent as StructureComponent
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_structure": True}])
 
-class GroupItemField(MetaField.MetaField):
+class GroupItemField(FieldContainer.FieldContainer):
 
     def __init__(self, key:str, value:str|None, path:list[str|int]) -> None:
         self.type_field = TypeField.TypeField(key, path)

@@ -6,7 +6,7 @@ import Structure.Importer.ImporterConfig as ImporterConfig
 
 a = TypeVar("a", bound=Field.Field, covariant=True)
 
-class MetaField(Field.Field, Generic[a]):
+class FieldContainer(Field.Field, Generic[a]):
     '''
     Abstract class of Field that contains other Fields.
     '''

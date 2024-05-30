@@ -1,11 +1,11 @@
 from typing import Callable, Iterator, MutableSequence, TypeVar
 
 import Structure.Importer.Field.Field as Field
-import Structure.Importer.Field.MetaField as MetaField
+import Structure.Importer.Field.FieldContainer as FieldContainer
 
 a = TypeVar("a", bound=Field.Field, covariant=True)
 
-class FieldListField(MetaField.MetaField[a]):
+class FieldListField(FieldContainer.FieldContainer[a]):
     '''
     Field that contains other Fields.
     '''

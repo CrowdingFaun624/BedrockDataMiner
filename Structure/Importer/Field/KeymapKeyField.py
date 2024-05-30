@@ -4,7 +4,7 @@ import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.Field.Field as Field
-import Structure.Importer.Field.MetaField as MetaField
+import Structure.Importer.Field.FieldContainer as FieldContainer
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.Field.TypeListField as TypeListField
@@ -20,7 +20,7 @@ COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_g
 IMPORTABLE_KEYS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"has_importable_keys": True}])
 NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
 
-class KeymapKeyField(MetaField.MetaField[Field.Field]):
+class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 
     @overload
     def __init__(self, *, key:str, has_been_imported:bool, types_field:TypeListField.TypeListField, subcomponent_field:OptionalComponentField.OptionalComponentField[Union["StructureComponent.StructureComponent","GroupComponent.GroupComponent"]], tags_field:TagListField.TagListField, path:list[str|int]) -> None:
