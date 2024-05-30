@@ -1,3 +1,5 @@
+from typing import Generic, TypeVar
+
 ALLOWED_PROPERTIES = set([
     "has_importable_keys", # i.e. Keymap's importable keys
     "has_keys",
@@ -12,7 +14,9 @@ ALLOWED_PROPERTIES = set([
     "is_type_alias",
 ])
 
-class CapabilitiesPattern():
+a = TypeVar("a")
+
+class CapabilitiesPattern(Generic[a]):
 
     def __init__(self, properties:list[dict[str,bool]]) -> None:
         for property_set in properties:

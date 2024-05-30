@@ -10,7 +10,7 @@ import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Utilities.TypeVerifier as TypeVerifier
 
-COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
+COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 
 class DictComponent(StructureComponent.StructureComponent):
 
@@ -41,7 +41,7 @@ class DictComponent(StructureComponent.StructureComponent):
         self.measure_length = data.get("measure_length", False)
         self.print_all = data.get("print_all", False)
 
-        self.subcomponent_field:OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.comparison_move_function_field = OptionalFunctionField.OptionalFunctionField(data.get("comparison_move_function", None), ["comparison_move_function"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])

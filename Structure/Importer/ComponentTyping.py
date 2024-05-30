@@ -19,7 +19,7 @@ class BaseComponentTypedDict(TypedDict):
 
 class CacheComponentTypedDict(TypedDict):
     type: Required[Literal["Cache"]]
-    types: Required[list[str]]
+    types: Required[str|list[str]]
     subcomponent: Required[str]
     cache_check_all_types: NotRequired[bool]
     cache_normalize: NotRequired[bool]
@@ -37,7 +37,8 @@ class DictComponentTypedDict(TypedDict):
     normalizer: NotRequired[str|list[str]]
     type: Required[Literal["Dict"]]
     print_all: NotRequired[bool]
-    types: Required[list[str]]
+    types: Required[str|list[str]]
+    tags: NotRequired[str|list[str]]
 
 class GroupComponentTypedDict(TypedDict):
     type: Required[Literal["Group"]]
@@ -53,7 +54,7 @@ class KeymapComponentTypedDict(TypedDict):
     imports: NotRequired[str|list[str]]
     measure_length: NotRequired[bool]
     normalizer: NotRequired[str|list[str]]
-    tags: NotRequired[list[str]]
+    tags: NotRequired[str|list[str]]
     type: Required[Literal["Keymap"]]
     keys: Required[dict[str,KeymapKeyTypedDict]]
 
@@ -66,14 +67,15 @@ class ListComponentTypedDict(TypedDict):
     print_all: NotRequired[bool]
     print_flat: NotRequired[bool]
     type: Required[Literal["List"]]
-    types: Required[list[str]]
+    types: Required[str|list[str]]
+    tags: NotRequired[str|list[str]]
 
 class NbtBaseTypedDict(TypedDict):
     subcomponent: Required[str]
     endianness: Required[Literal["big", "little"]]
-    normalizer: NotRequired[list[str]|str]
+    normalizer: NotRequired[str|list[str]]
     type: Required[Literal["NbtBase"]]
-    types: Required[list[str]]
+    types: Required[str|list[str]]
 
 class NormalizerTypedDict(TypedDict):
     dependencies: Required[list[str]]
@@ -85,7 +87,7 @@ class TagTypedDict(TypedDict):
 
 class TypeAliasTypedDict(TypedDict):
     type: Required[Literal["TypeAlias"]]
-    types: Required[list[str]]
+    types: Required[str|list[str]]
 
 class VolumeTypedDict(TypedDict):
     field: NotRequired[str]
@@ -94,10 +96,10 @@ class VolumeTypedDict(TypedDict):
     print_additional_data: NotRequired[bool]
     state_key: Required[str]
     subcomponent: Required[str|None]
-    tags: NotRequired[list[str]]
+    tags: NotRequired[str|list[str]]
     this_type: Required[str]
     type: Required[Literal["Volume"]]
-    types: Required[list[str]]
+    types: Required[str|list[str]]
 
 ComponentTypedDicts = BaseComponentTypedDict|DictComponentTypedDict|GroupComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|NbtBaseTypedDict|NormalizerTypedDict|TypeAliasTypedDict|VolumeTypedDict
 StructureComponentTypedDicts = DictComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|VolumeTypedDict

@@ -14,9 +14,7 @@ if TYPE_CHECKING:
     import Structure.Importer.StructureComponent as StructureComponent
     import Structure.Structure as Structure
 
-COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
-IMPORTABLE_KEYS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"has_importable_keys": True}])
-NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
+COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 
 class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 
@@ -69,7 +67,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
             self.has_been_imported = False # Keys that have been imported cannot be imported again
 
             self.types_field = TypeListField.TypeListField(data["type"] if isinstance(data["type"], list) else [data["type"]], ["keys", key, "type"])
-            self.subcomponent_field:OptionalComponentField.OptionalComponentField[Union["StructureComponent.StructureComponent","GroupComponent.GroupComponent"]] = OptionalComponentField.OptionalComponentField(data.get("subcomponent", None), COMPONENT_REQUEST_PROPERTIES, ["keys", key, "subcomponent"])
+            self.subcomponent_field = OptionalComponentField.OptionalComponentField(data.get("subcomponent", None), COMPONENT_REQUEST_PROPERTIES, ["keys", key, "subcomponent"])
             self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["keys", key, "tags"])
             self.tags_field.add_to_tag_set(tag_set)
         self.types_field.verify_with(self.subcomponent_field)

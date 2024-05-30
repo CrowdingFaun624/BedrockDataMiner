@@ -9,7 +9,7 @@ import Structure.Importer.Field.KeymapKeyField as KeymapKeyField
 if TYPE_CHECKING:
     import Structure.Importer.KeymapComponent as KeymapComponent
 
-IMPORTABLE_KEYS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"has_importable_keys": True}])
+IMPORTABLE_KEYS_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern["KeymapComponent.KeymapComponent"] = ComponentCapabilities.CapabilitiesPattern([{"has_importable_keys": True}])
 
 class KeymapImportField(ComponentListField.ComponentListField):
 

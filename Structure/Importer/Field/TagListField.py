@@ -7,7 +7,7 @@ import Structure.Importer.Field.ComponentListField as ComponentListField
 if TYPE_CHECKING:
     import Structure.Importer.TagComponent as TagComponent
 
-TAG_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_tag": True}])
+TAG_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern["TagComponent.TagComponent"] = ComponentCapabilities.CapabilitiesPattern([{"is_tag": True}])
 
 class TagListField(ComponentListField.ComponentListField["TagComponent.TagComponent"]):
 

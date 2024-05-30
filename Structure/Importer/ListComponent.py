@@ -9,7 +9,7 @@ import Structure.Importer.StructureComponent as StructureComponent
 import Structure.ListStructure as ListStructure
 import Utilities.TypeVerifier as TypeVerifier
 
-COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
+COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 
 class ListComponent(StructureComponent.StructureComponent):
 
@@ -41,7 +41,7 @@ class ListComponent(StructureComponent.StructureComponent):
         self.print_all = data.get("print_all", False)
         self.print_flat = data.get("print_flat", False)
 
-        self.subcomponent_field:OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])

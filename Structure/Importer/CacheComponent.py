@@ -3,10 +3,12 @@ import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Field.TypeListField as TypeListField
+import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Utilities.TypeVerifier as TypeVerifier
+from Structure.Importer.ImporterConfig import ImporterConfig
 
-COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
+COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 
 class CacheComponent(StructureComponent.StructureComponent):
 
@@ -37,7 +39,7 @@ class CacheComponent(StructureComponent.StructureComponent):
         self.cache_print_text = data.get("cache_print_text", True)
         self.cache_compare = data.get("cache_compare", True)
 
-        self.subcomponent_field:ComponentField.ComponentField[StructureComponent.StructureComponent] = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.types_field.verify_with(self.subcomponent_field)
         self.fields.extend([self.subcomponent_field, self.types_field])

@@ -11,8 +11,8 @@ import Structure.Structure as Structure
 import Structure.StructureBase as StructureBase
 import Utilities.TypeVerifier as TypeVerifier
 
-COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_structure": True}])
-NORMALIZER_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
+COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_structure": True}])
+NORMALIZER_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[NormalizerComponent.NormalizerComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
 
 class BaseComponent(Component.Component):
 
@@ -42,9 +42,9 @@ class BaseComponent(Component.Component):
         self.imports = data.get("imports", None)
         self.final:StructureBase.StructureBase|None = None
 
-        self.subcomponent_field:ComponentField.ComponentField[StructureComponent.StructureComponent] = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
-        self.normalizer_field:OptionalComponentField.OptionalComponentField[NormalizerComponent.NormalizerComponent] = OptionalComponentField.OptionalComponentField(data.get("normalizer", None), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
-        self.post_normalizer_field:OptionalComponentField.OptionalComponentField[NormalizerComponent.NormalizerComponent] = OptionalComponentField.OptionalComponentField(data.get("post_normalizer", None), NORMALIZER_REQUEST_PROPERTIES, ["post_normalizer"])
+        self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.normalizer_field = OptionalComponentField.OptionalComponentField(data.get("normalizer", None), NORMALIZER_REQUEST_PROPERTIES, ["normalizer"])
+        self.post_normalizer_field = OptionalComponentField.OptionalComponentField(data.get("post_normalizer", None), NORMALIZER_REQUEST_PROPERTIES, ["post_normalizer"])
         self.fields.extend([self.subcomponent_field, self.normalizer_field, self.post_normalizer_field])
 
     def create_final(self) -> None:

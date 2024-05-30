@@ -4,12 +4,12 @@ import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.AbstractTypeField as AbstractTypeField
 import Structure.Importer.Field.Field as Field
-import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 
 if TYPE_CHECKING:
     import Structure.Importer.Component as Component
+    import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 
-TYPE_ALIAS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
+TYPE_ALIAS_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern["TypeAliasComponent.TypeAliasComponent"] = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
 
 class TypeField(AbstractTypeField.AbstractTypeField):
     '''A link to a TypeAliasComponent or type.'''
@@ -29,7 +29,7 @@ class TypeField(AbstractTypeField.AbstractTypeField):
             self.subcomponent = ComponentTyping.DEFAULT_TYPES[self.subcomponent_str]
             return []
         else:
-            self.subcomponent = Field.choose_component(self.subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, self.error_path, component_name, component_class_name, TypeAliasComponent.TypeAliasComponent)
+            self.subcomponent = Field.choose_component(self.subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, self.error_path, component_name, component_class_name)
             assert self.subcomponent is not None and not isinstance(self.subcomponent, type)
             return [self.subcomponent]
 

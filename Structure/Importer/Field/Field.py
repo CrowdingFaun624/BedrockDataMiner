@@ -16,12 +16,11 @@ a = TypeVar("a")
 
 def choose_component(
         name:str,
-        required_properties:ComponentCapabilities.CapabilitiesPattern,
+        required_properties:ComponentCapabilities.CapabilitiesPattern[a],
         components:dict[str,"Component.Component"],
         keys:list[str|int],
         component_name:str,
         class_name:str,
-        return_value:type[a]=Component.Component
     ) -> a:
     if name not in components:
         raise KeyError("%s \"%s\", referenced in %s%s \"%s\", does not exist!" % (required_properties, name, get_keys_strs(False, keys), class_name, component_name))

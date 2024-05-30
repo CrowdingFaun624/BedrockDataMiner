@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     import Structure.Importer.GroupComponent as GroupComponent
     import Structure.Importer.StructureComponent as StructureComponent
 
-TYPE_ALIAS_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
+TYPE_ALIAS_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[TypeAliasComponent.TypeAliasComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
 VerifyComponentType:TypeAlias = ComponentField.ComponentField[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent"]]|OptionalComponentField.OptionalComponentField[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent"]]
 
 class TypeListField(AbstractTypeField.AbstractTypeField):
@@ -43,7 +43,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
                 subcomponent_type = ComponentTyping.DEFAULT_TYPES[subcomponent_str]
                 self.primitive_types.append(subcomponent_type)
             else:
-                subcomponent = Field.choose_component(subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, self.error_path, component_name, component_class_name, TypeAliasComponent.TypeAliasComponent)
+                subcomponent = Field.choose_component(subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, self.error_path, component_name, component_class_name)
                 components_used.append(subcomponent)
                 self.type_aliases.append(subcomponent)
         return components_used

@@ -9,7 +9,7 @@ a = TypeVar("a", bound=Component.Component, covariant=True)
 class OptionalComponentField(Field.Field, Generic[a]):
     '''A link to another Component.'''
 
-    def __init__(self, subcomponent_str:str|None, capabilities_pattern:ComponentCapabilities.CapabilitiesPattern, path:list[str|int]) -> None:
+    def __init__(self, subcomponent_str:str|None, capabilities_pattern:ComponentCapabilities.CapabilitiesPattern[a], path:list[str|int]) -> None:
         '''
         :subcomponent_str: The name of the Component this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.

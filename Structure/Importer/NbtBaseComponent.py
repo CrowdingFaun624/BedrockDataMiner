@@ -13,7 +13,7 @@ import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.TypeVerifier as TypeVerifier
 
-COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
+COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
 
 class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
 
@@ -36,7 +36,7 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
         self.final_structure:NbtBaseStructure.NbtBaseStructure|None=None
         self.children_has_normalizer = True
 
-        self.subcomponent_field:ComponentField.ComponentField[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field.verify_with(self.subcomponent_field)
