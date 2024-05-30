@@ -22,15 +22,19 @@
 #     stats = pstats.Stats(profile, stream=stream)
 #     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
 
+import threading
 from typing import Any, Callable
 
 PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "CustomJson", "DataMiners", "FileSummary", "GetFile", "NbtReader", "Scripts", "StoredVersions", "TestStructures", "UrlValidator", "VersionParser", "WikiValidator"]
 
+user_input_lock = threading.Lock()
+
 def get_user_input() -> None:
-    output = ""
-    while output not in PROGRAM_NAMES:
-        output = input("Choose a program (%s):\n" % (PROGRAM_NAMES))
-    user_input[0] = output
+    with user_input_lock:
+        output = ""
+        while output not in PROGRAM_NAMES:
+            output = input("Choose a program (%s):\n" % (PROGRAM_NAMES))
+        user_input[0] = output
 user_input:list[Any] = [None]
 if __name__ == "__main__":
     import threading
@@ -70,10 +74,8 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
 }
 
 def main() -> None:
-    import time
-    while user_input[0] is None:
-        time.sleep(0.05)
-    PROGRAM_FUNCTIONS[user_input[0]]()
+    with user_input_lock:
+        PROGRAM_FUNCTIONS[user_input[0]]()
 
 if __name__ == "__main__":
     main()
