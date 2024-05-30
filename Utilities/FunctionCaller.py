@@ -1,20 +1,10 @@
 from typing import Any, Callable, Generic, TypeVar
 
-import Utilities.TypeVerifier as TypeVerifier
-
 T = TypeVar("T") # I love type hinting
 
 class FunctionCaller(Generic[T]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("target", "a Callable", True, Callable),
-        TypeVerifier.TypedDictKeyTypeVerifier("args", "a list or None", True, (list, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("kwargs", "a dict or None", True, (dict, type(None))),
-    )
-
     def __init__(self, target:Callable[..., T], args:list[Any]|None=None, kwargs:dict[str,Any]|None=None) -> None:
-        self.type_verifier.base_verify({"target": target, "args": args, "kwargs": kwargs})
-
         self.target = target
         self.args = [] if args is None else args
         self.kwargs = {} if kwargs is None else kwargs

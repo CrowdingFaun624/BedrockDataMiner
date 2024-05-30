@@ -15,7 +15,6 @@ import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 import Version.VersionParser as VersionParser
 import Version.VersionRange as VersionRange
@@ -32,20 +31,7 @@ def str_to_version(version_str:str|None) -> Version.Version|None:
 
 class DataMinerSettings():
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("start_version_str", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("end_version_str", "a str", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("dataminer_class", "a type", True, type),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list or None", True, TypeVerifier.UnionTypeVerifier(
-            "a list or None",
-            type(None),
-            TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"),
-        ))
-    )
-
     def __init__(self, start_version_str:str|None, end_version_str:str|None, dataminer_class:type["DataMiner"], name:str, files:list[str], dependencies:list[str]|None, kwargs:dict[str,Any]) -> None:
-        self.type_verifier.base_verify({"start_version_str": start_version_str, "end_version_str": end_version_str, "dataminer_class": dataminer_class, "name": name, "dependencies": dependencies})
 
         self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
         self.file_name:str|None = None
@@ -66,14 +52,7 @@ class DataMiner():
 
     parameters:DataMinerParameters.Parameters|None = None
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("version", "a Version", True, Version.Version),
-        TypeVerifier.TypedDictKeyTypeVerifier("settings", "a DataMinerSettings", True, DataMinerSettings),
-    )
-
     def __init__(self, version:Version.Version, settings:DataMinerSettings) -> None:
-        self.type_verifier.base_verify({"version": version, "settings": settings})
-
         self.version = version
         self.settings = settings
         self.file_name = self.settings.file_name
@@ -249,16 +228,7 @@ class NullDataMiner(DataMiner):
 
 class DataMinerCollection():
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a StructureBase", True, StructureBase.StructureBase),
-        TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(DataMinerSettings, list, "a DataMinerSettings", "a list")),
-    )
-
     def __init__(self, file_name:str, name:str, structure:StructureBase.StructureBase, dataminers:list[DataMinerSettings]) -> None:
-        self.type_verifier.base_verify({"file_name": file_name, "name": name, "structure": structure, "dataminers": dataminers})
-
         self.dataminer_settings = dataminers
         self.name = name
         self.structure = structure
