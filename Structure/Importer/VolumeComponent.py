@@ -26,10 +26,10 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
         TypeVerifier.TypedDictKeyTypeVerifier("print_additional_data", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("state_key", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
     def __init__(self, data:ComponentTyping.VolumeTypedDict, name: str) -> None:

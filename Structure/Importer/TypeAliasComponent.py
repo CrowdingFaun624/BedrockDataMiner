@@ -11,7 +11,7 @@ class TypeAliasComponent(Component.Component):
     my_properties = ComponentCapabilities.Capabilities(is_type_alias=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
     def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str) -> None:

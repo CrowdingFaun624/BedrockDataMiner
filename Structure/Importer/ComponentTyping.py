@@ -46,7 +46,7 @@ class GroupComponentTypedDict(TypedDict):
 class KeymapKeyTypedDict(TypedDict):
     type: Required[str|list[str]]
     subcomponent: NotRequired[str|None]
-    tags: NotRequired[list[str]]
+    tags: NotRequired[str|list[str]]
 
 class KeymapComponentTypedDict(TypedDict):
     field: NotRequired[str]
