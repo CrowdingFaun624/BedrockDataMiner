@@ -66,3 +66,10 @@ class CacheComponent(StructureComponent.StructureComponent):
             structure=subcomponent.final,
             types=types,
         )
+
+    def check(self, config: ImporterConfig) -> list[Exception]:
+        exceptions = super().check(config)
+        structure = self.subcomponent_field.get_component().final
+        if isinstance(structure, dict):
+            exceptions.extend(ValueError("%s %s cannot except null subcomponent in type %s: null" % (self.class_name, self.name, substructure_type.__name__)) for substructure_type, substructure in structure.items() if substructure is None)
+        return exceptions

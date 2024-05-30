@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generic, Iterable, TypeVar
+from typing import Any, Callable, Generic, Iterable, TypeVar, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -42,10 +42,10 @@ class CacheStructure(Structure.Structure[d]):
 
     def link_substructures(
         self,
-        structure:Structure.Structure[d]|dict[type,Structure.Structure[d]],
+        structure:Structure.Structure[d]|dict[type,Structure.Structure[d]|None],
         types:list[type],
     ) -> None:
-        self.structure = structure
+        self.structure = cast(Structure.Structure[d]|dict[type,Structure.Structure[d]], structure) # This is checked in the check method of CacheComponent
         self.types = tuple(types)
 
     def choose_structure_flat(self, key:None, value_type:type, value:None) -> Structure.Structure:
