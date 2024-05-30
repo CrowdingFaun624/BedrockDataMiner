@@ -34,12 +34,12 @@ class StructureBase():
         self.children_tags = children_tags
 
         self.structure:Structure.Structure|None = None
-        self.normalizer:Normalizer.Normalizer|None = None
+        self.normalizer:list[Normalizer.Normalizer]|None = None
 
     def link_substructures(
         self,
         structure:Structure.Structure,
-        normalizer:Normalizer.Normalizer|None,
+        normalizer:list[Normalizer.Normalizer],
     ) -> None:
         self.structure = structure
         self.normalizer = normalizer
@@ -51,18 +51,20 @@ class StructureBase():
         '''Manipulates the data before comparison.'''
         # base normalizer
         exceptions:list[Trace.ErrorTrace] = []
-        if self.normalizer is None:
-            output = data
-        else:
+        assert self.normalizer is not None
+        output = data
+        for normalizer_index, normalizer in enumerate(self.normalizer):
             try:
-                output = self.normalizer(data, normalizer_dependencies, version_number)
+                output = normalizer(output, normalizer_dependencies, version_number)
             except Exception as e:
                 output = None
-                exceptions.append(Trace.ErrorTrace(e, self.component_name, None, data))
+                exceptions.append(Trace.ErrorTrace(e, self.component_name, normalizer_index, data))
+                break
             else:
                 if output is None:
-                    exceptions.append(Trace.ErrorTrace(RuntimeError("Output of normalizer is None!"), self.component_name, None, data))
+                    exceptions.append(Trace.ErrorTrace(RuntimeError("Output of normalizer %i is None!" % (normalizer_index,)), self.component_name, normalizer_index, data))
                     output = None
+                    break
 
         # other normalizers
         self.print_exception_list(exceptions)

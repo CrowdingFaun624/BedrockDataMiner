@@ -13,7 +13,7 @@ class BaseComponentTypedDict(TypedDict):
     subcomponent: Required[str]
     imports: NotRequired[list[ImportTypedDict]]
     name: Required[str]
-    normalizer: NotRequired[str]
+    normalizer: NotRequired[str|list[str]]
     type: Required[Literal["Base"]]
 
 class CacheComponentTypedDict(TypedDict):
