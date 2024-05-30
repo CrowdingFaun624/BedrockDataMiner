@@ -7,7 +7,6 @@ import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
-from Structure.Importer.ImporterConfig import ImporterConfig
 
 if TYPE_CHECKING:
     import Structure.Importer.Component as Component

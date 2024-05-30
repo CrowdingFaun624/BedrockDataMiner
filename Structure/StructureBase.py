@@ -8,7 +8,6 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Version.Version as Version

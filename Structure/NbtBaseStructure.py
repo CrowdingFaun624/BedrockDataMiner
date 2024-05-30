@@ -11,7 +11,6 @@ import Structure.Trace as Trace
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
-import Utilities.TypeVerifier as TypeVerifier
 
 
 class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):

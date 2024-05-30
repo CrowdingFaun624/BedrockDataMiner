@@ -1,8 +1,6 @@
-from typing import Any, Callable, cast, Generic, TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, cast
 
 import DataMiners.DataMinerTyping as DataMinerTyping
-import Structure.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
 if TYPE_CHECKING:

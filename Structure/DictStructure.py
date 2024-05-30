@@ -9,7 +9,6 @@ import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Nbt.NbtTypes as NbtTypes
-import Utilities.TypeVerifier as TypeVerifier
 
 b = TypeVar("b")
 d = TypeVar("d")

@@ -7,7 +7,6 @@ import Structure.Importer.Field.NormalizerListField as NormalizerListField
 import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.KeymapStructure as KeymapStructure
-import Structure.Structure as Structure
 import Utilities.TypeVerifier as TypeVerifier
 
 

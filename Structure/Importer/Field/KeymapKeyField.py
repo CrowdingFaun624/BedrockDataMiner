@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, Union, overload
 
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
-import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Field.FieldContainer as FieldContainer
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
@@ -13,7 +12,6 @@ from Structure.Importer.ImporterConfig import ImporterConfig
 if TYPE_CHECKING:
     import Structure.Importer.GroupComponent as GroupComponent
     import Structure.Importer.StructureComponent as StructureComponent
-    import Structure.Importer.TagComponent as TagComponent
     import Structure.Structure as Structure
 
 COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])

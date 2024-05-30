@@ -8,7 +8,6 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
 
 d = TypeVar("d")
 

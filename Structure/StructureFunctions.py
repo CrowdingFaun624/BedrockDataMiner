@@ -1,9 +1,10 @@
 import json
-from typing import Any, Callable, cast, TypedDict
+from typing import Any, Callable, TypedDict, cast
 
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 import Utilities.Nbt.NbtTypes as NbtTypes
+
 
 def animation_controllers_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
     if "animation_controllers" in data: return
