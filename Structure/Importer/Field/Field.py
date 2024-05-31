@@ -1,8 +1,8 @@
 from typing import Callable, Sequence, TypeVar
 
-import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
 import Structure.Importer.ImporterConfig as ImporterConfig
+import Structure.Importer.Pattern as Capabilities
 
 
 def get_keys_strs(is_capital:bool, keys:list[str|int]) -> str:

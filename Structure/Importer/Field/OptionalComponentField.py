@@ -1,8 +1,8 @@
 from typing import Callable, Generic, Sequence, TypeVar
 
-import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
 import Structure.Importer.Field.Field as Field
+import Structure.Importer.Pattern as Capabilities
 
 a = TypeVar("a", bound=Component.Component, covariant=True)
 

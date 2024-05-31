@@ -1,6 +1,6 @@
-import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.NormalizerComponent as NormalizerComponent
+import Structure.Importer.Pattern as Capabilities
 import Structure.Normalizer as Normalizer
 
 NORMALIZER_REQUEST_PROPERTIES:Capabilities.Pattern[NormalizerComponent.NormalizerComponent] = Capabilities.Pattern([{"is_normalizer": True}])

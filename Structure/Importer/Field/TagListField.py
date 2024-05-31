@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING, Callable, Sequence
 
-import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
 import Structure.Importer.Field.ComponentListField as ComponentListField
+import Structure.Importer.Pattern as Capabilities
 
 if TYPE_CHECKING:
     import Structure.Importer.TagComponent as TagComponent

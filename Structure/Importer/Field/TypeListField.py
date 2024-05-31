@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING, Callable, Sequence
 
-import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.AbstractTypeField as AbstractTypeField
 import Structure.Importer.Field.Field as Field
+import Structure.Importer.Pattern as Capabilities
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 
 if TYPE_CHECKING:

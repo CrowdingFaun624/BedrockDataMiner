@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING, Callable, Sequence, cast
 
-import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
 import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.KeymapKeyField as KeymapKeyField
+import Structure.Importer.Pattern as Capabilities
 
 if TYPE_CHECKING:
     import Structure.Importer.KeymapComponent as KeymapComponent

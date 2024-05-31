@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Union
 
-import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
+import Structure.Importer.Pattern as Capabilities
 
 if TYPE_CHECKING:
     import Structure.Importer.StructureComponent as StructureComponent
