@@ -32,8 +32,4 @@ class OptionalStructroidComponentField(OptionalComponentField.OptionalComponentF
         structure = component.final
         if structure is None:
             raise RuntimeError("Final Structure of StructureComponent is None!")
-        if isinstance(structure, dict):
-            null_substructures = [substructure_type for substructure_type, substructure in structure.items() if substructure is None]
-            if len(null_substructures) > 0:
-                raise RuntimeError("StructroidComponentField cannot accept Groups with substructure of null! Offenders are [%s]" % (", ".join(substructure_type.__name__ for substructure_type in null_substructures)))
         return structure
