@@ -26,13 +26,13 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
 
         self.endianness=endianness
 
-        self.structure:Structure.Structure|dict[type,Structure.Structure|None]|None = None
+        self.structure:Structure.Structure|dict[type,Structure.Structure]|None = None
         self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
 
     def link_substructures(
         self,
-        structure:Structure.Structure|dict[type,Structure.Structure|None],
+        structure:Structure.Structure|dict[type,Structure.Structure],
         types:list[type],
         normalizer:list[Normalizer.Normalizer],
     ) -> None:

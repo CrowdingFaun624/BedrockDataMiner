@@ -42,7 +42,7 @@ class CacheStructure(Structure.Structure[d]):
 
     def link_substructures(
         self,
-        structure:Structure.Structure[d]|dict[type,Structure.Structure[d]|None],
+        structure:Structure.Structure[d]|dict[type,Structure.Structure[d]],
         types:list[type],
     ) -> None:
         self.structure = cast(Structure.Structure[d]|dict[type,Structure.Structure[d]], structure) # This is checked in the check method of CacheComponent
