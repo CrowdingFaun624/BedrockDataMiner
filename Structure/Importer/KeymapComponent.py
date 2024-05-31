@@ -1,4 +1,4 @@
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.KeymapImportField as KeymapImportField
@@ -15,7 +15,7 @@ class KeymapComponent(StructureComponent.StructureComponent):
     class_name_article = "a Keymap"
     class_name = "Keymap"
     my_type = [dict]
-    my_properties = ComponentCapabilities.Capabilities(has_importable_keys=True, has_keys=True, is_structure=True)
+    my_capabilities = Capabilities.Capabilities(has_importable_keys=True, has_keys=True, is_structure=True)
     final:KeymapStructure.KeymapStructure
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),

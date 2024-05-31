@@ -1,5 +1,5 @@
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -8,7 +8,7 @@ class TypeAliasComponent(Component.Component):
 
     class_name_article = "a TypeAlias"
     class_name = "TypeAlias"
-    my_properties = ComponentCapabilities.Capabilities(is_type_alias=True)
+    my_capabilities = Capabilities.Capabilities(is_type_alias=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),

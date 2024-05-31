@@ -1,4 +1,4 @@
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.DictComponent as DictComponent
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.KeymapComponent as KeymapComponent
@@ -11,7 +11,7 @@ class NbtTagCompoundComponent(DictComponent.DictComponent):
     class_name_article = "an NbtTagCompound"
     class_name = "NbtTagCompound"
     my_type = [NbtTypes.TAG_Compound]
-    my_properties = ComponentCapabilities.Capabilities(has_keys=True, is_nbt_tag=True, is_structure=True)
+    my_capabilities = Capabilities.Capabilities(has_keys=True, is_nbt_tag=True, is_structure=True)
 
 class NbtTagListComponent(ListComponent.ListComponent):
 
@@ -19,7 +19,7 @@ class NbtTagListComponent(ListComponent.ListComponent):
     class_name = "NbtTagList"
     my_type = [NbtTypes.TAG_List]
     required_types:list[type]|None = None
-    my_properties = ComponentCapabilities.Capabilities(is_nbt_tag=True, is_structure=True)
+    my_capabilities = Capabilities.Capabilities(is_nbt_tag=True, is_structure=True)
 
     def check_required_type(self) -> list[Exception]:
         if self.required_types is None: return []
@@ -59,5 +59,5 @@ class NbtKeymapTagCompoundComponent(KeymapComponent.KeymapComponent):
     class_name_article = "an NbtKeymapTagCompound"
     class_name = "NbtKeymapTagCompound"
     my_type = [NbtTypes.TAG_Compound]
-    my_properties = ComponentCapabilities.Capabilities(has_importable_keys=True, has_keys=True, is_nbt_tag=True, is_structure=True)
+    my_capabilities = Capabilities.Capabilities(has_importable_keys=True, has_keys=True, is_nbt_tag=True, is_structure=True)
     children_has_normalizer_default = True

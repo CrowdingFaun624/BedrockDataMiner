@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence, Union
 
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.StructureBase as StructureBase
 import Utilities.TypeVerifier as TypeVerifier
@@ -12,7 +12,7 @@ class Component():
 
     class_name_article = "a Component"
     class_name = "Component"
-    my_properties:ComponentCapabilities.Capabilities
+    my_capabilities:Capabilities.Capabilities
     children_has_normalizer_default = False
     type_verifier:TypeVerifier.TypeVerifier
 

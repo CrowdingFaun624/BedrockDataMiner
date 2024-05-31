@@ -1,7 +1,7 @@
 from typing import Callable, Generic, Sequence, TypeVar
 
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.Field.Field as Field
 
 a = TypeVar("a", bound=Component.Component, covariant=True)
@@ -9,15 +9,16 @@ a = TypeVar("a", bound=Component.Component, covariant=True)
 class OptionalComponentField(Field.Field, Generic[a]):
     '''A link to another Component.'''
 
-    def __init__(self, subcomponent_str:str|None, capabilities_pattern:ComponentCapabilities.CapabilitiesPattern[a], path:list[str|int]) -> None:
+    def __init__(self, subcomponent_str:str|None, pattern:Capabilities.Pattern[a], path:list[str|int]) -> None:
         '''
         :subcomponent_str: The name of the Component this Field refers to.
+        :pattern: The Pattern used to search for Components.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
         '''
         super().__init__(path)
         self.subcomponent_str = subcomponent_str
         self.subcomponent:a|None = None
-        self.capabilities_pattern = capabilities_pattern
+        self.pattern = pattern
         self.has_set_component = False
 
     def set_field(self, component_name:str, component_class_name:str, components:dict[str,Component.Component], functions:dict[str,Callable]) -> Sequence[Component.Component]:
@@ -26,7 +27,7 @@ class OptionalComponentField(Field.Field, Generic[a]):
             self.subcomponent = None
             return []
         else:
-            subcomponent:"Component.Component" = Field.choose_component(self.subcomponent_str, self.capabilities_pattern, components, self.error_path, component_name, component_class_name)
+            subcomponent:"Component.Component" = Field.choose_component(self.subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name)
             self.subcomponent = subcomponent # type: ignore
             assert self.subcomponent is not None
             return [self.subcomponent]

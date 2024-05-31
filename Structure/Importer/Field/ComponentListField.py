@@ -1,7 +1,7 @@
 from typing import Callable, Generic, Iterator, Sequence, TypeVar
 
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.Field.Field as Field
 
 a = TypeVar("a", bound=Component.Component, covariant=True)
@@ -9,21 +9,21 @@ a = TypeVar("a", bound=Component.Component, covariant=True)
 class ComponentListField(Field.Field, Generic[a]):
     '''A link to multiple other Components.'''
 
-    def __init__(self, subcomponents_strs:list[str]|str, capabilities_pattern:ComponentCapabilities.CapabilitiesPattern[a], path:list[str|int]) -> None:
+    def __init__(self, subcomponents_strs:list[str]|str, pattern:Capabilities.Pattern[a], path:list[str|int]) -> None:
         '''
         :subcomponents_strs: The names of the Components this Field refers to.
-        :capabilities_pattern: The pattern to use when searching for Components.
+        :pattern: The Pattern used to search for Components.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
         '''
         super().__init__(path)
         self.subcomponents_strs = [subcomponents_strs] if isinstance(subcomponents_strs, str) else subcomponents_strs
         self.subcomponents:list[a]|None = None
-        self.capabilities_pattern = capabilities_pattern
+        self.pattern = pattern
 
     def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         self.subcomponents = []
         for subcomponent_str in self.subcomponents_strs:
-            subcomponent = Field.choose_component(subcomponent_str, self.capabilities_pattern, components, self.error_path, component_name, component_class_name)
+            subcomponent = Field.choose_component(subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name)
             assert subcomponent is not None
             self.subcomponents.append(subcomponent) # type: ignore
         return self.subcomponents

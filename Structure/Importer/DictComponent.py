@@ -1,5 +1,5 @@
 import Structure.DictStructure as DictStructure
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
 import Structure.Importer.Field.OptionalFunctionField as OptionalFunctionField
@@ -15,7 +15,7 @@ class DictComponent(StructureComponent.StructureComponent):
     class_name_article = "a Dict"
     class_name = "Dict"
     my_type = [dict]
-    my_properties = ComponentCapabilities.Capabilities(has_keys=True, is_structure=True)
+    my_capabilities = Capabilities.Capabilities(has_keys=True, is_structure=True)
     final:DictStructure.DictStructure
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),

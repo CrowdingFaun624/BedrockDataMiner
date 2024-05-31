@@ -1,5 +1,5 @@
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
 import Structure.Importer.Field.StructureComponentField as StructureComponentField
@@ -11,7 +11,7 @@ class BaseComponent(Component.Component):
 
     class_name_article = "a Base"
     class_name = "Base"
-    my_properties = ComponentCapabilities.Capabilities(is_base=True)
+    my_capabilities = Capabilities.Capabilities(is_base=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("imports", "a list", False, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(

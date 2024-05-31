@@ -1,7 +1,7 @@
 from typing import Callable, Sequence, TypeVar
 
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ImporterConfig as ImporterConfig
 
 
@@ -16,7 +16,7 @@ a = TypeVar("a")
 
 def choose_component(
         name:str,
-        required_properties:ComponentCapabilities.CapabilitiesPattern[a],
+        required_properties:Capabilities.Pattern[a],
         components:dict[str,"Component.Component"],
         keys:list[str|int],
         component_name:str,
@@ -25,8 +25,8 @@ def choose_component(
     if name not in components:
         raise KeyError("%s \"%s\", referenced in %s%s \"%s\", does not exist!" % (required_properties, name, get_keys_strs(False, keys), class_name, component_name))
     component = components[name]
-    if component.my_properties not in required_properties:
-        raise ValueError("%s%s \"%s\" references object \"%s\", expecting %s but getting a %s!" % (get_keys_strs(True, keys), class_name, component_name, name, required_properties, component.my_properties))
+    if component.my_capabilities not in required_properties:
+        raise ValueError("%s%s \"%s\" references object \"%s\", expecting %s but getting a %s!" % (get_keys_strs(True, keys), class_name, component_name, name, required_properties, component.my_capabilities))
     return component # type: ignore
 
 class Field():

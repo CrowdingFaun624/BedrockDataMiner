@@ -1,25 +1,25 @@
 import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
+import Structure.Importer.Field.StructroidComponentField as StructroidComponentField
 import Structure.Importer.Field.TypeListField as TypeListField
 import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.StructureComponent as StructureComponent
-import Structure.Importer.Field.StructroidComponentField as StructroidComponentField
 import Structure.NbtBaseStructure as NbtBaseStructure
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.TypeVerifier as TypeVerifier
 
-COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
+COMPONENT_REQUEST_PROPERTIES:Capabilities.Pattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = Capabilities.Pattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
 
 class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
 
     class_name_article = "an NbtBase"
     class_name = "NbtBase"
-    my_properties = ComponentCapabilities.Capabilities(is_group=True, is_nbt_base=True)
+    my_capabilities = Capabilities.Capabilities(is_group=True, is_nbt_base=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("endianness", "a str", True, TypeVerifier.EnumTypeVerifier(("big", "little"))),
@@ -36,7 +36,7 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
         self.final_structure:NbtBaseStructure.NbtBaseStructure|None=None
         self.children_has_normalizer = True
 
-        self.subcomponent_field = StructroidComponentField.StructroidComponentField(data["subcomponent"], ["subcomponent"], capabilities_pattern=COMPONENT_REQUEST_PROPERTIES)
+        self.subcomponent_field = StructroidComponentField.StructroidComponentField(data["subcomponent"], ["subcomponent"], pattern=COMPONENT_REQUEST_PROPERTIES)
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field.verify_with(self.subcomponent_field)

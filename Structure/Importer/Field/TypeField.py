@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Callable, Sequence
 
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.AbstractTypeField as AbstractTypeField
 import Structure.Importer.Field.Field as Field
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     import Structure.Importer.Component as Component
     import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 
-TYPE_ALIAS_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern["TypeAliasComponent.TypeAliasComponent"] = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
+TYPE_ALIAS_REQUEST_PROPERTIES:Capabilities.Pattern["TypeAliasComponent.TypeAliasComponent"] = Capabilities.Pattern([{"is_type_alias": True}])
 
 class TypeField(AbstractTypeField.AbstractTypeField):
     '''A link to a TypeAliasComponent or type.'''

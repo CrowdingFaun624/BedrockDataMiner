@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Callable, Sequence, cast
 
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.KeymapKeyField as KeymapKeyField
@@ -9,14 +9,13 @@ import Structure.Importer.Field.KeymapKeyField as KeymapKeyField
 if TYPE_CHECKING:
     import Structure.Importer.KeymapComponent as KeymapComponent
 
-IMPORTABLE_KEYS_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern["KeymapComponent.KeymapComponent"] = ComponentCapabilities.CapabilitiesPattern([{"has_importable_keys": True}])
+IMPORTABLE_KEYS_REQUEST_PROPERTIES:Capabilities.Pattern["KeymapComponent.KeymapComponent"] = Capabilities.Pattern([{"has_importable_keys": True}])
 
 class KeymapImportField(ComponentListField.ComponentListField):
 
     def __init__(self, subcomponents_strs:list[str]|str, path:list[str|int]) -> None:
         '''
         :subcomponents_strs: The names of the Components this Field refers to.
-        :capabilities_pattern: The pattern to use when searching for Components.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         super().__init__(subcomponents_strs, IMPORTABLE_KEYS_REQUEST_PROPERTIES, path)

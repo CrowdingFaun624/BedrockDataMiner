@@ -1,5 +1,5 @@
 import Structure.CacheStructure as CacheStructure
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.StructroidComponentField as StructroidComponentField
 import Structure.Importer.Field.TypeListField as TypeListField
@@ -12,7 +12,7 @@ class CacheComponent(StructureComponent.StructureComponent):
 
     class_name_article = "a Cache"
     class_name = "Cache"
-    my_properties = ComponentCapabilities.Capabilities(is_structure=True)
+    my_capabilities = Capabilities.Capabilities(is_structure=True)
     final:CacheStructure.CacheStructure
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),

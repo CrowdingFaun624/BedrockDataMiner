@@ -1,4 +1,4 @@
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
 import Structure.Importer.Field.OptionalStructroidComponentField as OptionalStructroidComponentField
@@ -14,7 +14,7 @@ class ListComponent(StructureComponent.StructureComponent):
     class_name_article = "a List"
     class_name = "List"
     my_type = [list]
-    my_properties = ComponentCapabilities.Capabilities(is_structure=True)
+    my_capabilities = Capabilities.Capabilities(is_structure=True)
     final:ListStructure.ListStructure
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),

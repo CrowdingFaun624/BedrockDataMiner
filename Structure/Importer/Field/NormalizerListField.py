@@ -1,9 +1,9 @@
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.NormalizerComponent as NormalizerComponent
 import Structure.Normalizer as Normalizer
 
-NORMALIZER_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[NormalizerComponent.NormalizerComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
+NORMALIZER_REQUEST_PROPERTIES:Capabilities.Pattern[NormalizerComponent.NormalizerComponent] = Capabilities.Pattern([{"is_normalizer": True}])
 
 class NormalizerListField(ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent]):
 

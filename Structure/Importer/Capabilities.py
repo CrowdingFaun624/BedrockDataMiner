@@ -16,7 +16,7 @@ ALLOWED_PROPERTIES = set([
 
 a = TypeVar("a")
 
-class CapabilitiesPattern(Generic[a]):
+class Pattern(Generic[a]):
 
     def __init__(self, properties:list[dict[str,bool]]) -> None:
         for property_set in properties:
@@ -38,7 +38,7 @@ class CapabilitiesPattern(Generic[a]):
             return NotImplemented
     
     def __repr__(self) -> str:
-        return "<CapabilitiesPattern %s>" % (", ".join("(%s)" % (", ".join("%s: %s" % (property, value) for property, value in property_set.items())) for property_set in self.properties))
+        return "<Pattern %s>" % (", ".join("(%s)" % (", ".join("%s: %s" % (property, value) for property, value in property_set.items())) for property_set in self.properties))
 
 class Capabilities():
 

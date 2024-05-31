@@ -1,5 +1,5 @@
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.FunctionField as FunctionField
 import Structure.Importer.ImporterConfig as ImporterConfig
@@ -12,7 +12,7 @@ class NormalizerComponent(Component.Component):
     class_name_article = "a Normalizer"
     class_name = "Normalizer"
 
-    my_properties = ComponentCapabilities.Capabilities(is_function=True, is_normalizer=True)
+    my_capabilities = Capabilities.Capabilities(is_function=True, is_normalizer=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),

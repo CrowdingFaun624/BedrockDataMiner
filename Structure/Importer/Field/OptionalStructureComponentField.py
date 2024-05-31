@@ -1,24 +1,24 @@
 from typing import TYPE_CHECKING, Union
 
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 
 if TYPE_CHECKING:
     import Structure.Importer.StructureComponent as StructureComponent
     import Structure.Structure as Structure
 
-STRUCTURE_COMPONENT_REQUEST_PROPERTIES = ComponentCapabilities.CapabilitiesPattern([{"is_structure": True}])
+STRUCTURE_COMPONENT_REQUEST_PROPERTIES = Capabilities.Pattern([{"is_structure": True}])
 
 class OptionalStructureComponentField(OptionalComponentField.OptionalComponentField["StructureComponent.StructureComponent"]):
     '''A Field that refers to a StructureComponent (but not a GroupComponent) or no Component.'''
 
-    def __init__(self, subcomponent_str:str|None, path: list[str|int], capabilities_pattern:ComponentCapabilities.CapabilitiesPattern=STRUCTURE_COMPONENT_REQUEST_PROPERTIES) -> None:
+    def __init__(self, subcomponent_str:str|None, path: list[str|int], pattern:Capabilities.Pattern=STRUCTURE_COMPONENT_REQUEST_PROPERTIES) -> None:
         '''
         :subcomponent_str: The name of the StructureComponent this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
-        :capabilities_pattern: The CapabilitiesPattern to override the default with.
+        :pattern: The Pattern to override the default with.
         '''
-        super().__init__(subcomponent_str, capabilities_pattern, path)
+        super().__init__(subcomponent_str, pattern, path)
 
     def get_final(self) -> Union["Structure.Structure", None]:
         '''

@@ -1,13 +1,13 @@
 from typing import TYPE_CHECKING, Callable, Sequence
 
+import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.Field.ComponentListField as ComponentListField
 
 if TYPE_CHECKING:
     import Structure.Importer.TagComponent as TagComponent
 
-TAG_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern["TagComponent.TagComponent"] = ComponentCapabilities.CapabilitiesPattern([{"is_tag": True}])
+TAG_REQUEST_PROPERTIES:Capabilities.Pattern["TagComponent.TagComponent"] = Capabilities.Pattern([{"is_tag": True}])
 
 class TagListField(ComponentListField.ComponentListField["TagComponent.TagComponent"]):
 
