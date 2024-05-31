@@ -1,7 +1,7 @@
 import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentTyping as ComponentTyping
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class TypeAliasComponent(Component.Component):

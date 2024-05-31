@@ -12,7 +12,7 @@ import Structure.NbtBaseStructure as NbtBaseStructure
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES:Structure.Importer.Pattern.Pattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = Structure.Importer.Pattern.Pattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
 

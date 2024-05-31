@@ -31,7 +31,7 @@ import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEv
 import Structure.Importer.Importer as Importer
 import Structure.StructureBase as StructureBase
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
 import Version.VersionFileType as VersionFileType
 import Version.VersionParser as VersionParser

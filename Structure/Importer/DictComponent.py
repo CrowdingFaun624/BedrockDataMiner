@@ -7,7 +7,7 @@ import Structure.Importer.Field.OptionalStructroidComponentField as OptionalStru
 import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.Field.TypeListField as TypeListField
 import Structure.Importer.StructureComponent as StructureComponent
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class DictComponent(StructureComponent.StructureComponent):

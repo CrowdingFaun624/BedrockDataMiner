@@ -3,7 +3,7 @@ import json
 from typing import TYPE_CHECKING, Any, Callable, TypedDict, TypeVar, cast
 
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import DataMiners.DataMinerTyping as DataMinerTyping

@@ -5,9 +5,9 @@ from pathlib2 import Path
 
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller
-import Utilities.TypeVerifier as TypeVerifier
 
 
 class LocalManagerTypedDict(TypedDict):

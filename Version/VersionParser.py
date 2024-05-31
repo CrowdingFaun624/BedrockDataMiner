@@ -1,9 +1,10 @@
 import json
 from typing import Any, Mapping, Sequence, TypedDict
+
 from typing_extensions import NotRequired, Required
 
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
 import Version.VersionFileType as VersionFileType
 import Version.VersionTags as VersionTags

@@ -4,7 +4,7 @@ import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
 import Structure.Importer.Field.StructureComponentField as StructureComponentField
 import Structure.StructureBase as StructureBase
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class BaseComponent(Component.Component):

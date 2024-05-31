@@ -8,7 +8,7 @@ from pathlib2 import Path
 import Downloader.DownloadLog as DownloadLog
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
 

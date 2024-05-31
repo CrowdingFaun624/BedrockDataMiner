@@ -8,7 +8,7 @@ import Structure.Importer.Field.TypeField as TypeField
 import Structure.Importer.Field.TypeListField as TypeListField
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.VolumeStructure as VolumeStructure
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):

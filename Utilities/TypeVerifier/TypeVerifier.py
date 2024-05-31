@@ -1,6 +1,8 @@
 import enum
 import traceback
-from typing import Any, Callable, Container, cast, Generic, Iterable, Mapping, Sequence, TypeVar
+from typing import (Any, Callable, Container, Generic, Iterable, Mapping,
+                    Sequence, TypeVar, cast)
+
 
 class TraceItemType(enum.Enum):
     KEY = 0

@@ -4,7 +4,7 @@ import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.StructroidComponentField as StructroidComponentField
 import Structure.Importer.Field.TypeListField as TypeListField
 import Structure.Importer.StructureComponent as StructureComponent
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 from Structure.Importer.ImporterConfig import ImporterConfig
 
 

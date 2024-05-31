@@ -3,7 +3,7 @@ import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.GroupItemField as GroupItemField
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class GroupComponent(AbstractGroupComponent.AbstractGroupComponent):

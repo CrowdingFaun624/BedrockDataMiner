@@ -1,9 +1,10 @@
 import json
-from typing import Iterable, TypedDict, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable, TypedDict
+
 from typing_extensions import NotRequired, Required
 
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionRange as VersionRange
 
 if TYPE_CHECKING:

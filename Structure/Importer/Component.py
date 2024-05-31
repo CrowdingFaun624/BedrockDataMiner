@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence, Union
 import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.StructureBase as StructureBase
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Structure.Importer.Field.Field as Field

@@ -4,7 +4,7 @@ import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.FunctionField as FunctionField
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Normalizer as Normalizer
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class NormalizerComponent(Component.Component):

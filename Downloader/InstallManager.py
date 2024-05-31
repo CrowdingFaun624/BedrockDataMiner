@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any, Iterable, Literal, overload
 
 from pathlib2 import Path
 
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:

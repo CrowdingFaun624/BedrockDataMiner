@@ -6,7 +6,7 @@ from pathlib2 import Path
 import Downloader.InstallManager as InstallManager
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
 
 
