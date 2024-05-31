@@ -1,15 +1,13 @@
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
-import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
+import Structure.Importer.Field.OptionalStructroidComponentField as OptionalStructroidComponentField
 import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.Field.TypeListField as TypeListField
-import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Structure.ListStructure as ListStructure
 import Utilities.TypeVerifier as TypeVerifier
 
-COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 
 class ListComponent(StructureComponent.StructureComponent):
 
@@ -41,7 +39,7 @@ class ListComponent(StructureComponent.StructureComponent):
         self.print_all = data.get("print_all", False)
         self.print_flat = data.get("print_flat", False)
 
-        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.subcomponent_field = OptionalStructroidComponentField.OptionalStructroidComponentField(data["subcomponent"], ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
@@ -65,7 +63,7 @@ class ListComponent(StructureComponent.StructureComponent):
         super().link_finals()
         assert self.final is not None
         self.final.link_substructures(
-            structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
+            structure=self.subcomponent_field.get_final(),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()

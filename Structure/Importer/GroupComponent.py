@@ -33,11 +33,6 @@ class GroupComponent(AbstractGroupComponent.AbstractGroupComponent):
         assert self.final is not None
         for group_field in self.subcomponents_field:
             valid_types = group_field.get_types()
-            subcomponent = group_field.get_component()
             self.my_type.update(valid_types)
-            if subcomponent is None:
-                structure = None
-            else:
-                structure = subcomponent.final
             for valid_type in valid_types:
-                self.final[valid_type] = structure
+                self.final[valid_type] = group_field.subcomponent_field.get_final()

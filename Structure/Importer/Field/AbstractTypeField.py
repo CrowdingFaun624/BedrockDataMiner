@@ -1,16 +1,14 @@
-from typing import TYPE_CHECKING, TypeAlias, Union
+from typing import TypeAlias
 
 import Structure.Importer.ComponentTyping as ComponentTyping
-import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Field.Field as Field
-import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
+import Structure.Importer.Field.OptionalStructroidComponentField as OptionalStructroidComponentField
+import Structure.Importer.Field.OptionalStructureComponentField as OptionalStructureComponentField
+import Structure.Importer.Field.StructroidComponentField as StructroidComponentField
+import Structure.Importer.Field.StructureComponentField as StructureComponentField
 import Structure.Importer.ImporterConfig as ImporterConfig
 
-if TYPE_CHECKING:
-    import Structure.Importer.GroupComponent as GroupComponent
-    import Structure.Importer.StructureComponent as StructureComponent
-
-VerifyComponentType:TypeAlias = ComponentField.ComponentField[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent"]]|OptionalComponentField.OptionalComponentField[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent"]]
+VerifyComponentType:TypeAlias = StructroidComponentField.StructroidComponentField|OptionalStructroidComponentField.OptionalStructroidComponentField|StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
 
 class AbstractTypeField(Field.Field):
 

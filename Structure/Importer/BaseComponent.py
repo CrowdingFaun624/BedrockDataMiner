@@ -1,18 +1,11 @@
-from typing import cast
-
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
-import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
-import Structure.Importer.NormalizerComponent as NormalizerComponent
-import Structure.Importer.StructureComponent as StructureComponent
-import Structure.Structure as Structure
+import Structure.Importer.Field.StructureComponentField as StructureComponentField
 import Structure.StructureBase as StructureBase
 import Utilities.TypeVerifier as TypeVerifier
 
-COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_structure": True}])
-NORMALIZER_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[NormalizerComponent.NormalizerComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_normalizer": True}])
 
 class BaseComponent(Component.Component):
 
@@ -41,7 +34,7 @@ class BaseComponent(Component.Component):
         self.imports = data.get("imports", None)
         self.final:StructureBase.StructureBase|None = None
 
-        self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.fields.extend([self.subcomponent_field, self.normalizer_field])
 
@@ -56,6 +49,6 @@ class BaseComponent(Component.Component):
         super().link_finals()
         assert self.final is not None
         self.final.link_substructures(
-            structure=cast(Structure.Structure, self.subcomponent_field.get_component().final),
+            structure=self.subcomponent_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
         )

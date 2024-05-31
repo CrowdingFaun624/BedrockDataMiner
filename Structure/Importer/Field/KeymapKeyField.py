@@ -1,25 +1,20 @@
 from typing import TYPE_CHECKING, Union, overload
 
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Field.FieldContainer as FieldContainer
-import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
+import Structure.Importer.Field.OptionalStructroidComponentField as OptionalStructroidComponentField
 import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.Field.TypeListField as TypeListField
 from Structure.Importer.ImporterConfig import ImporterConfig
 
 if TYPE_CHECKING:
-    import Structure.Importer.GroupComponent as GroupComponent
-    import Structure.Importer.StructureComponent as StructureComponent
     import Structure.Structure as Structure
-
-COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent"]] = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 
 class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 
     @overload
-    def __init__(self, *, key:str, has_been_imported:bool, types_field:TypeListField.TypeListField, subcomponent_field:OptionalComponentField.OptionalComponentField[Union["StructureComponent.StructureComponent","GroupComponent.GroupComponent"]], tags_field:TagListField.TagListField, path:list[str|int]) -> None:
+    def __init__(self, *, key:str, has_been_imported:bool, types_field:TypeListField.TypeListField, subcomponent_field:OptionalStructroidComponentField.OptionalStructroidComponentField, tags_field:TagListField.TagListField, path:list[str|int]) -> None:
         '''
         This overload is used to copy a KeymapKeyField.
         '''
@@ -42,7 +37,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
             path:list[str|int]|None=None,
             has_been_imported:bool|None=None,
             types_field:TypeListField.TypeListField|None=None,
-            subcomponent_field:OptionalComponentField.OptionalComponentField[Union["StructureComponent.StructureComponent","GroupComponent.GroupComponent"]]|None=None,
+            subcomponent_field:OptionalStructroidComponentField.OptionalStructroidComponentField|None=None,
             tags_field:TagListField.TagListField|None=None,
         ) -> None:
         if data is None:
@@ -67,7 +62,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
             self.has_been_imported = False # Keys that have been imported cannot be imported again
 
             self.types_field = TypeListField.TypeListField(data["type"] if isinstance(data["type"], list) else [data["type"]], ["keys", key, "type"])
-            self.subcomponent_field = OptionalComponentField.OptionalComponentField(data.get("subcomponent", None), COMPONENT_REQUEST_PROPERTIES, ["keys", key, "subcomponent"])
+            self.subcomponent_field = OptionalStructroidComponentField.OptionalStructroidComponentField(data.get("subcomponent", None), ["keys", key, "subcomponent"])
             self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["keys", key, "tags"])
             self.tags_field.add_to_tag_set(tag_set)
         self.types_field.verify_with(self.subcomponent_field)
@@ -90,16 +85,11 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 
     def get_subcomponent_final(self) -> dict[type,Union["Structure.Structure",None]]:
         '''Extracts the data about the structure of this field's components without changing the identity of the data structures.'''
-        subcomponent = self.subcomponent_field.get_component()
-        value_types = self.types_field.get_types()
-        if subcomponent is None:
-            return {value_type: None for value_type in value_types}
+        structure = self.subcomponent_field.get_final()
+        if isinstance(structure, dict):
+            return structure
         else:
-            assert subcomponent.final is not None
-            if isinstance(subcomponent.final, dict):
-                return subcomponent.final
-            else:
-                return {value_type: subcomponent.final for value_type in value_types}
+            return {value_type: structure for value_type in self.types_field.get_types()}
 
     def check(self, component_name:str, component_class_name:str, config: ImporterConfig) -> list[Exception]:
         exceptions = super().check(component_name, component_class_name, config)

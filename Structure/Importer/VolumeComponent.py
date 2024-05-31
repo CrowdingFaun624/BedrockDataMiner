@@ -1,10 +1,8 @@
-from typing import TYPE_CHECKING, Union
-
 import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
-import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
+import Structure.Importer.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.Field.TypeField as TypeField
 import Structure.Importer.Field.TypeListField as TypeListField
@@ -12,11 +10,6 @@ import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.VolumeStructure as VolumeStructure
 import Utilities.TypeVerifier as TypeVerifier
 
-if TYPE_CHECKING:
-    import Structure.Importer.DictComponent as DictComponent
-    import Structure.Importer.KeymapComponent as KeymapComponent
-
-COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[Union["DictComponent.DictComponent", "KeymapComponent.KeymapComponent"]] = ComponentCapabilities.CapabilitiesPattern([{"has_keys": True}])
 
 class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
 
@@ -50,7 +43,7 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
         self.final_structure:VolumeStructure.VolumeStructure|None=None
         self.my_type.add(tuple)
 
-        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data.get("subcomponent"), COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("subcomponent"), ["subcomponent"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.this_type_field = TypeField.TypeField(data["this_type"], ["this_type"])
@@ -76,7 +69,7 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
         assert self.final_structure is not None
         assert self.final is not None
         self.final_structure.link_substructures(
-            structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
+            structure=self.subcomponent_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()
         )

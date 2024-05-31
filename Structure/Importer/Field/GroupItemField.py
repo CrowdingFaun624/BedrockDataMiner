@@ -1,20 +1,18 @@
 from typing import TYPE_CHECKING, Union
 
-import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.Field.FieldContainer as FieldContainer
-import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
+import Structure.Importer.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Structure.Importer.Field.TypeField as TypeField
 
 if TYPE_CHECKING:
     import Structure.Importer.StructureComponent as StructureComponent
 
-COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern["StructureComponent.StructureComponent"] = ComponentCapabilities.CapabilitiesPattern([{"is_structure": True}])
 
 class GroupItemField(FieldContainer.FieldContainer):
 
     def __init__(self, key:str, value:str|None, path:list[str|int]) -> None:
         self.type_field = TypeField.TypeField(key, path)
-        self.subcomponent_field = OptionalComponentField.OptionalComponentField(value, COMPONENT_REQUEST_PROPERTIES, path)
+        self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(value, path)
         self.type_field.verify_with(self.subcomponent_field)
         super().__init__([self.type_field, self.subcomponent_field], path)
 

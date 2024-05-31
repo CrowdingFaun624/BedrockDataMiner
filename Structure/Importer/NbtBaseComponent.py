@@ -1,12 +1,12 @@
 import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
-import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
 import Structure.Importer.Field.TypeListField as TypeListField
 import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.StructureComponent as StructureComponent
+import Structure.Importer.Field.StructroidComponentField as StructroidComponentField
 import Structure.NbtBaseStructure as NbtBaseStructure
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
@@ -36,7 +36,7 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
         self.final_structure:NbtBaseStructure.NbtBaseStructure|None=None
         self.children_has_normalizer = True
 
-        self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.subcomponent_field = StructroidComponentField.StructroidComponentField(data["subcomponent"], ["subcomponent"], capabilities_pattern=COMPONENT_REQUEST_PROPERTIES)
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field.verify_with(self.subcomponent_field)
@@ -61,12 +61,10 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
         super().link_finals()
         assert self.final is not None
         assert self.final_structure is not None
-        subcomponent = self.subcomponent_field.get_component()
-        assert subcomponent.final is not None
         types = self.types_field.get_types()
         self.my_type = set(types)
         self.final_structure.link_substructures(
-            structure=subcomponent.final,
+            structure=self.subcomponent_field.get_final(),
             types=types,
             normalizer=self.normalizer_field.get_finals(),
         )

@@ -2,15 +2,13 @@ import Structure.DictStructure as DictStructure
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
-import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.Field.OptionalFunctionField as OptionalFunctionField
+import Structure.Importer.Field.OptionalStructroidComponentField as OptionalStructroidComponentField
 import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.Field.TypeListField as TypeListField
-import Structure.Importer.GroupComponent as GroupComponent
 import Structure.Importer.StructureComponent as StructureComponent
 import Utilities.TypeVerifier as TypeVerifier
 
-COMPONENT_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_group": True}, {"is_structure": True}])
 
 class DictComponent(StructureComponent.StructureComponent):
 
@@ -41,7 +39,7 @@ class DictComponent(StructureComponent.StructureComponent):
         self.measure_length = data.get("measure_length", False)
         self.print_all = data.get("print_all", False)
 
-        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data["subcomponent"], COMPONENT_REQUEST_PROPERTIES, ["subcomponent"])
+        self.subcomponent_field = OptionalStructroidComponentField.OptionalStructroidComponentField(data["subcomponent"], ["subcomponent"])
         self.comparison_move_function_field = OptionalFunctionField.OptionalFunctionField(data.get("comparison_move_function", None), ["comparison_move_function"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
@@ -66,7 +64,7 @@ class DictComponent(StructureComponent.StructureComponent):
         super().link_finals()
         assert self.final is not None
         self.final.link_substructures(
-            structure=subcomponent.final if (subcomponent := self.subcomponent_field.get_component()) is not None else None,
+            structure=self.subcomponent_field.get_final(),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()
