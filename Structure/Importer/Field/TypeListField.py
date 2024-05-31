@@ -1,20 +1,15 @@
-from typing import TYPE_CHECKING, Callable, Sequence, TypeAlias, Union
+from typing import TYPE_CHECKING, Callable, Sequence
 
 import Structure.Importer.ComponentCapabilities as ComponentCapabilities
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.AbstractTypeField as AbstractTypeField
-import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Field.Field as Field
-import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 
 if TYPE_CHECKING:
     import Structure.Importer.Component as Component
-    import Structure.Importer.GroupComponent as GroupComponent
-    import Structure.Importer.StructureComponent as StructureComponent
 
 TYPE_ALIAS_REQUEST_PROPERTIES:ComponentCapabilities.CapabilitiesPattern[TypeAliasComponent.TypeAliasComponent] = ComponentCapabilities.CapabilitiesPattern([{"is_type_alias": True}])
-VerifyComponentType:TypeAlias = ComponentField.ComponentField[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent"]]|OptionalComponentField.OptionalComponentField[Union["StructureComponent.StructureComponent", "GroupComponent.GroupComponent"]]
 
 class TypeListField(AbstractTypeField.AbstractTypeField):
     '''A link to multiple TypeAliasComponents and/or types.'''
