@@ -92,14 +92,6 @@ class DownloadManager(InstallManager.InstallManager):
         return name in self.get_file_set()
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
-
-        if not isinstance(file_name, str):
-            raise TypeError("Parameter `file_name` is not a `str`!")
-        if not isinstance(mode, str):
-            raise TypeError("Parameter `mode` is not a `str`!")
-        if mode not in ("t", "b"):
-            raise ValueError("Parameter `mode` is not \"b\" or \"t\"!")
-
         if not self.installed.get():
             self.install_all()
         file_name = self.get_full_file_name(file_name)
@@ -126,13 +118,6 @@ class DownloadManager(InstallManager.InstallManager):
                 current_path = children[0]
             for folder_to_remove in reversed(folders_to_remove):
                 folder_to_remove.rmdir()
-
-        if not isinstance(file_name, str):
-            raise TypeError("Parameter `file_name` is not a `str`!")
-        if not isinstance(mode, str):
-            raise TypeError("Parameter `mode` is not a `str`!")
-        if mode not in ("t", "b"):
-            raise ValueError("Parameter `mode` is not \"b\" or \"t\"!")
 
         if not self.installed.get():
             self.install_all()

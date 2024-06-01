@@ -86,28 +86,12 @@ class LocalManager(InstallManager.InstallManager):
         return Path(self.bedrock_local.joinpath(self.get_full_file_name(name))).exists()
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
-
-        if not isinstance(file_name, str):
-            raise TypeError("Parameter `file_name` is not a `str`!")
-        if not isinstance(mode, str):
-            raise TypeError("Parameter `mode` is not a `str`!")
-        if mode not in ("t", "b"):
-            raise ValueError("Parameter `mode` is not \"b\" or \"t\"!")
-
         file_name = self.get_full_file_name(file_name)
         full_path = Path(self.bedrock_local.joinpath(file_name))
         with open(full_path, "r" + mode) as f:
             return f.read()
 
     def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> FileManager.FilePromise:
-
-        if not isinstance(file_name, str):
-            raise TypeError("Parameter `file_name` is not a `str`!")
-        if not isinstance(mode, str):
-            raise TypeError("Parameter `mode` is not a `str`!")
-        if mode not in ("t", "b"):
-            raise ValueError("Parameter `mode` is not \"b\" or \"t\"!")
-
         file_name = self.get_full_file_name(file_name)
         full_path = Path(self.bedrock_local.joinpath(file_name))
         return FileManager.FilePromise(FunctionCaller(open, [full_path, "r" + mode]), file_name.split("/")[-1], mode)
