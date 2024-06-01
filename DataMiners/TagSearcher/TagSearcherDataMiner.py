@@ -43,6 +43,9 @@ class DataReader():
 
     def back(self, amount:int=1) -> None:
         self.position -= amount
+    
+    def is_at_last_index(self) -> bool:
+        return self.position == len(self.data)
 
 def parse_tag(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath.DataPath]]], set[DataPath.DataPath]], str]:
     letters:list[str] = []
@@ -128,7 +131,10 @@ def parse_expression(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath.
 
 def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath.DataPath|Any]]], set[DataPath.DataPath|Any]], set[str]]:
     data = DataReader(string)
-    return parse_expression(data)
+    output = parse_expression(data)
+    if not data.is_at_last_index():
+        raise RuntimeError("Tag expression finished (at index %i) before completing character sequence: %s" % (data.position, string))
+    return output
 
 class TagSearcherDataMiner(DataMiner.DataMiner):
 
