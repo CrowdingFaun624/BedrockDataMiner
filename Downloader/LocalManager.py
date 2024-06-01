@@ -3,7 +3,7 @@ from typing import Literal, TypedDict
 
 from pathlib2 import Path
 
-import Downloader.InstallManager as InstallManager
+import Downloader.Manager as Manager
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
@@ -13,7 +13,7 @@ from Utilities.FunctionCaller import FunctionCaller
 class LocalManagerTypedDict(TypedDict):
     is_preview: bool
 
-class LocalManager(InstallManager.InstallManager):
+class LocalManager(Manager.Manager):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("is_preview", "a bool", True, bool),

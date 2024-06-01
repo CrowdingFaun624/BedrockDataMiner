@@ -91,7 +91,6 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
-# TODO: rename InstallManager to Manager
 # TODO: implement json-y way to do stuff with file types, accessors, and managers
 # TODO: standardize how exceptions are used.
 

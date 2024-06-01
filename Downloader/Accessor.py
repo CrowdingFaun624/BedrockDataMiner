@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any, Literal, overload
 
 from pathlib2 import Path
 
-import Downloader.InstallManager as InstallManager
+import Downloader.Manager as Manager
 import Utilities.FileManager as FileManager
 
 if TYPE_CHECKING:
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 class Accessor():
 
-    def __init__(self, name:str, manager:InstallManager.InstallManager, version:"Version.Version", file_type_arguments:Any) -> None:
+    def __init__(self, name:str, manager:Manager.Manager, version:"Version.Version", file_type_arguments:Any) -> None:
         self.name = name
         self.manager = manager
         self.version = version

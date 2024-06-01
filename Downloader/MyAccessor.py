@@ -1,13 +1,13 @@
 from typing import Any
 
 import Downloader.Accessor as Accessor
-import Downloader.InstallManager as InstallManager
+import Downloader.Manager as Manager
 import Version.Version as Version
 
 
 class MyAccessor(Accessor.Accessor):
 
-    def __init__(self, name: str, manager: InstallManager.InstallManager, version: "Version.Version", file_type_arguments:Any) -> None:
+    def __init__(self, name: str, manager: Manager.Manager, version: "Version.Version", file_type_arguments:Any) -> None:
         super().__init__(name, manager, version, file_type_arguments)
         if "ipa" in self.version.tags:
             self.file_prepension = "Payload/minecraftpe.app/data/"

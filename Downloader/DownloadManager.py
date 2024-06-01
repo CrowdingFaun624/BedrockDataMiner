@@ -6,7 +6,7 @@ import requests
 from pathlib2 import Path
 
 import Downloader.DownloadLog as DownloadLog
-import Downloader.InstallManager as InstallManager
+import Downloader.Manager as Manager
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
@@ -16,7 +16,7 @@ from Utilities.FunctionCaller import FunctionCaller, WaitValue
 class DownloadManagerTypedDict(TypedDict):
     url: str
 
-class DownloadManager(InstallManager.InstallManager):
+class DownloadManager(Manager.Manager):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("url", "a str", True, str),

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, TypedDict
 
 import Downloader.Accessor as Accessor
 import Downloader.DownloadManager as DownloadManager
-import Downloader.InstallManager as InstallManager
+import Downloader.Manager as Manager
 import Downloader.LocalManager as LocalManager
 import Downloader.MyAccessor as MyAccessor
 import Downloader.StoredManager as StoredManager
@@ -18,7 +18,7 @@ ACCESSORS:dict[str,type[Accessor.Accessor]] = {
     "MyAccessor": MyAccessor.MyAccessor,
 }
 
-MANAGERS:dict[str,type[InstallManager.InstallManager]] = {
+MANAGERS:dict[str,type[Manager.Manager]] = {
     "DownloadManager": DownloadManager.DownloadManager,
     "LocalManager": LocalManager.LocalManager,
     "StoredManager": StoredManager.StoredManager,
@@ -30,7 +30,7 @@ class AccessorTypedDict(TypedDict):
 
 class AccessorType():
 
-    def __init__(self, name:str, manager_class:type[InstallManager.InstallManager], accessor_class:type[Accessor.Accessor]) -> None:
+    def __init__(self, name:str, manager_class:type[Manager.Manager], accessor_class:type[Accessor.Accessor]) -> None:
         self.name = name
         self.manager_class = manager_class
         self.accessor_class = accessor_class

@@ -19,7 +19,7 @@ class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
         behavior_pack_names:set[str] = set()
 
         for file in file_list:
-            assert not file.startswith("/") # just in case one of the InstallManagers goes wonky.
+            assert not file.startswith("/") # just in case one of the Managers goes wonky.
             if file.startswith(self.behavior_packs_folder):
                 if file.count("/") == 1: continue # random file in behavior packs folder, such as "flipbook_textures.json" in a0.16.0_build3
                 name = file.split("/")[1]

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     import Utilities.FileManager as FileManager
     import Version.Version as Version
 
-class InstallManager():
+class Manager():
 
     type_verifier:TypeVerifier.TypeVerifier
 

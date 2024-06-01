@@ -3,7 +3,7 @@ from typing import Literal, TypedDict
 
 from pathlib2 import Path
 
-import Downloader.InstallManager as InstallManager
+import Downloader.Manager as Manager
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -13,7 +13,7 @@ import Version.VersionTags as VersionTags
 class StoredManagerTypedDict(TypedDict):
     stored_name: str
 
-class StoredManager(InstallManager.InstallManager):
+class StoredManager(Manager.Manager):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("stored_name", "a str", True, str),
