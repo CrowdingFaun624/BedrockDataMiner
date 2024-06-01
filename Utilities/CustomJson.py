@@ -1,11 +1,11 @@
 import json
 import traceback
-from typing import Any, cast, Generic, Literal, TypedDict, TypeVar
+from typing import Any, Generic, Literal, TypedDict, TypeVar, cast
 
 import Structure.DataPath as DataPath
 import Utilities.FileStorageManager as FileStorageManager
-import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.Nbt.NbtReader as NbtReader
+import Utilities.Nbt.NbtTypes as NbtTypes
 
 DataPathTypedDict = TypedDict("DataPathTypedDict", {"$special_type": Literal["data_path"], "root": str, "path_items":list[Any], "embedded_data": Any|None})
 NbtBytesTypedDict = TypedDict("NbtBytesTypedDict", {"$special_type": Literal["nbt_bytes"], "hash": str})

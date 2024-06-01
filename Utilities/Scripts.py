@@ -1,7 +1,7 @@
-from typing import Any, IO, Iterable
+from typing import IO, Any, Iterable
 
-import jqpy # library that doesn't let me compile but will work on Windows
-import lupa # looks like this has no type hinting whatsoever
+import jqpy  # library that doesn't let me compile but will work on Windows
+import lupa  # looks like this has no type hinting whatsoever
 from pathlib2 import Path
 
 import Utilities.FileManager as FileManager

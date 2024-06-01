@@ -4,7 +4,6 @@ from typing import Any, Callable
 
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerTyping as DataMinerTyping
 import Structure.DataPath as DataPath
 
 TAG_CHARACTERS = re.compile(r"[^\s\\\+\*\?\[\]\(\)\{\}\=\!\<\>\|\-\/\~]") # using exclusive because of multitudinous language characters

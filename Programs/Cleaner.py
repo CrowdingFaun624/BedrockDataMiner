@@ -1,8 +1,10 @@
-from pathlib2 import Path
 from typing import Iterable
+
+from pathlib2 import Path
 
 import DataMiners.DataMiners as DataMiners
 import Version.VersionParser as VersionParser
+
 
 def __remove_files(files:Iterable[Path]) -> None:
     for file in files:

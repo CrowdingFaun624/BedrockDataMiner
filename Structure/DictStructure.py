@@ -1,4 +1,5 @@
-from typing import Any, Callable, Generator, Iterable, Literal, MutableMapping, TypeVar
+from typing import (Any, Callable, Generator, Iterable, Literal,
+                    MutableMapping, TypeVar)
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D

@@ -1,9 +1,10 @@
 import gzip
-from itertools import islice
-from pathlib2 import Path
 import shutil
-from typing import Iterable, Literal
 import zipfile
+from itertools import islice
+from typing import Iterable, Literal
+
+from pathlib2 import Path
 
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller

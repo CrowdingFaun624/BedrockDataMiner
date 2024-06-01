@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Literal, overload
+from typing import TYPE_CHECKING, Any, Literal, overload
 
 from pathlib2 import Path
 

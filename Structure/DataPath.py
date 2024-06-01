@@ -1,5 +1,6 @@
 from typing import Any, Hashable
 
+
 class DataPath():
 
     def __init__(self, path_items:list[tuple[Hashable,type]], root:str, embedded_data:Any|None=None) -> None:
