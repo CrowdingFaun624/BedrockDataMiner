@@ -1,24 +1,12 @@
 from typing import TYPE_CHECKING, Any
 
-from pathlib2 import Path
-
 import Downloader.Accessor as Accessor
-import Downloader.MyAccessor as MyAccessor
-import Downloader.DownloadManager as DownloadManager
-import Downloader.InstallManager as InstallManager
-import Downloader.LocalManager as LocalManager
-import Downloader.StoredManager as StoredManager
+import Downloader.AccessorType as AccessorType
 import Version.VersionFileType as VersionFileType
 import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Version.Version as Version
-
-MANAGERS:dict[str,type[InstallManager.InstallManager]] = {
-    "download": DownloadManager.DownloadManager,
-    "local": LocalManager.LocalManager,
-    "stored": StoredManager.StoredManager
-}
 
 class VersionFile():
 
@@ -35,10 +23,8 @@ class VersionFile():
         self.accessors:dict[str,Accessor.Accessor] = {}
         for allowed_accessor in self.file_type.allowed_accessors:
             if allowed_accessor in accessors:
-                manager_class = MANAGERS[allowed_accessor]
-                manager_class.validate_arguments(accessors[allowed_accessor], version.name, file_type.name, allowed_accessor)
-                manager = manager_class(self.version, accessors[allowed_accessor], Path(version.version_folder.joinpath(self.file_type.install_location)), version_tags)
-                self.accessors[allowed_accessor] = MyAccessor.MyAccessor(allowed_accessor, manager, version, accessors[allowed_accessor])
+                accessor_arguments = accessors[allowed_accessor]
+                self.accessors[allowed_accessor] = AccessorType.accessors[allowed_accessor].create_accessor(version, file_type, version_tags, accessor_arguments)
 
     def __repr__(self) -> str:
         return "<VersionFile %s of %s>" % (self.file_type.name, self.version.name)
