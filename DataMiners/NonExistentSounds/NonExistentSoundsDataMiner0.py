@@ -8,14 +8,14 @@ import DataMiners.NonExistentSounds.NonExistentSoundsDataMiner as NonExistentSou
 
 def strip_file_name(file_name:str, resource_packs_location:str|None) -> str|None:
     '''Removes the resource pack info and file extension from the file name.
-    If it is not in the resource packs folder, return None.'''
+    If it is not in the resource packs directory, return None.'''
     if resource_packs_location is not None:
         if not file_name.startswith(resource_packs_location): return None
         file_name = file_name.replace(resource_packs_location + "/", "", 1)
         resource_pack_name = file_name.split("/")[0]
         file_name = file_name.replace(resource_pack_name + "/", "", 1)
     else:
-        file_name = file_name.replace("sounds/", "", 1) # in versions with sounds not in resource packs, sound_definitions.json does not include the sounds folder.
+        file_name = file_name.replace("sounds/", "", 1) # in versions with sounds not in resource packs, sound_definitions.json does not include the sounds directory.
     file_extension = "." + file_name.split(".")[-1]
     assert "/" not in file_extension
     file_name = file_name.replace(file_extension, "", 1)
@@ -49,7 +49,7 @@ class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDa
         sound_files = {strip_file_name(sound_file, self.resource_packs_location) for sound_file in sound_files_data.keys()}
         sound_files.discard(None)
         if len(sound_files) == 0:
-            raise RuntimeError("There are no sound files in a resource pack folder!")
+            raise RuntimeError("There are no sound files in a resource pack directory!")
 
         non_existent_sounds:dict[str,dict[str,list[str]]] = {}
         sound_definitions = environment.dependency_data["sound_definitions"]

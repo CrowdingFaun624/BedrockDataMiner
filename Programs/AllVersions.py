@@ -28,7 +28,7 @@ def datamine_version(version:Version.Version, all_dataminers:dict[str,DataMiner.
     if not version.latest:
         for version_file in version.version_files.values():
             for accessor in version_file.accessors.values():
-                accessor.all_done() # remove all of the installed client files from the version folder so I don't have to clog my storage
+                accessor.all_done() # remove all of the installed client files from the version directory so I don't have to clog my storage
     return True
 
 def main() -> None:

@@ -38,8 +38,8 @@ def should_zip_file(file:FileManager.FilePromise) -> bool:
     return file_end in COMPRESSIBLE_FILES
 
 def get_file_path(hex_string:str) -> Path:
-    archived_folder = FileManager.FILE_STORAGE_OBJECTS_FOLDER.joinpath(hex_string[:2])
-    archived_path = archived_folder.joinpath(hex_string)
+    archived_directory = FileManager.FILE_STORAGE_OBJECTS_DIRECTORY.joinpath(hex_string[:2])
+    archived_path = archived_directory.joinpath(hex_string)
     return archived_path
 
 def archive_data(data:bytes|str, file_name:str) -> str:
@@ -58,9 +58,9 @@ def archive(file:FileManager.FilePromise) -> str:
     file = reopen_in_binary(file)
     file_hash = FileManager.get_hash(file.open())
     hex_string = FileManager.stringify_sha1_hash(file_hash)
-    archived_folder = FileManager.FILE_STORAGE_OBJECTS_FOLDER.joinpath(hex_string[:2])
+    archived_directory = FileManager.FILE_STORAGE_OBJECTS_DIRECTORY.joinpath(hex_string[:2])
     archived_path = get_file_path(hex_string)
-    archived_folder.mkdir(exist_ok=True)
+    archived_directory.mkdir(exist_ok=True)
     zipped = should_zip_file(file)
     with open(archived_path, "wb") as destination, file.open() as source:
         if FileManager.get_file_size(source) == 0:

@@ -87,7 +87,7 @@ class Scripts():
     def __init__(self) -> None:
         self.lua_runtime = lupa.LuaRuntime()
         script_dependencies = _ScriptDependencies(self.lua_runtime)
-        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, script_dependencies) for file, relative_name in iter_dir(FileManager.SCRIPTS_FOLDER)}
+        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, script_dependencies) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY)}
 
     def __getitem__(self, name:str) -> Script:
         output = self.scripts.get(name, None)

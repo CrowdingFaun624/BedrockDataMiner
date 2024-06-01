@@ -177,20 +177,20 @@ def parse() -> tuple[dict[str,Version.Version], VersionTags.VersionTags]:
     assign_wiki_pages(versions, version_tags)
     assign_latest(versions, version_tags)
     assign_accessors(versions, version_file_types, version_tags)
-    fix_folders(versions)
+    fix_directories(versions)
     return versions, version_tags
 
-def fix_folders(versions:dict[str,Version.Version]) -> None:
-    '''Makes folders that are empty and don't exist disappear.
+def fix_directories(versions:dict[str,Version.Version]) -> None:
+    '''Makes directories that are empty and don't exist disappear.
     It is for scenarios like when a version is delayed and betas suddenly point to a new parent,
     or when a version is renamed.'''
-    for version_folder in FileManager.VERSIONS_FOLDER.iterdir():
-        if not version_folder.is_dir(): continue
-        if version_folder.name not in versions:
+    for version_directory in FileManager.VERSIONS_DIRECTORY.iterdir():
+        if not version_directory.is_dir(): continue
+        if version_directory.name not in versions:
             try:
-                version_folder.rmdir()
+                version_directory.rmdir()
             except OSError:
-                print("Version folder \"%s\" does not exist in versions.json and contains files!" % version_folder.name)
+                print("Version directory \"%s\" does not exist in versions.json and contains files!" % version_directory.name)
                 continue
 
 versions, version_tags = parse()

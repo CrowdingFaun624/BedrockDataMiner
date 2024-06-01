@@ -77,18 +77,18 @@ class DataMiner():
         raise NotImplementedError("`activate` was called by %s without being defined by a subclass." % repr(self))
 
     def get_data_file_path(self) -> Path:
-        if self.version.version_folder is None:
-            raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % self.version.name)
-        return FileManager.get_version_data_path(self.version.version_folder, self.file_name)
+        if self.version.version_directory is None:
+            raise FileNotFoundError("Version \"%s\"'s version directory does not exist!" % self.version.name)
+        return FileManager.get_version_data_path(self.version.version_directory, self.file_name)
 
     def store(self, environment:DataMinerEnvironment.DataMinerEnvironment, dataminer_collections:list["DataMinerCollection"]) -> Any:
         '''Makes the dataminer get the file. Returns the output and stores it in a file.'''
         data = self.activate(environment)
         if data is None:
             raise RuntimeError("DataMiner %s returned None!" % self)
-        if self.version.version_folder is None:
-            raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % self.version.name)
-        data_path = FileManager.get_version_data_path(self.version.version_folder, None)
+        if self.version.version_directory is None:
+            raise FileNotFoundError("Version \"%s\"'s version directory does not exist!" % self.version.name)
+        data_path = FileManager.get_version_data_path(self.version.version_directory, None)
         if not data_path.exists():
             data_path.mkdir()
         with open(self.get_data_file_path(), "wt") as f:
@@ -242,9 +242,9 @@ class DataMinerCollection():
         '''Opens the data file if it exists, and raises an error if it doesn't, or returns None if `non_exist_ok` is True'''
         if version is None:
             raise TypeError("Attempted to get the data file of None!")
-        if version.version_folder is None:
-            raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % version.name)
-        data_path = FileManager.get_version_data_path(version.version_folder, self.file_name)
+        if version.version_directory is None:
+            raise FileNotFoundError("Version \"%s\"'s version directory does not exist!" % version.name)
+        data_path = FileManager.get_version_data_path(version.version_directory, self.file_name)
         if not data_path.exists():
             if non_exist_ok:
                 return None
@@ -254,9 +254,9 @@ class DataMinerCollection():
             return json.load(f, cls=CustomJson.decoder)
 
     def remove_data_file(self, version:Version.Version) -> None:
-        if version.version_folder is None:
-            raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % version.name)
-        data_path = FileManager.get_version_data_path(version.version_folder, self.file_name)
+        if version.version_directory is None:
+            raise FileNotFoundError("Version \"%s\"'s version directory does not exist!" % version.name)
+        data_path = FileManager.get_version_data_path(version.version_directory, self.file_name)
         if data_path.exists():
             data_path.unlink()
 
@@ -341,6 +341,6 @@ class DataMinerCollection():
             return all(all_dataminers[dependency].supports_version(version, all_dataminers) for dependency in version_dataminer_settings.dependencies)
 
     def get_data_file_path(self, version:Version.Version) -> Path:
-        if version.version_folder is None:
-            raise FileNotFoundError("Version \"%s\"'s version folder does not exist!" % version.name)
-        return FileManager.get_version_data_path(version.version_folder, self.file_name)
+        if version.version_directory is None:
+            raise FileNotFoundError("Version \"%s\"'s version directory does not exist!" % version.name)
+        return FileManager.get_version_data_path(version.version_directory, self.file_name)

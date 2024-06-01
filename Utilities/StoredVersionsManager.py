@@ -85,9 +85,9 @@ def reverse_dict(input_dict:dict) -> dict:
     return dict(reversed(input_dict.items()))
 
 def extract(name:str, output_path:Path|None=None, index:dict[str,tuple[str,bool]]|None=None) -> None:
-    '''Extracts an apk file from the archive into the given file name, or the output folder if not given.'''
+    '''Extracts an apk file from the archive into the given file name, or the output directory if not given.'''
     if output_path is None:
-        output_path = FileManager.STORED_VERSIONS_OUTPUT_FOLDER.joinpath(name + ".apk")
+        output_path = FileManager.STORED_VERSIONS_OUTPUT_DIRECTORY.joinpath(name + ".apk")
     if index is None: index = read_index(name) # {filename: (hash, compressed)}
     if output_path.exists(): output_path.unlink()
     with zipfile.ZipFile(output_path, "w") as zip_file:
@@ -145,19 +145,19 @@ def extract_files(version_name:str, files:Iterable[str], destinations:Iterable[P
         extract_file(version_name, file, destination, index)
 
 def archive_all() -> None:
-    '''Archives the entire contents of the `./_assets/stored_versions/indexes` folder.'''
-    for file in FileManager.STORED_VERSIONS_INPUT_FOLDER.iterdir():
+    '''Archives the entire contents of the `./_assets/stored_versions/indexes` directory.'''
+    for file in FileManager.STORED_VERSIONS_INPUT_DIRECTORY.iterdir():
         zip_file = open_zip_file(file)
         hashes = hash_files(zip_file)
         archive(file, hashes)
         print("archived \"%s\"." % file.name)
 
 def archive(path:Path, hashes:dict[str,bytes], version_name:str|None=None) -> dict[str,tuple[str,bool]]:
-    '''Places the contents of the zip file into the objects folder, and places an index file into the indexes folder.'''
+    '''Places the contents of the zip file into the objects directory, and places an index file into the indexes directory.'''
     if version_name is None: version_name = path.stem
     zip_file = open_zip_file(path)
     index:dict[str,tuple[str,bool]] = {}
-    objects_path = FileManager.STORED_VERSIONS_OBJECTS_FOLDER
+    objects_path = FileManager.STORED_VERSIONS_OBJECTS_DIRECTORY
     for zip_info in zip_file.infolist():
         if zip_info.is_dir():
             continue
@@ -200,7 +200,7 @@ def hash_files(zip_file:zipfile.ZipFile) -> dict[str,bytes]:
 
 def open_zip_file(path:Path) -> zipfile.ZipFile:
     '''Returns a ZipFile object in read mode from the given file name.'''
-    if not path.parent == FileManager.STORED_VERSIONS_INPUT_FOLDER: raise ValueError("Path is not within `./_assets/stored_versions`!")
+    if not path.parent == FileManager.STORED_VERSIONS_INPUT_DIRECTORY: raise ValueError("Path is not within `./_assets/stored_versions`!")
     # if not path.exists(): raise FileNotFoundError("File \"%s\" does not exist!" % str(path))
     zip_file = zipfile.ZipFile(path, "r")
     return zip_file
@@ -211,11 +211,11 @@ def get_hash_file_path(str_hash:str, return_string:bool=False) -> Path:
     if return_string:
         return Path(first_two, str_hash)
     else:
-        return FileManager.STORED_VERSIONS_OBJECTS_FOLDER.joinpath(first_two, str_hash)
+        return FileManager.STORED_VERSIONS_OBJECTS_DIRECTORY.joinpath(first_two, str_hash)
 
 def clear_objects() -> None:
     '''Clears all files and directories in the `./_assets/stored_versions/objects` directory. Requires user input.'''
-    path = FileManager.STORED_VERSIONS_OBJECTS_FOLDER
+    path = FileManager.STORED_VERSIONS_OBJECTS_DIRECTORY
     user_requirement = "I would like to remove all files from \"./_assets/stored_versions/objects\""
     print("Are you sure you want to remove all contents from `./_assets/stored_versions/objects`? (y/n) ")
     print("If so, type \"%s\"." % user_requirement)

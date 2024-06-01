@@ -10,44 +10,44 @@ from pathlib2 import Path
 
 from Utilities.FunctionCaller import FunctionCaller
 
-PARENT_FOLDER          = Path("./").absolute()
-ASSETS_FOLDER          = PARENT_FOLDER.joinpath("_assets")
-FILE_STORAGE_FOLDER    = ASSETS_FOLDER.joinpath("file_storage")
-FILE_STORAGE_OBJECTS_FOLDER = FILE_STORAGE_FOLDER.joinpath("objects")
-FILE_STORAGE_INDEX_FILE = FILE_STORAGE_FOLDER.joinpath("index.txt")
-LOGS_FOLDER            = ASSETS_FOLDER.joinpath("logs")
-DOWNLOAD_LOG           = LOGS_FOLDER.joinpath("download_log.jsonl")
-VERSION_PARSER_WARNINGS_FILE = LOGS_FOLDER.joinpath("version_parser_warnings.txt")
-WIKI_VALIDATOR_WARNINGS_FILE = LOGS_FOLDER.joinpath("wiki_validator_warnings.txt")
-SCRIPTS_FOLDER         = ASSETS_FOLDER.joinpath("scripts")
-STORED_VERSIONS_FOLDER = ASSETS_FOLDER.joinpath("stored_versions")
-STORED_VERSIONS_INPUT_FOLDER = STORED_VERSIONS_FOLDER.joinpath("input")
-STORED_VERSIONS_OBJECTS_FOLDER = STORED_VERSIONS_FOLDER.joinpath("objects")
-STORED_VERSIONS_OUTPUT_FOLDER = STORED_VERSIONS_FOLDER.joinpath("output")
-STORED_VERSIONS_INDEXES_FILE = STORED_VERSIONS_FOLDER.joinpath("indexes.zip")
-STRUCTURES_FOLDER      = ASSETS_FOLDER.joinpath("structures")
-ACCESSOR_TYPES_FILE         = ASSETS_FOLDER.joinpath("accessor_types.json")
-DATAMINER_COLLECTIONS_FILE = ASSETS_FOLDER.joinpath("dataminer_collections.json")
-FSB_CACHE_FILE         = ASSETS_FOLDER.joinpath("fsb_cache.json")
-RESOUCE_PACK_DATA_FILE = ASSETS_FOLDER.joinpath("resource_pack_data.json")
-STRUCTURES_FILE        = ASSETS_FOLDER.joinpath("structures.json")
-VERSION_FILE_TYPES_FILE= ASSETS_FOLDER.joinpath("version_file_types.json")
-VERSION_TAGS_FILE      = ASSETS_FOLDER.joinpath("version_tags.json")
-VERSIONS_FILE          = ASSETS_FOLDER.joinpath("versions.json")
-COMPARISONS_FOLDER     = PARENT_FOLDER.joinpath("_comparisons")
-LIB_FOLDER             = PARENT_FOLDER.joinpath("_lib")
-LIB_FSB_FOLDER         = LIB_FOLDER.joinpath("fsb")
-LIB_FSB_EXE_FILE       = LIB_FSB_FOLDER.joinpath("fsb_aud_extr.exe")
-TEMP_FOLDER            = PARENT_FOLDER.joinpath("_temp")
-VERSIONS_FOLDER        = PARENT_FOLDER.joinpath("_versions")
+PARENT_DIRECTORY          = Path("./").absolute()
+ASSETS_DIRECTORY          = PARENT_DIRECTORY.joinpath("_assets")
+FILE_STORAGE_DIRECTORY    = ASSETS_DIRECTORY.joinpath("file_storage")
+FILE_STORAGE_OBJECTS_DIRECTORY = FILE_STORAGE_DIRECTORY.joinpath("objects")
+FILE_STORAGE_INDEX_FILE   = FILE_STORAGE_DIRECTORY.joinpath("index.txt")
+LOGS_DIRECTORY            = ASSETS_DIRECTORY.joinpath("logs")
+DOWNLOAD_LOG              = LOGS_DIRECTORY.joinpath("download_log.jsonl")
+VERSION_PARSER_WARNINGS_FILE = LOGS_DIRECTORY.joinpath("version_parser_warnings.txt")
+WIKI_VALIDATOR_WARNINGS_FILE = LOGS_DIRECTORY.joinpath("wiki_validator_warnings.txt")
+SCRIPTS_DIRECTORY         = ASSETS_DIRECTORY.joinpath("scripts")
+STORED_VERSIONS_DIRECTORY = ASSETS_DIRECTORY.joinpath("stored_versions")
+STORED_VERSIONS_INPUT_DIRECTORY = STORED_VERSIONS_DIRECTORY.joinpath("input")
+STORED_VERSIONS_OBJECTS_DIRECTORY = STORED_VERSIONS_DIRECTORY.joinpath("objects")
+STORED_VERSIONS_OUTPUT_DIRECTORY = STORED_VERSIONS_DIRECTORY.joinpath("output")
+STORED_VERSIONS_INDEXES_FILE = STORED_VERSIONS_DIRECTORY.joinpath("indexes.zip")
+STRUCTURES_DIRECTORY      = ASSETS_DIRECTORY.joinpath("structures")
+ACCESSOR_TYPES_FILE       = ASSETS_DIRECTORY.joinpath("accessor_types.json")
+DATAMINER_COLLECTIONS_FILE = ASSETS_DIRECTORY.joinpath("dataminer_collections.json")
+FSB_CACHE_FILE            = ASSETS_DIRECTORY.joinpath("fsb_cache.json")
+RESOUCE_PACK_DATA_FILE    = ASSETS_DIRECTORY.joinpath("resource_pack_data.json")
+STRUCTURES_FILE           = ASSETS_DIRECTORY.joinpath("structures.json")
+VERSION_FILE_TYPES_FILE   = ASSETS_DIRECTORY.joinpath("version_file_types.json")
+VERSION_TAGS_FILE         = ASSETS_DIRECTORY.joinpath("version_tags.json")
+VERSIONS_FILE             = ASSETS_DIRECTORY.joinpath("versions.json")
+COMPARISONS_DIRECTORY     = PARENT_DIRECTORY.joinpath("_comparisons")
+LIB_DIRECTORY             = PARENT_DIRECTORY.joinpath("_lib")
+LIB_FSB_DIRECTORY         = LIB_DIRECTORY.joinpath("fsb")
+LIB_FSB_EXE_FILE          = LIB_FSB_DIRECTORY.joinpath("fsb_aud_extr.exe")
+TEMP_DIRECTORY            = PARENT_DIRECTORY.joinpath("_temp")
+VERSIONS_DIRECTORY        = PARENT_DIRECTORY.joinpath("_versions")
 
 def get_comparison_file_path(name:str, number:int|None=None) -> Path:
     if number is None:
-        comparison_path = COMPARISONS_FOLDER.joinpath(name)
+        comparison_path = COMPARISONS_DIRECTORY.joinpath(name)
     else:
-        comparison_path = COMPARISONS_FOLDER.joinpath(name, "report_%s.txt" % str(number).zfill(4))
-    if COMPARISONS_FOLDER not in comparison_path.parents:
-        raise FileNotFoundError("Comparison \"%s\" (%i)'s folder can not be created due to illegal characters!" % (name, number))
+        comparison_path = COMPARISONS_DIRECTORY.joinpath(name, "report_%s.txt" % str(number).zfill(4))
+    if COMPARISONS_DIRECTORY not in comparison_path.parents:
+        raise FileNotFoundError("Comparison \"%s\" (%i)'s directory can not be created due to illegal characters!" % (name, number))
     return comparison_path
 
 def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/getting-file-size-in-python
@@ -58,38 +58,38 @@ def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/g
     return size
 
 def get_structure_path(structure_name:str) -> Path:
-    structure_path = STRUCTURES_FOLDER.joinpath(structure_name + ".json")
-    if STRUCTURES_FOLDER not in structure_path.parents:
+    structure_path = STRUCTURES_DIRECTORY.joinpath(structure_name + ".json")
+    if STRUCTURES_DIRECTORY not in structure_path.parents:
         raise FileNotFoundError("Structure \"%s\" can not be created due to illegal characters!" % structure_name)
     return structure_path
 
 def get_version_path(version_name:str) -> Path:
-    version_path = VERSIONS_FOLDER.joinpath(version_name)
-    if VERSIONS_FOLDER not in version_path.parents:
-        raise FileNotFoundError("Version \"%s\"'s folder can not be created due to illegal characters!" % version_name)
+    version_path = VERSIONS_DIRECTORY.joinpath(version_name)
+    if VERSIONS_DIRECTORY not in version_path.parents:
+        raise FileNotFoundError("Version \"%s\"'s directory can not be created due to illegal characters!" % version_name)
     return version_path
 
-def get_version_install_path(version_folder:Path) -> Path:
-    return version_folder.joinpath("client")
+def get_version_install_path(version_directory:Path) -> Path:
+    return version_directory.joinpath("client")
 
-def get_version_data_path(version_folder:Path, file_name:str|None) -> Path:
-    '''Returns the Path in the version folder that a data file name will be stored at. Set `file_name` to None to get the data path.'''
+def get_version_data_path(version_directory:Path, file_name:str|None) -> Path:
+    '''Returns the Path in the version directory that a data file name will be stored at. Set `file_name` to None to get the data path.'''
     if file_name is None:
-        data_path = version_folder.joinpath("./data")
+        data_path = version_directory.joinpath("./data")
     else:
-        data_path = version_folder.joinpath("./data/%s" % file_name)
-    if version_folder not in data_path.parents:
+        data_path = version_directory.joinpath("./data/%s" % file_name)
+    if version_directory not in data_path.parents:
         raise FileNotFoundError("Data file \"%s\" has an invalid name!" % file_name)
-    if VERSIONS_FOLDER != version_folder.parent:
-        raise FileNotFoundError("Version folder \"%s\" has an invalid location!" % version_folder)
+    if VERSIONS_DIRECTORY != version_directory.parent:
+        raise FileNotFoundError("Version directory \"%s\" has an invalid location!" % version_directory)
     return data_path
 
-def get_version_index_path(version_folder:Path) -> Path:
-    return version_folder.joinpath("index.json")
+def get_version_index_path(version_directory:Path) -> Path:
+    return version_directory.joinpath("index.json")
 
 def get_temp_file_path() -> Path:
     '''Returns a path such as `./_temp/a6f780a3-83d0-4afd-a654-dc28df0b9831`.'''
-    return TEMP_FOLDER.joinpath(str(uuid.uuid4()))
+    return TEMP_DIRECTORY.joinpath(str(uuid.uuid4()))
 
 def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
     '''
@@ -152,9 +152,9 @@ def get_hash(file:IO) -> bytes:
 
 def clear_temp() -> None:
     '''
-    Removes every file and recursively removes every folder from the temp directory.
+    Removes every file and recursively removes every directory from the temp directory.
     '''
-    for file in TEMP_FOLDER.iterdir():
+    for file in TEMP_DIRECTORY.iterdir():
         if file.is_file():
             file.unlink()
         else:

@@ -24,7 +24,7 @@ class Version():
         self.development_category_names = development_categories
 
         # attributes set in this __init__ function.
-        self.version_folder:Path|None = None
+        self.version_directory:Path|None = None
         self.version_files:dict[str,VersionFile.VersionFile] = {}
 
         # attributes to be set after finished creating version list.
@@ -82,14 +82,14 @@ class Version():
 
     def validate_version_name(self, name:str) -> None:
         '''Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''
-        version_folder = FileManager.VERSIONS_FOLDER.joinpath(name)
-        if version_folder.parent != FileManager.VERSIONS_FOLDER: raise ValueError("Invalid Version name \"%s\"!" % str(name))
+        version_directory = FileManager.VERSIONS_DIRECTORY.joinpath(name)
+        if version_directory.parent != FileManager.VERSIONS_DIRECTORY: raise ValueError("Invalid Version name \"%s\"!" % str(name))
 
     def validate_name(self) -> None:
-        '''Sets this Version's `version_folder` attribute based off of the value of `name`. Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''
-        self.version_folder = FileManager.get_version_path(self.name)
+        '''Sets this Version's `version_directory` attribute based off of the value of `name`. Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''
+        self.version_directory = FileManager.get_version_path(self.name)
         self.validate_version_name(self.name)
-        self.version_folder.mkdir(exist_ok=True)
+        self.version_directory.mkdir(exist_ok=True)
 
     def validate_parent(self) -> None:
         '''Raises a ValueError if it is not valid, or a TypeError if it is the wrong type.'''

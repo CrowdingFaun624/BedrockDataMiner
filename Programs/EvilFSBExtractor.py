@@ -89,7 +89,7 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
 
         # return FilePromises
         temp_file.unlink()
-        input_file_releases = {result_file_path.name: False for result_file_path in result_file_paths} # the all_done function will set its thing to True, and then delete the folder if all are True.
+        input_file_releases = {result_file_path.name: False for result_file_path in result_file_paths} # the all_done function will set its thing to True, and then delete the directory if all are True.
         return {result_file_path.name: FileManager.FilePromise(FunctionCaller(open, [result_file_path, "rb"]), "%s %s" % (input_file.name, result_file_path.name), "b", FunctionCaller(__output_file_all_done, [input_file_releases, result_file_path])) for result_file_path in result_file_paths}
 
     else: # If the fsb has been seen before, then it returns its wav files from FileStorage

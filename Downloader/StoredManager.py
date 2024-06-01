@@ -60,6 +60,6 @@ class StoredManager(Manager.Manager):
     def all_done(self) -> None:
         if self.apk_location.exists():
             self.apk_location.unlink()
-        assert self.location.name != self.version.name # self.location refers to the `client` subdirectory of the version folder.
+        assert self.location.name != self.version.name # self.location refers to the `client` subdirectory of the version directory.
         if self.location.exists():
             shutil.rmtree(self.location)

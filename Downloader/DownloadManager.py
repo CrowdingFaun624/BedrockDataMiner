@@ -78,17 +78,17 @@ class DownloadManager(Manager.Manager):
 
         def clear_temp_file(temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
             path_that_zipfile_puts_it_in.unlink()
-            folders_to_remove:list[Path] = [temp_path] # with `temp_path` so that it removes the base, temporary path name
+            directories_to_remove:list[Path] = [temp_path] # with `temp_path` so that it removes the base, temporary path name
             current_path = temp_path
             while True:
                 children = list(current_path.iterdir())
                 if len(children) == 0:
                     break
                 assert len(children) == 1
-                folders_to_remove.extend(children)
+                directories_to_remove.extend(children)
                 current_path = children[0]
-            for folder_to_remove in reversed(folders_to_remove):
-                folder_to_remove.rmdir()
+            for directory_to_remove in reversed(directories_to_remove):
+                directory_to_remove.rmdir()
 
         if not self.installed.get():
             self.install_all()
@@ -131,6 +131,6 @@ class DownloadManager(Manager.Manager):
         self.has_zip_file_opened = False
         if self.apk_location.exists():
             self.apk_location.unlink()
-        assert self.location.name != self.version.name # self.location refers to the `client` subdirectory of the version folder.
+        assert self.location.name != self.version.name # self.location refers to the `client` subdirectory of the version directory.
         if self.location.exists():
             shutil.rmtree(self.location)

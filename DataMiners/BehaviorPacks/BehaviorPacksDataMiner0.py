@@ -7,10 +7,10 @@ import Utilities.CollapseResourcePacks as CollapseResourcePacks
 
 class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({"behavior_packs_folder": (str, True)})
+    parameters = DataMinerParameters.TypedDictParameters({"behavior_packs_directory": (str, True)})
 
     def initialize(self, **kwargs) -> None:
-        self.behavior_packs_folder:str = kwargs["behavior_packs_folder"]
+        self.behavior_packs_directory:str = kwargs["behavior_packs_directory"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.BehaviorPackTypedDict]:
         behavior_pack_order = CollapseResourcePacks.resource_pack_order
@@ -20,15 +20,15 @@ class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
 
         for file in file_list:
             assert not file.startswith("/") # just in case one of the Managers goes wonky.
-            if file.startswith(self.behavior_packs_folder):
-                if file.count("/") == 1: continue # random file in behavior packs folder, such as "flipbook_textures.json" in a0.16.0_build3
+            if file.startswith(self.behavior_packs_directory):
+                if file.count("/") == 1: continue # random file in behavior packs directory, such as "flipbook_textures.json" in a0.16.0_build3
                 name = file.split("/")[1]
                 if name == "": continue # relic in old archive.org minecraft-iOS versions. Just a file with no content (b'')
                 if name not in behavior_pack_order:
                     raise RuntimeError("Unknown behavior pack name in \"%s\": \"%s\"" % (self.version.name, name))
                 if name in behavior_pack_names: continue # so they aren't recorded multiple times - wonky behavior
                 behavior_pack_names.add(name)
-                behavior_packs.append({"name": name, "path": "%s/%s/" % (self.behavior_packs_folder, name)})
+                behavior_packs.append({"name": name, "path": "%s/%s/" % (self.behavior_packs_directory, name)})
 
         if len(behavior_packs) == 0:
             raise RuntimeError("No behavior packs found in \"%s\"!" % self.version.name)

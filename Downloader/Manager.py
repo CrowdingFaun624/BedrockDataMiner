@@ -13,7 +13,7 @@ class Manager():
     def __init__(self, version:"Version.Version", file_type_arguments:dict[str,Any], location:Path, version_tags:VersionTags.VersionTags) -> None:
         '''
         :version: Version object this manager is based on.
-        :location: File location to the folder containing extracted files.'''
+        :location: File location to the directory containing extracted files.'''
 
         if not isinstance(location, Path):
             raise TypeError("Parameter `location` is not a `Path`!")
