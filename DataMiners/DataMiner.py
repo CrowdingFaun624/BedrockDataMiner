@@ -8,7 +8,7 @@ from pathlib2 import Path
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
-import Downloader.InstallManager as InstallManager
+import Downloader.Accessor as Accessor
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
 import Structure.StructureBase as StructureBase
@@ -105,29 +105,29 @@ class DataMiner():
         with open(self.get_data_file_path(), "rt") as f:
             return json.load(f, cls=CustomJson.decoder)
 
-    def get_accessor(self, file_type:str) -> InstallManager.InstallManager:
+    def get_accessor(self, file_type:str) -> Accessor.Accessor:
         if file_type not in self.files:
             raise RuntimeError("Attempted to get accessor of file type \"%s\" from %s; this dataminer only has permission to take files from [%s]!" % (file_type, self, ", ".join(sorted(self.files))))
         return self.version.get_accessor(file_type)
 
-    def get_files_in(self, accessor:InstallManager.InstallManager, parent:str) -> Iterable[str]:
+    def get_files_in(self, accessor:Accessor.Accessor, parent:str) -> list[str]:
         return accessor.get_files_in(parent)
 
-    def get_file_list(self, accessor:InstallManager.InstallManager) -> list[str]:
+    def get_file_list(self, accessor:Accessor.Accessor) -> list[str]:
         return accessor.get_file_list()
 
     @overload
-    def read_file(self, accessor:InstallManager.InstallManager, file_name:str, mode:Literal["b"]) -> bytes: ...
+    def read_file(self, accessor:Accessor.Accessor, file_name:str, mode:Literal["b"]) -> bytes: ...
     @overload
-    def read_file(self, accessor:InstallManager.InstallManager, file_name:str, mode:Literal["t"]) -> str: ...
+    def read_file(self, accessor:Accessor.Accessor, file_name:str, mode:Literal["t"]) -> str: ...
     @overload
-    def read_file(self, accessor:InstallManager.InstallManager, file_name:str) -> str: ...
-    def read_file(self, accessor:InstallManager.InstallManager, file_name:str, mode:Literal["b", "t"]="t") -> str|bytes:
+    def read_file(self, accessor:Accessor.Accessor, file_name:str) -> str: ...
+    def read_file(self, accessor:Accessor.Accessor, file_name:str, mode:Literal["b", "t"]="t") -> str|bytes:
         return accessor.read(file_name, mode)
 
     read_files_typevar = TypeVar("read_files_typevar")
 
-    def _read_file(self, accessor:InstallManager.InstallManager, file_name:str, mode:Literal["b", "t"], callable:None|Callable[[IO],read_files_typevar], non_exist_ok:bool) -> str|bytes|Any:
+    def _read_file(self, accessor:Accessor.Accessor, file_name:str, mode:Literal["b", "t"], callable:None|Callable[[IO],read_files_typevar], non_exist_ok:bool) -> str|bytes|Any:
         try:
             if not non_exist_ok or self.file_exists(accessor, file_name):
                 if callable is None:
@@ -145,18 +145,18 @@ class DataMiner():
             return e
 
     @overload
-    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[str], non_exist_ok:bool=False) -> dict[str,str]: ...
+    def read_files(self, accessor:Accessor.Accessor, files:Sequence[str], non_exist_ok:bool=False) -> dict[str,str]: ...
     @overload
-    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[tuple[str,Literal["t"],None]], non_exist_ok:bool=False) -> dict[str,str]: ...
+    def read_files(self, accessor:Accessor.Accessor, files:Sequence[tuple[str,Literal["t"],None]], non_exist_ok:bool=False) -> dict[str,str]: ...
     @overload
-    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[tuple[str,Literal["b"],None]], non_exist_ok:bool=False) -> dict[str,bytes]: ...
+    def read_files(self, accessor:Accessor.Accessor, files:Sequence[tuple[str,Literal["b"],None]], non_exist_ok:bool=False) -> dict[str,bytes]: ...
     @overload
-    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[tuple[str,Literal["t"],Callable[[IO[str]],read_files_typevar]]], non_exist_ok:bool=False) -> dict[str,read_files_typevar]: ...
+    def read_files(self, accessor:Accessor.Accessor, files:Sequence[tuple[str,Literal["t"],Callable[[IO[str]],read_files_typevar]]], non_exist_ok:bool=False) -> dict[str,read_files_typevar]: ...
     @overload
-    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[tuple[str,Literal["b"],Callable[[IO[bytes]],read_files_typevar]]], non_exist_ok:bool=False) -> dict[str,read_files_typevar]: ...
+    def read_files(self, accessor:Accessor.Accessor, files:Sequence[tuple[str,Literal["b"],Callable[[IO[bytes]],read_files_typevar]]], non_exist_ok:bool=False) -> dict[str,read_files_typevar]: ...
     @overload
-    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]: ...
-    def read_files(self, accessor:InstallManager.InstallManager, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]:
+    def read_files(self, accessor:Accessor.Accessor, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]: ...
+    def read_files(self, accessor:Accessor.Accessor, files:Sequence[str|tuple[str,Literal["b", "t"],None|Callable[[IO],read_files_typevar]]], non_exist_ok:bool=False) -> Mapping[str,str|bytes|read_files_typevar]:
         '''Synchronously obtains a list of files. Items of the list can be a filename string or (filename string, mode, optional_callable).
         The optional callable takes in an IO object and returns a transformed value.'''
 
@@ -190,10 +190,10 @@ class DataMiner():
 
         return file_results
 
-    def file_exists(self, accessor:InstallManager.InstallManager, file_name:str) -> bool:
+    def file_exists(self, accessor:Accessor.Accessor, file_name:str) -> bool:
         return accessor.file_exists(file_name)
 
-    def get_file(self, accessor:InstallManager.InstallManager, file_name:str, mode:Literal["b","t"]="t") -> FileManager.FilePromise:
+    def get_file(self, accessor:Accessor.Accessor, file_name:str, mode:Literal["b","t"]="t") -> FileManager.FilePromise:
         return accessor.get_file(file_name, mode)
 
 class NullDataMiner(DataMiner):
@@ -208,10 +208,10 @@ class NullDataMiner(DataMiner):
     def get_file_list(self) -> Iterable[str]:
         raise RuntimeError("Attempted to use `get_file_list` from a NullDataMiner!")
 
-    def get_accessor(self, file_type:str) -> InstallManager.InstallManager:
+    def get_accessor(self, file_type:str) -> Accessor.Accessor:
         raise RuntimeError("Attempted to use `get_accessor` from a NullDataMiner!")
 
-    def get_files_in(self, accessor:InstallManager.InstallManager, parent:str) -> Iterable[str]:
+    def get_files_in(self, accessor:Accessor.Accessor, parent:str) -> Iterable[str]:
         raise RuntimeError("Attempted to use `get_files_in` from a NullDataMiner!")
 
     def read_file(self, file_name: str, mode: Literal["b","t"] = "t") -> str | bytes:
@@ -220,7 +220,7 @@ class NullDataMiner(DataMiner):
     def read_files(self, files:list[str|tuple[str,str,Callable[[IO],Any]|None]]) -> dict[str,str|bytes|Any]:
         raise RuntimeError("Attempted to use `read_files` from a NullDataMiner!")
 
-    def file_exists(self, accessor:InstallManager.InstallManager, file_name:str) -> bool:
+    def file_exists(self, accessor:Accessor.Accessor, file_name:str) -> bool:
         raise RuntimeError("Attempted to use `file_exists` from a NullDataMiner!")
 
     def get_file(self, file_name:str, mode:Literal["b","t"]="t") -> FileManager.FilePromise:

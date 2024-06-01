@@ -1,5 +1,5 @@
 import shutil
-from typing import Iterable, Literal, TypedDict
+from typing import Literal, TypedDict
 
 from pathlib2 import Path
 
@@ -39,37 +39,26 @@ class StoredManager(InstallManager.InstallManager):
             self.read_index()
             StoredVersionsManager.extract(self.name, destination, self.index)
 
-    def get_files_in(self, parent: str) -> Iterable[str]:
+    def get_files_in(self, parent: str) -> list[str]:
         return [file for file in self.get_file_list() if file.startswith(parent)]
 
-    def get_file_list(self) -> Iterable[str]:
+    def get_file_list(self) -> list[str]:
         if self.file_list is None:
-            strip_string = self.get_full_file_name("")
             self.read_index()
             assert self.index is not None
-            self.file_list = [index.replace(strip_string, "", 1) for index in self.index.keys() if index.startswith(strip_string) and not index.endswith("/")]
+            self.file_list = list(self.index.keys())
         return self.file_list
-
-    def get_full_file_list(self) -> list[str]:
-        self.read_index()
-        assert self.index is not None
-        return list(self.index.keys())
 
     def file_exists(self, name:str) -> bool:
         self.read_index()
         assert self.index is not None
-        return self.get_full_file_name(name) in self.index
+        return name in self.index
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
-        file_name = self.get_full_file_name(file_name)
         self.read_index()
         return StoredVersionsManager.read_file(self.name, file_name, mode, self.index)
 
-    def get_full_file_name(self, asset_name:str) -> str:
-        return "assets/" + asset_name
-
     def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> FileManager.FilePromise:
-        file_name = self.get_full_file_name(file_name)
         self.read_index()
         return StoredVersionsManager.get_file(self.name, file_name, mode, self.index)
 

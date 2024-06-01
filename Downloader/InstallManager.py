@@ -33,10 +33,6 @@ class InstallManager():
         '''Raises an exception if the file type arguments are invalid for this InstallManager'''
         cls.type_verifier.base_verify(file_type_arguments, [version_name, file_type, accessor_name])
 
-    def get_full_file_name(self, asset_name:str) -> str:
-        '''Returns the full file path within the archive needed to find the given asset.'''
-        raise NotImplementedError("`get_full_file_name` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
-
     def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_parameters:dict[str,Any]) -> None:
         '''Any actions that can take place before grabbing files can happen.'''
         raise NotImplementedError("`prepare_for_install` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
@@ -49,16 +45,12 @@ class InstallManager():
         '''Returns if the file exists in this version.'''
         raise NotImplementedError("`file_exists` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
-    def get_files_in(self, parent:str) -> Iterable[str]:
+    def get_files_in(self, parent:str) -> list[str]:
         '''Returns a list of all files that are within the given directory.'''
         raise NotImplementedError("`get_files_in` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
     def get_file_list(self) -> list[str]:
         '''Returns a list of all files in the archive.'''
-        raise NotImplementedError("`get_file_list` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
-
-    def get_full_file_list(self) -> list[str]:
-        '''Returns a list of every file in the archive, including those not in the assets folder.'''
         raise NotImplementedError("`get_file_list` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
     @overload

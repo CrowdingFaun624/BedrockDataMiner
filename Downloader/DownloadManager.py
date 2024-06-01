@@ -1,6 +1,6 @@
 import shutil
 import zipfile
-from typing import Iterable, Literal, TypedDict
+from typing import Literal, TypedDict
 
 import requests
 from pathlib2 import Path
@@ -32,7 +32,6 @@ class DownloadManager(InstallManager.InstallManager):
         self.file_set:set[str]|None = None
 
         self.url = file_type_arguments["url"]
-        self.set_file_prepension(version_tags)
 
     def open_zip_file(self) -> None:
         '''Opens the zip file if it hasn't already.'''
@@ -43,21 +42,7 @@ class DownloadManager(InstallManager.InstallManager):
             self.members = {member.filename: member for member in self.zip_file.filelist}
             self.has_zip_file_opened = True
 
-    def set_file_prepension(self, version_tags:VersionTags.VersionTags) -> None:
-        tags = self.version.tags
-        if version_tags["ipa"] in tags:
-            prepend = "Payload/minecraftpe.app/data/"
-        else:
-            if version_tags["double_assets"] in tags:
-                prepend = "assets/assets/"
-            else:
-                prepend = "assets/"
-        self.file_prepension = prepend
-
-    def get_full_file_name(self, asset_name:str) -> str:
-        return self.file_prepension + asset_name
-
-    def get_files_in(self, parent: str) -> Iterable[str]:
+    def get_files_in(self, parent: str) -> list[str]:
         return [file for file in self.get_file_list() if file.startswith(parent)]
 
     def get_file_list(self) -> list[str]:
@@ -67,9 +52,8 @@ class DownloadManager(InstallManager.InstallManager):
         if self.file_list is None:
             if self.file_list is not None:
                 return self.file_list # If it started waiting and then it's complete when it's done waiting.
-            strip_string = self.get_full_file_name("")
             assert self.zip_file is not None
-            self.file_list = [file.filename.replace(strip_string, "", 1) for file in self.zip_file.filelist if file.filename.startswith(strip_string) and not file.filename.endswith("/")]
+            self.file_list = [file.filename for file in self.zip_file.filelist]
             self.file_set = set(self.file_list)
         return self.file_list
 
@@ -79,13 +63,6 @@ class DownloadManager(InstallManager.InstallManager):
         assert self.file_set is not None
         return self.file_set
 
-    def get_full_file_list(self) -> list[str]:
-        if not self.installed.get():
-            self.install_all()
-        self.open_zip_file()
-        assert self.zip_file is not None
-        return [file.filename for file in self.zip_file.filelist]
-
     def file_exists(self, name:str) -> bool:
         if not self.installed.get():
             self.install_all()
@@ -94,7 +71,6 @@ class DownloadManager(InstallManager.InstallManager):
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
         if not self.installed.get():
             self.install_all()
-        file_name = self.get_full_file_name(file_name)
         self.open_zip_file()
         assert self.zip_file is not None
         data = self.zip_file.read(file_name)
@@ -121,7 +97,6 @@ class DownloadManager(InstallManager.InstallManager):
 
         if not self.installed.get():
             self.install_all()
-        file_name = self.get_full_file_name(file_name)
         self.open_zip_file()
         assert self.zip_file is not None
         if mode == "b":

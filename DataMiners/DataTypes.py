@@ -4,7 +4,7 @@ from typing import IO, Any, Callable, Iterable, Literal, Sequence, cast, overloa
 import pyjson5
 
 import DataMiners.DataMiner as DataMiner
-import Downloader.InstallManager as InstallManager
+import Downloader.Accessor as Accessor
 import Utilities.Nbt.NbtReader as NbtReader
 
 
@@ -21,7 +21,7 @@ class DataTypes(enum.Enum):
         types_dict:dict[DataTypes,Literal["b","t"]] = {DataTypes.json: "t", DataTypes.nbt: "b"}
         return types_dict[self]
 
-def get_data(dataminer:DataMiner.DataMiner, path:str, data_type:DataTypes, accessor:InstallManager.InstallManager) -> Any:
+def get_data(dataminer:DataMiner.DataMiner, path:str, data_type:DataTypes, accessor:Accessor.Accessor) -> Any:
     data_format = data_type.get_data_format()
     file_data = accessor.read(path, data_format)
     return get_data_from_content(file_data, data_type)

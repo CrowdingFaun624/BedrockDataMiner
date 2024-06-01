@@ -1,5 +1,5 @@
 import os
-from typing import Iterable, Literal, TypedDict
+from typing import Literal, TypedDict
 
 from pathlib2 import Path
 
@@ -37,25 +37,19 @@ class LocalManager(InstallManager.InstallManager):
         else:
             raise NotImplementedError("OS type \"%s\" is not implemented!" % (os.name))
 
-    def get_full_file_name(self, asset_name:str) -> str:
-        return "data/" + asset_name
-
     def install_all(self, destination:Path|None=None) -> None:
         pass # There is no need to do anything. All of the files are already there.
 
-    def get_files_in(self, parent:str) -> Iterable[str]:
+    def get_files_in(self, parent:str) -> list[str]:
         return [file for file in self.get_file_list() if file.startswith(parent)]
 
-    def get_file_list(self, path:Path|None=None) -> Iterable[str]:
+    def get_file_list(self, path:Path|None=None) -> list[str]:
         if path is None:
             if self.file_list is None:
-                strip_string1 = self.bedrock_local.as_posix() + "/"
-                strip_string2 = self.get_full_file_name("")
+                strip_string = self.bedrock_local.as_posix() + "/"
                 output:list[str] = []
                 for file_path in self.get_file_list(self.bedrock_local):
-                    stripped_path = file_path.replace(strip_string1, "", 1)
-                    if stripped_path.startswith(strip_string2):
-                        output.append(stripped_path.replace(strip_string2, ""))
+                    output.append(file_path.replace(strip_string, "", 1))
                 self.file_list = output
             return self.file_list
         else:
@@ -67,32 +61,15 @@ class LocalManager(InstallManager.InstallManager):
                     output.extend(self.get_file_list(subpath))
             return output
 
-    def get_full_file_list(self, path:Path|None=None) -> list[str]:
-        if path is None:
-            if self.file_list is None:
-                strip_string1 = self.bedrock_local.as_posix() + "/"
-                self.file_list = [file_path.replace(strip_string1, "", 1) for file_path in self.get_file_list(self.bedrock_local)]
-            return self.file_list
-        else:
-            output:list[str] = []
-            for subpath in path.iterdir():
-                if subpath.is_file():
-                    output.append(subpath.as_posix())
-                elif subpath.is_dir():
-                    output.extend(self.get_file_list(subpath))
-            return output
-
     def file_exists(self, name:str) -> bool:
-        return Path(self.bedrock_local.joinpath(self.get_full_file_name(name))).exists()
+        return Path(self.bedrock_local.joinpath(name)).exists()
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
-        file_name = self.get_full_file_name(file_name)
         full_path = Path(self.bedrock_local.joinpath(file_name))
         with open(full_path, "r" + mode) as f:
             return f.read()
 
     def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> FileManager.FilePromise:
-        file_name = self.get_full_file_name(file_name)
         full_path = Path(self.bedrock_local.joinpath(file_name))
         return FileManager.FilePromise(FunctionCaller(open, [full_path, "r" + mode]), file_name.split("/")[-1], mode)
 

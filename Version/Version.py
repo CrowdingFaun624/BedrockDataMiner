@@ -9,7 +9,7 @@ import Version.VersionFileType as VersionFileType
 import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
-    import Downloader.InstallManager as InstallManager
+    import Downloader.Accessor as Accessor
 
 class Version():
 
@@ -40,7 +40,7 @@ class Version():
         self.validate_parent()
         self.validate_time()
 
-    def get_accessor(self, file_type:str) -> "InstallManager.InstallManager":
+    def get_accessor(self, file_type:str) -> "Accessor.Accessor":
         return self.version_files[file_type].get_accessor()
 
     def assign_wiki_page(self, version_tags:VersionTags.VersionTags) -> None:
