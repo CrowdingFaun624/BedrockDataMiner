@@ -43,9 +43,9 @@ VERSIONS_FOLDER        = PARENT_FOLDER.joinpath("_versions")
 
 def get_comparison_file_path(name:str, number:int|None=None) -> Path:
     if number is None:
-        comparison_path = Path(COMPARISONS_FOLDER.joinpath(name))
+        comparison_path = COMPARISONS_FOLDER.joinpath(name)
     else:
-        comparison_path = Path(COMPARISONS_FOLDER.joinpath(name, "report_%s.txt" % str(number).zfill(4)))
+        comparison_path = COMPARISONS_FOLDER.joinpath(name, "report_%s.txt" % str(number).zfill(4))
     if COMPARISONS_FOLDER not in comparison_path.parents:
         raise FileNotFoundError("Comparison \"%s\" (%i)'s folder can not be created due to illegal characters!" % (name, number))
     return comparison_path
@@ -58,26 +58,26 @@ def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/g
     return size
 
 def get_structure_path(structure_name:str) -> Path:
-    structure_path = Path(STRUCTURES_FOLDER.joinpath(structure_name + ".json"))
+    structure_path = STRUCTURES_FOLDER.joinpath(structure_name + ".json")
     if STRUCTURES_FOLDER not in structure_path.parents:
         raise FileNotFoundError("Structure \"%s\" can not be created due to illegal characters!" % structure_name)
     return structure_path
 
 def get_version_path(version_name:str) -> Path:
-    version_path = Path(VERSIONS_FOLDER.joinpath(version_name))
+    version_path = VERSIONS_FOLDER.joinpath(version_name)
     if VERSIONS_FOLDER not in version_path.parents:
         raise FileNotFoundError("Version \"%s\"'s folder can not be created due to illegal characters!" % version_name)
     return version_path
 
 def get_version_install_path(version_folder:Path) -> Path:
-    return Path(version_folder.joinpath("client"))
+    return version_folder.joinpath("client")
 
 def get_version_data_path(version_folder:Path, file_name:str|None) -> Path:
     '''Returns the Path in the version folder that a data file name will be stored at. Set `file_name` to None to get the data path.'''
     if file_name is None:
-        data_path = Path(version_folder.joinpath("./data"))
+        data_path = version_folder.joinpath("./data")
     else:
-        data_path = Path(version_folder.joinpath("./data/%s" % file_name))
+        data_path = version_folder.joinpath("./data/%s" % file_name)
     if version_folder not in data_path.parents:
         raise FileNotFoundError("Data file \"%s\" has an invalid name!" % file_name)
     if VERSIONS_FOLDER != version_folder.parent:
@@ -85,11 +85,11 @@ def get_version_data_path(version_folder:Path, file_name:str|None) -> Path:
     return data_path
 
 def get_version_index_path(version_folder:Path) -> Path:
-    return Path(version_folder.joinpath("index.json"))
+    return version_folder.joinpath("index.json")
 
 def get_temp_file_path() -> Path:
     '''Returns a path such as `./_temp/a6f780a3-83d0-4afd-a654-dc28df0b9831`.'''
-    return Path(TEMP_FOLDER.joinpath(str(uuid.uuid4())))
+    return TEMP_FOLDER.joinpath(str(uuid.uuid4()))
 
 def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
     '''
@@ -155,7 +155,6 @@ def clear_temp() -> None:
     Removes every file and recursively removes every folder from the temp directory.
     '''
     for file in TEMP_FOLDER.iterdir():
-        file:Path
         if file.is_file():
             file.unlink()
         else:

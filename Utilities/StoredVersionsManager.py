@@ -87,7 +87,7 @@ def reverse_dict(input_dict:dict) -> dict:
 def extract(name:str, output_path:Path|None=None, index:dict[str,tuple[str,bool]]|None=None) -> None:
     '''Extracts an apk file from the archive into the given file name, or the output folder if not given.'''
     if output_path is None:
-        output_path = Path(FileManager.STORED_VERSIONS_OUTPUT_FOLDER.joinpath(name + ".apk"))
+        output_path = FileManager.STORED_VERSIONS_OUTPUT_FOLDER.joinpath(name + ".apk")
     if index is None: index = read_index(name) # {filename: (hash, compressed)}
     if output_path.exists(): output_path.unlink()
     with zipfile.ZipFile(output_path, "w") as zip_file:
@@ -147,7 +147,6 @@ def extract_files(version_name:str, files:Iterable[str], destinations:Iterable[P
 def archive_all() -> None:
     '''Archives the entire contents of the `./_assets/stored_versions/indexes` folder.'''
     for file in FileManager.STORED_VERSIONS_INPUT_FOLDER.iterdir():
-        file:Path
         zip_file = open_zip_file(file)
         hashes = hash_files(zip_file)
         archive(file, hashes)
@@ -212,7 +211,7 @@ def get_hash_file_path(str_hash:str, return_string:bool=False) -> Path:
     if return_string:
         return Path(first_two, str_hash)
     else:
-        return Path(FileManager.STORED_VERSIONS_OBJECTS_FOLDER.joinpath(first_two, str_hash))
+        return FileManager.STORED_VERSIONS_OBJECTS_FOLDER.joinpath(first_two, str_hash)
 
 def clear_objects() -> None:
     '''Clears all files and directories in the `./_assets/stored_versions/objects` directory. Requires user input.'''
@@ -223,7 +222,6 @@ def clear_objects() -> None:
     user_input = input()
     if user_input != user_requirement: raise ValueError("Failed to clear all files.")
     for file in path.iterdir():
-        file:Path
         if file.is_dir():
             shutil.rmtree(file)
         else:

@@ -67,7 +67,7 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
     if cache_data is None:
         temp_directory = FileManager.get_temp_file_path()
         temp_directory.mkdir()
-        temp_file = Path(temp_directory.joinpath("fsb.fsb"))
+        temp_file = temp_directory.joinpath("fsb.fsb")
         # copying file to temp directory
         with open(temp_file, "wb") as dest, input_file.open() as fsb_file_io:
             dest.write(fsb_file_io.read())

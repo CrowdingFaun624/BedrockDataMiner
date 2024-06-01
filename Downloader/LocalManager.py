@@ -28,7 +28,6 @@ class LocalManager(InstallManager.InstallManager):
             else:
                 search_file = "Microsoft.MinecraftUWP"
             for window_file in windows_apps.iterdir():
-                window_file:Path
                 if window_file.name.startswith(search_file):
                     self.bedrock_local = window_file
                     break
@@ -62,15 +61,15 @@ class LocalManager(InstallManager.InstallManager):
             return output
 
     def file_exists(self, name:str) -> bool:
-        return Path(self.bedrock_local.joinpath(name)).exists()
+        return self.bedrock_local.joinpath(name).exists()
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
-        full_path = Path(self.bedrock_local.joinpath(file_name))
+        full_path = self.bedrock_local.joinpath(file_name)
         with open(full_path, "r" + mode) as f:
             return f.read()
 
     def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> FileManager.FilePromise:
-        full_path = Path(self.bedrock_local.joinpath(file_name))
+        full_path = self.bedrock_local.joinpath(file_name)
         return FileManager.FilePromise(FunctionCaller(open, [full_path, "r" + mode]), file_name.split("/")[-1], mode)
 
     def all_done(self) -> None:

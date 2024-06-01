@@ -82,7 +82,7 @@ class Version():
 
     def validate_version_name(self, name:str) -> None:
         '''Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''
-        version_folder = Path(FileManager.VERSIONS_FOLDER.joinpath(name))
+        version_folder = FileManager.VERSIONS_FOLDER.joinpath(name)
         if version_folder.parent != FileManager.VERSIONS_FOLDER: raise ValueError("Invalid Version name \"%s\"!" % str(name))
 
     def validate_name(self) -> None:
