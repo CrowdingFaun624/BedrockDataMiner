@@ -29,20 +29,6 @@ class StoredManager(InstallManager.InstallManager):
         if self.index is not None: return
         self.index = StoredVersionsManager.read_index(self.name)
 
-    def install(self, file_name:str, destination:Path|None=None) -> Path:
-
-        if not isinstance(file_name, str):
-            raise TypeError("Parameter `file_name` is not a `str`!")
-        if destination is not None and not isinstance(destination, Path):
-            raise TypeError("Parameter `destination` is not a `Path`!")
-
-        file_name = self.get_full_file_name(file_name)
-        if destination is None:
-            destination = Path(self.location.joinpath(file_name))
-        self.read_index()
-        StoredVersionsManager.extract_file(self.name, file_name, destination, self.index)
-        return destination
-
     def install_all(self, destination:Path|None=None) -> None:
 
         if destination is not None and not isinstance(destination, Path):

@@ -57,30 +57,6 @@ class DownloadManager(InstallManager.InstallManager):
     def get_full_file_name(self, asset_name:str) -> str:
         return self.file_prepension + asset_name
 
-    def install(self, file_name:str, destination:Path|None=None) -> Path:
-
-        if not isinstance(file_name, str):
-            raise TypeError("Parameter `file_name` is not a `str`!")
-        if destination is not None and not isinstance(destination, Path):
-            raise TypeError("Parameter `destination` is not a `Path`!")
-
-        if not self.installed.get():
-            self.install_all()
-        file_name = self.get_full_file_name(file_name)
-        assert self.members is not None
-        assert self.zip_file is not None
-        member = self.members[file_name]
-        self.open_zip_file()
-        if destination is not None:
-            name_carry = member.filename
-            member.filename = destination.name
-            self.zip_file.extract(file_name, destination.parents[0])
-            member.filename = name_carry
-            return destination
-        else:
-            self.zip_file.extract(file_name, self.location)
-            return Path(self.location.joinpath(file_name))
-
     def get_files_in(self, parent: str) -> Iterable[str]:
         return [file for file in self.get_file_list() if file.startswith(parent)]
 

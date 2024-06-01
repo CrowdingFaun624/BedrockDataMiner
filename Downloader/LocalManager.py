@@ -43,10 +43,6 @@ class LocalManager(InstallManager.InstallManager):
     def install_all(self, destination:Path|None=None) -> None:
         pass # There is no need to do anything. All of the files are already there.
 
-    def install(self, file_name:str, destination:Path|None=None) -> Path:
-        # There is no need to do anything else. All of the files are already there.
-        return Path(self.bedrock_local.joinpath(self.get_full_file_name(file_name)))
-
     def get_files_in(self, parent:str) -> Iterable[str]:
         return [file for file in self.get_file_list() if file.startswith(parent)]
 
