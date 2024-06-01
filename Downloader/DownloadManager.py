@@ -8,7 +8,6 @@ from pathlib2 import Path
 import Downloader.DownloadLog as DownloadLog
 import Downloader.Manager as Manager
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
@@ -17,10 +16,6 @@ class DownloadManagerTypedDict(TypedDict):
     url: str
 
 class DownloadManager(Manager.Manager):
-
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("url", "a str", True, str),
-    )
 
     def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:DownloadManagerTypedDict) -> None:
         self.apk_location = self.location

@@ -6,7 +6,6 @@ from pathlib2 import Path
 import Downloader.Manager as Manager
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
 
 
@@ -14,10 +13,6 @@ class StoredManagerTypedDict(TypedDict):
     stored_name: str
 
 class StoredManager(Manager.Manager):
-
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("stored_name", "a str", True, str),
-    )
 
     def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:StoredManagerTypedDict) -> None:
         self.apk_location = Path(str(self.location) + ".zip")

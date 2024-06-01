@@ -5,7 +5,6 @@ from pathlib2 import Path
 
 import Downloader.Manager as Manager
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller
 
@@ -14,10 +13,6 @@ class LocalManagerTypedDict(TypedDict):
     is_preview: bool
 
 class LocalManager(Manager.Manager):
-
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("is_preview", "a bool", True, bool),
-    )
 
     def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:LocalManagerTypedDict) -> None:
         self.file_list:list[str]|None = None

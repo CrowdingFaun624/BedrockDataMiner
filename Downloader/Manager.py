@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, Any, Literal, overload
 
 from pathlib2 import Path
 
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
@@ -10,8 +9,6 @@ if TYPE_CHECKING:
     import Version.Version as Version
 
 class Manager():
-
-    type_verifier:TypeVerifier.TypeVerifier
 
     def __init__(self, version:"Version.Version", file_type_arguments:dict[str,Any], location:Path, version_tags:VersionTags.VersionTags) -> None:
         '''
@@ -27,11 +24,6 @@ class Manager():
 
     def __repr__(self) -> str:
         return "<%s for %s>" % (self.__class__.__name__, self.version.name)
-
-    @classmethod
-    def validate_arguments(cls, file_type_arguments:Any, version_name:str, file_type:str, accessor_name:str) -> None:
-        '''Raises an exception if the file type arguments are invalid for this InstallManager'''
-        cls.type_verifier.base_verify(file_type_arguments, [version_name, file_type, accessor_name])
 
     def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_parameters:dict[str,Any]) -> None:
         '''Any actions that can take place before grabbing files can happen.'''
