@@ -21,9 +21,6 @@ class Accessor():
     def trim_file_name(self, file_name:str) -> str:
         return file_name
 
-    def validate_arguments(self, file_type_arguments:Any, version_name:str, file_type:str) -> None:
-        return self.manager.validate_arguments(file_type_arguments, version_name, file_type, self.name)
-
     def install_all(self, destination:Path|None) -> None:
         return self.manager.install_all(destination)
 
