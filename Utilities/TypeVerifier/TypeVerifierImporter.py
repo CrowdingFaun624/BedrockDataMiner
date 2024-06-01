@@ -1,4 +1,5 @@
-from typing import Any, Literal, TypeAlias, TypedDict, Union, overload
+import traceback
+from typing import Any, Literal, TypeAlias, TypedDict, Union, cast, overload
 
 from typing_extensions import NotRequired, Required
 
@@ -34,7 +35,7 @@ class ListTypedDict(TypedDict):
 
 class TupleItemTypedDict(TypedDict):
     item_type: Required[Union[str, list[str], "TypedVerifierTypedDicts"]]
-    item_type_str: str
+    item_type_str: Required[str]
 
 class TupleTypedDict(TypedDict):
     type: Required[Literal["Tuple"]]
@@ -63,6 +64,84 @@ allowed_types = {
     "str": str, 
     "tuple": tuple
 }
+
+
+def type_verify_type_verifier(key:str, value:TypedVerifierTypedDicts) -> tuple[bool,str]:
+    if not isinstance(value, dict):
+        return False, "Data is not a dict!"
+    elif "type" not in value:
+        return False, "Key \"type\" is not in data!"
+    trace = TypeVerifier.Trace()
+    match value["type"]:
+        case "Dict":
+            exceptions = dict_type_verifier.verify(value, trace)
+        case "Enum":
+            exceptions = enum_type_verifier.verify(value, trace)
+        case "List":
+            exceptions = list_type_verifier.verify(value, trace)
+        case "Tuple":
+            exceptions = tuple_type_verifier.verify(value, trace)
+        case "TypedDict":
+            exceptions = typed_dict_type_verifier.verify(value, trace)
+        case "Union":
+            exceptions = union_type_verifier.verify(value, trace)
+        case _:
+            return False, "Unknown TypeVerifier type \"%s\"!" % value["type"]
+    if len(exceptions) > 0:
+        return False, "\n".join("\n".join("\t" + exception_line for exception_line in traceback.format_exception(exception)) for exception in exceptions)
+    else:
+        return True, ""
+
+dict_type_verifier = TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier(("Dict",))),
+    TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+    TypeVerifier.TypedDictKeyTypeVerifier("data_type_str", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("key_type", "a str, list, or TypeVerifier", True, TypeVerifier.UnionTypeVerifier("a str, list, or TypeVerifier", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")), function=lambda key, value: ((True, "") if not isinstance(value, dict) else type_verify_type_verifier(key, cast(TypedVerifierTypedDicts, value)))),
+    TypeVerifier.TypedDictKeyTypeVerifier("key_type_str", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("value_type", "a str, list, or TypeVerifier", True, TypeVerifier.UnionTypeVerifier("a str, list, or TypeVerifier", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")), function=lambda key, value: ((True, "") if not isinstance(value, dict) else type_verify_type_verifier(key, cast(TypedVerifierTypedDicts, value)))),
+    TypeVerifier.TypedDictKeyTypeVerifier("value_type_str", "a str", True, str),
+)
+
+typed_dict_type_verifier = TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier(("TypedDict",))),
+    TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+    TypeVerifier.TypedDictKeyTypeVerifier("data_type_str", "a str", False, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("required", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("value_str", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("value_type", "a str, list, or TypeVerifier", True, TypeVerifier.UnionTypeVerifier("a str or list", str, dict, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        function=lambda data: type_verify_type_verifier("", cast(TypedVerifierTypedDicts, data["value_type"])) if isinstance(data.get("value_type", None), dict) else (True, "")
+    ), "a dict", "a str", "a dict")),
+)
+
+list_type_verifier = TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier(("List",))),
+    TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+    TypeVerifier.TypedDictKeyTypeVerifier("data_type_str", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("item_type", "a str, list, or TypeVerifier", True, TypeVerifier.UnionTypeVerifier("a str, list, or TypeVerifier", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")), function=lambda key, value: ((True, "") if not isinstance(value, dict) else type_verify_type_verifier(key, cast(TypedVerifierTypedDicts, value)))),
+    TypeVerifier.TypedDictKeyTypeVerifier("item_type_str", "a str", True, str),
+)
+
+tuple_type_verifier = TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier(("Tuple",))),
+    TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+    TypeVerifier.TypedDictKeyTypeVerifier("data_type_str", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("items", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("item_type", "a str, list, or TypeVerifier", True, TypeVerifier.UnionTypeVerifier("a str, list, or TypeVerifier", str, dict, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")), function=lambda key, value: ((True, "") if not isinstance(value, dict) else type_verify_type_verifier(key, cast(TypedVerifierTypedDicts, value)))),
+        TypeVerifier.TypedDictKeyTypeVerifier("item_type_str", "a str", True, str),
+    ), list, "a dict", "a list"))
+)
+
+enum_type_verifier = TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier(("Enum",))),
+    TypeVerifier.TypedDictKeyTypeVerifier("options", "a list", True, TypeVerifier.ListTypeVerifier(object, list, "an object", "a list")),
+)
+
+union_type_verifier = TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, TypeVerifier.EnumTypeVerifier(("Union",))),
+    TypeVerifier.TypedDictKeyTypeVerifier("type_str", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.UnionTypeVerifier("a str or TypeVerifier", str, dict), list, "a str or TypeVerifier", "a list", item_function=lambda item: ((True, "") if not isinstance(item, dict) else type_verify_type_verifier("", cast(TypedVerifierTypedDicts, item))))),
+)
 
 @overload
 def parse_type_field(data:str|list[str], allow_type_verifier:Literal[False]) -> type|tuple[type]: ...
