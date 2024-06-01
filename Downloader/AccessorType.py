@@ -31,6 +31,12 @@ class AccessorTypedDict(TypedDict):
     manager: str
     parameters: TypeVerifierImporter.TypedVerifierTypedDicts
 
+type_verifier = TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("accessor", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("manager", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("parameters", "a TypeVerifier", True, dict, function=TypeVerifierImporter.type_verify_type_verifier)
+), "a dict", "a str", "a dict")
+
 class AccessorType():
 
     def __init__(self, name:str, manager_class:type[Manager.Manager], accessor_class:type[Accessor.Accessor], parameters:TypeVerifier.TypeVerifier) -> None:
@@ -50,6 +56,8 @@ def parse_accessor_types(data:dict[str,AccessorTypedDict]) -> dict[str,AccessorT
 
 def import_accessor_types() -> dict[str,AccessorType]:
     with open(FileManager.ACCESSOR_TYPES_FILE, "rt") as f:
-        return parse_accessor_types(json.load(f))
+        data = json.load(f)
+        type_verifier.base_verify(data, [FileManager.ACCESSOR_TYPES_FILE.name])
+        return parse_accessor_types(data)
 
 accessors = import_accessor_types()
