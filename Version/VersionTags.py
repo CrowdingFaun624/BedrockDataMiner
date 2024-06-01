@@ -135,6 +135,14 @@ class VersionTag():
     def __hash__(self) -> int:
         return hash(self.name)
 
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, VersionTag):
+            return self.name == value.name
+        elif isinstance(value, str):
+            return self.name == value
+        else:
+            return False
+
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.name)
 
