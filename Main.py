@@ -91,6 +91,10 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
+# TODO: rename InstallManager to Manager
+# TODO: implement json-y way to do stuff with file types, accessors, and managers
+# TODO: standardize how exceptions are used.
+
 # TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions
 # TODO: dataminers for:
 #   renderer/vanilla_lights.json in 1.20.20.23
