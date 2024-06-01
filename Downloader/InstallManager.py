@@ -29,7 +29,7 @@ class InstallManager():
         return "<%s for %s>" % (self.__class__.__name__, self.version.name)
 
     @classmethod
-    def validate_arguments(cls, file_type_arguments:dict[str,Any], version_name:str, file_type:str, accessor_name:str) -> None:
+    def validate_arguments(cls, file_type_arguments:Any, version_name:str, file_type:str, accessor_name:str) -> None:
         '''Raises an exception if the file type arguments are invalid for this InstallManager'''
         cls.type_verifier.base_verify(file_type_arguments, [version_name, file_type, accessor_name])
 

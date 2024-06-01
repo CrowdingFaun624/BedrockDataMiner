@@ -12,7 +12,7 @@ import Version.VersionTags as VersionTags
 
 class VersionTypedDict(TypedDict):
     id: Required[str]
-    files: Required[dict[str,dict[str,dict[str,Any]]]]
+    files: Required[dict[str,dict[str,Any]]]
     parent: Required[str|None]
     time: Required[str|None]
     tags: Required[list[str]]

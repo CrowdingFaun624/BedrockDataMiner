@@ -20,7 +20,7 @@ ACCESSORS:dict[str,type[InstallManager.InstallManager]] = {
 
 class VersionFile():
 
-    def __init__(self, version:"Version.Version", file_type:VersionFileType.VersionFileType, accessors:dict[str,dict[str,Any]], version_tags:VersionTags.VersionTags) -> None:
+    def __init__(self, version:"Version.Version", file_type:VersionFileType.VersionFileType, accessors:dict[str,Any], version_tags:VersionTags.VersionTags) -> None:
         self.version = version
         self.file_type = file_type
 
