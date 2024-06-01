@@ -76,7 +76,7 @@ class StoredManager(InstallManager.InstallManager):
     def get_full_file_name(self, asset_name:str) -> str:
         return "assets/" + asset_name
 
-    def get_file(self, file_name:str, mode:Literal["b","t"]="b", is_in_assets:bool=True) -> FileManager.FilePromise:
+    def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> FileManager.FilePromise:
 
         if not isinstance(file_name, str):
             raise TypeError("Parameter `file_name` is not a `str`!")
@@ -85,8 +85,7 @@ class StoredManager(InstallManager.InstallManager):
         if mode not in ("t", "b"):
             raise ValueError("Parameter `mode` is not \"b\" or \"t\"!")
 
-        if is_in_assets:
-            file_name = self.get_full_file_name(file_name)
+        file_name = self.get_full_file_name(file_name)
         self.read_index()
         return StoredVersionsManager.get_file(self.name, file_name, mode, self.index)
 

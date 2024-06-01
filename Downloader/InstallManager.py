@@ -69,7 +69,7 @@ class InstallManager():
         '''Returns the contents of the given file name from the Version'''
         raise NotImplementedError("`read` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
-    def get_file(self, file_name:str, mode:Literal["b","t"]="b", is_in_assets:bool=True) -> "FileManager.FilePromise":
+    def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> "FileManager.FilePromise":
         '''Returns a FilePromise object of the file.'''
         raise NotImplementedError("`get_file` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 

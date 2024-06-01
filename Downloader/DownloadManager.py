@@ -111,7 +111,7 @@ class DownloadManager(InstallManager.InstallManager):
         else:
             return data
 
-    def get_file(self, file_name:str, mode:Literal["b","t"]="b", is_in_assets:bool=True) -> FileManager.FilePromise:
+    def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> FileManager.FilePromise:
 
         def clear_temp_file(temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
             path_that_zipfile_puts_it_in.unlink()
@@ -136,8 +136,7 @@ class DownloadManager(InstallManager.InstallManager):
 
         if not self.installed.get():
             self.install_all()
-        if is_in_assets:
-            file_name = self.get_full_file_name(file_name)
+        file_name = self.get_full_file_name(file_name)
         self.open_zip_file()
         assert self.zip_file is not None
         if mode == "b":
