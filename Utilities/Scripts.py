@@ -95,6 +95,13 @@ class Scripts():
             raise FileNotFoundError("Script \"%s\" does not exist!" % (name,))
         return output
 
+    def get_all_in_directory(self, directory_name:str) -> dict[str,Script]:
+        '''
+        Returns all scripts whose full names start with `directory_name`.
+        :directory_name: The directory name, ending in "/", to select from.
+        '''
+        return {script_name: script for script_name, script in self.scripts.items() if script_name.startswith(directory_name)}
+
     def __repr__(self) -> str:
         return "<Scripts %s>" % (self.scripts)
 
