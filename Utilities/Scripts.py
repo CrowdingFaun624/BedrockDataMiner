@@ -111,11 +111,6 @@ def main() -> None:
     while user_script is None:
         user_script = scripts.scripts.get(input("Choose a script from the scripts directory: "), None)
     output = user_script()
-    print(output(5))
-    # print(dir(output))
-    # print(output.__class__)
-    # print([func() for func in output.values()])
-
-
+    print(output)
 
 scripts = Scripts()
