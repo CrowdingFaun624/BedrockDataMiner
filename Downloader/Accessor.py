@@ -14,6 +14,10 @@ class Accessor():
         self.name = name
         self.manager = manager
         self.version = version
+        self.initialize()
+
+    def initialize(self) -> None:
+        pass
 
     def modify_file_name(self, file_name:str="") -> str:
         return file_name
