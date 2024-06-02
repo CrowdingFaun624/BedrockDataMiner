@@ -1,24 +1,24 @@
 import json
-from typing import TYPE_CHECKING, Any, TypedDict
+from typing import TYPE_CHECKING, Any, TypedDict, cast
 
 import Downloader.Accessor as Accessor
 import Downloader.DownloadManager as DownloadManager
 import Downloader.LocalManager as LocalManager
 import Downloader.Manager as Manager
-import Downloader.MyAccessor as MyAccessor
 import Downloader.StoredManager as StoredManager
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Utilities.TypeVerifier.TypeVerifierImporter as TypeVerifierImporter
+import Utilities.Scripts as Scripts
 import Version.VersionFileType as VersionFileType
 import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Version.Version as Version
 
-ACCESSORS:dict[str,type[Accessor.Accessor]] = {
-    "MyAccessor": MyAccessor.MyAccessor,
-}
+# ACCESSORS:dict[str,type[Accessor.Accessor]] = {
+#     "ZipAccessor": MyAccessor.
+# }
 
 MANAGERS:dict[str,type[Manager.Manager]] = {
     "DownloadManager": DownloadManager.DownloadManager,
@@ -52,7 +52,18 @@ class AccessorType():
         return self.accessor_class(self.name, manager, version, accessor_arguments)
 
 def parse_accessor_types(data:dict[str,AccessorTypedDict]) -> dict[str,AccessorType]:
-    return {key: AccessorType(key, MANAGERS[accessor_data["manager"]], ACCESSORS[accessor_data["accessor"]], TypeVerifierImporter.parse_type_verifier(accessor_data["parameters"])) for key, accessor_data in data.items()}
+    accessor_scripts = Scripts.scripts.get_all_in_directory("accessors/")
+    accessor_types:dict[str,type[Accessor.Accessor]] = {}
+    for file_name, script in accessor_scripts.items():
+        class_name = file_name.removeprefix("accessors/").removesuffix(".lua").replace("/", ".")
+        accessor_types[class_name] = type(class_name, (Accessor.ScriptedAccessor,), dict(script()))
+    output:dict[str,AccessorType] = {}
+    for key, accessor_data in data.items():
+        accessor_type = accessor_types.get(accessor_data["accessor"], None)
+        if accessor_type is None:
+            raise KeyError("Unrecognized AccessorType \"%s\"!" % (accessor_data["accessor"]))
+        output[key] = AccessorType(key, MANAGERS[accessor_data["manager"]], accessor_types[accessor_data["accessor"]], TypeVerifierImporter.parse_type_verifier(accessor_data["parameters"]))
+    return output
 
 def import_accessor_types() -> dict[str,AccessorType]:
     with open(FileManager.ACCESSOR_TYPES_FILE, "rt") as f:
