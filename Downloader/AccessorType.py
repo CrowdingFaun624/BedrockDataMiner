@@ -56,7 +56,7 @@ def parse_accessor_types(data:dict[str,AccessorTypedDict]) -> dict[str,AccessorT
     accessor_types:dict[str,type[Accessor.Accessor]] = {}
     for file_name, script in accessor_scripts.items():
         class_name = file_name.removeprefix("accessors/").removesuffix(".lua").replace("/", ".")
-        accessor_types[class_name] = type(class_name, (Accessor.ScriptedAccessor,), dict(script()))
+        accessor_types[class_name] = type(class_name, (Accessor.Accessor, Scripts.ScriptedObject), dict(script()))
     output:dict[str,AccessorType] = {}
     for key, accessor_data in data.items():
         accessor_type = accessor_types.get(accessor_data["accessor"], None)

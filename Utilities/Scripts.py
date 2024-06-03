@@ -1,8 +1,9 @@
-from typing import IO, Any, Iterable
+from typing import IO, Any, Callable, Iterable
 
 import jqpy  # library that doesn't let me compile but will work on Windows
 import lupa  # looks like this has no type hinting whatsoever
 from pathlib2 import Path
+from typing_extensions import Self
 
 import Utilities.FileManager as FileManager
 
@@ -114,3 +115,18 @@ def main() -> None:
     print(output)
 
 scripts = Scripts()
+
+class ScriptedObject():
+    '''
+    Subclasses of ScriptedObject will have all unbound functions be bound to them.
+    '''
+
+    def __new__(cls, *args, **kwargs) -> Self:
+        def make_the_function(self: Self, func:Callable) -> Callable:
+            return lambda *function_arguments, **function_keyword_arguments: func(self, *function_arguments, **function_keyword_arguments)
+        output = super().__new__(cls)
+        for attribute in cls.__dict__:
+            attr = getattr(output, attribute)
+            if not attribute.startswith("__") and hasattr(attr, "__call__") and not isinstance(attr, type):
+                setattr(output, attribute, make_the_function(output, attr))
+        return output

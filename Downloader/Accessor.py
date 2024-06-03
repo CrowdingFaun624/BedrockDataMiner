@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING, Any, Callable, Literal, overload
+from typing import TYPE_CHECKING, Any, Literal, overload
 
 from pathlib2 import Path
-from typing_extensions import Self
 
 import Downloader.Manager as Manager
 import Utilities.FileManager as FileManager
@@ -53,16 +52,3 @@ class Accessor():
 
     def all_done(self) -> None:
         return self.manager.all_done()
-
-class ScriptedAccessor(Accessor):
-
-    def __new__(cls, *args, **kwargs) -> Self:
-        def make_the_function(self: Self, func:Callable) -> Callable:
-            # print(self, func, attribute, args, kwargs)
-            return lambda *function_arguments, **function_keyword_arguments: func(self, *function_arguments, **function_keyword_arguments)
-        output = super().__new__(cls)
-        for attribute in cls.__dict__:
-            attr = getattr(output, attribute)
-            if not attribute.startswith("__") and hasattr(attr, "__call__") and not isinstance(attr, type):
-                setattr(output, attribute, make_the_function(output, attr))
-        return output
