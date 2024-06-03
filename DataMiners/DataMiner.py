@@ -41,6 +41,22 @@ class DataMinerSettings():
         self.dependencies = dependencies if dependencies is not None else []
         self.kwargs = kwargs
 
+    def get_name(self) -> str:
+        '''
+        Get the name of this DataMinerSettings, and raise an exception if it is None.
+        '''
+        if self.name is None:
+            raise Exceptions.AttributeNoneError("name", self)
+        return self.name
+
+    def get_file_name(self) -> str:
+        '''
+        Get the file name of this DataMinerSettings, and raise an exception if it is None.
+        '''
+        if self.file_name is None:
+            raise Exceptions.AttributeNoneError("file_name", self)
+        return self.file_name
+
     def __repr__(self) -> str:
         if self.name is None:
             return "<DataMinerSettings \"%s\"–\"%s\">" % (str(self.version_range.start), str(self.version_range.stop))
@@ -54,8 +70,8 @@ class DataMiner():
     def __init__(self, version:Version.Version, settings:DataMinerSettings) -> None:
         self.version = version
         self.settings = settings
-        self.file_name = self.settings.file_name
-        self.name = self.settings.name
+        self.file_name = self.settings.get_file_name()
+        self.name = self.settings.get_name()
         self.files = set(self.settings.files)
         self.dependencies = self.settings.dependencies
         if not isinstance(self, NullDataMiner) and self.version not in self.settings.version_range:

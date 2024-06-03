@@ -221,10 +221,9 @@ def open_file() -> DataMinersCollections:
 
 def get_dependencies(dataminer_settings:DataMiner.DataMinerSettings, dataminer_settings_dict:dict[str, DataMiner.DataMinerSettings], already:set[str]|None=None) -> list[str]:
     if already is None: already = set()
-    assert dataminer_settings.name is not None
-    if dataminer_settings.name in already:
-        return [dataminer_settings.name]
-    already.add(dataminer_settings.name)
+    if dataminer_settings.get_name() in already:
+        return [dataminer_settings.get_name()]
+    already.add(dataminer_settings.get_name())
     duplicated_dataminer_settings:list[str] = []
     for dependency in dataminer_settings.dependencies:
         already_copy = already.copy()
@@ -236,9 +235,7 @@ def check_for_loops(used_versions:set[Version.Version], dataminers:list[DataMine
     versions = sorted(used_versions)
     for version in versions:
         dataminer_settings_list = [dataminer.get_dataminer_settings(version) for dataminer in dataminers]
-        if any(dataminer_settings.name is None for dataminer_settings in dataminer_settings_list):
-            raise RuntimeError("A dataminer_settings has a None name!")
-        dataminer_settings_dict = {dataminer_settings.name: dataminer_settings for dataminer_settings in dataminer_settings_list if dataminer_settings.name is not None}
+        dataminer_settings_dict = {dataminer_settings.get_name(): dataminer_settings for dataminer_settings in dataminer_settings_list}
         for dataminer_settings in dataminer_settings_list:
             duplicated_datminer_settings = get_dependencies(dataminer_settings, dataminer_settings_dict)
             if len(duplicated_datminer_settings) > 0:
