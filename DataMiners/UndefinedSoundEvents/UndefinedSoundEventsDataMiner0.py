@@ -1,9 +1,9 @@
 from typing import Generator, Iterable, TypeVar
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiner as UndefinedSoundEventsDataMiner
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 a, b = TypeVar("a"), TypeVar("b")
 def glue_iterable(iter1:Iterable[a], iter2:Iterable[b]) -> Generator[a|b,None,None]:
@@ -12,9 +12,9 @@ def glue_iterable(iter1:Iterable[a], iter2:Iterable[b]) -> Generator[a|b,None,No
 
 class UndefinedSoundEventsDataMiner0(UndefinedSoundEventsDataMiner.UndefinedSoundEventsDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "use_music_definitions": (bool, True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("use_music_definitions", "a bool", True, bool),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.use_music_definitions:bool = kwargs["use_music_definitions"]

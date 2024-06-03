@@ -1,20 +1,20 @@
 from typing import Any
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMiners as DataMiners
 import DataMiners.TagSearcher.TagSearcherDataMiner as TagSearcherDataMiner
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class TagSearcherDataMiner0(TagSearcherDataMiner.TagSearcherDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "tags": (str, True),
-        "sort_output": (bool, True),
-        "none_okay": (bool, False),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("sort_output", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("none_okay", "a bool", False, bool),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.tags:str = kwargs["tags"]

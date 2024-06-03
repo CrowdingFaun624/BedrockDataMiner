@@ -1,15 +1,14 @@
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.TextureList.TextureListDataMiner as TextureListDataMiner
 import Utilities.Sorting as Sorting
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class TextureListDataMiner0(TextureListDataMiner.TextureListDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "locations": (DataMinerParameters.ListParameters(str), True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.locations:list[str] = kwargs["locations"]

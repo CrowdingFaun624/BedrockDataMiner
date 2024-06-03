@@ -5,17 +5,16 @@ from typing import Any
 import pyjson5  # supports comments
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Models.ModelsDataMiner as ModelsDataMiner
 import Utilities.Sorting as Sorting
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class ModelsDataMiner0(ModelsDataMiner.ModelsDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "location": (str, True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.location:str = kwargs["location"]

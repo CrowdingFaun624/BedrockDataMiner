@@ -3,18 +3,18 @@ from typing import IO, Any, Callable, cast
 import pyjson5  # supports comments
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Items.ItemsDataMiner as ItemsDataMiner
 import Utilities.Sorting as Sorting
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class ItemsDataMiner1(ItemsDataMiner.ItemsDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "locations": (DataMinerParameters.ListParameters(str), True),
-        "pack_type": (DataMinerParameters.LiteralParameters(["behavior_packs", "resource_packs"]), True)
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs"))),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.locations:list[str] = kwargs["locations"]

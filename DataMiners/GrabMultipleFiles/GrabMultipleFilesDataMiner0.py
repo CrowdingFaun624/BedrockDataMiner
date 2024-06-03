@@ -1,22 +1,22 @@
 from typing import Any
 
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabMultipleFiles.GrabMultipleFilesDataMiner as GrabMultipleFilesDataMiner
 import Utilities.Sorting as Sorting
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "data_type": (DataMinerParameters.LiteralParameters(DataTypes.DataTypes.data_types()), False),
-        "ignore_suffixes": (DataMinerParameters.ListParameters(str), False),
-        "location": (str, True),
-        "suffixes": (DataMinerParameters.ListParameters(str), False),
-        "file_display_name": ((str, type(None)), True),
-        "insert_pack": (str, False),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a DataType", False, TypeVerifier.EnumTypeVerifier(DataTypes.DataTypes.data_types())),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_display_name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", "a str", False, str),
+    )
 
     def initialize(self, **kwargs) -> None:
         if "data_type" not in kwargs:

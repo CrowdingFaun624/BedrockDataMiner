@@ -1,14 +1,14 @@
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiner as UnusedSoundEventsDataMiner
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class UnusedSoundEventsDataMiner0(UnusedSoundEventsDataMiner.UnusedSoundEventsDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "use_music_definitions": (bool, True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("use_music_definitions", "a bool", True, bool),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.use_music_definitions:bool = kwargs["use_music_definitions"]

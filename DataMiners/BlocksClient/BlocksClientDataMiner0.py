@@ -4,14 +4,16 @@ import pyjson5  # supports comments
 
 import DataMiners.BlocksClient.BlocksClientDataMiner as BlocksDataMiner
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Sorting as Sorting
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({"blocks_locations": (DataMinerParameters.ListParameters(str), True)})
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("blocks_locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))
+    )
 
     def initialize(self, **kwargs) -> None:
         self.blocks_locations:list[str] = kwargs["blocks_locations"]

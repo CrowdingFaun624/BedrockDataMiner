@@ -1,17 +1,17 @@
 import json
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
 import Utilities.Sorting as Sorting
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class SplashesDataMiner1(SplashesDataMiner.SplashesDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "splashes_location": (str, True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("splashes_location", "a str", True, str),
+    )
     
     def initialize(self, **kwargs) -> None:
         self.splashes_location:str = kwargs["splashes_location"]

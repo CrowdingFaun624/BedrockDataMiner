@@ -3,17 +3,17 @@ from typing import IO, Any, Callable, cast
 import pyjson5  # supports comments
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.SoundsJson.SoundsJsonDataMiner as SoundsJsonDataMiner
 import Utilities.Sorting as Sorting
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "sounds_json_locations": (DataMinerParameters.ListParameters(str), True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("sounds_json_locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.sounds_json_locations:list[str] = kwargs["sounds_json_locations"]

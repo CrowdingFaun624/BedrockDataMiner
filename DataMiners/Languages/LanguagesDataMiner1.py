@@ -1,16 +1,16 @@
 import json
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class LanguagesDataMiner1(LanguagesDataMiner.LanguagesDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "languages_location": (str, True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("languages_location", "a str", True, str),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.languages_location:str = kwargs["languages_location"]

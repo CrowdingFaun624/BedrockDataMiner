@@ -1,20 +1,20 @@
 from typing import Any
 
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabSingleFile.GrabSingleFileDataMiner as GrabSingleFileDataMiner
 import Utilities.Sorting as Sorting
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "data_type": (DataMinerParameters.LiteralParameters(DataTypes.DataTypes.data_types()), False),
-        "location": (str, True),
-        "file_display_name": (str, True),
-        "insert_pack": (str, False),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a DataType", False, TypeVerifier.EnumTypeVerifier(DataTypes.DataTypes.data_types())),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_display_name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", "a str", False, str),
+    )
 
     def initialize(self, **kwargs) -> None:
         if "data_type" not in kwargs:

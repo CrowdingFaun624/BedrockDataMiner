@@ -176,7 +176,8 @@ class DataMinerCollectionIntermediate():
             dataminer_class = self.dataminer_classes[dataminer_settings["name"]]
             parameters = dataminer_class.parameters
             if parameters is not None:
-                exceptions.extend(parameters.validate(dataminer_settings["parameters"]))
+                type_verifier_trace = TypeVerifier.make_trace([self, "%s (%i)" % (dataminer_settings["name"], index)])
+                exceptions.extend(parameters.verify(dataminer_settings["parameters"], type_verifier_trace))
         for exception in exceptions:
             traceback.print_exception(exception)
             print()

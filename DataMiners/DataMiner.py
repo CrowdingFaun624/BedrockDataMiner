@@ -6,8 +6,6 @@ from typing import (IO, Any, Callable, Iterable, Literal, Mapping, Sequence,
 from pathlib2 import Path
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
-import DataMiners.DataMinerTyping as DataMinerTyping
 import Downloader.Accessor as Accessor
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
@@ -15,6 +13,7 @@ import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
 import Version.VersionParser as VersionParser
 import Version.VersionRange as VersionRange
@@ -50,7 +49,7 @@ class DataMinerSettings():
 
 class DataMiner():
 
-    parameters:DataMinerParameters.Parameters|None = None
+    parameters:TypeVerifier.TypeVerifier|None = None
 
     def __init__(self, version:Version.Version, settings:DataMinerSettings) -> None:
         self.version = version
@@ -83,8 +82,8 @@ class DataMiner():
         '''Makes the dataminer get the file. Returns the output and stores it in a file.'''
         data = self.activate(environment)
         if data is None:
-            raise RuntimeError("DataMiner %s returned None!" % self)
-        data_path = FileManager.get_version_data_path(self.version.get_version_directory, None)
+            raise Exceptions.DataMinerNullReturnError(self)
+        data_path = FileManager.get_version_data_path(self.version.get_version_directory(), None)
         if not data_path.exists():
             data_path.mkdir()
         with open(self.get_data_file_path(), "wt") as f:

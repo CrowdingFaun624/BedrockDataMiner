@@ -3,17 +3,17 @@ from typing import IO, Any, Callable, cast
 import pyjson5  # supports comments
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
 import Utilities.Sorting as Sorting
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class SplashesDataMiner0(SplashesDataMiner.SplashesDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "splashes_locations": (DataMinerParameters.ListParameters(str), True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("splashes_locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.splashes_locations = kwargs["splashes_locations"]

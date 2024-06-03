@@ -1,15 +1,15 @@
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "resource_packs_directory": (str, True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("resource_packs_directory", "a str", True, str),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.resource_packs_directory:str = kwargs["resource_packs_directory"]

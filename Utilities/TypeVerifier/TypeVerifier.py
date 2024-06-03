@@ -132,6 +132,10 @@ class TypeVerificationUnionError(TypeVerificationException):
     def __str__(self) -> str:
         return "%s is not %s, but instead %s due to %s!" % (self.trace.to_str(), self.expected_type, self.observed_type.__name__, [[str(exception) for exception in exception_list] for exception_list in self.causes])
 
+def make_trace(trace_items:list[Any]|None) -> Trace:
+    trace_items_final:list[tuple[object,TraceItemType]]|None = [(trace_item, TraceItemType.OTHER) for trace_item in trace_items] if trace_items is not None else None
+    return Trace(trace_items_final)
+
 type_verifier_typevar = TypeVar("type_verifier_typevar")
 class TypeVerifier(Generic[type_verifier_typevar]):
     '''Use `base_verify` to check the types of data.'''
@@ -139,8 +143,7 @@ class TypeVerifier(Generic[type_verifier_typevar]):
     def verify(self, data:type_verifier_typevar, trace:Trace) -> list[TypeVerificationException]: ...
 
     def base_verify(self, data:type_verifier_typevar, trace_items:list[Any]|None=None) -> None:
-        trace_items_final:list[tuple[object,TraceItemType]]|None = [(trace_item, TraceItemType.OTHER) for trace_item in trace_items] if trace_items is not None else None
-        exceptions = self.verify(data, Trace(trace_items_final))
+        exceptions = self.verify(data, make_trace(trace_items))
         if len(exceptions) > 0:
             for exception in exceptions:
                 traceback.print_exception(exception)

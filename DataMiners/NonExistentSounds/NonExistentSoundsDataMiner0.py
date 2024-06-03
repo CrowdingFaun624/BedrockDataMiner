@@ -1,9 +1,9 @@
 from typing import Generator
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.NonExistentSounds.NonExistentSoundsDataMiner as NonExistentSoundsDataMiner
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 def strip_file_name(file_name:str, resource_packs_location:str|None) -> str|None:
@@ -36,9 +36,9 @@ def get_sounds(sound_definitions:DataMinerTyping.MySoundDefinitionsJson) -> Gene
 
 class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "resource_packs_location": ((str, type(None)), True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("resource_packs_location", "a str or None", True, (str, type(None))),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.resource_packs_location:str|None = kwargs["resource_packs_location"]

@@ -1,13 +1,15 @@
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiner as BehaviorPacksDataMiner
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({"behavior_packs_directory": (str, True)})
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("behavior_packs_directory", "a str", True, str),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.behavior_packs_directory:str = kwargs["behavior_packs_directory"]

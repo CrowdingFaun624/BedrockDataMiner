@@ -1,17 +1,17 @@
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-import DataMiners.DataMinerParameters as DataMinerParameters
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Language.LanguageDataMiner as LanguageDataMiner
 import Utilities.Sorting as Sorting
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class LanguageDataMiner0(LanguageDataMiner.LanguageDataMiner):
 
-    parameters = DataMinerParameters.TypedDictParameters({
-        "language_code": (str, True),
-        "location": (str, True),
-        "file_display_name": (str, True),
-    })
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("language_code", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_display_name", "a str", True, str),
+    )
 
     def initialize(self, **kwargs) -> None:
         self.language_code:str = kwargs["language_code"]
