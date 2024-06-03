@@ -31,8 +31,8 @@ class Accessor():
     def install_all(self, destination:Path|None) -> None:
         return self.manager.install_all(destination)
 
-    def file_exists(self, name:str) -> bool:
-        return self.manager.file_exists(self.modify_file_name(name))
+    def file_exists(self, file_name:str) -> bool:
+        return self.manager.file_exists(self.modify_file_name(file_name))
 
     def get_files_in(self, parent:str) -> list[str]:
         return [self.trim_file_name(file) for file in self.manager.get_files_in(self.modify_file_name(parent))]

@@ -58,10 +58,10 @@ class DownloadManager(Manager.Manager):
         assert self.file_set is not None
         return self.file_set
 
-    def file_exists(self, name:str) -> bool:
+    def file_exists(self, file_name:str) -> bool:
         if not self.installed.get():
             self.install_all()
-        return name in self.get_file_set()
+        return file_name in self.get_file_set()
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
         if not self.installed.get():

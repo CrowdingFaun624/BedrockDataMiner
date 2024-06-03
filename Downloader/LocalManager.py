@@ -55,8 +55,8 @@ class LocalManager(Manager.Manager):
                     output.extend(self.get_file_list(subpath))
             return output
 
-    def file_exists(self, name:str) -> bool:
-        return self.bedrock_local.joinpath(name).exists()
+    def file_exists(self, file_name:str) -> bool:
+        return self.bedrock_local.joinpath(file_name).exists()
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
         full_path = self.bedrock_local.joinpath(file_name)

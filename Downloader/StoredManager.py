@@ -44,10 +44,10 @@ class StoredManager(Manager.Manager):
             self.file_list = list(self.index.keys())
         return self.file_list
 
-    def file_exists(self, name:str) -> bool:
+    def file_exists(self, file_name:str) -> bool:
         self.read_index()
         assert self.index is not None
-        return name in self.index
+        return file_name in self.index
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
         self.read_index()

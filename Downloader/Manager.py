@@ -33,7 +33,7 @@ class Manager():
         '''Installs all of the files of the Version.'''
         raise NotImplementedError("`install_all` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
-    def file_exists(self, name:str) -> bool:
+    def file_exists(self, file_name:str) -> bool:
         '''Returns if the file exists in this version.'''
         raise NotImplementedError("`file_exists` is not implemented for \"%s\"'s InstallManager!" % self.version.name)
 
