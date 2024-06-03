@@ -169,7 +169,7 @@ def parse() -> tuple[dict[str,Version.Version], VersionTags.VersionTags]:
         if id in versions:
             raise KeyError("Version named \"%s\" already exists!" % id)
 
-        versions[id] = Version.Version(id, files, parent, time, tags, index, version_tags, version_file_types, wiki_page, development_categories)
+        versions[id] = Version.Version(id, files, parent, time, tags, index, version_tags, wiki_page, development_categories)
 
     assign_parents(versions)
     verify_ordering(versions, version_tags)

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 class Version():
 
-    def __init__(self, name:str, files:dict[str,dict[str,Any]], parent_str:str|None, time_str:str|None, tags_str:list[str], index:int, version_tags:VersionTags.VersionTags, version_file_types:dict[str,VersionFileType.VersionFileType], wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
+    def __init__(self, name:str, files:dict[str,dict[str,Any]], parent_str:str|None, time_str:str|None, tags_str:list[str], index:int, version_tags:VersionTags.VersionTags, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
         self.name = name
         self.files_str = files
         self.parent_str = parent_str
