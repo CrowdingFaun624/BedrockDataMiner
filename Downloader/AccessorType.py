@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 BUILT_IN_ACCESSORS:dict[str,type[Accessor.Accessor]] = {accessor_class.__name__: accessor_class for accessor_class in [
     Accessor.Accessor,
-    Accessor.DirectoryAccessor,
     Accessor.SubDirectoryAccessor
 ]}
 

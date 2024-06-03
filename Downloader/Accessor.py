@@ -22,11 +22,6 @@ class Accessor():
     def initialize(self) -> None:
         pass
 
-class DirectoryAccessor(Accessor):
-    '''
-    Accessor with common directory methods.
-    '''
-
     def modify_file_name(self, file_name:str="") -> str:
         return file_name
 
@@ -61,7 +56,7 @@ class DirectoryAccessor(Accessor):
     def all_done(self) -> None:
         return self.manager.all_done()
 
-class SubDirectoryAccessor(DirectoryAccessor):
+class SubDirectoryAccessor(Accessor):
     '''
     Accessor for directory access that automatically adds a certain string to the beginning of all paths.
     '''
