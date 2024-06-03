@@ -17,10 +17,7 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
     )
 
     def initialize(self, **kwargs) -> None:
-        if "data_type" not in kwargs:
-            self.data_type = DataTypes.DataTypes.json
-        else:
-            self.data_type = DataTypes.DataTypes[kwargs["data_type"]]
+        self.data_type = DataTypes.DataTypes[kwargs.get("data_type", "json")]
         self.location:str = kwargs["location"]
         self.file_display_name:str|None = kwargs["file_display_name"]
         self.insert_pack:str|None = kwargs.get("insert_pack", None)

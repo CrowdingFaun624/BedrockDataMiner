@@ -1,6 +1,6 @@
 # The json is invalid in very old versions, this tries to correct that.
 
-from typing import Any
+from typing import Any, Callable
 
 import pyjson5  # supports comments
 
@@ -9,17 +9,16 @@ import DataMiners.Models.ModelsDataMiner as ModelsDataMiner
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
+location_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (value.endswith("/"), "location does not end in \"/\"")
 
 class ModelsDataMiner0(ModelsDataMiner.ModelsDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=location_function),
     )
 
     def initialize(self, **kwargs) -> None:
         self.location:str = kwargs["location"]
-        if not self.location.endswith("/"):
-            raise ValueError("\"location\" \"%s\" does not end in \"/\"!" % (self.location))
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         packs = environment.dependency_data["resource_packs"]

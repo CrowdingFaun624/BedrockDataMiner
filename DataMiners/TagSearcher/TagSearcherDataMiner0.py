@@ -19,7 +19,6 @@ class TagSearcherDataMiner0(TagSearcherDataMiner.TagSearcherDataMiner):
     def initialize(self, **kwargs) -> None:
         self.tags:str = kwargs["tags"]
         self.sort_output = kwargs["sort_output"]
-        # self.record_type = RecordType[kwargs["record_type"]]
         self.none_okay = kwargs.get("none_okay", False)
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataPath.DataPath|Any]:

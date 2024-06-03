@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Any, Callable, Literal
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataTypes as DataTypes
@@ -6,35 +6,25 @@ import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiner as GrabMu
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
+location_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (value.endswith("/"), "location does not end in \"/\"")
 
 class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultiplePackFilesDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a DataType", False, TypeVerifier.EnumTypeVerifier(DataTypes.DataTypes.data_types())),
         TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=location_function),
         TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs"))),
         TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("file_display_name", "a str", True, str),
     )
 
     def initialize(self, **kwargs) -> None:
-        if "data_type" not in kwargs:
-            self.data_type = DataTypes.DataTypes.json
-        else:
-            self.data_type = DataTypes.DataTypes[kwargs["data_type"]]
-        if "ignore_suffixes" in kwargs:
-            self.ignore_suffixes:list[str]|None = kwargs["ignore_suffixes"]
-        else:
-            self.ignore_suffixes = None
+        self.data_type = DataTypes.DataTypes[kwargs.get("data_type", "json")]
+        self.ignore_suffixes:list[str]|None = kwargs.get("ignore_suffixes", None)
         self.location:str = kwargs["location"]
-        if not self.location.endswith("/"):
-            raise ValueError("\"location\" \"%s\" does not end in \"/\"!" % (self.location))
         self.pack_type:Literal["resource_packs", "behavior_packs"] = kwargs["pack_type"]
-        if "suffixes" in kwargs:
-            self.suffixes:list[str]|None = kwargs["suffixes"]
-        else:
-            self.suffixes = None
+        self.suffixes:list[str]|None = kwargs.get("suffixes", None)
         self.file_display_name:str|None = kwargs["file_display_name"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:

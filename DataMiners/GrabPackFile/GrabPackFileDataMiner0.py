@@ -17,10 +17,7 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
     )
 
     def initialize(self, **kwargs) -> None:
-        if "data_type" not in kwargs:
-            self.data_type = DataTypes.DataTypes.json
-        else:
-            self.data_type = DataTypes.DataTypes[kwargs["data_type"]]
+        self.data_type = DataTypes.DataTypes[kwargs.get("data_type", "json")]
         self.locations:list[str] = kwargs["locations"]
         self.pack_type:Literal["resource_packs", "behavior_packs"] = kwargs["pack_type"]
         self.file_display_name:str|None = kwargs["file_display_name"]
