@@ -15,7 +15,6 @@ class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDa
         TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=location_function),
         TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_display_name", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", "a str", False, str),
     )
 
@@ -24,7 +23,6 @@ class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDa
         self.ignore_suffixes:list[str]|None = kwargs.get("ignore_suffixes", None)
         self.location:str = kwargs["location"]
         self.suffixes:list[str]|None = kwargs.get("suffixes", None)
-        self.file_display_name:str|None = kwargs["file_display_name"]
         self.insert_pack:str|None = kwargs.get("insert_pack", None)
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
@@ -46,10 +44,7 @@ class GrabMultipleFilesDataMiner0(GrabMultipleFilesDataMiner.GrabMultipleFilesDa
                 assert not file_name.endswith(suffix)
                 files[file_name] = path
         if len(files) == 0:
-            if self.file_display_name is None:
-                raise FileNotFoundError("No files found in \"%s\"" % self.version)
-            else:
-                raise FileNotFoundError("No %s files found in \"%s\"" % (self.file_display_name, self.version))
+            raise FileNotFoundError("No files found in \"%s\"" % self.version)
 
         output:dict[str,dict[str,Any]] = {}
         for file_name, path in files.items():

@@ -12,14 +12,12 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a DataType", False, TypeVerifier.EnumTypeVerifier(DataTypes.DataTypes.data_types())),
         TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_display_name", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", "a str", False, str),
     )
 
     def initialize(self, **kwargs) -> None:
         self.data_type = DataTypes.DataTypes[kwargs.get("data_type", "json")]
         self.location:str = kwargs["location"]
-        self.file_display_name:str|None = kwargs["file_display_name"]
         self.insert_pack:str|None = kwargs.get("insert_pack", None)
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
@@ -29,11 +27,7 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
             file = self.get_accessor("client").read(self.location, self.data_type.get_data_format())
         except FileNotFoundError as e:
             exception = e
-            if self.file_display_name is None:
-                exception_message = "No file found in \"%s\"" % (self.version)
-            else:
-                exception_message = "No %s file found in \"%s\"!" % (self.file_display_name, self.version)
-            exception.args = tuple(list(exception.args) + [exception_message])
+            exception.args = tuple(list(exception.args) + ["No file found in \"%s\"" % (self.version)])
         if exception is not None:
             raise exception
 

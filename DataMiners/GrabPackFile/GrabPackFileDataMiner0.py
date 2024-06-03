@@ -13,14 +13,12 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a DataType", False, TypeVerifier.EnumTypeVerifier(DataTypes.DataTypes.data_types())),
         TypeVerifier.TypedDictKeyTypeVerifier("locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_display_name", "a str", True, str),
     )
 
     def initialize(self, **kwargs) -> None:
         self.data_type = DataTypes.DataTypes[kwargs.get("data_type", "json")]
         self.locations:list[str] = kwargs["locations"]
         self.pack_type:Literal["resource_packs", "behavior_packs"] = kwargs["pack_type"]
-        self.file_display_name:str|None = kwargs["file_display_name"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         packs = environment.dependency_data[self.pack_type]
@@ -33,10 +31,7 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
         accessor = self.get_accessor("client")
         files:dict[str,Any] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
-            if self.file_display_name is None:
-                raise FileNotFoundError("No files found in \"%s\"" % self.version)
-            else:
-                raise FileNotFoundError("No %s files found in \"%s\"" % (self.file_display_name, self.version))
+            raise FileNotFoundError("No files found in \"%s\"" % self.version)
 
         output = {pack_files[pack_file]: data for pack_file, data in files.items()}
         return Sorting.sort_everything(output)

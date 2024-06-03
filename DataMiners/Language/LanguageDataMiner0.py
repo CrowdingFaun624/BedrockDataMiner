@@ -10,13 +10,11 @@ class LanguageDataMiner0(LanguageDataMiner.LanguageDataMiner):
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("language_code", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_display_name", "a str", True, str),
     )
 
     def initialize(self, **kwargs) -> None:
         self.language_code:str = kwargs["language_code"]
         self.location:str = kwargs["location"]
-        self.file_display_name:str|None = kwargs["file_display_name"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Language:
         packs = environment.dependency_data["resource_packs"]
@@ -27,10 +25,7 @@ class LanguageDataMiner0(LanguageDataMiner.LanguageDataMiner):
         accessor = self.get_accessor("client")
         files:dict[str,str] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
-            if self.file_display_name is None:
-                raise FileNotFoundError("No files found in \"%s\"" % self.version)
-            else:
-                raise FileNotFoundError("No %s files found in \"%s\"" % (self.file_display_name, self.version))
+            raise FileNotFoundError("No files found in \"%s\"" % self.version)
 
         output:DataMinerTyping.Language = {}
         for pack_file, language_file in files.items():

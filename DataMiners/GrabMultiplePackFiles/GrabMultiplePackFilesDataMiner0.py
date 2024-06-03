@@ -16,7 +16,6 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
         TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=location_function),
         TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs"))),
         TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_display_name", "a str", True, str),
     )
 
     def initialize(self, **kwargs) -> None:
@@ -25,7 +24,6 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
         self.location:str = kwargs["location"]
         self.pack_type:Literal["resource_packs", "behavior_packs"] = kwargs["pack_type"]
         self.suffixes:list[str]|None = kwargs.get("suffixes", None)
-        self.file_display_name:str|None = kwargs["file_display_name"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         packs = environment.dependency_data[self.pack_type]
@@ -58,9 +56,6 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
                 output[file_name][pack_name] = file_data
 
         if len(output) == 0:
-            if self.file_display_name is None:
-                raise FileNotFoundError("No files found in \"%s\"" % self.version)
-            else:
-                raise FileNotFoundError("No %s files found in \"%s\"" % (self.file_display_name, self.version))
+            raise FileNotFoundError("No files found in \"%s\"" % self.version)
 
         return Sorting.sort_everything(output)
