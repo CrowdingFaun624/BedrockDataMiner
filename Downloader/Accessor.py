@@ -9,6 +9,9 @@ if TYPE_CHECKING:
     import Version.Version as Version
 
 class Accessor():
+    '''
+    Base accessor class
+    '''
 
     def __init__(self, name:str, manager:Manager.Manager, version:"Version.Version", file_type_arguments:Any) -> None:
         self.name = name
@@ -18,6 +21,11 @@ class Accessor():
 
     def initialize(self) -> None:
         pass
+
+class DirectoryAccessor(Accessor):
+    '''
+    Accessor with common directory methods.
+    '''
 
     def modify_file_name(self, file_name:str="") -> str:
         return file_name
@@ -52,3 +60,22 @@ class Accessor():
 
     def all_done(self) -> None:
         return self.manager.all_done()
+
+class SubDirectoryAccessor(DirectoryAccessor):
+    '''
+    Accessor for directory access that automatically adds a certain string to the beginning of all paths.
+    '''
+
+    file_prepension:str
+    '''
+    The string to prepend to incoming file names and remove from outgoing file names.
+    '''
+
+    def initialize(self) -> None:
+        self.file_prepension = ""
+
+    def modify_file_name(self, file_name:str="") -> str:
+        return self.file_prepension + file_name
+
+    def trim_file_name(self, file_name:str) -> str:
+        return file_name[len(self.file_prepension):]

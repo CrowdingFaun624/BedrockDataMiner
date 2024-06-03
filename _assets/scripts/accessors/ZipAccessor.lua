@@ -1,6 +1,7 @@
 --- @alias readFileMode `b` | `t`
 
 --- @class (exact) zip_accessor
+--- @field inherit string
 --- @field file_prepension string
 --- @field name string
 --- @field manager table
@@ -17,6 +18,8 @@
 --- @field get_file fun( self, file_name: string, mode: readFileMode ): ( table )
 --- @field all_done fun( self ): (nil)
 local zip_accessor = {}
+
+zip_accessor.inherit = "SubDirectoryAccessor"
 
 function zip_accessor:initialize()
     local has_ipa = false
@@ -35,18 +38,6 @@ function zip_accessor:initialize()
     else
         self.file_prepension = "assets/"
     end
-end
-
-function zip_accessor:modify_file_name( file_name )
-    if file_name == nil then
-        return self.file_prepension
-    end
-    return self.file_prepension .. file_name
-end
-
-function zip_accessor:trim_file_name( file_name )
-    local file_prepension_length = self.file_prepension:len()
-    return file_name:sub( file_prepension_length + 1 ) -- lua is 1-indexed
 end
 
 return zip_accessor

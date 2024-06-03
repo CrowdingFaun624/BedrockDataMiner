@@ -1,5 +1,5 @@
 import json
-from typing import TYPE_CHECKING, Any, TypedDict, cast
+from typing import TYPE_CHECKING, Any, TypedDict
 
 import Downloader.Accessor as Accessor
 import Downloader.DownloadManager as DownloadManager
@@ -7,24 +7,26 @@ import Downloader.LocalManager as LocalManager
 import Downloader.Manager as Manager
 import Downloader.StoredManager as StoredManager
 import Utilities.FileManager as FileManager
+import Utilities.Scripts as Scripts
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Utilities.TypeVerifier.TypeVerifierImporter as TypeVerifierImporter
-import Utilities.Scripts as Scripts
 import Version.VersionFileType as VersionFileType
 import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Version.Version as Version
 
-# ACCESSORS:dict[str,type[Accessor.Accessor]] = {
-#     "ZipAccessor": MyAccessor.
-# }
+BUILT_IN_ACCESSORS:dict[str,type[Accessor.Accessor]] = {accessor_class.__name__: accessor_class for accessor_class in [
+    Accessor.Accessor,
+    Accessor.DirectoryAccessor,
+    Accessor.SubDirectoryAccessor
+]}
 
-MANAGERS:dict[str,type[Manager.Manager]] = {
-    "DownloadManager": DownloadManager.DownloadManager,
-    "LocalManager": LocalManager.LocalManager,
-    "StoredManager": StoredManager.StoredManager,
-}
+MANAGERS:dict[str,type[Manager.Manager]] = {manager_class.__name__: manager_class for manager_class in [
+    DownloadManager.DownloadManager,
+    LocalManager.LocalManager,
+    StoredManager.StoredManager,
+]}
 
 class AccessorTypedDict(TypedDict):
     accessor: str
@@ -56,7 +58,15 @@ def parse_accessor_types(data:dict[str,AccessorTypedDict]) -> dict[str,AccessorT
     accessor_types:dict[str,type[Accessor.Accessor]] = {}
     for file_name, script in accessor_scripts.items():
         class_name = file_name.removeprefix("accessors/").removesuffix(".lua").replace("/", ".")
-        accessor_types[class_name] = type(class_name, (Accessor.Accessor, Scripts.ScriptedObject), dict(script()))
+        attributes = dict(script())
+        inherit_from:str = attributes.pop("inherit", None)
+        if inherit_from is None:
+            raise KeyError("Accessor \"%s\" attribute \"inherit\" is missing!" % (class_name,))
+        superclass = BUILT_IN_ACCESSORS.get(inherit_from, None)
+        if superclass is None:
+            raise KeyError("Accessor \"%s\" attempts to subclass unknown built-in Accessor \"%s\"!" % (class_name, inherit_from))
+        accessor_types[class_name] = type(class_name, (superclass, Scripts.ScriptedObject), dict(script()))
+
     output:dict[str,AccessorType] = {}
     for key, accessor_data in data.items():
         accessor_type = accessor_types.get(accessor_data["accessor"], None)
