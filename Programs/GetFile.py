@@ -10,8 +10,7 @@ def main() -> None:
     file = input("File: ")
     install_manager = version.version_files["client"].accessors["download"]
     if install_manager is not None:
-        assert version.version_directory is not None
-        destination = version.version_directory.joinpath(file)
+        destination = version.get_version_directory().joinpath(file)
         file_promise = install_manager.get_file(file)
         with open(destination, "wb") as destination_file, file_promise.open() as source_file:
             destination_file.write(source_file.read())

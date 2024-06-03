@@ -19,7 +19,6 @@ class VersionFile():
                 raise ValueError("File Type %s for version %s does not recognize accessor \"%s\"!" % (self.file_type.name, self.version.name, accessor))
 
         # sort this VersionFile's accessors in the same way as its FileType
-        assert version.version_directory is not None
         self.accessors:dict[str,Accessor.Accessor] = {}
         for allowed_accessor in self.file_type.allowed_accessors:
             if allowed_accessor in accessors:

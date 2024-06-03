@@ -146,6 +146,12 @@ class Version():
         self.parent.add_child(self)
         self.siblings = self.parent.children
 
+    def get_version_directory(self) -> Path:
+        '''Returns this Version's directory, and raises an error if it does not exist.'''
+        if self.version_directory is None:
+            raise RuntimeError("Version directory of %s does not exist!" % (self,))
+        return self.version_directory
+
     def __str__(self) -> str:
         return self.name
 

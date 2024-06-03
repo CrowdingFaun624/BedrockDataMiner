@@ -48,8 +48,7 @@ class AccessorType():
 
     def create_accessor(self, version:"Version.Version", file_type:VersionFileType.VersionFileType, version_tags:VersionTags.VersionTags, accessor_arguments:Any) -> Accessor.Accessor:
         self.parameters.base_verify(accessor_arguments, [version.name, file_type.name, self.name])
-        assert version.version_directory is not None
-        manager = self.manager_class(version, accessor_arguments, version.version_directory.joinpath(file_type.install_location), version_tags)
+        manager = self.manager_class(version, accessor_arguments, version.get_version_directory().joinpath(file_type.install_location), version_tags)
         return self.accessor_class(self.name, manager, version, accessor_arguments)
 
 def parse_accessor_types(data:dict[str,AccessorTypedDict]) -> dict[str,AccessorType]:

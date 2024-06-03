@@ -25,7 +25,7 @@ def main() -> None:
     while dataminer_selected not in dataminer_file_names:
         dataminer_selected = input("Select a file to clear from %i versions (%s): " % (len(versions_selected), dataminer_file_names))
 
-    files = [path for version in versions_selected if version.version_directory is not None and (path := version.version_directory.joinpath("data", dataminer_selected)).exists()]
+    files = [path for version in versions_selected if (path := version.get_version_directory().joinpath("data", dataminer_selected)).exists()]
     prompt = "I wish to remove %i versions of %s" % (len(files), dataminer_selected)
     prompt_input = input("This action will remove %i copies of \"%s\". If you wish to continue, type \"%s\": " % (len(files), dataminer_selected, prompt))
     if prompt_input == prompt:
