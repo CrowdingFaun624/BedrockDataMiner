@@ -90,25 +90,21 @@ def glue_adjacent(iter:list[a]) -> Generator[tuple[a, a], None, None]:
 class DataMinerCollectionIntermediate():
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("data", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("structure", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-                TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
-                TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
-                TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
-                TypeVerifier.TypedDictKeyTypeVerifier("files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-                TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-                TypeVerifier.TypedDictKeyTypeVerifier("parameters", "a dict", False, dict),
-            ), list, "a dict", "a list")),
-            TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool)
-        )),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("structures", "a dict", True, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
+            TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
+            TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
+            TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
+            TypeVerifier.TypedDictKeyTypeVerifier("files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+            TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+            TypeVerifier.TypedDictKeyTypeVerifier("parameters", "a dict", False, dict),
+        ), list, "a dict", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool)
     )
 
     def __init__(self, data:DataMinerCollectionTypedDict, name:str, structures:dict[str,StructureBase.StructureBase]) -> None:
-        self.type_verifier.base_verify({"data": data, "name": name, "structures": structures}, [name])
+        self.type_verifier.base_verify(data, [name])
 
         self.name = name
         self.file_name = data["file_name"]
