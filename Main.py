@@ -75,7 +75,8 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
 
 def main() -> None:
     with user_input_lock:
-        PROGRAM_FUNCTIONS[user_input[0]]()
+        if user_input[0] is not None:
+            PROGRAM_FUNCTIONS[user_input[0]]()
 
 if __name__ == "__main__":
     main()
