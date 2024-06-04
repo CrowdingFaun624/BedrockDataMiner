@@ -1,8 +1,5 @@
-import errno
 import hashlib
-import os
 import shutil
-import sys
 import uuid
 from typing import IO, Any, Callable, Literal
 
@@ -90,33 +87,6 @@ def get_version_index_path(version_directory:Path) -> Path:
 def get_temp_file_path() -> Path:
     '''Returns a path such as `./_temp/a6f780a3-83d0-4afd-a654-dc28df0b9831`.'''
     return TEMP_DIRECTORY.joinpath(str(uuid.uuid4()))
-
-def is_pathname_valid(pathname:str) -> bool: # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
-    '''
-    Returns True if the path name is valid on this OS.
-    '''
-    ERROR_INVALID_NAME = 123
-    try:
-        if not isinstance(pathname, str) or not pathname:
-            return False
-        _, pathname = os.path.splitdrive(pathname)
-        root_dirname = os.environ.get('HOMEDRIVE', 'C:') \
-            if sys.platform == 'win32' else os.path.sep
-        assert os.path.isdir(root_dirname)
-        root_dirname = root_dirname.rstrip(os.path.sep) + os.path.sep
-        for pathname_part in pathname.split(os.path.sep):
-            try:
-                os.lstat(root_dirname + pathname_part)
-            except OSError as exc:
-                if hasattr(exc, 'winerror'):
-                    if exc.winerror == ERROR_INVALID_NAME:
-                        return False
-                elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
-                    return False
-    except TypeError as exc:
-        return False
-    else:
-        return True
 
 def stringify_sha1_hash(sha1_hash:bytes) -> str:
     '''
