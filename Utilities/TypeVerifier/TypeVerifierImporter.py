@@ -25,6 +25,7 @@ class TypedDictTypedDict(TypedDict):
     data_type: NotRequired[str|list[str]]
     data_type_str: NotRequired[str]
     keys: Required[dict[str,TypedDictKeyTypedDict]]
+    loose: NotRequired[bool]
 
 class ListTypedDict(TypedDict):
     type: Required[Literal["List"]]
@@ -112,6 +113,7 @@ typed_dict_type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("value_type", "a str, list, or TypeVerifier", True, TypeVerifier.UnionTypeVerifier("a str or list", str, dict, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         function=lambda data: type_verify_type_verifier("", cast(TypedVerifierTypedDicts, data["value_type"])) if isinstance(data.get("value_type", None), dict) else (True, "")
     ), "a dict", "a str", "a dict")),
+    TypeVerifier.TypedDictKeyTypeVerifier("loose", "a bool", False, bool),
 )
 
 list_type_verifier = TypeVerifier.TypedDictTypeVerifier(
@@ -200,6 +202,7 @@ def parse_typed_dict(data:TypedDictTypedDict) -> TypeVerifier.TypedDictTypeVerif
         ) for key, value in data["keys"].items()),
         data_type=parse_type_field(data.get("data_type", "dict"), allow_type_verifier=False),
         data_type_str=data.get("data_type_str", "a dict"),
+        loose=data.get("loose", False)
     )
 
 def parse_union(data:UnionTypedDict) -> TypeVerifier.UnionTypeVerifier:

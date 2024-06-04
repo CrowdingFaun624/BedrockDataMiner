@@ -297,6 +297,7 @@ class TypedDictTypeVerifier(TypeVerifier[Mapping[Any, Any]]):
             data_type:type[Mapping]|tuple[type[Mapping],...]=dict,
             data_type_str:str="a dict",
             function:Callable[[Mapping[key_typevar, value_typevar]],tuple[bool,str|None]]|None=None,
+            loose:bool=False,
             type_check:bool=True,
         ) -> None:
         if type_check:
@@ -305,11 +306,13 @@ class TypedDictTypeVerifier(TypeVerifier[Mapping[Any, Any]]):
                 "data_type": data_type,
                 "data_type_str": data_type_str,
                 "function": function,
+                "loose": loose,
             }, ["TypedDictTypeVerifier"])
         self.keys_dict = {key.key: key for key in keys}
         self.data_type = data_type
         self.data_type_str = data_type_str
         self.function = function
+        self.loose = loose
 
         self.required_keys = [key.key for key in keys if key.required]
 
@@ -321,7 +324,8 @@ class TypedDictTypeVerifier(TypeVerifier[Mapping[Any, Any]]):
         for key, value in data.items():
             type_verifier = self.keys_dict.get(key)
             if type_verifier is None:
-                exceptions.append(TypeVerificationUnrecognizedKeyError(trace.copy(key, TraceItemType.KEY)))
+                if not self.loose:
+                    exceptions.append(TypeVerificationUnrecognizedKeyError(trace.copy(key, TraceItemType.KEY)))
                 continue
             new_exceptions = type_verifier.verify((key, value), trace)
             if len(new_exceptions) > 0:
@@ -571,6 +575,7 @@ private__typed_dict_type_verifier = TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("data_type", "a type or tuple", True, UnionTypeVerifier("a type or tuple of types", type, special_type, ListTypeVerifier((type, special_type), tuple, "a type", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False), function=cannot_be_none_key_function, type_check=False),
     TypedDictKeyTypeVerifier("data_type_str", "a str", True, str, type_check=False),
     TypedDictKeyTypeVerifier("function", "a Callable or None", True, (Callable, NoneType), type_check=False),
+    TypedDictKeyTypeVerifier("loose", "a bool", True, bool),
     type_check=False,
 )
 
