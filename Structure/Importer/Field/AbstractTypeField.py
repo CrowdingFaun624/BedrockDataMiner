@@ -1,12 +1,12 @@
 from typing import TypeAlias
 
-import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Field.OptionalStructroidComponentField as OptionalStructroidComponentField
 import Structure.Importer.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Structure.Importer.Field.StructroidComponentField as StructroidComponentField
 import Structure.Importer.Field.StructureComponentField as StructureComponentField
 import Structure.Importer.ImporterConfig as ImporterConfig
+import Structure.Importer.StructureComponent as StructureComponent
 import Utilities.Exceptions as Exceptions
 
 VerifyComponentType:TypeAlias = StructroidComponentField.StructroidComponentField|OptionalStructroidComponentField.OptionalStructroidComponentField|StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
@@ -24,7 +24,7 @@ class AbstractTypeField(Field.Field):
             component_types = self.get_types()
             if subcomponent is None:
                 for value_type in component_types:
-                    if value_type in ComponentTyping.REQUIRES_SUBCOMPONENT_TYPES:
+                    if value_type in StructureComponent.REQUIRES_SUBCOMPONENT_TYPES:
                         exceptions.append(Exceptions.ComponentTypeRequiresComponentError("%s \"%s\"" % (component_class_name, component_name), value_type))
             else:
                 if set(component_types) != set(subcomponent.my_type):

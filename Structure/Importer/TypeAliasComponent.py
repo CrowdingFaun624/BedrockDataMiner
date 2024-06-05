@@ -1,6 +1,7 @@
 import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.StructureComponent as StructureComponent
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -18,8 +19,8 @@ class TypeAliasComponent(Component.Component[list[type]]):
     def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str) -> None:
         super().__init__(name)
         self.verify_arguments(data, name)
-        if name in ComponentTyping.DEFAULT_TYPES:
-            raise Exceptions.ComponentInvalidNameError(self, list(ComponentTyping.DEFAULT_TYPES.keys()))
+        if name in StructureComponent.DEFAULT_TYPES:
+            raise Exceptions.ComponentInvalidNameError(self, list(StructureComponent.DEFAULT_TYPES.keys()))
 
         self.types_strs = data["types"]
         self.types:list[type]|None = None
@@ -31,7 +32,7 @@ class TypeAliasComponent(Component.Component[list[type]]):
             if type_str in already_types:
                 raise Exceptions.ComponentDuplicateTypeError(type_str, self)
             already_types.add(type_str)
-            if type_str in ComponentTyping.DEFAULT_TYPES:
-                self.types.append(ComponentTyping.DEFAULT_TYPES[type_str])
+            if type_str in StructureComponent.DEFAULT_TYPES:
+                self.types.append(StructureComponent.DEFAULT_TYPES[type_str])
             else:
                 raise Exceptions.ComponentUnrecognizedTypeError(type_str, self)

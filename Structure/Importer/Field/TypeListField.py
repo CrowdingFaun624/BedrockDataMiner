@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING, Callable, Sequence
 
-import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.AbstractTypeField as AbstractTypeField
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Pattern as Capabilities
+import Structure.Importer.StructureComponent as StructureComponent
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Utilities.Exceptions as Exceptions
 
@@ -35,8 +35,8 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
             if subcomponent_str in already_types:
                 raise Exceptions.ComponentDuplicateTypeError(subcomponent_str, self, "(referenced in %sof %s \"%s\")" % (Field.get_keys_strs(False, self.error_path), component_class_name, component_name))
             already_types.add(subcomponent_str)
-            if subcomponent_str in ComponentTyping.DEFAULT_TYPES:
-                subcomponent_type = ComponentTyping.DEFAULT_TYPES[subcomponent_str]
+            if subcomponent_str in StructureComponent.DEFAULT_TYPES:
+                subcomponent_type = StructureComponent.DEFAULT_TYPES[subcomponent_str]
                 self.primitive_types.append(subcomponent_type)
             else:
                 subcomponent = Field.choose_component(subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, self.error_path, component_name, component_class_name)
