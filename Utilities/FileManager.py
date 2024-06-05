@@ -5,6 +5,7 @@ from typing import IO, Any, Callable, Literal
 
 from pathlib2 import Path
 
+import Utilities.Exceptions as Exceptions
 from Utilities.FunctionCaller import FunctionCaller
 
 PARENT_DIRECTORY          = Path("./").absolute()
@@ -44,7 +45,7 @@ def get_comparison_file_path(name:str, number:int|None=None) -> Path:
     else:
         comparison_path = COMPARISONS_DIRECTORY.joinpath(name, "report_%s.txt" % str(number).zfill(4))
     if COMPARISONS_DIRECTORY not in comparison_path.parents:
-        raise FileNotFoundError("Comparison \"%s\" (%i)'s directory can not be created due to illegal characters!" % (name, number))
+        raise Exceptions.InvalidFileNameError(name, "Comparison", "(%i)" % (number,))
     return comparison_path
 
 def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/getting-file-size-in-python
@@ -57,13 +58,13 @@ def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/g
 def get_structure_path(structure_name:str) -> Path:
     structure_path = STRUCTURES_DIRECTORY.joinpath(structure_name + ".json")
     if STRUCTURES_DIRECTORY not in structure_path.parents:
-        raise FileNotFoundError("Structure \"%s\" can not be created due to illegal characters!" % structure_name)
+        raise Exceptions.InvalidFileNameError(structure_name, "Structure")
     return structure_path
 
 def get_version_path(version_name:str) -> Path:
     version_path = VERSIONS_DIRECTORY.joinpath(version_name)
     if VERSIONS_DIRECTORY not in version_path.parents:
-        raise FileNotFoundError("Version \"%s\"'s directory can not be created due to illegal characters!" % version_name)
+        raise Exceptions.InvalidFileNameError(version_name, "Version")
     return version_path
 
 def get_version_install_path(version_directory:Path) -> Path:
@@ -76,9 +77,9 @@ def get_version_data_path(version_directory:Path, file_name:str|None) -> Path:
     else:
         data_path = version_directory.joinpath("./data/%s" % file_name)
     if version_directory not in data_path.parents:
-        raise FileNotFoundError("Data file \"%s\" has an invalid name!" % file_name)
+        raise Exceptions.InvalidFileNameError(data_path.name, "Data file")
     if VERSIONS_DIRECTORY != version_directory.parent:
-        raise FileNotFoundError("Version directory \"%s\" has an invalid location!" % version_directory)
+        raise Exceptions.InvalidFileNameError(data_path.name, "Data file")
     return data_path
 
 def get_version_index_path(version_directory:Path) -> Path:
@@ -153,7 +154,7 @@ class FilePromise():
         Cannot be called if `all_done` has been called on this FilePromise.
         '''
         if self.is_all_done:
-            raise RuntimeError("Attempted to open FilePromise \"%s\" that has been marked as all done!" % self.name)
+            raise Exceptions.OpenAllDoneFilePromiseError(self)
         return self.open_callable()
 
     def all_done(self) -> None:

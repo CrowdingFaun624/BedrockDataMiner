@@ -3,6 +3,7 @@ from typing import Any
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabSingleFile.GrabSingleFileDataMiner as GrabSingleFileDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -21,15 +22,10 @@ class GrabSingleFileDataMiner0(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
         self.insert_pack:str|None = kwargs.get("insert_pack", None)
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
-
-        exception = None
-        try:
-            file = self.get_accessor("client").read(self.location, self.data_type.get_data_format())
-        except FileNotFoundError as e:
-            exception = e
-            exception.args = tuple(list(exception.args) + ["No file found in \"%s\"" % (self.version)])
-        if exception is not None:
-            raise exception
+        accessor = self.get_accessor("client")
+        if not accessor.file_exists(self.location):
+            raise Exceptions.DataMinerNothingFoundError(self)
+        file = self.get_accessor("client").read(self.location, self.data_type.get_data_format())
 
         file_data = DataTypes.get_data_from_content(file, self.data_type)
         if self.insert_pack is not None:

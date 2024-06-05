@@ -1,10 +1,12 @@
 from typing import TYPE_CHECKING, Union
 
+import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
+import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.Pattern as Capabilities
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
-    import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
     import Structure.Importer.StructureComponent as StructureComponent
     import Structure.Structure as Structure
 
@@ -21,6 +23,14 @@ class OptionalStructroidComponentField(OptionalComponentField.OptionalComponentF
         '''
         super().__init__(subcomponent_str, pattern, path)
 
+    def check(self, component_name: str, component_class_name: str, config: ImporterConfig.ImporterConfig) -> list[Exception]:
+        exceptions = super().check(component_name, component_class_name, config)
+        if isinstance(self.subcomponent, AbstractGroupComponent.AbstractGroupComponent):
+            for subsubcomponent in self.subcomponent.get_subcomponents():
+                if subsubcomponent.my_capabilities not in self.pattern:
+                    exceptions.append(Exceptions.InvalidComponentError(subsubcomponent, "%s \"%s\"" % (component_class_name, component_name), self.pattern, subsubcomponent.my_capabilities))
+        return exceptions
+
     def get_final(self) -> Union["Structure.Structure", dict[type, Union["Structure.Structure", None]], None]:
         '''
         Returns the final Structure that this Field refers to.
@@ -29,7 +39,4 @@ class OptionalStructroidComponentField(OptionalComponentField.OptionalComponentF
         component = self.get_component()
         if component is None:
             return component
-        structure = component.final
-        if structure is None:
-            raise RuntimeError("Final Structure of StructureComponent is None!")
-        return structure
+        return component.get_final()

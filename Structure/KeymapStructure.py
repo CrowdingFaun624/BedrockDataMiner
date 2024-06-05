@@ -9,6 +9,7 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
+import Utilities.Exceptions as Exceptions
 
 d = TypeVar("d")
 
@@ -49,7 +50,8 @@ class KeymapStructure(DictStructure.DictStructure[d]):
         self.tags = tags
 
     def finalize(self) -> None:
-        assert self.keys_intermediate is not None
+        if self.keys_intermediate is None:
+            raise Exceptions.AttributeNoneError("keys_intermediate", self)
         self.keys = {}
         for key, substructure in self.keys_intermediate.items():
             for value_type, type_substructure in substructure.items():
@@ -62,35 +64,36 @@ class KeymapStructure(DictStructure.DictStructure[d]):
                 self.key_types[allowed_key].add(key_type)
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
-        assert self.keys is not None
+        if self.keys is None:
+            raise Exceptions.AttributeNoneError("keys", self)
         return (substructure for substructure in self.keys.values() if substructure is not None)
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
-        if isinstance(key, D.Diff) or isinstance(value, D.Diff):
-            raise TypeError("`check_all_types` was given data containing Diffs!")
-        assert self.key_types is not None
+        if self.key_types is None:
+            raise Exceptions.AttributeNoneError("key_types", self)
         if key not in self.key_types:
-            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because key is not recognized!" % (SU.stringify(key), SU.stringify(value), self.name)), self.name, key, value)
+            return Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value)
         if type(value) not in self.key_types[key]:
-            value_types_string = ", ".join(type_key.__name__ for type_key in self.key_types[key])
-            return Trace.ErrorTrace(TypeError("Key, value %s: %s in %s excepted because value is %s instead of [%s]!" % (SU.stringify(key), SU.stringify(value), self.name, value.__class__.__name__, value_types_string)), self.name, key, value)
+            return Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.key_types[key]), type(value), "Value"), self.name, key, value)
 
     def choose_structure_flat(self, key: str, value_type:type[d], value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        assert self.keys is not None
+        if self.keys is None:
+            raise Exceptions.AttributeNoneError("keys", self)
         output = self.keys.get((key, value_type), Structure.StructureFailure.choose_structure_failure)
         if output is Structure.StructureFailure.choose_structure_failure:
             accepted_types = [keys_key[1] for keys_key in self.keys.keys() if keys_key[0] == key]
             if len(accepted_types) == 0:
-                return None, [Trace.ErrorTrace(KeyError("Unrecognized key %s for key, value %s: %s" % (self.name, key, value_type)), self.name, key, value)]
+                return None, [Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value)]
             else:
-                return None, [Trace.ErrorTrace(KeyError("Unrecognized key type %s for key %s in %s (can only be [%s])" % (value_type, key, self.name, ", ".join(accepted_type.__name__ for accepted_type in accepted_types))), self.name, key, value)]
+                return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(accepted_types), value_type, "Value"), self.name, key, value)]
         return output, []
 
     def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
-        assert self.tags is not None
+        if self.tags is None:
+            raise Exceptions.AttributeNoneError("tags", self)
         for key, value in data.items():
             if tag in self.tags[key]:
                 output.append(data_path.copy((key, type(value))).embed(value))
@@ -105,7 +108,8 @@ class KeymapStructure(DictStructure.DictStructure[d]):
         return output, exceptions
 
     def choose_structure(self, key:str, value:d) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
-        assert self.keys is not None
+        if self.keys is None:
+            raise Exceptions.AttributeNoneError("keys", self)
         output:dict[D.DiffType,Structure.Structure|None] = {}
         exceptions:list[Trace.ErrorTrace] = []
         if self.detect_key_moves:
@@ -118,9 +122,9 @@ class KeymapStructure(DictStructure.DictStructure[d]):
             if structure is Structure.StructureFailure.choose_structure_failure:
                 accepted_types = [keys_key[1] for keys_key in self.keys.keys() if keys_key[0] == key]
                 if len(accepted_types) == 0:
-                    exceptions.append(Trace.ErrorTrace(KeyError("Unrecognized key %s for key, value %s: %s" % (self.name, key, type(value))), self.name, key, value))
+                    exceptions.append(Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value))
                 else:
-                    exceptions.append(Trace.ErrorTrace(KeyError("Unrecognized key type %s for key %s in %s (can only be [%s])" % (type(value), key, self.name, ", ".join(accepted_type.__name__ for accepted_type in accepted_types))), self.name, key, value))
+                    exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(accepted_types), type(value), "Value"), self.name, key, value))
                 continue
             output[value_diff_type] = structure
         return StructureSet.StructureSet(output), exceptions

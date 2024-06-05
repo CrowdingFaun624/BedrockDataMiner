@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any
 
 from pathlib2 import Path
 
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Version.VersionFile as VersionFile
 import Version.VersionFileType as VersionFileType
@@ -75,42 +76,38 @@ class Version():
 
     def add_tag(self, tag:VersionTags.VersionTag) -> None:
         '''Adds a tag to the Version.'''
-        if not isinstance(tag, VersionTags.VersionTag):
-            raise TypeError("Attempted to add a non-VersionTag object to \"%s\"'s tags!" % (self.name))
         if tag not in self.tags:
             self.tags.append(tag)
 
     def validate_version_name(self, name:str) -> None:
-        '''Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''
+        '''Raises an InvalidVersionNameError if it is not valid.'''
         version_directory = FileManager.VERSIONS_DIRECTORY.joinpath(name)
-        if version_directory.parent != FileManager.VERSIONS_DIRECTORY: raise ValueError("Invalid Version name \"%s\"!" % str(name))
+        if version_directory.parent != FileManager.VERSIONS_DIRECTORY: raise Exceptions.InvalidVersionNameError(self)
 
     def validate_name(self) -> None:
-        '''Sets this Version's `version_directory` attribute based off of the value of `name`. Raises a ValueError if it is not valid, or a TypeError if `name` is the wrong type.'''
+        '''Sets this Version's `version_directory` attribute based off of the value of `name`. Raises an InvalidVersionNameError if it is not valid.'''
         self.version_directory = FileManager.get_version_path(self.name)
         self.validate_version_name(self.name)
         self.version_directory.mkdir(exist_ok=True)
 
     def validate_parent(self) -> None:
-        '''Raises a ValueError if it is not valid, or a TypeError if it is the wrong type.'''
+        '''Raises a InvalidParentVersionError if it is not valid.'''
         if self.parent_str is None: return
-        if self.parent_str == self.name: raise ValueError("Parent version of \"%s\" is itself!" % self.name)
-        return self.validate_version_name(self.parent_str)
+        if self.parent_str == self.name:
+            raise Exceptions.InvalidParentVersionError(self, self.parent_str)
 
     def validate_time(self) -> None:
-        '''Raises a ValueError if it is not valid, or a TypeError if it is the wrong type.'''
+        '''Raises an InvalidVersionTimeError if it is not valid.'''
         if self.time_str is None:
             self.time = None
             return
         self.time = datetime.date.fromisoformat(self.time_str)
-        if self.time > datetime.date.today(): raise ValueError("`time` is after today!")
-        if self.time.year < 2011: raise ValueError("`time` is before year 2011!")
+        if self.time > datetime.date.today(): raise Exceptions.InvalidVersionTimeError(self, self.time, "time is after today")
+        # TODO: remove this line or make it ✨data-based✨
+        if self.time.year < 2011: raise Exceptions.InvalidVersionTimeError(self, self.time, "time is before 2011")
 
     def validate_tags(self, version_tags:VersionTags.VersionTags) -> None:
-        '''Raises a ValueError if this Version's tags are not valid.'''
         self.tags = [version_tags[tag_str] for tag_str in self.tags_str]
-        if not all(isinstance(tag, VersionTags.VersionTag) for tag in self.tags):
-            raise ValueError("Version \"%s\" does not have valid VersionTags: \"%s\"!" % (self.name, str(self.tags)))
         self.ordering_tag = VersionTags.get_ordering_tag(self.tags)
 
     def get_children_recursive(self) -> list["Version"]:
@@ -126,22 +123,22 @@ class Version():
         for file_type_name, accessors in self.files_str.items():
             file_type = version_file_types.get(file_type_name, None)
             if file_type is None:
-                raise ValueError("Unrecognized file type \"%s\" in version \"%s\"!" % (file_type_name, self.name))
+                raise Exceptions.UnrecognizedVersionFileTypeError(file_type_name, self)
             self.version_files[file_type_name] = VersionFile.VersionFile(self, file_type, accessors, version_tags)
         for file_type_name, file_type in version_file_types.items():
             if file_type.must_exist and file_type_name not in self.version_files:
-                raise KeyError("Required file type \"%s\" is not in version \"%s\"!" % (file_type_name, self.name))
+                raise Exceptions.RequiredVersionFileTypeMissingError(file_type, self)
 
         if version_tags["unreleased"] in self.tags:
             if len(self.version_files) == 0:
-                raise ValueError("Version \"%s\" has the \"%s\" tag but has a download method!" % (self.name, version_tags["unreleased"]))
+                raise Exceptions.UnreleasedDownloadableVersionError(self, version_tags["unreleased"])
 
     def assign_parent(self, version_dict:dict[str,"Version"]) -> None:
         if self.parent_str is None:
             self.parent = None
             return
         if self.parent_str not in version_dict:
-            raise KeyError("Unable to find parent \"%s\" of version \"%s\"!" % (self.parent_str, self.name))
+            raise Exceptions.UnrecognizedVersionError(self.parent_str, self, "(parent of Version)")
         self.parent = version_dict[self.parent_str]
         self.parent.add_child(self)
         self.siblings = self.parent.children
@@ -149,8 +146,14 @@ class Version():
     def get_version_directory(self) -> Path:
         '''Returns this Version's directory, and raises an error if it does not exist.'''
         if self.version_directory is None:
-            raise RuntimeError("Version directory of %s does not exist!" % (self,))
+            raise Exceptions.AttributeNoneError("version_directory", self)
         return self.version_directory
+
+    def get_order_tag(self) -> VersionTags.VersionTag:
+        '''Returns this Version's ordering VersionTag, and raises an error if it does not exist.'''
+        if self.ordering_tag is None:
+            raise Exceptions.AttributeNoneError("ordering_tag", self)
+        return self.ordering_tag
 
     def __str__(self) -> str:
         return self.name
@@ -162,21 +165,13 @@ class Version():
         return hash(self.name)
 
     def __lt__(self, other:"Version") -> bool:
-        if not isinstance(other, Version):
-            raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
         return self.index < other.index
 
     def __gt__(self, other:"Version") -> bool:
-        if not isinstance(other, Version):
-            raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
         return self.index > other.index
 
     def __le__(self, other:"Version") -> bool:
-        if not isinstance(other, Version):
-            raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
         return self.index <= other.index
 
     def __ge__(self, other:"Version") -> bool:
-        if not isinstance(other, Version):
-            raise TypeError("Attempted to compare a Version to \"%s\"" % str(type(other)))
         return self.index >= other.index

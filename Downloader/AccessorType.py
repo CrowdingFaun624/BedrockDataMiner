@@ -6,6 +6,7 @@ import Downloader.DownloadManager as DownloadManager
 import Downloader.LocalManager as LocalManager
 import Downloader.Manager as Manager
 import Downloader.StoredManager as StoredManager
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.Scripts as Scripts
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -59,17 +60,17 @@ def parse_accessor_types(data:dict[str,AccessorTypedDict]) -> dict[str,AccessorT
         attributes = dict(script())
         inherit_from:str = attributes.pop("inherit", None)
         if inherit_from is None:
-            raise KeyError("Accessor \"%s\" attribute \"inherit\" is missing!" % (class_name,))
+            raise Exceptions.AccessorTypeMissingInheritError(class_name)
         superclass = BUILT_IN_ACCESSORS.get(inherit_from, None)
         if superclass is None:
-            raise KeyError("Accessor \"%s\" attempts to subclass unknown built-in Accessor \"%s\"!" % (class_name, inherit_from))
+            raise Exceptions.AccessorTypeInheritUnrecognizedAccessorTypeError(class_name, inherit_from)
         accessor_types[class_name] = type(class_name, (superclass, Scripts.ScriptedObject), dict(script()))
 
     output:dict[str,AccessorType] = {}
     for key, accessor_data in data.items():
         accessor_type = accessor_types.get(accessor_data["accessor"], None)
         if accessor_type is None:
-            raise KeyError("Unrecognized AccessorType \"%s\"!" % (accessor_data["accessor"]))
+            raise Exceptions.UnrecognizedAccessorTypeError(accessor_data["accessor"], source_str="AccessorType \"%s\"" % (key,))
         output[key] = AccessorType(key, MANAGERS[accessor_data["manager"]], accessor_types[accessor_data["accessor"]], TypeVerifierImporter.parse_type_verifier(accessor_data["parameters"]))
     return output
 

@@ -19,8 +19,4 @@ class NormalizerListField(ComponentListField.ComponentListField[NormalizerCompon
         Returns the Normalizers that corresponds to this Field's NormalizerComponents..
         Can only be called after `set_field`.
         '''
-        output:list[Normalizer.Normalizer] = []
-        for component in self.get_components():
-            assert component.final is not None
-            output.append(component.final)
-        return output
+        return [component.get_final() for component in self.get_components()]

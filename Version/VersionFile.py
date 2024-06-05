@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Any
 
 import Downloader.Accessor as Accessor
 import Downloader.AccessorType as AccessorType
+import Utilities.Exceptions as Exceptions
 import Version.VersionFileType as VersionFileType
 import Version.VersionTags as VersionTags
 
@@ -16,7 +17,7 @@ class VersionFile():
 
         for accessor in accessors:
             if accessor not in self.file_type.allowed_accessors:
-                raise ValueError("File Type %s for version %s does not recognize accessor \"%s\"!" % (self.file_type.name, self.version.name, accessor))
+                raise Exceptions.VersionFileInvalidAccessorError(self, accessor)
 
         # sort this VersionFile's accessors in the same way as its FileType
         self.accessors:dict[str,Accessor.Accessor] = {}
@@ -32,4 +33,4 @@ class VersionFile():
         for accessor_name, accessor in self.accessors.items():
             if True: return accessor
         else:
-            raise RuntimeError("Cannot get accessor of %s!" % (self))
+            raise Exceptions.VersionFileNoAccessorsError(self)

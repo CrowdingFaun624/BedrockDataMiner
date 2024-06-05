@@ -55,8 +55,4 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         Returns the `final` attribute of all tags in this TagListField.
         Can only be called after `set_field`.
         '''
-        output:list[str] = []
-        for tag in self.get_components():
-            assert tag.final is not None
-            output.append(tag.final)
-        return output
+        return [tag.get_final() for tag in self.get_components()]

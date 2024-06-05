@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Callable, Sequence
 
 import Structure.Importer.Field.Field as Field
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Structure.Importer.Component as Component
@@ -19,7 +20,7 @@ class FunctionField(Field.Field):
     def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         function = functions.get(self.function_name)
         if function is None:
-            raise KeyError("Function \"%s\" does not exist in %s \"%s\"!" % (self.function_name, component_class_name, component_name))
+            raise Exceptions.ComponentUnrecognizedFunctionError(self.function_name, "%s \"%s\"" % (component_class_name, component_name))
         self.function = function
         return []
 
@@ -29,5 +30,5 @@ class FunctionField(Field.Field):
         Can only be called after `set_field`.
         '''
         if self.function is None:
-            raise RuntimeError("Cannot call `get_function` before `set_field`!")
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_function, self)
         return self.function

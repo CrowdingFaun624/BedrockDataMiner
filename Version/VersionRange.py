@@ -1,4 +1,6 @@
-from typing import Literal, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union
+
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Version.Version as Version
@@ -9,11 +11,11 @@ class VersionRange():
     By default, checks if the version is in [start, stop). If start and stop are the same, it checks for equality.'''
 
     def __init__(self, start:Union["Version.Version",None], stop:Union["Version.Version",None]) -> None:
-        if start is not None and stop is not None and start > stop:
-            raise ValueError("Start Version (\"%s\")in `VersionRange` occurs after stop Version (\"%s\")!" % (start.name, stop.name))
         self.start = start if start is not None else None
         self.stop = stop if stop is not None else None
         self.equals = self.start == self.stop and self.start is not None
+        if start is not None and stop is not None and start > stop:
+            raise Exceptions.VersionRangeOrderError(self, start, stop)
 
     def __repr__(self) -> str:
         return "<VersionRange \"%s\"–\"%s\">" % (str(self.start), str(self.stop))
@@ -31,4 +33,4 @@ class VersionRange():
             case (False, False):
                 return version < self.stop and version >= self.start # type: ignore
             case _:
-                raise RuntimeError("Logic has failed us")
+                raise Exceptions.InvalidStateError("Logic has failed us")

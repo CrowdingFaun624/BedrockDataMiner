@@ -3,6 +3,7 @@ import Structure.Importer.DictComponent as DictComponent
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.KeymapComponent as KeymapComponent
 import Structure.Importer.ListComponent as ListComponent
+import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.NbtTypes as NbtTypes
 
 
@@ -25,7 +26,8 @@ class NbtTagListComponent(ListComponent.ListComponent):
         if self.required_types is None: return []
         for type in self.types_field.get_types():
             if type not in self.required_types:
-                return [TypeError("%s \"%s\" accepts type %s instead of only [%s]!" % (self.class_name, self.name, type, ", ".join(required_type.__name__ for required_type in self.required_types)))]
+                output:Exception = Exceptions.InvalidComponentTypeError(self, tuple(self.required_types), type)
+                return [output]
         return []
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:

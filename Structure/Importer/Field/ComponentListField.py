@@ -3,6 +3,7 @@ from typing import Callable, Generic, Iterator, Sequence, TypeVar
 import Structure.Importer.Component as Component
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Pattern as Capabilities
+import Utilities.Exceptions as Exceptions
 
 a = TypeVar("a", bound=Component.Component, covariant=True)
 
@@ -23,9 +24,7 @@ class ComponentListField(Field.Field, Generic[a]):
     def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         self.subcomponents = []
         for subcomponent_str in self.subcomponents_strs:
-            subcomponent = Field.choose_component(subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name)
-            assert subcomponent is not None
-            self.subcomponents.append(subcomponent) # type: ignore
+            self.subcomponents.append(Field.choose_component(subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name))
         return self.subcomponents
 
     def extend(self, new_components:Sequence[a]) -> None:
@@ -34,7 +33,7 @@ class ComponentListField(Field.Field, Generic[a]):
         :new_components: The sequence of Components to add.
         '''
         if self.subcomponents is None:
-            raise RuntimeError("Cannot call `extend` before `set_field`!")
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.extend, self)
         self.subcomponents.extend(new_components)
 
     b = TypeVar("b")
@@ -45,7 +44,7 @@ class ComponentListField(Field.Field, Generic[a]):
         :function: The function to use.
         '''
         if self.subcomponents is None:
-            raise RuntimeError("Cannot call `for_each` before `set_field`!")
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.for_each, self)
         for subcomponent in self.subcomponents:
             function(subcomponent)
 
@@ -55,7 +54,7 @@ class ComponentListField(Field.Field, Generic[a]):
         :function: The function to use.
         '''
         if self.subcomponents is None:
-            raise RuntimeError("Cannot call `map` before `set_field`!")
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.map, self)
         return (function(subcomponent) for subcomponent in self.subcomponents)
 
     def get_components(self) -> list[a]:
@@ -64,7 +63,7 @@ class ComponentListField(Field.Field, Generic[a]):
         Can only be called after `set_field`.
         '''
         if self.subcomponents is None:
-            raise RuntimeError("Cannot call `get_components` before `set_field`!")
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_components, self)
         return self.subcomponents # type: ignore
 
     def __repr__(self) -> str:

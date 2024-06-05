@@ -2,6 +2,7 @@ import gzip
 import traceback
 from typing import BinaryIO
 
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.FileStorageManager as FileStorageManager
 import Utilities.Nbt.DataReader as DataReader
@@ -23,7 +24,7 @@ class NbtBytes():
             self.value = value
             self.hash = FileManager.stringify_sha1_hash(FileManager.get_hash_from_bytes(value))
         elif data_hash is None and value is None:
-            raise RuntimeError("Must provide data_hash and/or value")
+            raise Exceptions.NbtBytesInvalidArgumentsError(self)
 
     def open(self) -> bytes:
         if self.value is None:
@@ -93,15 +94,15 @@ def string_test(data:NbtTypes.TAG|type[Exception], data_string:str|None=None) ->
             traceback.print_exception(e)
         else:
             if type(e) != data:
-                raise RuntimeError("Error is not expected from %s!" % (data_string))
+                raise Exceptions.NbtTestFailureError("Error is not expected from %s!" % (data_string))
     if isinstance(data, NbtTypes.TAG):
         if reparsed_data is None:
-            raise RuntimeError("Failed to parse data %s!" % (data_string))
+            raise Exceptions.NbtTestFailureError("Failed to parse data %s!" % (data_string))
         if data != reparsed_data:
-            raise RuntimeError("Parsed data is not equal to original data: original: %s, reparsed: %s" % (data, reparsed_data))
+            raise Exceptions.NbtTestFailureError("Parsed data is not equal to original data: original: %s, reparsed: %s" % (data, reparsed_data))
     else:
         if reparsed_data is not None:
-            raise RuntimeError("Expected an error from %s, %s" % (data_string, reparsed_data))
+            raise Exceptions.NbtTestFailureError("Expected an error from %s, %s" % (data_string, reparsed_data))
 
 def main_string_demo() -> None:
     # byte test
@@ -111,38 +112,38 @@ def main_string_demo() -> None:
     string_test(NbtTypes.TAG_Byte(0), "false")
     string_test(NbtTypes.TAG_Byte(1), "true")
     string_test(NbtTypes.TAG_Byte(-128))
-    string_test(SnbtParser.ParseException, "-129b")
-    string_test(SnbtParser.ParseException, "128b")
+    string_test(Exceptions.SnbtParseError, "-129b")
+    string_test(Exceptions.SnbtParseError, "128b")
     string_test(NbtTypes.TAG_Byte(55), "55B")
 
     # short test
     string_test(NbtTypes.TAG_Short(32767))
     string_test(NbtTypes.TAG_Short(-32768))
     string_test(NbtTypes.TAG_Short(0))
-    string_test(SnbtParser.ParseException, "32768s")
-    string_test(SnbtParser.ParseException, "-32769s")
+    string_test(Exceptions.SnbtParseError, "32768s")
+    string_test(Exceptions.SnbtParseError, "-32769s")
     string_test(NbtTypes.TAG_Short(256), "256S")
 
     # int test
     string_test(NbtTypes.TAG_Int(2147483647))
     string_test(NbtTypes.TAG_Int(-2147483648))
     string_test(NbtTypes.TAG_Int(0))
-    string_test(SnbtParser.ParseException, "2147483648")
-    string_test(SnbtParser.ParseException, "-2147483649")
-    string_test(SnbtParser.ParseException, "333i")
+    string_test(Exceptions.SnbtParseError, "2147483648")
+    string_test(Exceptions.SnbtParseError, "-2147483649")
+    string_test(Exceptions.SnbtParseError, "333i")
 
     # long test
     string_test(NbtTypes.TAG_Long(9223372036854775807))
     string_test(NbtTypes.TAG_Long(-9223372036854775808))
     string_test(NbtTypes.TAG_Long(0))
-    string_test(SnbtParser.ParseException, "9223372036854775808l")
-    string_test(SnbtParser.ParseException, "-9223372036854775809l")
+    string_test(Exceptions.SnbtParseError, "9223372036854775808l")
+    string_test(Exceptions.SnbtParseError, "-9223372036854775809l")
     string_test(NbtTypes.TAG_Long(3037), "3037L")
 
     # float test
     string_test(NbtTypes.TAG_Float(937.50)) # keeping the decimal as a power of two because it's a float
     string_test(NbtTypes.TAG_Float(-123.125))
-    string_test(SnbtParser.ParseException, "123.f")
+    string_test(Exceptions.SnbtParseError, "123.f")
     string_test(NbtTypes.TAG_Float(999.96875), "999.96875F")
 
     # double test
@@ -150,7 +151,7 @@ def main_string_demo() -> None:
     string_test(NbtTypes.TAG_Double(937.50), "937.50d")
     string_test(NbtTypes.TAG_Double(937.50), "937.50D")
     string_test(NbtTypes.TAG_Double(-123.125))
-    string_test(SnbtParser.ParseException, "123.d")
+    string_test(Exceptions.SnbtParseError, "123.d")
 
     # string test
     string_test(NbtTypes.TAG_String("Hi"))
@@ -159,12 +160,12 @@ def main_string_demo() -> None:
     string_test(NbtTypes.TAG_String("Hi"), "'Hi'")
     string_test(NbtTypes.TAG_String("英語以外の文字をテストする"))
     string_test(NbtTypes.TAG_String("This thi\\ng has \t\\\"escape\" characters!"), "\"This thi\\\\ng has \t\\\\\\\"escape\\\" characters!\"")
-    string_test(SnbtParser.ParseException, "'Hi\"")
-    string_test(SnbtParser.ParseException, "\"Hi'")
-    string_test(SnbtParser.ParseException, "\"Hi")
-    string_test(SnbtParser.ParseException, "\"Hi\\")
-    string_test(SnbtParser.ParseException, "\"")
-    string_test(SnbtParser.ParseException, "bob") # quoteless strings are not supported to avoid silent errors
+    string_test(Exceptions.SnbtParseError, "'Hi\"")
+    string_test(Exceptions.SnbtParseError, "\"Hi'")
+    string_test(Exceptions.SnbtParseError, "\"Hi")
+    string_test(Exceptions.SnbtParseError, "\"Hi\\")
+    string_test(Exceptions.SnbtParseError, "\"")
+    string_test(Exceptions.SnbtParseError, "bob") # quoteless strings are not supported to avoid silent errors
 
     # list test
     string_test(NbtTypes.TAG_List([NbtTypes.TAG_Byte(125)]))
@@ -173,36 +174,36 @@ def main_string_demo() -> None:
     string_test(NbtTypes.TAG_List([NbtTypes.TAG_String("wow"), NbtTypes.TAG_String("truly incredible")]))
     string_test(NbtTypes.TAG_List([]))
     string_test(NbtTypes.TAG_List([NbtTypes.TAG_String("wow"), NbtTypes.TAG_String("truly incredible")]), "[   \"wow\"  , \"truly incredible\"  ]")
-    string_test(SnbtParser.ParseException, "[66b, 4299L]")
-    string_test(SnbtParser.ParseException, "[66l, 4299L")
-    string_test(SnbtParser.ParseException, "[")
+    string_test(Exceptions.SnbtParseError, "[66b, 4299L]")
+    string_test(Exceptions.SnbtParseError, "[66l, 4299L")
+    string_test(Exceptions.SnbtParseError, "[")
 
     # byte array test
     string_test(NbtTypes.TAG_Byte_Array([NbtTypes.TAG_Byte(125)]))
     string_test(NbtTypes.TAG_Byte_Array([NbtTypes.TAG_Byte(125), NbtTypes.TAG_Byte(123)]))
     string_test(NbtTypes.TAG_Byte_Array([]))
     string_test(NbtTypes.TAG_Byte_Array([NbtTypes.TAG_Byte(1), NbtTypes.TAG_Byte(0)]), "[B;   true , false ]")
-    string_test(SnbtParser.ParseException, "[B; 0b, 1]")
-    string_test(SnbtParser.ParseException, "[B; 0b, 1b")
-    string_test(SnbtParser.ParseException, "[B;")
+    string_test(Exceptions.SnbtParseError, "[B; 0b, 1]")
+    string_test(Exceptions.SnbtParseError, "[B; 0b, 1b")
+    string_test(Exceptions.SnbtParseError, "[B;")
 
     # int array test
     string_test(NbtTypes.TAG_Int_Array([NbtTypes.TAG_Int(125)]))
     string_test(NbtTypes.TAG_Int_Array([NbtTypes.TAG_Int(125), NbtTypes.TAG_Int(123)]))
     string_test(NbtTypes.TAG_Int_Array([]))
     string_test(NbtTypes.TAG_Int_Array([NbtTypes.TAG_Int(1), NbtTypes.TAG_Int(0)]), "[I;   1 , 0 ]")
-    string_test(SnbtParser.ParseException, "[I; 0b, 1]")
-    string_test(SnbtParser.ParseException, "[I; 0, 1")
-    string_test(SnbtParser.ParseException, "[I;")
+    string_test(Exceptions.SnbtParseError, "[I; 0b, 1]")
+    string_test(Exceptions.SnbtParseError, "[I; 0, 1")
+    string_test(Exceptions.SnbtParseError, "[I;")
 
     # long array test
     string_test(NbtTypes.TAG_Long_Array([NbtTypes.TAG_Long(125)]))
     string_test(NbtTypes.TAG_Long_Array([NbtTypes.TAG_Long(125), NbtTypes.TAG_Long(123)]))
     string_test(NbtTypes.TAG_Long_Array([]))
     string_test(NbtTypes.TAG_Long_Array([NbtTypes.TAG_Long(1), NbtTypes.TAG_Long(0)]), "[L;   1l , 0l ]")
-    string_test(SnbtParser.ParseException, "[L; 0l, 1]")
-    string_test(SnbtParser.ParseException, "[L; 0l, 1l")
-    string_test(SnbtParser.ParseException, "[L;")
+    string_test(Exceptions.SnbtParseError, "[L; 0l, 1]")
+    string_test(Exceptions.SnbtParseError, "[L; 0l, 1l")
+    string_test(Exceptions.SnbtParseError, "[L;")
 
     # compound test
     string_test(NbtTypes.TAG_Compound({}))
@@ -210,12 +211,12 @@ def main_string_demo() -> None:
     string_test(NbtTypes.TAG_Compound({"wow": NbtTypes.TAG_String("hi")}), "{wow: \"hi\"}")
     string_test(NbtTypes.TAG_Compound({"wow": NbtTypes.TAG_String("hi")}), "{\"wow\": \"hi\"}")
     string_test(NbtTypes.TAG_Compound({"wow": NbtTypes.TAG_Int(42), "truly_incredible": NbtTypes.TAG_Long(444222)}))
-    string_test(SnbtParser.ParseException, "{")
-    string_test(SnbtParser.ParseException, "{\"")
-    string_test(SnbtParser.ParseException, "{\"wow\"")
-    string_test(SnbtParser.ParseException, "{\"wow\":")
-    string_test(SnbtParser.ParseException, "{\"wow\": \"")
-    string_test(SnbtParser.ParseException, "{\"wow\": \"hi\"")
+    string_test(Exceptions.SnbtParseError, "{")
+    string_test(Exceptions.SnbtParseError, "{\"")
+    string_test(Exceptions.SnbtParseError, "{\"wow\"")
+    string_test(Exceptions.SnbtParseError, "{\"wow\":")
+    string_test(Exceptions.SnbtParseError, "{\"wow\": \"")
+    string_test(Exceptions.SnbtParseError, "{\"wow\": \"hi\"")
     string_test(NbtTypes.TAG_Compound({
         "": NbtTypes.TAG_Byte(0),
         "test1": NbtTypes.TAG_Short(32),
@@ -230,8 +231,8 @@ def main_string_demo() -> None:
     }))
 
     # miscellaneous tests
-    string_test(SnbtParser.ParseException, "please error")
-    string_test(SnbtParser.ParseException, "pleaseerror")
+    string_test(Exceptions.SnbtParseError, "please error")
+    string_test(Exceptions.SnbtParseError, "pleaseerror")
 
 def main() -> None:
     PROGRAMS = {

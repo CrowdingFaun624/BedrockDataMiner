@@ -1,6 +1,6 @@
 import json
 import traceback
-from typing import Callable
+from typing import Callable, cast
 
 import Structure.Importer.BaseComponent as BaseComponent
 import Structure.Importer.CacheComponent as CacheComponent
@@ -19,7 +19,9 @@ import Structure.Importer.TypeAliasComponent as TypeAliasComponent
 import Structure.Importer.VolumeComponent as VolumeComponent
 import Structure.StructureBase as StructureBase
 import Structure.StructureFunctions as StructureFunctions
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 component_types:list[type[Component.Component]] = [
     CacheComponent.CacheComponent,
@@ -40,6 +42,11 @@ component_types:list[type[Component.Component]] = [
     NormalizerComponent.NormalizerComponent,
     TagComponent.TagComponent,
 ]
+
+structure_file_type_verifier = TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
+    loose=True
+), "a dict", "a str", "a dict")
 
 def get_file(name:str) -> ComponentTyping.StructureFileType:
     with open(FileManager.get_structure_path(name), "rt") as f:
@@ -64,24 +71,15 @@ def create_components(name:str, data:ComponentTyping.StructureFileType) -> tuple
     components:dict[str,Component.Component] = {}
     base_components:list[tuple[str,BaseComponent.BaseComponent]] = []
     for index, (component_name, component_data) in enumerate(data.items()):
-        if not isinstance(component_name, str):
-            raise TypeError("Component index %i's name is not a str!" % (index))
-        if not isinstance(component_data, dict):
-            raise TypeError("Component \"%s\" is not a dict!" % (component_name))
-        if "type" not in component_data:
-            raise KeyError("Component \"%s\" has no \"type\" key!" % (component_name))
-        if not isinstance(component_data["type"], str):
-            raise TypeError("Key \"type\" of Component \"%s\" is not a str!" % (component_name))
         for component_type in component_types:
             if component_type.class_name == component_data["type"]:
                 component = component_type(component_data, component_name) # type:ignore All subclasses have this sort of __init__.
                 components[component_name] = component
                 if component_type is BaseComponent.BaseComponent:
-                    assert isinstance(component, BaseComponent.BaseComponent)
-                    base_components.append((component_name, component))
+                    base_components.append((component_name, cast(BaseComponent.BaseComponent, component)))
                 break
         else:
-            raise ValueError("Component \"%s\" has an invalid \"type\" key: %s. Must be one of [%s]!" % (component_name, component_data["type"], ", ".join(component_type.class_name for component_type in component_types)))
+            raise Exceptions.UnrecognizedComponentTypeError(component_data["type"], component_name, "(Must be one of [%s])" % (", ".join(component_type.class_name for component_Type in component_types),))
 
     return base_components, components
 
@@ -91,22 +89,22 @@ def set_components(components:dict[str,Component.Component], exclude:set[str], f
             continue
         component.set_component(components, functions)
 
-def do_imports(base_components:BaseComponent.BaseComponent, partially_imported:set[str], config:ImporterConfig.ImporterConfig) -> dict[str,Component.Component]:
-    if base_components.imports is None: return {}
+def do_imports(base_component:BaseComponent.BaseComponent, partially_imported:set[str], config:ImporterConfig.ImporterConfig) -> dict[str,Component.Component]:
+    if base_component.imports is None: return {}
     all_components:dict[str,tuple[Component.Component,str]] = {}
-    if not config.allow_imports and len(base_components.imports) > 0:
-        raise ValueError("Base %s attempted to import in an environment where imports are not allowed!" % (base_components,))
-    for imported_structure_data in base_components.imports:
+    if not config.allow_imports and len(base_component.imports) > 0:
+        raise Exceptions.ComponentConfigError(base_component, "(imports are not allowed)")
+    for imported_structure_data in base_component.imports:
         import_from = imported_structure_data["from"]
         imported_components = import_component(import_from, StructureFunctions.functions, partially_imported, config)
         # check for circular import
         if import_from in partially_imported:
-            raise RuntimeError("Circular import: %s" % partially_imported)
+            raise Exceptions.ComponentImporterCircularImportError(sorted(partially_imported))
 
         for imported_component_data in imported_structure_data["components"]:
             # check for existence
             if imported_component_data["component"] not in imported_components:
-                raise KeyError("Attempted to import Component \"%s\" from \"%s\", which does not exist!" % (imported_component_data["component"], import_from))
+                raise Exceptions.UnrecognizedComponentError(imported_component_data["component"], import_from)
             component = imported_components[imported_component_data["component"]]
             # set the name
             if "as" in imported_component_data:
@@ -117,7 +115,7 @@ def do_imports(base_components:BaseComponent.BaseComponent, partially_imported:s
             # checking for name duplication
             if name in all_components:
                 duplicated_structure = all_components[name][1]
-                raise RuntimeError("Attempted to import Components with the same name, \"%s\" and \"%s\"!" % (duplicated_structure, import_from))
+                raise Exceptions.ComponentImportNameClashError(duplicated_structure)
             all_components[name] = (component, import_from)
     output = {name: component for name, (component, structure_from) in all_components.items()}
     return output
@@ -147,7 +145,7 @@ def check_components(components:dict[str,Component.Component], config:ImporterCo
         traceback.print_exception(exception)
         print()
     if len(exceptions) > 0:
-        raise RuntimeError("Failed to parse structure!")
+        raise Exceptions.ComponentParseError()
 
 def finalize_components(components:dict[str,Component.Component], exclude:set[str]) -> None:
     for component_name, component in components.items():
@@ -155,20 +153,16 @@ def finalize_components(components:dict[str,Component.Component], exclude:set[st
         component.finalize()
 
 def parse_structure_file(name:str, data:ComponentTyping.StructureFileType, functions:dict[str,Callable], config:ImporterConfig.ImporterConfig=ImporterConfig.DEFAULT) -> StructureBase.StructureBase:
-    if not isinstance(data, dict):
-        raise TypeError("Structure file \"%s\" is not a dict!" % (name))
-
+    structure_file_type_verifier.base_verify(data)
     base_components, components = create_components(name, data)
-    if len(base_components) == 0:
-        raise ValueError("There is not a BaseComponent in Structure file \"%s\"!" % name)
-    if len(base_components) > 1:
-        raise ValueError("There are more than one BaseComponents in Structure file \"%s\": [%s]" % (", ".join(component_name for component_name, component in base_components)))
+    if len(base_components) != 1:
+        raise Exceptions.BaseComponentCountError(name, len(base_components))
     base_component = base_components[0][1]
 
     imported_components = do_imports(base_component, set(), config)
     for imported_component in imported_components:
         if imported_component in components:
-            raise KeyError("Duplicate key \"%s\" between \"%s\" and an imported Component!" % (imported_component, name))
+            raise Exceptions.ComponentImportNameClashError(imported_component, "(Structure \"%s\")" % (name))
     components.update(imported_components)
 
     set_components(components, set(imported_components.keys()), functions)
@@ -183,23 +177,19 @@ def parse_structure_file(name:str, data:ComponentTyping.StructureFileType, funct
     check_components(components, config, exclude=set(imported_components.keys()))
     finalize_components(components, exclude=set(imported_components.keys()))
 
-    assert base_component.final is not None
-    return base_component.final
+    return base_component.get_final()
 
 def parse_structure_file_for_import(name:str, data:ComponentTyping.StructureFileType, functions:dict[str,Callable], partially_imported:set[str], config:ImporterConfig.ImporterConfig) -> dict[str,Component.Component]:
-    if not isinstance(data, dict):
-        raise TypeError("Structure file \"%s\" is not a dict!" % (name))
+    structure_file_type_verifier.base_verify(data)
     base_components, components = create_components(name, data)
-    if len(base_components) == 0:
-        raise ValueError("There is not a BaseComponent in Structure file \"%s\"!" % name)
-    if len(base_components) > 1:
-        raise ValueError("There are more than one BaseComponent in Structure file \"%s\": [%s]" % (", ".join(component_name for component_name, component in base_components)))
+    if len(base_components) != 1:
+        raise Exceptions.BaseComponentCountError(name, len(base_components))
     base_component = base_components[0][1]
     partially_imported.add(name)
     imported_components = do_imports(base_component, partially_imported, config)
     for imported_component in imported_components:
         if imported_component in components:
-            raise KeyError("Duplicate key \"%s\" between \"%s\" and an imported component!" % (imported_component, name))
+            raise Exceptions.ComponentImportNameClashError(imported_component, "(Structure \"%s\")" % (name))
     components.update(imported_components)
 
     set_components(components, set(imported_components.keys()), functions)
@@ -212,14 +202,10 @@ def parse_structure_file_for_import(name:str, data:ComponentTyping.StructureFile
     return components
 
 def import_component(name:str, functions:dict[str,Callable], partially_imported:set[str], config:ImporterConfig.ImporterConfig) -> dict[str,Component.Component]:
-    if not isinstance(name, str):
-        raise TypeError("`name` is not a str!")
     data = get_file(name)
     return parse_structure_file_for_import(name, data, functions, partially_imported, config)
 
 def load(name:str, functions:dict[str,Callable]) -> StructureBase.StructureBase:
-    if not isinstance(name, str):
-        raise TypeError("`name` is not a str!")
     data = get_file(name)
     return parse_structure_file(name, data, functions)
 
@@ -235,7 +221,7 @@ def parse_structures_index() -> dict[str,StructureBase.StructureBase]:
     for structure_file_name in index:
         structure_file_path = FileManager.get_structure_path(structure_file_name)
         if not structure_file_path.exists():
-            raise FileNotFoundError("Structure file \"%s\" is referred to by structures.json, but does not exist!" % (structure_file_name))
+            raise Exceptions.UnrecognizedStructureError(structure_file_name, "(referred to be structures.json)")
     return {structure_file_name: load_from_file(structure_file_name, StructureFunctions.functions) for structure_file_name in index}
 
 structures = parse_structures_index()

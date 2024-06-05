@@ -3,6 +3,7 @@ from typing import Generator
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.NonExistentSounds.NonExistentSoundsDataMiner as NonExistentSoundsDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
@@ -17,9 +18,11 @@ def strip_file_name(file_name:str, resource_packs_location:str|None) -> str|None
     else:
         file_name = file_name.replace("sounds/", "", 1) # in versions with sounds not in resource packs, sound_definitions.json does not include the sounds directory.
     file_extension = "." + file_name.split(".")[-1]
-    assert "/" not in file_extension
+    if "/" in file_extension:
+        raise Exceptions.InvalidFileNameError(file_name, message="(invalid suffix \"%s\")" % (file_extension,))
     file_name = file_name.replace(file_extension, "", 1)
-    assert not file_name.endswith(file_extension)
+    if file_name.endswith(file_extension):
+        raise Exceptions.InvalidStateError(file_name, resource_packs_location, "file_name still ends in \"%s\"!" % (file_extension))
     return file_name
 
 def get_sounds(sound_definitions:DataMinerTyping.MySoundDefinitionsJson) -> Generator[tuple[str,str,str],None,None]:
@@ -45,15 +48,13 @@ class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDa
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.NonExistentSounds:
         sound_files_data = environment.dependency_data["sound_files"]
-        assert sound_files_data is not None
         sound_files = {strip_file_name(sound_file, self.resource_packs_location) for sound_file in sound_files_data.keys()}
         sound_files.discard(None)
         if len(sound_files) == 0:
-            raise RuntimeError("There are no sound files in a resource pack directory!")
+            raise Exceptions.DataMinerNothingFoundError(self, "(no sound files in a resource pack directory)")
 
         non_existent_sounds:dict[str,dict[str,list[str]]] = {}
         sound_definitions = environment.dependency_data["sound_definitions"]
-        assert sound_definitions is not None
         total_sound_locations = 0
         total_non_existent_sound_locations = 0
         for sound_event, resource_pack, sound_location in get_sounds(sound_definitions):
@@ -69,6 +70,6 @@ class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDa
                 non_existent_sounds[sound_event] = {resource_pack: [sound_location]}
 
         if total_sound_locations == total_non_existent_sound_locations:
-            raise RuntimeError("Every sound appears to be non-existent!")
+            raise Exceptions.DataMinerFailureError(self, "Every sound appears to be non-existent!")
 
         return {key: value for key, value in sorted(non_existent_sounds.items())}

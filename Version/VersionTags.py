@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Iterable, TypedDict
 
 from typing_extensions import NotRequired, Required
 
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionRange as VersionRange
@@ -89,7 +90,7 @@ class AutoAssignerRange(AutoAssigner):
     def get_version(self, version:str, versions:dict[str,"Version.Version"]) -> "Version.Version":
         output = versions.get(version)
         if output is None:
-            raise KeyError("VersionTag %s refers to non-existent version \"%s\"!" % (self.parent_tag.name, version))
+            raise Exceptions.UnrecognizedVersionError(version, self.parent_tag)
         return output
 
     def contains_version(self, version:"Version.Version", versions:dict[str,"Version.Version"]) -> bool:
@@ -164,7 +165,7 @@ class Latest():
         for tag in tags:
             if tag.latest_slot is None: continue
             if not self.is_latest_slot(tag.latest_slot):
-                raise ValueError("Latest slot \"%s\" in tag \"%s\" is not recognized!" % (tag.latest_slot, tag.name))
+                raise Exceptions.UnrecognizedLatestSlotError(tag.latest_slot, tag)
             self.latest_tags[tag.latest_slot].add(tag)
 
     def __repr__(self) -> str:
@@ -187,7 +188,7 @@ class Order():
             if isinstance(item, str):
                 tag = tags.get(item, None)
                 if tag is None:
-                    raise ValueError("Tag \"%s\" in item %i of order does not exist!" % (item, index))
+                    raise Exceptions.UnrecognizedVersionTagError(item, self, "(item %i)" % (index,))
                 output.append(tag)
                 used_tags.add(tag)
             else:
@@ -195,21 +196,21 @@ class Order():
                 for index2, item2 in enumerate(item):
                     tag = tags.get(item2, None)
                     if tag is None:
-                        raise ValueError("Tag \"%s\" in item %i of %i of order does not exist!" % (item2, index2, index))
+                        raise Exceptions.UnrecognizedVersionTagError(item2, self, "(item %i of %i)" % (index2, index))
                     tag_set.add(tag)
                     used_tags.add(tag)
                 output.append(tag_set)
         for used_tag in used_tags:
             if not used_tag.is_order_tag:
-                raise ValueError("Tag \"%s\" is not an order tag and is not allowed in order!" % (used_tag.name))
+                raise Exceptions.NotAnOrderTagError(used_tag, "and is not allowed in order")
         if len(used_tags) != len(self.order_tags):
-            raise ValueError("Not all order tags were used in order!")
+            raise Exceptions.NotAllOrderTagsUsedError("in order")
         return output
 
     def get_top_level_tag(self, top_level_tag:str, tags:dict[str,VersionTag]) -> VersionTag:
         tag = tags.get(top_level_tag, None)
         if tag is None:
-            raise ValueError("Tag \"%s\" in top_level_tag does not exist!" % top_level_tag)
+            raise Exceptions.UnrecognizedVersionTagError(top_level_tag, self, "(in top_level_tag)")
         return tag
 
     def get_tags_in_tag_list(self, data:list[str], tags:dict[str,VersionTag]) -> list[VersionTag]:
@@ -217,23 +218,23 @@ class Order():
         for index, item in enumerate(data):
             tag = tags.get(item, None)
             if tag is None:
-                raise ValueError("Tag \"%s\" of item %i does not exist!" % (item, index))
+                raise Exceptions.UnrecognizedVersionTagError(item, self, "(item %i)" % (index,))
             output.append(tag)
         return output
 
     def get_allowed_children(self, data:dict[str,list[str]], tags:dict[str,VersionTag]) -> dict[VersionTag,list[VersionTag]]:
         output:dict[VersionTag,list[VersionTag]] = {}
         if len(data) != len(self.order_tags):
-            raise ValueError("Not all order tags were used in allowed_children!")
+            raise Exceptions.NotAllOrderTagsUsedError("in allowed_children")
         for tag_str, children_str in data.items():
             tag = tags.get(tag_str, None)
             if tag is None:
-                raise ValueError("Tag \"%s\" in allowed_children does not exist!" % (tag_str))
+                raise Exceptions.UnrecognizedVersionTagError(tag_str, self, "(in allowed_children)")
             children:list[VersionTag] = []
             for child_str in children_str:
                 child = tags.get(child_str, None)
                 if child is None:
-                    raise ValueError("Tag \"%s\" in key \"%s\" of allowed_children does not exist!" % (child_str))
+                    raise Exceptions.UnrecognizedVersionTagError(child_str, self, "(in key \"%s\" of allowed_children)" % (tag_str))
                 children.append(child)
             output[tag] = children
         return output
@@ -274,7 +275,7 @@ def get_ordering_tag(tags:list[VersionTag]) -> VersionTag:
         if tag.is_order_tag:
             return tag
     else:
-        raise IndexError("No ordering tags found within list!")
+        raise Exceptions.NoOrderVersionTagsFoundError(tags)
 
 def parse() -> VersionTags:
     with open(FileManager.VERSION_TAGS_FILE, "rt") as f:

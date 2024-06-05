@@ -9,13 +9,12 @@ import Structure.ListStructure as ListStructure
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class ListComponent(StructureComponent.StructureComponent):
+class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStructure]):
 
     class_name_article = "a List"
     class_name = "List"
     my_type = [list]
     my_capabilities = Capabilities.Capabilities(is_structure=True)
-    final:ListStructure.ListStructure
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
@@ -61,8 +60,7 @@ class ListComponent(StructureComponent.StructureComponent):
 
     def link_finals(self) -> None:
         super().link_finals()
-        assert self.final is not None
-        self.final.link_substructures(
+        self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),

@@ -3,6 +3,7 @@ import json
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.MusicDefinitions.MusicDefinitionsDataMiner as MusicDefinitionsDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 
 
@@ -10,14 +11,13 @@ class MusicDefinitionsDataMiner0(MusicDefinitionsDataMiner.MusicDefinitionsDataM
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.MyMusicDefinitions:
         resource_packs = environment.dependency_data["resource_packs"]
-        assert resource_packs is not None
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         resource_pack_files = {"resource_packs/%s/sounds/music_definitions.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         files_request = [(resource_pack_file, "t", json.load) for resource_pack_file in resource_pack_files.keys()]
         accessor = self.get_accessor("client")
         files:dict[str,DataMinerTyping.MusicDefinitions] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
-            raise FileNotFoundError("No \"music_definitions.json\" files found in \"%s\"" % self.version)
+            raise Exceptions.DataMinerNothingFoundError(self)
 
         music_definitions:DataMinerTyping.MyMusicDefinitions = {}
         for resource_pack_file, resource_pack_music_definitions in files.items():

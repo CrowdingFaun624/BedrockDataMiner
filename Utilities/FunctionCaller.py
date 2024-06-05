@@ -19,8 +19,6 @@ class WaitValue(Generic[T]):
     '''Does not call the FunctionCaller until `get` is called. It then stores the output of the FunctionCaller for future calls of `get`.'''
 
     def __init__(self, caller:FunctionCaller[T]|Callable[[],T]) -> None:
-        if not isinstance(caller, (FunctionCaller, Callable)):
-            raise TypeError("`caller` is not a FunctionCaller or Callable!")
         self.caller = caller
         self.has_called = False
         self.value = None

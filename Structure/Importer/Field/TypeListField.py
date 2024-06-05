@@ -5,6 +5,7 @@ import Structure.Importer.Field.AbstractTypeField as AbstractTypeField
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Pattern as Capabilities
 import Structure.Importer.TypeAliasComponent as TypeAliasComponent
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Structure.Importer.Component as Component
@@ -32,7 +33,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         already_types:set[str] = set()
         for subcomponent_str in self.subcomponents_strs:
             if subcomponent_str in already_types:
-                raise KeyError("Duplicate type \"%s\" of %sof %s \"%s\"." % (subcomponent_str, Field.get_keys_strs(False, self.error_path), component_class_name, component_name))
+                raise Exceptions.ComponentDuplicateTypeError(subcomponent_str, self, "(referenced in %sof %s \"%s\")" % (Field.get_keys_strs(False, self.error_path), component_class_name, component_name))
             already_types.add(subcomponent_str)
             if subcomponent_str in ComponentTyping.DEFAULT_TYPES:
                 subcomponent_type = ComponentTyping.DEFAULT_TYPES[subcomponent_str]
@@ -44,17 +45,14 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         return components_used
 
     def resolve(self) -> None:
-        if self.primitive_types is None:
-            raise RuntimeError("Cannot call `resolve` before `set_field`!")
-        assert self.type_aliases is not None
+        if self.primitive_types is None or self.type_aliases is None:
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.resolve, self)
         self.types = []
         self.types.extend(self.primitive_types)
         for type_alias_component in self.type_aliases:
-            if type_alias_component.types is None:
-                raise RuntimeError("Cannot call `resolve` before all TypeAliases are set!")
-            self.types.extend(type_alias_component.types)
+            self.types.extend(type_alias_component.get_types())
 
     def get_types(self) -> list[type]:
         if self.types is None:
-            raise RuntimeError("Cannot call `get_types` before `resolve`!")
+            raise Exceptions.FieldSequenceBreakError(self.resolve, self.get_types, self)
         return self.types

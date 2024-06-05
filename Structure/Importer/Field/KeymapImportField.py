@@ -5,6 +5,7 @@ import Structure.Importer.Field.ComponentListField as ComponentListField
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.KeymapKeyField as KeymapKeyField
 import Structure.Importer.Pattern as Capabilities
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Structure.Importer.KeymapComponent as KeymapComponent
@@ -25,7 +26,7 @@ class KeymapImportField(ComponentListField.ComponentListField):
     def set_field(self, component_name: str, component_class_name: str, components: dict[str, Component.Component], functions: dict[str, Callable]) -> Sequence[Component.Component]:
         output = cast(Sequence["KeymapComponent.KeymapComponent"], super().set_field(component_name, component_class_name, components, functions))
         if self.import_into_keys is None:
-            raise RuntimeError("Cannot call `set_field` before `import_into`!")
+            raise Exceptions.FieldSequenceBreakError(self.import_into, self.set_field, self)
         tag_set = self.tag_set
         for component in output:
             self.import_into_keys.extend(key.copy_for_importing() for key in iter(component.keys) if not key.has_been_imported)

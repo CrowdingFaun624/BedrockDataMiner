@@ -1,5 +1,6 @@
 from typing import Any
 
+import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
@@ -28,14 +29,7 @@ def stringify(data:Any) -> str:
                 except Exception:
                     return "Unencodable Nbt Object"
         case _:
-            try:
-                stringified_data = str(data)
-            except Exception: stringified_data = None
-            if stringified_data is None:
-                error_message = "Unencodable object of type \"%s\"!" % (data.__class__.__name__)
-            else:
-                error_message = "Unencodable object of type \"%s\": %s" % (data.__class__.__name__, stringified_data)
-            raise TypeError(error_message)
+            raise Exceptions.CannotStringifyError(type(data))
 
 class Line():
 

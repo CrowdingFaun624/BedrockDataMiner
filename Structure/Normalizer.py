@@ -1,6 +1,8 @@
-from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, cast
+from typing import (TYPE_CHECKING, Any, Callable, Generic, Literal, TypeVar,
+                    cast)
 
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.Exceptions as Exceptions
 import Version.Version as Version
 
 if TYPE_CHECKING:
@@ -18,9 +20,7 @@ class Normalizer(Generic[IN, OUT]):
         self.function = function
         self.dependencies = cast(list[DataMinerTyping.DependenciesLiterals], dependencies)
 
-    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", version_number:int) -> OUT|None:
-        if version_number not in (1, 2):
-            raise ValueError("`version_number` is not 1 or 2!")
+    def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", version_number:Literal[1,2]) -> OUT|None:
         version = normalizer_dependencies.get_version(version_number)
         this_data:DataMinerTyping.DependenciesTypedDict
         if version is None:
@@ -28,38 +28,16 @@ class Normalizer(Generic[IN, OUT]):
         else:
             this_data = cast(DataMinerTyping.DependenciesTypedDict, {dependency: normalizer_dependencies.get_data(version, dependency) for dependency in self.dependencies})
         # `this_data` is only the dataminer data that is needed for this normalizer.
-        exception = None
         try:
             return self.function(data, this_data)
-        except Exception as e:
-            exception = e
-            data_string = str(data)
-            if len(data_string) > 500:
-                exception.args = tuple(list(exception.args) + ["Normalizer excepted!"])
-            else:
-                exception.args = tuple(list(exception.args) + ["Normalizer excepted on data: %s" % (data_string)])
-        if exception is not None:
-            raise exception
+        except Exception:
+            raise Exceptions.NormalizerError(self, data)
 
 class NormalizerDependencies():
 
     def __init__(self, data:dict[tuple[Version.Version, str], Any], dataminer_collections:list["DataMiner.DataMinerCollection"]):
         '''There should only be one data object that is shared between all NormalizerDependencies, or only one NormalizerDependencies object.
         The data is a dictionary of tuples of a version and a dataminer name, and the corresponding data.'''
-        if not isinstance(data, dict):
-            raise TypeError("`data` is not a dict!")
-        for index, key in enumerate(data.keys()):
-            if not isinstance(key, tuple):
-                raise TypeError("Key number %i of `data` is not a tuple, but instead %s!" % (index, key.__class__.__name__))
-            if len(key) != 2:
-                raise TypeError("Key number %i of `data` is not length 2!" % (index))
-            if not isinstance(key[0], Version.Version):
-                raise TypeError("Item 0 of key number %i of `data` is not a Version, but instead %s!" % (index, key[0].__class__.__name__))
-            if not isinstance(key[1], str):
-                raise TypeError("Item 1 of key number %i of `data` is not a str, but instead %s!" % (index, key[1].__class__.__name__))
-        if not isinstance(dataminer_collections, list):
-            raise TypeError("`dataminer_collections` is not a list!")
-
         self.data = data
         self.dataminer_collections = {dataminer_collection.name: dataminer_collection for dataminer_collection in dataminer_collections}
 
@@ -80,24 +58,16 @@ class NormalizerDependencies():
 class LocalNormalizerDependencies():
 
     def __init__(self, normalizer_dependencies:NormalizerDependencies, version1:Version.Version|None, version2:Version.Version|None):
-        if not isinstance(normalizer_dependencies, NormalizerDependencies):
-            raise TypeError("`normalizer_dependencies` is not a NormalizerDependencies, but instead a %s!" % (normalizer_dependencies.__class__.__name__))
-        if not (version1 is None or isinstance(version1, Version.Version)):
-            raise TypeError("`version1` is not a Version or None, but instead a %s!" % (version1.__class__.__name__))
-        if not (version2 is None or isinstance(version2, Version.Version)):
-            raise TypeError("`version2` is not a Version or None, but instead a %s!" % (version2.__class__.__name__))
         self.parent = normalizer_dependencies
         self.version1 = version1
         self.version2 = version2
 
-    def get_version(self, index:int) -> Version.Version|None:
+    def get_version(self, index:Literal[1,2]) -> Version.Version|None:
         match index:
             case 1:
                 return self.version1
             case 2:
                 return self.version2
-            case _:
-                raise ValueError("`index` is not 1 or 2!")
 
     def get_data(self, version:Version.Version, dataminer_name:str) -> Any:
         return self.parent.get_data(version, dataminer_name)
@@ -113,7 +83,7 @@ class NullNormalizerDependencies(LocalNormalizerDependencies):
         self.version2 = None
 
     def get_data(self, version: Version.Version, dataminer_name: str) -> Any:
-        raise RuntimeError("Attempted to get data from NullNormalizerDependencies!")
+        raise Exceptions.NullNormalizerDependenciesAccessorError(self, version, dataminer_name)
     
     def __repr__(self) -> str:
         return "<%s>" % (self.__class__.__name__)
@@ -121,15 +91,10 @@ class NullNormalizerDependencies(LocalNormalizerDependencies):
 class SimpleNormalizerDependencies(LocalNormalizerDependencies):
 
     def __init__(self, data:DataMinerTyping.DependenciesTypedDict, version:Version.Version):
-        if not isinstance(data, dict):
-            raise TypeError("`data` is not a dict, but instead %s!" % (data.__class__.__name__))
-        if not isinstance(version, Version.Version):
-            raise TypeError("`version` is not a Version, but instead %s!" % (version.__class__.__name__))
-
         self.data = data
         self.version = version
 
-    def get_version(self, index: int) -> Version.Version:
+    def get_version(self, index: Literal[1,2]) -> Version.Version:
         return self.version
 
     def get_data(self, version:Version.Version, dataminer_name:str) -> Any:

@@ -7,6 +7,7 @@ import Structure.Importer.Field.OptionalStructureComponentField as OptionalStruc
 import Structure.Importer.Field.StructroidComponentField as StructroidComponentField
 import Structure.Importer.Field.StructureComponentField as StructureComponentField
 import Structure.Importer.ImporterConfig as ImporterConfig
+import Utilities.Exceptions as Exceptions
 
 VerifyComponentType:TypeAlias = StructroidComponentField.StructroidComponentField|OptionalStructroidComponentField.OptionalStructroidComponentField|StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
 
@@ -24,12 +25,10 @@ class AbstractTypeField(Field.Field):
             if subcomponent is None:
                 for value_type in component_types:
                     if value_type in ComponentTyping.REQUIRES_SUBCOMPONENT_TYPES:
-                        exceptions.append(TypeError("%s \"%s\" accepts type %s, but has a null Subcomponent!" % (component_class_name, component_name, value_type.__name__)))
+                        exceptions.append(Exceptions.ComponentTypeRequiresComponentError("%s \"%s\"" % (component_class_name, component_name), value_type))
             else:
                 if set(component_types) != set(subcomponent.my_type):
-                    my_types = ", ".join(type_item.__name__ for type_item in component_types)
-                    its_types = ", ".join(type_item.__name__ for type_item in subcomponent.my_type)
-                    exceptions.append(TypeError("%s \"%s\" accepts types [%s], but its Subcomponent, \"%s\", only accepts type [%s]!" % (component_class_name, component_name, my_types, subcomponent.name, its_types)))
+                    exceptions.append(Exceptions.ComponentMismatchedTypesError("%s \"%s\"" % (component_class_name, component_name), sorted(component_types, key=lambda type: type.__name__), subcomponent, sorted(subcomponent.my_type, key=lambda type: type.__name__)))
         return exceptions
 
     def resolve(self) -> None:

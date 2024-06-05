@@ -5,6 +5,7 @@ import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMiners as DataMiners
 import Structure.Normalizer as Normalizer
 import Structure.StructureEnvironment as StructureEnvironment
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Version.Version as Version
 import Version.VersionParser as VersionParser
@@ -20,7 +21,8 @@ def pairs(_list:Iterable[PairsType]) -> Generator[tuple[PairsType,PairsType], No
     previous_item = None
     for index, item in enumerate(_list):
         if index != 0:
-            assert previous_item is not None
+            if previous_item is None:
+                raise Exceptions.InvalidStateError(previous_item, "is None!")
             yield (previous_item, item)
         previous_item = item
 
@@ -62,8 +64,10 @@ def compare_all_of(
             else:
                 undataminable_versions_between.append(version)
     except Exception as e:
-        assert version is not None
-        print("%s failed at version %s." % (dataminer_collection.name, version.name))
+        if version is None:
+            print("%s failed." % (dataminer_collection.name))
+        else:
+            print("%s failed at version %s." % (dataminer_collection.name, version.name))
         exception_holder[dataminer_collection.name] = (e, previous_successful_version, version)
     else:
         print("Compared all of %s." % dataminer_collection.name)
@@ -89,11 +93,11 @@ def main() -> None:
     major_tags = {tag for tag in version_tags.tags.values() if tag.is_major_tag}
     minor_tags_before = {tag for tag in version_tags.tags.values() if not tag.is_major_tag and tag in version_tags.order.tags_before_top_level_tag}
     minor_tags_after  = {tag for tag in version_tags.tags.values() if not tag.is_major_tag and tag in version_tags.order.tags_after_top_level_tag }
-    major_versions:dict[Version.Version,list[Version.Version]] = {version: [] for version in versions.values() if version.ordering_tag in major_tags}
+    major_versions:dict[Version.Version,list[Version.Version]] = {version: [] for version in versions.values() if version.get_order_tag() in major_tags}
     for major_version, child_versions in major_versions.items():
-        child_versions.extend(child for child in major_version.children if child.ordering_tag in minor_tags_before)
+        child_versions.extend(child for child in major_version.children if child.get_order_tag() in minor_tags_before)
         child_versions.append(major_version)
-        child_versions.extend(child for child in major_version.children if child.ordering_tag in minor_tags_after)
+        child_versions.extend(child for child in major_version.children if child.get_order_tag() in minor_tags_after)
 
     sorted_versions = list(flatten(child_versions for child_versions in major_versions.values()))
     exception_holder:dict[str,bool|tuple[Exception,Version.Version|None,Version.Version|None]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
@@ -113,6 +117,6 @@ def main() -> None:
     if excepted:
         for structure_name, previous_version, version in excepted_threads:
             print("\"%s\" excepted between Versions \"%s\" and \"%s\"" % (structure_name, previous_version, version))
-        raise RuntimeError("CompareAll threads excepted: %s" % [structure_name for structure_name, previous_version, version in excepted_threads])
+        raise Exceptions.StructuresCompareFailureError([structure_name for structure_name, previous_version, version in excepted_threads])
     else:
         print("Compared all versions.")

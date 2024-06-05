@@ -2,6 +2,7 @@ import enum
 import json
 from typing import TYPE_CHECKING, Any, Callable, TypedDict, TypeVar, cast
 
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -47,7 +48,7 @@ def collapse_resource_packs(data:dict[str,a], add_defined_in:bool=True, extend:b
     resource_packs_by_tag:dict[str,list[str]] = {}
     for resource_pack in data.keys():
         if resource_pack not in resource_pack_order:
-            raise KeyError("Unrecognized resource pack \"%s\"" % (resource_pack))
+            raise Exceptions.UnrecognizedPackError(resource_pack, "pack")
         tag_string = ",".join(resource_pack_dict[resource_pack]["tags"])
         if tag_string in resource_packs_by_tag:
             resource_packs_by_tag[tag_string].append(resource_pack)
@@ -83,13 +84,13 @@ def collapse_resource_packs(data:dict[str,a], add_defined_in:bool=True, extend:b
 def collapse_resource_pack_list(data:list[str], dependencies:"DataMinerTyping.DependenciesTypedDict") -> list[str]:
     for properties_resource_pack in data:
         if properties_resource_pack not in resource_pack_dict:
-            raise KeyError("Unknown resource pack \"%s\"!" % (properties_resource_pack))
+            raise Exceptions.UnrecognizedPackError(properties_resource_pack, "pack")
     output:list[str] = []
     exists_in_output:set[str] = set()
     while len(data) > 0:
         properties_resource_pack = data.pop()
         if properties_resource_pack not in resource_pack_dict:
-            raise KeyError("Unknown resource pack \"%s\"!" % (properties_resource_pack))
+            raise Exceptions.UnrecognizedPackError(properties_resource_pack, "pack")
         tags_str = ",".join(resource_pack_dict[properties_resource_pack]["tags"])
         if tags_str not in exists_in_output:
             output.append(tags_str)

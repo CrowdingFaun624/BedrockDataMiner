@@ -1,7 +1,7 @@
 import json
 import traceback
-from typing import (IO, Any, Callable, Iterable, Literal, Mapping, Sequence,
-                    TypeVar, overload)
+from typing import (IO, Any, Callable, Literal, Mapping, NoReturn,
+                    Sequence, TypeVar, overload)
 
 from pathlib2 import Path
 
@@ -12,6 +12,7 @@ import Structure.Normalizer as Normalizer
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.CustomJson as CustomJson
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
@@ -25,7 +26,7 @@ def str_to_version(version_str:str|None) -> Version.Version|None:
     versions = VersionParser.versions
     output = versions.get(version_str)
     if output is None:
-        raise KeyError("Version \"%s\" does not exist!" % version_str)
+        raise Exceptions.UnrecognizedVersionError(version_str)
     return output
 
 class DataMinerSettings():
@@ -75,7 +76,7 @@ class DataMiner():
         self.files = set(self.settings.files)
         self.dependencies = self.settings.dependencies
         if not isinstance(self, NullDataMiner) and self.version not in self.settings.version_range:
-            raise ValueError("Version \"%s\" is not a valid version for this dataminer!" % self.version.name)
+            raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, "in DataMiner %r" % (self,))
 
         self.initialize(**settings.kwargs)
 
@@ -85,11 +86,11 @@ class DataMiner():
     def initialize(self, **kwargs) -> None:
         '''`DataMinerSettings.__init__(**kwargs)` -> `DataMiner.initialize(**kwargs)`.'''
         if len(kwargs) > 0:
-            raise NotImplementedError("`initialize` was called with %i non-empty parameters by %s without being defined by a subclass:\n%s" % (len(kwargs), repr(self), kwargs))
+            raise Exceptions.DataMinerKeywordArgumentsExistError(kwargs, self)
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         '''Makes the dataminer get the file. Returns the output.'''
-        raise NotImplementedError("`activate` was called by %s without being defined by a subclass." % repr(self))
+        raise Exceptions.DataMinerLacksActivateError(self)
 
     def get_data_file_path(self) -> Path:
         return FileManager.get_version_data_path(self.version.get_version_directory(), self.file_name)
@@ -118,7 +119,7 @@ class DataMiner():
 
     def get_accessor(self, file_type:str) -> Accessor.Accessor:
         if file_type not in self.files:
-            raise RuntimeError("Attempted to get accessor of file type \"%s\" from %s; this dataminer only has permission to take files from [%s]!" % (file_type, self, ", ".join(sorted(self.files))))
+            raise Exceptions.DataMinerFileTypePermissionError(self, file_type, sorted(self.files))
         return self.version.get_accessor(file_type)
 
     def get_files_in(self, accessor:Accessor.Accessor, parent:str) -> list[str]:
@@ -197,7 +198,7 @@ class DataMiner():
             traceback.print_exception(exception)
             print()
         if len(exceptions) > 0:
-            raise RuntimeError("Failed to read files!")
+            raise Exceptions.DataMinerReadFilesError(self)
 
         return file_results
 
@@ -210,32 +211,32 @@ class DataMiner():
 class NullDataMiner(DataMiner):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
 
-    def activate(self, dependency_data:DataMinerTyping.DependenciesTypedDict, structure_environment:StructureEnvironment.StructureEnvironment) -> Any:
-        raise RuntimeError("Attempted to use `activate` from a NullDataMiner!")
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> NoReturn:
+        raise Exceptions.NullDataMinerMethodError(self, self.activate)
 
-    def store(self, dependency_data:DataMinerTyping.DependenciesTypedDict, dataminer_collections:list["DataMinerCollection"]) -> Any:
-        raise RuntimeError("Attempted to use `store` from a NullDataMiner!")
+    def store(self, environment:DataMinerEnvironment.DataMinerEnvironment, dataminer_collections:list["DataMinerCollection"]) -> NoReturn:
+        raise Exceptions.NullDataMinerMethodError(self, self.store)
 
-    def get_file_list(self) -> Iterable[str]:
-        raise RuntimeError("Attempted to use `get_file_list` from a NullDataMiner!")
+    def get_file_list(self) -> NoReturn:
+        raise Exceptions.NullDataMinerMethodError(self, self.get_file_list)
 
-    def get_accessor(self, file_type:str) -> Accessor.Accessor:
-        raise RuntimeError("Attempted to use `get_accessor` from a NullDataMiner!")
+    def get_accessor(self, file_type:str) -> NoReturn:
+        raise Exceptions.NullDataMinerMethodError(self, self.get_accessor)
 
-    def get_files_in(self, accessor:Accessor.Accessor, parent:str) -> Iterable[str]:
-        raise RuntimeError("Attempted to use `get_files_in` from a NullDataMiner!")
+    def get_files_in(self, accessor:Accessor.Accessor, parent:str) -> NoReturn:
+        raise Exceptions.NullDataMinerMethodError(self, self.get_files_in)
 
-    def read_file(self, file_name: str, mode: Literal["b","t"] = "t") -> str | bytes:
-        raise RuntimeError("Attempted to use `read_file` from a NullDataMiner!")
+    def read_file(self, file_name: str, mode: Literal["b","t"] = "t") -> NoReturn:
+        raise Exceptions.NullDataMinerMethodError(self, self.read_file)
 
-    def read_files(self, files:list[str|tuple[str,str,Callable[[IO],Any]|None]]) -> dict[str,str|bytes|Any]:
-        raise RuntimeError("Attempted to use `read_files` from a NullDataMiner!")
+    def read_files(self, files:list[str|tuple[str,str,Callable[[IO],Any]|None]]) -> NoReturn:
+        raise Exceptions.NullDataMinerMethodError(self, self.read_files)
 
-    def file_exists(self, accessor:Accessor.Accessor, file_name:str) -> bool:
-        raise RuntimeError("Attempted to use `file_exists` from a NullDataMiner!")
+    def file_exists(self, accessor:Accessor.Accessor, file_name:str) -> NoReturn:
+        raise Exceptions.NullDataMinerMethodError(self, self.file_exists)
 
-    def get_file(self, file_name:str, mode:Literal["b","t"]="t") -> FileManager.FilePromise:
-        raise RuntimeError("Attempted to use `get_file` from a NullDataMiner!")
+    def get_file(self, file_name:str, mode:Literal["b","t"]="t") -> NoReturn:
+        raise Exceptions.NullDataMinerMethodError(self, self.get_file)
 
 class DataMinerCollection():
 
@@ -256,7 +257,7 @@ class DataMinerCollection():
             if non_exist_ok:
                 return None
             else:
-                raise FileNotFoundError("Version \"%s\" does not currently have a data file \"%s\"!" % (version.name, self.file_name))
+                raise Exceptions.MissingDataFileError(self, self.file_name, version)
         with open(data_path, "rt") as f:
             return json.load(f, cls=CustomJson.decoder)
 

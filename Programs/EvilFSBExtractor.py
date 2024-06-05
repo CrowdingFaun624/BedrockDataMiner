@@ -1,9 +1,10 @@
 import json
 import subprocess
-from typing import Generator, Iterable
+from typing import Iterator
 
 from pathlib2 import Path
 
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.FileStorageManager as FileStorageManager
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
@@ -21,20 +22,6 @@ def write_cache(cache_data:dict[str,dict[str,str]]) -> None:
         json.dump(cache_data, f)
 
 def cache_new_item(fsb_hash:str, data:dict[str,str]) -> None:
-    if not isinstance(fsb_hash, str):
-        raise TypeError("`fsb_hash` is not a str!")
-    if len(fsb_hash) != 40:
-        raise ValueError("`fsb_hash` is len %i instead of 40: \"%s\"!" % (len(fsb_hash), fsb_hash))
-    if not isinstance(data, dict):
-        raise TypeError("`data` is not a dict!")
-    for key, value in data.items():
-        if not isinstance(key, str):
-            raise TypeError("A key in `data` is not a str: \"%s\"" % key)
-        if not isinstance(value, str):
-            raise TypeError("A value in `data` is not a str: \"%s\": \"%s\"!" % (key, value))
-        if len(value) != 40:
-            raise ValueError("A value in `data` is len %i isntead of 40: \"%s\": \"%s\"!" % (len(value), key, value))
-
     cache = fsb_cache.get()
     cache[fsb_hash] = data
     write_cache(cache)
@@ -50,10 +37,7 @@ def cache_read_item(fsb_hash:str) -> dict[str,str]|None:
 fsb_cache = WaitValue(FunctionCaller(read_cache))
 
 def __output_file_all_done(input_file_releases:dict[str,bool], file_path:Path) -> None:
-    file_name = file_path.name
-    if file_name not in input_file_releases:
-        raise KeyError("\"%s\" is not a key in %s!" % (file_name, input_file_releases))
-    input_file_releases[file_name] = True
+    input_file_releases[file_path.name] = True
     file_path.unlink()
     if all(input_file_releases.values()):
         Path(file_path.parent).rmdir()
@@ -75,7 +59,7 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
         # run fsb extractor on fsb file.
         exe_return = subprocess.run([FileManager.LIB_FSB_EXE_FILE, temp_file], shell=True, cwd=temp_directory, capture_output=True)
         if exe_return.returncode != 0:
-            raise RuntimeError("EvilFSBExtractor returned a code of %i on file \"%s\"!" % (exe_return.returncode, input_file.name))
+            raise Exceptions.SoundFilesExtractionError(input_file, exe_return.returncode)
 
         # look at what files are there.
         result_file_paths = [result_file for result_file in temp_directory.iterdir() if result_file.name != "fsb.fsb"]
@@ -96,11 +80,7 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
         input_file.all_done()
         return {cached_file_path: FileStorageManager.open_archived(cached_file_hash, "b") for cached_file_path, cached_file_hash in cache_data.items()}
 
-def extract_fsb_files(files:Iterable[tuple[str,FileManager.FilePromise]]|Generator[tuple[str,FileManager.FilePromise],None,None]) -> Generator[tuple[str,dict[str,FileManager.FilePromise]],None,None]:
+def extract_fsb_files(files:Iterator[tuple[str,FileManager.FilePromise]]) -> Iterator[tuple[str,dict[str,FileManager.FilePromise]]]:
     '''Adds all FilePromises to the queue. It yields the input FilePromise name and a dictionary of its result. Does not necessarily maintain the same order.'''
-    if not isinstance(files, Iterable):
-        raise TypeError("`files` is not an Iterable!")
     for file_name, next_file in files:
-        if not isinstance(next_file, FileManager.FilePromise):
-            raise TypeError("`files` has an item that is not a FilePromise!")
         yield file_name, extract_fsb_file(next_file)

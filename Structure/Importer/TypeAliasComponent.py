@@ -1,6 +1,7 @@
 import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentTyping as ComponentTyping
+import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
@@ -18,7 +19,7 @@ class TypeAliasComponent(Component.Component):
         super().__init__(name)
         self.verify_arguments(data, name)
         if name in ComponentTyping.DEFAULT_TYPES:
-            raise ValueError("A TypeAlias's name cannot be one of [%s]!" % ", ".join(ComponentTyping.DEFAULT_TYPES.keys()))
+            raise Exceptions.ComponentInvalidNameError(self, list(ComponentTyping.DEFAULT_TYPES.keys()))
 
         self.types_strs = data["types"]
         self.types:list[type]|None = None
@@ -28,9 +29,14 @@ class TypeAliasComponent(Component.Component):
         already_types:set[str] = set()
         for type_str in self.types_strs:
             if type_str in already_types:
-                raise KeyError("Duplicate type \"%s\" of %s \"%s\"." % (type_str, self.class_name, self.name))
+                raise Exceptions.ComponentDuplicateTypeError(type_str, self)
             already_types.add(type_str)
             if type_str in ComponentTyping.DEFAULT_TYPES:
                 self.types.append(ComponentTyping.DEFAULT_TYPES[type_str])
             else:
-                raise KeyError("%s \"%s\" refers to type \"%s\", which is not a valid default type!" % (self.class_name, self.name, type_str))
+                raise Exceptions.ComponentUnrecognizedTypeError(type_str, self)
+
+    def get_types(self) -> list[type]:
+        if self.types is None:
+            raise Exceptions.AttributeNoneError("types", self)
+        return self.types

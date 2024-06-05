@@ -1,3 +1,5 @@
+import Utilities.Exceptions as Exceptions
+
 ALLOWED_PROPERTIES = set([
     "has_importable_keys", # i.e. Keymap's importable keys
     "has_keys",
@@ -17,7 +19,7 @@ class Capabilities():
     def __init__(self, **properties:bool) -> None:
         for key in properties.keys():
             if key not in ALLOWED_PROPERTIES:
-                raise KeyError("Key \"%s\" in properties is not a recognized property!" % (key))
+                raise Exceptions.UnrecognizedCapabilityError(key)
         for key in ALLOWED_PROPERTIES:
             if key not in properties:
                 properties[key] = False

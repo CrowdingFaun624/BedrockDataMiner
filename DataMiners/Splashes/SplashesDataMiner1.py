@@ -3,6 +3,7 @@ import json
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -18,19 +19,15 @@ class SplashesDataMiner1(SplashesDataMiner.SplashesDataMiner):
     
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Splashes:
 
-        exception = None
-        try:
-            file = self.get_accessor("client").read(self.splashes_location, "t")
-        except FileNotFoundError as e:
-            exception = e
-            exception.args = tuple(list(exception.args) + ["No splashes file found in \"%s\"!" % (self.version)])
-        if exception is not None:
-            raise exception
+        accessor = self.get_accessor("client")
+        if not accessor.file_exists(self.splashes_location):
+            raise Exceptions.DataMinerNothingFoundError(self)
+        file = self.get_accessor("client").read(self.splashes_location, "t")
         
         splashes:DataMinerTyping.Splashes = json.loads(file)
         if not isinstance(splashes, dict):
-            raise TypeError("Splashes in version \"%s\" is not a dict!" % (self.version))
+            raise Exceptions.DataMinerFailureError(self, "Splashes is not a dict!")
         if list(splashes.keys()) != ["splashes"]:
-            raise KeyError("Unrecognized key(s) are within version \"%s\": %s" % (self.version, list(splashes.keys())))
+            raise Exceptions.DataMinerFailureError(self, "Unrecognized key(s): %s" % (list(splashes.keys())))
         output = {"vanilla": splashes["splashes"]}
         return Sorting.sort_everything(output)

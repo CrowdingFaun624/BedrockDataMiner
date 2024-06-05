@@ -3,6 +3,7 @@ from typing import Callable, Generic, Sequence, TypeVar, Union
 import Structure.Importer.Component as Component
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Pattern as Capabilities
+import Utilities.Exceptions as Exceptions
 
 a = TypeVar("a", bound=Component.Component, covariant=True)
 
@@ -21,9 +22,7 @@ class ComponentField(Field.Field, Generic[a]):
         self.pattern = pattern
     
     def set_field(self, component_name:str, component_class_name:str, components:dict[str,Component.Component], functions:dict[str,Callable]) -> Sequence[Component.Component]:
-        subcomponent:"Component.Component" = Field.choose_component(self.subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name)
-        self.subcomponent = subcomponent # type: ignore
-        assert self.subcomponent is not None
+        self.subcomponent = Field.choose_component(self.subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name)
         return [self.subcomponent]
 
     def get_component(self) -> a:
@@ -32,5 +31,5 @@ class ComponentField(Field.Field, Generic[a]):
         Can only be called after `set_field`.
         '''
         if self.subcomponent is None:
-            raise RuntimeError("Cannot call `get_component` before `set_field`!")
-        return self.subcomponent # type: ignore
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_component, self)
+        return self.subcomponent

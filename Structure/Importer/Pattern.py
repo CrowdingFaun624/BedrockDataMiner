@@ -1,5 +1,6 @@
 from typing import Generic, TypeVar
 
+import Utilities.Exceptions as Exceptions
 from Structure.Importer.Capabilities import ALLOWED_PROPERTIES, Capabilities
 
 a = TypeVar("a")
@@ -10,7 +11,7 @@ class Pattern(Generic[a]):
         for property_set in properties:
             for key in property_set.keys():
                 if key not in ALLOWED_PROPERTIES:
-                    raise TypeError("Key \"%s\" in properties is not a recognized property!" % (key))
+                    raise Exceptions.UnrecognizedCapabilityError(key)
         self.properties = properties
 
     def __contains__(self, __value: object) -> bool:

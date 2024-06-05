@@ -6,7 +6,7 @@ import Structure.Importer.Field.FieldContainer as FieldContainer
 import Structure.Importer.Field.OptionalStructroidComponentField as OptionalStructroidComponentField
 import Structure.Importer.Field.TagListField as TagListField
 import Structure.Importer.Field.TypeListField as TypeListField
-from Structure.Importer.ImporterConfig import ImporterConfig
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Structure.Structure as Structure
@@ -41,12 +41,8 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
             tags_field:TagListField.TagListField|None=None,
         ) -> None:
         if data is None:
-            assert key is not None
-            assert has_been_imported is not None
-            assert types_field is not None
-            assert subcomponent_field is not None
-            assert tags_field is not None
-            assert path is not None
+            if key is None or has_been_imported is None or types_field is None or subcomponent_field is None or tags_field is None or path is None:
+                raise Exceptions.InvalidStateError()
             super().__init__([], path)
             self.key = key
             self.has_been_imported = has_been_imported
@@ -54,9 +50,8 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
             self.subcomponent_field = subcomponent_field
             self.tags_field = tags_field
         else:
-            assert path is not None
-            assert key is not None
-            assert tag_set is not None
+            if path is None or key is None or tag_set is None:
+                raise Exceptions.InvalidStateError()
             super().__init__([], path)
             self.key = key
             self.has_been_imported = False # Keys that have been imported cannot be imported again
@@ -90,21 +85,6 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
             return structure
         else:
             return {value_type: structure for value_type in self.types_field.get_types()}
-
-    def check(self, component_name:str, component_class_name:str, config: ImporterConfig) -> list[Exception]:
-        exceptions = super().check(component_name, component_class_name, config)
-        subcomponent = self.subcomponent_field.get_component()
-        key_types = self.types_field.get_types()
-        if subcomponent is None:
-            for key_type in key_types:
-                if key_type in ComponentTyping.REQUIRES_SUBCOMPONENT_TYPES:
-                    exceptions.append(TypeError("Key \"%s\" of %s \"%s\" accepts type %s, but has a null Subcomponent!" % (self.key, component_class_name, component_name, key_type.__name__)))
-        else:
-            if set(key_types) != set(subcomponent.my_type):
-                my_types = ", ".join(type_item.__name__ for type_item in sorted(key_types, key=lambda x: x.__name__))
-                its_types = ", ".join(type_item.__name__ for type_item in sorted(subcomponent.my_type, key=lambda x: x.__name__))
-                exceptions.append(TypeError("Key \"%s\" of %s \"%s\" accepts types [%s], but its Subcomponent, \"%s\", only accepts type [%s]!" % (self.key, component_class_name, component_name, my_types, subcomponent.name, its_types)))
-        return exceptions
 
     def copy_for_importing(self) -> "KeymapKeyField":
         return KeymapKeyField(

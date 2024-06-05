@@ -3,6 +3,7 @@ from typing import IO, Literal, overload
 
 from pathlib2 import Path
 
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller
 
@@ -64,7 +65,7 @@ def archive(file:FileManager.FilePromise) -> str:
     zipped = should_zip_file(file)
     with open(archived_path, "wb") as destination, file.open() as source:
         if FileManager.get_file_size(source) == 0:
-            raise ValueError("File \"%s\" returned an IO object with length 0!" % file.name)
+            raise Exceptions.EmptyFileError(file)
         if zipped:
             destination.write(gzip.compress(source.read()))
         else:
@@ -90,7 +91,7 @@ def archive_io(file:IO, file_name:str) -> str:
 def open_archived(hex_string:str, mode:Literal["t", "b"]) -> FileManager.FilePromise:
     archived_path = get_file_path(hex_string)
     if not archived_path.exists():
-        raise FileNotFoundError("File with hash \"%s\" does not exist!" % hex_string)
+        raise Exceptions.FileHashNotFound(hex_string)
     is_zipped, name = index[hex_string]
     if is_zipped:
         temp_file = FileManager.get_temp_file_path()
@@ -109,10 +110,7 @@ def read_archived(hex_string:str, mode:Literal["t", "b"]) -> bytes|str:
     cached_file = cache_data.get(cache_name)
     if cached_file is not None:
         return cached_file
-    try:
-        cache_counts[cache_name] += 1
-    except KeyError:
-        cache_counts[cache_name] = 1
+    cache_counts[cache_name] = cache_counts.get(cache_name, 0) + 1
     should_cache = cache_counts[cache_name] >= CACHE_LIMIT and cache_name not in cache_data
 
     archived_path = get_file_path(hex_string)

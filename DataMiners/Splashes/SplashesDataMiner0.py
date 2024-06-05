@@ -5,6 +5,7 @@ import pyjson5  # supports comments
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Splashes.SplashesDataMiner as SplashesDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -20,7 +21,6 @@ class SplashesDataMiner0(SplashesDataMiner.SplashesDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Splashes:
         resource_packs = environment.dependency_data["resource_packs"]
-        assert resource_packs is not None
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for splashes_location in self.splashes_locations:
@@ -29,15 +29,15 @@ class SplashesDataMiner0(SplashesDataMiner.SplashesDataMiner):
         accessor = self.get_accessor("client")
         files:dict[str,DataMinerTyping.SplashesFile] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
-            raise FileNotFoundError("No \"splashes.json\" files found in \"%s\"" % self.version)
+            raise Exceptions.DataMinerNothingFoundError(self)
         
         output:DataMinerTyping.Splashes = {}
         for resource_pack_file, splashes in files.items():
             resource_pack_name = resource_pack_files[resource_pack_file]
             if not isinstance(splashes, dict):
-                raise TypeError("Splashes for resource pack \"%s\" in version \"%s\" is not a dict!" % (resource_pack_name, self.version))
+                raise Exceptions.DataMinerFailureError(self, "Splashes for resource pack \"%s\" is not a dict!" % (resource_pack_name,))
             if list(splashes.keys()) != ["splashes"]:
-                raise KeyError("Unrecognized key(s) are within resource pack \"%s\" of version \"%s\": %s" % (resource_pack_name, self.version, list(splashes.keys())))
+                raise Exceptions.DataMinerFailureError(self, "Unrecognized key(s) are within resource pack \"%s\": %s" % (resource_pack_name, list(splashes.keys())))
             splash_list = splashes["splashes"]
             output[resource_pack_name] = splash_list
         return Sorting.sort_everything(output)

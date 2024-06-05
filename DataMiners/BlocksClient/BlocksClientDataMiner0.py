@@ -5,6 +5,7 @@ import pyjson5  # supports comments
 import DataMiners.BlocksClient.BlocksClientDataMiner as BlocksDataMiner
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -20,7 +21,6 @@ class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.MyBlocksJsonClientBlockTypedDict]:
         resource_packs = environment.dependency_data["resource_packs"]
-        assert resource_packs is not None
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for blocks_location in self.blocks_locations:
@@ -29,7 +29,7 @@ class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
         accessor = self.get_accessor("client")
         files:dict[str,dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
-            raise FileNotFoundError("No \"blocks.json\" files found in \"%s\"" % self.version)
+            raise Exceptions.DataMinerNothingFoundError(self)
 
         blocks:dict[str,DataMinerTyping.MyBlocksJsonClientBlockTypedDict] = {} # temporarily in dict so it can be easily created.
         for resource_pack_file, resource_pack_blocks in files.items():

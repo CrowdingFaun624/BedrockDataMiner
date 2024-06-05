@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Pattern as Capabilities
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Structure.Importer.StructureComponent as StructureComponent
@@ -25,7 +26,4 @@ class StructureComponentField(ComponentField.ComponentField["StructureComponent.
         Returns the final Structure that this Field refers to.
         Can only be called after `set_field`.
         '''
-        component = self.get_component()
-        if component.final is None:
-            raise RuntimeError("Final Structure of StructureComponent is None!")
-        return component.final
+        return self.get_component().get_final()

@@ -3,6 +3,7 @@ import json
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.SoundDefinitions.SoundDefinitionsDataMiner as SoundDefinitionsDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 
 
@@ -12,7 +13,7 @@ class SoundDefinitionsDataMiner1(SoundDefinitionsDataMiner.SoundDefinitionsDataM
         path = "sounds/sounds.json"
         accessor = self.get_accessor("client")
         if not accessor.file_exists(path):
-            raise FileNotFoundError("No \"sound_definitions.json\" files found in \"%s\"" % self.version)
+            raise Exceptions.DataMinerNothingFoundError(self)
         sound_definitions_file:dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict] = json.loads(accessor.read(path, "t"))
 
         sound_definitions:dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]] = {}

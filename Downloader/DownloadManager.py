@@ -7,6 +7,7 @@ from pathlib2 import Path
 
 import Downloader.DownloadLog as DownloadLog
 import Downloader.Manager as Manager
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Version.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
@@ -47,7 +48,8 @@ class DownloadManager(Manager.Manager):
         if self.file_list is None:
             if self.file_list is not None:
                 return self.file_list # If it started waiting and then it's complete when it's done waiting.
-            assert self.zip_file is not None
+            if self.zip_file is None:
+                raise Exceptions.AttributeNoneError("zip_file", self)
             self.file_list = [file.filename for file in self.zip_file.filelist]
             self.file_set = set(self.file_list)
         return self.file_list
@@ -55,7 +57,8 @@ class DownloadManager(Manager.Manager):
     def get_file_set(self) -> set[str]:
         if self.file_set is None:
             self.get_file_list()
-        assert self.file_set is not None
+        if self.file_set is None:
+            raise Exceptions.AttributeNoneError("file_set", self)
         return self.file_set
 
     def file_exists(self, file_name:str) -> bool:
@@ -67,7 +70,8 @@ class DownloadManager(Manager.Manager):
         if not self.installed.get():
             self.install_all()
         self.open_zip_file()
-        assert self.zip_file is not None
+        if self.zip_file is None:
+            raise Exceptions.AttributeNoneError("zip_file", self)
         data = self.zip_file.read(file_name)
         if mode == "t":
             return data.decode("utf-8")
@@ -84,7 +88,8 @@ class DownloadManager(Manager.Manager):
                 children = list(current_path.iterdir())
                 if len(children) == 0:
                     break
-                assert len(children) == 1
+                if len(children) != 1:
+                    raise Exceptions.InvalidStateError(self, children, "too many children!")
                 directories_to_remove.extend(children)
                 current_path = children[0]
             for directory_to_remove in reversed(directories_to_remove):
@@ -93,19 +98,17 @@ class DownloadManager(Manager.Manager):
         if not self.installed.get():
             self.install_all()
         self.open_zip_file()
-        assert self.zip_file is not None
+        if self.zip_file is None:
+            raise Exceptions.AttributeNoneError("zip_file", self)
         if mode == "b":
             return FileManager.FilePromise(FunctionCaller(self.zip_file.open, [file_name]), file_name.split("/")[-1], mode)
         else:
             temp_path = FileManager.get_temp_file_path()
-            path_that_zipfile_puts_it_in = Path(temp_path.joinpath(file_name))
+            path_that_zipfile_puts_it_in = temp_path.joinpath(file_name)
             self.zip_file.extract(file_name, temp_path)
             return FileManager.FilePromise(FunctionCaller(open, [path_that_zipfile_puts_it_in, "rt"]), file_name.split("/")[-1], mode, FunctionCaller(clear_temp_file, [temp_path, path_that_zipfile_puts_it_in]))
 
     def install_all(self, destination:Path|None=None) -> None:
-        if destination is not None and not isinstance(destination, Path):
-            raise TypeError("Parameter `destination` is not a `Path`!")
-
         if destination is None: destination = self.apk_location
         if not self.installed.get():
             response_supposed_length = None
@@ -115,12 +118,12 @@ class DownloadManager(Manager.Manager):
                 with open(destination, "wb") as f:
                     with requests.get(self.url) as response:
                         response_length = len(response.content)
-                        response_supposed_length = int(response.headers["Content-Length"])
+                        response_supposed_length = int(response.headers.get("Content-Length", "0"))
                         DownloadLog.log(self.version, response, response_length)
                         f.write(response.content)
                 tries += 1
                 if tries >= 5:
-                    raise RuntimeError("Failed to correctly download file!")
+                    raise Exceptions.DownloadManagerFailError(self, self.url)
             self.installed.set(True)
             self.open_zip_file()
 
@@ -131,6 +134,7 @@ class DownloadManager(Manager.Manager):
         self.has_zip_file_opened = False
         if self.apk_location.exists():
             self.apk_location.unlink()
-        assert self.location.name != self.version.name # self.location refers to the `client` subdirectory of the version directory.
+        if self.location.name == self.version.name: # self.location refers to the `client` subdirectory of the version directory.
+            raise Exceptions.InvalidStateError(self.location.name, self.version.name, "These should not be the same!")
         if self.location.exists():
             shutil.rmtree(self.location)

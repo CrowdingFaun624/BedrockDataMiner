@@ -1,5 +1,5 @@
 import enum
-from typing import Any, Generic, Iterable, TypeVar, Union
+from typing import Any, Generic, Iterable, Literal, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
@@ -112,8 +112,7 @@ class Structure(Generic[a]):
 
     def print_text(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]: ...
 
-    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
-        raise NotImplementedError()
+    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:Literal[1,2], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]: ...
 
     def get_tag_paths(self, data:a, tag:str, data_path:DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]: ...
 

@@ -3,6 +3,7 @@ import json
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Languages.LanguagesDataMiner as LanguagesDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
@@ -18,13 +19,13 @@ class LanguagesDataMiner2(LanguagesDataMiner.LanguagesDataMiner):
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.LanguagesTypedDict]:
         accessor = self.get_accessor("client")
         if not accessor.file_exists(self.languages_location):
-            raise FileNotFoundError("Language file \"%s\" does not exist in \"%s\"!" % (self.languages_location, self.version.name))
+            raise Exceptions.DataMinerNothingFoundError(self)
         language_file:list[str] = json.loads(accessor.read(self.languages_location, "t"))
         languages:list[DataMinerTyping.LanguagesTypedDict] = []
         already_codes:set[str] = set()
         for language_code in language_file:
             if language_code in already_codes:
-                raise RuntimeError("Duplicate language code \"%s\" in \"%s\"." % (language_code, self.version.name))
+                raise Exceptions.DataMinerFailureError(self, "Duplicate language code \"%s\"." % (language_code))
             languages.append({"code": language_code, "defined_in": [], "properties": {}})
             already_codes.add(language_code)
 

@@ -5,6 +5,7 @@ from typing import Generic, Iterable, Iterator, Mapping, TypeVar
 
 import mutf8
 
+import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.DataReader as DataReader
 import Utilities.Nbt.Endianness as Endianness
 
@@ -451,11 +452,10 @@ class TAG_Compound(TAG[dict[str,TAG]]):
         output:dict[str,TAG] = {}
         while True:
             key_name, value = parse_compound_item_from_bytes(data_reader, endianness)
-            if isinstance(value, TAG_End):
+            if isinstance(value, TAG_End) or key_name is None:
                 break
             if key_name in output:
-                raise KeyError("Duplicate key \"%s\"!" % key_name)
-            assert key_name is not None
+                raise Exceptions.CompoundDuplicateKeyError(key_name)
             output[key_name] = value
         return cls(output)
 
@@ -722,4 +722,4 @@ def parse_object_from_bytes(data_reader:DataReader.DataReader, content_type:int,
         case IdEnum.TAG_Int_Array:  return TAG_Int_Array.from_bytes(data_reader, endianness)
         case IdEnum.TAG_Long_Array: return TAG_Long_Array.from_bytes(data_reader, endianness)
         case _:
-            raise ValueError("Invalid content type: %i!" % (content_type))
+            raise Exceptions.InvalidNbtContentType(content_type)

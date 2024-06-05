@@ -4,6 +4,7 @@ import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.AbstractTypeField as AbstractTypeField
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Pattern as Capabilities
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Structure.Importer.Component as Component
@@ -29,20 +30,19 @@ class TypeField(AbstractTypeField.AbstractTypeField):
             self.subcomponent = ComponentTyping.DEFAULT_TYPES[self.subcomponent_str]
             return []
         else:
-            self.subcomponent = Field.choose_component(self.subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, self.error_path, component_name, component_class_name)
-            assert self.subcomponent is not None and not isinstance(self.subcomponent, type)
-            return [self.subcomponent]
+            component = Field.choose_component(self.subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, self.error_path, component_name, component_class_name)
+            self.subcomponent = component
+            return [component]
 
     def resolve(self) -> None:
         if self.subcomponent is None:
-            raise RuntimeError("Cannot call `resolve` before `set_field`!")
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.resolve, self)
         if isinstance(self.subcomponent, type):
             self.types = [self.subcomponent]
         else:
-            assert self.subcomponent.types is not None
-            self.types = self.subcomponent.types
+            self.types = self.subcomponent.get_types()
 
     def get_types(self) -> list[type]:
         if self.types is None:
-            raise RuntimeError("Cannot call `get_types` before `resolve`!")
+            raise Exceptions.FieldSequenceBreakError(self.resolve, self.get_types, self)
         return self.types

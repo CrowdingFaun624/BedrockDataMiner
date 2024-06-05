@@ -10,13 +10,12 @@ import Structure.KeymapStructure as KeymapStructure
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class KeymapComponent(StructureComponent.StructureComponent):
+class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.KeymapStructure]):
 
     class_name_article = "a Keymap"
     class_name = "Keymap"
     my_type = [dict]
     my_capabilities = Capabilities.Capabilities(has_importable_keys=True, has_keys=True, is_structure=True)
-    final:KeymapStructure.KeymapStructure
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("imports", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -61,12 +60,11 @@ class KeymapComponent(StructureComponent.StructureComponent):
 
     def link_finals(self) -> None:
         super().link_finals()
-        assert self.final is not None
-        self.final.link_substructures(
+        self.get_final().link_substructures(
             keys_intermediate={key.key: key.get_subcomponent_final() for key in self.keys},
             normalizer=self.normalizer_field.get_finals(),
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys}
         )
 
     def finalize(self) -> None:
-        self.final.finalize()
+        self.get_final().finalize()

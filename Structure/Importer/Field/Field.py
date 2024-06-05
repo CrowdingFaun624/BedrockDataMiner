@@ -3,6 +3,7 @@ from typing import Callable, Sequence, TypeVar
 import Structure.Importer.Component as Component
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.Pattern as Capabilities
+import Utilities.Exceptions as Exceptions
 
 
 def get_keys_strs(is_capital:bool, keys:list[str|int]) -> str:
@@ -23,10 +24,10 @@ def choose_component(
         class_name:str,
     ) -> a:
     if name not in components:
-        raise KeyError("%s \"%s\", referenced in %s%s \"%s\", does not exist!" % (required_properties, name, get_keys_strs(False, keys), class_name, component_name))
+        raise Exceptions.UnrecognizedComponentError(name, "%s%s \"%s\"" % (get_keys_strs(False, keys), class_name, component_name), "(should have %r)" % (required_properties,))
     component = components[name]
     if component.my_capabilities not in required_properties:
-        raise ValueError("%s%s \"%s\" references object \"%s\", expecting %s but getting a %s!" % (get_keys_strs(True, keys), class_name, component_name, name, required_properties, component.my_capabilities))
+        raise Exceptions.InvalidComponentError(component, "%s \"%s\"" % (class_name, component_name), required_properties, component.my_capabilities)
     return component # type: ignore
 
 class Field():

@@ -3,6 +3,7 @@ from typing import Any, Callable, Literal
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiner as GrabMultiplePackFilesDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -27,7 +28,6 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         packs = environment.dependency_data[self.pack_type]
-        assert packs is not None
         files:dict[tuple[str,str],str] = {}
         accessor = self.get_accessor("client")
         for pack in packs:
@@ -41,10 +41,12 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
                 else:
                     suffixes = [suffix for suffix in self.suffixes if path.endswith("." + suffix)]
                     if len(suffixes) == 0:
-                        raise ValueError("Unrecognized suffix on path \"%s\"!" % path)
+                        recognized_suffixes = self.suffixes if self.ignore_suffixes is None else (self.suffixes + self.ignore_suffixes)
+                        raise Exceptions.DataMinerUnrecognizedSuffixError(self, path, recognized_suffixes)
                     suffix = "." + suffixes[0]
                     file_name = path.replace(path_base, "", 1).replace(suffix, "", 1)
-                    assert not file_name.endswith(suffix)
+                    if file_name.endswith(suffix):
+                        raise Exceptions.InvalidStateError(self, "file_name still ends in \"%s\"!" % (suffix))
                     files[file_name, pack["name"]] = path
 
         output:dict[str,dict[str,Any]] = {}
@@ -56,6 +58,6 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
                 output[file_name][pack_name] = file_data
 
         if len(output) == 0:
-            raise FileNotFoundError("No files found in \"%s\"" % self.version)
+            raise Exceptions.DataMinerNothingFoundError(self)
 
         return Sorting.sort_everything(output)

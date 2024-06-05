@@ -5,6 +5,7 @@ import pyjson5  # supports comments
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.SoundsJson.SoundsJsonDataMiner as SoundsJsonDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -20,7 +21,7 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
 
     def parse_flat_sound_collection(self, source:DataMinerTyping.SoundsJsonFlatCollectionTypedDict, destination:DataMinerTyping.ResourcePackSoundsJsonFlatCollectionTypedDict, resource_pack_name:str) -> None:
         if list(source.keys()) != ["events"]:
-            raise KeyError("Invalid keys in a flat sound collection in \"%s\" in \"%s\": %s" % (resource_pack_name, self.version.name, str(list(source.keys()))))
+            raise Exceptions.DataMinerFailureError(self, "Invalid keys in a flat sound collection in \"%s\": %s" % (resource_pack_name, str(list(source.keys()))))
         if "events" not in destination: destination["events"] = {}
         if "events" in source:
             for event_name, event_properties in source["events"].items():
@@ -31,7 +32,7 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
 
     def parse_sound_collection(self, source:DataMinerTyping.SoundsJsonSoundCollectionTypedDict, destination:DataMinerTyping.ResourcePackSoundsJsonSoundCollectionTypedDict, resource_pack_name:str) -> None:
         if len(set(source.keys()) - set(("events", "volume", "pitch"))) > 0:
-            raise KeyError("Invalid keys in a sound collection in \"%s\" in \"%s\": %s" % (resource_pack_name, self.version.name, str(list(source.keys()))))
+            raise Exceptions.DataMinerFailureError(self, "Invalid keys in a sound collection in \"%s\": %s" % (resource_pack_name, str(list(source.keys()))))
         if "events" not in destination: destination["events"] = {}
         if "volume" not in destination: destination["volume"] = {}
         if "pitch" not in destination: destination["pitch"] = {}
@@ -56,7 +57,7 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
         accessor = self.get_accessor("client")
         files:dict[str,DataMinerTyping.SoundsJsonTypedDict] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
-            raise FileNotFoundError("No \"sounds.json\" files found in \"%s\"" % self.version)
+            raise Exceptions.DataMinerNothingFoundError(self)
 
         sounds_json:DataMinerTyping.MySoundsJsonTypedDict = {
             "individual_event_sounds": {},
@@ -94,7 +95,7 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
                     self.parse_sound_collection(resource_pack_sounds_json["entity_sounds"]["defaults"], sounds_json["entity_sounds"]["defaults"], resource_pack_name)
                 if "entities" in resource_pack_sounds_json["entity_sounds"]:
                     for entity_name, entity_sounds in resource_pack_sounds_json["entity_sounds"]["entities"].items():
-                        if entity_name == "defaults": raise KeyError("An entity named \"defaults\" clashes with the separate defaults object in %s in %s!" % (resource_pack_name, self.version.name))
+                        if entity_name == "defaults": raise Exceptions.DataMinerFailureError(self, "An entity named \"defaults\" clashes with the separate defaults object in %s!" % (resource_pack_name,))
                         if entity_name not in sounds_json["entity_sounds"]:
                             sounds_json["entity_sounds"][entity_name] = {}
                         self.parse_sound_collection(entity_sounds, sounds_json["entity_sounds"][entity_name], resource_pack_name)
@@ -107,7 +108,7 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
                     self.parse_sound_collection(resource_pack_sounds_json["interactive_sounds"]["entity_sounds"]["defaults"], sounds_json["entity_sounds"]["defaults"], resource_pack_name)
                 if "entities" in resource_pack_sounds_json["interactive_sounds"]["entity_sounds"]:
                     for entity_name, entity_sounds in resource_pack_sounds_json["interactive_sounds"]["entity_sounds"]["entities"].items():
-                        if entity_name == "defaults": raise KeyError("An interactive entity named \"defaults\" clashes withe the separate defaults object in %s in %s!" % (resource_pack_name, self.version.name))
+                        if entity_name == "defaults": raise Exceptions.DataMinerFailureError(self, "An interactive entity named \"defaults\" clashes withe the separate defaults object in %s!" % (resource_pack_name))
                         if entity_name not in sounds_json["interactive_entity_sounds"]:
                             sounds_json["interactive_entity_sounds"][entity_name] = {}
                         self.parse_sound_collection(entity_sounds, sounds_json["interactive_entity_sounds"][entity_name], resource_pack_name)

@@ -1,6 +1,6 @@
 import json
 import traceback
-from typing import Any, Generator, Mapping, Sequence, TypedDict, TypeVar
+from typing import Any, Generator, Mapping, Sequence, TypedDict, TypeVar, cast
 
 from typing_extensions import NotRequired, Required
 
@@ -30,6 +30,7 @@ import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as Undefin
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
 import Structure.Importer.Importer as Importer
 import Structure.StructureBase as StructureBase
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
@@ -116,7 +117,7 @@ class DataMinerCollectionIntermediate():
             self.structure = None
         else:
             if self.structure_name not in structures:
-                raise KeyError("Structure \"%s\", referenced by DataMinerCollection \"%s\", does not exist!" % (self.structure_name, self.name))
+                raise Exceptions.UnrecognizedStructureError(self.structure_name, self)
             self.structure = structures[self.structure_name]
         self.dataminer_classes:dict[str,type[DataMiner.DataMiner]]|None = None
 
@@ -126,7 +127,7 @@ class DataMinerCollectionIntermediate():
     def create_final(self, all_dataminers:Mapping[str,type[DataMiner.DataMiner]]) -> DataMiner.DataMinerCollection:
         for index, dataminer_settings_str in enumerate(self.dataminer_settings_strs):
             if dataminer_settings_str["name"] is not None and dataminer_settings_str["name"] not in all_dataminers:
-                raise KeyError("DataMiner \"%s\", referenced by DataMinerSettings %i of DataMinerCollection \"%s\", does not exist!" % (dataminer_settings_str["name"], index, self.name))
+                raise Exceptions.UnrecognizedDataMinerError(dataminer_settings_str["name"], None, "(referenced by DataMinerSettings %i of %r)" % (index, self))
         self.dataminer_classes = {}
         dataminer_settings:list[DataMiner.DataMinerSettings] = []
         for dataminer_settings_str in self.dataminer_settings_strs:
@@ -143,7 +144,8 @@ class DataMinerCollectionIntermediate():
                 dependencies = dataminer_settings_str.get("dependencies", None),
                 kwargs = dataminer_settings_str.get("parameters", {}),
             ))
-        assert self.structure is not None
+        if self.structure is None:
+            raise Exceptions.AttributeNoneError("structure", self)
         return DataMiner.DataMinerCollection(
             file_name = self.file_name,
             name = self.name,
@@ -158,15 +160,15 @@ class DataMinerCollectionIntermediate():
         for index, dataminer_settings in enumerate(self.dataminer_settings_strs):
             if dataminer_settings["name"] is None:
                 if "files" in dataminer_settings:
-                    exceptions.append(KeyError("Key \"files\" cannot exist when \"name\" is null!"))
+                    exceptions.append(Exceptions.DataMinerCollectionFileError(True, self, "when \"name\" is null"))
                     continue
             else:
                 if "files" not in dataminer_settings:
-                    exceptions.append(KeyError("Key \"files\" must exist when \"name\" is not null!"))
+                    exceptions.append(Exceptions.DataMinerCollectionFileError(False, self, "when \"name\" is not null"))
                     continue
                 for file in dataminer_settings["files"]:
                     if file not in version_files:
-                        exceptions.append(KeyError("Version file \"%s\" does not exist!" % (file)))
+                        exceptions.append(Exceptions.UnrecognizedVersionFileTypeError(file, self))
 
         # check parameters
         for index, dataminer_settings in enumerate(self.dataminer_settings_strs):
@@ -182,7 +184,7 @@ class DataMinerCollectionIntermediate():
             traceback.print_exception(exception)
             print()
         if len(exceptions) > 0:
-            raise TypeError("Invalid parameters in DataMinerCollection \"%s\"!" % (self.name))
+            raise Exceptions.DataMinerCollectionInvalidArgumentsError(self)
 
         # check dependencies
         used_versions:list["Version.Version"] = []
@@ -190,28 +192,28 @@ class DataMinerCollectionIntermediate():
             if "dependencies" in dataminer_settings:
                 for dependency in dataminer_settings["dependencies"]:
                     if dependency not in intermediates:
-                        raise KeyError("DataMinerSettings %i of DataMinerCollection \"%s\" references non-existent DataMinerCollection \"%s\"!" % (index, self.name, dependency))
+                        raise Exceptions.UnrecognizedDataMinerCollectionError(dependency, self, "(referenced by DataMinerSettings %i)" % (index,))
 
             # ending DataMinerSettings must have null versions on corresponding versions; middle ones cannot be null.
             if index == 0:
                 if dataminer_settings["new"] is not None:
-                    raise ValueError("The new version of the first DataMinerSettings of DataMinerCollection \"%s\" is not None, but instead \"%s\"!" % (self.name, dataminer_settings["new"]))
+                    raise Exceptions.DataMinerSettingsVersionRangeExists(self, dataminer_settings["new"], True)
             else:
                 if dataminer_settings["new"] is None:
-                    raise ValueError("The new version of DataMinerSettings %i of DataMinerCollection \"%s\" is None!" % (index, self.name))
+                    raise Exceptions.DataMinerSettingsVersionRangeMissing(self, index, "new")
                 used_versions.append(versions[dataminer_settings["new"]])
             if index == len(self.dataminer_settings_strs) - 1:
                 if dataminer_settings["old"] is not None:
-                    raise ValueError("The old version of the last DataMinerSettings of DataMinerCollection \"%s\" is not None, but instead \"%s\"!" % (self.name, dataminer_settings["old"]))
+                    raise Exceptions.DataMinerSettingsVersionRangeExists(self, dataminer_settings["old"], False)
             else:
                 if dataminer_settings["old"] is None:
-                    raise ValueError("The old version of DataMinerSettings %i of DataMinerCollection \"%s\" is None!" % (index, self.name))
+                    raise Exceptions.DataMinerSettingsVersionRangeMissing(self, index, "old")
                 used_versions.append(versions[dataminer_settings["old"]])
 
         # checking that there are no gaps in the ranges by checking for equality
         for new_version, old_version in glue_adjacent(used_versions):
             if new_version != old_version:
-                raise ValueError("DataMinerCollection \"%s\" has a gap between versions \"%s\" and \"%s\"!" % (self.name, new_version, old_version))
+                raise Exceptions.DataMinerSettingsVersionRangeGap(self, new_version, old_version)
 
         return used_versions
 
@@ -239,15 +241,15 @@ def check_for_loops(used_versions:set[Version.Version], dataminers:list[DataMine
         for dataminer_settings in dataminer_settings_list:
             duplicated_datminer_settings = get_dependencies(dataminer_settings, dataminer_settings_dict)
             if len(duplicated_datminer_settings) > 0:
-                raise RuntimeError("Dataminer %s has a import loop containing [%s]!" % (dataminer_settings, ", ".join(duplicated_datminer_settings)))
+                raise Exceptions.DataMinerSettingsImporterLoopError(dataminer_settings, duplicated_datminer_settings)
 
 def load_dataminers() -> list[DataMiner.DataMinerCollection]:
     data = open_file()
-    if not isinstance(data, dict):
-        raise TypeError("dataminer_collections.json is not a dict!")
-    version_file_types = VersionFileType.version_file_types
+    TypeVerifier.DictTypeVerifier(dict, str, dict, "a dict", "a str", "a dict").base_verify(cast(Any, data), ["dataminer_collections.json"])
 
+    version_file_types = VersionFileType.version_file_types
     structures:dict[str,StructureBase.StructureBase] = Importer.structures
+
     all_dataminers_dict = {dataminer.__name__: dataminer for dataminer in all_dataminers}
     dataminer_collection_intermediates:dict[str,DataMinerCollectionIntermediate] = {}
     for name, dataminer_collection_data in data.items():

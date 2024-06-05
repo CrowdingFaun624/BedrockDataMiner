@@ -4,6 +4,7 @@ from typing import Literal, TypedDict
 from pathlib2 import Path
 
 import Downloader.Manager as Manager
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Version.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller
@@ -27,9 +28,9 @@ class LocalManager(Manager.Manager):
                     self.bedrock_local = window_file
                     break
             else:
-                raise FileNotFoundError("No \"%s\" directory found in \"%s\"! Is it installed correctly?" % (search_file, windows_apps))
+                raise Exceptions.ManagerFailureError(self, "No \"%s\" directory found in \"%s\"! Is it installed correctly?" % (search_file, windows_apps))
         else:
-            raise NotImplementedError("OS type \"%s\" is not implemented!" % (os.name))
+            raise Exceptions.ManagerFailureError(self, "OS type \"%s\" is not implemented!" % (os.name))
 
     def install_all(self, destination:Path|None=None) -> None:
         pass # There is no need to do anything. All of the files are already there.

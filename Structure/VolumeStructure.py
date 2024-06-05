@@ -1,6 +1,6 @@
 import math
-from typing import (Any, Iterable, Mapping, MutableMapping, MutableSequence,
-                    cast)
+from typing import (Any, Iterable, Literal, Mapping, MutableMapping,
+                    MutableSequence, cast)
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -9,6 +9,7 @@ import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
+import Utilities.Exceptions as Exceptions
 
 LAYER_CHARACTERS_DEFAULT = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+={[}];:'<,>./?αβγδεζηθικλμνξπρσςτυφχψωΓΔΘΛΞΠΣΦΨΩБбгДдËëЖжЗзИиЙйЛлФфЦцЧчШшЩщЪъЫыЬьЭэЮюЯя" # no such thing as too many letters
 
@@ -62,7 +63,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             for exception in new_exceptions: exception.add(self.name, index)
             output.extend(new_exceptions)
             if structure is None and len(additional_data) > 0:
-                output.append(Trace.ErrorTrace(KeyError("Unrecognized keys [%s]!" % (list(additional_data.keys()),)), self.name, index, additional_data))
+                output.append(Trace.ErrorTrace(Exceptions.VolumeStructureUnrecognizedKeysError(list(additional_data.keys())), self.name, index, additional_data))
             if structure is not None:
                 new_exceptions = structure.check_all_types(additional_data, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
@@ -79,30 +80,30 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             state = block.get(self.state_key, None)
 
             if position_list is None:
-                exceptions.append(Trace.ErrorTrace(KeyError("Position key \"%s\" is not present in block %i!" % (self.position_key, index)), self.name, index, block))
+                exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureMissingKeyError("Position", self.position_key, index), self.name, index, block))
                 continue
             if state is None:
-                exceptions.append(Trace.ErrorTrace(KeyError("State key \"%s\" is not present in block %i!" % (self.state_key, index)), self.name, index, block))
+                exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureMissingKeyError("State", self.state_key, index), self.name, index, block))
                 continue
             try: # try except because it could be a not-list, which would raise an exception on the tuple() call.
                 if len(position_list) != 3:
-                    exceptions.append(Trace.ErrorTrace(ValueError("Position %s of block %i is not length 3!" % (position_list, index)), self.name, index, block))
+                    exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureInvalidKeyError("Position", position_list, index, "is not length 3"), self.name, index, block))
                     continue
                 position:tuple[int,int,int] = tuple(position_list)
             except Exception:
-                exceptions.append(Trace.ErrorTrace(RuntimeError("Position %s of block %i is not a valid position!" % (position_list, index)), self.name, index, block))
+                exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureInvalidKeyError("Position", position_list, index), self.name, index, block))
                 continue
             if not all(isinstance(axis, int) for axis in position):
-                exceptions.append(Trace.ErrorTrace(TypeError("An axis of position (%i, %i, %i) of block %i is not an int!" % (*position, index)), self.name, index, block))
+                exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureInvalidKeyError("Position", position, index, "has an axis that is not an int"), self.name, index, block))
             if not isinstance(state, int):
-                exceptions.append(Trace.ErrorTrace(TypeError("State of position (%i, %i, %i) of block %i is not an int!" % (*position, index)), self.name, index, block))
+                exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureInvalidKeyError("State", state, index, "is not an int"), self.name, index, block))
                 continue
             weird_axes = [(axis, label) for axis, label in zip(position, "xyz") if axis < 0]
             if len(weird_axes) > 0:
-                exceptions.append(Trace.ErrorTrace(ValueError("Axes [%s] of position (%i, %i, %i) of block %i is less than 0!" % (", ".join("%s-axis of %i" % (label, axis) for axis, label in weird_axes), *position, index)), self.name, index, block))
+                exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureInvalidKeyError("Position", position, index, "has an axis that is less than 0"), self.name, index, block))
                 continue
             if state >= len(self.layer_characters):
-                exceptions.append(Trace.ErrorTrace(ValueError("State %i of position (%i, %i, %i) of block %i is too great! Must be less than %i." % (state, *position, index, len(self.layer_characters))), self.name, index, block))
+                exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureInvalidKeyError("State", state, index, "is at least %i, the maximum for this VolumeStructure" % (self.layer_characters)), self.name, index, block))
 
             max_x, max_y, max_z = max(max_x, position[0]), max(max_y, position[1]), max(max_z, position[2])
             states[position] = int(state)
@@ -114,7 +115,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             self,
             data:MutableSequence[MutableMapping[str,Any]],
             normalizer_dependencies:Normalizer.LocalNormalizerDependencies,
-            version_number:int,
+            version_number:Literal[1,2],
             environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
@@ -122,7 +123,8 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if not self.children_has_normalizer: return data_output, []
-        assert self.normalizer is not None
+        if self.normalizer is None:
+            raise Exceptions.AttributeNoneError("normalizer", self)
         for normalizer in self.normalizer:
             try:
                 normalizer(data_output, normalizer_dependencies, version_number)
@@ -150,7 +152,8 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
-        assert self.tags is not None
+        if self.tags is None:
+            raise Exceptions.AttributeNoneError("tags", self)
         if tag in self.tags:
             output.extend(data_path.copy((index, type(value))).embed(value) for index, value in enumerate(data))
         for index, value in enumerate(data):
@@ -205,7 +208,8 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
                 pass # changes and removals were covered in above code.
 
         for coordinate1, block_data1 in additional_data1.items():
-            assert self.structure is not None
+            if self.structure is None:
+                raise Exceptions.AttributeNoneError("structure", self)
             block_data2 = additional_data2.get(coordinate1)
             if block_data2 is None:
                 additional_data_output[coordinate1] = D.Diff(old=block_data1)
@@ -259,9 +263,6 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             x_labels[i] = " " * (x_axis_size - len(x_labels[i])) + x_labels[i]
         for i in range(size[2]):
             z_labels[i] = " " * (z_axis_size - len(z_labels[i])) + z_labels[i]
-        # if size[2] > 10:
-        #     print(z_labels, size, z_axis_size)
-        #     assert False
         output_grid:list[list[str]] = []
         for i in range(x_axis_size):
             output_grid.append(([" "] * (z_axis_size + 1)) + [x_labels[j][i] for j in range(size[0])])
@@ -270,15 +271,16 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             output_grid.append(list(z_labels[i] + " ") + layer_2d[i])
         output:list[SU.Line] = [SU.Line("".join(line)) for line in output_grid]
         if self.print_additional_data:
-            assert len(additional_data) == 0 or self.structure is not None
-            structure = cast(Structure.Structure, self.structure)
+            if len(additional_data) > 0 and self.structure is None:
+                exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureAdditionalDataError(self), self.name, layer, additional_data))
 
-            for position, block_data in additional_data.items():
-                if position[1] != layer: continue
-                substructure_output, new_exceptions = structure.print_text(block_data, environment)
-                for exception in new_exceptions: exception.add(self.name, position)
-                exceptions.extend(new_exceptions)
-                output.extend(self.print_item(substructure_output, position))
+            if self.structure is not None:
+                for position, block_data in additional_data.items():
+                    if position[1] != layer: continue
+                    substructure_output, new_exceptions = self.structure.print_text(block_data, environment)
+                    for exception in new_exceptions: exception.add(self.name, position)
+                    exceptions.extend(new_exceptions)
+                    output.extend(self.print_item(substructure_output, position))
         return output, exceptions
 
     def print_text(
@@ -375,7 +377,8 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             for exception in new_exceptions: exception.add(self.name, position)
             exceptions.extend(new_exceptions)
         else:
-            assert self.structure is not None
+            if self.structure is None:
+                raise Exceptions.AttributeNoneError("structure", self)
             substructure_output, has_changes, new_exceptions = self.structure.compare_text(block_data, environment)
             for exception in new_exceptions: exception.add(self.name, position)
             exceptions.extend(new_exceptions)
@@ -413,7 +416,8 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
 
             block_data = additional_data.get(position)
             if block_data is not None:
-                assert self.structure is not None
+                if self.structure is None:
+                    raise Exceptions.AttributeNoneError("structure", self)
                 block_data_comparison, block_data_has_changes, new_exceptions = self.compare_text_block(position, block_data, environment)
                 if block_data_has_changes:
                     block_data_comparisons[position[1]].append(block_data_comparison)

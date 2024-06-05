@@ -3,6 +3,7 @@ from typing import Any, Literal, TypeAlias, TypedDict, Union, cast, overload
 
 from typing_extensions import NotRequired, Required
 
+import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
@@ -156,7 +157,7 @@ def parse_type_field(data:str|list[str]|TypedVerifierTypedDicts, allow_type_veri
         return tuple(allowed_types[type_str] for type_str in data)
     else:
         if not allow_type_verifier:
-            raise TypeError("TypeVerifier is not allowed here!")
+            raise Exceptions.TypeVerifierDisallowedError(data)
         return parse_type_verifier(data)
 
 def parse_dict(data:DictTypedDict) -> TypeVerifier.DictTypeVerifier:

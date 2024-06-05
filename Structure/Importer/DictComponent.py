@@ -10,13 +10,12 @@ import Structure.Importer.StructureComponent as StructureComponent
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class DictComponent(StructureComponent.StructureComponent):
+class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStructure]):
 
     class_name_article = "a Dict"
     class_name = "Dict"
     my_type = [dict]
     my_capabilities = Capabilities.Capabilities(has_keys=True, is_structure=True)
-    final:DictStructure.DictStructure
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("comparison_move_function", "a str", False, str),
@@ -62,8 +61,7 @@ class DictComponent(StructureComponent.StructureComponent):
 
     def link_finals(self) -> None:
         super().link_finals()
-        assert self.final is not None
-        self.final.link_substructures(
+        self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),

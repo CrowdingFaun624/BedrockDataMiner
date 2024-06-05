@@ -4,6 +4,7 @@ import Structure.Difference as D
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Structure.Structure as Structure
@@ -31,12 +32,10 @@ class StructureSet(Generic[d]):
             return self.structures[key]
         elif isinstance(key, int):
             return list(self.structures.values())[key]
-        else:
-            raise KeyError("Attempted to index a StructureSet using a %s rather than a D.DiffType!" % type(key))
 
     def print_text(self, key:D.DiffType|int, data:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
-        if  isinstance(key, D.DiffType) and key not in self:
-            return [], [Trace.ErrorTrace(RuntimeError("KeyError on \"%s\" for data %s!" % (key, data)), None, None, data)]
+        if isinstance(key, D.DiffType) and key not in self:
+            return [], [Trace.ErrorTrace(Exceptions.StructureSetKeyError(key, self), None, None, data)]
         structure = self[key]
         if structure is None:
             return [SU.Line(SU.stringify(data))], []
@@ -46,7 +45,7 @@ class StructureSet(Generic[d]):
     def compare_text(self, key:D.DiffType|int, data:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
         structure = self[key]
         if structure is None:
-            raise RuntimeError("Attempted to compare (key %s) using a NoneType object!" % (key))
+            raise Exceptions.CompareWithNoneError(self, key)
         else:
             return structure.compare_text(data, environment)
 

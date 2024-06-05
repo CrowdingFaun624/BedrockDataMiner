@@ -165,7 +165,7 @@ def parse_betas(version:Version.Version, mwapi:mediawikiapi.MediaWikiAPI, versio
     for development_category_page in development_category_pages:
         wiki_betas.extend(get_category_members(development_category_page))
     wiki_betas_set = set(wiki_betas)
-    my_betas = set(child.wiki_page for child in version.children if child.ordering_tag is version_tags["beta"])
+    my_betas = set(child.wiki_page for child in version.children if child.get_order_tag() is version_tags["beta"])
     if wiki_betas_set != my_betas:
         for my_beta in my_betas:
             if my_beta not in wiki_betas_set:

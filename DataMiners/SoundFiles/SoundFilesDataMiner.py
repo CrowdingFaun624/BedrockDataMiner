@@ -6,6 +6,7 @@ import audio_metadata
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 
 ALL_SOUND_FILE_FORMATS = [".flac", ".fsb", ".mp3", ".ogg", ".wav"]
@@ -13,10 +14,9 @@ ALL_SOUND_FILE_FORMATS = [".flac", ".fsb", ".mp3", ".ogg", ".wav"]
 def get_metadata(file:FileManager.FilePromise) -> DataMinerTyping.SoundFilesTypedDict:
     with file.open() as file_io:
         if FileManager.get_file_size(file_io) == 0:
-            raise ValueError("`file` refers to an IO with no bytes!")
+            raise Exceptions.EmptyFileError(file)
         if not isinstance(file_io, IO): # If it's from a zip file or something, it can't be read by audio_metadata.
             temp_file = FileManager.get_temp_file_path()
-            exception = None
             with open(temp_file, "wb") as temp_file_io:
                 temp_file_io.write(file_io.read())
                 file_io.seek(0)
@@ -25,10 +25,7 @@ def get_metadata(file:FileManager.FilePromise) -> DataMinerTyping.SoundFilesType
                     metadata = audio_metadata.load(temp_file_io)
                     file_io.seek(0)
                 except Exception as e:
-                    exception = e
-                if exception is not None:
-                    print("audio_metadata failed to extract file \"%s\"!" % file.name)
-                    raise exception
+                    raise Exceptions.SoundFilesMetadataError(file)
                 info = serialize(metadata)
             temp_file.unlink()
         else:
@@ -38,10 +35,7 @@ def get_metadata(file:FileManager.FilePromise) -> DataMinerTyping.SoundFilesType
                 metadata = audio_metadata.load(file_io)
                 file_io.seek(0)
             except Exception as e:
-                exception = e
-            if exception is not None:
-                print("audio_metadata failed to extract file \"%s\"!" % file.name)
-                raise exception
+                raise Exceptions.SoundFilesMetadataError(file)
             info = serialize(metadata)
 
         del info["filepath"]

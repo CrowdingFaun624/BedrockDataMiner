@@ -3,6 +3,7 @@ import traceback
 from typing import Any, Generic, Literal, TypedDict, TypeVar, cast
 
 import Structure.DataPath as DataPath
+import Utilities.Exceptions as Exceptions
 import Utilities.FileStorageManager as FileStorageManager
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
@@ -65,7 +66,7 @@ class SpecialEncoder(json.JSONEncoder):
             case NbtTypes.TAG():
                 return NbtCoder.encode(data)
             case _:
-                raise TypeError("Object of type %s is not JSON serializable" % (data.__class__.__name__))
+                raise Exceptions.CannotEncodeToJsonError(data)
 
 def decoder_function(data:dict[str,Any]|custom_types) -> Any:
     if "$special_type" not in data:
@@ -79,7 +80,7 @@ def decoder_function(data:dict[str,Any]|custom_types) -> Any:
         case "nbt":
             return NbtCoder.decode(data)
         case _:
-            raise ValueError("Invalid $special_type of \"%s\" received!" % data["$special_type"])
+            raise Exceptions.InvalidSpecialTypeError(data["$special_type"])
 
 class SpecialDecoder(json.JSONDecoder):
 
@@ -96,9 +97,9 @@ def test(data:Any, data_correct_encoded:Any) -> None:
     except Exception as e:
         traceback.print_exception(e)
     if data_encoded is None:
-        raise RuntimeError("Failed to encode data %s!" % (data))
+        raise Exceptions.CustomJsonTestFailError("Failed to encode data %s!" % (data))
     if data_encoded != json.dumps(data_correct_encoded):
-        raise RuntimeError("Encoded data %s does not match %s!" % (data_encoded, data_correct_encoded))
+        raise Exceptions.CustomJsonTestFailError("Encoded data %s does not match %s!" % (data_encoded, data_correct_encoded))
 
     data_decoded = None
     try:
@@ -106,9 +107,9 @@ def test(data:Any, data_correct_encoded:Any) -> None:
     except Exception as e:
         traceback.print_exception(e)
     if data_decoded is None:
-        raise RuntimeError("Failed to decode data %s!" % data_encoded)
+        raise Exceptions.CustomJsonTestFailError("Failed to decode data %s!" % data_encoded)
     if data != data_decoded:
-        raise RuntimeError("Decoded data %s is not equal to original %s!" % (data_decoded, data))
+        raise Exceptions.CustomJsonTestFailError("Decoded data %s is not equal to original %s!" % (data_decoded, data))
 
 def main() -> None:
     test(NbtTypes.TAG_Compound({"wow": NbtTypes.TAG_String("truly incredible")}), {"$special_type": "nbt", "data": "{wow: \"truly incredible\"}"})

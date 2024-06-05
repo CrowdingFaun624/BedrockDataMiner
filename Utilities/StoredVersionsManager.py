@@ -6,6 +6,7 @@ from typing import Iterable, Literal
 
 from pathlib2 import Path
 
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import FunctionCaller
 
@@ -62,7 +63,7 @@ def read_index(version_name:str) -> dict[str,tuple[str,bool]]:
     index_zip = zipfile.ZipFile(index_path, "r")
     file_name = version_name + ".txt"
     if file_name not in (file.filename for file in index_zip.filelist):
-        raise FileNotFoundError("Hash index named \"%s\" does not exist!" % file_name)
+        raise Exceptions.FileNotFoundInVersionArchive(file_name, version_name)
     index_content = index_zip.read(file_name).decode()
     index:dict[str,tuple[str,bool]] = {}
     for line in index_content.split("\n"):
@@ -98,16 +99,14 @@ def extract(name:str, output_path:Path|None=None, index:dict[str,tuple[str,bool]
                     zip_file.writestr(file_name, gzip.decompress(f.read()), zipfile.ZIP_DEFLATED)
             else:
                 zip_file.write(get_hash_file_path(file_hash), file_name, zipfile.ZIP_DEFLATED)
-    assert output_path.exists()
 
 def extract_file(version_name:str, file_name:str, destination:Path, index:dict[str,tuple[str,bool]]|None=None) -> None:
     if index is None: index = read_index(version_name)
-    if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
+    if file_name not in index: raise Exceptions.FileNotFoundInVersionArchive(file_name, version_name)
     file_hash, file_compressed = index[file_name]
     for parent in reversed(destination.parents):
         parent:Path
         parent.mkdir(exist_ok=True)
-        assert parent.exists()
     if file_compressed:
         with open(get_hash_file_path(file_hash), "rb") as f, open(destination, "wb") as g:
             g.write(gzip.decompress(f.read()))
@@ -116,7 +115,7 @@ def extract_file(version_name:str, file_name:str, destination:Path, index:dict[s
 
 def read_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tuple[str,bool]]|None=None) -> bytes|str:
     if index is None: index = read_index(version_name)
-    if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
+    if file_name not in index: raise Exceptions.FileNotFoundInVersionArchive(file_name, version_name)
     file_hash, file_compressed = index[file_name]
     with open(get_hash_file_path(file_hash), "rb") as f:
         if file_compressed: data = gzip.decompress(f.read())
@@ -129,7 +128,7 @@ def read_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tupl
 def get_file(version_name:str, file_name:str, mode:Literal["b", "t"]="b", index:dict[str,tuple[str,bool]]|None=None) -> FileManager.FilePromise:
     '''Returns a FilePromise of the object.'''
     if index is None: index = read_index(version_name)
-    if file_name not in index: raise KeyError("File \"%s\" is not in stored version \"%s\"!" % (file_name, version_name))
+    if file_name not in index: raise Exceptions.FileNotFoundInVersionArchive(file_name, version_name)
     file_hash, file_compressed = index[file_name]
     if file_compressed:
         temp_path = FileManager.get_temp_file_path()
@@ -163,7 +162,7 @@ def archive(path:Path, hashes:dict[str,bytes], version_name:str|None=None) -> di
             continue
         name = zip_info.filename
         if name.split(".")[-1].lower() in ILLEGAL_FORMATS:
-            raise ValueError("Illegal file format detected in \"%s\"!" % (name))
+            raise Exceptions.InvalidFileFormatError(name)
         completed = False # evil debug code
         try:
             file_hash = hashes[name]
@@ -200,8 +199,6 @@ def hash_files(zip_file:zipfile.ZipFile) -> dict[str,bytes]:
 
 def open_zip_file(path:Path) -> zipfile.ZipFile:
     '''Returns a ZipFile object in read mode from the given file name.'''
-    if not path.parent == FileManager.STORED_VERSIONS_INPUT_DIRECTORY: raise ValueError("Path is not within `./_assets/stored_versions`!")
-    # if not path.exists(): raise FileNotFoundError("File \"%s\" does not exist!" % str(path))
     zip_file = zipfile.ZipFile(path, "r")
     return zip_file
 
@@ -219,8 +216,9 @@ def clear_objects() -> None:
     user_requirement = "I would like to remove all files from \"./_assets/stored_versions/objects\""
     print("Are you sure you want to remove all contents from `./_assets/stored_versions/objects`? (y/n) ")
     print("If so, type \"%s\"." % user_requirement)
-    user_input = input()
-    if user_input != user_requirement: raise ValueError("Failed to clear all files.")
+    user_input = None
+    while user_input != user_requirement:
+        user_input = input()
     for file in path.iterdir():
         if file.is_dir():
             shutil.rmtree(file)

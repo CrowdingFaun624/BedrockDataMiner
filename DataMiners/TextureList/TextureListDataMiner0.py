@@ -1,5 +1,6 @@
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.TextureList.TextureListDataMiner as TextureListDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -15,7 +16,6 @@ class TextureListDataMiner0(TextureListDataMiner.TextureListDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,list[str]]:
         packs = environment.dependency_data["resource_packs"]
-        assert packs is not None
         pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {}
         for blocks_location in self.locations:
@@ -24,7 +24,7 @@ class TextureListDataMiner0(TextureListDataMiner.TextureListDataMiner):
         accessor = self.get_accessor("client")
         files:dict[str,str] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
-            raise FileNotFoundError("No texture_list files found in \"%s\"" % (self.version))
+            raise Exceptions.DataMinerNothingFoundError(self)
 
         output = {pack_files[pack_file]: texture_list.splitlines() for pack_file, texture_list in files.items()}
         return Sorting.sort_everything(output)

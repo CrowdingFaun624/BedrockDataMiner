@@ -4,6 +4,7 @@ import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.FunctionField as FunctionField
 import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Normalizer as Normalizer
+import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
@@ -35,8 +36,13 @@ class NormalizerComponent(Component.Component):
     def create_final(self) -> None:
         self.final = Normalizer.Normalizer(self.function_field.get_function(), self.dependencies)
 
+    def get_final(self) -> Normalizer.Normalizer:
+        if self.final is None:
+            raise Exceptions.AttributeNoneError("final", self)
+        return self.final
+
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         exceptions = super().check(config)
         if not config.allow_normalizer_dependencies and len(self.dependencies) > 0:
-            exceptions.append(ValueError("Normalizer \"%s\" has dependencies in an environment with no allowed normalizer dependencies!" % (self.name,)))
+            exceptions.append(Exceptions.ComponentConfigError(self, "by having dependencies in an environment with no normalizer dependencies allowed"))
         return exceptions

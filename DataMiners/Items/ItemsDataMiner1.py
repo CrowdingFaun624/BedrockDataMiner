@@ -5,6 +5,7 @@ import pyjson5  # supports comments
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Items.ItemsDataMiner as ItemsDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -30,7 +31,7 @@ class ItemsDataMiner1(ItemsDataMiner.ItemsDataMiner):
         accessor = self.get_accessor("client")
         files:dict[str,list[dict[str,Any]]] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
-            raise FileNotFoundError("No \"items.json\" files found in \"%s\"" % self.version)
+            raise Exceptions.DataMinerNothingFoundError(self)
 
         items:DataMinerTyping.Items = {}
         for resource_pack_file, resource_pack_items in files.items():

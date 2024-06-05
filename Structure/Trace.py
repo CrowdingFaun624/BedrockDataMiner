@@ -1,6 +1,8 @@
 import traceback
 from typing import Any, Hashable
 
+import Utilities.Exceptions as Exceptions
+
 
 class ErrorTrace():
 
@@ -15,20 +17,20 @@ class ErrorTrace():
 
     def add(self, current_pos_name:str, current_pos_key:Hashable|None, force:bool=False) -> None:
         if self.is_final:
-            raise RuntimeError("Attempted to add to a finalized Trace!")
+            raise Exceptions.TraceError(self, self.add, self.is_final)
         if force or current_pos_name not in self.already_added_names:
             self.trace.append(_TraceItem(current_pos_name, current_pos_key))
             self.already_added_names.add(current_pos_name)
 
     def finalize(self) -> None:
         if self.is_final:
-            raise RuntimeError("This Trace is already finalized!")
+            raise Exceptions.TraceError(self, self.finalize, self.is_final)
         self.is_final = True
         self.trace.reverse()
 
     def stringify(self) -> str:
         if not self.is_final:
-            raise RuntimeError("Attempted to stringify a non-finalized Trace!")
+            raise Exceptions.TraceError(self, self.stringify, self.is_final)
         trace_string = ".".join(str(trace_item) for trace_item in self.trace)
         exception_lines = traceback.format_exception(self.exception)
         if self.data is None:

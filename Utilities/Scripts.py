@@ -5,6 +5,7 @@ import lupa  # looks like this has no type hinting whatsoever
 from pathlib2 import Path
 from typing_extensions import Self
 
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 
 EmptyInput = jqpy.EmptyInput
@@ -83,7 +84,7 @@ class Scripts():
             case ".lua":
                 return LuaScript
             case _:
-                raise ValueError("Invalid file suffix \"%s\" on file \"%s\"" % (suffix, name))
+                raise Exceptions.InvalidScriptFileSuffix(suffix, name)
 
     def __init__(self) -> None:
         self.lua_runtime = lupa.LuaRuntime()
@@ -93,7 +94,7 @@ class Scripts():
     def __getitem__(self, name:str) -> Script:
         output = self.scripts.get(name, None)
         if output is None:
-            raise FileNotFoundError("Script \"%s\" does not exist!" % (name,))
+            raise Exceptions.UnrecognizedScriptError(name)
         return output
 
     def get_all_in_directory(self, directory_name:str) -> dict[str,Script]:

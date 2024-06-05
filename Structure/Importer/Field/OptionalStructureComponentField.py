@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Union
 
 import Structure.Importer.Field.OptionalComponentField as OptionalComponentField
 import Structure.Importer.Pattern as Capabilities
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Structure.Importer.StructureComponent as StructureComponent
@@ -28,6 +29,4 @@ class OptionalStructureComponentField(OptionalComponentField.OptionalComponentFi
         component = self.get_component()
         if component is None:
             return component
-        if component.final is None:
-            raise RuntimeError("Final Structure of StructureComponent is None!")
-        return component.final
+        return component.get_final()

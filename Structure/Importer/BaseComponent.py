@@ -4,6 +4,7 @@ import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.NormalizerListField as NormalizerListField
 import Structure.Importer.Field.StructureComponentField as StructureComponentField
 import Structure.StructureBase as StructureBase
+import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
@@ -45,10 +46,14 @@ class BaseComponent(Component.Component):
             children_tags=self.children_tags,
         )
 
+    def get_final(self) -> StructureBase.StructureBase:
+        if self.final is None:
+            raise Exceptions.AttributeNoneError("final", self)
+        return self.final
+
     def link_finals(self) -> None:
         super().link_finals()
-        assert self.final is not None
-        self.final.link_substructures(
+        self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
         )

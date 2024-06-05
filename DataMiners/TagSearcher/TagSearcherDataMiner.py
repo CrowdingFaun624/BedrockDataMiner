@@ -5,6 +5,7 @@ from typing import Any, Callable
 import DataMiners.DataMiner as DataMiner
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import Structure.DataPath as DataPath
+import Utilities.Exceptions as Exceptions
 
 TAG_CHARACTERS = re.compile(r"[^\s\\\+\*\?\[\]\(\)\{\}\=\!\<\>\|\-\/\~]") # using exclusive because of multitudinous language characters
 # valid tag characters are a-zA-Z0-9, _, ., and non-ascii not-whitespace characters
@@ -102,7 +103,7 @@ def parse_expression(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath.
         mentioned_tags.update(new_tags)
         parse_whitespace(data)
         if data.read(1) != ")":
-            raise ValueError("Expected \")\" at position %i!" % data.position)
+            raise Exceptions.TagSearcherParseError(data, "Expected \")\"")
         match operator:
             case BinaryOperator.union:
                 return lambda all_mentioned_tags: argument1(all_mentioned_tags) | argument2(all_mentioned_tags), mentioned_tags
@@ -126,13 +127,13 @@ def parse_expression(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath.
             case UnaryOperator.remove_embedded_data:
                 return lambda all_mentioned_tags: {data_path.remove_embedded_data() for data_path in argument(all_mentioned_tags)}, mentioned_tags
     else:
-        raise ValueError("Unexpected character \"%s\" at position %i!" % (character, data.position))
+        raise Exceptions.TagSearcherParseError(data, "Unexpected character \"%s\"" % (character,))
 
 def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath.DataPath|Any]]], set[DataPath.DataPath|Any]], set[str]]:
     data = DataReader(string)
     output = parse_expression(data)
     if not data.is_at_last_index():
-        raise RuntimeError("Tag expression finished (at index %i) before completing character sequence: %s" % (data.position, string))
+        raise Exceptions.TagSearcherParseError(data, "Tag expression finished before completing")
     return output
 
 class TagSearcherDataMiner(DataMiner.DataMiner):

@@ -1,13 +1,16 @@
 import enum
-from typing import Any, Generic, Sequence, TypeVar
+from typing import Any, Generic, NoReturn, Sequence, TypeVar
+
+import Utilities.Exceptions as Exceptions
+
 
 class NoExist(): # class that is different from None
 
     def __hash__(self) -> int:
         return hash(None)
 
-    def __str__(self) -> str:
-        raise NotImplementedError("Attempted to stringify NoExist object!")
+    def __str__(self) -> NoReturn:
+        raise Exceptions.CannotStringifyError(NoExist)
 
 class ChangeType(enum.Enum):
     removal = "removal"
@@ -33,15 +36,6 @@ Dt4 = TypeVar("Dt4")
 class Diff(Generic[Dt1,Dt2]):
 
     def __init__(self, old:Dt1=NoExist(), new:Dt2=NoExist()) -> None:
-        if old == new:
-            raise ValueError("`old` is equal to `new`!")
-        if isinstance(old, Diff):
-            raise TypeError("`old` is a Diff!")
-        if isinstance(new, Diff):
-            raise TypeError("`new` is a Diff!")
-        if isinstance(old, NoExist) and isinstance(new, NoExist):
-            raise ValueError("Neither `old` nor `new` exist!")
-
         self.old:Dt1 = old
         self.new:Dt2 = new
         self.change_type = exist_change_type[not isinstance(old, NoExist), not isinstance(new, NoExist)]
@@ -65,19 +59,18 @@ class Diff(Generic[Dt1,Dt2]):
             case ChangeType.removal:
                 return [(self.old, DiffType.old)]
 
-    def __getitem__(self, index:ChangeType) -> Dt1|Dt2:
-        if index is DiffType.new:
-            if isinstance(self.new, NoExist):
-                raise KeyError("%s does not have a new object!" % repr(self))
-            else: return self.new
-        elif index is DiffType.old:
-            if isinstance(self.old, NoExist):
-                raise KeyError("%s does not have an old object!" % repr(self))
-            else: return self.old
-        elif index is DiffType.not_diff:
-            raise KeyError("Attempted to get an item of %s using a `DiffType.not_diff` key!" % repr(self))
-        else:
-            raise KeyError("Attempted to get an item of %s using a non-DiffType key!" % repr(self))
+    def __getitem__(self, index:DiffType) -> Dt1|Dt2:
+        match index:
+            case DiffType.new:
+                if isinstance(self.new, NoExist):
+                    raise Exceptions.DiffKeyError(index, self)
+                else: return self.new
+            case DiffType.old:
+                if isinstance(self.old, NoExist):
+                    raise Exceptions.DiffKeyError(index, self)
+                else: return self.old
+            case DiffType.not_diff:
+                raise Exceptions.DiffKeyError(index, self)
 
     def __repr__(self) -> str:
         match self.change_type:

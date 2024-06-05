@@ -4,6 +4,7 @@ from typing import Literal, TypedDict
 from pathlib2 import Path
 
 import Downloader.Manager as Manager
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
 import Version.VersionTags as VersionTags
@@ -25,10 +26,6 @@ class StoredManager(Manager.Manager):
         self.index = StoredVersionsManager.read_index(self.name)
 
     def install_all(self, destination:Path|None=None) -> None:
-
-        if destination is not None and not isinstance(destination, Path):
-            raise TypeError("Parameter `destination` is not a `Path`!")
-
         if destination is None: destination = self.apk_location
         if not destination.exists():
             self.read_index()
@@ -40,13 +37,15 @@ class StoredManager(Manager.Manager):
     def get_file_list(self) -> list[str]:
         if self.file_list is None:
             self.read_index()
-            assert self.index is not None
+            if self.index is None:
+                raise Exceptions.AttributeNoneError("index", self)
             self.file_list = list(self.index.keys())
         return self.file_list
 
     def file_exists(self, file_name:str) -> bool:
         self.read_index()
-        assert self.index is not None
+        if self.index is None:
+            raise Exceptions.AttributeNoneError("index", self)
         return file_name in self.index
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
@@ -60,6 +59,7 @@ class StoredManager(Manager.Manager):
     def all_done(self) -> None:
         if self.apk_location.exists():
             self.apk_location.unlink()
-        assert self.location.name != self.version.name # self.location refers to the `client` subdirectory of the version directory.
+        if self.location.name == self.version.name: # self.location refers to the `client` subdirectory of the version directory.
+            raise Exceptions.InvalidStateError(self.location.name, self.version.name, "These should not be the same!")
         if self.location.exists():
             shutil.rmtree(self.location)

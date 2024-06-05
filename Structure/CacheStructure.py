@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generic, Iterable, TypeVar, cast
+from typing import Any, Callable, Generic, Iterable, Literal, TypeVar, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -7,6 +7,7 @@ import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
+import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
 
@@ -49,7 +50,8 @@ class CacheStructure(Structure.Structure[d]):
         self.types = tuple(types)
 
     def choose_structure_flat(self, key:None, value_type:type, value:None) -> Structure.Structure:
-        assert self.structure is not None
+        if self.structure is None:
+            raise Exceptions.AttributeNoneError("structure", self)
         if isinstance(self.structure, dict):
             return self.structure[value_type]
         else:
@@ -62,8 +64,7 @@ class CacheStructure(Structure.Structure[d]):
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.check_all_types:
-            assert cache_item.check_all_types_data is not None
-            return cache_item.check_all_types_data
+            return cache_item.get_check_all_types_data()
         if cache_item is None:
             new_cache_item:CacheItem[d] = CacheItem()
             self.cache[data_hash] = new_cache_item
@@ -73,15 +74,14 @@ class CacheStructure(Structure.Structure[d]):
         cache_item.set_check_all_types(output)
         return output
 
-    def normalize(self, data:d, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:int, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:d, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:Literal[1,2], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         structure = self.choose_structure_flat(None, type(data), None)
         if not environment.should_cache or not self.cache_normalize:
             return structure.normalize(data, normalizer_dependencies, version_number, environment)
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.normalize:
-            assert cache_item.normalize_data is not None
-            return cache_item.normalize_data
+            return cache_item.get_normalize_data()
         if cache_item is None:
             new_cache_item:CacheItem[d] = CacheItem()
             self.cache[data_hash] = new_cache_item
@@ -98,8 +98,7 @@ class CacheStructure(Structure.Structure[d]):
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.get_tag_paths:
-            assert cache_item.get_tag_paths_data is not None
-            return cache_item.get_tag_paths_data
+            return cache_item.get_get_tag_paths_data()
         if cache_item is None:
             new_cache_item:CacheItem[d] = CacheItem()
             self.cache[data_hash] = new_cache_item
@@ -116,11 +115,7 @@ class CacheStructure(Structure.Structure[d]):
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.compare_text:
-            assert cache_item.compare_text_data is not None
-            assert cache_item.compare_text_indents is not None
-            for line, indents in zip(cache_item.compare_text_data[0], cache_item.compare_text_indents):
-                line.set_indent(indents)
-            return cache_item.compare_text_data
+            return cache_item.get_compare_text_data()
         if cache_item is None:
             new_cache_item:CacheItem[d] = CacheItem()
             self.cache[data_hash] = new_cache_item
@@ -137,11 +132,7 @@ class CacheStructure(Structure.Structure[d]):
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.print_text:
-            assert cache_item.print_text_data is not None
-            assert cache_item.print_text_indents is not None
-            for line, indents in zip(cache_item.print_text_data[0], cache_item.print_text_indents):
-                line.set_indent(indents)
-            return cache_item.print_text_data
+            return cache_item.get_print_text_data()
         if cache_item is None:
             new_cache_item:CacheItem[d] = CacheItem()
             self.cache[data_hash] = new_cache_item
@@ -158,8 +149,7 @@ class CacheStructure(Structure.Structure[d]):
         data_hash = hash((hash_data(data1), hash_data(data2)))
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.compare:
-            assert cache_item.compare_data is not None
-            return cache_item.compare_data
+            return cache_item.get_compare_data()
         if cache_item is None:
             new_cache_item:CacheItem[d] = CacheItem()
             self.cache[data_hash] = new_cache_item
@@ -174,7 +164,8 @@ class CacheStructure(Structure.Structure[d]):
         self.cache.clear()
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
-        assert self.structure is not None
+        if self.structure is None:
+            raise Exceptions.AttributeNoneError("structure", self)
         if isinstance(self.structure, dict):
             return self.structure.values()
         else:
@@ -198,27 +189,65 @@ class CacheItem(Generic[d]):
         self.compare = False
         self.compare_data:tuple[d, bool, list[Trace.ErrorTrace]]|None = None
 
+    def get_check_all_types_data(self) -> list[Trace.ErrorTrace]:
+        if self.check_all_types_data is None:
+            raise Exceptions.AttributeNoneError("check_all_types_data", self)
+        return self.check_all_types_data
+
     def set_check_all_types(self, data:list[Trace.ErrorTrace]) -> None:
         self.check_all_types = True
         self.check_all_types_data = data
+
+    def get_normalize_data(self) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+        if self.normalize_data is None:
+            raise Exceptions.AttributeNoneError("normalize_data", self)
+        return self.normalize_data
 
     def set_normalize(self, data:tuple[Any|None,list[Trace.ErrorTrace]]) -> None:
         self.normalize = True
         self.normalize_data = data
 
+    def get_get_tag_paths_data(self) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+        if self.get_tag_paths_data is None:
+            raise Exceptions.AttributeNoneError("get_tag_paths_data", self)
+        return self.get_tag_paths_data
+
     def set_get_tag_paths(self, data:tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]) -> None:
         self.get_tag_paths = True
         self.get_tag_paths_data = data
+
+    def get_compare_text_data(self) -> tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]:
+        if self.compare_text_data is None:
+            raise Exceptions.AttributeNoneError("compare_text_data", self)
+        if self.compare_text_indents is None:
+            raise Exceptions.AttributeNoneError("compare_text_indents", self)
+        for line, indents in zip(self.compare_text_data[0], self.compare_text_indents):
+            line.set_indent(indents)
+        return self.compare_text_data
 
     def set_compare_text(self, data:tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]) -> None:
         self.compare_text = True
         self.compare_text_data = data
         self.compare_text_indents = [line.indents for line in data[0]]
 
+    def get_print_text_data(self) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+        if self.print_text_data is None:
+            raise Exceptions.AttributeNoneError("print_text_data", self)
+        if self.print_text_indents is None:
+            raise Exceptions.AttributeNoneError("print_text_indents", self)
+        for line, indents in zip(self.print_text_data[0], self.print_text_indents):
+            line.set_indent(indents)
+        return self.print_text_data
+
     def set_print_text(self, data:tuple[list[SU.Line], list[Trace.ErrorTrace]]) -> None:
         self.print_text = True
         self.print_text_data = data
         self.print_text_indents = [line.indents for line in data[0]]
+
+    def get_compare_data(self) -> tuple[d, bool, list[Trace.ErrorTrace]]:
+        if self.compare_data is None:
+            raise Exceptions.AttributeNoneError("compare_data", self)
+        return self.compare_data
 
     def set_compare(self, data:tuple[d, bool, list[Trace.ErrorTrace]]) -> None:
         self.compare = True
@@ -233,7 +262,7 @@ def hash_data(data:Any) -> int:
     if hash_function is not None:
         return hash_function(data)
     else:
-        raise TypeError("Unhashable type \"%s\"!" % (data.__class__))
+        raise Exceptions.CacheStructureHashError(data.__class__)
 
 class HashTableItem():
 

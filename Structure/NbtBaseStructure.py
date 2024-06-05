@@ -8,6 +8,7 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
+import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
@@ -47,14 +48,12 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
 
     def check_all_types(self, data: NbtTypes.TAG, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         output:list[Trace.ErrorTrace] = []
-        if isinstance(data, D.Diff):
-            raise TypeError("`check_all_types` was given data containing Diffs!")
-        assert self.types is not None
+        if self.types is None:
+            raise Exceptions.AttributeNoneError("types", self)
         if not isinstance(data, self.types):
-            item_types_string = ", ".join(type_key.__name__ for type_key in self.types)
-            output.append(Trace.ErrorTrace(TypeError("Data %s in %s excepted is %s instead of [%s]!" % (SU.stringify(data), self.name, data.__class__.__name__, item_types_string)), self.name, None, data))
+            output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(data), "Data"), self.name, None, data))
             return output
-        structure, new_exceptions = self.choose_structure_flat("", type(data), data)
+        structure, new_exceptions = self.choose_structure_flat(None, type(data), data)
         for exception in new_exceptions: exception.add(self.name, None)
         output.extend(new_exceptions)
         if structure is not None:
@@ -63,13 +62,11 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             output.extend(new_exceptions)
         return output
 
-    def choose_structure_flat(self, key:Literal[""], value_type:type[NbtTypes.TAG], value:NbtTypes.TAG|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        if key != "":
-            return None, [Trace.ErrorTrace(RuntimeError("Nbt root tag name at %s is not an empty string, but instead \"%s\"!" % (key)), self.name, key, value_type)]
+    def choose_structure_flat(self, key:None, value_type:type[NbtTypes.TAG], value:NbtTypes.TAG|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         if isinstance(self.structure, dict):
             output = self.structure.get(value_type, Structure.StructureFailure.choose_structure_failure)
             if output is Structure.StructureFailure.choose_structure_failure:
-                return None, [Trace.ErrorTrace(KeyError("Failed to get Structure at: %s" % (value_type)), self.name, key, value)]
+                return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.structure.keys()), value_type, "Item"), self.name, key, value)]
             return output, []
         else:
             return self.structure, []
@@ -81,27 +78,28 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             if isinstance(self.structure, dict):
                 structure = self.structure.get(type(item_iter), Structure.StructureFailure.choose_structure_failure)
                 if structure is Structure.StructureFailure.choose_structure_failure:
-                    exceptions.append(Trace.ErrorTrace(KeyError("Failed to get Structure at: %s" % (item_iter)), self.name, None, item))
+                    exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.structure.keys()), type(item), "Item"), self.name, None, item))
                     continue
                 output[diff_type] = structure
             else:
                 output[diff_type] = self.structure
         return StructureSet.StructureSet(output), exceptions
 
-    def normalize(self, data: NbtReader.NbtBytes, normalizer_dependencies: Normalizer.LocalNormalizerDependencies, version_number: int, environment:StructureEnvironment.StructureEnvironment) -> tuple[NbtTypes.TAG|None, list[Trace.ErrorTrace]]:
+    def normalize(self, data: NbtReader.NbtBytes, normalizer_dependencies: Normalizer.LocalNormalizerDependencies, version_number: Literal[1,2], environment:StructureEnvironment.StructureEnvironment) -> tuple[NbtTypes.TAG|None, list[Trace.ErrorTrace]]:
         try:
             data_parsed = NbtReader.unpack_bytes(data.open(), gzipped=False, endianness=self.endianness)[1]
         except Exception as e:
             return None, [Trace.ErrorTrace(e, self.name, None, data)]
         if not self.children_has_normalizer: return data_parsed, []
-        assert self.normalizer is not None
+        if self.normalizer is None:
+            raise Exceptions.AttributeNoneError("normalizer", self)
         for normalizer in self.normalizer:
             try:
                 normalizer(data_parsed, normalizer_dependencies, version_number)
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.choose_structure_flat("", type(data_parsed), data_parsed)
+        structure, new_exceptions = self.choose_structure_flat(None, type(data_parsed), data_parsed)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if structure is not None:
@@ -115,7 +113,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
     def get_tag_paths(self, data: NbtTypes.TAG, tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
         exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.choose_structure_flat("", type(data), data)
+        structure, new_exceptions = self.choose_structure_flat(None, type(data), data)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if structure is None: return [], exceptions

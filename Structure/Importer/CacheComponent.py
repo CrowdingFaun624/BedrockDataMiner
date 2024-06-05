@@ -4,16 +4,15 @@ import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.StructroidComponentField as StructroidComponentField
 import Structure.Importer.Field.TypeListField as TypeListField
 import Structure.Importer.StructureComponent as StructureComponent
+import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
-from Structure.Importer.ImporterConfig import ImporterConfig
 
 
-class CacheComponent(StructureComponent.StructureComponent):
+class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheStructure]):
 
     class_name_article = "a Cache"
     class_name = "Cache"
     my_capabilities = Capabilities.Capabilities(is_structure=True)
-    final:CacheStructure.CacheStructure
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
@@ -57,17 +56,9 @@ class CacheComponent(StructureComponent.StructureComponent):
 
     def link_finals(self) -> None:
         super().link_finals()
-        assert self.final is not None
         types = self.types_field.get_types()
         self.my_type = types
-        self.final.link_substructures(
+        self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
             types=types,
         )
-
-    def check(self, config: ImporterConfig) -> list[Exception]:
-        exceptions = super().check(config)
-        structure = self.subcomponent_field.get_component().final
-        if isinstance(structure, dict):
-            exceptions.extend(ValueError("%s %s cannot except null subcomponent in type %s: null" % (self.class_name, self.name, substructure_type.__name__)) for substructure_type, substructure in structure.items() if substructure is None)
-        return exceptions

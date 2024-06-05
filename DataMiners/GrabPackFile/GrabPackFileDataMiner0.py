@@ -3,6 +3,7 @@ from typing import Any, Literal
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabPackFile.GrabPackFileDataMiner as GrabPackFileDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -22,7 +23,6 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         packs = environment.dependency_data[self.pack_type]
-        assert packs is not None
         pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {}
         for blocks_location in self.locations:
@@ -31,7 +31,7 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
         accessor = self.get_accessor("client")
         files:dict[str,Any] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
-            raise FileNotFoundError("No files found in \"%s\"" % self.version)
+            raise Exceptions.DataMinerNothingFoundError(self)
 
         output = {pack_files[pack_file]: data for pack_file, data in files.items()}
         return Sorting.sort_everything(output)

@@ -5,6 +5,7 @@ import pyjson5
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.Items.ItemsDataMiner as ItemsDataMiner
+import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -20,14 +21,10 @@ class ItemsDataMiner2(ItemsDataMiner.ItemsDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
 
-        exception = None
-        try:
-            file = self.get_accessor("client").read(self.location, "t")
-        except FileNotFoundError as e:
-            exception = e
-            exception.args = tuple(list(exception.args) + ["No items file found in \"%s\"!" % (self.version)])
-        if exception is not None:
-            raise exception
+        accessor = self.get_accessor("client")
+        if not accessor.file_exists(self.location):
+            raise Exceptions.DataMinerNothingFoundError(self)
+        file = self.get_accessor("client").read(self.location, "t")
 
         items:list[dict[str,Any]] = pyjson5.loads(file)
         output:DataMinerTyping.Items = {}

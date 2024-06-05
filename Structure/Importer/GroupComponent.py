@@ -1,5 +1,6 @@
 import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.Capabilities as Capabilities
+import Structure.Importer.Component as Component
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.GroupItemField as GroupItemField
@@ -25,14 +26,17 @@ class GroupComponent(AbstractGroupComponent.AbstractGroupComponent):
             for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())], ["subcomponents"])
         self.fields.extend([self.subcomponents_field])
 
+    def get_subcomponents(self) -> list[Component.Component]:
+        return [group_item_component for group_item in self.subcomponents_field if (group_item_component := group_item.get_component()) is not None]
+
     def create_final(self) -> None:
         self.final = {}
 
     def link_finals(self) -> None:
         super().link_finals()
-        assert self.final is not None
+        final = self.get_final()
         for group_field in self.subcomponents_field:
             valid_types = group_field.get_types()
             self.my_type.update(valid_types)
             for valid_type in valid_types:
-                self.final[valid_type] = group_field.subcomponent_field.get_final()
+                final[valid_type] = group_field.subcomponent_field.get_final()

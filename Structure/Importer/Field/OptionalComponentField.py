@@ -3,6 +3,7 @@ from typing import Callable, Generic, Sequence, TypeVar
 import Structure.Importer.Component as Component
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Pattern as Capabilities
+import Utilities.Exceptions as Exceptions
 
 a = TypeVar("a", bound=Component.Component, covariant=True)
 
@@ -27,9 +28,7 @@ class OptionalComponentField(Field.Field, Generic[a]):
             self.subcomponent = None
             return []
         else:
-            subcomponent:"Component.Component" = Field.choose_component(self.subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name)
-            self.subcomponent = subcomponent # type: ignore
-            assert self.subcomponent is not None
+            self.subcomponent = Field.choose_component(self.subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name)
             return [self.subcomponent]
 
     def get_component(self) -> a|None:
@@ -38,5 +37,5 @@ class OptionalComponentField(Field.Field, Generic[a]):
         Can only be called after `set_field`.
         '''
         if not self.has_set_component:
-            raise RuntimeError("Cannot call `get_component` before `set_field`!")
-        return self.subcomponent # type: ignore
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_component, self)
+        return self.subcomponent
