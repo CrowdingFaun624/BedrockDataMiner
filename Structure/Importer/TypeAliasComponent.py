@@ -23,16 +23,15 @@ class TypeAliasComponent(Component.Component[list[type]]):
             raise Exceptions.ComponentInvalidNameError(self, list(StructureComponent.DEFAULT_TYPES.keys()))
 
         self.types_strs = data["types"]
-        self.types:list[type]|None = None
 
     def create_final(self) -> None:
-        self.types = []
+        self.final = []
         already_types:set[str] = set()
         for type_str in self.types_strs:
             if type_str in already_types:
                 raise Exceptions.ComponentDuplicateTypeError(type_str, self)
             already_types.add(type_str)
             if type_str in StructureComponent.DEFAULT_TYPES:
-                self.types.append(StructureComponent.DEFAULT_TYPES[type_str])
+                self.final.append(StructureComponent.DEFAULT_TYPES[type_str])
             else:
                 raise Exceptions.ComponentUnrecognizedTypeError(type_str, self)
