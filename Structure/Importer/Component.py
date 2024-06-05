@@ -1,14 +1,17 @@
-from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence, Union
+from typing import (TYPE_CHECKING, Any, Callable, Generic, Mapping, Sequence,
+                    TypeVar, Union)
 
 import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.ImporterConfig as ImporterConfig
-import Structure.StructureBase as StructureBase
+import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Structure.Importer.Field.Field as Field
 
-class Component():
+a = TypeVar("a")
+
+class Component(Generic[a]):
 
     class_name_article = "a Component"
     class_name = "Component"
@@ -20,11 +23,16 @@ class Component():
         self.name = name
         self.links_to_other_components:list[Component] = []
         self.parents:list[Component] = []
-        self.final:StructureBase.StructureBase|None = None
+        self.final:a|None = None
         self.children_has_normalizer = False
         self.children_has_normalizer_dependencies = False
         self.children_tags:set[str] = set()
         self.fields:list["Field.Field"] = []
+
+    def get_final(self) -> a:
+        if self.final is None:
+            raise Exceptions.AttributeNoneError("final", self)
+        return self.final
 
     def link_components(self, components:Sequence["Component"]) -> None:
         self.links_to_other_components.extend(components)

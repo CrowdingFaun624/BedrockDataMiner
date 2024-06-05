@@ -8,7 +8,7 @@ import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class NormalizerComponent(Component.Component):
+class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
 
     class_name_article = "a Normalizer"
     class_name = "Normalizer"
@@ -28,18 +28,12 @@ class NormalizerComponent(Component.Component):
         self.dependencies = data.get("dependencies", [])
         self.children_has_normalizer = True
         self.children_has_normalizer_dependencies = (len(self.dependencies) > 0)
-        self.final:Normalizer.Normalizer|None = None
 
         self.function_field = FunctionField.FunctionField(data["function_name"], ["function_name"])
         self.fields.extend([self.function_field])
 
     def create_final(self) -> None:
         self.final = Normalizer.Normalizer(self.function_field.get_function(), self.dependencies)
-
-    def get_final(self) -> Normalizer.Normalizer:
-        if self.final is None:
-            raise Exceptions.AttributeNoneError("final", self)
-        return self.final
 
     def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
         exceptions = super().check(config)

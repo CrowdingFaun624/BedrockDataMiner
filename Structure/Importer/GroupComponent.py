@@ -4,10 +4,11 @@ import Structure.Importer.Component as Component
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.FieldListField as FieldListField
 import Structure.Importer.Field.GroupItemField as GroupItemField
+import Structure.Structure as Structure
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class GroupComponent(AbstractGroupComponent.AbstractGroupComponent):
+class GroupComponent(AbstractGroupComponent.AbstractGroupComponent[Structure.Structure]):
 
     class_name_article = "a Group"
     class_name = "Group"

@@ -1,11 +1,10 @@
 import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.Component as Component
 import Structure.Importer.ComponentTyping as ComponentTyping
-import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class TagComponent(Component.Component):
+class TagComponent(Component.Component[str]):
 
     class_name_article = "a Tag"
     class_name = "Tag"
@@ -23,11 +22,6 @@ class TagComponent(Component.Component):
 
     def create_final(self) -> None:
         self.final = self.name
-
-    def get_final(self) -> str:
-        if self.final is None:
-            raise Exceptions.AttributeNoneError("final", self)
-        return self.final
 
     def __hash__(self) -> int:
         return hash(self.name)

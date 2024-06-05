@@ -40,7 +40,7 @@ class TypeField(AbstractTypeField.AbstractTypeField):
         if isinstance(self.subcomponent, type):
             self.types = [self.subcomponent]
         else:
-            self.types = self.subcomponent.get_types()
+            self.types = self.subcomponent.get_final()
 
     def get_types(self) -> list[type]:
         if self.types is None:

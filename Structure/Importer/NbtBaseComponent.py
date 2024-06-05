@@ -18,7 +18,7 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 COMPONENT_REQUEST_PROPERTIES:Structure.Importer.Pattern.Pattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = Structure.Importer.Pattern.Pattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
 
-class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent):
+class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStructure.NbtBaseStructure]):
 
     class_name_article = "an NbtBase"
     class_name = "NbtBase"

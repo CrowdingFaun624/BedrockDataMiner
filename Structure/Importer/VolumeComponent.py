@@ -12,7 +12,7 @@ import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent):
+class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent[VolumeStructure.VolumeStructure]):
 
     class_name_article = "a Volume"
     class_name = "Volume"

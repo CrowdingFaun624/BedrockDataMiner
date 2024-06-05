@@ -50,7 +50,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         self.types = []
         self.types.extend(self.primitive_types)
         for type_alias_component in self.type_aliases:
-            self.types.extend(type_alias_component.get_types())
+            self.types.extend(type_alias_component.get_final())
 
     def get_types(self) -> list[type]:
         if self.types is None:

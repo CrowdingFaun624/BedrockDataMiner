@@ -5,7 +5,7 @@ import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class TypeAliasComponent(Component.Component):
+class TypeAliasComponent(Component.Component[list[type]]):
 
     class_name_article = "a TypeAlias"
     class_name = "TypeAlias"
@@ -35,8 +35,3 @@ class TypeAliasComponent(Component.Component):
                 self.types.append(ComponentTyping.DEFAULT_TYPES[type_str])
             else:
                 raise Exceptions.ComponentUnrecognizedTypeError(type_str, self)
-
-    def get_types(self) -> list[type]:
-        if self.types is None:
-            raise Exceptions.AttributeNoneError("types", self)
-        return self.types
