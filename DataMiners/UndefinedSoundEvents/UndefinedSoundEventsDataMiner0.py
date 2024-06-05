@@ -20,14 +20,14 @@ class UndefinedSoundEventsDataMiner0(UndefinedSoundEventsDataMiner.UndefinedSoun
         self.use_music_definitions:bool = kwargs["use_music_definitions"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.UndefinedSoundEvents:
-        sounds_json = environment.dependency_data["sounds_json"]
+        sounds_json:DataMinerTyping.MySoundsJson = environment.dependency_data.get("sounds_json", self)
         sounds_json_sound_events = UndefinedSoundEventsDataMiner.get_sounds_json_sound_events(sounds_json)
 
-        sound_definitions = environment.dependency_data["sound_definitions"]
+        sound_definitions:DataMinerTyping.SoundDefinitionsJson = environment.dependency_data.get("sound_definitions", self)
         sound_definitions_sound_events = set(sound_definitions.keys())
 
         if self.use_music_definitions:
-            music_definitions = environment.dependency_data["music_definitions"]
+            music_definitions:DataMinerTyping.MyMusicDefinitions = environment.dependency_data.get("music_definitions", self)
             music_definitions_sound_events = UndefinedSoundEventsDataMiner.get_music_definitions_sound_events(music_definitions)
 
         output:dict[str,list[list[str]]] = {}

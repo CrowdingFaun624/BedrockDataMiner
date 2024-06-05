@@ -20,7 +20,7 @@ class SplashesDataMiner0(SplashesDataMiner.SplashesDataMiner):
         self.splashes_locations = kwargs["splashes_locations"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Splashes:
-        resource_packs = environment.dependency_data["resource_packs"]
+        resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for splashes_location in self.splashes_locations:

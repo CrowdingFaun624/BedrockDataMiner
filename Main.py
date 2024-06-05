@@ -92,7 +92,6 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
-# TODO: make DataMinerEnvironment.dependency_data its own object that throws errors if it's accessed in a wrong way.
 # TODO: make all importers use Components in some fashion. Components are cool!
 
 # TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions

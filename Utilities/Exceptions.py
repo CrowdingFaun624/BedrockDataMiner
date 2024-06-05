@@ -912,6 +912,25 @@ class DataMinersFailureError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class DataMinerUnrecognizedDependencyError(DataMinerException):
+    "A dependency does not exist."
+
+    def __init__(self, dataminer:"DataMiner.DataMiner", dependency_name:str, message:Optional[str]=None) -> None:
+        '''
+        :dataminer: The DataMiner attempting to access the dependency.
+        :dependency_name: The name of the DataMinerCollection that does not exist.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer, dependency_name, message)
+        self.dataminer = dataminer
+        self.dependency_name = dependency_name
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r references dependency \"%s\" that is non-existent for this Version" % (self.dataminer, self.dependency_name)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class DataMinerUnrecognizedSuffixError(DataMinerException):
     "A file suffix is unrecognized."
 
@@ -934,6 +953,25 @@ class DataMinerUnrecognizedSuffixError(DataMinerException):
             output += "!"
         else:
             output += "; %s!" % (self.message,)
+        return output
+
+class DataMinerUnregisteredDependencyError(DataMinerException):
+    "The dependency exists, but is not listed as a dependency by this DataMiner."
+    
+    def __init__(self, dataminer:"DataMiner.DataMiner", dependency_name:str, message:Optional[str]=None) -> None:
+        '''
+        :dataminer: The DataMiner attempting to access the dependency.
+        :dependency_name: The name of the DataMinerCollection that is unregistered.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer, dependency_name, message)
+        self.dataminer = dataminer
+        self.dependency_name = dependency_name
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r references unlisted dependency \"%s\"" % (self.dataminer, self.dependency_name)
+        output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
 class MissingDataFileError(DataMinerException):
@@ -2163,7 +2201,7 @@ class VersionTimeTravelError(VersionException):
 
 class VersionTopLevelError(VersionException):
     "A Version is a top-level Version but has no top-level VersionTag."
-    
+
     def __init__(self, version:"Version.Version", top_level_tag:"VersionTags.VersionTag", message:Optional[str]=None) -> None:
         '''
         :version: The top-level Version missing the top-level VersionTag.

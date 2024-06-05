@@ -1,6 +1,7 @@
 from typing import Any, Literal
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
+import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabPackFile.GrabPackFileDataMiner as GrabPackFileDataMiner
 import Utilities.Exceptions as Exceptions
@@ -22,7 +23,7 @@ class GrabPackFileDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
         self.pack_type:Literal["resource_packs", "behavior_packs"] = kwargs["pack_type"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
-        packs = environment.dependency_data[self.pack_type]
+        packs:DataMinerTyping.ResourcePacks|DataMinerTyping.BehaviorPacks = environment.dependency_data.get(self.pack_type, self)
         pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {}
         for blocks_location in self.locations:

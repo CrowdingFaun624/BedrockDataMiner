@@ -1,6 +1,7 @@
 from typing import Any, Callable, Literal
 
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
+import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.DataTypes as DataTypes
 import DataMiners.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiner as GrabMultiplePackFilesDataMiner
 import Utilities.Exceptions as Exceptions
@@ -27,7 +28,7 @@ class GrabMultiplePackFilesDataMiner0(GrabMultiplePackFilesDataMiner.GrabMultipl
         self.suffixes:list[str]|None = kwargs.get("suffixes", None)
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
-        packs = environment.dependency_data[self.pack_type]
+        packs:DataMinerTyping.ResourcePacks|DataMinerTyping.BehaviorPacks = environment.dependency_data.get(self.pack_type, self)
         files:dict[tuple[str,str],str] = {}
         accessor = self.get_accessor("client")
         for pack in packs:

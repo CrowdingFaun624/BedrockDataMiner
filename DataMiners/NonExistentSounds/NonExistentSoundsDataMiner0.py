@@ -47,14 +47,14 @@ class NonExistentSoundsDataMiner0(NonExistentSoundsDataMiner.NonExistentSoundsDa
         self.resource_packs_location:str|None = kwargs["resource_packs_location"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.NonExistentSounds:
-        sound_files_data = environment.dependency_data["sound_files"]
+        sound_files_data:DataMinerTyping.SoundFiles = environment.dependency_data.get("sound_files", self)
         sound_files = {strip_file_name(sound_file, self.resource_packs_location) for sound_file in sound_files_data.keys()}
         sound_files.discard(None)
         if len(sound_files) == 0:
             raise Exceptions.DataMinerNothingFoundError(self, "(no sound files in a resource pack directory)")
 
         non_existent_sounds:dict[str,dict[str,list[str]]] = {}
-        sound_definitions = environment.dependency_data["sound_definitions"]
+        sound_definitions:DataMinerTyping.MySoundDefinitionsJson = environment.dependency_data.get("sound_definitions", self)
         total_sound_locations = 0
         total_non_existent_sound_locations = 0
         for sound_event, resource_pack, sound_location in get_sounds(sound_definitions):

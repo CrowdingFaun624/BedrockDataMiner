@@ -18,7 +18,7 @@ class LanguageDataMiner0(LanguageDataMiner.LanguageDataMiner):
         self.location:str = kwargs["location"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Language:
-        packs = environment.dependency_data["resource_packs"]
+        packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)
         pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {pack_path + self.location % (self.language_code,): pack_name for pack_name, pack_path in pack_names}
         files_request = [(file, "t", None) for file in pack_files.keys()]

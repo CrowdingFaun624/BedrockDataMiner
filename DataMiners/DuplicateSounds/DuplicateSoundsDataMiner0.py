@@ -1,12 +1,12 @@
+import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.DataMinerTyping as DataMinerTyping
 import DataMiners.DuplicateSounds.DuplicateSoundsDataMiner as DuplicateSoundsDataMiner
-import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 
 
 class DuplicateSoundsDataMiner0(DuplicateSoundsDataMiner.DuplicateSoundsDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,list[DataMinerTyping.DuplicateSoundsTypedDict]]:
-        sound_files = environment.dependency_data["sound_files"]
+        sound_files:DataMinerTyping.SoundFiles = environment.dependency_data.get("sound_files", self)
 
         hash_dict:dict[str,list[DataMinerTyping.DuplicateSoundsTypedDict]] = {}
         for sound_file_name, sound_file_internals in sound_files.items():

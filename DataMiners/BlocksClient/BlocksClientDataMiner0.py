@@ -20,7 +20,7 @@ class BlocksClientDataMiner0(BlocksDataMiner.BlocksClientDataMiner):
         self.blocks_locations:list[str] = kwargs["blocks_locations"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.MyBlocksJsonClientBlockTypedDict]:
-        resource_packs = environment.dependency_data["resource_packs"]
+        resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for blocks_location in self.blocks_locations:

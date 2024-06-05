@@ -14,7 +14,7 @@ def decode(io:IO[bytes]) -> Any:
 class LanguagesDataMiner0(LanguagesDataMiner.LanguagesDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.LanguagesTypedDict]:
-        resource_packs = environment.dependency_data["resource_packs"]
+        resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)
         accessor = self.get_accessor("client")
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         languages_files = {"resource_packs/%s/texts/languages.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}

@@ -48,7 +48,7 @@ class SoundsJsonDataMiner0(SoundsJsonDataMiner.SoundsJsonDataMiner):
                     destination["events"][event_name][resource_pack_name] = event_properties
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.MySoundsJsonTypedDict:
-        resource_packs = environment.dependency_data["resource_packs"]
+        resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for sounds_json_location in self.sounds_json_locations:

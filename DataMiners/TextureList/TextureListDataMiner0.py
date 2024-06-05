@@ -1,5 +1,6 @@
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import DataMiners.TextureList.TextureListDataMiner as TextureListDataMiner
+import DataMiners.DataMinerTyping as DataMinerTyping
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -15,7 +16,7 @@ class TextureListDataMiner0(TextureListDataMiner.TextureListDataMiner):
         self.locations:list[str] = kwargs["locations"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,list[str]]:
-        packs = environment.dependency_data["resource_packs"]
+        packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)
         pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {}
         for blocks_location in self.locations:

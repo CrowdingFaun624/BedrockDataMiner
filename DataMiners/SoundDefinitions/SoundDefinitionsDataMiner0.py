@@ -18,7 +18,7 @@ class SoundDefinitionsDataMiner0(SoundDefinitionsDataMiner.SoundDefinitionsDataM
         else: return data
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]]:
-        resource_packs = environment.dependency_data["resource_packs"]
+        resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         resource_pack_files = {"resource_packs/%s/sounds/sound_definitions.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         files_request = [(resource_pack_file, "t", self.normalize) for resource_pack_file in resource_pack_files.keys()]

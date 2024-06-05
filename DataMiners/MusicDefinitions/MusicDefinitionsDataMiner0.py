@@ -10,7 +10,7 @@ import Utilities.Sorting as Sorting
 class MusicDefinitionsDataMiner0(MusicDefinitionsDataMiner.MusicDefinitionsDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.MyMusicDefinitions:
-        resource_packs = environment.dependency_data["resource_packs"]
+        resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         resource_pack_files = {"resource_packs/%s/sounds/music_definitions.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         files_request = [(resource_pack_file, "t", json.load) for resource_pack_file in resource_pack_files.keys()]

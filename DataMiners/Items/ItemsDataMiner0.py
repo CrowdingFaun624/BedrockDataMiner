@@ -22,7 +22,7 @@ class ItemsDataMiner0(ItemsDataMiner.ItemsDataMiner):
         self.pack_type:str = kwargs["pack_type"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Items:
-        resource_packs = environment.dependency_data[self.pack_type]
+        resource_packs:DataMinerTyping.ResourcePacks|DataMinerTyping.BehaviorPacks = environment.dependency_data.get(self.pack_type, self)
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         resource_pack_files:dict[str,str] = {}
         for items_location in self.locations:
