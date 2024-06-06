@@ -317,7 +317,11 @@ class DataMinerCollection():
 
     def get_null_dataminer_settings(self) -> DataMinerSettings:
         '''Returns an instance of DataMinerSettings that is usable on a NullDataMiner.'''
-        return DataMinerSettings(None, None, NullDataMiner, self.name, [], [], {})
+        output = DataMinerSettings(None, None, NullDataMiner, self.name, [], [], {})
+        output.file_name = self.file_name
+        output.name = self.name
+        output.structure = self.structure
+        return output
 
     def get_dataminer_settings(self, version:Version.Version) -> DataMinerSettings:
         '''Returns a DataMinerSettings such that `version` is in the dataminer's VersionRange'''
