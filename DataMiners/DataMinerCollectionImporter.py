@@ -109,7 +109,7 @@ class DataMinerCollectionIntermediate():
 
         self.name = name
         self.file_name = data["file_name"]
-        self.structure_name = data["structure"]
+        self.structure_name = "structures/" + data["structure"]
         self.dataminer_settings_strs = data["dataminers"]
         self.disabled = data["disabled"] if "disabled" in data else False
 

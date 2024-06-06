@@ -23,8 +23,8 @@ class KeymapImportField(ComponentListField.ComponentListField):
         self.import_into_keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]|None = None
         self.tag_set:set[str]|None = None
 
-    def set_field(self, component_name: str, component_class_name: str, components: dict[str, Component.Component], functions: dict[str, Callable]) -> Sequence[Component.Component]:
-        output = cast(Sequence["KeymapComponent.KeymapComponent"], super().set_field(component_name, component_class_name, components, functions))
+    def set_field(self, component_name: str, component_class_name: str, components: dict[str, Component.Component], imported_components:dict[str,dict[str,"Component.Component"]], functions: dict[str, Callable]) -> Sequence[Component.Component]:
+        output = cast(Sequence["KeymapComponent.KeymapComponent"], super().set_field(component_name, component_class_name, components ,imported_components, functions))
         if self.import_into_keys is None:
             raise Exceptions.FieldSequenceBreakError(self.import_into, self.set_field, self)
         tag_set = self.tag_set

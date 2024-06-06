@@ -1,6 +1,5 @@
 import Structure.Importer.Capabilities as Capabilities
 import Structure.Importer.DictComponent as DictComponent
-import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.KeymapComponent as KeymapComponent
 import Structure.Importer.ListComponent as ListComponent
 import Utilities.Exceptions as Exceptions
@@ -30,8 +29,8 @@ class NbtTagListComponent(ListComponent.ListComponent):
                 return [output]
         return []
 
-    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
-        exceptions = super().check(config)
+    def check(self) -> list[Exception]:
+        exceptions = super().check()
         exceptions.extend(self.check_required_type())
         return exceptions
 

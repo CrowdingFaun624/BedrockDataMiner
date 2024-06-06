@@ -21,8 +21,8 @@ class ComponentField(Field.Field, Generic[a]):
         self.subcomponent:Union[a,None] = None
         self.pattern = pattern
     
-    def set_field(self, component_name:str, component_class_name:str, components:dict[str,Component.Component], functions:dict[str,Callable]) -> Sequence[Component.Component]:
-        self.subcomponent = Field.choose_component(self.subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name)
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,Component.Component], imported_components:dict[str,dict[str,Component.Component]], functions:dict[str,Callable]) -> Sequence[Component.Component]:
+        self.subcomponent = Field.choose_component(self.subcomponent_str, self.pattern, components, imported_components, self.error_path, component_name, component_class_name)
         return [self.subcomponent]
 
     def get_component(self) -> a:

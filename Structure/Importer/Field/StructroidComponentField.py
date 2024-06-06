@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, Union
 
 import Structure.Importer.AbstractGroupComponent as AbstractGroupComponent
 import Structure.Importer.Field.ComponentField as ComponentField
-import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.Pattern as Capabilities
 import Utilities.Exceptions as Exceptions
 
@@ -23,8 +22,8 @@ class StructroidComponentField(ComponentField.ComponentField[Union["StructureCom
         '''
         super().__init__(subcomponent_str, pattern, path)
 
-    def check(self, component_name: str, component_class_name: str, config: ImporterConfig.ImporterConfig) -> list[Exception]:
-        exceptions = super().check(component_name, component_class_name, config)
+    def check(self, component_name: str, component_class_name: str) -> list[Exception]:
+        exceptions = super().check(component_name, component_class_name)
         if isinstance(self.subcomponent, AbstractGroupComponent.AbstractGroupComponent):
             for subsubcomponent in self.subcomponent.get_subcomponents():
                 if subsubcomponent.my_capabilities not in self.pattern:

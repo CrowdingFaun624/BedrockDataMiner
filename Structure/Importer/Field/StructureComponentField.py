@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import Structure.Importer.Field.ComponentField as ComponentField
 import Structure.Importer.Pattern as Capabilities
+
 if TYPE_CHECKING:
     import Structure.Importer.StructureComponent as StructureComponent
     import Structure.Structure as Structure

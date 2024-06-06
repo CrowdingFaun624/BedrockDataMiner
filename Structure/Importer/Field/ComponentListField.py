@@ -21,10 +21,10 @@ class ComponentListField(Field.Field, Generic[a]):
         self.subcomponents:list[a]|None = None
         self.pattern = pattern
 
-    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], imported_components:dict[str,dict[str,"Component.Component"]], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         self.subcomponents = []
         for subcomponent_str in self.subcomponents_strs:
-            self.subcomponents.append(Field.choose_component(subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name))
+            self.subcomponents.append(Field.choose_component(subcomponent_str, self.pattern, components, imported_components, self.error_path, component_name, component_class_name))
         return self.subcomponents
 
     def extend(self, new_components:Sequence[a]) -> None:

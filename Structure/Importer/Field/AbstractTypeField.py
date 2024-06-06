@@ -5,7 +5,6 @@ import Structure.Importer.Field.OptionalStructroidComponentField as OptionalStru
 import Structure.Importer.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Structure.Importer.Field.StructroidComponentField as StructroidComponentField
 import Structure.Importer.Field.StructureComponentField as StructureComponentField
-import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.StructureComponent as StructureComponent
 import Utilities.Exceptions as Exceptions
 
@@ -17,8 +16,8 @@ class AbstractTypeField(Field.Field):
         super().__init__(path)
         self.verify_with_component:VerifyComponentType|None=None
 
-    def check(self, component_name: str, component_class_name: str, config: ImporterConfig.ImporterConfig) -> list[Exception]:
-        exceptions = super().check(component_name, component_class_name, config)
+    def check(self, component_name: str, component_class_name: str) -> list[Exception]:
+        exceptions = super().check(component_name, component_class_name)
         if self.verify_with_component is not None:
             subcomponent = self.verify_with_component.get_component()
             component_types = self.get_types()

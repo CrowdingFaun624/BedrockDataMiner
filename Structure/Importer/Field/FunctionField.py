@@ -17,7 +17,7 @@ class FunctionField(Field.Field):
         self.function_name = function_name
         self.function:Callable|None = None
 
-    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], imported_components:dict[str,dict[str,"Component.Component"]], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         function = functions.get(self.function_name)
         if function is None:
             raise Exceptions.ComponentUnrecognizedFunctionError(self.function_name, "%s \"%s\"" % (component_class_name, component_name))

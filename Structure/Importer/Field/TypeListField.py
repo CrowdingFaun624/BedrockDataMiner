@@ -26,7 +26,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         self.type_aliases:list[TypeAliasComponent.TypeAliasComponent]|None = None
         self.types:list[type]|None = None
 
-    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], imported_components:dict[str,dict[str,"Component.Component"]], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         components_used:list["Component.Component"] = []
         self.primitive_types = []
         self.type_aliases = []
@@ -39,7 +39,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
                 subcomponent_type = StructureComponent.DEFAULT_TYPES[subcomponent_str]
                 self.primitive_types.append(subcomponent_type)
             else:
-                subcomponent = Field.choose_component(subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, self.error_path, component_name, component_class_name)
+                subcomponent = Field.choose_component(subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, imported_components, self.error_path, component_name, component_class_name)
                 components_used.append(subcomponent)
                 self.type_aliases.append(subcomponent)
         return components_used

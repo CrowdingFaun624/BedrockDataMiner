@@ -266,23 +266,6 @@ class BaseComponentCountError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class ComponentConfigError(ComponentException):
-    "A Component has violated the ImporterConfig."
-
-    def __init__(self, component:"Component.Component", message:Optional[str]=None) -> None:
-        '''
-        :component: The Component that violates the ImporterConfig.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(component, message)
-        self.component = component
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r violates the ImporterConfig" % (self.component,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class ComponentDuplicateTypeError(ComponentException):
     "A Component has a duplicate type."
 

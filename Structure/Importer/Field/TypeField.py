@@ -25,12 +25,12 @@ class TypeField(AbstractTypeField.AbstractTypeField):
         self.subcomponent:type|TypeAliasComponent.TypeAliasComponent|None = None
         self.types:list[type]|None = None
 
-    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], imported_components:dict[str,dict[str,"Component.Component"]], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
         if self.subcomponent_str in StructureComponent.DEFAULT_TYPES:
             self.subcomponent = StructureComponent.DEFAULT_TYPES[self.subcomponent_str]
             return []
         else:
-            component = Field.choose_component(self.subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, self.error_path, component_name, component_class_name)
+            component = Field.choose_component(self.subcomponent_str, TYPE_ALIAS_REQUEST_PROPERTIES, components, imported_components, self.error_path, component_name, component_class_name)
             self.subcomponent = component
             return [component]
 

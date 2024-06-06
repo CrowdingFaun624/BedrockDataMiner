@@ -1,6 +1,5 @@
 import json
 import traceback
-from typing import Callable, cast
 
 import Structure.Importer.BaseComponent as BaseComponent
 import Structure.Importer.CacheComponent as CacheComponent
@@ -8,7 +7,6 @@ import Structure.Importer.Component as Component
 import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.DictComponent as DictComponent
 import Structure.Importer.GroupComponent as GroupComponent
-import Structure.Importer.ImporterConfig as ImporterConfig
 import Structure.Importer.KeymapComponent as KeymapComponent
 import Structure.Importer.ListComponent as ListComponent
 import Structure.Importer.NbtBaseComponent as NbtBaseComponent
@@ -48,11 +46,7 @@ structure_file_type_verifier = TypeVerifier.DictTypeVerifier(dict, str, TypeVeri
     loose=True
 ), "a dict", "a str", "a dict")
 
-def get_file(name:str) -> ComponentTyping.StructureFileType:
-    with open(FileManager.get_structure_path(name), "rt") as f:
-        return json.load(f)
-
-def get_used_components(base_component:BaseComponent.BaseComponent) -> set[Component.Component]:
+def get_unused_components(base_component:BaseComponent.BaseComponent, components:dict[str,Component.Component]) -> list[Component.Component]:
     visited_nodes:set[Component.Component] = set()
     unvisited_nodes:list[Component.Component] = [base_component]
     while len(unvisited_nodes) > 0:
@@ -64,164 +58,90 @@ def get_used_components(base_component:BaseComponent.BaseComponent) -> set[Compo
             else:
                 unvisited_nodes.append(neighbor)
         visited_nodes.add(unvisited_node)
-    return visited_nodes
+    output:list[Component.Component] = []
+    for component in components.values():
+        if component not in visited_nodes: output.append(component)
+    return output
 
-def create_components(name:str, data:ComponentTyping.StructureFileType) -> tuple[list[tuple[str,BaseComponent.BaseComponent]], dict[str,Component.Component]]:
+def create_components(name:str, data:ComponentTyping.StructureFileType) -> dict[str,Component.Component]:
     '''Returns a list of BaseComponents and a dict of all Components.'''
     components:dict[str,Component.Component] = {}
-    base_components:list[tuple[str,BaseComponent.BaseComponent]] = []
-    for index, (component_name, component_data) in enumerate(data.items()):
+    for component_name, component_data in data.items():
         for component_type in component_types:
             if component_type.class_name == component_data["type"]:
                 component = component_type(component_data, component_name) # type:ignore All subclasses have this sort of __init__.
                 components[component_name] = component
-                if component_type is BaseComponent.BaseComponent:
-                    base_components.append((component_name, cast(BaseComponent.BaseComponent, component)))
                 break
         else:
             raise Exceptions.UnrecognizedComponentTypeError(component_data["type"], component_name, "(Must be one of [%s])" % (", ".join(component_type.class_name for component_Type in component_types),))
-
-    return base_components, components
-
-def set_components(components:dict[str,Component.Component], exclude:set[str], functions:dict[str,Callable]) -> None:
-    for component_name, component in components.items():
-        if component_name in exclude:
-            continue
-        component.set_component(components, functions)
-
-def do_imports(base_component:BaseComponent.BaseComponent, partially_imported:set[str], config:ImporterConfig.ImporterConfig) -> dict[str,Component.Component]:
-    if base_component.imports is None: return {}
-    all_components:dict[str,tuple[Component.Component,str]] = {}
-    if not config.allow_imports and len(base_component.imports) > 0:
-        raise Exceptions.ComponentConfigError(base_component, "(imports are not allowed)")
-    for imported_structure_data in base_component.imports:
-        import_from = imported_structure_data["from"]
-        imported_components = import_component(import_from, StructureFunctions.functions, partially_imported, config)
-        # check for circular import
-        if import_from in partially_imported:
-            raise Exceptions.ComponentImporterCircularImportError(sorted(partially_imported))
-
-        for imported_component_data in imported_structure_data["components"]:
-            # check for existence
-            if imported_component_data["component"] not in imported_components:
-                raise Exceptions.UnrecognizedComponentError(imported_component_data["component"], import_from)
-            component = imported_components[imported_component_data["component"]]
-            # set the name
-            if "as" in imported_component_data:
-                component.name = imported_component_data["as"]
-                name = imported_component_data["as"]
-            else:
-                name = imported_component_data["component"]
-            # checking for name duplication
-            if name in all_components:
-                duplicated_structure = all_components[name][1]
-                raise Exceptions.ComponentImportNameClashError(duplicated_structure)
-            all_components[name] = (component, import_from)
-    output = {name: component for name, (component, structure_from) in all_components.items()}
-    return output
-
-def propagate_component_variables(components:dict[str,Component.Component]) -> None:
-    for component in components.values():
-        component.propagate_variables()
-
-def create_final_components(components:dict[str,Component.Component], exclude:set[str]) -> None:
-    for component_name, component in components.items():
-        if component_name in exclude: continue
-        component.create_final()
-
-def link_final_components(components:dict[str,Component.Component], exclude:set[str]) -> None:
-    for component_name, component in components.items():
-        if component_name in exclude: continue
-        component.link_finals()
-
-def check_components(components:dict[str,Component.Component], config:ImporterConfig.ImporterConfig, exclude:set[str]) -> None:
-    exceptions:list[Exception] = []
-    for component_name, component in components.items():
-        if component_name in exclude: continue
-        new_exceptions = component.check(config)
-        if new_exceptions is not None:
-            exceptions.extend(new_exceptions)
-    for exception in exceptions:
-        traceback.print_exception(exception)
-        print()
-    if len(exceptions) > 0:
-        raise Exceptions.ComponentParseError()
-
-def finalize_components(components:dict[str,Component.Component], exclude:set[str]) -> None:
-    for component_name, component in components.items():
-        if component_name in exclude: continue
-        component.finalize()
-
-def parse_structure_file(name:str, data:ComponentTyping.StructureFileType, functions:dict[str,Callable], config:ImporterConfig.ImporterConfig=ImporterConfig.DEFAULT) -> StructureBase.StructureBase:
-    structure_file_type_verifier.base_verify(data)
-    base_components, components = create_components(name, data)
-    if len(base_components) != 1:
-        raise Exceptions.BaseComponentCountError(name, len(base_components))
-    base_component = base_components[0][1]
-
-    imported_components = do_imports(base_component, set(), config)
-    for imported_component in imported_components:
-        if imported_component in components:
-            raise Exceptions.ComponentImportNameClashError(imported_component, "(Structure \"%s\")" % (name))
-    components.update(imported_components)
-
-    set_components(components, set(imported_components.keys()), functions)
-    used_components = get_used_components(base_component)
-    unused_components = [component for component in components.values() if component not in used_components]
-    if len(unused_components) > 0:
-        print("Warning: Structure file \"%s\" has %i unused components: %s" % (name, len(unused_components), [component.name for component in unused_components]))
-
-    propagate_component_variables(components)
-    create_final_components(components, exclude=set(imported_components.keys()))
-    link_final_components(components, exclude=set(imported_components.keys()))
-    check_components(components, config, exclude=set(imported_components.keys()))
-    finalize_components(components, exclude=set(imported_components.keys()))
-
-    return base_component.get_final()
-
-def parse_structure_file_for_import(name:str, data:ComponentTyping.StructureFileType, functions:dict[str,Callable], partially_imported:set[str], config:ImporterConfig.ImporterConfig) -> dict[str,Component.Component]:
-    structure_file_type_verifier.base_verify(data)
-    base_components, components = create_components(name, data)
-    if len(base_components) != 1:
-        raise Exceptions.BaseComponentCountError(name, len(base_components))
-    base_component = base_components[0][1]
-    partially_imported.add(name)
-    imported_components = do_imports(base_component, partially_imported, config)
-    for imported_component in imported_components:
-        if imported_component in components:
-            raise Exceptions.ComponentImportNameClashError(imported_component, "(Structure \"%s\")" % (name))
-    components.update(imported_components)
-
-    set_components(components, set(imported_components.keys()), functions)
-    propagate_component_variables(components)
-    create_final_components(components, exclude=set(imported_components.keys()))
-    link_final_components(components, exclude=set(imported_components.keys()))
-    check_components(components, config, exclude=set(imported_components.keys()))
-    finalize_components(components, exclude=set(imported_components.keys()))
-    partially_imported.remove(name)
     return components
 
-def import_component(name:str, functions:dict[str,Callable], partially_imported:set[str], config:ImporterConfig.ImporterConfig) -> dict[str,Component.Component]:
-    data = get_file(name)
-    return parse_structure_file_for_import(name, data, functions, partially_imported, config)
+def do_imports(all_components:dict[str,dict[str,Component.Component]]) -> dict[str,dict[str,dict[str,Component.Component]]]:
+    output:dict[str,dict[str,dict[str,Component.Component]]] = {}
+    for structure_name, components in all_components.items():
+        output[structure_name] = {}
+        imports:list[ComponentTyping.ImportTypedDict]|None = None
+        for component in components.values():
+            if isinstance(component, BaseComponent.BaseComponent):
+                imports = component.imports
+                break
+        if imports is None: continue
+        for import_data in imports:
+            import_from = import_data["from"]
+            if import_from == structure_name:
+                raise Exceptions.ComponentImporterCircularImportError([structure_name], "(attempted to self-import)")
+            output[structure_name][import_from] = {}
+            for import_component_data in import_data["components"]:
+                import_component_name = import_component_data["component"]
+                import_component_as = import_component_data.get("as", import_component_name)
+                output[structure_name][import_from][import_component_as] = all_components[import_from][import_component_name]
+    return output
 
-def load(name:str, functions:dict[str,Callable]) -> StructureBase.StructureBase:
-    data = get_file(name)
-    return parse_structure_file(name, data, functions)
-
-def load_from_file(name:str, functions:dict[str,Callable]) -> StructureBase.StructureBase:
-    return load(name, functions)
-
-def open_index_file() -> dict[str,dict]:
-    with open(FileManager.STRUCTURES_FILE, "rt") as f:
+def get_file(name:str) -> ComponentTyping.StructureFileType:
+    with open(FileManager.ASSETS_DIRECTORY.joinpath(name + ".json"), "rt") as f:
         return json.load(f)
 
-def parse_structures_index() -> dict[str,StructureBase.StructureBase]:
-    index = open_index_file()
-    for structure_file_name in index:
-        structure_file_path = FileManager.get_structure_path(structure_file_name)
-        if not structure_file_path.exists():
-            raise Exceptions.UnrecognizedStructureError(structure_file_name, "(referred to be structures.json)")
-    return {structure_file_name: load_from_file(structure_file_name, StructureFunctions.functions) for structure_file_name in index}
+def parse_all_structures() -> dict[str,StructureBase.StructureBase]:
+    functions = StructureFunctions.functions
+    all_components:dict[str,dict[str,Component.Component]] = {}
+    for structure_file in FileManager.STRUCTURES_DIRECTORY.iterdir():
+        name = "structures/" + structure_file.stem
+        components_data = get_file(name)
+        structure_file_type_verifier.base_verify(components_data)
+        all_components[name] = create_components(name, components_data)
 
-structures = parse_structures_index()
+    component_imports = do_imports(all_components)
+    for name, components in all_components.items():
+        for component in components.values(): component.set_component(components, component_imports[name], functions)
+    for name, components in all_components.items():
+        for component in components.values(): component.propagate_variables()
+    for name, components in all_components.items():
+        for component in components.values(): component.create_final()
+    for name, components in all_components.items():
+        for component in components.values(): component.link_finals()
+    exceptions:list[Exception] = []
+    for name, components, in all_components.items():
+        for component in components.values(): exceptions.extend(component.check())
+    if len(exceptions) > 0:
+        for exception in exceptions:
+            traceback.print_exception(exception)
+        raise Exceptions.ComponentParseError()
+    for name, components in all_components.items():
+        for component in components.values(): component.finalize()
+
+    output:dict[str,StructureBase.StructureBase] = {}
+    for name, components in all_components.items():
+        base_components:dict[str,BaseComponent.BaseComponent] = {}
+        for component_name, component in components.items():
+            if isinstance(component, BaseComponent.BaseComponent):
+                base_components[component_name] = component
+        if len(base_components) != 1:
+            raise Exceptions.BaseComponentCountError(name, len(base_components), "(names: [%s])" % (", ".join(base_components.keys()),))
+        base_component = list(base_components.values())[0]
+        unused_components = get_unused_components(base_component, components)
+        for unused_component in unused_components:
+            print("Warning: Unused %r in %s." % (unused_component, name))
+        output[name] = base_component.get_final()
+    return output
+
+structures = parse_all_structures()

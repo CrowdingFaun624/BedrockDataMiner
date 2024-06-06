@@ -2,7 +2,6 @@ from typing import (TYPE_CHECKING, Any, Callable, Generic, Mapping, Sequence,
                     TypeVar, Union)
 
 import Structure.Importer.Capabilities as Capabilities
-import Structure.Importer.ImporterConfig as ImporterConfig
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -42,10 +41,10 @@ class Component(Generic[a]):
     def verify_arguments(self, data:Mapping[str,Any], name:str) -> None:
         self.type_verifier.base_verify(data, ["%s \"%s\"" % (self.class_name, name)])
 
-    def set_component(self, components:dict[str,"Component"], functions:dict[str,Callable]) -> None:
+    def set_component(self, components:dict[str,"Component"], imported_components:dict[str,dict[str,"Component"]], functions:dict[str,Callable]) -> None:
         '''Links this Component to other Components'''
         for field in self.fields:
-            linked_components = field.set_field(self.name, self.class_name, components, functions)
+            linked_components = field.set_field(self.name, self.class_name, components, imported_components, functions)
             self.link_components(linked_components)
 
     def create_final(self) -> None:
@@ -57,11 +56,11 @@ class Component(Generic[a]):
         for field in self.fields:
             field.resolve()
 
-    def check(self, config:ImporterConfig.ImporterConfig) -> list[Exception]:
+    def check(self) -> list[Exception]:
         '''Make sure that this Component's types are all in order; no error could occur.'''
         exceptions:list[Exception] = []
         for field in self.fields:
-            exceptions.extend(field.check(self.name, self.class_name, config))
+            exceptions.extend(field.check(self.name, self.class_name))
         return exceptions
 
     def finalize(self) -> None:

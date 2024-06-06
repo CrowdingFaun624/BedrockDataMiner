@@ -22,13 +22,13 @@ class OptionalComponentField(Field.Field, Generic[a]):
         self.pattern = pattern
         self.has_set_component = False
 
-    def set_field(self, component_name:str, component_class_name:str, components:dict[str,Component.Component], functions:dict[str,Callable]) -> Sequence[Component.Component]:
+    def set_field(self, component_name:str, component_class_name:str, components:dict[str,Component.Component], imported_components:dict[str,dict[str,Component.Component]], functions:dict[str,Callable]) -> Sequence[Component.Component]:
         self.has_set_component = True
         if self.subcomponent_str is None:
             self.subcomponent = None
             return []
         else:
-            self.subcomponent = Field.choose_component(self.subcomponent_str, self.pattern, components, self.error_path, component_name, component_class_name)
+            self.subcomponent = Field.choose_component(self.subcomponent_str, self.pattern, components, imported_components, self.error_path, component_name, component_class_name)
             return [self.subcomponent]
 
     def get_component(self) -> a|None:

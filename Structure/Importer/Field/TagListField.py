@@ -20,10 +20,10 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         self.tag_sets:list[set[str]] = []
         self.import_from_field:TagListField|None = None
 
-    def set_field(self, component_name: str, component_class_name: str, components: dict[str, Component.Component], functions: dict[str, Callable]) -> Sequence[Component.Component]:
-        output = super().set_field(component_name, component_class_name, components, functions)
+    def set_field(self, component_name: str, component_class_name: str, components: dict[str, Component.Component], imported_components:dict[str,dict[str,Component.Component]], functions: dict[str, Callable]) -> Sequence[Component.Component]:
+        output = super().set_field(component_name, component_class_name, components, imported_components, functions)
         if self.import_from_field is not None:
-            self.import_from_field.set_field(component_name, component_class_name, components, functions)
+            self.import_from_field.set_field(component_name, component_class_name, components, imported_components, functions)
             self.extend(self.import_from_field.get_components())
         for tag_set in self.tag_sets:
             tag_set.update(self.get_tags())
