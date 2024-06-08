@@ -4,6 +4,7 @@ from typing import Any, Generator, Mapping, Sequence, TypedDict, TypeVar, cast
 
 from typing_extensions import NotRequired, Required
 
+import Component.Importer as Importer
 import DataMiners.AllFiles.AllFilesDataMiners as AllFilesDataMiners
 import DataMiners.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
 import DataMiners.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
@@ -28,7 +29,6 @@ import DataMiners.TagSearcher.TagSearcherDataMiners as TagSearcherDataMiners
 import DataMiners.TextureList.TextureListDataMiners as TextureListDataMiners
 import DataMiners.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as UndefinedSoundEventsDataMiners
 import DataMiners.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
-import Structure.Importer.Importer as Importer
 import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
