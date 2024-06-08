@@ -18,11 +18,11 @@ a = TypeVar("a")
 
 
 class InLinePermissions(enum.Enum):
-    "Use when creating a Field to specify if it's allowed to have in-line Components."
-    in_line = 0
+    "Use when creating a Field to specify if it's allowed to have inline Components."
+    inline = 0
     "In-line Components are allowed."
     mixed = 1
-    "Both in-line and reference Components are allowed."
+    "Both inline and reference Components are allowed."
     reference = 2
     "Only reference Components are allowed."
 
@@ -37,18 +37,18 @@ def choose_component(
     ) -> tuple[a,bool]:
     '''
     Finds a Component with the same name and properties if `component_data` is a str.
-    If `component_data` is a dict, it creates a new in-line Component using the `create_component_function`.
-    Returns the Component and a bool specifying if the Component is in-line.
+    If `component_data` is a dict, it creates a new inline Component using the `create_component_function`.
+    Returns the Component and a bool specifying if the Component is inline.
     :component_data: The Component name or dictionary of Component data.
     :source_component: The Component referring to the given subcomponent name or subcomponent.
     :required_properties: The Pattern the Component must follow.
     :components: A dict of all Components in this Component group.
     :imported_components: a dict of dicts of all Components from each Component Group.
     :keys: The path through the source Component to get to this Component.
-    :create_component_function: The function used to create new in-line Components.
+    :create_component_function: The function used to create new inline Components.
     '''
     if isinstance(component_data, str):
-        is_in_line = False
+        is_inline = False
         component = components.get(component_data, None)
         if component is None:
             for library in imported_components.values():
@@ -58,11 +58,11 @@ def choose_component(
         if component is None:
             raise Exceptions.UnrecognizedComponentError(component_data, "%s%r" % (get_keys_strs(False, keys), source_component), "(should have %r)" % (required_properties,))
     else:
-        is_in_line = True
+        is_inline = True
         component = create_component_function(component_data, source_component)
     if component.my_capabilities not in required_properties:
         raise Exceptions.InvalidComponentError(component, source_component, required_properties, component.my_capabilities)
-    return cast(a, component), is_in_line
+    return cast(a, component), is_inline
 
 class Field():
     '''Abstract class of Fields. Fields are a modular way to manage the data of Components.'''
@@ -82,13 +82,13 @@ class Field():
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["Component.Component"],list["Component.Component"]]:
         '''
-        Links this Component to other Components. Returns a list of all children Components (including in-line Components) as well as a list of all in-line Components.
-        Fields are not responsible for calling `set_component` on in-line Components.
+        Links this Component to other Components. Returns a list of all children Components (including inline Components) as well as a list of all inline Components.
+        Fields are not responsible for calling `set_component` on inline Components.
         :source_component: The Component that owns this Field.
         :components: A dictionary of all Components and with the keys as their names.
         :imported_components: A dictionary with keys of the Component group and values of the imported components from that group.
         :functions: A dictionary of functions that is provided by the importer.
-        :create_component_function: The function used to create in-line Components.
+        :create_component_function: The function used to create inline Components.
         '''
         return [], []
 

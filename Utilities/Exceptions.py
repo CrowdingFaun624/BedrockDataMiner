@@ -480,12 +480,12 @@ class GroupContainsNullSubcomponentsError(ComponentException):
         return output
 
 class InLineComponentError(ComponentException):
-    "An in-line Component exists where it is not allowed."
+    "An inline Component exists where it is not allowed."
     
     def __init__(self, component:"Component.Component", field:"Field.Field", subcomponent_data:Optional["ComponentTyping.ComponentTypedDicts"]=None, message:Optional[str]=None) -> None:
         '''
-        :component: The Component with the disallowed in-line subcomponent.
-        :field: The Field with the disallowed in-line subcomponent.
+        :component: The Component with the disallowed inline subcomponent.
+        :field: The Field with the disallowed inline subcomponent.
         :subcomponent_data: The data used to specify the subcomponent.
         :message: Additional text to place after the main message.
         '''
@@ -496,7 +496,7 @@ class InLineComponentError(ComponentException):
         self.message = message
     
     def __str__(self) -> str:
-        output = "%r, %r attempted to create a disallowed in-line Component" % (self.component, self.field)
+        output = "%r, %r attempted to create a disallowed inline Component" % (self.component, self.field)
         if self.message is not None: output += " %s" % (self.message,)
         output += ": %s" % (self.subcomponent_data,) if self.subcomponent_data is not None else "!"
         return output
@@ -551,8 +551,8 @@ class ReferenceComponentError(ComponentException):
     
     def __init__(self, component:"Component.Component", field:"Field.Field", subcomponent_name:Optional[str]=None, message:Optional[str]=None) -> None:
         '''
-        :component: The Component with the disallowed in-line subcomponent.
-        :field: The Field with the disallowed in-line subcomponent.
+        :component: The Component with the disallowed inline subcomponent.
+        :field: The Field with the disallowed inline subcomponent.
         :subcomponent_name: The name of the subcomponent.
         :message: Additional text to place after the main message.
         '''

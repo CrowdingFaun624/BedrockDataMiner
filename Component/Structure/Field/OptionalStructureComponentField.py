@@ -14,14 +14,14 @@ STRUCTURE_COMPONENT_REQUEST_PROPERTIES = Pattern.Pattern([{"is_structure": True}
 class OptionalStructureComponentField(OptionalComponentField.OptionalComponentField["StructureComponent.StructureComponent"]):
     '''A Field that refers to a StructureComponent (but not a GroupComponent) or no Component.'''
 
-    def __init__(self, subcomponent_data:str|ComponentTyping.StructureComponentTypedDicts|None, path: list[str|int], pattern:Pattern.Pattern=STRUCTURE_COMPONENT_REQUEST_PROPERTIES, *, allow_in_line:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
+    def __init__(self, subcomponent_data:str|ComponentTyping.StructureComponentTypedDicts|None, path: list[str|int], pattern:Pattern.Pattern=STRUCTURE_COMPONENT_REQUEST_PROPERTIES, *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
         '''
-        :subcomponent_data: The name of the reference StructureComponent or the data of the in-line StructureComponent this Field refers to.
+        :subcomponent_data: The name of the reference StructureComponent or the data of the inline StructureComponent this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
         :pattern: The Pattern to override the default with.
-        :allow_in_line: An InLinePermissions object describing the type of subcomponent_data allowed.
+        :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
         '''
-        super().__init__(subcomponent_data, pattern, path, allow_in_line=allow_in_line)
+        super().__init__(subcomponent_data, pattern, path, allow_inline=allow_inline)
 
     def get_final(self) -> Union["Structure.Structure", None]:
         '''

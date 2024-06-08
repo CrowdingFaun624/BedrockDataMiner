@@ -66,8 +66,8 @@ def get_unused_components(base_component:BaseComponent.BaseComponent, components
         if component not in visited_nodes: output.append(component)
     return output
 
-def create_in_line_component(component_data:ComponentTyping.ComponentTypedDicts, parent_component:Component.Component) -> Component.Component:
-    component_name = parent_component.get_in_line_component_name()
+def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, parent_component:Component.Component) -> Component.Component:
+    component_name = parent_component.get_inline_component_name()
     component_type = component_types_dict.get(component_data["type"])
     if component_type is None:
         raise Exceptions.UnrecognizedComponentTypeError(component_data["type"], component_name, "(Must be one of [%s])" % (", ".join(component.class_name for component in component_types),))
@@ -138,7 +138,7 @@ def parse_all_structures() -> dict[str,StructureBase.StructureBase]:
 
     component_imports = do_imports(all_components)
     for name, components in all_components.items():
-        for component in components.values(): component.set_component(components, component_imports[name], functions, create_in_line_component)
+        for component in components.values(): component.set_component(components, component_imports[name], functions, create_inline_component)
 
     propagate_variables(all_components)
 

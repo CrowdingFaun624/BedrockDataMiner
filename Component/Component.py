@@ -29,12 +29,12 @@ class Component(Generic[a]):
         self.children_has_normalizer_dependencies = False
         self.children_tags:set[str] = set()
         self.fields:list["Field.Field"] = []
-        self.in_line_components:list[Component]|None = None
-        self.in_line_component_count = 0
+        self.inline_components:list[Component]|None = None
+        self.inline_component_count = 0
 
-    def get_in_line_component_name(self) -> str:
-        output = self.name + ".%i" % (self.in_line_component_count)
-        self.in_line_component_count += 1
+    def get_inline_component_name(self) -> str:
+        output = self.name + ".%i" % (self.inline_component_count)
+        self.inline_component_count += 1
         return output
 
     def get_all_descendants(self, memo:set["Component"]) -> list["Component"]:
@@ -65,47 +65,47 @@ class Component(Generic[a]):
 
     def set_component(self, components:dict[str,"Component"], imported_components:dict[str,dict[str,"Component"]], functions:dict[str,Callable], create_component_function:ComponentTyping.CreateComponentFunction) -> None:
         '''Links this Component to other Components'''
-        self.in_line_components = []
+        self.inline_components = []
         for field in self.fields:
-            linked_components, new_in_line_components = field.set_field(self, components, imported_components, functions, create_component_function)
+            linked_components, new_inline_components = field.set_field(self, components, imported_components, functions, create_component_function)
             self.link_components(linked_components)
-            self.in_line_components.extend(new_in_line_components)
-        for in_line_component in self.in_line_components:
-            in_line_component.set_component(components, imported_components, functions, create_component_function)
+            self.inline_components.extend(new_inline_components)
+        for inline_component in self.inline_components:
+            inline_component.set_component(components, imported_components, functions, create_component_function)
 
     def create_final(self) -> None:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''
-        if self.in_line_components is None:
-            raise Exceptions.AttributeNoneError("in_line_components", self)
-        for in_line_component in self.in_line_components:
-            in_line_component.create_final()
+        if self.inline_components is None:
+            raise Exceptions.AttributeNoneError("inline_components", self)
+        for inline_component in self.inline_components:
+            inline_component.create_final()
 
     def link_finals(self) -> None:
         '''Links this Component's final object to other final objects.'''
         for field in self.fields:
             field.resolve()
-        if self.in_line_components is None:
-            raise Exceptions.AttributeNoneError("in_line_components", self)
-        for in_line_component in self.in_line_components:
-            in_line_component.link_finals()
+        if self.inline_components is None:
+            raise Exceptions.AttributeNoneError("inline_components", self)
+        for inline_component in self.inline_components:
+            inline_component.link_finals()
 
     def check(self) -> list[Exception]:
         '''Make sure that this Component's types are all in order; no error could occur.'''
         exceptions:list[Exception] = []
         for field in self.fields:
             exceptions.extend(field.check(self))
-        if self.in_line_components is None:
-            raise Exceptions.AttributeNoneError("in_line_components", self)
-        for in_line_component in self.in_line_components:
-            exceptions.extend(in_line_component.check())
+        if self.inline_components is None:
+            raise Exceptions.AttributeNoneError("inline_components", self)
+        for inline_component in self.inline_components:
+            exceptions.extend(inline_component.check())
         return exceptions
 
     def finalize(self) -> None:
         '''Used to call on the structure once all structures and components are guaranteed to be linked.'''
-        if self.in_line_components is None:
-            raise Exceptions.AttributeNoneError("in_line_components", self)
-        for in_line_component in self.in_line_components:
-            in_line_component.finalize()
+        if self.inline_components is None:
+            raise Exceptions.AttributeNoneError("inline_components", self)
+        for inline_component in self.inline_components:
+            inline_component.finalize()
 
     def propagate_variables(self) -> bool:
         has_changed = False

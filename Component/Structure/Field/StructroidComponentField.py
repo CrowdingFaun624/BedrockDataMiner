@@ -17,14 +17,14 @@ STRUCTROID_COMPONENT_REQUEST_PROPERTIES:Pattern.Pattern[Union["StructureComponen
 class StructroidComponentField(ComponentField.ComponentField[Union["StructureComponent.StructureComponent[Structure.Structure]", "AbstractGroupComponent.AbstractGroupComponent"]]):
     '''A Field that refers to a StructureComponent or an GroupComponent.'''
 
-    def __init__(self, subcomponent_data:str|ComponentTyping.StructroidComponentTypedDicts, path: list[str|int], pattern:Pattern.Pattern=STRUCTROID_COMPONENT_REQUEST_PROPERTIES, allow_in_line:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
+    def __init__(self, subcomponent_data:str|ComponentTyping.StructroidComponentTypedDicts, path: list[str|int], pattern:Pattern.Pattern=STRUCTROID_COMPONENT_REQUEST_PROPERTIES, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
         '''
-        :subcomponent_data: The name of the reference StructureComponent or GroupComponent or the data of the in-line StructureComponent or GroupComponent this Field refers to.
+        :subcomponent_data: The name of the reference StructureComponent or GroupComponent or the data of the inline StructureComponent or GroupComponent this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
         :pattern: The Pattern to override the default with.
-        :allow_in_line: An InLinePermissions object describing the type of subcomponent_data allowed.
+        :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
         '''
-        super().__init__(subcomponent_data, pattern, path, allow_in_line=allow_in_line)
+        super().__init__(subcomponent_data, pattern, path, allow_inline=allow_inline)
 
     def check(self, source_component:"Component.Component") -> list[Exception]:
         exceptions = super().check(source_component)

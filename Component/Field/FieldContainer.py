@@ -24,12 +24,12 @@ class FieldContainer(Field.Field, Generic[a]):
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["Component.Component"],list["Component.Component"]]:
         linked_components:list["Component.Component"] = []
-        in_line_components:list["Component.Component"] = []
+        inline_components:list["Component.Component"] = []
         for field in self.fields:
-            new_linked_components, new_in_line_components = field.set_field(source_component, components, imported_components, functions, create_component_function)
+            new_linked_components, new_inline_components = field.set_field(source_component, components, imported_components, functions, create_component_function)
             linked_components.extend(new_linked_components)
-            in_line_components.extend(new_in_line_components)
-        return linked_components, in_line_components
+            inline_components.extend(new_inline_components)
+        return linked_components, inline_components
 
     def resolve(self) -> None:
         for field in self.fields:

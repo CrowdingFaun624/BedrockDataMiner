@@ -18,7 +18,7 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         :subcomponents_strs: The names of the TagComponents this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_strs, TAG_REQUEST_PROPERTIES, path, allow_in_line=Field.InLinePermissions.reference)
+        super().__init__(subcomponents_strs, TAG_REQUEST_PROPERTIES, path, allow_inline=Field.InLinePermissions.reference)
         self.tag_sets:list[set[str]] = []
         self.import_from_field:TagListField|None = None
 
@@ -30,13 +30,13 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         functions:dict[str,Callable],
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["TagComponent.TagComponent"],list["TagComponent.TagComponent"]]:
-        subcomponents, in_line_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
+        subcomponents, inline_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
         if self.import_from_field is not None:
             self.import_from_field.set_field(source_component, components, imported_components, functions, create_component_function)
             self.extend(self.import_from_field.get_components())
         for tag_set in self.tag_sets:
             tag_set.update(self.get_tags())
-        return subcomponents, in_line_components
+        return subcomponents, inline_components
 
     def import_from(self, tag_list_field:"TagListField") -> None:
         '''

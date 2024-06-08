@@ -21,7 +21,7 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         :subcomponents_data: The names of the Components this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_data, IMPORTABLE_KEYS_REQUEST_PROPERTIES, path, allow_in_line=Field.InLinePermissions.reference)
+        super().__init__(subcomponents_data, IMPORTABLE_KEYS_REQUEST_PROPERTIES, path, allow_inline=Field.InLinePermissions.reference)
         self.import_into_keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]|None = None
         self.tag_set:set[str]|None = None
 
@@ -33,7 +33,7 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         functions:dict[str,Callable],
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["KeymapComponent.KeymapComponent"],list["KeymapComponent.KeymapComponent"]]:
-        subcomponents, in_line_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
+        subcomponents, inline_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
         if self.import_into_keys is None:
             raise Exceptions.FieldSequenceBreakError(self.import_into, self.set_field, self)
         tag_set = self.tag_set
@@ -41,7 +41,7 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
             self.import_into_keys.extend(key.copy_for_importing() for key in iter(component.keys) if not key.has_been_imported)
             if tag_set is not None:
                 self.import_into_keys.for_each(lambda keymap_key_field: keymap_key_field.add_to_tag_set(tag_set))
-        return subcomponents, in_line_components
+        return subcomponents, inline_components
 
     def import_into(self, keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]) -> None:
         '''

@@ -11,13 +11,13 @@ NORMALIZER_REQUEST_PROPERTIES:Pattern.Pattern[NormalizerComponent.NormalizerComp
 
 class NormalizerListField(ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent]):
 
-    def __init__(self, subcomponents_data:Sequence[str|ComponentTyping.NormalizerTypedDict]|str|ComponentTyping.NormalizerTypedDict, path:list[str|int], *, allow_in_line:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
+    def __init__(self, subcomponents_data:Sequence[str|ComponentTyping.NormalizerTypedDict]|str|ComponentTyping.NormalizerTypedDict, path:list[str|int], *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
         '''
-        :subcomponents_data: The names of the reference Components and/or the data of the in-line Components this Field refers to.
+        :subcomponents_data: The names of the reference Components and/or the data of the inline Components this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
-        :allow_in_line: An InLinePermissions object describing the type of subcomponent_data allowed.
+        :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
         '''
-        super().__init__(subcomponents_data, NORMALIZER_REQUEST_PROPERTIES, path, allow_in_line=allow_in_line)
+        super().__init__(subcomponents_data, NORMALIZER_REQUEST_PROPERTIES, path, allow_inline=allow_inline)
 
     def get_finals(self) -> list[Normalizer.Normalizer]:
         '''
