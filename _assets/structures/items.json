@@ -4,10 +4,6 @@
         "name": "items",
         "subcomponent": "items"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
     "not_in_documentation": {
         "type": "Tag"
     },
@@ -31,7 +27,10 @@
         "types": ["dict"],
         "field": "behavior pack",
         "detect_key_moves": true,
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "comparison_move_function": "items_behavior_pack_comparison_move_function",
         "subcomponent": "item"
     },
@@ -41,7 +40,13 @@
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
-            "minecraft:item": {"type": "dict", "subcomponent": "minecraft:item"}
+            "minecraft:item": {"type": "dict", "subcomponent": {
+                "type": "Keymap",
+                "keys": {
+                    "description": {"type": "dict", "subcomponent": "description"},
+                    "components": {"type": "dict", "subcomponent": "components"}
+                }
+            }}
         }
     },
     "defined_in": {
@@ -51,13 +56,6 @@
         "ordered": false,
         "measure_length": true,
         "subcomponent": null
-    },
-    "minecraft:item": {
-        "type": "Keymap",
-        "keys": {
-            "description": {"type": "dict", "subcomponent": "description"},
-            "components": {"type": "dict", "subcomponent": "components"}
-        }
     },
     "minecraft:item.old": {
         "type": "Keymap",
@@ -286,16 +284,15 @@
         "field": "effect",
         "ordered": false,
         "measure_length": true,
-        "subcomponent": "component.food:effects.item"
-    },
-    "component.food:effects.item": {
-        "type": "Keymap",
-        "keys": {
-            "amplifier": {"type": "int"},
-            "chance": {"type": "decimal"},
-            "duration": {"type": "int"},
-            "hide_particles": {"type": "bool", "tags": ["outdated"]},
-            "name": {"type": "str"}
+        "subcomponent": {
+            "type": "Keymap",
+            "keys": {
+                "amplifier": {"type": "int"},
+                "chance": {"type": "decimal"},
+                "duration": {"type": "int"},
+                "hide_particles": {"type": "bool", "tags": ["outdated"]},
+                "name": {"type": "str"}
+            }
         }
     },
     "component.food:remove_effects": {
@@ -382,15 +379,14 @@
         "types": ["dict"],
         "ordered": false,
         "measure_length": true,
-        "subcomponent": "component.shooter:ammunition.item"
-    },
-    "component.shooter:ammunition.item": {
-        "type": "Keymap",
-        "keys": {
-            "item": {"type": "str"},
-            "use_offhand": {"type": "bool"},
-            "search_inventory": {"type": "bool"},
-            "use_in_creative": {"type": "bool"}
+        "subcomponent": {
+            "type": "Keymap",
+            "keys": {
+                "item": {"type": "str"},
+                "use_offhand": {"type": "bool"},
+                "search_inventory": {"type": "bool"},
+                "use_in_creative": {"type": "bool"}
+            }
         }
     },
     "component.should_despawn": {
@@ -402,16 +398,15 @@
     "component.tags": {
         "type": "Keymap",
         "keys": {
-            "tags": {"type": "list", "subcomponent": "component.tags:tags"}
+            "tags": {"type": "list", "subcomponent": {
+                "type": "List",
+                "types": ["str"],
+                "ordered": false,
+                "measure_length": true,
+                "field": "tag",
+                "subcomponent": null
+            }}
         }
-    },
-    "component.tags:tags": {
-        "type": "List",
-        "types": ["str"],
-        "ordered": false,
-        "measure_length": true,
-        "field": "tag",
-        "subcomponent": null
     },
     "component.throwable": {
         "type": "Keymap",

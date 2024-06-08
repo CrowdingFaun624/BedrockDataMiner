@@ -4,14 +4,6 @@
         "name": "animation_controllers",
         "subcomponent": "files"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
-    "fix_old": {
-        "type": "Normalizer",
-        "function_name": "animation_controllers_fix_old"
-    },
     "outdated": {
         "type": "Tag"
     },
@@ -37,13 +29,19 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "comparison_move_function": "entities_behavior_pack_comparison_move_function",
         "subcomponent": "animation_controllers_file"
     },
     "animation_controllers_file": {
         "type": "Keymap",
-        "normalizer": "fix_old",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "animation_controllers_fix_old"
+        },
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
@@ -82,7 +80,13 @@
     "state": {
         "type": "Keymap",
         "keys": {
-            "animations": {"type": ["dict", "list"], "subcomponent": "animations:group"},
+            "animations": {"type": ["dict", "list"], "subcomponent": {
+                "type": "Group",
+                "subcomponents": {
+                    "dict": "animations:dict",
+                    "list": "animations"
+                }
+            }},
             "blend_transition": {"type": "decimal"},
             "blend_via_shortest_path": {"type": "bool"},
             "parameters": {"type": "list", "subcomponent": "parameters", "tags": ["outdated"]},
@@ -91,40 +95,31 @@
             "transitions": {"type": "list", "subcomponent": "transitions"}
         }
     },
-    "animations:group": {
-        "type": "Group",
-        "subcomponents": {
-            "dict": "animations:dict",
-            "list": "animations"
-        }
-    },
     "animations": {
         "type": "List",
         "field": "animation dict",
         "types": ["dict", "str"],
         "ordered": false,
         "measure_length": true,
-        "subcomponent": "animations_group"
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "dict": "animation",
+                "str": null
+            }
+        }
     },
     "animations:dict": {
         "type": "Dict",
         "field": "animation",
         "types": ["dict", "list"],
         "measure_length": true,
-        "subcomponent": "animations:dict.group"
-    },
-    "animations:dict.group": {
-        "type": "Group",
-        "subcomponents": {
-            "dict": "empty",
-            "list": "animation:list"
-        }
-    },
-    "animations_group": {
-        "type": "Group",
-        "subcomponents": {
-            "dict": "animation",
-            "str": null
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "dict": "empty",
+                "list": "animation:list"
+            }
         }
     },
     "animation": {
@@ -132,13 +127,12 @@
         "field": "animation",
         "types": ["list", "str"],
         "measure_length": true,
-        "subcomponent": "animation_group"
-    },
-    "animation_group": {
-        "type": "Group",
-        "subcomponents": {
-            "list": "animation:list",
-            "str": null
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "list": "animation:list",
+                "str": null
+            }
         }
     },
     "animation:list": {

@@ -58,15 +58,14 @@
         "type": "Keymap",
         "keys": {
             "format_version": {"type": "str"},
-            "minecraft:feature_rules": {"type": "dict", "subcomponent": "minecraft:feature_rules"}
-        }
-    },
-    "minecraft:feature_rules": {
-        "type": "Keymap",
-        "keys": {
-            "conditions": {"type": "dict", "subcomponent": "conditions"},
-            "description": {"type": "dict", "subcomponent": "description"},
-            "distribution": {"type": "dict", "subcomponent": "distribution"}
+            "minecraft:feature_rules": {"type": "dict", "subcomponent": {
+                "type": "Keymap",
+                "keys": {
+                    "conditions": {"type": "dict", "subcomponent": "conditions"},
+                    "description": {"type": "dict", "subcomponent": "description"},
+                    "distribution": {"type": "dict", "subcomponent": "distribution"}
+                }
+            }}
         }
     },
     "description": {
@@ -97,16 +96,15 @@
     "distribution:coordinate.group": {
         "type": "Group",
         "subcomponents": {
-            "dict": "distribution:coordinate.dict",
+            "dict": {
+                "type": "Keymap",
+                "keys": {
+                    "distribution": {"type": "str"},
+                    "extent": {"type": "list", "subcomponent": "range_list_int_molang"}
+                }
+            },
             "int": null,
             "str": null
-        }
-    },
-    "distribution:coordinate.dict": {
-        "type": "Keymap",
-        "keys": {
-            "distribution": {"type": "str"},
-            "extent": {"type": "list", "subcomponent": "range_list_int_molang"}
         }
     }
 }

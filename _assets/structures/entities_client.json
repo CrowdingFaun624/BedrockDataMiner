@@ -4,14 +4,6 @@
         "name": "entities_client",
         "subcomponent": "entities"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
-    "fix_old": {
-        "type": "Normalizer",
-        "function_name": "entities_client_fix_old"
-    },
     "outdated": {
         "type": "Tag"
     },
@@ -34,16 +26,27 @@
         "detect_key_moves": true,
         "comparison_move_function": "entities_behavior_pack_comparison_move_function",
         "measure_length": true,
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "subcomponent": "entity"
     },
     "entity": {
         "type": "Keymap",
-        "normalizer": "fix_old",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "entities_client_fix_old"
+        },
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
-            "minecraft:client_entity": {"type": "dict", "subcomponent": "minecraft:client_entity"}
+            "minecraft:client_entity": {"type": "dict", "subcomponent": {
+                "type": "Keymap",
+                "keys": {
+                    "description": {"type": "dict", "subcomponent": "description"}
+                }
+            }}
         }
     },
     "defined_in": {
@@ -62,12 +65,6 @@
         "print_flat": true,
         "print_all": true,
         "subcomponent": null
-    },
-    "minecraft:client_entity": {
-        "type": "Keymap",
-        "keys": {
-            "description": {"type": "dict", "subcomponent": "description"}
-        }
     },
     "description": {
         "type": "Keymap",
@@ -97,15 +94,14 @@
         "types": ["dict"],
         "ordered": false,
         "measure_length": true,
-        "subcomponent": "animation_controllers.item"
-    },
-    "animation_controllers.item": {
-        "type": "Dict",
-        "field": "animation controller",
-        "types": ["str"],
-        "detect_key_moves": true,
-        "measure_length": true,
-        "subcomponent": null
+        "subcomponent": {
+            "type": "Dict",
+            "field": "animation controller",
+            "types": ["str"],
+            "detect_key_moves": true,
+            "measure_length": true,
+            "subcomponent": null
+        }
     },
     "animations": {
         "type": "Dict",
@@ -128,14 +124,13 @@
         "field": "locator set",
         "types": ["dict"],
         "measure_length": true,
-        "subcomponent": "locator"
-    },
-    "locator": {
-        "type": "Dict",
-        "field": "locator",
-        "types": ["list"],
-        "measure_length": true,
-        "subcomponent": "vector_decimal"
+        "subcomponent": {
+            "type": "Dict",
+            "field": "locator",
+            "types": ["list"],
+            "measure_length": true,
+            "subcomponent": "vector_decimal"
+        }
     },
     "materials": {
         "type": "Dict",
@@ -167,22 +162,20 @@
         "types": ["dict", "str"],
         "ordered": false,
         "measure_length": true,
-        "subcomponent": "render_controllers:item_group"
-    },
-    "render_controllers:item_group": {
-        "type": "Group",
-        "subcomponents": {
-            "dict": "render_controllers:item",
-            "str": null
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "dict": {
+                    "type": "Dict",
+                    "field": "render controller item",
+                    "types": ["str"],
+                    "detect_key_moves": true,
+                    "measure_length": true,
+                    "subcomponent": null
+                },
+                "str": null
+            }
         }
-    },
-    "render_controllers:item": {
-        "type": "Dict",
-        "field": "render controller item",
-        "types": ["str"],
-        "detect_key_moves": true,
-        "measure_length": true,
-        "subcomponent": null
     },
     "scripts": {
         "type": "Keymap",
@@ -207,22 +200,20 @@
         "types": ["dict", "str"],
         "ordered": false,
         "measure_length": true,
-        "subcomponent": "scripts:item_group"
-    },
-    "scripts:item_group": {
-        "type": "Group",
-        "subcomponents": {
-            "dict": "scripts:item_dict",
-            "str": null
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "dict": {
+                    "type": "Dict",
+                    "field": "script item",
+                    "types": ["str"],
+                    "detect_key_moves": true,
+                    "measure_length": true,
+                    "subcomponent": null
+                },
+                "str": null
+            }
         }
-    },
-    "scripts:item_dict": {
-        "type": "Dict",
-        "field": "script item",
-        "types": ["str"],
-        "detect_key_moves": true,
-        "measure_length": true,
-        "subcomponent": null
     },
     "sound_effects": {
         "type": "Dict",

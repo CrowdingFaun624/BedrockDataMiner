@@ -7,22 +7,6 @@
     "outdated": {
         "type": "Tag"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
-    "remove_weird_components": {
-        "type": "Normalizer",
-        "function_name": "particles_remove_weird_components"
-    },
-    "normalize_old": {
-        "type": "Normalizer",
-        "function_name": "particles_normalize_old"
-    },
-    "normalize_component_particle_appearance_tinting_color": {
-        "type": "Normalizer",
-        "function_name": "particles_normalize_component_particle_appearance_tinting_color"
-    },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
@@ -103,14 +87,20 @@
         "field": "resource pack",
         "types": ["dict"],
         "measure_length": true,
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "detect_key_moves": true,
         "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
         "subcomponent": "particle"
     },
     "particle": {
         "type": "Keymap",
-        "normalizer": "normalize_old",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "particles_normalize_old"
+        },
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
@@ -127,7 +117,10 @@
     },
     "particle_effect": {
         "type": "Keymap",
-        "normalizer": "remove_weird_components",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "particles_remove_weird_components"
+        },
         "keys": {
             "components": {"type": "dict", "subcomponent": "components"},
             "curves": {"type": "dict", "subcomponent": "curves"},
@@ -426,7 +419,10 @@
     },
     "component.particle_appearance_tinting": {
         "type": "Keymap",
-        "normalizer": "normalize_component_particle_appearance_tinting_color",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "particles_normalize_component_particle_appearance_tinting_color"
+        },
         "keys": {
             "color": {"type": ["dict", "list"], "subcomponent": "component.particle_appearance_tinting:color.group"},
             "interpolant": {"type": ["decimal", "str"]}

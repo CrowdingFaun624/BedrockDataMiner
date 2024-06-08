@@ -13,10 +13,6 @@
     "outdated": {
         "type": "Tag"
     },
-    "normalize_old": {
-        "type": "Normalizer",
-        "function_name": "biomes_normalize_old"
-    },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
@@ -33,17 +29,19 @@
     },
     "biome": {
         "type": "Keymap",
-        "normalizer": "normalize_old",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "biomes_normalize_old"
+        },
         "keys": {
             "format_version": {"type": "str"},
-            "minecraft:biome": {"type": "dict", "subcomponent": "minecraft:biome"}
-        }
-    },
-    "minecraft:biome": {
-        "type": "Keymap",
-        "keys": {
-            "description": {"type": "dict", "subcomponent": "description"},
-            "components": {"type": "dict", "subcomponent": "components"}
+            "minecraft:biome": {"type": "dict", "subcomponent": {
+                "type": "Keymap",
+                "keys": {
+                    "description": {"type": "dict", "subcomponent": "description"},
+                    "components": {"type": "dict", "subcomponent": "components"}
+                }
+            }}
         }
     },
     "description": {
@@ -55,18 +53,17 @@
     "block": {
         "type": "Group",
         "subcomponents": {
-            "dict": "block_dict",
+            "dict": {
+                "type": "Keymap",
+                "keys": {
+                    "name": {"type": "str"},
+                    "states": {"type": "dict", "subcomponent": "block.states"}
+                }
+            },
             "str": null
         }
     },
-    "block_dict": {
-        "type": "Keymap",
-        "keys": {
-            "name": {"type": "str"},
-            "states": {"type": "dict", "subcomponent": "block_dict.states"}
-        }
-    },
-    "block_dict.states": {
+    "block.states": {
         "type": "Keymap",
         "keys": {
             "dirt_type": {"type": "str"},
@@ -413,30 +410,28 @@
     "component.world_generation_rules:item.group": {
         "type": "Group",
         "subcomponents": {
-            "list": "component.world_generation_rules:item",
+            "list": {
+                "type": "List",
+                "field": "climate",
+                "types": ["list", "str"],
+                "ordered": true,
+                "measure_length": true,
+                "subcomponent": "component.world_generation_rules:item.item.group"
+            },
             "str": null
         }
-    },
-    "component.world_generation_rules:item": {
-        "type": "List",
-        "field": "climate",
-        "types": ["list", "str"],
-        "ordered": true,
-        "measure_length": true,
-        "subcomponent": "component.world_generation_rules:item.item.group"
     },
     "component.world_generation_rules:item.item.group": {
         "type": "Group",
         "subcomponents": {
-            "list": "component.world_generation_rules:item.item",
+            "list": {
+                "type": "List",
+                "types": ["str", "int"],
+                "ordered": true,
+                "measure_length": true,
+                "subcomponent": null
+            },
             "str": null
         }
-    },
-    "component.world_generation_rules:item.item": {
-        "type": "List",
-        "types": ["str", "int"],
-        "ordered": true,
-        "measure_length": true,
-        "subcomponent": null
     }
 }

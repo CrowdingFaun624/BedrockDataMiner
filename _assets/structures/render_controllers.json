@@ -4,18 +4,6 @@
         "name": "render_controllers",
         "subcomponent": "files"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
-    "fix_old": {
-        "type": "Normalizer",
-        "function_name": "render_controllers_fix_old"
-    },
-    "remove_texures": {
-        "type": "Normalizer",
-        "function_name": "render_controllers_remove_texures"
-    },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
@@ -34,13 +22,19 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "comparison_move_function": "entities_behavior_pack_comparison_move_function",
         "subcomponent": "render_controllers_file"
     },
     "render_controllers_file": {
         "type": "Keymap",
-        "normalizer": "fix_old",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "render_controllers_fix_old"
+        },
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
@@ -74,7 +68,10 @@
     },
     "render_controller": {
         "type": "Keymap",
-        "normalizer": "remove_texures",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "render_controllers_remove_texures"
+        },
         "keys": {
             "arrays": {"type": "dict", "subcomponent": "arrays"},
             "color": {"type": "dict", "subcomponent": "color"},

@@ -4,14 +4,6 @@
         "name": "structures_nbt",
         "subcomponent": "structures"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_without_defined_in"
-    },
-    "normalize_text": {
-        "type": "Normalizer",
-        "function_name": "structures_nbt_normalize_text"
-    },
     "outdated": {
         "type": "Tag"
     },
@@ -28,7 +20,10 @@
         "type": "Dict",
         "field": "behavior pack",
         "types": ["TAG_Compound"],
-        "normalizer": ["collapse_resource_packs"],
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_without_defined_in"
+        },
         "measure_length": true,
         "detect_key_moves": true,
         "comparison_move_function": "structures_resource_pack_move",
@@ -133,7 +128,10 @@
     "block_nbt": {
         "type": "NbtKeymapTagCompound",
         "field": "tag",
-        "normalizer": "normalize_text",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "structures_nbt_normalize_text"
+        },
         "measure_length": true,
         "keys": {
             "attachement_type": {"type": "TAG_String"},

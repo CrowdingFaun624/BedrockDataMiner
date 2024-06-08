@@ -4,21 +4,12 @@
         "name": "gui_routes",
         "subcomponent": "parent"
     },
-    "normalize_routes": {
-        "type": "Normalizer",
-        "function_name": "gui_routes_normalize"
-    },
-    "normalize_supported_routes": {
-        "type": "Normalizer",
-        "function_name": "gui_routes_supported_routes_normalize"
-    },
-    "normalize_params": {
-        "type": "Normalizer",
-        "function_name": "gui_routes_params_normalize"
-    },
     "parent": {
         "type": "Keymap",
-        "normalizer": "normalize_routes",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "gui_routes_normalize"
+        },
         "keys": {
             "routes": {"type": "dict", "subcomponent": "routes"}
         }
@@ -33,7 +24,10 @@
     },
     "route": {
         "type": "Keymap",
-        "normalizer": "normalize_supported_routes",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "gui_routes_supported_routes_normalize"
+        },
         "keys": {
             "defaultRoute": {"type": "str"},
             "fileName": {"type": "str"},
@@ -59,7 +53,10 @@
     },
     "supported_route": {
         "type": "Keymap",
-        "normalizer": "normalize_params",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "gui_routes_params_normalize"
+        },
         "keys": {
             "knownEntries": {"type": "list", "subcomponent": "known_entries"},
             "modes": {"type": "list", "subcomponent": "modes"},

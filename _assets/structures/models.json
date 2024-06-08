@@ -5,10 +5,6 @@
         "subcomponent": "files",
         "normalizer": "model_normalize"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_without_defined_in"
-    },
     "model_normalize": {
         "type": "Normalizer",
         "function_name": "models_model_normalize"
@@ -46,7 +42,10 @@
         "field": "resource pack",
         "types": ["dict"],
         "measure_length": true,
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_without_defined_in"
+        },
         "detect_key_moves": true,
         "comparison_move_function": "entities_behavior_pack_comparison_move_function",
         "subcomponent": "model"
@@ -56,7 +55,14 @@
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": ["null", "str"]},
-            "minecraft:geometry": {"type": "dict", "subcomponent": "minecraft:geometry"}
+            "minecraft:geometry": {"type": "dict", "subcomponent": {
+                "type": "Keymap",
+                "normalizer": "normalize_bones",
+                "keys": {
+                    "bones": {"type": "dict", "subcomponent": "bones"},
+                    "description": {"type": "dict", "subcomponent": "description"}
+                }
+            }}
         }
     },
     "defined_in": {
@@ -66,14 +72,6 @@
         "measure_length": true,
         "ordered": false,
         "subcomponent": null
-    },
-    "minecraft:geometry": {
-        "type": "Keymap",
-        "normalizer": "normalize_bones",
-        "keys": {
-            "bones": {"type": "dict", "subcomponent": "bones"},
-            "description": {"type": "dict", "subcomponent": "description"}
-        }
     },
     "description": {
         "type": "Keymap",
@@ -152,19 +150,18 @@
     "uv_group": {
         "type": "Group",
         "subcomponents": {
-            "dict": "uv_dict",
+            "dict": {
+                "type": "Keymap",
+                "keys": {
+                    "down": {"type": "dict", "subcomponent": "uv_dict.item"},
+                    "east": {"type": "dict", "subcomponent": "uv_dict.item"},
+                    "north": {"type": "dict", "subcomponent": "uv_dict.item"},
+                    "south": {"type": "dict", "subcomponent": "uv_dict.item"},
+                    "up": {"type": "dict", "subcomponent": "uv_dict.item"},
+                    "west": {"type": "dict", "subcomponent": "uv_dict.item"}
+                }
+            },
             "list": "uv_list"
-        }
-    },
-    "uv_dict": {
-        "type": "Keymap",
-        "keys": {
-            "down": {"type": "dict", "subcomponent": "uv_dict.item"},
-            "east": {"type": "dict", "subcomponent": "uv_dict.item"},
-            "north": {"type": "dict", "subcomponent": "uv_dict.item"},
-            "south": {"type": "dict", "subcomponent": "uv_dict.item"},
-            "up": {"type": "dict", "subcomponent": "uv_dict.item"},
-            "west": {"type": "dict", "subcomponent": "uv_dict.item"}
         }
     },
     "uv_dict.item": {

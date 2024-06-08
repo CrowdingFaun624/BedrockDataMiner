@@ -7,33 +7,29 @@
     "outdated": {
         "type": "Tag"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
-    "fix_font_aliases": {
-        "type": "Normalizer",
-        "function_name": "fonts_fix_font_aliases"
-    },
-    "fix_font_references": {
-        "type": "Normalizer",
-        "function_name": "fonts_fix_font_references"
-    },
-    "fix_fonts": {
-        "type": "Normalizer",
-        "function_name": "fonts_fix_fonts"
-    },
     "resource_packs": {
         "type": "Dict",
         "field": "resource pack",
         "types": ["dict"],
         "measure_length": true,
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "subcomponent": "font_metadata"
     },
     "font_metadata": {
         "type": "Keymap",
-        "normalizer": ["fix_fonts", "fix_font_aliases"],
+        "normalizer": [
+            {
+                "type": "Normalizer",
+                "function_name": "fonts_fix_fonts"
+            },
+            {
+                "type": "Normalizer",
+                "function_name": "fonts_fix_font_aliases"
+            }
+        ],
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "font_aliases": {"type": "dict", "subcomponent": "font_aliases"},
@@ -78,7 +74,10 @@
     },
     "font_alias": {
         "type": "Keymap",
-        "normalizer": "fix_font_references",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "fonts_fix_font_references"
+        },
         "keys": {
             "alias": {"type": "str"},
             "font_scale_factor": {"type": "int", "tags": ["outdated"]},

@@ -4,19 +4,20 @@
         "name": "flipbook_textures",
         "subcomponent": "resource_packs"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_without_defined_in"
-    },
-    "fix_flipbook_textures": {
-        "type": "Normalizer",
-        "function_name": "flipbook_textures_fix_flipbook_textures"
-    },
     "resource_packs": {
         "type": "Dict",
         "field": "resource pack",
         "types": ["dict"],
-        "normalizer": ["fix_flipbook_textures", "collapse_resource_packs"],
+        "normalizer": [
+            {
+                "type": "Normalizer",
+                "function_name": "flipbook_textures_fix_flipbook_textures"
+            },
+            {
+                "type": "Normalizer",
+                "function_name": "collapse_resource_packs_without_defined_in"
+            }
+        ],
         "measure_length": true,
         "detect_key_moves": true,
         "comparison_move_function": "identity_move_function",

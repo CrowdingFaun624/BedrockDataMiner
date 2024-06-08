@@ -8,10 +8,6 @@
         "type": "TypeAlias",
         "types": ["float", "int"]
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
     "empty_dict": {
         "type": "Keymap",
         "keys": {}
@@ -38,7 +34,10 @@
         "field": "behavior pack",
         "types": ["dict"],
         "measure_length": true,
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "detect_key_moves": true,
         "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
         "subcomponent": "behavior_tree"
@@ -47,7 +46,13 @@
         "type": "Keymap",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
-            "minecraft:behavior_tree": {"type": "dict", "subcomponent": "minecraft:behavior_tree"}
+            "minecraft:behavior_tree": {"type": "dict", "subcomponent": {
+                "type": "Keymap",
+                "keys": {
+                    "minecraft:name": {"type": "str"},
+                    "minecraft:root": {"type": "dict", "subcomponent": "root"}
+                }
+            }}
         }
     },
     "defined_in": {
@@ -57,13 +62,6 @@
         "ordered": false,
         "measure_length": true,
         "subcomponent": null
-    },
-    "minecraft:behavior_tree": {
-        "type": "Keymap",
-        "keys": {
-            "minecraft:name": {"type": "str"},
-            "minecraft:root": {"type": "dict", "subcomponent": "root"}
-        }
     },
     "root": {
         "type": "Keymap",

@@ -11,10 +11,6 @@
         "type": "TypeAlias",
         "types": ["float", "int"]
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
     "empty_dict": {
         "type": "Keymap",
         "keys": {}
@@ -51,7 +47,10 @@
         "field": "resource pack",
         "types": ["dict"],
         "measure_length": true,
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
         "subcomponent": "camera"
     },
@@ -68,14 +67,13 @@
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
-            "minecraft:camera_entity": {"type": "dict", "subcomponent": "minecraft:camera_entity"}
-        }
-    },
-    "minecraft:camera_entity": {
-        "type": "Keymap",
-        "keys": {
-            "components": {"type": "dict", "subcomponent": "components"},
-            "description": {"type": "dict", "subcomponent": "description"}
+            "minecraft:camera_entity": {"type": "dict", "subcomponent": {
+                "type": "Keymap",
+                "keys": {
+                    "components": {"type": "dict", "subcomponent": "components"},
+                    "description": {"type": "dict", "subcomponent": "description"}
+                }
+            }}
         }
     },
     "description": {

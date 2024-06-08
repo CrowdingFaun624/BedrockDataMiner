@@ -4,26 +4,6 @@
         "name": "sound_definitions",
         "subcomponent": "sound_event"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
-    "fix_MCPE_153558": {
-        "type": "Normalizer",
-        "function_name": "sound_definitions_fix_MCPE_153558"
-    },
-    "fix_MCPE_178265": {
-        "type": "Normalizer",
-        "function_name": "sound_definitions_fix_MCPE_178265"
-    },
-    "make_sounds_dict": {
-        "type": "Normalizer",
-        "function_name": "sound_definitions_make_sounds_dict"
-    },
-    "fix_MCPE_153561": {
-        "type": "Normalizer",
-        "function_name": "sound_definitions_fix_MCPE_153561"
-    },
     "sound_event": {
         "type": "Dict",
         "field": "sound event",
@@ -38,14 +18,30 @@
         "types": ["dict"],
         "detect_key_moves": true,
         "comparison_move_function": "sound_definitions_resource_pack_comparison_move_function",
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "measure_length": true,
         "subcomponent": "sound_event_property"
     },
     "sound_event_property": {
         "type": "Keymap",
         "field": "property",
-        "normalizer": ["fix_MCPE_153558", "fix_MCPE_178265", "make_sounds_dict"],
+        "normalizer": [
+            {
+                "type": "Normalizer",
+                "function_name": "sound_definitions_fix_MCPE_153558"
+            },
+            {
+                "type": "Normalizer",
+                "function_name": "sound_definitions_fix_MCPE_178265"
+            },
+            {
+                "type": "Normalizer",
+                "function_name": "sound_definitions_make_sounds_dict"
+            }
+        ],
         "keys": {
             "category": {"type": "str"},
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
@@ -68,7 +64,10 @@
     "sound_properties": {
         "type": "Keymap",
         "field": "property",
-        "normalizer": "fix_MCPE_153561",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "sound_definitions_fix_MCPE_153561"
+        },
         "keys": {
             "exclude_from_pocket_platforms": {"type": "bool"},
             "is3D": {"type": "bool"},

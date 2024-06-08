@@ -4,14 +4,6 @@
         "name": "spawn_rules",
         "subcomponent": "spawn_rules"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
-    "normalize_herd": {
-        "type": "Normalizer",
-        "function_name": "spawn_rules_normalize_herd"
-    },
     "outdated": {
         "type": "Tag"
     },
@@ -96,7 +88,10 @@
         "type": "Dict",
         "field": "behavior pack",
         "types": ["dict"],
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "measure_length": true,
         "detect_key_moves": true,
         "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
@@ -142,7 +137,10 @@
     },
     "condition_set": {
         "type": "Keymap",
-        "normalizer": "normalize_herd",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "spawn_rules_normalize_herd"
+        },
         "keys": {
             "minecraft:biome_filter": {"type": ["dict", "list"], "subcomponent": "filter_or_filter_list"},
             "minecraft:brightness_filter": {"type": "dict", "subcomponent": "condition.brightness_filter"},

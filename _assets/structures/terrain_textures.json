@@ -2,23 +2,18 @@
     "base": {
         "type": "Base",
         "name": "terrain_textures",
-        "normalizer": "normalize",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "terrain_textures_normalize"
+        },
         "subcomponent": "terrain_textures"
     },
     "outdated": {
         "type": "Tag"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
     "collapse_resource_packs_without_defined_in": {
         "type": "Normalizer",
         "function_name": "collapse_resource_packs_without_defined_in"
-    },
-    "normalize": {
-        "type": "Normalizer",
-        "function_name": "terrain_textures_normalize"
     },
     "terrain_textures": {
         "type": "Keymap",
@@ -56,7 +51,10 @@
         "type": "Dict",
         "field": "resource pack",
         "types": ["dict"],
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "measure_length": true,
         "detect_key_moves": true,
         "comparison_move_function": "entities_behavior_pack_comparison_move_function",

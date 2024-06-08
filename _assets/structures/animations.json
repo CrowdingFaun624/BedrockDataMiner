@@ -4,14 +4,6 @@
         "name": "animations",
         "subcomponent": "files"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
-    "fix_old": {
-        "type": "Normalizer",
-        "function_name": "animations_fix_old"
-    },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
@@ -30,13 +22,19 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "comparison_move_function": "entities_behavior_pack_comparison_move_function",
         "subcomponent": "animations_file"
     },
     "animations_file": {
         "type": "Keymap",
-        "normalizer": "fix_old",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "animations_fix_old"
+        },
         "keys": {
             "animations": {"type": "dict", "subcomponent": "animations"},
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
@@ -96,22 +94,20 @@
         "print_all": true,
         "print_flat": true,
         "measure_length": false,
-        "subcomponent": "vector_special_group"
-    },
-    "vector_special_group": {
-        "type": "Group",
-        "subcomponents": {
-            "decimal": null,
-            "dict": "vector_dict",
-            "str": null
-        }
-    },
-    "vector_dict": {
-        "type": "Keymap",
-        "keys": {
-            "x": {"type": "str"},
-            "y": {"type": "str"},
-            "z": {"type": "str"}
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "decimal": null,
+                "dict": {
+                    "type": "Keymap",
+                    "keys": {
+                        "x": {"type": "str"},
+                        "y": {"type": "str"},
+                        "z": {"type": "str"}
+                    }
+                },
+                "str": null
+            }
         }
     },
     "animation": {
@@ -164,13 +160,12 @@
         "types": ["dict"],
         "detect_key_moves": false,
         "measure_length": true,
-        "subcomponent": "particle_effects.item"
-    },
-    "particle_effects.item": {
-        "type": "Keymap",
-        "keys": {
-            "effect": {"type": "str"},
-            "pre_effect_script": {"type": "str"}
+        "subcomponent": {
+            "type": "Keymap",
+            "keys": {
+                "effect": {"type": "str"},
+                "pre_effect_script": {"type": "str"}
+            }
         }
     },
     "sound_effects": {
@@ -179,12 +174,11 @@
         "types": ["dict"],
         "detect_key_moves": false,
         "measure_length": true,
-        "subcomponent": "sound_effects.item"
-    },
-    "sound_effects.item": {
-        "type": "Keymap",
-        "keys": {
-            "effect": {"type": "str"}
+        "subcomponent": {
+            "type": "Keymap",
+            "keys": {
+                "effect": {"type": "str"}
+            }
         }
     }
 }

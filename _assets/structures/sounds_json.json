@@ -8,18 +8,6 @@
         "type": "Normalizer",
         "function_name": "collapse_resource_packs_without_defined_in_without_extend"
     },
-    "remove_bad_events": {
-        "type": "Normalizer",
-        "function_name": "sounds_json_remove_bad_events"
-    },
-    "remove_bad_interactive_entity_events": {
-        "type": "Normalizer",
-        "function_name": "sounds_json_remove_bad_interactive_entity_events"
-    },
-    "fix_sounds": {
-        "type": "Normalizer",
-        "function_name": "sounds_json_fix_sounds"
-    },
     "categories": {
         "type": "Keymap",
         "field": "category",
@@ -163,7 +151,13 @@
         "detect_key_moves": true,
         "subcomponent": "sound_group",
         "measure_length": true,
-        "normalizer": ["collapse_resource_packs_flat", "remove_bad_events"]
+        "normalizer": [
+            "collapse_resource_packs_flat",
+            {
+                "type": "Normalizer",
+                "function_name": "sounds_json_remove_bad_events"
+            }
+        ]
     },
     "interactive_entity_events_resource_packs": {
         "type": "Dict",
@@ -172,7 +166,13 @@
         "detect_key_moves": true,
         "subcomponent": "sound_case",
         "measure_length": true,
-        "normalizer": ["collapse_resource_packs_flat", "remove_bad_interactive_entity_events"]
+        "normalizer": [
+            "collapse_resource_packs_flat",
+            {
+                "type": "Normalizer",
+                "function_name": "sounds_json_remove_bad_interactive_entity_events"
+            }
+        ]
     },
     "sound_case": {
         "type": "Dict",
@@ -192,7 +192,10 @@
     "sound": {
         "type": "Keymap",
         "field": "sound",
-        "normalizer": "fix_sounds",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "sounds_json_fix_sounds"
+        },
         "keys": {
             "pitch": {"type": ["float", "int", "list"], "subcomponent": "pitch_group"},
             "sound": {"type": "str"},

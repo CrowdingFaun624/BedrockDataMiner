@@ -4,30 +4,6 @@
         "name": "entities",
         "subcomponent": "entities"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_with_defined_in"
-    },
-    "fix_event_bug": {
-        "type": "Normalizer",
-        "function_name": "entities_fix_event_bug"
-    },
-    "fix_out_of_bounds_components": {
-        "type": "Normalizer",
-        "function_name": "entities_fix_out_of_bounds_components"
-    },
-    "fix_MCPE_178417": {
-        "type": "Normalizer",
-        "function_name": "entities_fix_MCPE_178417"
-    },
-    "fix_invalid_components": {
-        "type": "Normalizer",
-        "function_name": "entities_fix_invalid_components"
-    },
-    "fix_priotiry": {
-        "type": "Normalizer",
-        "function_name": "entities_fix_priotiry"
-    },
     "deprecated": {
         "type": "Tag"
     },
@@ -73,7 +49,10 @@
         "types": ["dict"],
         "detect_key_moves": true,
         "comparison_move_function": "entities_behavior_pack_comparison_move_function",
-        "normalizer": "collapse_resource_packs",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_with_defined_in"
+        },
         "subcomponent": "entity"
     },
     "entity": {
@@ -82,7 +61,21 @@
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "definitions": {"type": "dict", "subcomponent": "definitions", "tags": ["outdated"]},
             "format_version": {"type": "str"},
-            "minecraft:entity": {"type": "dict", "subcomponent": "minecraft:entity"},
+            "minecraft:entity": {"type": "dict", "subcomponent": {
+                "type": "Keymap",
+                "normalizer": {
+                    "type": "Normalizer",
+                    "function_name": "entities_fix_out_of_bounds_components"
+                },
+                "keys": {
+                    "description": {"type": "dict", "subcomponent": "description"},
+                    "component_groups": {"type": "dict", "subcomponent": "component_groups"},
+                    "components": {"type": "dict", "subcomponent": "components"},
+                    "events": {"type": "dict", "subcomponent": "events"},
+                    "format_version": {"type": ["decimal", "str"], "tags": ["outdated"]},
+                    "version": {"type": "decimal", "tags": ["outdated"]}
+                }
+            }},
             "version": {"type": "decimal", "tags": ["outdated"]}
         }
     },
@@ -100,18 +93,6 @@
         "types": ["dict"],
         "measure_length": true,
         "subcomponent": "empty"
-    },
-    "minecraft:entity": {
-        "type": "Keymap",
-        "normalizer": "fix_out_of_bounds_components",
-        "keys": {
-            "description": {"type": "dict", "subcomponent": "description"},
-            "component_groups": {"type": "dict", "subcomponent": "component_groups"},
-            "components": {"type": "dict", "subcomponent": "components"},
-            "events": {"type": "dict", "subcomponent": "events"},
-            "format_version": {"type": ["decimal", "str"], "tags": ["outdated"]},
-            "version": {"type": "decimal", "tags": ["outdated"]}
-        }
     },
     "description": {
         "type": "Keymap",
@@ -174,7 +155,10 @@
     },
     "events_event": {
         "type": "Keymap",
-        "normalizer": ["fix_event_bug"],
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "entities_fix_event_bug"
+        },
         "keys": {
             "add": {"type": "dict", "subcomponent": "component_groups_add_remove"},
             "emit_vibration": {"type": "dict", "subcomponent": "event:emit_vibration"},
@@ -189,7 +173,10 @@
     },
     "component_groups_add_remove": {
         "type": "Keymap",
-        "normalizer": "fix_MCPE_178417",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "entities_fix_MCPE_178417"
+        },
         "keys": {
             "component_groups": {"type": "list", "subcomponent": "component_group_list"}
         }
@@ -256,7 +243,10 @@
     "components": {
         "type": "Keymap",
         "field": "component",
-        "normalizer": ["fix_invalid_components"],
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "entities_fix_invalid_components"
+        },
         "measure_length": true,
         "tags": ["entity_component"],
         "keys": {
@@ -4807,7 +4797,10 @@
     },
     "behavior.pig_zombie_anger_target": {
         "type": "Keymap",
-        "normalizer": "fix_priotiry",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "entities_fix_priotiry"
+        },
         "keys": {
             "priority": {"type": "int"}
         }

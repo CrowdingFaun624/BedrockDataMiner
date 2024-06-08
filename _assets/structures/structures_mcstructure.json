@@ -4,10 +4,6 @@
         "name": "structures_mcstructure",
         "subcomponent": "structures"
     },
-    "collapse_resource_packs": {
-        "type": "Normalizer",
-        "function_name": "collapse_resource_packs_without_defined_in"
-    },
     "empty_compound": {
         "type": "NbtKeymapTagCompound",
         "keys": {}
@@ -31,7 +27,10 @@
         "type": "Dict",
         "field": "behavior pack",
         "types": ["TAG_Compound"],
-        "normalizer": ["collapse_resource_packs"],
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "collapse_resource_packs_without_defined_in"
+        },
         "measure_length": true,
         "detect_key_moves": true,
         "comparison_move_function": "structures_resource_pack_move",
@@ -111,13 +110,12 @@
         "types": ["TAG_Compound"],
         "ordered": true,
         "measure_length": true,
-        "subcomponent": "item.tag.ench.item"
-    },
-    "item.tag.ench.item": {
-        "type": "NbtKeymapTagCompound",
-        "keys": {
-            "id": {"type": "TAG_Short"},
-            "lvl": {"type": "TAG_Short"}
+        "subcomponent": {
+            "type": "NbtKeymapTagCompound",
+            "keys": {
+                "id": {"type": "TAG_Short"},
+                "lvl": {"type": "TAG_Short"}
+            }
         }
     },
     "item_list": {
@@ -283,17 +281,16 @@
         "types": ["TAG_Compound"],
         "ordered": true,
         "measure_length": true,
-        "subcomponent": "entity.attributes.item.modifiers.item"
-    },
-    "entity.attributes.item.modifiers.item": {
-        "type": "NbtKeymapTagCompound",
-        "keys": {
-            "Amount": {"type": "TAG_Float"},
-            "Name": {"type": "TAG_String"},
-            "Operand": {"type": "TAG_Int"},
-            "Operation": {"type": "TAG_Int"},
-            "UUIDLeast": {"type": "TAG_Long"},
-            "UUIDMost": {"type": "TAG_Long"}
+        "subcomponent": {
+            "type": "NbtKeymapTagCompound",
+            "keys": {
+                "Amount": {"type": "TAG_Float"},
+                "Name": {"type": "TAG_String"},
+                "Operand": {"type": "TAG_Int"},
+                "Operation": {"type": "TAG_Int"},
+                "UUIDLeast": {"type": "TAG_Long"},
+                "UUIDMost": {"type": "TAG_Long"}
+            }
         }
     },
     "entity.definitions": {
