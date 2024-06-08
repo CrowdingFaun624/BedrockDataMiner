@@ -40,12 +40,12 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.print_all = data.get("print_all", False)
 
         self.import_field = KeymapImportField.KeymapImportField(data.get("imports", []), ["imports"])
-        self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(data=key_data, key=key, tag_set=self.children_tags, path=["keys", key]) for key, key_data in data["keys"].items()], ["keys"])
+        self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(key_data, key, self.children_tags, ["keys", key], self) for key, key_data in data["keys"].items()], ["keys"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_for_all_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.tags_for_all_field.add_to_tag_set(self.children_tags)
-        self.import_field.import_into(self.keys)
         self.keys.for_each(lambda key: key.add_tag_fields(self.tags_for_all_field))
+        self.import_field.import_into(self.keys)
         self.fields.extend([self.import_field, self.tags_for_all_field, self.keys, self.normalizer_field])
 
     def create_final(self) -> None:

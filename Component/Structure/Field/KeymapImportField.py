@@ -23,7 +23,6 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         '''
         super().__init__(subcomponents_data, IMPORTABLE_KEYS_REQUEST_PROPERTIES, path, allow_inline=Field.InLinePermissions.reference)
         self.import_into_keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]|None = None
-        self.tag_set:set[str]|None = None
 
     def set_field(
         self,
@@ -36,11 +35,8 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         subcomponents, inline_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
         if self.import_into_keys is None:
             raise Exceptions.FieldSequenceBreakError(self.import_into, self.set_field, self)
-        tag_set = self.tag_set
         for component in subcomponents:
-            self.import_into_keys.extend(key.copy_for_importing() for key in iter(component.keys) if not key.has_been_imported)
-            if tag_set is not None:
-                self.import_into_keys.for_each(lambda keymap_key_field: keymap_key_field.add_to_tag_set(tag_set))
+            self.import_into_keys.extend(key for key in iter(component.keys) if key.source_component is component)
         return subcomponents, inline_components
 
     def import_into(self, keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]) -> None:
@@ -50,10 +46,3 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         :keys: The FieldListField of KeymapKeyFields to add into.
         '''
         self.import_into_keys = keys
-
-    def add_to_tag_set(self, tag_set:set[str]) -> None:
-        '''
-        Makes this KeymapImportField add tags into the given tag_set when `set_field` is called.
-        :tag_set: The set of tag strings to add to.
-        '''
-        self.tag_set = tag_set
