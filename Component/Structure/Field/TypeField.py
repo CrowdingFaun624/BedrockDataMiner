@@ -19,7 +19,7 @@ class TypeField(AbstractTypeField.AbstractTypeField):
     def __init__(self, subcomponent_data:str, path:list[str|int]) -> None:
         '''
         :subcomponent_data: String representing a default type or Component.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         super().__init__(path)
         self.subcomponent_data = subcomponent_data

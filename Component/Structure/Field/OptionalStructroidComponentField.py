@@ -20,7 +20,7 @@ class OptionalStructroidComponentField(OptionalComponentField.OptionalComponentF
     def __init__(self, subcomponent_data:str|ComponentTyping.StructroidComponentTypedDicts|None, path: list[str|int], pattern:Pattern.Pattern=STRUCTROID_COMPONENT_REQUEST_PROPERTIES, *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
         '''
         :subcomponent_data: The name of the reference StructureComponent or GroupComponent or the data of the inline StructureComponent or GroupComponent this Field refers to.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :pattern: The Pattern to override the default with.
         :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
         '''

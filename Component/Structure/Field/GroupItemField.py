@@ -15,7 +15,7 @@ class GroupItemField(FieldContainer.FieldContainer):
         '''
         :key: The type associated with this GroupItemField.
         :value: The name of the reference Component or data of the inline Component for this type.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
         '''
         self.type_field = TypeField.TypeField(key, path)

@@ -25,7 +25,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         :data: A dictionary containing the keys {"type": str|list[str], "subcomponent": str|ComponentTyping.StructroidComponentTypedDicts|None, tags:list[str]}
         :key: The key that this Field corresponds to.
         :tag_set: The set of tags to update when `set_field` is called.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
         '''
         ...

@@ -12,7 +12,7 @@ class OptionalFunctionField(Field.Field):
     def __init__(self, function_name:str|None, path:list[str|int]) -> None:
         '''
         :function_name: The name of the function this refers to.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         super().__init__(path)
         self.function_name = function_name

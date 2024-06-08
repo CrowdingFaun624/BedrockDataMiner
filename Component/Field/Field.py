@@ -69,7 +69,7 @@ class Field():
 
     def __init__(self, path:list[str|int]) -> None:
         '''
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         self.error_path = path
 

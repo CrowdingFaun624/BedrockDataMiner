@@ -15,7 +15,7 @@ class OptionalComponentField(Field.Field, Generic[a]):
         '''
         :subcomponent_data: The name of the reference Component or the data of the inline Components this Field refers to.
         :pattern: The Pattern used to search for Components.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
         '''
         super().__init__(path)
