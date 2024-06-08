@@ -13,7 +13,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
     class_name = "Cache"
     my_capabilities = Capabilities.Capabilities(is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructroidComponent or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a list or str", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("cache_check_all_types", "a bool", False, bool),
@@ -24,8 +24,8 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         TypeVerifier.TypedDictKeyTypeVerifier("cache_compare", "a bool", False, bool),
     )
 
-    def __init__(self, data:ComponentTyping.CacheComponentTypedDict, name: str) -> None:
-        super().__init__(name)
+    def __init__(self, data:ComponentTyping.CacheComponentTypedDict, name: str, component_group:str) -> None:
+        super().__init__(data, name, component_group)
         self.verify_arguments(data, name)
 
         self.cache_check_all_types = data.get("cache_check_all_types", True)
@@ -41,6 +41,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.fields.extend([self.subcomponent_field, self.types_field])
 
     def create_final(self) -> None:
+        super().create_final()
         self.final = CacheStructure.CacheStructure(
             name=self.name,
             cache_check_all_types=self.cache_check_all_types,

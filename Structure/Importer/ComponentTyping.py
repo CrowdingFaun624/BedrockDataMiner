@@ -1,6 +1,9 @@
-from typing import Literal, TypedDict
+from typing import TYPE_CHECKING, Callable, Literal, TypeAlias, TypedDict, Union
 
 from typing_extensions import NotRequired, Required
+
+if TYPE_CHECKING:
+    import Structure.Importer.Component as Component
 
 ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotRequired[str], "component": Required[str]})
 
@@ -42,7 +45,7 @@ class GroupComponentTypedDict(TypedDict):
 
 class KeymapKeyTypedDict(TypedDict):
     type: Required[str|list[str]]
-    subcomponent: NotRequired[str|None]
+    subcomponent: NotRequired[Union[str,None,"StructroidComponentTypedDicts"]]
     tags: NotRequired[str|list[str]]
 
 class KeymapComponentTypedDict(TypedDict):
@@ -97,6 +100,9 @@ class VolumeTypedDict(TypedDict):
     type: Required[Literal["Volume"]]
     types: Required[str|list[str]]
 
-ComponentTypedDicts = BaseComponentTypedDict|DictComponentTypedDict|GroupComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|NbtBaseTypedDict|NormalizerTypedDict|TypeAliasTypedDict|VolumeTypedDict
-StructureComponentTypedDicts = DictComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|VolumeTypedDict
+ComponentTypedDicts = BaseComponentTypedDict|CacheComponentTypedDict|DictComponentTypedDict|GroupComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|NbtBaseTypedDict|NormalizerTypedDict|TypeAliasTypedDict|VolumeTypedDict
+StructureComponentTypedDicts = DictComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict
+StructroidComponentTypedDicts = CacheComponentTypedDict|DictComponentTypedDict|GroupComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|VolumeTypedDict
 StructureFileType = dict[str,ComponentTypedDicts]
+
+CreateComponentFunction:TypeAlias = Callable[[ComponentTypedDicts,"Component.Component"],"Component.Component"]

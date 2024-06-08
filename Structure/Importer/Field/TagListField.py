@@ -1,13 +1,15 @@
-from typing import TYPE_CHECKING, Callable, Sequence
+from typing import TYPE_CHECKING, Callable
 
+import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Component as Component
 import Structure.Importer.Field.ComponentListField as ComponentListField
-import Structure.Importer.Pattern as Capabilities
+import Structure.Importer.Field.Field as Field
+import Structure.Importer.Pattern as Pattern
 
 if TYPE_CHECKING:
     import Structure.Importer.TagComponent as TagComponent
 
-TAG_REQUEST_PROPERTIES:Capabilities.Pattern["TagComponent.TagComponent"] = Capabilities.Pattern([{"is_tag": True}])
+TAG_REQUEST_PROPERTIES:Pattern.Pattern["TagComponent.TagComponent"] = Pattern.Pattern([{"is_tag": True}])
 
 class TagListField(ComponentListField.ComponentListField["TagComponent.TagComponent"]):
 
@@ -16,18 +18,25 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         :subcomponents_strs: The names of the TagComponents this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepset, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_strs, TAG_REQUEST_PROPERTIES, path)
+        super().__init__(subcomponents_strs, TAG_REQUEST_PROPERTIES, path, allow_in_line=Field.InLinePermissions.reference)
         self.tag_sets:list[set[str]] = []
         self.import_from_field:TagListField|None = None
 
-    def set_field(self, component_name: str, component_class_name: str, components: dict[str, Component.Component], imported_components:dict[str,dict[str,Component.Component]], functions: dict[str, Callable]) -> Sequence[Component.Component]:
-        output = super().set_field(component_name, component_class_name, components, imported_components, functions)
+    def set_field(
+        self,
+        source_component:"Component.Component",
+        components:dict[str,"Component.Component"],
+        imported_components:dict[str,dict[str,"Component.Component"]],
+        functions:dict[str,Callable],
+        create_component_function:ComponentTyping.CreateComponentFunction,
+    ) -> tuple[list["TagComponent.TagComponent"],list["TagComponent.TagComponent"]]:
+        subcomponents, in_line_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
         if self.import_from_field is not None:
-            self.import_from_field.set_field(component_name, component_class_name, components, imported_components, functions)
+            self.import_from_field.set_field(source_component, components, imported_components, functions, create_component_function)
             self.extend(self.import_from_field.get_components())
         for tag_set in self.tag_sets:
             tag_set.update(self.get_tags())
-        return output
+        return subcomponents, in_line_components
 
     def import_from(self, tag_list_field:"TagListField") -> None:
         '''

@@ -2,6 +2,7 @@ from typing import (TYPE_CHECKING, Any, Callable, Generic, Mapping, Sequence,
                     TypeVar, Union)
 
 import Structure.Importer.Capabilities as Capabilities
+import Structure.Importer.ComponentTyping as ComponentTyping
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -18,8 +19,9 @@ class Component(Generic[a]):
     children_has_normalizer_default = False
     type_verifier:TypeVerifier.TypeVerifier
 
-    def __init__(self, name:str) -> None:
+    def __init__(self, data:Any, name:str, component_group:str) -> None:
         self.name = name
+        self.component_group = component_group
         self.links_to_other_components:list[Component] = []
         self.parents:list[Component] = []
         self.final:a|None = None
@@ -27,6 +29,26 @@ class Component(Generic[a]):
         self.children_has_normalizer_dependencies = False
         self.children_tags:set[str] = set()
         self.fields:list["Field.Field"] = []
+        self.in_line_components:list[Component]|None = None
+        self.in_line_component_count = 0
+
+    def get_in_line_component_name(self) -> str:
+        output = self.name + ".%i" % (self.in_line_component_count)
+        self.in_line_component_count += 1
+        return output
+
+    def get_all_descendants(self, memo:set["Component"]) -> list["Component"]:
+        '''
+        Returns a list of the Component, its childern, its grandchildren, and so on.
+        :memo: The set of all Components already added to the list, ensuring no duplicates or infinite loops.
+        '''
+        result:list[Component] = []
+        if self not in memo:
+            result.append(self)
+            memo.add(self)
+            for child in self.links_to_other_components:
+                result.extend(child.get_all_descendants(memo))
+        return result
 
     def get_final(self) -> a:
         if self.final is None:
@@ -41,36 +63,53 @@ class Component(Generic[a]):
     def verify_arguments(self, data:Mapping[str,Any], name:str) -> None:
         self.type_verifier.base_verify(data, ["%s \"%s\"" % (self.class_name, name)])
 
-    def set_component(self, components:dict[str,"Component"], imported_components:dict[str,dict[str,"Component"]], functions:dict[str,Callable]) -> None:
+    def set_component(self, components:dict[str,"Component"], imported_components:dict[str,dict[str,"Component"]], functions:dict[str,Callable], create_component_function:ComponentTyping.CreateComponentFunction) -> None:
         '''Links this Component to other Components'''
+        self.in_line_components = []
         for field in self.fields:
-            linked_components = field.set_field(self.name, self.class_name, components, imported_components, functions)
+            linked_components, new_in_line_components = field.set_field(self, components, imported_components, functions, create_component_function)
             self.link_components(linked_components)
+            self.in_line_components.extend(new_in_line_components)
+        for in_line_component in self.in_line_components:
+            in_line_component.set_component(components, imported_components, functions, create_component_function)
 
     def create_final(self) -> None:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''
-        pass
+        if self.in_line_components is None:
+            raise Exceptions.AttributeNoneError("in_line_components", self)
+        for in_line_component in self.in_line_components:
+            in_line_component.create_final()
 
     def link_finals(self) -> None:
         '''Links this Component's final object to other final objects.'''
         for field in self.fields:
             field.resolve()
+        if self.in_line_components is None:
+            raise Exceptions.AttributeNoneError("in_line_components", self)
+        for in_line_component in self.in_line_components:
+            in_line_component.link_finals()
 
     def check(self) -> list[Exception]:
         '''Make sure that this Component's types are all in order; no error could occur.'''
         exceptions:list[Exception] = []
         for field in self.fields:
-            exceptions.extend(field.check(self.name, self.class_name))
+            exceptions.extend(field.check(self))
+        if self.in_line_components is None:
+            raise Exceptions.AttributeNoneError("in_line_components", self)
+        for in_line_component in self.in_line_components:
+            exceptions.extend(in_line_component.check())
         return exceptions
 
     def finalize(self) -> None:
         '''Used to call on the structure once all structures and components are guaranteed to be linked.'''
-        ...
+        if self.in_line_components is None:
+            raise Exceptions.AttributeNoneError("in_line_components", self)
+        for in_line_component in self.in_line_components:
+            in_line_component.finalize()
 
-    def propagate_variables(self, child:Union["Component",None]=None) -> None:
-        '''Calls `propagates_variables` on the parents of this Component with the child.'''
+    def propagate_variables(self) -> bool:
         has_changed = False
-        if child is not None:
+        for child in self.links_to_other_components:
             if child.children_has_normalizer and not self.children_has_normalizer:
                 self.children_has_normalizer = True
                 has_changed = True
@@ -81,12 +120,10 @@ class Component(Generic[a]):
                 tags_length_before = len(self.children_tags)
                 self.children_tags.update(child.children_tags)
                 has_changed = has_changed or len(self.children_tags) != tags_length_before
-        if has_changed or child is None:
-            for parent in self.parents:
-                parent.propagate_variables(self)
+        return has_changed
 
     def __hash__(self) -> int:
-        return hash(self.name)
+        return hash((self.name, self.component_group))
 
     def __repr__(self) -> str:
         return "<%s %s>" % (self.class_name, self.name)

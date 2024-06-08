@@ -1,4 +1,4 @@
-from typing import TypeAlias
+from typing import TYPE_CHECKING, TypeAlias
 
 import Structure.Importer.Field.Field as Field
 import Structure.Importer.Field.OptionalStructroidComponentField as OptionalStructroidComponentField
@@ -8,6 +8,9 @@ import Structure.Importer.Field.StructureComponentField as StructureComponentFie
 import Structure.Importer.StructureComponent as StructureComponent
 import Utilities.Exceptions as Exceptions
 
+if TYPE_CHECKING:
+    import Structure.Importer.Component as Component
+
 VerifyComponentType:TypeAlias = StructroidComponentField.StructroidComponentField|OptionalStructroidComponentField.OptionalStructroidComponentField|StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
 
 class AbstractTypeField(Field.Field):
@@ -16,18 +19,18 @@ class AbstractTypeField(Field.Field):
         super().__init__(path)
         self.verify_with_component:VerifyComponentType|None=None
 
-    def check(self, component_name: str, component_class_name: str) -> list[Exception]:
-        exceptions = super().check(component_name, component_class_name)
+    def check(self, source_component:"Component.Component") -> list[Exception]:
+        exceptions = super().check(source_component)
         if self.verify_with_component is not None:
             subcomponent = self.verify_with_component.get_component()
             component_types = self.get_types()
             if subcomponent is None:
                 for value_type in component_types:
                     if value_type in StructureComponent.REQUIRES_SUBCOMPONENT_TYPES:
-                        exceptions.append(Exceptions.ComponentTypeRequiresComponentError("%s \"%s\"" % (component_class_name, component_name), value_type))
+                        exceptions.append(Exceptions.ComponentTypeRequiresComponentError(source_component, value_type))
             else:
                 if set(component_types) != set(subcomponent.my_type):
-                    exceptions.append(Exceptions.ComponentMismatchedTypesError("%s \"%s\"" % (component_class_name, component_name), sorted(component_types, key=lambda type: type.__name__), subcomponent, sorted(subcomponent.my_type, key=lambda type: type.__name__)))
+                    exceptions.append(Exceptions.ComponentMismatchedTypesError(source_component, sorted(component_types, key=lambda type: type.__name__), subcomponent, sorted(subcomponent.my_type, key=lambda type: type.__name__)))
         return exceptions
 
     def resolve(self) -> None:

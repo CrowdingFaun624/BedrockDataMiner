@@ -15,11 +15,11 @@ class GroupComponent(AbstractGroupComponent.AbstractGroupComponent[Structure.Str
     my_capabilities = Capabilities.Capabilities(is_group=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, type(None)), "a dict", "a str", "a str or None")),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, dict, type(None)), "a dict", "a str", "a str, StructureComponent, or None")),
     )
 
-    def __init__(self, data:ComponentTyping.GroupComponentTypedDict, name:str) -> None:
-        super().__init__(name)
+    def __init__(self, data:ComponentTyping.GroupComponentTypedDict, name:str, component_group:str) -> None:
+        super().__init__(data, name, component_group)
         self.verify_arguments(data, name)
 
         self.subcomponents_field:FieldListField.FieldListField[GroupItemField.GroupItemField] = FieldListField.FieldListField([
@@ -31,6 +31,7 @@ class GroupComponent(AbstractGroupComponent.AbstractGroupComponent[Structure.Str
         return [group_item_component for group_item in self.subcomponents_field if (group_item_component := group_item.get_component()) is not None]
 
     def create_final(self) -> None:
+        super().create_final()
         self.final = {}
 
     def link_finals(self) -> None:

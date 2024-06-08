@@ -10,6 +10,8 @@ if TYPE_CHECKING:
     import Structure.Difference as D
     import Structure.Importer.Capabilities as Capabilities
     import Structure.Importer.Component as Component
+    import Structure.Importer.ComponentTyping as ComponentTyping
+    import Structure.Importer.Field.Field as Field
     import Structure.Importer.Pattern as Pattern
     import Structure.Normalizer as Normalizer
     import Structure.Structure as Structure
@@ -401,19 +403,20 @@ class ComponentTypeRequiresComponentError(ComponentException):
 class ComponentUnrecognizedFunctionError(ComponentException):
     "This Component references an unrecognized function."
 
-    def __init__(self, function_name:str, source_str:str, message:Optional[str]=None) -> None:
+    def __init__(self, function_name:str, source:object|str, message:Optional[str]=None) -> None:
         '''
         :function_name: The name of the unrecognized function.
-        :source_str: A string representing the object that references the function.
+        :source: The object or a string representing the object that references the function.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(function_name, source_str, message)
+        super().__init__(function_name, source, message)
         self.function_name = function_name
-        self.source_str = source_str
+        self.source = source
         self.message = message
 
     def __str__(self) -> str:
-        output = "Function \"%s\", as referenced by %s, is unrecognized" % (self.function_name, self.source_str)
+        source_str = self.source if isinstance(self.source, str) else repr(self.source)
+        output = "Function \"%s\", as referenced by %s, is unrecognized" % (self.function_name, source_str)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -476,26 +479,49 @@ class GroupContainsNullSubcomponentsError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class InLineComponentError(ComponentException):
+    "An in-line Component exists where it is not allowed."
+    
+    def __init__(self, component:"Component.Component", field:"Field.Field", subcomponent_data:Optional["ComponentTyping.ComponentTypedDicts"]=None, message:Optional[str]=None) -> None:
+        '''
+        :component: The Component with the disallowed in-line subcomponent.
+        :field: The Field with the disallowed in-line subcomponent.
+        :subcomponent_data: The data used to specify the subcomponent.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component, field, subcomponent_data, message)
+        self.component = component
+        self.field = field
+        self.subcomponent_data = subcomponent_data
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "%r, %r attempted to create a disallowed in-line Component" % (self.component, self.field)
+        if self.message is not None: output += " %s" % (self.message,)
+        output += ": %s" % (self.subcomponent_data,) if self.subcomponent_data is not None else "!"
+        return output
+
 class InvalidComponentError(ComponentException):
     "The referenced Component has the wrong properties."
 
-    def __init__(self, component:"Component.Component", source_str:str, required_properties:"Pattern.Pattern", actual_capabilities:"Capabilities.Capabilities", message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component.Component", source:object|str, required_properties:"Pattern.Pattern", actual_capabilities:"Capabilities.Capabilities", message:Optional[str]=None) -> None:
         '''
         :component: The Component that is being referenced.
-        :source_str: A string representing the object that is referencing the Component.
+        :source: The object or a string representing the object that is referencing the Component.
         :required_properties: The Pattern that the Component is expected to have.
         :actual_capabilities: The Capabilities that the Component actually has.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component, source_str, required_properties, actual_capabilities, message)
+        super().__init__(component, source, required_properties, actual_capabilities, message)
         self.component = component
-        self.source_str = source_str
+        self.source = source
         self.required_properties = required_properties
         self.actual_capabilities = actual_capabilities
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r, as referenced by %s, is expected to have %r, but only has %r" % (self.component, self.source_str, self.required_properties, self.actual_capabilities)
+        source_str = self.source if isinstance(self.source, str) else repr(self.source)
+        output = "%r, as referenced by %s, is expected to have %r, but only has %r" % (self.component, source_str, self.required_properties, self.actual_capabilities)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -517,6 +543,28 @@ class InvalidComponentTypeError(ComponentException):
 
     def __str__(self) -> str:
         output = "%r is expected to have types [%s], but only has \"%s\"" % (self.component, ", ".join("\"%s\"" % required_type.__name__ for required_type in self.required_types), self.actual_type.__name__)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ReferenceComponentError(ComponentException):
+    "An reference Component exists where it is not allowed."
+    
+    def __init__(self, component:"Component.Component", field:"Field.Field", subcomponent_name:Optional[str]=None, message:Optional[str]=None) -> None:
+        '''
+        :component: The Component with the disallowed in-line subcomponent.
+        :field: The Field with the disallowed in-line subcomponent.
+        :subcomponent_name: The name of the subcomponent.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component, field, subcomponent_name, message)
+        self.component = component
+        self.field = field
+        self.subcomponent_name = subcomponent_name
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "%r, %r attempted to reference a disallowed reference Component" % (self.component, self.field)
+        if self.subcomponent_name is not None: output += " \"%s\"" % (self.subcomponent_name,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -552,7 +600,7 @@ class UnrecognizedComponentError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Component \"%s\", as referenced by %s, is unrecognized" % (self.component_type_str, self.source_str)
+        output = "Component at \"%s\", as referenced by %s, is unrecognized" % (self.component_type_str, self.source_str)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

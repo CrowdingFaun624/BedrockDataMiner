@@ -16,10 +16,10 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
     my_type = [list]
     my_capabilities = Capabilities.Capabilities(is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructroidComponent, or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("ordered", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", False, bool),
@@ -28,8 +28,8 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
-    def __init__(self, data:ComponentTyping.ListComponentTypedDict, name:str) -> None:
-        super().__init__(name)
+    def __init__(self, data:ComponentTyping.ListComponentTypedDict, name:str, component_group:str) -> None:
+        super().__init__(data, name, component_group)
         self.verify_arguments(data, name)
 
         self.field = data.get("field", "item")
@@ -47,6 +47,7 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
         self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.tags_field])
 
     def create_final(self) -> None:
+        super().create_final()
         self.final = ListStructure.ListStructure(
             name=self.name,
             field=self.field,

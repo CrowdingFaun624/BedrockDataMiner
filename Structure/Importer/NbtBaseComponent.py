@@ -24,15 +24,15 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStru
     class_name = "NbtBase"
     my_capabilities = Capabilities.Capabilities(is_group=True, is_nbt_base=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or StructroidComponent", True, (str, dict)),
         TypeVerifier.TypedDictKeyTypeVerifier("endianness", "a str", True, TypeVerifier.EnumTypeVerifier(("big", "little"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
-    def __init__(self, data:ComponentTyping.NbtBaseTypedDict, name: str) -> None:
-        super().__init__(name)
+    def __init__(self, data:ComponentTyping.NbtBaseTypedDict, name: str, component_group:str) -> None:
+        super().__init__(data, name, component_group)
         self.verify_arguments(data, name)
 
         self.endianness:Literal["big", "little"] = data["endianness"]
@@ -54,6 +54,7 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStru
             case "little": return Endianness.End.LITTLE
 
     def create_final(self) -> None:
+        super().create_final()
         self.final_structure = NbtBaseStructure.NbtBaseStructure(
             name = self.name,
             endianness=self.get_endianness(self.endianness),

@@ -17,20 +17,20 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
     my_type = [dict]
     my_capabilities = Capabilities.Capabilities(has_keys=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructroidComponent or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("comparison_move_function", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
-    def __init__(self, data:ComponentTyping.DictComponentTypedDict, name:str) -> None:
-        super().__init__(name)
+    def __init__(self, data:ComponentTyping.DictComponentTypedDict, name:str, component_group:str) -> None:
+        super().__init__(data, name, component_group)
         self.verify_arguments(data, name)
 
         self.detect_key_moves = data.get("detect_key_moves", False)
@@ -48,6 +48,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.fields.extend([self.subcomponent_field, self.comparison_move_function_field, self.normalizer_field, self.types_field, self.tags_field])
 
     def create_final(self) -> None:
+        super().create_final()
         self.final = DictStructure.DictStructure(
             name=self.name,
             field=self.field,

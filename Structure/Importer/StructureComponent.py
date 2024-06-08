@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import Any, TypeVar
 
 import Structure.Importer.Component as Component
 import Structure.Structure as Structure
@@ -38,5 +38,5 @@ class StructureComponent(Component.Component[a]):
     class_name = "StructureComponent"
     my_type:list[type]
 
-    def __init__(self, name: str) -> None:
-        super().__init__(name)
+    def __init__(self, data:Any, name: str, component_group:str) -> None:
+        super().__init__(data, name, component_group)

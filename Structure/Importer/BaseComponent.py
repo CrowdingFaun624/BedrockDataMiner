@@ -13,7 +13,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
     class_name = "Base"
     my_capabilities = Capabilities.Capabilities(is_base=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or StructureComponent", True, (str, dict)),
         TypeVerifier.TypedDictKeyTypeVerifier("imports", "a list", False, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
             TypeVerifier.TypedDictKeyTypeVerifier("from", "a str", True, str),
             TypeVerifier.TypedDictKeyTypeVerifier("components", "a dict", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
@@ -22,12 +22,12 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
             ), list, "a dict", "a list")),
         ), list, "a dict", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
     )
 
-    def __init__(self, data:ComponentTyping.BaseComponentTypedDict, name:str) -> None:
-        super().__init__(name)
+    def __init__(self, data:ComponentTyping.BaseComponentTypedDict, name:str, component_group:str) -> None:
+        super().__init__(data, name, component_group)
         self.verify_arguments(data, name)
 
         self.structure_name = data["name"]
@@ -38,6 +38,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         self.fields.extend([self.subcomponent_field, self.normalizer_field])
 
     def create_final(self) -> None:
+        super().create_final()
         self.final = StructureBase.StructureBase(
             component_name=self.name,
             structure_name=self.structure_name,

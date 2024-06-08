@@ -1,5 +1,6 @@
-from typing import TYPE_CHECKING, Callable, Sequence
+from typing import TYPE_CHECKING, Callable
 
+import Structure.Importer.ComponentTyping as ComponentTyping
 import Structure.Importer.Field.Field as Field
 import Utilities.Exceptions as Exceptions
 
@@ -18,16 +19,23 @@ class OptionalFunctionField(Field.Field):
         self.function:Callable|None = None
         self.has_set_function = False
 
-    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], imported_components:dict[str,dict[str,"Component.Component"]], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(
+        self,
+        source_component:"Component.Component",
+        components:dict[str,"Component.Component"],
+        imported_components:dict[str,dict[str,"Component.Component"]],
+        functions:dict[str,Callable],
+        create_component_function:ComponentTyping.CreateComponentFunction,
+    ) -> tuple[list["Component.Component"],list["Component.Component"]]:
         self.has_set_function = True
         if self.function_name is None:
             self.function = None
         else:
             function = functions.get(self.function_name)
             if function is None:
-                raise Exceptions.ComponentUnrecognizedFunctionError(self.function_name, "%s \"%s\"" % (component_class_name, component_name))
+                raise Exceptions.ComponentUnrecognizedFunctionError(self.function_name, source_component)
             self.function = function
-        return []
+        return [], []
 
     def get_function(self) -> Callable|None:
         '''

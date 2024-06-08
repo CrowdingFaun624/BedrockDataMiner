@@ -19,8 +19,8 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
     )
 
-    def __init__(self, data:ComponentTyping.NormalizerTypedDict, name:str) -> None:
-        super().__init__(name)
+    def __init__(self, data:ComponentTyping.NormalizerTypedDict, name:str, component_group:str) -> None:
+        super().__init__(data, name, component_group)
         self.verify_arguments(data, name)
 
         self.dependencies = data.get("dependencies", [])
@@ -31,6 +31,7 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
         self.fields.extend([self.function_field])
 
     def create_final(self) -> None:
+        super().create_final()
         self.final = Normalizer.Normalizer(self.function_field.get_function(), self.dependencies)
 
     def check(self) -> list[Exception]:

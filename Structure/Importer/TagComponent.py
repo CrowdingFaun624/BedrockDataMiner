@@ -14,13 +14,14 @@ class TagComponent(Component.Component[str]):
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
     )
 
-    def __init__(self, data: ComponentTyping.TagTypedDict, name: str) -> None:
-        super().__init__(name)
+    def __init__(self, data: ComponentTyping.TagTypedDict, name: str, component_group:str) -> None:
+        super().__init__(data, name, component_group)
         self.verify_arguments(data, name)
 
         self.final:str|None = None
 
     def create_final(self) -> None:
+        super().create_final()
         self.final = self.name
 
     def __hash__(self) -> int:

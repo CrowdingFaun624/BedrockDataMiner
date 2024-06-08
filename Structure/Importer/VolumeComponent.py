@@ -20,19 +20,19 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent[VolumeStruct
     my_capabilities = Capabilities.Capabilities(is_group=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("position_key", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("print_additional_data", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("state_key", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
-    def __init__(self, data:ComponentTyping.VolumeTypedDict, name: str) -> None:
-        super().__init__(name)
+    def __init__(self, data:ComponentTyping.VolumeTypedDict, name: str, component_group:str) -> None:
+        super().__init__(data, name, component_group)
         self.verify_arguments(data, name)
 
         self.field = data.get("field", "block")
@@ -57,6 +57,7 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent[VolumeStruct
         return [] if subcomponent is None else [subcomponent]
 
     def create_final(self) -> None:
+        super().create_final()
         self.final_structure = VolumeStructure.VolumeStructure(
             name=self.name,
             field=self.field,

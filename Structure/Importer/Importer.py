@@ -1,5 +1,6 @@
 import json
 import traceback
+from collections import deque
 
 import Structure.Importer.BaseComponent as BaseComponent
 import Structure.Importer.CacheComponent as CacheComponent
@@ -41,6 +42,8 @@ component_types:list[type[Component.Component]] = [
     TagComponent.TagComponent,
 ]
 
+component_types_dict:dict[str,type[Component.Component]] = {component_type.class_name: component_type for component_type in component_types}
+
 structure_file_type_verifier = TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
     TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
     loose=True
@@ -63,17 +66,23 @@ def get_unused_components(base_component:BaseComponent.BaseComponent, components
         if component not in visited_nodes: output.append(component)
     return output
 
+def create_in_line_component(component_data:ComponentTyping.ComponentTypedDicts, parent_component:Component.Component) -> Component.Component:
+    component_name = parent_component.get_in_line_component_name()
+    component_type = component_types_dict.get(component_data["type"])
+    if component_type is None:
+        raise Exceptions.UnrecognizedComponentTypeError(component_data["type"], component_name, "(Must be one of [%s])" % (", ".join(component.class_name for component in component_types),))
+    component = component_type(component_data, component_name, parent_component.component_group)
+    return component
+
 def create_components(name:str, data:ComponentTyping.StructureFileType) -> dict[str,Component.Component]:
     '''Returns a list of BaseComponents and a dict of all Components.'''
     components:dict[str,Component.Component] = {}
     for component_name, component_data in data.items():
-        for component_type in component_types:
-            if component_type.class_name == component_data["type"]:
-                component = component_type(component_data, component_name) # type:ignore All subclasses have this sort of __init__.
-                components[component_name] = component
-                break
-        else:
-            raise Exceptions.UnrecognizedComponentTypeError(component_data["type"], component_name, "(Must be one of [%s])" % (", ".join(component_type.class_name for component_Type in component_types),))
+        component_type = component_types_dict.get(component_data["type"])
+        if component_type is None:
+            raise Exceptions.UnrecognizedComponentTypeError(component_data["type"], component_name, "(Must be one of [%s])" % (", ".join(component.class_name for component in component_types),))
+        component = component_type(component_data, component_name, name)
+        components[component_name] = component
     return components
 
 def do_imports(all_components:dict[str,dict[str,Component.Component]]) -> dict[str,dict[str,dict[str,Component.Component]]]:
@@ -101,6 +110,23 @@ def get_file(name:str) -> ComponentTyping.StructureFileType:
     with open(FileManager.ASSETS_DIRECTORY.joinpath(name + ".json"), "rt") as f:
         return json.load(f)
 
+def propagate_variables(all_components:dict[str,dict[str,Component.Component]]) -> None:
+    all_components_flat:list[Component.Component] = []
+    all_components_flat_memo:set[Component.Component] = set()
+    for components in all_components.values():
+        for component in components.values(): all_components_flat.extend(component.get_all_descendants(all_components_flat_memo))
+    components_queue = deque(all_components_flat) # components_queue and unvisited_components should mirror each other
+    unvisited_components = all_components_flat_memo # the set of Components that need to be updated or re-updated.
+    while len(components_queue) > 0:
+        component = components_queue.popleft()
+        unvisited_components.remove(component)
+        component_has_changed = component.propagate_variables()
+        if component_has_changed:
+            for parent_component in component.parents:
+                if parent_component not in unvisited_components:
+                    unvisited_components.add(parent_component)
+                    components_queue.append(parent_component)
+
 def parse_all_structures() -> dict[str,StructureBase.StructureBase]:
     functions = StructureFunctions.functions
     all_components:dict[str,dict[str,Component.Component]] = {}
@@ -112,13 +138,16 @@ def parse_all_structures() -> dict[str,StructureBase.StructureBase]:
 
     component_imports = do_imports(all_components)
     for name, components in all_components.items():
-        for component in components.values(): component.set_component(components, component_imports[name], functions)
-    for name, components in all_components.items():
-        for component in components.values(): component.propagate_variables()
+        for component in components.values(): component.set_component(components, component_imports[name], functions, create_in_line_component)
+
+    propagate_variables(all_components)
+
     for name, components in all_components.items():
         for component in components.values(): component.create_final()
+
     for name, components in all_components.items():
         for component in components.values(): component.link_finals()
+
     exceptions:list[Exception] = []
     for name, components, in all_components.items():
         for component in components.values(): exceptions.extend(component.check())

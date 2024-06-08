@@ -20,19 +20,19 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("imports", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-            TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or None", False, (str, type(None))),
+            TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructroidComponent, or None", False, (str, dict, type(None))),
             TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         ), "a dict", "a str", "a dict")),
     )
 
-    def __init__(self, data:ComponentTyping.KeymapComponentTypedDict, name:str) -> None:
-        super().__init__(name)
+    def __init__(self, data:ComponentTyping.KeymapComponentTypedDict, name:str, component_group:str) -> None:
+        super().__init__(data, name, component_group)
         self.verify_arguments(data, name)
 
         self.field = data.get("field", "field")
@@ -49,6 +49,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.fields.extend([self.import_field, self.tags_for_all_field, self.keys, self.normalizer_field])
 
     def create_final(self) -> None:
+        super().create_final()
         self.final = KeymapStructure.KeymapStructure(
             name=self.name,
             field=self.field,
@@ -67,4 +68,5 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         )
 
     def finalize(self) -> None:
+        super().finalize()
         self.get_final().finalize()

@@ -1,7 +1,9 @@
-from typing import Callable, Sequence, TypeVar
+import enum
+from typing import Callable, TypeVar, cast
 
 import Structure.Importer.Component as Component
-import Structure.Importer.Pattern as Capabilities
+import Structure.Importer.ComponentTyping as ComponentTyping
+import Structure.Importer.Pattern as Pattern
 import Utilities.Exceptions as Exceptions
 
 
@@ -14,26 +16,53 @@ def get_keys_strs(is_capital:bool, keys:list[str|int]) -> str:
 
 a = TypeVar("a")
 
+
+class InLinePermissions(enum.Enum):
+    "Use when creating a Field to specify if it's allowed to have in-line Components."
+    in_line = 0
+    "In-line Components are allowed."
+    mixed = 1
+    "Both in-line and reference Components are allowed."
+    reference = 2
+    "Only reference Components are allowed."
+
 def choose_component(
-        name:str,
-        required_properties:Capabilities.Pattern[a],
+        component_data:str|ComponentTyping.ComponentTypedDicts,
+        source_component:Component.Component,
+        required_properties:Pattern.Pattern[a],
         components:dict[str,"Component.Component"],
         imported_components:dict[str,dict[str,"Component.Component"]],
         keys:list[str|int],
-        component_name:str,
-        class_name:str,
-    ) -> a:
-    component = components.get(name, None)
-    if component is None:
-        for library in imported_components.values():
-            component = library.get(name, None)
-            if component is not None:
-                break
-    if component is None:
-        raise Exceptions.UnrecognizedComponentError(name, "%s%s \"%s\"" % (get_keys_strs(False, keys), class_name, component_name), "(should have %r)" % (required_properties,))
+        create_component_function:ComponentTyping.CreateComponentFunction,
+    ) -> tuple[a,bool]:
+    '''
+    Finds a Component with the same name and properties if `component_data` is a str.
+    If `component_data` is a dict, it creates a new in-line Component using the `create_component_function`.
+    Returns the Component and a bool specifying if the Component is in-line.
+    :component_data: The Component name or dictionary of Component data.
+    :source_component: The Component referring to the given subcomponent name or subcomponent.
+    :required_properties: The Pattern the Component must follow.
+    :components: A dict of all Components in this Component group.
+    :imported_components: a dict of dicts of all Components from each Component Group.
+    :keys: The path through the source Component to get to this Component.
+    :create_component_function: The function used to create new in-line Components.
+    '''
+    if isinstance(component_data, str):
+        is_in_line = False
+        component = components.get(component_data, None)
+        if component is None:
+            for library in imported_components.values():
+                component = library.get(component_data, None)
+                if component is not None:
+                    break
+        if component is None:
+            raise Exceptions.UnrecognizedComponentError(component_data, "%s%r" % (get_keys_strs(False, keys), source_component), "(should have %r)" % (required_properties,))
+    else:
+        is_in_line = True
+        component = create_component_function(component_data, source_component)
     if component.my_capabilities not in required_properties:
-        raise Exceptions.InvalidComponentError(component, "%s \"%s\"" % (class_name, component_name), required_properties, component.my_capabilities)
-    return component # type: ignore
+        raise Exceptions.InvalidComponentError(component, source_component, required_properties, component.my_capabilities)
+    return cast(a, component), is_in_line
 
 class Field():
     '''Abstract class of Fields. Fields are a modular way to manage the data of Components.'''
@@ -44,16 +73,24 @@ class Field():
         '''
         self.error_path = path
 
-    def set_field(self, component_name:str, component_class_name:str, components:dict[str,"Component.Component"], imported_components:dict[str,dict[str,"Component.Component"]], functions:dict[str,Callable]) -> Sequence["Component.Component"]:
+    def set_field(
+        self,
+        source_component:"Component.Component",
+        components:dict[str,"Component.Component"],
+        imported_components:dict[str,dict[str,"Component.Component"]],
+        functions:dict[str,Callable],
+        create_component_function:ComponentTyping.CreateComponentFunction,
+    ) -> tuple[list["Component.Component"],list["Component.Component"]]:
         '''
-        Links this Component to other Components.
-        :component_name: The name of this Component.
-        :component_class_name: the `class_name` attribute of this Component.
+        Links this Component to other Components. Returns a list of all children Components (including in-line Components) as well as a list of all in-line Components.
+        Fields are not responsible for calling `set_component` on in-line Components.
+        :source_component: The Component that owns this Field.
         :components: A dictionary of all Components and with the keys as their names.
         :imported_components: A dictionary with keys of the Component group and values of the imported components from that group.
         :functions: A dictionary of functions that is provided by the importer.
+        :create_component_function: The function used to create in-line Components.
         '''
-        return []
+        return [], []
 
     def resolve(self) -> None:
         '''
@@ -61,9 +98,10 @@ class Field():
         '''
         ...
 
-    def check(self, component_name:str, component_class_name:str) -> list[Exception]:
+    def check(self, source_component:"Component.Component") -> list[Exception]:
         '''
         Make sure that this Component's types are all in order; no error could occur.
+        :source_component: The Component that owns this Field.
         '''
         return []
 
