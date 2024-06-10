@@ -27,6 +27,7 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
     class_name = "DataMinerCollection"
     my_capabilities = Capabilities.Capabilities(is_dataminer_collection=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("structure", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool),

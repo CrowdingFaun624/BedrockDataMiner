@@ -14,7 +14,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
     my_capabilities = Capabilities.Capabilities(is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructroidComponent or None", True, (str, dict, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a list or str", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("cache_check_all_types", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("cache_normalize", "a bool", False, bool),

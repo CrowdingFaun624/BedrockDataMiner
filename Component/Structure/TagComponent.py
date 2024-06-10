@@ -11,7 +11,7 @@ class TagComponent(Component.Component[str]):
     my_capabilities = Capabilities.Capabilities(is_tag=True)
     children_has_normalizer = False
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
     def __init__(self, data: ComponentTyping.TagTypedDict, name: str, component_group:str) -> None:

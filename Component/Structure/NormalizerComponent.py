@@ -16,7 +16,7 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("function_name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
     def __init__(self, data:ComponentTyping.NormalizerTypedDict, name:str, component_group:str) -> None:
