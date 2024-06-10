@@ -6,7 +6,7 @@ import Utilities.Exceptions as Exceptions
 import Version.Version as Version
 
 if TYPE_CHECKING:
-    import DataMiner.DataMiner as DataMiner
+    import DataMiner.DataMinerCollection as DataMinerCollection
 
 IN = TypeVar("IN")
 OUT = TypeVar("OUT")
@@ -35,7 +35,7 @@ class Normalizer(Generic[IN, OUT]):
 
 class NormalizerDependencies():
 
-    def __init__(self, data:dict[tuple[Version.Version, str], Any], dataminer_collections:list["DataMiner.DataMinerCollection"]):
+    def __init__(self, data:dict[tuple[Version.Version, str], Any], dataminer_collections:list["DataMinerCollection.DataMinerCollection"]):
         '''There should only be one data object that is shared between all NormalizerDependencies, or only one NormalizerDependencies object.
         The data is a dictionary of tuples of a version and a dataminer name, and the corresponding data.'''
         self.data = data

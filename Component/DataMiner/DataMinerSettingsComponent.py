@@ -8,7 +8,7 @@ import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
-import DataMiner.DataMiner as DataMiner
+import DataMiner.DataMinerSettings as DataMinerSettings
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 DEPENDENCY_PATTERN:Pattern.Pattern["DataMinerCollectionComponent.DataMinerCollectionComponent"] = Pattern.Pattern([{"is_dataminer_collection": True}])
 
-class DataMinerSettingsComponent(Component.Component[DataMiner.DataMinerSettings]):
+class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMinerSettings]):
 
     class_name_article = "a DataMinerSettings"
     class_name = "DataMinerSettings"
@@ -54,7 +54,7 @@ class DataMinerSettingsComponent(Component.Component[DataMiner.DataMinerSettings
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = DataMiner.DataMinerSettings(
+        self.final = DataMinerSettings.DataMinerSettings(
             start_version_str=self.old,
             end_version_str=self.new,
             files=[] if self.files is None else self.files,

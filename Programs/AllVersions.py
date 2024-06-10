@@ -1,6 +1,6 @@
 import traceback
 
-import DataMiner.DataMiner as DataMiner
+import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMiners as DataMiners
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
@@ -9,7 +9,7 @@ import Version.VersionParser as VersionParser
 
 STRUCTURE_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
 
-def datamine_version(version:Version.Version, all_dataminers:dict[str,DataMiner.DataMinerCollection], print_messages:bool=True) -> None:
+def datamine_version(version:Version.Version, all_dataminers:dict[str,DataMinerCollection.DataMinerCollection], print_messages:bool=True) -> None:
     dataminers = DataMiners.get_dataminable_dataminers(version, all_dataminers)
     already_files = set(DataMiners.currently_has_data_files_from(version))
     needed_files = [dataminer for dataminer in dataminers if dataminer not in already_files]

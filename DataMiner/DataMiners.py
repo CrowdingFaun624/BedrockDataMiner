@@ -1,7 +1,7 @@
 import traceback
 
 import Component.Importer as Importer
-import DataMiner.DataMiner as DataMiner
+import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import Structure.StructureEnvironment as StructureEnvironment
 import Version.Version as Version
@@ -12,7 +12,7 @@ dataminers = list(Importer.dataminer_collections.values())
 SINGLE_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.datamining)
 MANY_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
 
-def get_dataminable_dataminers(version:Version.Version, all_dataminers:dict[str,DataMiner.DataMinerCollection]) -> list[DataMiner.DataMinerCollection]:
+def get_dataminable_dataminers(version:Version.Version, all_dataminers:dict[str,DataMinerCollection.DataMinerCollection]) -> list[DataMinerCollection.DataMinerCollection]:
     '''
     Returns the names of all data files that this Version supports.
     :version: The version to test.
@@ -21,22 +21,22 @@ def get_dataminable_dataminers(version:Version.Version, all_dataminers:dict[str,
     output = [dataminer for dataminer in dataminers if dataminer.supports_version(version, all_dataminers)]
     return output
 
-def currently_has_data_files_from(version:Version.Version) -> list[DataMiner.DataMinerCollection]:
+def currently_has_data_files_from(version:Version.Version) -> list[DataMinerCollection.DataMinerCollection]:
     return [dataminer for dataminer in dataminers if dataminer.get_data_file_path(version).exists()]
 
-def get_dataminer_order(version:Version.Version, unordered_dataminers:list[DataMiner.DataMinerCollection]) -> list[DataMiner.DataMinerCollection]:
+def get_dataminer_order(version:Version.Version, unordered_dataminers:list[DataMinerCollection.DataMinerCollection]) -> list[DataMinerCollection.DataMinerCollection]:
     '''
     Sorts the dataminers such that they can be completed in order. Does not change the original list.
     :unordered_dataminers: The unordered list of DataMinerCollections to sort.
     '''
-    ordered_dataminers:list[DataMiner.DataMinerCollection] = []
-    already_added:set[DataMiner.DataMinerCollection] = set()
+    ordered_dataminers:list[DataMinerCollection.DataMinerCollection] = []
+    already_added:set[DataMinerCollection.DataMinerCollection] = set()
     for dataminer in unordered_dataminers:
         if dataminer not in already_added:
             resolve_dataminer_order(ordered_dataminers, already_added, dataminer, version)
     return ordered_dataminers
 
-def resolve_dataminer_order(dataminers:list[DataMiner.DataMinerCollection], already_added:set[DataMiner.DataMinerCollection], current_dataminer:DataMiner.DataMinerCollection, version:Version.Version) -> None:
+def resolve_dataminer_order(dataminers:list[DataMinerCollection.DataMinerCollection], already_added:set[DataMinerCollection.DataMinerCollection], current_dataminer:DataMinerCollection.DataMinerCollection, version:Version.Version) -> None:
     for dependency in current_dataminer.get_version(version).dependencies:
         if dependency not in already_added:
             resolve_dataminer_order(dataminers, already_added, dependency, version)
@@ -45,13 +45,13 @@ def resolve_dataminer_order(dataminers:list[DataMiner.DataMinerCollection], alre
 
 def run(
         version:Version.Version,
-        dataminer_collections:list[DataMiner.DataMinerCollection],
+        dataminer_collections:list[DataMinerCollection.DataMinerCollection],
         structure_environment:StructureEnvironment.StructureEnvironment,
-        all_dataminers:dict[str,DataMiner.DataMinerCollection],
+        all_dataminers:dict[str,DataMinerCollection.DataMinerCollection],
         *,
         recalculate_everything:bool=False,
         print_messages:bool=False
-    ) -> list[tuple[DataMiner.DataMinerCollection, Exception]]:
+    ) -> list[tuple[DataMinerCollection.DataMinerCollection, Exception]]:
     '''
     Runs and stores the output of multiple DataMiners. Returns the DataMinerCollections that it failed to datamine and the corresponding exception.
     :version: The Version to run the DataMiners on.
@@ -77,7 +77,7 @@ def run(
                 dataminer_environment.dependency_data.set_item(dataminer_order[i].name, dataminer_order[i].get_data_file(version))
                 del dataminer_order[i]
             else: i += 1
-    failure_dataminers:list[tuple[DataMiner.DataMinerCollection, Exception]] = []
+    failure_dataminers:list[tuple[DataMinerCollection.DataMinerCollection, Exception]] = []
     failure_dataminers_set:set[str] = set()
     for dataminer_collection in dataminer_order:
         try:
@@ -116,7 +116,7 @@ def user_interface() -> None:
         dataminable_dataminers_set = set(dataminers)
     else:
         versions = [version_names[version]]
-        dataminable_dataminers_set:set[DataMiner.DataMinerCollection] = set()
+        dataminable_dataminers_set:set[DataMinerCollection.DataMinerCollection] = set()
         for version in versions:
             dataminable_dataminers_set.update(get_dataminable_dataminers(version, all_dataminers_dict))
         dataminable_file_names = sorted(dataminer.name for dataminer in dataminable_dataminers_set)

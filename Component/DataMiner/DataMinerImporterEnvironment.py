@@ -5,13 +5,14 @@ from pathlib2 import Path
 import Component.Component as Component
 import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
 import Component.ImporterEnvironment as ImporterEnvironment
-import DataMiner.DataMiner as DataMiner
+import DataMiner.DataMinerCollection as DataMinerCollection
+import DataMiner.DataMinerSettings as DataMinerSettings
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Version.Version as Version
 
 
-class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,DataMiner.DataMinerCollection]]):
+class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,DataMinerCollection.DataMinerCollection]]):
 
     assume_type = DataMinerCollectionComponent.DataMinerCollectionComponent.class_name
 
@@ -24,7 +25,7 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
     def get_component_group_name(self, file_path:Path) -> str:
         return "dataminer_collections"
 
-    def get_dependencies(self, dataminer_settings:DataMiner.DataMinerSettings, dataminer_settings_dict:dict[DataMiner.DataMinerCollection,DataMiner.DataMinerSettings], already:set[str]) -> list[str]:
+    def get_dependencies(self, dataminer_settings:DataMinerSettings.DataMinerSettings, dataminer_settings_dict:dict[DataMinerCollection.DataMinerCollection,DataMinerSettings.DataMinerSettings], already:set[str]) -> list[str]:
         if dataminer_settings.get_name() in already:
             return [dataminer_settings.get_name()]
         already.add(dataminer_settings.get_name())
@@ -34,7 +35,7 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
             duplicated_dataminer_settings.extend(self.get_dependencies(dataminer_settings_dict[dependency], dataminer_settings_dict, already_copy))
         return duplicated_dataminer_settings
 
-    def check_for_loops(self, used_versions:set[Version.Version], dataminer_collections:list[DataMiner.DataMinerCollection]) -> list[Exception]:
+    def check_for_loops(self, used_versions:set[Version.Version], dataminer_collections:list[DataMinerCollection.DataMinerCollection]) -> list[Exception]:
         '''Raises an error if a loop exists in any part.'''
         versions = sorted(used_versions)
         exceptions:list[Exception] = []
@@ -46,7 +47,7 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
                     exceptions.append(Exceptions.DataMinerSettingsImporterLoopError(dataminer_settings, duplicated_datminer_settings))
         return exceptions
 
-    def check(self, output: dict[str,DataMiner.DataMinerCollection], other_outputs:dict[str,Any]) -> list[Exception]:
+    def check(self, output: dict[str,DataMinerCollection.DataMinerCollection], other_outputs:dict[str,Any]) -> list[Exception]:
         exceptions = super().check(output, other_outputs)
         used_versions:set[Version.Version] = set()
         for dataminer_collection in output.values():

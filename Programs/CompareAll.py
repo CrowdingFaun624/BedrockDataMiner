@@ -2,6 +2,7 @@ import traceback
 from typing import Generator, Iterable, TypeVar
 
 import DataMiner.DataMiner as DataMiner
+import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMiners as DataMiners
 import Structure.Normalizer as Normalizer
 import Structure.StructureEnvironment as StructureEnvironment
@@ -29,14 +30,14 @@ def pairs(_list:Iterable[PairsType]) -> Generator[tuple[PairsType,PairsType], No
 def compare(
         version1:Version.Version|None,
         version2:Version.Version,
-        dataminer_collection:DataMiner.DataMinerCollection,
+        dataminer_collection:DataMinerCollection.DataMinerCollection,
         undataminable_versions_between:list[Version.Version],
         normalizer_dependencies:Normalizer.NormalizerDependencies,
     ) -> None:
     dataminer_collection.compare(version1, version2, undataminable_versions_between, normalizer_dependencies, COMPARING_ENVIRONMENT)
 
 def compare_all_of(
-        dataminer_collection:DataMiner.DataMinerCollection,
+        dataminer_collection:DataMinerCollection.DataMinerCollection,
         versions:list[Version.Version],
         exception_holder:dict[str,tuple[Exception,Version.Version|None,Version.Version|None]|bool],
         normalizer_dependencies:Normalizer.NormalizerDependencies,
@@ -75,7 +76,7 @@ def compare_all_of(
     finally:
         dataminer_collection.clear_caches()
 
-def select_dataminers(dataminers:list["DataMiner.DataMinerCollection"]) -> list["DataMiner.DataMinerCollection"]:
+def select_dataminers(dataminers:list[DataMinerCollection.DataMinerCollection]) -> list[DataMinerCollection.DataMinerCollection]:
     dataminer_names = {dataminer.name: dataminer for dataminer in dataminers}
     selected_dataminer = None
     while selected_dataminer not in dataminer_names and selected_dataminer != "*":

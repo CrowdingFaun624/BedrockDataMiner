@@ -13,7 +13,9 @@ if TYPE_CHECKING:
     import Component.ImporterEnvironment as ImporterEnvironment
     import Component.Pattern as Pattern
     import DataMiner.DataMiner as DataMiner
+    import DataMiner.DataMinerCollection as DataMinerCollection
     import DataMiner.DataMinerEnvironment as DataMinerEnvironment
+    import DataMiner.DataMinerSettings as DataMinerSettings
     import DataMiner.TagSearcher.TagSearcherDataMiner as TagSearcherDataMiner
     import Downloader.Manager as Manager
     import Structure.Difference as D
@@ -923,7 +925,7 @@ class DataMinerReadFilesError(DataMinerException):
 class DataMinerSettingsImporterLoopError(DataMinerException):
     "A DataMinerSettings has an import loop."
 
-    def __init__(self, dataminer_settings:"DataMiner.DataMinerSettings", loop_items:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer_settings:"DataMinerSettings.DataMinerSettings", loop_items:list[str], message:Optional[str]=None) -> None:
         '''
         :dataminer_settings: The initial DataMinerSettings containing the loop.
         :loop_items: A list of DataMinerCollection names contained in the loop.
@@ -1009,7 +1011,7 @@ class DataMinerSettingsVersionRangeMissing(DataMinerSettingsInvalidVersionRangeE
 class DataMinersFailureError(DataMinerException):
     "Multiple DataMiners failed to activate."
 
-    def __init__(self, version:"Version.Version", dataminer_collections:list["DataMiner.DataMinerCollection"], message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version.Version", dataminer_collections:list["DataMinerCollection.DataMinerCollection"], message:Optional[str]=None) -> None:
         '''
         :version: The Version for which datamining failed.
         :dataminer_collections: The DataMinerCollections that failed to activate on this Version.
@@ -1090,7 +1092,7 @@ class DataMinerUnregisteredDependencyError(DataMinerException):
 class MissingDataFileError(DataMinerException):
     "The data file for this DataMinerCollection is missing."
 
-    def __init__(self, dataminer:Union["DataMiner.DataMiner", "DataMiner.DataMinerSettings", "DataMiner.DataMinerCollection"], file_name:str, version:Optional["Version.Version"], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:Union["DataMiner.DataMiner", "DataMinerSettings.DataMinerSettings", "DataMinerCollection.DataMinerCollection"], file_name:str, version:Optional["Version.Version"], message:Optional[str]=None) -> None:
         '''
         :dataminer_collection: The DataMiner, DataMinerSettings, or DataMinerCollection that is missing its file.
         :file_name: The name of the file that's missing.
@@ -1170,7 +1172,7 @@ class SoundFilesMetadataError(DataMinerException):
 class TagSearcherDependencyError(DataMinerException):
     "A tag exists in a DataMiner that is not a dependency of this one."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", tag:str, dataminer_collection:"DataMiner.DataMinerCollection", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"DataMiner.DataMiner", tag:str, dataminer_collection:"DataMinerCollection.DataMinerCollection", message:Optional[str]=None) -> None:
         '''
         :dataminer: The DataMiner that attempted to access the tag.
         :tag: The tag that was found in an inaccessible DataMinerCollection.

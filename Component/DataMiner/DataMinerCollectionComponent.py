@@ -9,7 +9,7 @@ import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
 import Component.Structure.Field.StructureField as StructureField
-import DataMiner.DataMiner as DataMiner
+import DataMiner.DataMinerCollection as DataMinerCollection
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -21,7 +21,7 @@ def glue_adjacent(iter:list[a]) -> Generator[tuple[a, a], None, None]:
     for i in range(0, len(iter) - 1, 2):
         yield iter[i], iter[i + 1]
 
-class DataMinerCollectionComponent(Component.Component[DataMiner.DataMinerCollection]):
+class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataMinerCollection]):
 
     class_name_article = "a DataMinerCollection"
     class_name = "DataMinerCollection"
@@ -54,7 +54,7 @@ class DataMinerCollectionComponent(Component.Component[DataMiner.DataMinerCollec
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = DataMiner.DataMinerCollection(
+        self.final = DataMinerCollection.DataMinerCollection(
             file_name=self.file_name,
             name=self.name,
         )

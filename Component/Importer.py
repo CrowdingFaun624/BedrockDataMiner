@@ -24,9 +24,9 @@ import Component.Structure.StructureImporterEnvironment as StructureImporterEnvi
 import Component.Structure.TagComponent as TagComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
 import Component.Structure.VolumeComponent as VolumeComponent
-import DataMiner.DataMiner as DataMiner
-import Structure.StructureFunctions as StructureFunctions
+import DataMiner.DataMinerCollection as DataMinerCollection
 import Structure.StructureBase as StructureBase
+import Structure.StructureFunctions as StructureFunctions
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -172,5 +172,5 @@ def parse_all_component_groups() -> dict[str,Any]:
 
 all_component_groups = parse_all_component_groups()
 
-dataminer_collections:dict[str,DataMiner.DataMinerCollection] = all_component_groups["dataminer_collections"]
+dataminer_collections:dict[str,DataMinerCollection.DataMinerCollection] = all_component_groups["dataminer_collections"]
 structures:dict[str,StructureBase.StructureBase] = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}
