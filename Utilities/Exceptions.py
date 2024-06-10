@@ -688,6 +688,25 @@ class UnrecognizedComponentError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class UnrecognizedComponentGroupError(ComponentException):
+    "A Component group is unrecognized"
+    
+    def __init__(self, component_group_str:str, source_str:str, message:Optional[str]=None) -> None:
+        '''
+        :component_group_str: The name of the unrecognized Component group.
+        :source_str: The object that refers to this Component group.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component_group_str, source_str, message)
+        self.component_group_str = component_group_str
+        self.source_str = source_str
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "Component group \"%s\", as referenced by %s, is unrecognized" % (self.component_group_str, self.source_str)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class UnrecognizedComponentTypeError(ComponentException):
     "A Component type is unrecognized."
 
