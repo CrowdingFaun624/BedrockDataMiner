@@ -4,6 +4,8 @@ ALLOWED_PROPERTIES = set([
     "has_importable_keys", # i.e. Keymap's importable keys
     "has_keys",
     "is_base",
+    "is_dataminer_collection",
+    "is_dataminer_settings",
     "is_function",
     "is_group",
     "is_structure",

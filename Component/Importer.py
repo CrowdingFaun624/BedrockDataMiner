@@ -7,6 +7,9 @@ from pathlib2 import Path
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
+import Component.DataMiner.DataMinerImporterEnvironment as DataMinerImporterEnvironment
+import Component.DataMiner.DataMinerSettingsComponent as DataMinerSettingsComponent
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.Structure.BaseComponent as BaseComponent
 import Component.Structure.CacheComponent as CacheComponent
@@ -21,13 +24,17 @@ import Component.Structure.StructureImporterEnvironment as StructureImporterEnvi
 import Component.Structure.TagComponent as TagComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
 import Component.Structure.VolumeComponent as VolumeComponent
+import DataMiners.DataMiner as DataMiner
 import Structure.StructureFunctions as StructureFunctions
+import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 component_types:list[type[Component.Component]] = [
     BaseComponent.BaseComponent,
     CacheComponent.CacheComponent,
+    DataMinerCollectionComponent.DataMinerCollectionComponent,
+    DataMinerSettingsComponent.DataMinerSettingsComponent,
     DictComponent.DictComponent,
     GroupComponent.GroupComponent,
     KeymapComponent.KeymapComponent,
@@ -46,13 +53,14 @@ component_types:list[type[Component.Component]] = [
 ]
 
 importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] = [
+    DataMinerImporterEnvironment.DataMinerImporterEnvironment,
     StructureImporterEnvironment.StructureImporterEnvironment,
 ]
 
 component_types_dict:dict[str,type[Component.Component]] = {component_type.class_name: component_type for component_type in component_types}
 
 component_group_type_verifier = TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
-    TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     loose=True
 ), "a dict", "a str", "a dict")
 
@@ -65,6 +73,7 @@ def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, 
     if component_type is None:
         raise Exceptions.UnrecognizedComponentTypeError(component_type_str, component_name, "(Must be one of [%s])" % (", ".join(component.class_name for component in component_types),))
     component = component_type(component_data, component_name, parent_component.component_group)
+    component.inline_parent = parent_component
     return component
 
 def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, importer_environment:ImporterEnvironment.ImporterEnvironment) -> dict[str,Component.Component]:
@@ -102,7 +111,7 @@ def propagate_variables(all_components:dict[str,dict[str,Component.Component]]) 
                     unvisited_components.add(parent_component)
                     components_queue.append(parent_component)
 
-def parse_all_structures() -> dict[str,Any]:
+def parse_all_component_groups() -> dict[str,Any]:
     functions = StructureFunctions.functions
     all_components:dict[str,dict[str,Component.Component]] = {}
     already_paths:dict[Path,ImporterEnvironment.ImporterEnvironment] = {}
@@ -153,6 +162,15 @@ def parse_all_structures() -> dict[str,Any]:
         for unused_component in unused_components:
             print("Warning: Unused %r in %s." % (unused_component, name))
         output[name] = importer_environment_output
+    
+    exceptions:list[Exception] = []
+    for name, component_group_output in output.items():
+        importer_environment = importer_environments[name]
+        exceptions.extend(importer_environment.check(component_group_output, output))
+    
     return output
 
-structures = parse_all_structures()
+all_component_groups = parse_all_component_groups()
+
+dataminer_collections:dict[str,DataMiner.DataMinerCollection] = all_component_groups["dataminer_collections"]
+structures:dict[str,StructureBase.StructureBase] = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}

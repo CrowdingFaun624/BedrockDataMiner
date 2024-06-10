@@ -31,6 +31,13 @@ class Component(Generic[a]):
         self.fields:list["Field.Field"] = []
         self.inline_components:list[Component]|None = None
         self.inline_component_count = 0
+        self.inline_parent:Component|None = None
+
+    def get_inline_parent(self) -> "Component":
+        "Returns the parent of this Component if it is an inline Component. If it isn't, an error is raised."
+        if self.inline_parent is None:
+            raise Exceptions.AttributeNoneError("inline_parent", self)
+        return self.inline_parent
 
     def get_inline_component_name(self) -> str:
         output = self.name + ".%i" % (self.inline_component_count)
@@ -61,7 +68,7 @@ class Component(Generic[a]):
             component.parents.append(self)
 
     def verify_arguments(self, data:Mapping[str,Any], name:str) -> None:
-        self.type_verifier.base_verify(data, ["%s \"%s\"" % (self.class_name, name)])
+        self.type_verifier.base_verify(data, ["%s \"%s\"" % (self.class_name, name), self.component_group])
 
     def set_component(self, components:dict[str,"Component"], imported_components:dict[str,dict[str,"Component"]], functions:dict[str,Callable], create_component_function:ComponentTyping.CreateComponentFunction) -> None:
         '''Links this Component to other Components'''

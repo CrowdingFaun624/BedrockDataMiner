@@ -1,4 +1,4 @@
-from typing import Generic, Iterable, TypeVar
+from typing import Any, Generic, Iterable, TypeVar
 
 from pathlib2 import Path
 
@@ -59,6 +59,14 @@ class ImporterEnvironment(Generic[a]):
         for component in components.values():
             if component not in visited_nodes: output.append(component)
         return output
+    
+    def check(self, output:a, other_outputs:dict[str,Any]) -> list[Exception]:
+        '''
+        Make sure that this Component's types are all in order; no error could occur.
+        :output: The output that `get_output` returned.
+        :other_outputs: The outputs of all Component groups.
+        '''
+        return []
     
     def get_component_group_name(self, file_path:Path) -> str:
         '''

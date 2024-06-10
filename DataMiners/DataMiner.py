@@ -1,7 +1,7 @@
 import json
 import traceback
-from typing import (IO, Any, Callable, Literal, Mapping, NoReturn,
-                    Sequence, TypeVar, overload)
+from typing import (IO, Any, Callable, Literal, Mapping, NoReturn, Sequence,
+                    TypeVar, overload)
 
 from pathlib2 import Path
 
@@ -31,16 +31,34 @@ def str_to_version(version_str:str|None) -> Version.Version|None:
 
 class DataMinerSettings():
 
-    def __init__(self, start_version_str:str|None, end_version_str:str|None, dataminer_class:type["DataMiner"], name:str, files:list[str], dependencies:list[str]|None, kwargs:dict[str,Any]) -> None:
+    def __init__(self, start_version_str:str|None, end_version_str:str|None, files:list[str], kwargs:dict[str,Any]) -> None:
 
         self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
-        self.file_name:str|None = None
-        self.name:str|None = name
-        self.structure:StructureBase.StructureBase|None = None
-        self.dataminer_class = dataminer_class
         self.files = files
-        self.dependencies = dependencies if dependencies is not None else []
         self.kwargs = kwargs
+
+        self.file_name:str|None = None
+        self.name:str|None = None
+        self.structure:StructureBase.StructureBase|None = None
+        self.dataminer_class:type["DataMiner"]|None = None
+        self.dependencies:list["DataMinerCollection"]|None = None
+
+    def link_subcomponents(self, file_name:str, name:str, structure:StructureBase.StructureBase, dataminer_class:type["DataMiner"]|None, dependencies:list["DataMinerCollection"]) -> None:
+        self.file_name = file_name
+        self.name = name
+        self.structure = structure
+        self.dataminer_class = dataminer_class
+        self.dependencies = dependencies
+
+    def get_dependencies(self) -> list["DataMinerCollection"]:
+        if self.dependencies is None:
+            raise Exceptions.AttributeNoneError("dependencies", self)
+        return self.dependencies
+
+    def get_dataminer_class(self) -> type["DataMiner"]:
+        if self.dataminer_class is None:
+            raise Exceptions.AttributeNoneError("dataminer_class", self)
+        return self.dataminer_class
 
     def get_name(self) -> str:
         '''
@@ -74,7 +92,8 @@ class DataMiner():
         self.file_name = self.settings.get_file_name()
         self.name = self.settings.get_name()
         self.files = set(self.settings.files)
-        self.dependencies = self.settings.dependencies
+        self.dependencies = self.settings.get_dependencies()
+        self.dependencies_str = [dependency.name for dependency in self.dependencies]
         if not isinstance(self, NullDataMiner) and self.version not in self.settings.version_range:
             raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, "in DataMiner %r" % (self,))
 
@@ -240,15 +259,30 @@ class NullDataMiner(DataMiner):
 
 class DataMinerCollection():
 
-    def __init__(self, file_name:str, name:str, structure:StructureBase.StructureBase, dataminers:list[DataMinerSettings]) -> None:
-        self.dataminer_settings = dataminers
+    def __init__(self, file_name:str, name:str) -> None:
         self.name = name
-        self.structure = structure
         self.file_name = file_name
-        for dataminer in dataminers:
+
+        self.dataminer_settings:list[DataMinerSettings]|None = None
+        self.structure:StructureBase.StructureBase|None = None
+
+    def link_subcomponents(self, structure:StructureBase.StructureBase, dataminer_settings:list[DataMinerSettings]) -> None:
+        self.structure = structure
+        self.dataminer_settings = dataminer_settings
+        for dataminer in self.dataminer_settings:
             dataminer.file_name = self.file_name
             dataminer.name = self.name
             dataminer.structure = self.structure
+
+    def get_all_dataminer_settings(self) -> list[DataMinerSettings]:
+        if self.dataminer_settings is None:
+            raise Exceptions.AttributeNoneError("dataminer_settings", self)
+        return self.dataminer_settings
+
+    def get_structure(self) -> StructureBase.StructureBase:
+        if self.structure is None:
+            raise Exceptions.AttributeNoneError("structure", self)
+        return self.structure
 
     def get_data_file(self, version:Version.Version, non_exist_ok:bool=False) -> Any:
         '''Opens the data file if it exists, and raises an error if it doesn't, or returns None if `non_exist_ok` is True'''
@@ -271,16 +305,16 @@ class DataMinerCollection():
         Returns True if the given tag could potentially be in this Version.
         :tag: The tag to test for.
         '''
-        return self.structure.has_tag(tag)
+        return self.get_structure().has_tag(tag)
 
     def get_tag_paths(self, version:Version.Version, tag:str, normalizer_dependencies:Normalizer.NormalizerDependencies, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
-        if not self.structure.has_tag(tag):
+        if not self.get_structure().has_tag(tag):
             return []
         dataminer = self.get_version(version)
         if isinstance(dataminer, NullDataMiner):
             return []
         data = dataminer.get_data_file()
-        return self.structure.get_tag_paths(data, tag, version, normalizer_dependencies, environment)
+        return self.get_structure().get_tag_paths(data, tag, version, normalizer_dependencies, environment)
 
     def compare(
             self,
@@ -300,9 +334,9 @@ class DataMinerCollection():
         else:
             version1_data = self.get_data_file(version1)
             version2_data = self.get_data_file(version2)
-        report, had_changes = self.structure.comparison_report(version1_data, version2_data, version1, version2, versions_between, normalizer_dependencies, environment)
+        report, had_changes = self.get_structure().comparison_report(version1_data, version2_data, version1, version2, versions_between, normalizer_dependencies, environment)
         if store and had_changes:
-            self.structure.store(report, self.name)
+            self.get_structure().store(report, self.name)
         return report
 
     def __hash__(self) -> int:
@@ -313,42 +347,29 @@ class DataMinerCollection():
 
     def clear_caches(self) -> None:
         '''Clears all caches of this DataMinerCollection's Structure.'''
-        self.structure.clear_caches()
-
-    def get_null_dataminer_settings(self) -> DataMinerSettings:
-        '''Returns an instance of DataMinerSettings that is usable on a NullDataMiner.'''
-        output = DataMinerSettings(None, None, NullDataMiner, self.name, [], [], {})
-        output.file_name = self.file_name
-        output.name = self.name
-        output.structure = self.structure
-        return output
+        self.get_structure().clear_caches()
 
     def get_dataminer_settings(self, version:Version.Version) -> DataMinerSettings:
         '''Returns a DataMinerSettings such that `version` is in the dataminer's VersionRange'''
-        for dataminer_setting in self.dataminer_settings:
+        for dataminer_setting in self.get_all_dataminer_settings():
             if version in dataminer_setting.version_range:
                 return dataminer_setting
-        else: return self.get_null_dataminer_settings()
+        else: raise Exceptions.InvalidStateError("Version matches no DataMinerSettings!")
 
     def get_version(self, version:Version.Version) -> DataMiner:
         '''Returns a DataMiner such that `version` is in the dataminer's VersionRange.'''
-        for dataminer_setting in self.dataminer_settings:
-            if version in dataminer_setting.version_range:
-                return dataminer_setting.dataminer_class(version, dataminer_setting)
-        else: return NullDataMiner(version, self.get_null_dataminer_settings())
+        dataminer_settings = self.get_dataminer_settings(version)
+        return dataminer_settings.get_dataminer_class()(version, dataminer_settings)
 
     def supports_version(self, version:Version.Version, all_dataminers:dict[str,"DataMinerCollection"]) -> bool:
-        version_dataminer_settings:DataMinerSettings
-        for dataminer_settings in self.dataminer_settings:
-            if version in dataminer_settings.version_range:
-                version_dataminer_settings = dataminer_settings
-                break
-        else: return False
-        for version_file in version_dataminer_settings.files:
+        dataminer_settings = self.get_dataminer_settings(version)
+        if dataminer_settings.dataminer_class is NullDataMiner:
+            return False
+        for version_file in dataminer_settings.files:
             if len(version.version_files[version_file].accessors) == 0:
                 return False # cannot datamine it if its files are inaccessible
         else:
-            return all(all_dataminers[dependency].supports_version(version, all_dataminers) for dependency in version_dataminer_settings.dependencies)
+            return all(dependency.supports_version(version, all_dataminers) for dependency in dataminer_settings.get_dependencies())
 
     def get_data_file_path(self, version:Version.Version) -> Path:
         return FileManager.get_version_data_path(version.get_version_directory(), self.file_name)

@@ -1,13 +1,13 @@
 import traceback
 
+import Component.Importer as Importer
 import DataMiners.DataMiner as DataMiner
-import DataMiners.DataMinerCollectionImporter as DataMinerCollectionImporter
 import DataMiners.DataMinerEnvironment as DataMinerEnvironment
 import Structure.StructureEnvironment as StructureEnvironment
 import Version.Version as Version
 import Version.VersionParser as VersionParser
 
-dataminers = DataMinerCollectionImporter.load_dataminers()
+dataminers = list(Importer.dataminer_collections.values())
 
 SINGLE_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.datamining)
 MANY_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
@@ -24,7 +24,7 @@ def get_dataminable_dataminers(version:Version.Version, all_dataminers:dict[str,
 def currently_has_data_files_from(version:Version.Version) -> list[DataMiner.DataMinerCollection]:
     return [dataminer for dataminer in dataminers if dataminer.get_data_file_path(version).exists()]
 
-def get_dataminer_order(version:Version.Version, unordered_dataminers:list[DataMiner.DataMinerCollection], all_dataminers:dict[str,DataMiner.DataMinerCollection]) -> list[DataMiner.DataMinerCollection]:
+def get_dataminer_order(version:Version.Version, unordered_dataminers:list[DataMiner.DataMinerCollection]) -> list[DataMiner.DataMinerCollection]:
     '''
     Sorts the dataminers such that they can be completed in order. Does not change the original list.
     :unordered_dataminers: The unordered list of DataMinerCollections to sort.
@@ -33,13 +33,13 @@ def get_dataminer_order(version:Version.Version, unordered_dataminers:list[DataM
     already_added:set[DataMiner.DataMinerCollection] = set()
     for dataminer in unordered_dataminers:
         if dataminer not in already_added:
-            resolve_dataminer_order(ordered_dataminers, already_added, dataminer, version, all_dataminers)
+            resolve_dataminer_order(ordered_dataminers, already_added, dataminer, version)
     return ordered_dataminers
 
-def resolve_dataminer_order(dataminers:list[DataMiner.DataMinerCollection], already_added:set[DataMiner.DataMinerCollection], current_dataminer:DataMiner.DataMinerCollection, version:Version.Version, all_dataminers:dict[str,DataMiner.DataMinerCollection]) -> None:
+def resolve_dataminer_order(dataminers:list[DataMiner.DataMinerCollection], already_added:set[DataMiner.DataMinerCollection], current_dataminer:DataMiner.DataMinerCollection, version:Version.Version) -> None:
     for dependency in current_dataminer.get_version(version).dependencies:
-        if all_dataminers[dependency] not in already_added:
-            resolve_dataminer_order(dataminers, already_added, all_dataminers[dependency], version, all_dataminers)
+        if dependency not in already_added:
+            resolve_dataminer_order(dataminers, already_added, dependency, version)
     dataminers.append(current_dataminer)
     already_added.add(current_dataminer)
 

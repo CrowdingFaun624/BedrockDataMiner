@@ -1,5 +1,5 @@
-from typing import (TYPE_CHECKING, Callable, Literal, TypeAlias, TypedDict,
-                    Union)
+from typing import (TYPE_CHECKING, Any, Callable, Literal, TypeAlias,
+                    TypedDict, Union)
 
 from typing_extensions import NotRequired, Required
 
@@ -27,6 +27,22 @@ class CacheComponentTypedDict(TypedDict):
     cache_compare_text: NotRequired[bool]
     cache_print_text: NotRequired[bool]
     cache_compare: NotRequired[bool]
+
+class DataMinerCollectionComponentTypedDict(TypedDict):
+    type: NotRequired[Literal["DataMinerCollection"]]
+    file_name: Required[str]
+    structure: Required[str]
+    disabled: NotRequired[bool]
+    dataminers: Required[list["DataMinerSettingsComponentTypedDict"]]
+
+class DataMinerSettingsComponentTypedDict(TypedDict):
+    type: NotRequired[Literal["DataMinerSettings"]]
+    new: Required[str|None]
+    old: Required[str|None]
+    name: Required[str|None]
+    files: NotRequired[list[str]]
+    dependencies: NotRequired[list[str]]
+    parameters: NotRequired[dict[str,Any]]
 
 class DictComponentTypedDict(TypedDict):
     subcomponent: Required[str|None]
@@ -98,12 +114,12 @@ class VolumeTypedDict(TypedDict):
     subcomponent: Required[str|None]
     tags: NotRequired[str|list[str]]
     this_type: Required[str]
-    type: Required[Literal["Volume"]]
+    type: NotRequired[Literal["Volume"]]
     types: Required[str|list[str]]
 
-ComponentTypedDicts = BaseComponentTypedDict|CacheComponentTypedDict|DictComponentTypedDict|GroupComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|NbtBaseTypedDict|NormalizerTypedDict|TypeAliasTypedDict|VolumeTypedDict
-StructureComponentTypedDicts = DictComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict
-StructroidComponentTypedDicts = CacheComponentTypedDict|DictComponentTypedDict|GroupComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|VolumeTypedDict
-StructureFileType = dict[str,ComponentTypedDicts]
+ComponentTypedDicts:TypeAlias = BaseComponentTypedDict|CacheComponentTypedDict|DataMinerCollectionComponentTypedDict|DataMinerSettingsComponentTypedDict|DictComponentTypedDict|GroupComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|NbtBaseTypedDict|NormalizerTypedDict|TypeAliasTypedDict|VolumeTypedDict
+StructureComponentTypedDicts:TypeAlias = DictComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict
+StructroidComponentTypedDicts:TypeAlias = CacheComponentTypedDict|DictComponentTypedDict|GroupComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|VolumeTypedDict
+ComponentGroupFileType:TypeAlias = dict[str,ComponentTypedDicts]
 
-CreateComponentFunction:TypeAlias = Callable[[ComponentTypedDicts,"Component.Component"],"Component.Component"]
+CreateComponentFunction:TypeAlias = Callable[[ComponentTypedDicts,"Component.Component",str|None],"Component.Component"]
