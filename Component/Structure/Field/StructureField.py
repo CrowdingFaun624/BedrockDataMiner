@@ -9,10 +9,11 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Component.Component as Component
     import Component.Structure.BaseComponent as BaseComponent
+    import Structure.StructureBase as StructureBase
 
-STRUCTURE_BASE_REQUEST_PROPERTIES:Pattern.Pattern[BaseComponent.BaseComponent] = Pattern.Pattern([{"is_base": True}])
+STRUCTURE_BASE_REQUEST_PROPERTIES:Pattern.Pattern["BaseComponent.BaseComponent"] = Pattern.Pattern([{"is_base": True}])
 
-class StructureField(ComponentField.ComponentField[BaseComponent.BaseComponent]):
+class StructureField(ComponentField.ComponentField["BaseComponent.BaseComponent"]):
 
     def __init__(self, structure_str:str, path:list[str|int], *, assume_type:str|None=None) -> None:
         '''
@@ -40,3 +41,6 @@ class StructureField(ComponentField.ComponentField[BaseComponent.BaseComponent])
         self.has_reference_components = self.has_reference_components or not is_inline
         self.has_inline_components = self.has_inline_components or is_inline
         return [self.subcomponent], ([self.subcomponent] if is_inline else [])
+
+    def get_final(self) -> "StructureBase.StructureBase":
+        return self.get_component().get_final()
