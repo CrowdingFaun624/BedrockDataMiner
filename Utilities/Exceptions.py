@@ -2,17 +2,20 @@ import datetime
 from typing import (TYPE_CHECKING, Any, Callable, Container, Literal, Optional,
                     Union)
 
+from pathlib2 import Path
+
 if TYPE_CHECKING:
+    import Component.Capabilities as Capabilities
+    import Component.Component as Component
+    import Component.ComponentTyping as ComponentTyping
+    import Component.Field.Field as Field
+    import Component.ImporterEnvironment as ImporterEnvironment
+    import Component.Pattern as Pattern
     import DataMiners.DataMiner as DataMiner
     import DataMiners.DataMinerCollectionImporter as DataMinerCollectionImporter
     import DataMiners.TagSearcher.TagSearcherDataMiner as TagSearcherDataMiner
     import Downloader.Manager as Manager
     import Structure.Difference as D
-    import Structure.Importer.Capabilities as Capabilities
-    import Structure.Importer.Component as Component
-    import Structure.Importer.ComponentTyping as ComponentTyping
-    import Structure.Importer.Field.Field as Field
-    import Structure.Importer.Pattern as Pattern
     import Structure.Normalizer as Normalizer
     import Structure.Structure as Structure
     import Structure.StructureBase as StructureBase
@@ -380,6 +383,23 @@ class ComponentParseError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class ComponentTypeMissingError(ComponentException):
+    "A Component is missing the type key and there is no type assumption."
+
+    def __init__(self, component_name:str, message:Optional[str]=None) -> None:
+        '''
+        :component_name: The name of the Component with the missing type key.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component_name, message)
+        self.component_name = component_name
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Component \"%s\" is missing its type key" % (self.component_name,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class ComponentTypeRequiresComponentError(ComponentException):
     "A Component has a type that requires a Component but has no Component."
 
@@ -479,9 +499,51 @@ class GroupContainsNullSubcomponentsError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class ImporterEnvironmentNameCollisionError(ComponentException):
+    "Two Component groups have the same name."
+
+    def __init__(self, name:str, importer_environment1:"ImporterEnvironment.ImporterEnvironment", importer_environment2:"ImporterEnvironment.ImporterEnvironment", message:Optional[str]=None) -> None:
+        '''
+        :name: The name of the duplicate Component group.
+        :importer_environment1: The ImporterEnvironment that produced the first Component group with this name.
+        :importer_environment2: The ImporterEnvironment that produced the second Component group with this name.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(name, importer_environment1, importer_environment2, message)
+        self.name = name
+        self.importer_environment1 = importer_environment1
+        self.importer_environment2 = importer_environment2
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "ImporterEnvironments %r and %r both attempted to create a Component group with the name \"%s\"" % (self.importer_environment1, self.importer_environment2, self.name)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ImporterEnvironmentPathCollisionError(ComponentException):
+    "Two Component groups come from the same file."
+
+    def __init__(self, path:Path, importer_environment1:"ImporterEnvironment.ImporterEnvironment", importer_environment2:"ImporterEnvironment.ImporterEnvironment", message:Optional[str]=None) -> None:
+        '''
+        :path: The path of the duplicate Component group.
+        :importer_environment1: The ImporterEnvironment that produced the first Component group with this path.
+        :importer_environment2: The ImporterEnvironment that produced the second Component group with this path.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(path, importer_environment1, importer_environment2, message)
+        self.path = path
+        self.importer_environment1 = importer_environment1
+        self.importer_environment2 = importer_environment2
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "ImporterEnvironments %r and %r both attempted to create a Component group from the same file \"%s\"" % (self.importer_environment1, self.importer_environment2, self.path)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class InLineComponentError(ComponentException):
     "An inline Component exists where it is not allowed."
-    
+
     def __init__(self, component:"Component.Component", field:"Field.Field", subcomponent_data:Optional["ComponentTyping.ComponentTypedDicts"]=None, message:Optional[str]=None) -> None:
         '''
         :component: The Component with the disallowed inline subcomponent.
@@ -494,7 +556,7 @@ class InLineComponentError(ComponentException):
         self.field = field
         self.subcomponent_data = subcomponent_data
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "%r, %r attempted to create a disallowed inline Component" % (self.component, self.field)
         if self.message is not None: output += " %s" % (self.message,)
@@ -546,9 +608,26 @@ class InvalidComponentTypeError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class NoComponentMatchError(ComponentException):
+    "No Components match the Pattern."
+
+    def __init__(self, pattern:"Pattern.Pattern", message:Optional[str]=None) -> None:
+        '''
+        :pattern: The Pattern that does not exist in the Components.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(pattern, message)
+        self.pattern = pattern
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Cannot find any Components with %r" % (self.pattern,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class ReferenceComponentError(ComponentException):
-    "An reference Component exists where it is not allowed."
-    
+    "A reference Component exists where it is not allowed."
+
     def __init__(self, component:"Component.Component", field:"Field.Field", subcomponent_name:Optional[str]=None, message:Optional[str]=None) -> None:
         '''
         :component: The Component with the disallowed inline subcomponent.
@@ -561,7 +640,7 @@ class ReferenceComponentError(ComponentException):
         self.field = field
         self.subcomponent_name = subcomponent_name
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "%r, %r attempted to reference a disallowed reference Component" % (self.component, self.field)
         if self.subcomponent_name is not None: output += " \"%s\"" % (self.subcomponent_name,)
@@ -988,7 +1067,7 @@ class DataMinerUnrecognizedSuffixError(DataMinerException):
 
 class DataMinerUnregisteredDependencyError(DataMinerException):
     "The dependency exists, but is not listed as a dependency by this DataMiner."
-    
+
     def __init__(self, dataminer:"DataMiner.DataMiner", dependency_name:str, message:Optional[str]=None) -> None:
         '''
         :dataminer: The DataMiner attempting to access the dependency.

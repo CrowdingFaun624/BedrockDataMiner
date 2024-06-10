@@ -11,12 +11,13 @@ a = TypeVar("a", bound=Component.Component, covariant=True)
 class ComponentField(Field.Field, Generic[a]):
     '''A link to another Component.'''
 
-    def __init__(self, subcomponent_data:str|ComponentTyping.ComponentTypedDicts, pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
+    def __init__(self, subcomponent_data:str|ComponentTyping.ComponentTypedDicts, pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed, assume_type:str|None=None) -> None:
         '''
         :subcomponent_data: The name of the reference Component or data of the inline Component.
         :pattern: The Pattern used to search for Components.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
+        :assume_type: String to use as the type of an inline Component if the type key is missing from it.
         '''
         super().__init__(path)
         self.subcomponent_data = subcomponent_data
@@ -25,6 +26,7 @@ class ComponentField(Field.Field, Generic[a]):
         self.allow_inline = allow_inline
         self.has_reference_components = False
         self.has_inline_components = False
+        self.assume_type = assume_type
 
     def set_field(
         self,
@@ -34,7 +36,7 @@ class ComponentField(Field.Field, Generic[a]):
         functions:dict[str,Callable],
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list[a],list[a]]:
-        self.subcomponent, is_inline = Field.choose_component(self.subcomponent_data, source_component, self.pattern, components, imported_components, self.error_path, create_component_function)
+        self.subcomponent, is_inline = Field.choose_component(self.subcomponent_data, source_component, self.pattern, components, imported_components, self.error_path, create_component_function, self.assume_type)
         self.has_reference_components = self.has_reference_components or not is_inline
         self.has_inline_components = self.has_inline_components or is_inline
         return [self.subcomponent], ([self.subcomponent] if is_inline else [])

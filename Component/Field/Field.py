@@ -16,7 +16,6 @@ def get_keys_strs(is_capital:bool, keys:list[str|int]) -> str:
 
 a = TypeVar("a")
 
-
 class InLinePermissions(enum.Enum):
     "Use when creating a Field to specify if it's allowed to have inline Components."
     inline = 0
@@ -27,17 +26,19 @@ class InLinePermissions(enum.Enum):
     "Only reference Components are allowed."
 
 def choose_component(
-        component_data:str|ComponentTyping.ComponentTypedDicts,
+        component_data:str|ComponentTyping.ComponentTypedDicts|None,
         source_component:Component.Component,
         required_properties:Pattern.Pattern[a],
         components:dict[str,"Component.Component"],
         imported_components:dict[str,dict[str,"Component.Component"]],
         keys:list[str|int],
         create_component_function:ComponentTyping.CreateComponentFunction,
+        assume_type:str|None,
     ) -> tuple[a,bool]:
     '''
     Finds a Component with the same name and properties if `component_data` is a str.
     If `component_data` is a dict, it creates a new inline Component using the `create_component_function`.
+    If `component_data` is None, it will select the first Component that matches the `required_properties` Pattern; `imported_components` is ignored.
     Returns the Component and a bool specifying if the Component is inline.
     :component_data: The Component name or dictionary of Component data.
     :source_component: The Component referring to the given subcomponent name or subcomponent.
@@ -46,8 +47,16 @@ def choose_component(
     :imported_components: a dict of dicts of all Components from each Component Group.
     :keys: The path through the source Component to get to this Component.
     :create_component_function: The function used to create new inline Components.
+    :assume_type: What to use as the type key of an inline Component if it is missing.
     '''
-    if isinstance(component_data, str):
+    if component_data is None:
+        is_inline = False
+        for component in components.values():
+            if component.my_capabilities in required_properties:
+                break
+        else:
+            raise Exceptions.NoComponentMatchError(required_properties)
+    elif isinstance(component_data, str):
         is_inline = False
         component = components.get(component_data, None)
         if component is None:
@@ -59,7 +68,7 @@ def choose_component(
             raise Exceptions.UnrecognizedComponentError(component_data, "%s%r" % (get_keys_strs(False, keys), source_component), "(should have %r)" % (required_properties,))
     else:
         is_inline = True
-        component = create_component_function(component_data, source_component)
+        component = create_component_function(component_data, source_component, assume_type)
     if component.my_capabilities not in required_properties:
         raise Exceptions.InvalidComponentError(component, source_component, required_properties, component.my_capabilities)
     return cast(a, component), is_inline

@@ -15,10 +15,10 @@ class BaseComponentTypedDict(TypedDict):
     imports: NotRequired[list[ImportTypedDict]]
     name: Required[str]
     normalizer: NotRequired[str|list[str]]
-    type: Required[Literal["Base"]]
+    type: NotRequired[Literal["Base"]]
 
 class CacheComponentTypedDict(TypedDict):
-    type: Required[Literal["Cache"]]
+    type: NotRequired[Literal["Cache"]]
     types: Required[str|list[str]]
     subcomponent: Required[str]
     cache_check_all_types: NotRequired[bool]
@@ -35,13 +35,13 @@ class DictComponentTypedDict(TypedDict):
     field: NotRequired[str]
     measure_length: NotRequired[bool]
     normalizer: NotRequired[str|list[str]]
-    type: Required[Literal["Dict"]]
+    type: NotRequired[Literal["Dict"]]
     print_all: NotRequired[bool]
     types: Required[str|list[str]]
     tags: NotRequired[str|list[str]]
 
 class GroupComponentTypedDict(TypedDict):
-    type: Required[Literal["Group"]]
+    type: NotRequired[Literal["Group"]]
     subcomponents: Required[dict[str,str|None]]
 
 class KeymapKeyTypedDict(TypedDict):
@@ -55,7 +55,7 @@ class KeymapComponentTypedDict(TypedDict):
     measure_length: NotRequired[bool]
     normalizer: NotRequired[str|list[str]]
     tags: NotRequired[str|list[str]]
-    type: Required[Literal["Keymap"]]
+    type: NotRequired[Literal["Keymap"]]
     keys: Required[dict[str,KeymapKeyTypedDict]]
 
 class ListComponentTypedDict(TypedDict):
@@ -66,7 +66,7 @@ class ListComponentTypedDict(TypedDict):
     ordered: NotRequired[bool]
     print_all: NotRequired[bool]
     print_flat: NotRequired[bool]
-    type: Required[Literal["List"]]
+    type: NotRequired[Literal["List"]]
     types: Required[str|list[str]]
     tags: NotRequired[str|list[str]]
 
@@ -74,19 +74,19 @@ class NbtBaseTypedDict(TypedDict):
     subcomponent: Required[str]
     endianness: Required[Literal["big", "little"]]
     normalizer: NotRequired[str|list[str]]
-    type: Required[Literal["NbtBase"]]
+    type: NotRequired[Literal["NbtBase"]]
     types: Required[str|list[str]]
 
 class NormalizerTypedDict(TypedDict):
     dependencies: Required[list[str]]
     function_name: Required[str]
-    type: Required[Literal["Normalizer"]]
+    type: NotRequired[Literal["Normalizer"]]
 
 class TagTypedDict(TypedDict):
-    type: Required[Literal["Tag"]]
+    type: NotRequired[Literal["Tag"]]
 
 class TypeAliasTypedDict(TypedDict):
-    type: Required[Literal["TypeAlias"]]
+    type: NotRequired[Literal["TypeAlias"]]
     types: Required[str|list[str]]
 
 class VolumeTypedDict(TypedDict):
