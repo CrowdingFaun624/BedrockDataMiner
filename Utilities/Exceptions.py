@@ -389,17 +389,19 @@ class ComponentParseError(ComponentException):
 class ComponentTypeMissingError(ComponentException):
     "A Component is missing the type key and there is no type assumption."
 
-    def __init__(self, component_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, component_name:str, component_group:str, message:Optional[str]=None) -> None:
         '''
         :component_name: The name of the Component with the missing type key.
+        :component_group: The Component group the Component is found in.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component_name, message)
+        super().__init__(component_name, component_group, message)
         self.component_name = component_name
+        self.component_group = component_group
         self.message = message
 
     def __str__(self) -> str:
-        output = "Component \"%s\" is missing its type key" % (self.component_name,)
+        output = "Component \"%s\" in %s is missing its type key" % (self.component_name, self.component_group)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

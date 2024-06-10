@@ -133,4 +133,4 @@ class Component(Generic[a]):
         return hash((self.name, self.component_group))
 
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.class_name, self.name)
+        return "<%s %s in %s>" % (self.class_name, self.name, self.component_group)
