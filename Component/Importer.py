@@ -6,6 +6,7 @@ from typing import Any
 from pathlib2 import Path
 
 import Component.Component as Component
+import Component.ComponentFunctions as ComponentFunctions
 import Component.ComponentTyping as ComponentTyping
 import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
 import Component.DataMiner.DataMinerImporterEnvironment as DataMinerImporterEnvironment
@@ -26,7 +27,6 @@ import Component.Structure.TypeAliasComponent as TypeAliasComponent
 import Component.Structure.VolumeComponent as VolumeComponent
 import DataMiner.DataMinerCollection as DataMinerCollection
 import Structure.StructureBase as StructureBase
-import Structure.StructureFunctions as StructureFunctions
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -112,7 +112,7 @@ def propagate_variables(all_components:dict[str,dict[str,Component.Component]]) 
                     components_queue.append(parent_component)
 
 def parse_all_component_groups() -> dict[str,Any]:
-    functions = StructureFunctions.functions
+    functions = ComponentFunctions.functions
     all_components:dict[str,dict[str,Component.Component]] = {}
     already_paths:dict[Path,ImporterEnvironment.ImporterEnvironment] = {}
     importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment] = {}
