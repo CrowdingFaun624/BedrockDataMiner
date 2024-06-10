@@ -7,7 +7,7 @@ import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
-    import DataMiners.DataMinerTyping as DataMinerTyping
+    import DataMiner.DataMinerTyping as DataMinerTyping
 
 class ResourcePackTypedDict(TypedDict):
     name: str

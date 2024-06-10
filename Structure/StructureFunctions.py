@@ -1,7 +1,7 @@
 import json
 from typing import Any, Callable, TypedDict, cast
 
-import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiner.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 import Utilities.Nbt.NbtTypes as NbtTypes
 

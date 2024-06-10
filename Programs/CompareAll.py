@@ -1,8 +1,8 @@
 import traceback
 from typing import Generator, Iterable, TypeVar
 
-import DataMiners.DataMiner as DataMiner
-import DataMiners.DataMiners as DataMiners
+import DataMiner.DataMiner as DataMiner
+import DataMiner.DataMiners as DataMiners
 import Structure.Normalizer as Normalizer
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions

@@ -41,7 +41,7 @@ if __name__ == "__main__":
     user_thread = threading.Thread(target=get_user_input, daemon=True)
     user_thread.start()
 
-import DataMiners.DataMiners as DataMiners
+import DataMiner.DataMiners as DataMiners
 import Programs.AllVersions as AllVersions
 import Programs.Cleaner as Cleaner
 import Programs.CompareAll as CompareAll

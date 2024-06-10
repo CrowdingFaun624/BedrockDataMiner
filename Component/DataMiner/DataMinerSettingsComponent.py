@@ -8,7 +8,7 @@ import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
-import DataMiners.DataMiner as DataMiner
+import DataMiner.DataMiner as DataMiner
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 

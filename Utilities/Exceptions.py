@@ -12,9 +12,9 @@ if TYPE_CHECKING:
     import Component.Field.Field as Field
     import Component.ImporterEnvironment as ImporterEnvironment
     import Component.Pattern as Pattern
-    import DataMiners.DataMiner as DataMiner
-    import DataMiners.DataMinerEnvironment as DataMinerEnvironment
-    import DataMiners.TagSearcher.TagSearcherDataMiner as TagSearcherDataMiner
+    import DataMiner.DataMiner as DataMiner
+    import DataMiner.DataMinerEnvironment as DataMinerEnvironment
+    import DataMiner.TagSearcher.TagSearcherDataMiner as TagSearcherDataMiner
     import Downloader.Manager as Manager
     import Structure.Difference as D
     import Structure.Normalizer as Normalizer

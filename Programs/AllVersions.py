@@ -1,7 +1,7 @@
 import traceback
 
-import DataMiners.DataMiner as DataMiner
-import DataMiners.DataMiners as DataMiners
+import DataMiner.DataMiner as DataMiner
+import DataMiner.DataMiners as DataMiners
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
 import Version.Version as Version

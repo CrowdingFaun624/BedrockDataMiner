@@ -24,7 +24,7 @@ import Component.Structure.StructureImporterEnvironment as StructureImporterEnvi
 import Component.Structure.TagComponent as TagComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
 import Component.Structure.VolumeComponent as VolumeComponent
-import DataMiners.DataMiner as DataMiner
+import DataMiner.DataMiner as DataMiner
 import Structure.StructureFunctions as StructureFunctions
 import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions

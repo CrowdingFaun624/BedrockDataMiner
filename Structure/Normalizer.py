@@ -1,12 +1,12 @@
 from typing import (TYPE_CHECKING, Any, Callable, Generic, Literal, TypeVar,
                     cast)
 
-import DataMiners.DataMinerTyping as DataMinerTyping
+import DataMiner.DataMinerTyping as DataMinerTyping
 import Utilities.Exceptions as Exceptions
 import Version.Version as Version
 
 if TYPE_CHECKING:
-    import DataMiners.DataMiner as DataMiner
+    import DataMiner.DataMiner as DataMiner
 
 IN = TypeVar("IN")
 OUT = TypeVar("OUT")

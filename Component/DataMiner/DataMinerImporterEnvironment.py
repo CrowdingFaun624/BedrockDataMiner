@@ -5,7 +5,7 @@ from pathlib2 import Path
 import Component.Component as Component
 import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
 import Component.ImporterEnvironment as ImporterEnvironment
-import DataMiners.DataMiner as DataMiner
+import DataMiner.DataMiner as DataMiner
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Version.Version as Version

@@ -2,7 +2,7 @@ from typing import Iterable
 
 from pathlib2 import Path
 
-import DataMiners.DataMiners as DataMiners
+import DataMiner.DataMiners as DataMiners
 import Version.VersionParser as VersionParser
 
 
