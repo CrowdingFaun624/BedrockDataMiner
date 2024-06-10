@@ -1,5 +1,5 @@
 import enum
-from typing import Callable, TypeVar, cast
+from typing import Callable, Mapping, TypeVar, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -29,8 +29,8 @@ def choose_component(
         component_data:str|ComponentTyping.ComponentTypedDicts|None,
         source_component:Component.Component,
         required_properties:Pattern.Pattern[a],
-        components:dict[str,"Component.Component"],
-        imported_components:dict[str,dict[str,"Component.Component"]],
+        components:Mapping[str,"Component.Component"],
+        imported_components:Mapping[str,Mapping[str,"Component.Component"]],
         keys:list[str|int],
         create_component_function:ComponentTyping.CreateComponentFunction,
         assume_type:str|None,
