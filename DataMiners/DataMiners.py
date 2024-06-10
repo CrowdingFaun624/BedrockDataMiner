@@ -64,8 +64,8 @@ def run(
     dataminers_list = list(all_dataminers.values())
     for dataminer in dataminer_collections:
         dataminer.remove_data_file(version)
-    dataminer_order = get_dataminer_order(version, dataminer_collections, all_dataminers)
-    dataminer_environment = DataMinerEnvironment.DataMinerEnvironment({}, structure_environment)
+    dataminer_order = get_dataminer_order(version, dataminer_collections)
+    dataminer_environment = DataMinerEnvironment.DataMinerEnvironment(DataMinerEnvironment.DataMinerDependencies({}), structure_environment)
     if recalculate_everything:
         for dataminer in dataminer_order:
             dataminer.remove_data_file(version)
@@ -74,7 +74,7 @@ def run(
         i = 0 
         while i < len(dataminer_order):
             if dataminer_order[i].get_data_file_path(version).exists():
-                dataminer_environment.dependency_data[dataminer_order[i].name] = dataminer_order[i].get_data_file(version)
+                dataminer_environment.dependency_data.set_item(dataminer_order[i].name, dataminer_order[i].get_data_file(version))
                 del dataminer_order[i]
             else: i += 1
     failure_dataminers:list[tuple[DataMiner.DataMinerCollection, Exception]] = []
@@ -86,7 +86,7 @@ def run(
                 if dependency in failure_dataminers_set:
                     continue # no use trying to datamine this if any of its dependencies excepted.
             dataminer_output = dataminer.store(dataminer_environment, dataminers_list)
-            dataminer_environment.dependency_data[dataminer_collection.name] = dataminer_output
+            dataminer_environment.dependency_data.set_item(dataminer_collection.name, dataminer_output)
         except Exception as e:
             failure_dataminers_set.add(dataminer_collection.name)
             failure_dataminers.append((dataminer_collection, e))
