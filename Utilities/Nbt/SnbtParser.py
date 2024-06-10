@@ -3,6 +3,7 @@ from typing import Callable, cast
 import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.NbtTypes as NbtTypes
 
+
 class Reader():
 
     def __init__(self, data:str) -> None:

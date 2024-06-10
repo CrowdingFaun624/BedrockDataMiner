@@ -5,6 +5,7 @@ from typing import (Any, Callable, Container, Generic, Iterable, Mapping,
 
 import Utilities.Exceptions as Exceptions
 
+
 class TraceItemType(enum.Enum):
     KEY = 0
     ITEM = 1

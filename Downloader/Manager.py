@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING, Any, Literal, overload
 
 from pathlib2 import Path
 
-import Version.VersionTags as VersionTags
 import Utilities.Exceptions as Exceptions
+import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Utilities.FileManager as FileManager

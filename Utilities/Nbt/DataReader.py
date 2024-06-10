@@ -3,6 +3,7 @@ from typing import Any, BinaryIO
 
 import Utilities.Nbt.Endianness as Endianness
 
+
 class DataReader():
 
     def __repr__(self) -> str:
