@@ -89,7 +89,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
                 if len(position_list) != 3:
                     exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureInvalidKeyError("Position", position_list, index, "is not length 3"), self.name, index, block))
                     continue
-                position:tuple[int,int,int] = tuple(position_list)
+                position:tuple[int,int,int] = cast(tuple[int,int,int], tuple(position_list))
             except Exception:
                 exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureInvalidKeyError("Position", position_list, index), self.name, index, block))
                 continue
