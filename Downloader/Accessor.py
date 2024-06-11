@@ -56,6 +56,10 @@ class Accessor():
     def all_done(self) -> None:
         return self.manager.all_done()
 
+class DummyAccessor(Accessor):
+    "Accessor that does nothing."
+    ...
+
 class SubDirectoryAccessor(Accessor):
     '''
     Accessor for directory access that automatically adds a certain string to the beginning of all paths.

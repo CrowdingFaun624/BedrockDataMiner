@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any, TypedDict
 
 import Downloader.Accessor as Accessor
 import Downloader.DownloadManager as DownloadManager
+import Downloader.DummyManager as DummyManager
 import Downloader.LocalManager as LocalManager
 import Downloader.Manager as Manager
 import Downloader.StoredManager as StoredManager
@@ -19,11 +20,13 @@ if TYPE_CHECKING:
 
 BUILT_IN_ACCESSORS:dict[str,type[Accessor.Accessor]] = {accessor_class.__name__: accessor_class for accessor_class in [
     Accessor.Accessor,
+    Accessor.DummyAccessor,
     Accessor.SubDirectoryAccessor
 ]}
 
 MANAGERS:dict[str,type[Manager.Manager]] = {manager_class.__name__: manager_class for manager_class in [
     DownloadManager.DownloadManager,
+    DummyManager.DummyManager,
     LocalManager.LocalManager,
     StoredManager.StoredManager,
 ]}
