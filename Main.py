@@ -10,7 +10,6 @@
 # import Programs.FileSummary as FileSummary
 # import Programs.GetFile as GetFile
 # import Programs.UrlValidator as UrlValidator
-# import Programs.WikiValidator as WikiValidator
 # import Utilities.CustomJson as CustomJson
 # import Utilities.FileManager as FileManager
 # import Utilities.Nbt.NbtReader as NbtReader
@@ -48,7 +47,6 @@ import Programs.CompareAll as CompareAll
 import Programs.FileSummary as FileSummary
 import Programs.GetFile as GetFile
 import Programs.UrlValidator as UrlValidator
-import Programs.WikiValidator as WikiValidator
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 import Utilities.Nbt.NbtReader as NbtReader
@@ -70,7 +68,6 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "TestStructures": DataMiners.test_structures,
     "UrlValidator": UrlValidator.main,
     "VersionParser": VersionParser.main,
-    "WikiValidator": WikiValidator.main,
 }
 
 def main() -> None:
