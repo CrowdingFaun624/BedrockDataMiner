@@ -14,15 +14,13 @@ if TYPE_CHECKING:
 
 class Version():
 
-    def __init__(self, name:str, files:dict[str,dict[str,Any]], parent_str:str|None, time_str:str|None, tags_str:list[str], index:int, version_tags:VersionTags.VersionTags, wiki_page:str|None=None, development_categories:list[str]|None=None) -> None:
+    def __init__(self, name:str, files:dict[str,dict[str,Any]], parent_str:str|None, time_str:str|None, tags_str:list[str], index:int, version_tags:VersionTags.VersionTags) -> None:
         self.name = name
         self.files_str = files
         self.parent_str = parent_str
         self.time_str = time_str
         self.tags_str = tags_str
         self.index = index
-        self.wiki_page = wiki_page
-        self.development_category_names = development_categories
 
         # attributes set in this __init__ function.
         self.version_directory:Path|None = None
@@ -44,35 +42,36 @@ class Version():
     def get_accessor(self, file_type:str) -> "Accessor.Accessor":
         return self.version_files[file_type].get_accessor()
 
-    def assign_wiki_page(self, version_tags:VersionTags.VersionTags) -> None:
-        '''Sets this Version's `wiki_page` attribute.'''
-        alpha = ""
-        if version_tags["pocket_edition"] not in self.tags:
-            edition = "Bedrock Edition"
-            alpha_positioned_before = True
-            if self.ordering_tag is version_tags["beta"]:
-                alpha = " beta"
-            development_category_suffix = " betas"
-        else:
-            edition = "Pocket Edition"
-            alpha_positioned_before = version_tags["pocket_edition_alpha_before"] in self.tags
-            if version_tags["alpha"] in self.tags or self.ordering_tag is version_tags["beta"]:
-                alpha = " alpha"
-            elif self.ordering_tag is version_tags["beta"]:
-                alpha = " beta"
-            development_category_suffix = " builds"
+    # this will be needed when I actually finish redoing the wiki page thing
+    # def assign_wiki_page(self, version_tags:VersionTags.VersionTags) -> None:
+    #     '''Sets this Version's `wiki_page` attribute.'''
+    #     alpha = ""
+    #     if version_tags["pocket_edition"] not in self.tags:
+    #         edition = "Bedrock Edition"
+    #         alpha_positioned_before = True
+    #         if self.ordering_tag is version_tags["beta"]:
+    #             alpha = " beta"
+    #         development_category_suffix = " betas"
+    #     else:
+    #         edition = "Pocket Edition"
+    #         alpha_positioned_before = version_tags["pocket_edition_alpha_before"] in self.tags
+    #         if version_tags["alpha"] in self.tags or self.ordering_tag is version_tags["beta"]:
+    #             alpha = " alpha"
+    #         elif self.ordering_tag is version_tags["beta"]:
+    #             alpha = " beta"
+    #         development_category_suffix = " builds"
 
-        if "_build" in self.name:
-            build = " build " + self.name.split("_build")[1]
-        else: build = ""
-        trimmed_name = "".join(char for char in self.name.split("_")[0].split("-")[0] if char in "0123456789.")
-        if alpha_positioned_before:
-            page_name = edition + alpha + " " + trimmed_name + build
-        else:
-            page_name = edition + " v" + trimmed_name + alpha + build
-        if self.wiki_page is None: self.wiki_page = page_name
-        development_category_name = "Category:" + self.wiki_page + development_category_suffix
-        if self.development_category_names is None: self.development_category_names = [development_category_name]
+    #     if "_build" in self.name:
+    #         build = " build " + self.name.split("_build")[1]
+    #     else: build = ""
+    #     trimmed_name = "".join(char for char in self.name.split("_")[0].split("-")[0] if char in "0123456789.")
+    #     if alpha_positioned_before:
+    #         page_name = edition + alpha + " " + trimmed_name + build
+    #     else:
+    #         page_name = edition + " v" + trimmed_name + alpha + build
+    #     if self.wiki_page is None: self.wiki_page = page_name
+    #     development_category_name = "Category:" + self.wiki_page + development_category_suffix
+    #     if self.development_category_names is None: self.development_category_names = [development_category_name]
 
     def add_tag(self, tag:VersionTags.VersionTag) -> None:
         '''Adds a tag to the Version.'''

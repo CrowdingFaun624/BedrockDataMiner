@@ -17,18 +17,11 @@ class VersionTypedDict(TypedDict):
     parent: Required[str|None]
     time: Required[str|None]
     tags: Required[list[str]]
-    development_categories: NotRequired[list[str]]
-    wiki_page: NotRequired[str]
 
 def is_sorted(data:Sequence[str]) -> tuple[bool, str]:
     return all(a <= b for a, b in zip(data, data[1:])), "data is not sorted!"
 
-def is_sorted_and_not_empty(data:Sequence[str]) -> tuple[bool, str]:
-    if len(data) == 0:
-        return False, "data is empty!"
-    return all(a <= b for a, b in zip(data, data[1:])), "data is not sorted!"
-
-KEY_ORDER = ["id", "files", "parent", "time", "tags", "wiki_page", "development_categories"]
+KEY_ORDER = ["id", "files", "parent", "time", "tags"]
 def keys_in_order(data:Mapping[Any, Any]) -> tuple[bool, str]:
     return list(data.keys()) == [key for key in KEY_ORDER if key in data], "keys are not in order of %s!" % (KEY_ORDER)
 
@@ -38,8 +31,6 @@ versions_type_verifier = TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTyp
     TypeVerifier.TypedDictKeyTypeVerifier("parent", "a str or None", True, (str, type(None))),
     TypeVerifier.TypedDictKeyTypeVerifier("time", "a str or None", True, (str, type(None))),
     TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=is_sorted)),
-    TypeVerifier.TypedDictKeyTypeVerifier("wiki_page", "a str", False, str),
-    TypeVerifier.TypedDictKeyTypeVerifier("development_categories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=is_sorted_and_not_empty)),
     function=keys_in_order,
 ), list, "a dict", "a list")
 
@@ -126,11 +117,6 @@ def verify_ordering(versions:dict[str,Version.Version], version_tags:VersionTags
             previous_time = child.time
             previous_child = child
 
-def assign_wiki_pages(versions:dict[str,Version.Version], version_tags:VersionTags.VersionTags) -> None:
-    '''Calls `assign_wiki_page` on all versions.'''
-    for version in versions.values():
-        version.assign_wiki_page(version_tags)
-
 def assign_latest(versions:dict[str,Version.Version], version_tags:VersionTags.VersionTags) -> None:
     for latest_slot, latest_slot_tags in version_tags.latest.latest_tags.items():
         for version in reversed(versions.values()):
@@ -163,17 +149,14 @@ def parse() -> tuple[dict[str,Version.Version], VersionTags.VersionTags]:
         parent = version_dict["parent"]
         time = version_dict["time"]
         tags = version_dict["tags"]
-        wiki_page = version_dict.get("wiki_page", None)
-        development_categories = version_dict.get("development_categories")
         if id in versions:
             raise Exceptions.DuplicateVersionError(id)
 
-        versions[id] = Version.Version(id, files, parent, time, tags, index, version_tags, wiki_page, development_categories)
+        versions[id] = Version.Version(id, files, parent, time, tags, index, version_tags)
 
     assign_parents(versions)
     verify_ordering(versions, version_tags)
     assign_additional_tags(versions, version_tags)
-    assign_wiki_pages(versions, version_tags)
     assign_latest(versions, version_tags)
     assign_accessors(versions, version_file_types, version_tags)
     fix_directories(versions)
