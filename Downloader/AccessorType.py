@@ -58,6 +58,7 @@ class AccessorType():
 def parse_accessor_types(data:dict[str,AccessorTypedDict]) -> dict[str,AccessorType]:
     accessor_scripts = Scripts.scripts.get_all_in_directory("accessors/")
     accessor_types:dict[str,type[Accessor.Accessor]] = {}
+    accessor_types.update(BUILT_IN_ACCESSORS)
     for file_name, script in accessor_scripts.items():
         class_name = file_name.removeprefix("accessors/").removesuffix(".lua").replace("/", ".")
         attributes = dict(script())
