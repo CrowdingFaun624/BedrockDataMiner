@@ -1,6 +1,8 @@
 import os
-from typing import Literal, TypedDict
+from types import ModuleType
+from typing import Any, Literal, TypedDict
 
+import pathlib2
 from pathlib2 import Path
 
 import Downloader.Manager as Manager
@@ -11,26 +13,18 @@ from Utilities.FunctionCaller import FunctionCaller
 
 
 class LocalManagerTypedDict(TypedDict):
-    is_preview: bool
+    file_path: str
 
 class LocalManager(Manager.Manager):
 
-    def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:LocalManagerTypedDict) -> None:
+    def get_directory_base(self, version_tags:VersionTags.VersionTags, file_type_arguments:dict[str,Any], os:ModuleType, pathlib2:ModuleType) -> str:
+        ...
+
+    def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:dict[str,Any]) -> None:
         self.file_list:list[str]|None = None
-        if os.name == "nt": # TODO: Make this part less sucky
-            windows_apps = Path("C:\\Program Files\\WindowsApps")
-            if file_type_arguments["is_preview"]:
-                search_file = "Microsoft.MinecraftWindowsBeta"
-            else:
-                search_file = "Microsoft.MinecraftUWP"
-            for window_file in windows_apps.iterdir():
-                if window_file.name.startswith(search_file):
-                    self.bedrock_local = window_file
-                    break
-            else:
-                raise Exceptions.ManagerFailureError(self, "No \"%s\" directory found in \"%s\"! Is it installed correctly?" % (search_file, windows_apps))
-        else:
-            raise Exceptions.ManagerFailureError(self, "OS type \"%s\" is not implemented!" % (os.name))
+        self.directory_base = Path(self.get_directory_base(version_tags, file_type_arguments, os, pathlib2))
+        if not self.directory_base.exists():
+            raise Exceptions.ManagerFailureError(self, "Given file \"%s\" does not exist!" % (self.directory_base,))
 
     def install_all(self, destination:Path|None=None) -> None:
         pass # There is no need to do anything. All of the files are already there.
@@ -41,9 +35,9 @@ class LocalManager(Manager.Manager):
     def get_file_list(self, path:Path|None=None) -> list[str]:
         if path is None:
             if self.file_list is None:
-                strip_string = self.bedrock_local.as_posix() + "/"
+                strip_string = self.directory_base.as_posix() + "/"
                 output:list[str] = []
-                for file_path in self.get_file_list(self.bedrock_local):
+                for file_path in self.get_file_list(self.directory_base):
                     output.append(file_path.replace(strip_string, "", 1))
                 self.file_list = output
             return self.file_list
@@ -57,15 +51,15 @@ class LocalManager(Manager.Manager):
             return output
 
     def file_exists(self, file_name:str) -> bool:
-        return self.bedrock_local.joinpath(file_name).exists()
+        return self.directory_base.joinpath(file_name).exists()
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
-        full_path = self.bedrock_local.joinpath(file_name)
+        full_path = self.directory_base.joinpath(file_name)
         with open(full_path, "r" + mode) as f:
             return f.read()
 
     def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> FileManager.FilePromise:
-        full_path = self.bedrock_local.joinpath(file_name)
+        full_path = self.directory_base.joinpath(file_name)
         return FileManager.FilePromise(FunctionCaller(open, [full_path, "r" + mode]), file_name.split("/")[-1], mode)
 
     def all_done(self) -> None:
