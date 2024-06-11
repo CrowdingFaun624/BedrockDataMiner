@@ -119,12 +119,19 @@ class Version():
     def add_child(self, child:"Version") -> None:
         self.children.append(child)
 
-    def assign_files(self, version_file_types:dict[str,VersionFileType.VersionFileType], version_tags:VersionTags.VersionTags) -> None:
+    def assign_files(self, version_file_types:dict[str,VersionFileType.VersionFileType], auto_assigning_version_file_types:list[VersionFileType.VersionFileType], version_tags:VersionTags.VersionTags) -> None:
         for file_type_name, accessors in self.files_str.items():
             file_type = version_file_types.get(file_type_name, None)
             if file_type is None:
                 raise Exceptions.UnrecognizedVersionFileTypeError(file_type_name, self)
             self.version_files[file_type_name] = VersionFile.VersionFile(self, file_type, accessors, version_tags)
+        for auto_assigning_version_file_type in auto_assigning_version_file_types:
+            if auto_assigning_version_file_type.name in self.version_files: continue
+            else:
+                if auto_assigning_version_file_type.auto_assign is None:
+                    raise Exceptions.InvalidStateError()
+                auto_assigning_accessors = {auto_assigning_version_file_type.auto_assign["accessor"]: auto_assigning_version_file_type.auto_assign["parameters"]}
+                self.version_files[auto_assigning_version_file_type.name] = VersionFile.VersionFile(self, auto_assigning_version_file_type, auto_assigning_accessors, version_tags)
         for file_type_name, file_type in version_file_types.items():
             if file_type.must_exist and file_type_name not in self.version_files:
                 raise Exceptions.RequiredVersionFileTypeMissingError(file_type, self)

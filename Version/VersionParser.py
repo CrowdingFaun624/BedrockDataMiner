@@ -147,8 +147,9 @@ def assign_additional_tags(versions:dict[str,Version.Version], version_tags:Vers
             tag.auto_assign(version, versions)
 
 def assign_accessors(versions:dict[str,Version.Version], version_file_types:dict[str,VersionFileType.VersionFileType], version_tags:VersionTags.VersionTags) -> None:
+    auto_assigning_version_file_types = [version_file_type for version_file_type in version_file_types.values() if version_file_type.auto_assign is not None]
     for version in versions.values():
-        version.assign_files(version_file_types, version_tags)
+        version.assign_files(version_file_types, auto_assigning_version_file_types, version_tags)
 
 def parse() -> tuple[dict[str,Version.Version], VersionTags.VersionTags]:
     data = read_versions_file()
