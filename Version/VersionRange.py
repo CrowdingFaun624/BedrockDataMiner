@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 class VersionRange():
     '''Used for detecting if a Version is within a range of versions.
-    Use "-" or None to represent not stopping, or continuing on to the end of the list.
+    Use None to represent not stopping, or continuing on to the end of the list.
     By default, checks if the version is in [start, stop). If start and stop are the same, it checks for equality.'''
 
     def __init__(self, start:Union["Version.Version",None], stop:Union["Version.Version",None]) -> None:
@@ -23,14 +23,13 @@ class VersionRange():
     def __contains__(self, version:"Version.Version") -> bool:
         if self.equals:
             return version == self.start
-        match (self.start is None, self.stop is None):
-            case (True, True):
-                return True
-            case (True, False):
-                return version < self.stop # type: ignore
-            case (False, True):
-                return version >= self.start # type: ignore
-            case (False, False):
-                return version < self.stop and version >= self.start # type: ignore
-            case _:
-                raise Exceptions.InvalidStateError("Logic has failed us")
+        elif self.start is None and self.stop is None:
+            return True
+        elif self.start is None and self.stop is not None:
+            return version < self.stop
+        elif self.start is not None and self.stop is None:
+            return version >= self.start
+        elif self.start is not None and self.stop is not None:
+            return version < self.stop and version >= self.start
+        else:
+            raise Exceptions.InvalidStateError("logic has failed us")
