@@ -37,6 +37,3 @@ class StructureComponent(Component.Component[a]):
     class_name_article = "a StructureComponent"
     class_name = "StructureComponent"
     my_type:list[type]
-
-    def __init__(self, data:Any, name: str, component_group:str) -> None:
-        super().__init__(data, name, component_group)

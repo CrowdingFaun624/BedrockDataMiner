@@ -16,8 +16,8 @@ class TypeAliasComponent(Component.Component[list[type]]):
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
-    def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str, component_group:str) -> None:
-        super().__init__(data, name, component_group)
+    def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str, component_group:str, index:int|None) -> None:
+        super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
         if name in StructureComponent.DEFAULT_TYPES:
             raise Exceptions.ComponentInvalidNameError(self, list(StructureComponent.DEFAULT_TYPES.keys()))

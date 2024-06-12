@@ -19,9 +19,10 @@ class Component(Generic[a]):
     children_has_normalizer_default = False
     type_verifier:TypeVerifier.TypeVerifier
 
-    def __init__(self, data:Any, name:str, component_group:str) -> None:
+    def __init__(self, data:Any, name:str, component_group:str, index:int|None) -> None:
         self.name = name
         self.component_group = component_group
+        self.index = index
         self.links_to_other_components:list[Component] = []
         self.parents:list[Component] = []
         self.final:a|None = None

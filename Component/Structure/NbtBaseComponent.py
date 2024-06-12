@@ -31,8 +31,8 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStru
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
-    def __init__(self, data:ComponentTyping.NbtBaseTypedDict, name: str, component_group:str) -> None:
-        super().__init__(data, name, component_group)
+    def __init__(self, data:ComponentTyping.NbtBaseTypedDict, name: str, component_group:str, index:int|None) -> None:
+        super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
 
         self.endianness:Literal["big", "little"] = data["endianness"]

@@ -34,8 +34,8 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
         TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list"))
     )
 
-    def __init__(self, data: ComponentTyping.DataMinerCollectionComponentTypedDict, name: str, component_group: str) -> None:
-        super().__init__(data, name, component_group)
+    def __init__(self, data: ComponentTyping.DataMinerCollectionComponentTypedDict, name: str, component_group: str, index:int|None) -> None:
+        super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
 
         self.file_name = data["file_name"]

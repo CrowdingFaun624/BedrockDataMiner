@@ -14,8 +14,8 @@ class TagComponent(Component.Component[str]):
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
-    def __init__(self, data: ComponentTyping.TagTypedDict, name: str, component_group:str) -> None:
-        super().__init__(data, name, component_group)
+    def __init__(self, data: ComponentTyping.TagTypedDict, name: str, component_group:str, index:int|None) -> None:
+        super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
 
         self.final:str|None = None

@@ -31,8 +31,8 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         ), "a dict", "a str", "a dict")),
     )
 
-    def __init__(self, data:ComponentTyping.KeymapComponentTypedDict, name:str, component_group:str) -> None:
-        super().__init__(data, name, component_group)
+    def __init__(self, data:ComponentTyping.KeymapComponentTypedDict, name:str, component_group:str, index:int|None) -> None:
+        super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
 
         self.field = data.get("field", "field")

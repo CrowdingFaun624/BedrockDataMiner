@@ -72,21 +72,21 @@ def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, 
     component_type = component_types_dict.get(component_type_str)
     if component_type is None:
         raise Exceptions.UnrecognizedComponentTypeError(component_type_str, component_name, "(Must be one of [%s])" % (", ".join(component.class_name for component in component_types),))
-    component = component_type(component_data, component_name, parent_component.component_group)
+    component = component_type(component_data, component_name, parent_component.component_group, None)
     component.inline_parent = parent_component
     return component
 
 def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, importer_environment:ImporterEnvironment.ImporterEnvironment) -> dict[str,Component.Component]:
     '''Returns a dict of all Components in the Component group.'''
     components:dict[str,Component.Component] = {}
-    for component_name, component_data in data.items():
+    for index, (component_name, component_data) in enumerate(data.items()):
         component_type_str = component_data.get("type", importer_environment.assume_type)
         if component_type_str is None:
             raise Exceptions.ComponentTypeMissingError(component_name, name)
         component_type = component_types_dict.get(component_type_str)
         if component_type is None:
             raise Exceptions.UnrecognizedComponentTypeError(component_type_str, "%s in %s" % (component_name, name), "(Must be one of [%s])" % (", ".join(component.class_name for component in component_types),))
-        component = component_type(component_data, component_name, name)
+        component = component_type(component_data, component_name, name, index)
         components[component_name] = component
     return components
 

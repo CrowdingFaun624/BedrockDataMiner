@@ -24,8 +24,8 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         TypeVerifier.TypedDictKeyTypeVerifier("cache_compare", "a bool", False, bool),
     )
 
-    def __init__(self, data:ComponentTyping.CacheComponentTypedDict, name: str, component_group:str) -> None:
-        super().__init__(data, name, component_group)
+    def __init__(self, data:ComponentTyping.CacheComponentTypedDict, name: str, component_group:str, index:int|None) -> None:
+        super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
 
         self.cache_check_all_types = data.get("cache_check_all_types", True)
