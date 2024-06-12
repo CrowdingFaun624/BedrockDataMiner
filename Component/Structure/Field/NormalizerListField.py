@@ -7,7 +7,7 @@ import Component.Pattern as Pattern
 import Component.Structure.NormalizerComponent as NormalizerComponent
 import Structure.Normalizer as Normalizer
 
-NORMALIZER_REQUEST_PROPERTIES:Pattern.Pattern[NormalizerComponent.NormalizerComponent] = Pattern.Pattern([{"is_normalizer": True}])
+NORMALIZER_PATTERN:Pattern.Pattern[NormalizerComponent.NormalizerComponent] = Pattern.Pattern([{"is_normalizer": True}])
 
 class NormalizerListField(ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent]):
 
@@ -17,7 +17,7 @@ class NormalizerListField(ComponentListField.ComponentListField[NormalizerCompon
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
         '''
-        super().__init__(subcomponents_data, NORMALIZER_REQUEST_PROPERTIES, path, allow_inline=allow_inline, assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        super().__init__(subcomponents_data, NORMALIZER_PATTERN, path, allow_inline=allow_inline, assume_type=NormalizerComponent.NormalizerComponent.class_name)
 
     def get_finals(self) -> list[Normalizer.Normalizer]:
         '''

@@ -1,6 +1,6 @@
 import Utilities.Exceptions as Exceptions
 
-ALLOWED_PROPERTIES = set([
+ALLOWED_CAPABILITIES = set([
     "has_importable_keys", # i.e. Keymap's importable keys
     "has_keys",
     "is_base",
@@ -18,14 +18,14 @@ ALLOWED_PROPERTIES = set([
 
 class Capabilities():
 
-    def __init__(self, **properties:bool) -> None:
-        for key in properties.keys():
-            if key not in ALLOWED_PROPERTIES:
-                raise Exceptions.UnrecognizedCapabilityError(key)
-        for key in ALLOWED_PROPERTIES:
-            if key not in properties:
-                properties[key] = False
-        self.properties = properties
+    def __init__(self, **capabilities:bool) -> None:
+        for capability in capabilities.keys():
+            if capability not in ALLOWED_CAPABILITIES:
+                raise Exceptions.UnrecognizedCapabilityError(capability)
+        for capability in ALLOWED_CAPABILITIES:
+            if capability not in capabilities:
+                capabilities[capability] = False
+        self.capabilities = capabilities
     
     def __repr__(self) -> str:
-        return "<Capabilities %s>" % (", ".join(property for property, value in self.properties.items() if value is True))
+        return "<Capabilities %s>" % (", ".join(property for property, value in self.capabilities.items() if value is True))

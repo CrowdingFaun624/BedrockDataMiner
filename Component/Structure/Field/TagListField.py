@@ -9,7 +9,7 @@ import Component.Pattern as Pattern
 if TYPE_CHECKING:
     import Component.Structure.TagComponent as TagComponent
 
-TAG_REQUEST_PROPERTIES:Pattern.Pattern["TagComponent.TagComponent"] = Pattern.Pattern([{"is_tag": True}])
+TAG_PATTERN:Pattern.Pattern["TagComponent.TagComponent"] = Pattern.Pattern([{"is_tag": True}])
 
 class TagListField(ComponentListField.ComponentListField["TagComponent.TagComponent"]):
 
@@ -18,7 +18,7 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         :subcomponents_strs: The names of the TagComponents this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_strs, TAG_REQUEST_PROPERTIES, path, allow_inline=Field.InLinePermissions.reference)
+        super().__init__(subcomponents_strs, TAG_PATTERN, path, allow_inline=Field.InLinePermissions.reference)
         self.tag_sets:list[set[str]] = []
         self.import_from_field:TagListField|None = None
 

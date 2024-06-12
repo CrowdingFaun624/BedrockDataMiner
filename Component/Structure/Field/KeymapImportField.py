@@ -12,7 +12,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Component.Structure.KeymapComponent as KeymapComponent
 
-IMPORTABLE_KEYS_REQUEST_PROPERTIES:Pattern.Pattern["KeymapComponent.KeymapComponent"] = Pattern.Pattern([{"has_importable_keys": True}])
+IMPORTABLE_KEYS_PATTERN:Pattern.Pattern["KeymapComponent.KeymapComponent"] = Pattern.Pattern([{"has_importable_keys": True}])
 
 class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.KeymapComponent"]):
 
@@ -21,7 +21,7 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         :subcomponents_data: The names of the Components this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_data, IMPORTABLE_KEYS_REQUEST_PROPERTIES, path, allow_inline=Field.InLinePermissions.reference)
+        super().__init__(subcomponents_data, IMPORTABLE_KEYS_PATTERN, path, allow_inline=Field.InLinePermissions.reference)
         self.import_into_keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]|None = None
 
     def set_field(

@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     import Component.Structure.BaseComponent as BaseComponent
     import Structure.StructureBase as StructureBase
 
-STRUCTURE_BASE_REQUEST_PROPERTIES:Pattern.Pattern["BaseComponent.BaseComponent"] = Pattern.Pattern([{"is_base": True}])
+STRUCTURE_BASE_PATTERN:Pattern.Pattern["BaseComponent.BaseComponent"] = Pattern.Pattern([{"is_base": True}])
 
 class StructureField(ComponentGroupField.ComponentGroupField["BaseComponent.BaseComponent"]):
 
@@ -31,7 +31,7 @@ class StructureField(ComponentGroupField.ComponentGroupField["BaseComponent.Base
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["BaseComponent.BaseComponent"],list["BaseComponent.BaseComponent"]]:
         super().set_field(source_component, components, imported_components, functions, create_component_function)
-        self.subcomponent, is_inline = Field.choose_component(None, source_component, STRUCTURE_BASE_REQUEST_PROPERTIES, self.get_component_group(), {}, self.error_path, create_component_function, None)
+        self.subcomponent, is_inline = Field.choose_component(None, source_component, STRUCTURE_BASE_PATTERN, self.get_component_group(), {}, self.error_path, create_component_function, None)
         return [self.subcomponent], []
 
     def get_component(self) -> "BaseComponent.BaseComponent":

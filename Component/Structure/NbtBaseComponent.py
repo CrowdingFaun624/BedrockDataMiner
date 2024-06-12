@@ -16,7 +16,7 @@ import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
-COMPONENT_REQUEST_PROPERTIES:Pattern.Pattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = Pattern.Pattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
+COMPONENT_PATTERN:Pattern.Pattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = Pattern.Pattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
 
 class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStructure.NbtBaseStructure]):
 
@@ -39,7 +39,7 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStru
         self.final_structure:NbtBaseStructure.NbtBaseStructure|None=None
         self.children_has_normalizer = True
 
-        self.subcomponent_field = StructroidComponentField.StructroidComponentField(data["subcomponent"], ["subcomponent"], pattern=COMPONENT_REQUEST_PROPERTIES)
+        self.subcomponent_field = StructroidComponentField.StructroidComponentField(data["subcomponent"], ["subcomponent"], pattern=COMPONENT_PATTERN)
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field.verify_with(self.subcomponent_field)

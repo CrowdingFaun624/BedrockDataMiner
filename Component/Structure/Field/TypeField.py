@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     import Component.Component as Component
     import Component.Structure.TypeAliasComponent as TypeAliasComponent
 
-TYPE_ALIAS_REQUEST_PROPERTIES:Pattern.Pattern["TypeAliasComponent.TypeAliasComponent"] = Pattern.Pattern([{"is_type_alias": True}])
+TYPE_ALIAS_PATTERN:Pattern.Pattern["TypeAliasComponent.TypeAliasComponent"] = Pattern.Pattern([{"is_type_alias": True}])
 
 class TypeField(AbstractTypeField.AbstractTypeField):
     '''A link to a TypeAliasComponent or type.'''
@@ -38,7 +38,7 @@ class TypeField(AbstractTypeField.AbstractTypeField):
             self.subcomponent = StructureComponent.DEFAULT_TYPES[self.subcomponent_data]
             return [], []
         else:
-            component, is_inline = Field.choose_component(self.subcomponent_data, source_component, TYPE_ALIAS_REQUEST_PROPERTIES, components, imported_components, self.error_path, create_component_function, None)
+            component, is_inline = Field.choose_component(self.subcomponent_data, source_component, TYPE_ALIAS_PATTERN, components, imported_components, self.error_path, create_component_function, None)
             if is_inline:
                 raise Exceptions.InLineComponentError(source_component, self, cast(ComponentTyping.TypeAliasTypedDict, self.subcomponent_data))
             self.subcomponent = component
