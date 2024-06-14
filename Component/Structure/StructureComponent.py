@@ -1,4 +1,4 @@
-from typing import Any, TypeVar
+from typing import TypeVar
 
 import Component.Component as Component
 import Structure.Structure as Structure
