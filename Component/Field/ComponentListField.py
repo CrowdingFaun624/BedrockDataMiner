@@ -1,4 +1,4 @@
-from typing import Callable, Generic, Iterator, Sequence, TypeVar
+from typing import Callable, Generic, Iterator, Sequence, TypeVar, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -20,7 +20,7 @@ class ComponentListField(Field.Field, Generic[a]):
         :assume_type: String to use as the type of an inline Component if the type key is missing from it.
         '''
         super().__init__(path)
-        self.subcomponents_data = [subcomponents_data] if isinstance(subcomponents_data, (str, dict)) else subcomponents_data
+        self.subcomponents_data = cast(Sequence[str|ComponentTyping.ComponentTypedDicts], [subcomponents_data]) if isinstance(subcomponents_data, (str, dict)) else subcomponents_data
         self.subcomponents:list[a]|None = None
         self.pattern = pattern
         self.allow_inline = allow_inline
