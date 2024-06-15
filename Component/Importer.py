@@ -1,7 +1,7 @@
 import json
 import traceback
 from collections import deque
-from typing import Any
+from typing import TYPE_CHECKING, Any, cast
 
 from pathlib2 import Path
 
@@ -127,7 +127,9 @@ def parse_all_component_groups() -> dict[str,Any]:
             importer_environments[name] = importer_environment
             already_paths[file_path] = importer_environment
             components_data = get_file(file_path)
-            component_group_type_verifier.base_verify(components_data)
+            if importer_environment.single_component:
+                components_data = cast(ComponentTyping.ComponentGroupFileType, {"": components_data})
+            component_group_type_verifier.base_verify(components_data, [name])
             all_components[name] = create_components(name, components_data, importer_environment)
 
     component_imports:dict[str,dict[str,dict[str,Component.Component]]] = {}
@@ -167,7 +169,7 @@ def parse_all_component_groups() -> dict[str,Any]:
     for name, component_group_output in output.items():
         importer_environment = importer_environments[name]
         exceptions.extend(importer_environment.check(component_group_output, output))
-    
+
     return output
 
 all_component_groups = parse_all_component_groups()

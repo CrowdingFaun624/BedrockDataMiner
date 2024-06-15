@@ -12,6 +12,9 @@ class ImporterEnvironment(Generic[a]):
     assume_type:str|None = None
     "If the type key of a Component is not present and assume_type is not None, it will use the value of assume_type as the type key."
 
+    single_component:bool = False
+    "If the Component group has a singular, unnamed Component or multiple Components."
+
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
         '''
         Given the current Component group and all other Component groups.
@@ -30,7 +33,10 @@ class ImporterEnvironment(Generic[a]):
         :name: The name of the current Component group.
         '''
         output = {component_name: component.get_final() for component_name, component in components.items()}
-        return output, [] # type: ignore
+        if self.single_component:
+            return output[""], []
+        else:
+            return output, [] # type: ignore
 
     def get_component_files(self) -> Iterable[Path]:
         '''
@@ -67,13 +73,13 @@ class ImporterEnvironment(Generic[a]):
         :other_outputs: The outputs of all Component groups.
         '''
         return []
-    
+
     def get_component_group_name(self, file_path:Path) -> str:
         '''
         Returns the name of the Component group based on the file path.
         :file_path: The file path of this Component group.
         '''
         ...
-    
+
     def __repr__(self) -> str:
         return "<%s %i>" % (self.__class__.__name__, id(self))
