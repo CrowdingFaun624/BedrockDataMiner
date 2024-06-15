@@ -12,12 +12,14 @@ class VersionFileType():
         name:str,
         install_location:str,
         must_exist:bool,
+        available_when_unreleased:bool,
         has_auto_assign:bool,
         auto_assign_arguments:dict[str,Any]|None,
     ) -> None:
         self.name = name
         self.install_location = install_location
         self.must_exist = must_exist
+        self.available_when_unreleased = available_when_unreleased
         self.has_auto_assign = has_auto_assign
         self.auto_assign_arguments = auto_assign_arguments
 

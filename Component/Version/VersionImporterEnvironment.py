@@ -120,4 +120,13 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                         exceptions.append(Exceptions.VersionTimeTravelError(previous_child, previous_time, child, child.time, version))
                 previous_time = child.time
                 previous_child = child
+
+        # some VersionFiles cannot exist if an unreleased VersionTag exists on the Version.
+        for version in output.values():
+            if not version.released:
+                for version_file in version.get_version_files():
+                    if not version_file.has_accessors(): continue
+                    if not version_file.get_version_file_type().available_when_unreleased:
+                        exceptions.append(Exceptions.UnreleasedDownloadableVersionError(version, version_file))
+
         return exceptions

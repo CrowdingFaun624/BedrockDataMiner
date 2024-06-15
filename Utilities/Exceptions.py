@@ -2217,19 +2217,19 @@ class UnrecognizedVersionTagError(VersionException):
 class UnreleasedDownloadableVersionError(VersionException):
     "A Version has the unreleased tag and has a method for downloading."
 
-    def __init__(self, version:"Version.Version", version_tag:"VersionTag.VersionTag", message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version.Version", version_file:"VersionFile.VersionFile", message:Optional[str]=None) -> None:
         '''
         :version: The Version with an unreleased tag and a method for downloading.
-        :version_tag: The unreleased VersionTag.
+        :version_file: The VersionFile that cannot exist when the Version is unreleased.
         :message: Additional text to place after the main message.
         '''
         super().__init__(version, message)
         self.version = version
-        self.version_tag = version_tag
+        self.version_file = version_file
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has the %r tag but has a download method" % (self.version, self.version_tag)
+        output = "%r cannot exist when %r is unreleased" % (self.version_file, self.version)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

@@ -24,6 +24,7 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
         TypeVerifier.TypedDictKeyTypeVerifier("allowed_accessor_types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("install_location", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("must_exist", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("available_when_unreleased", "a bool", True, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("auto_assign", "a dict", False, TypeVerifier.TypedDictTypeVerifier(
             TypeVerifier.TypedDictKeyTypeVerifier("accessor_type", "a str", True, str),
             TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", True, dict),
@@ -36,6 +37,7 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
 
         self.install_location = data["install_location"]
         self.must_exist = data["must_exist"]
+        self.available_when_unreleased = data["available_when_unreleased"]
         self.has_auto_assign = "auto_assign" in data
         self.auto_assign_arguments = data["auto_assign"]["arguments"] if self.has_auto_assign else None
         self.auto_assign_dict:ComponentTyping.VersionFileTypedDict|None = {"version_file_type": self.name, "accessors": [data["auto_assign"]]} if self.has_auto_assign else None
@@ -50,6 +52,7 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
             name=self.name,
             install_location=self.install_location,
             must_exist=self.must_exist,
+            available_when_unreleased=self.available_when_unreleased,
             has_auto_assign=self.has_auto_assign,
             auto_assign_arguments=self.auto_assign_arguments
         )

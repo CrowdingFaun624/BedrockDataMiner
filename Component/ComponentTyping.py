@@ -134,6 +134,7 @@ class VersionFileTypeTypedDict(TypedDict):
     allowed_accessor_types: list[str]
     install_location: str
     must_exist: bool
+    available_when_unreleased: Required[bool]
     auto_assign: AccessorTypedDict
 
 class VersionTagOrderTypedDict(TypedDict):
