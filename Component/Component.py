@@ -34,6 +34,12 @@ class Component(Generic[a]):
         self.inline_component_count = 0
         self.inline_parent:Component|None = None
 
+    def get_index(self) -> int:
+        "Returns the index of this Component in the Component group. Raises an error if it doesn't have an index."
+        if self.index is None:
+            raise Exceptions.AttributeNoneError("index", self)
+        return self.index
+
     def get_inline_parent(self) -> "Component":
         "Returns the parent of this Component if it is an inline Component. If it isn't, an error is raised."
         if self.inline_parent is None:
