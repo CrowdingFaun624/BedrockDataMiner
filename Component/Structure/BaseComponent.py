@@ -26,7 +26,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
-    def __init__(self, data:ComponentTyping.BaseComponentTypedDict, name:str, component_group:str, index:int|None) -> None:
+    def __init__(self, data:ComponentTyping.BaseTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
 

@@ -22,14 +22,14 @@ class AccessorTypeTypedDict(TypedDict):
     manager_class: Required[str]
     parameters: Required["TypeVerifierImporter.TypedVerifierTypedDicts"]
 
-class BaseComponentTypedDict(TypedDict):
+class BaseTypedDict(TypedDict):
     subcomponent: Required[str]
     imports: NotRequired[list[ImportTypedDict]]
     name: Required[str]
     normalizer: NotRequired[str|list[str]]
     type: NotRequired[Literal["Base"]]
 
-class CacheComponentTypedDict(TypedDict):
+class CacheTypedDict(TypedDict):
     type: NotRequired[Literal["Cache"]]
     types: Required[str|list[str]]
     subcomponent: Required[str]
@@ -40,14 +40,14 @@ class CacheComponentTypedDict(TypedDict):
     cache_print_text: NotRequired[bool]
     cache_compare: NotRequired[bool]
 
-class DataMinerCollectionComponentTypedDict(TypedDict):
+class DataMinerCollectionTypedDict(TypedDict):
     type: NotRequired[Literal["DataMinerCollection"]]
     file_name: Required[str]
     structure: Required[str]
     disabled: NotRequired[bool]
-    dataminers: Required[list["DataMinerSettingsComponentTypedDict"]]
+    dataminers: Required[list["DataMinerSettingsTypedDict"]]
 
-class DataMinerSettingsComponentTypedDict(TypedDict):
+class DataMinerSettingsTypedDict(TypedDict):
     type: NotRequired[Literal["DataMinerSettings"]]
     new: Required[str|None]
     old: Required[str|None]
@@ -56,7 +56,7 @@ class DataMinerSettingsComponentTypedDict(TypedDict):
     dependencies: NotRequired[list[str]]
     parameters: NotRequired[dict[str,Any]]
 
-class DictComponentTypedDict(TypedDict):
+class DictTypedDict(TypedDict):
     subcomponent: Required[str|None]
     comparison_move_function: NotRequired[str]
     detect_key_moves: NotRequired[bool]
@@ -68,16 +68,16 @@ class DictComponentTypedDict(TypedDict):
     types: Required[str|list[str]]
     tags: NotRequired[str|list[str]]
 
-class GroupComponentTypedDict(TypedDict):
+class GroupTypedDict(TypedDict):
     type: NotRequired[Literal["Group"]]
     subcomponents: Required[dict[str,str|None]]
 
 class KeymapKeyTypedDict(TypedDict):
     type: Required[str|list[str]]
-    subcomponent: NotRequired[Union[str,None,"StructroidComponentTypedDicts"]]
+    subcomponent: NotRequired[Union[str,None,"StructroidTypedDicts"]]
     tags: NotRequired[str|list[str]]
 
-class KeymapComponentTypedDict(TypedDict):
+class KeymapTypedDict(TypedDict):
     field: NotRequired[str]
     imports: NotRequired[str|list[str]]
     measure_length: NotRequired[bool]
@@ -89,7 +89,7 @@ class KeymapComponentTypedDict(TypedDict):
 class LatestSlotTypedDict(TypedDict):
     ...
 
-class ListComponentTypedDict(TypedDict):
+class ListTypedDict(TypedDict):
     subcomponent: Required[str|None]
     field: NotRequired[str]
     measure_length: NotRequired[bool]
@@ -178,15 +178,15 @@ AutoAssignerTypedDicts:TypeAlias = RangeVersionTagAutoAssignerTypedDict
 ComponentTypedDicts:TypeAlias = Union[
     AccessorTypedDict,
     AccessorTypeTypedDict,
-    BaseComponentTypedDict,
-    CacheComponentTypedDict,
-    DataMinerCollectionComponentTypedDict,
-    DataMinerSettingsComponentTypedDict,
-    DictComponentTypedDict,
-    GroupComponentTypedDict,
-    KeymapComponentTypedDict,
+    BaseTypedDict,
+    CacheTypedDict,
+    DataMinerCollectionTypedDict,
+    DataMinerSettingsTypedDict,
+    DictTypedDict,
+    GroupTypedDict,
+    KeymapTypedDict,
     LatestSlotTypedDict,
-    ListComponentTypedDict,
+    ListTypedDict,
     NbtBaseTypedDict,
     NormalizerTypedDict,
     RangeVersionTagAutoAssignerTypedDict,
@@ -199,8 +199,8 @@ ComponentTypedDicts:TypeAlias = Union[
     VersionTypedDict,
     VolumeTypedDict,
 ]
-StructureComponentTypedDicts:TypeAlias = DictComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict
-StructroidComponentTypedDicts:TypeAlias = CacheComponentTypedDict|DictComponentTypedDict|GroupComponentTypedDict|KeymapComponentTypedDict|ListComponentTypedDict|VolumeTypedDict
+StructureTypedDicts:TypeAlias = DictTypedDict|KeymapTypedDict|ListTypedDict
+StructroidTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict|VolumeTypedDict
 
 ComponentGroupFileType:TypeAlias = dict[str,ComponentTypedDicts]
 

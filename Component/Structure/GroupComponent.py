@@ -18,7 +18,7 @@ class GroupComponent(AbstractGroupComponent.AbstractGroupComponent[Structure.Str
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, dict, type(None)), "a dict", "a str", "a str, StructureComponent, or None")),
     )
 
-    def __init__(self, data:ComponentTyping.GroupComponentTypedDict, name:str, component_group:str, index:int|None) -> None:
+    def __init__(self, data:ComponentTyping.GroupTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
 

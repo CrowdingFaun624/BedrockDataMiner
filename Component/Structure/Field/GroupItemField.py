@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class GroupItemField(FieldContainer.FieldContainer):
 
-    def __init__(self, key:str, value:str|ComponentTyping.StructureComponentTypedDicts|None, path:list[str|int], *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
+    def __init__(self, key:str, value:str|ComponentTyping.StructureTypedDicts|None, path:list[str|int], *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
         '''
         :key: The type associated with this GroupItemField.
         :value: The name of the reference Component or data of the inline Component for this type.

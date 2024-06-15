@@ -14,7 +14,7 @@ STRUCTURE_COMPONENT_PATTERN = Pattern.Pattern([{"is_structure": True}])
 class OptionalStructureComponentField(OptionalComponentField.OptionalComponentField["StructureComponent.StructureComponent"]):
     '''A Field that refers to a StructureComponent (but not a GroupComponent) or no Component.'''
 
-    def __init__(self, subcomponent_data:str|ComponentTyping.StructureComponentTypedDicts|None, path: list[str|int], pattern:Pattern.Pattern=STRUCTURE_COMPONENT_PATTERN, *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
+    def __init__(self, subcomponent_data:str|ComponentTyping.StructureTypedDicts|None, path: list[str|int], pattern:Pattern.Pattern=STRUCTURE_COMPONENT_PATTERN, *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
         '''
         :subcomponent_data: The name of the reference StructureComponent or the data of the inline StructureComponent this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
