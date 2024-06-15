@@ -56,3 +56,6 @@ class DataMinerEnvironment():
     def __init__(self, dependency_data:DataMinerDependencies, structure_environment:StructureEnvironment.StructureEnvironment) -> None:
         self.dependency_data = dependency_data
         self.structure_environment = structure_environment
+
+    def __repr__(self) -> str:
+        return "<%s %r %r>" % (self.__class__.__name__, self.dependency_data, self.structure_environment)

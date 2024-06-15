@@ -56,6 +56,9 @@ class Accessor():
     def all_done(self) -> None:
         return self.manager.all_done()
 
+    def __repr__(self) -> str:
+        return "<%s id %i>" % (self.__class__.__name__, id(self))
+
 class DummyAccessor(Accessor):
     "Accessor that does nothing."
     ...

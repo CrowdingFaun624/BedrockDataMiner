@@ -49,3 +49,9 @@ class VersionTagOrder():
         if self.tags_after_top_level_tag is None:
             raise Exceptions.AttributeNoneError("tags_after_top_level_tag", self)
         return self.tags_after_top_level_tag
+
+    def __repr__(self) -> str:
+        if self.top_level_tag is None:
+            return "<%s uninitialized>" % (self.__class__.__name__)
+        else:
+            return "<%s top: %s>" % (self.__class__.__name__, self.top_level_tag)
