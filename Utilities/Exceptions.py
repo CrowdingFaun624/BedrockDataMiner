@@ -466,6 +466,23 @@ class ComponentUnrecognizedTypeError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class EmptyCapabilitiesError(ComponentException):
+    "An empty Capabilities object was created."
+
+    def __init__(self, capabilities:"Capabilities.Capabilities", message:Optional[str]=None) -> None:
+        '''
+        :capabilities: The empty Capabilities object.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(capabilities, message)
+        self.capabilities = capabilities
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r is empty" % (self.capabilities,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class FieldSequenceBreakError(ComponentException):
     "A Field's methods were called in the wrong order."
 

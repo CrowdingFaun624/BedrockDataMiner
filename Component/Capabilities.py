@@ -28,6 +28,8 @@ ALLOWED_CAPABILITIES = set([
 class Capabilities():
 
     def __init__(self, **capabilities:bool) -> None:
+        if len(capabilities) == 0:
+            raise Exceptions.EmptyCapabilitiesError(self)
         for capability in capabilities.keys():
             if capability not in ALLOWED_CAPABILITIES:
                 raise Exceptions.UnrecognizedCapabilityError(capability)
