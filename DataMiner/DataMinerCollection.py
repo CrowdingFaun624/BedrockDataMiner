@@ -120,7 +120,7 @@ class DataMinerCollection():
         dataminer_settings = self.get_dataminer_settings(version)
         return dataminer_settings.get_dataminer_class()(version, dataminer_settings)
 
-    def supports_version(self, version:Version.Version, all_dataminers:dict[str,"DataMinerCollection"]) -> bool:
+    def supports_version(self, version:Version.Version) -> bool:
         dataminer_settings = self.get_dataminer_settings(version)
         if dataminer_settings.dataminer_class is DataMiner.NullDataMiner:
             return False
@@ -128,7 +128,7 @@ class DataMinerCollection():
             if len(version.version_files[version_file].accessors) == 0:
                 return False # cannot datamine it if its files are inaccessible
         else:
-            return all(dependency.supports_version(version, all_dataminers) for dependency in dataminer_settings.get_dependencies())
+            return all(dependency.supports_version(version) for dependency in dataminer_settings.get_dependencies())
 
     def get_data_file_path(self, version:Version.Version) -> Path:
         return FileManager.get_version_data_path(version.get_version_directory(), self.file_name)

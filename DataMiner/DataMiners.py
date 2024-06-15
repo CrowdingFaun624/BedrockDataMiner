@@ -5,7 +5,6 @@ import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import Structure.StructureEnvironment as StructureEnvironment
 import Version.Version as Version
-import Version.VersionParser as VersionParser
 
 dataminers = list(Importer.dataminer_collections.values())
 
@@ -18,7 +17,7 @@ def get_dataminable_dataminers(version:Version.Version, all_dataminers:dict[str,
     :version: The version to test.
     :all_dataminers: A dict of all DataMinerCollections.
     '''
-    output = [dataminer for dataminer in dataminers if dataminer.supports_version(version, all_dataminers)]
+    output = [dataminer for dataminer in dataminers if dataminer.supports_version(version)]
     return output
 
 def currently_has_data_files_from(version:Version.Version) -> list[DataMinerCollection.DataMinerCollection]:
@@ -105,7 +104,7 @@ def test_structures() -> None:
     print("All structures successfully parsed.")
 
 def user_interface() -> None:
-    version_names = VersionParser.versions
+    version_names = Importer.versions
     all_dataminers_dict = {dataminer.name: dataminer for dataminer in dataminers}
     version = None
     while version not in version_names and version != "*":
@@ -137,8 +136,8 @@ def user_interface() -> None:
     recalculate_everything = False # if all dependencies should be recalculated too
     cannot_datamine:list[Version.Version] = []
     for version in versions:
-        if len(version.version_files) == 0: continue
-        failure_dataminers = run(version, dataminers_to_datamine, structure_environment, all_dataminers_dict, recalculate_everything=recalculate_everything, print_messages=True)
+        filtered_dataminers = [dataminer for dataminer in dataminers_to_datamine if dataminer.supports_version(version)]
+        failure_dataminers = run(version, filtered_dataminers, structure_environment, all_dataminers_dict, recalculate_everything=recalculate_everything, print_messages=True)
         if len(failure_dataminers) > 0:
             cannot_datamine.append(version)
     if len(versions) > 1:
