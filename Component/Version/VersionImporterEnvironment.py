@@ -132,11 +132,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                     if version_file.has_accessors() and not version_file.get_version_file_type().available_when_unreleased:
                         exceptions.append(Exceptions.UnreleasedDownloadableVersionError(version, version_file))
             version_files = version.get_version_files_dict()
-            if version.name == "1.21.0":
-                print(required_version_file_types, version_files)
             for required_version_file_type_name, required_version_file_type in required_version_file_types.items():
                 if required_version_file_type_name not in version_files:
-                    print(required_version_file_type_name)
                     exceptions.append(Exceptions.RequiredVersionFileTypeMissingError(required_version_file_type, version))
-        print(exceptions)
         return exceptions
