@@ -5,6 +5,7 @@ from typing import (Any, Callable, Container, Generic, Iterable, Mapping,
 
 import Utilities.Exceptions as Exceptions
 
+TYPE_CHECK_TYPE_VERIFIERS = False
 
 class TraceItemType(enum.Enum):
     KEY = 0
@@ -89,7 +90,7 @@ class DictTypeVerifier(TypeVerifier[Mapping[key_typevar, value_typevar]]):
             additional_function:Callable[[Mapping[key_typevar, value_typevar]],tuple[bool,str|None]]|None=None,
             type_check:bool=True,
         ) -> None:
-        if type_check:
+        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__dict_type_verifier.base_verify({
                 "data_type": data_type,
                 "key_type": key_type,
@@ -169,7 +170,7 @@ class TypedDictKeyTypeVerifier(TypeVerifier[tuple[key_typevar, value_typevar]]):
             function:Callable[[key_typevar, value_typevar],tuple[bool,str|None]]|None=None,
             type_check:bool=True,
         ) -> None:
-        if type_check:
+        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__typed_dict_key_type_verifier.base_verify({
                 "key": key,
                 "value_str": value_str,
@@ -217,7 +218,7 @@ class TypedDictTypeVerifier(TypeVerifier[Mapping[Any, Any]]):
             loose:bool=False,
             type_check:bool=True,
         ) -> None:
-        if type_check:
+        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__typed_dict_type_verifier.base_verify({
                 "keys": keys,
                 "data_type": data_type,
@@ -275,7 +276,7 @@ class ListTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
             additional_function:Callable[[Sequence[item_typevar]],tuple[bool,str|None]]|None=None,
             type_check:bool=True,
         ) -> None:
-        if type_check:
+        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__list_type_verifier.base_verify({
                 "item_type": item_type,
                 "data_type": data_type,
@@ -346,7 +347,7 @@ class TupleItemTypeVerifier(TypeVerifier[tuple[int,item_typevar]]):
             item_type_str:str,
             type_check:bool=True,
         ) -> None:
-        if type_check:
+        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__tuple_item_type_verifier.base_verify({
                 "item_type": item_type,
                 "item_type_str": item_type_str,
@@ -378,7 +379,7 @@ class TupleTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
             function:Callable[[Sequence[item_typevar]],tuple[bool,str|None]]|None=None,
             type_check:bool=True,
         ) -> None:
-        if type_check:
+        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__tuple_type_verifier.base_verify({
                 "data_type": data_type,
                 "data_type_str": data_type_str,
@@ -417,7 +418,7 @@ class TupleTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
 class EnumTypeVerifier(TypeVerifier[item_typevar]):
 
     def __init__(self, options:Container, type_check:bool=True) -> None:
-        if type_check:
+        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__enum_type_verifier.base_verify({"options": options}, ["EnumTypeVerifier"])
         self.options = options
 
@@ -433,7 +434,7 @@ class EnumTypeVerifier(TypeVerifier[item_typevar]):
 class UnionTypeVerifier(TypeVerifier[item_typevar]):
 
     def __init__(self, type_str:str, *types:type[item_typevar]|TypeVerifier[item_typevar], type_check:bool=True) -> None:
-        if type_check:
+        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__union_type_verifier.base_verify({
                 "type_str": type_str,
                 "types": types,

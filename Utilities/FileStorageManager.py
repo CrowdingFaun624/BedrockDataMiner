@@ -5,7 +5,7 @@ from pathlib2 import Path
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
-from Utilities.FunctionCaller import FunctionCaller
+from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
 COMPRESSIBLE_FILES = ["json", "fsb", "txt", "lang", "tga", "xml", "bin", "fragment", "h", "vertex", "properties", "material", "ttf", "otf", "fontdata", "css", "js", "html", "dat", "wlist", "pdn", "so", "dex", "sf", "mf"]
 
@@ -14,14 +14,13 @@ CACHE_LIMIT = 2 # how many times it has to miss the cache in order to cache the 
 cache_counts:dict[str,int] = {}
 cache_data:dict[str,bytes|str] = {}
 
-def read_index() -> dict[str, tuple[bool, str]]:
+def read_index() -> dict[str, bool]:
     '''Returns a dictionary of hex string hashes, and the file's zippability and a name it has.
     Should only be called once at the start of the program, and then the `index` variable should be used.'''
     with open(FileManager.FILE_STORAGE_INDEX_FILE, "rt") as index_file_io:
-        index_lines = index_file_io.readlines()
-    return {line[:40]: (bool(int(line[41])), line[43:].rstrip()) for line in index_lines}
+        return {line[:40]: bool(int(line[41])) for line in index_file_io.readlines()}
 
-index = read_index()
+index = WaitValue(read_index)
 
 def reopen_in_binary(file:FileManager.FilePromise) -> FileManager.FilePromise:
     '''Returns a new FilePromise in binary mode if the current one is in text mode.'''
@@ -72,8 +71,8 @@ def archive(file:FileManager.FilePromise) -> str:
             destination.write(source.read())
 
     with open(FileManager.FILE_STORAGE_INDEX_FILE, "at") as index_file:
-        index_file.write("%s %i %s\n" % (hex_string, zipped, file.name))
-    index[hex_string] = (zipped, file.name)
+        index_file.write("%s %i\n" % (hex_string, zipped))
+    index.get()[hex_string] = zipped
 
     return hex_string
 
@@ -92,7 +91,7 @@ def open_archived(hex_string:str, mode:Literal["t", "b"]) -> FileManager.FilePro
     archived_path = get_file_path(hex_string)
     if not archived_path.exists():
         raise Exceptions.FileHashNotFound(hex_string)
-    is_zipped, name = index[hex_string]
+    is_zipped = index.get()[hex_string]
     if is_zipped:
         temp_file = FileManager.get_temp_file_path()
         with open(archived_path, "rb") as f, open(temp_file, "wb") as temp_file_io:
@@ -114,7 +113,7 @@ def read_archived(hex_string:str, mode:Literal["t", "b"]) -> bytes|str:
     should_cache = cache_counts[cache_name] >= CACHE_LIMIT and cache_name not in cache_data
 
     archived_path = get_file_path(hex_string)
-    is_zipped, name = index[hex_string]
+    is_zipped = index.get()[hex_string]
     output:str|bytes
     if is_zipped and mode == "t":
         with open(archived_path, "rb") as f:

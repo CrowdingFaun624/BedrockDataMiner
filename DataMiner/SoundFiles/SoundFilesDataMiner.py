@@ -1,8 +1,6 @@
 import enum
 from typing import IO, Any
 
-import audio_metadata
-
 import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
@@ -12,6 +10,7 @@ import Utilities.FileManager as FileManager
 ALL_SOUND_FILE_FORMATS = [".flac", ".fsb", ".mp3", ".ogg", ".wav"]
 
 def get_metadata(file:FileManager.FilePromise) -> DataMinerTyping.SoundFilesTypedDict:
+    import audio_metadata
     with file.open() as file_io:
         if FileManager.get_file_size(file_io) == 0:
             raise Exceptions.EmptyFileError(file)
