@@ -86,8 +86,6 @@ if __name__ == "__main__":
     FileManager.clear_temp()
 
 pass
-# TODO: make all importers use Components in some fashion. Components are cool!
-
 # TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions
 # TODO: dataminers for:
 #   renderer/vanilla_lights.json in 1.20.20.23
