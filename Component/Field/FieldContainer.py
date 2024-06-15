@@ -31,9 +31,13 @@ class FieldContainer(Field.Field, Generic[a]):
             inline_components.extend(new_inline_components)
         return linked_components, inline_components
 
-    def resolve(self) -> None:
+    def resolve_create_finals(self) -> None:
         for field in self.fields:
-            field.resolve()
+            field.resolve_link_finals()
+
+    def resolve_link_finals(self) -> None:
+        for field in self.fields:
+            field.resolve_link_finals()
 
     def check(self, source_component:"Component.Component") -> list[Exception]:
         exceptions:list[Exception] = super().check(source_component)
