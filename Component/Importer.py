@@ -5,40 +5,18 @@ from typing import TYPE_CHECKING, Any, cast
 
 from pathlib2 import Path
 
-import Component.Accessor.AccessorComponent as AccessorComponent
-import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
+import Component.ComponentTypes as ComponentTypes
 import Component.Accessor.AccessorTypeImporterEnvironment as AccessorTypeImporterEnvironment
 import Component.Component as Component
 import Component.ComponentFunctions as ComponentFunctions
 import Component.ComponentTyping as ComponentTyping
-import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
 import Component.DataMiner.DataMinerImporterEnvironment as DataMinerImporterEnvironment
-import Component.DataMiner.DataMinerSettingsComponent as DataMinerSettingsComponent
 import Component.ImporterEnvironment as ImporterEnvironment
-import Component.Structure.BaseComponent as BaseComponent
-import Component.Structure.CacheComponent as CacheComponent
-import Component.Structure.DictComponent as DictComponent
-import Component.Structure.GroupComponent as GroupComponent
-import Component.Structure.KeymapComponent as KeymapComponent
-import Component.Structure.ListComponent as ListComponent
-import Component.Structure.NbtBaseComponent as NbtBaseComponent
-import Component.Structure.NbtTagComponent as NbtTagComponent
-import Component.Structure.NormalizerComponent as NormalizerComponent
 import Component.Structure.StructureImporterEnvironment as StructureImporterEnvironment
-import Component.Structure.TagComponent as TagComponent
-import Component.Structure.TypeAliasComponent as TypeAliasComponent
-import Component.Structure.VolumeComponent as VolumeComponent
-import Component.Version.VersionComponent as VersionComponent
-import Component.Version.VersionFileComponent as VersionFileComponent
-import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 import Component.Version.VersionFileTypeImporterEnvironment as VersionFileTypeImporterEnvironment
 import Component.Version.VersionImporterEnvironment as VersionImporterEnvironment
-import Component.VersionTag.LatestSlotComponent as LatestSlotComponent
 import Component.VersionTag.LatestSlotImporterEnvironment as LatestSlotImporterEnvironment
-import Component.VersionTag.RangeVersionTagAutoAssignerComponent as RangeVersionTagAutoAssignerComponent
-import Component.VersionTag.VersionTagComponent as VersionTagComponent
 import Component.VersionTag.VersionTagImporterEnvironment as VersionTagImporterEnvironment
-import Component.VersionTag.VersionTagOrderComponent as VersionTagOrderComponent
 import Component.VersionTag.VersionTagOrderImporterEnvironment as VersionTagOrderImporterEnvironment
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -52,37 +30,6 @@ if TYPE_CHECKING:
     import Version.VersionTag.VersionTag as VersionTag
     import Version.VersionTag.VersionTagOrder as VersionTagOrder
 
-component_types:list[type[Component.Component]] = [
-    AccessorComponent.AccessorComponent,
-    AccessorTypeComponent.AccessorTypeComponent,
-    BaseComponent.BaseComponent,
-    CacheComponent.CacheComponent,
-    DataMinerCollectionComponent.DataMinerCollectionComponent,
-    DataMinerSettingsComponent.DataMinerSettingsComponent,
-    DictComponent.DictComponent,
-    GroupComponent.GroupComponent,
-    KeymapComponent.KeymapComponent,
-    LatestSlotComponent.LatestSlotComponent,
-    ListComponent.ListComponent,
-    NbtBaseComponent.NbtBaseComponent,
-    NbtTagComponent.NbtKeymapTagCompoundComponent,
-    NbtTagComponent.NbtTagByteArrayComponent,
-    NbtTagComponent.NbtTagCompoundComponent,
-    NbtTagComponent.NbtTagIntArrayComponent,
-    NbtTagComponent.NbtTagListComponent,
-    NbtTagComponent.NbtTagLongArrayComponent,
-    NormalizerComponent.NormalizerComponent,
-    RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,
-    TagComponent.TagComponent,
-    TypeAliasComponent.TypeAliasComponent,
-    VersionComponent.VersionComponent,
-    VersionFileComponent.VersionFileComponent,
-    VersionFileTypeComponent.VersionFileTypeComponent,
-    VersionTagComponent.VersionTagComponent,
-    VersionTagOrderComponent.VersionTagOrderComponent,
-    VolumeComponent.VolumeComponent,
-]
-
 importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] = [
     AccessorTypeImporterEnvironment.AccessorTypeImporterEnvironment,
     DataMinerImporterEnvironment.DataMinerImporterEnvironment,
@@ -94,7 +41,7 @@ importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] =
     VersionTagOrderImporterEnvironment.VersionTagOrderImporterEnvironment,
 ]
 
-component_types_dict:dict[str,type[Component.Component]] = {component_type.class_name: component_type for component_type in component_types}
+component_types_dict:dict[str,type[Component.Component]] = {component_type.class_name: component_type for component_type in ComponentTypes.component_types}
 
 component_group_type_verifier = TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
     TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
@@ -108,7 +55,7 @@ def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, 
         raise Exceptions.ComponentTypeMissingError(component_name, parent_component.component_group)
     component_type = component_types_dict.get(component_type_str)
     if component_type is None:
-        raise Exceptions.UnrecognizedComponentTypeError(component_type_str, component_name, "(Must be one of [%s])" % (", ".join(component.class_name for component in component_types),))
+        raise Exceptions.UnrecognizedComponentTypeError(component_type_str, component_name, "(Must be one of [%s])" % (", ".join(component.class_name for component in ComponentTypes.component_types),))
     component = component_type(component_data, component_name, parent_component.component_group, None)
     component.inline_parent = parent_component
     return component
@@ -122,7 +69,7 @@ def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, imp
             raise Exceptions.ComponentTypeMissingError(component_name, name)
         component_type = component_types_dict.get(component_type_str)
         if component_type is None:
-            raise Exceptions.UnrecognizedComponentTypeError(component_type_str, "%s in %s" % (component_name, name), "(Must be one of [%s])" % (", ".join(component.class_name for component in component_types),))
+            raise Exceptions.UnrecognizedComponentTypeError(component_type_str, "%s in %s" % (component_name, name), "(Must be one of [%s])" % (", ".join(component.class_name for component in ComponentTypes.component_types),))
         component = component_type(component_data, component_name, name, index)
         components[component_name] = component
     return components
