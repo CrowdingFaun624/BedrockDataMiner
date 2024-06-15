@@ -1,4 +1,4 @@
-from typing import Any, Iterable
+from typing import Any, Iterable, cast
 
 from pathlib2 import Path
 
@@ -10,6 +10,7 @@ import Utilities.FileManager as FileManager
 import Version.Version as Version
 import Version.VersionTag.VersionTag as VersionTag
 import Version.VersionTag.VersionTagOrder as VersionTagOrder
+import Version.VersionFileType as VersionFileType
 
 
 class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,Version.Version]]):
@@ -122,11 +123,20 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                 previous_child = child
 
         # some VersionFiles cannot exist if an unreleased VersionTag exists on the Version.
+        # some VersionFileTypes require a VersionFile to exist on every Version.
+        version_file_types = cast(dict[str,VersionFileType.VersionFileType], other_outputs["version_file_types"])
+        required_version_file_types = {version_file_type_name: version_file_type for version_file_type_name, version_file_type in version_file_types.items() if version_file_type.must_exist}
         for version in output.values():
             if not version.released:
                 for version_file in version.get_version_files():
-                    if not version_file.has_accessors(): continue
-                    if not version_file.get_version_file_type().available_when_unreleased:
+                    if version_file.has_accessors() and not version_file.get_version_file_type().available_when_unreleased:
                         exceptions.append(Exceptions.UnreleasedDownloadableVersionError(version, version_file))
-
+            version_files = version.get_version_files_dict()
+            if version.name == "1.21.0":
+                print(required_version_file_types, version_files)
+            for required_version_file_type_name, required_version_file_type in required_version_file_types.items():
+                if required_version_file_type_name not in version_files:
+                    print(required_version_file_type_name)
+                    exceptions.append(Exceptions.RequiredVersionFileTypeMissingError(required_version_file_type, version))
+        print(exceptions)
         return exceptions
