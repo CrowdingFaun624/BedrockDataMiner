@@ -312,23 +312,6 @@ class ComponentImporterCircularImportError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class ComponentImportNameClashError(ComponentException):
-    "One Component and an imported Component's names are the same."
-
-    def __init__(self, name:str, message:Optional[str]=None) -> None:
-        '''
-        :name: The name of the Components.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(name, message)
-        self.name = name
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Cannot import components with the same name, \"%s\"" % (self.name,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class ComponentInvalidNameError(ComponentException):
     "A Component's name is invalid."
 
@@ -1249,54 +1232,6 @@ class TagSearcherParseError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class UnrecognizedDataMinerCollectionError(DataMinerException):
-    "The DataMinerCollection string is not recognized."
-
-    def __init__(self, dataminer_collection_str:str, source:Optional[object]=None, message:Optional[str]=None) -> None:
-        '''
-        :dataminer_collection_str: The DataMiner string that does not correspond to any DataMiner.
-        :source: The object attempting to reference this DataMiner.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer_collection_str, source, message)
-        self.source = source
-        self.dataminer_collection_str = dataminer_collection_str
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "DataMinerCollection \"%s\"" % (self.dataminer_collection_str)
-        if self.source is not None:
-            output += ", as referenced by %r," % (self.source,)
-        if self.message is None:
-            output += " does not exist!"
-        else:
-            output += " does not exist %s!" % (self.message,)
-        return output
-
-class UnrecognizedDataMinerError(DataMinerException):
-    "The DataMiner string is not recognized."
-
-    def __init__(self, dataminer_str:str, source:Optional[object]=None, message:Optional[str]=None) -> None:
-        '''
-        :dataminer_str: The DataMiner string that does not correspond to any DataMiner.
-        :source: The object attempting to reference this DataMiner.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer_str, source, message)
-        self.source = source
-        self.dataminer_str = dataminer_str
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "DataMiner \"%s\"" % (self.dataminer_str)
-        if self.source is not None:
-            output += ", as referenced by %r," % (self.source,)
-        if self.message is None:
-            output += " does not exist!"
-        else:
-            output += " does not exist %s!" % (self.message,)
-        return output
-
 class UnrecognizedPackError(DataMinerException):
     "The behavior pack/resource pack is not recognized."
 
@@ -1763,30 +1698,6 @@ class TraceError(StructureException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class UnrecognizedStructureError(StructureException):
-    "The Structure string is not recognized."
-
-    def __init__(self, structure_str:str, source:Optional[object]=None, message:Optional[str]=None) -> None:
-        '''
-        :structure_str: The Structure string that does not correspond to any Structure.
-        :source: The object attempting to reference this Structure.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(structure_str, source, message)
-        self.structure_str = structure_str
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Structure \"%s\"" % (self.structure_str,)
-        if self.source is not None:
-            output += ", as referenced by %r," % (self.source,)
-        if self.message is None:
-            output += " does not exist!"
-        else:
-            output += " does not exist %s!" % (self.message,)
-        return output
-
 class VolumeStructureAdditionalDataError(StructureException):
     "The VolumeStructure cannot print a layer because unexpected additional data exists."
 
@@ -1986,23 +1897,6 @@ class TypeVerificationWrongLengthError(TypeVerificationTypeException):
 class VersionException(Exception):
     "Abstract Exception class for errors relating to Versions."
 
-class DuplicateVersionError(VersionException):
-    "There are two Versions with the same name."
-
-    def __init__(self, version_name:str, message:Optional[str]=None) -> None:
-        '''
-        :version_name: The name of the duplicated Versions.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(version_name, message)
-        self.version_name = version_name
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "A duplicated Version with the name \"%s\" exists!" % (self.version_name,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class DuplicateVersionTagOrderError(VersionException):
     "There are two VersionTags with the same name in VersionTagOrder"
 
@@ -2042,23 +1936,6 @@ class InvalidParentVersionError(VersionException):
 
     def __str__(self) -> str:
         output = "%r has an invalid parent %r" % (self.version, self.parent)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class InvalidVersionNameError(VersionException):
-    "A Version has an invalid name."
-
-    def __init__(self, version:"Version.Version", message:Optional[str]=None) -> None:
-        '''
-        :version: The Version with an invalid name.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(version, message)
-        self.version = version
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r has an invalid name" % (self.version,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -2140,78 +2017,6 @@ class NotAnOrderTagError(VersionException):
     def __str__(self) -> str:
         output = "%r is not an ordering tag" % (self.tag,)
         output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class UnrecognizedLatestSlotError(VersionException):
-    "The latest slot is not recognized."
-
-    def __init__(self, latest_slot:str, source:Optional[object]=None, message:Optional[str]=None) -> None:
-        '''
-        :latest_slot: The latest slot that is unrecognized.
-        :source: The object attempting to reference this latest slot.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(latest_slot, source, message)
-        self.latest_slot = latest_slot
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Latest slot \"%s\"" % (self.latest_slot,)
-        if self.source is not None:
-            output += ", as referenced by %r," % (self.source,)
-        if self.message is None:
-            output += " does not exist!"
-        else:
-            output += " does not exist %s!" % (self.message,)
-        return output
-
-class UnrecognizedVersionError(VersionException):
-    "The Version string is not recognized."
-
-    def __init__(self, version_str:str, source:Optional[object]=None, message:Optional[str]=None) -> None:
-        '''
-        :version_str: The Version string that does not correspond to any Version.
-        :source: The object attempting to reference this Version.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(version_str, source, message)
-        self.version_str = version_str
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Version \"%s\"" % (self.version_str,)
-        if self.source is not None:
-            output += ", as referenced by %r," % (self.source,)
-        if self.message is None:
-            output += " does not exist!"
-        else:
-            output += " does not exist %s!" % (self.message,)
-        return output
-
-class UnrecognizedVersionTagError(VersionException):
-    "The VersionTag is not recognized."
-
-    def __init__(self, version_tag_str:str, source:Optional[object]=None, message:Optional[str]=None) -> None:
-        '''
-        :version_tag_str: The VersionTag string that does not correspond to any VersionTag.
-        :source: The object attempting to reference this Version.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(version_tag_str, source, message)
-        self.version_tag_str = version_tag_str
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "VersionTag \"%s\"" % (self.version_tag_str,)
-        if self.source is not None:
-            output += ", as referenced by %r," % (self.source,)
-        if self.message is None:
-            output += " does not exist!"
-        else:
-            output += " does not exist %s!" % (self.message,)
         return output
 
 class UnreleasedDownloadableVersionError(VersionException):
@@ -2467,25 +2272,6 @@ class RequiredVersionFileTypeMissingError(VersionFileException):
 
     def __str__(self) -> str:
         output = "Required %r is missing in %r" % (self.file_type, self.version)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class UnrecognizedVersionFileTypeError(VersionFileException):
-    "The VersionFileType is unrecognized."
-
-    def __init__(self, file_type_str:str, source:object, message:Optional[str]=None) -> None:
-        '''
-        :file_type_str: The name of the unrecognized VersionFileType.
-        :source: The object that references the VersionFileType.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(file_type_str, source, message)
-        self.file_type_str = file_type_str
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "FileType %s, as referenced by %r, is unrecognized" % (self.file_type_str, self.source)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
