@@ -1,7 +1,7 @@
 import json
 import traceback
 from collections import deque
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Callable, cast
 
 from pathlib2 import Path
 
@@ -95,8 +95,7 @@ def propagate_variables(all_components:dict[str,dict[str,Component.Component]]) 
                     unvisited_components.add(parent_component)
                     components_queue.append(parent_component)
 
-def parse_all_component_groups() -> dict[str,Any]:
-    functions = ComponentFunctions.functions
+def create_all_components() -> tuple[dict[str,dict[str,Component.Component]], dict[str,ImporterEnvironment.ImporterEnvironment]]:
     all_components:dict[str,dict[str,Component.Component]] = {}
     already_paths:dict[Path,ImporterEnvironment.ImporterEnvironment] = {}
     importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment] = {}
@@ -115,44 +114,54 @@ def parse_all_component_groups() -> dict[str,Any]:
                 components_data = cast(ComponentTyping.ComponentGroupFileType, {"": components_data})
             component_group_type_verifier.base_verify(components_data, [name])
             all_components[name] = create_components(name, components_data, importer_environment)
+    return all_components, importer_environments
 
+def get_imports(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> dict[str,dict[str,dict[str,Component.Component]]]:
     component_imports:dict[str,dict[str,dict[str,Component.Component]]] = {}
     for name, components in all_components.items():
         component_imports[name] = importer_environments[name].get_imports(components, all_components, name)
+    return component_imports
 
+def set_components(all_components:dict[str,dict[str,Component.Component]], component_imports:dict[str,dict[str,dict[str,Component.Component]]], functions:dict[str,Callable]) -> None:
     for name, components in all_components.items():
         for component in components.values(): component.set_component(components, component_imports[name], functions, create_inline_component)
 
-    propagate_variables(all_components)
-
-    for name, components in all_components.items():
+def create_finals(all_components:dict[str,dict[str,Component.Component]]) -> None:
+    for components in all_components.values():
         for component in components.values(): component.create_final()
 
-    for name, components in all_components.items():
+def link_finals(all_components:dict[str,dict[str,Component.Component]]) -> None:
+    for components in all_components.values():
         for component in components.values(): component.link_finals()
 
+def check_components(all_components:dict[str,dict[str,Component.Component]]) -> None:
     exceptions:list[Exception] = []
-    for name, components, in all_components.items():
+    for components in all_components.values():
         for component in components.values(): exceptions.extend(component.check())
     if len(exceptions) > 0:
         for exception in exceptions:
             traceback.print_exception(exception)
         raise Exceptions.ComponentParseError()
 
-    for name, components in all_components.items():
+def finalize_components(all_components:dict[str,dict[str,Component.Component]]) -> None:
+    for components in all_components.values():
         for component in components.values(): component.finalize()
 
+def get_outputs(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> dict[str,Any]:
     output:dict[str,Any] = {}
     for name, components in all_components.items():
         importer_environment_output, unused_components = importer_environments[name].get_output(components, name)
         for unused_component in unused_components:
             print("Warning: Unused %r in %s." % (unused_component, name))
         output[name] = importer_environment_output
+    return output
 
+def finalize_importer_environments(output:dict[str,Any], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
     for name, component_group_output in output.items():
         importer_environment = importer_environments[name]
         importer_environment.finalize(component_group_output, output)
 
+def check_importer_environments(output:dict[str,Any], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
     exceptions:list[Exception] = []
     for name, component_group_output in output.items():
         importer_environment = importer_environments[name]
@@ -162,6 +171,19 @@ def parse_all_component_groups() -> dict[str,Any]:
             traceback.print_exception(exception)
         raise Exceptions.ComponentParseError()
 
+def parse_all_component_groups() -> dict[str,Any]:
+    functions = ComponentFunctions.functions
+    all_components, importer_environments = create_all_components()
+    component_imports = get_imports(all_components, importer_environments)
+    set_components(all_components, component_imports, functions)
+    propagate_variables(all_components)
+    create_finals(all_components)
+    link_finals(all_components)
+    check_components(all_components)
+    finalize_components(all_components)
+    output = get_outputs(all_components, importer_environments)
+    finalize_importer_environments(output, importer_environments)
+    check_importer_environments(output, importer_environments)
     return output
 
 all_component_groups = parse_all_component_groups()
