@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, Any, Literal, overload
 from pathlib2 import Path
 
 import Utilities.Exceptions as Exceptions
-import Version.VersionTags as VersionTags
 
 if TYPE_CHECKING:
     import Utilities.FileManager as FileManager
@@ -11,19 +10,19 @@ if TYPE_CHECKING:
 
 class Manager():
 
-    def __init__(self, version:"Version.Version", file_type_arguments:dict[str,Any], location:Path, version_tags:VersionTags.VersionTags) -> None:
+    def __init__(self, version:"Version.Version", file_type_arguments:dict[str,Any], location:Path) -> None:
         '''
         :version: Version object this manager is based on.
         :location: File location to the directory containing extracted files.
         '''
         self.version = version
         self.location = location
-        self.prepare_for_install(version_tags, file_type_arguments)
+        self.prepare_for_install(file_type_arguments)
 
     def __repr__(self) -> str:
         return "<%s for %s>" % (self.__class__.__name__, self.version.name)
 
-    def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_parameters:dict[str,Any]) -> None:
+    def prepare_for_install(self, file_type_parameters:dict[str,Any]) -> None:
         '''Any actions that can take place before grabbing files can happen.'''
         raise Exceptions.ManagerUndefinedMethodError(self, self.prepare_for_install)
 

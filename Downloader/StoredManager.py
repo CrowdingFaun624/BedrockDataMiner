@@ -7,7 +7,6 @@ import Downloader.Manager as Manager
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
-import Version.VersionTags as VersionTags
 
 
 class StoredManagerTypedDict(TypedDict):
@@ -15,7 +14,7 @@ class StoredManagerTypedDict(TypedDict):
 
 class StoredManager(Manager.Manager):
 
-    def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:StoredManagerTypedDict) -> None:
+    def prepare_for_install(self, file_type_arguments:StoredManagerTypedDict) -> None:
         self.apk_location = Path(str(self.location) + ".zip")
         self.name = file_type_arguments["stored_name"]
         self.file_list:list[str]|None = None

@@ -1,16 +1,17 @@
 import datetime
 from typing import Callable, cast
 
+import Component.Importer as Importer
 import Downloader.DownloadManager as DownloadManager
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Version.Version as Version
-import Version.VersionParser as VersionParser
-import Version.VersionTags as VersionTags
+import Version.VersionTag.VersionTag as VersionTag
 
 
-def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version,str,VersionTags.VersionTags],list[str]]:
+def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version,str,dict[str,VersionTag.VersionTag]],list[str]]:
 
-    def matches_mcpedl(version:Version.Version, url:str, version_tags:VersionTags.VersionTags) -> list[str]:
+    def matches_mcpedl(version:Version.Version, url:str, version_tags:dict[str,VersionTag.VersionTag]) -> list[str]:
         VALID_ID_STARTS = ["minecraft-pe-", "minecraft-", "Minecraft-pe-", "Minecraft-PE-", "Minecraft-"] # make sure the more specific ones are first (e.g. "minecraft-pe-" before "minecraft-").
         if not url.startswith(KNOWN_URLS[matcher_name][0]):
             return ["%s url \"%s\" does not start with \"%s\"!" % (matcher_name, url, KNOWN_URLS[matcher_name][0])]
@@ -34,7 +35,7 @@ def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version,str,Ver
         else:
             return ["%s id string \"%s\" does not start validly!" % (matcher_name, id_string)]
         id = stripped_id_string.replace("-", ".")
-        if version_tags["alpha"] in version.tags:
+        if version_tags["alpha"] in version.get_tags():
             id = "a" + id
 
         return_values:list[str] = []
@@ -45,7 +46,7 @@ def mcpedl_like_assembler(matcher_name:str) -> Callable[[Version.Version,str,Ver
         return return_values
     return matches_mcpedl
 
-def matches_mcpealpha(version:Version.Version, url:str, version_tags:VersionTags.VersionTags) -> list[str]:
+def matches_mcpealpha(version:Version.Version, url:str, version_tags:dict[str,VersionTag.VersionTag]) -> list[str]:
     matcher_name = "mcpealpha"
     if not url.startswith(KNOWN_URLS[matcher_name][0]):
         return ["%s url \"%s\" does not start with \"%s\"!" % (matcher_name, url, KNOWN_URLS[matcher_name][0])]
@@ -61,7 +62,7 @@ def matches_mcpealpha(version:Version.Version, url:str, version_tags:VersionTags
         return_values.append("Version \"%s\"'s id does not match its url's (%s) id of \"%s\"!" % (version.name, matcher_name, id))
     return return_values
 
-def matches_minecraft_ios(version:Version.Version, url:str, version_tags:VersionTags.VersionTags) -> list[str]:
+def matches_minecraft_ios(version:Version.Version, url:str, version_tags:dict[str,VersionTag.VersionTag]) -> list[str]:
     matcher_name = "Minecraft-iOS"
     VALID_STARTS = ["Bedrock%20Edition%20-%20iOS/Minecraft%20", "Pocket%20Edition%20-%20iOS/Minecraft%20PE%20"]
     if not url.startswith(KNOWN_URLS[matcher_name][0]):
@@ -80,17 +81,19 @@ def matches_minecraft_ios(version:Version.Version, url:str, version_tags:Version
         return_values.append("Version \"%s\"'s id does not match its url's (%s) id of \"%s\"!" % (version.name, matcher_name, id))
     return return_values
 
-KNOWN_URLS:dict[str,tuple[str,Callable[[Version.Version,str,VersionTags.VersionTags],list[str]]]] = {
+KNOWN_URLS:dict[str,tuple[str,Callable[[Version.Version,str,dict[str,VersionTag.VersionTag]],list[str]]]] = {
     "mcpedl": ("https://mcpedl.org/uploads_files/", mcpedl_like_assembler("mcpedl")),
     "planet-minecraft": ("https://planet-minecraft.com/uploads_files/", mcpedl_like_assembler("planet-minecraft")),
     "mcpealpha": ("https://archive.org/download/MCPEAlpha/", matches_mcpealpha),
     "Minecraft-iOS": ("https://archive.org/download/minecraft-iOS/Minecraft%20-%20iOS/", matches_minecraft_ios)
 }
 
-def validate(version:Version.Version, version_tags:VersionTags.VersionTags) -> list[str]:
+def validate(version:Version.Version, version_tags:dict[str,VersionTag.VersionTag]) -> list[str]:
     '''Returns a list of warning strings about the given version.'''
-    if "download" not in version.version_files["client"].accessors: return []
-    accessor = cast(DownloadManager.DownloadManager, version.version_files["client"].accessors["download"])
+    try:
+        accessor = cast(DownloadManager.DownloadManager, version.get_version_files_dict()["client"].get_accessor())
+    except Exceptions.VersionFileNoAccessorsError:
+        return []
     url = accessor.url
     for url_id, url_data in KNOWN_URLS.items():
         url_start, url_function = url_data
@@ -100,11 +103,11 @@ def validate(version:Version.Version, version_tags:VersionTags.VersionTags) -> l
 
 def main() -> None:
     '''Writes a list of warning strings to "./_assets/version_parser_warnings.txt"'''
-    versions = VersionParser.versions
-    version_tags = VersionParser.version_tags
+    versions = Importer.versions
+    version_tags = Importer.version_tags
     warnings_list:list[str] = []
     for version in versions.values():
-        if len(version.version_files["client"].accessors) == 0: continue
+        if not version.get_version_files_dict()["client"].has_accessors(): continue
         warnings_list.extend(validate(version, version_tags))
     with open(FileManager.VERSION_PARSER_WARNINGS_FILE, "wt") as f:
         f.write("\n".join(warnings_list))

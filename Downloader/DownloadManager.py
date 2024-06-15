@@ -9,7 +9,6 @@ import Downloader.DownloadLog as DownloadLog
 import Downloader.Manager as Manager
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
-import Version.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
 
@@ -18,7 +17,7 @@ class DownloadManagerTypedDict(TypedDict):
 
 class DownloadManager(Manager.Manager):
 
-    def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:DownloadManagerTypedDict) -> None:
+    def prepare_for_install(self, file_type_arguments:DownloadManagerTypedDict) -> None:
         self.apk_location = self.location
         self.installed = WaitValue(self.apk_location.exists)
 

@@ -111,7 +111,7 @@ class DataMinerCollection():
     def get_dataminer_settings(self, version:Version.Version) -> "DataMinerSettings.DataMinerSettings":
         '''Returns a DataMinerSettings such that `version` is in the dataminer's VersionRange'''
         for dataminer_setting in self.get_all_dataminer_settings():
-            if version in dataminer_setting.version_range:
+            if version in dataminer_setting.get_version_range():
                 return dataminer_setting
         else: raise Exceptions.InvalidStateError("Version matches no DataMinerSettings!")
 
@@ -124,9 +124,10 @@ class DataMinerCollection():
         dataminer_settings = self.get_dataminer_settings(version)
         if dataminer_settings.dataminer_class is DataMiner.NullDataMiner:
             return False
-        for version_file in dataminer_settings.files:
-            if len(version.version_files[version_file].accessors) == 0:
-                return False # cannot datamine it if its files are inaccessible
+        version_files = set(version_file.get_version_file_type() for version_file in version.get_version_files() if version_file.has_accessors())
+        for required_version_file_type in dataminer_settings.get_version_file_types():
+            if required_version_file_type not in version_files:
+                return False # cannot datamine it if required files are inaccessible
         else:
             return all(dependency.supports_version(version) for dependency in dataminer_settings.get_dependencies())
 

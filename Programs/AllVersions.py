@@ -1,11 +1,11 @@
 import traceback
 
+import Component.Importer as Importer
 import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMiners as DataMiners
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
 import Version.Version as Version
-import Version.VersionParser as VersionParser
 
 STRUCTURE_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
 
@@ -27,14 +27,14 @@ def datamine_version(version:Version.Version, all_dataminers:dict[str,DataMinerC
         print()
         raise Exceptions.DataMinersFailureError(version, [dataminer_tuple[0] for dataminer_tuple in failure_dataminers])
     if not version.latest:
-        for version_file in version.version_files.values():
-            for accessor in version_file.accessors.values():
-                accessor.all_done() # remove all of the installed client files from the version directory so I don't have to clog my storage
+        for version_file in version.get_version_files():
+            for accessor in version_file.get_accessors():
+                accessor.get().all_done() # remove all of the installed client files from the version directory so I don't have to clog my storage
 
 def main() -> None:
     dataminers_dict = {dataminer.name: dataminer for dataminer in DataMiners.dataminers}
-    for version in reversed(VersionParser.versions.values()):
-        if len(version.version_files) == 0:
+    for version in reversed(Importer.versions.values()):
+        if not any(dataminer_collection.supports_version(version) for dataminer_collection in dataminers_dict.values()):
             print("Skipped \"%s\" due to being unarchived." % (version.name))
         else:
             datamine_version(version, dataminers_dict)

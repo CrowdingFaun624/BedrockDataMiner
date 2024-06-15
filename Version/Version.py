@@ -1,46 +1,89 @@
 import datetime
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Union
 
 from pathlib2 import Path
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Version.VersionFile as VersionFile
-import Version.VersionFileType as VersionFileType
-import Version.VersionTags as VersionTags
+import Version.VersionTag.VersionTag as VersionTag
 
 if TYPE_CHECKING:
     import Downloader.Accessor as Accessor
 
 class Version():
 
-    def __init__(self, name:str, files:dict[str,dict[str,Any]], parent_str:str|None, time_str:str|None, tags_str:list[str], index:int, version_tags:VersionTags.VersionTags) -> None:
+    def __init__(self, name:str, time:datetime.date|None, index:int) -> None:
         self.name = name
-        self.files_str = files
-        self.parent_str = parent_str
-        self.time_str = time_str
-        self.tags_str = tags_str
+        self.time = time
         self.index = index
 
-        # attributes set in this __init__ function.
-        self.version_directory:Path|None = None
-        self.version_files:dict[str,VersionFile.VersionFile] = {}
-
-        # attributes to be set after finished creating version list.
-        self.children:list[Version] = []
-        self.siblings:list[Version]|None = None
-        self.parent:"Version|None" = None
-        self.time:datetime.date|None = None
-        self.ordering_tag:VersionTags.VersionTag|None = None
+        self.parent:Version|None = None
+        self.tags:list[VersionTag.VersionTag]|None = None
+        self.version_files:list[VersionFile.VersionFile]|None = None
         self.latest = False
+        self.released = True
+        self.order_tag:VersionTag.VersionTag|None = None
 
-        self.validate_name()
-        self.validate_tags(version_tags)
-        self.validate_parent()
-        self.validate_time()
+        self.version_directory = FileManager.get_version_path(self.name)
+        self.version_directory.mkdir(exist_ok=True)
+        self.children:list[Version] = []
+
+    def link_finals(
+        self,
+        parent:Union["Version", None],
+        tags:list[VersionTag.VersionTag],
+        version_files:list[VersionFile.VersionFile],
+    ) -> None:
+        self.parent = parent
+        self.tags = tags
+        self.version_files = version_files
+
+        if self.parent is not None:
+            self.parent.add_child(self)
+
+    def assign_latest(self) -> None:
+        "Makes this Version be a latest one."
+        self.latest = True
+
+    def finalize(self) -> None:
+        self.tags_dict = {tag.name: tag for tag in self.get_tags()}
+        self.version_files_dict = {version_file.get_version_file_type().name: version_file for version_file in self.get_version_files()}
+        for tag in self.get_tags():
+            if self.order_tag is None and tag.is_order_tag:
+                self.order_tag = tag
+            if tag.is_unreleased_tag:
+                self.released = False
+        if self.order_tag is None:
+            raise Exceptions.NoOrderVersionTagsFoundError(self, self.get_tags())
+
+    def get_tags(self) -> list[VersionTag.VersionTag]:
+        if self.tags is None:
+            raise Exceptions.AttributeNoneError("tags", self)
+        return self.tags
+
+    def get_order_tag(self) -> VersionTag.VersionTag:
+        if self.order_tag is None:
+            raise Exceptions.AttributeNoneError("order_tag", self)
+        return self.order_tag
+
+    def get_tags_dict(self) -> dict[str,VersionTag.VersionTag]:
+        if self.tags_dict is None:
+            raise Exceptions.AttributeNoneError("tags_dict", self)
+        return self.tags_dict
+
+    def get_version_files(self) -> list[VersionFile.VersionFile]:
+        if self.version_files is None:
+            raise Exceptions.AttributeNoneError("files", self)
+        return self.version_files
+
+    def get_version_files_dict(self) -> dict[str,VersionFile.VersionFile]:
+        if self.version_files_dict is None:
+            raise Exceptions.AttributeNoneError("version_files_dict", self)
+        return self.version_files_dict
 
     def get_accessor(self, file_type:str) -> "Accessor.Accessor":
-        return self.version_files[file_type].get_accessor()
+        return self.get_version_files_dict()[file_type].get_accessor()
 
     # this will be needed when I actually finish redoing the wiki page thing
     # def assign_wiki_page(self, version_tags:VersionTags.VersionTags) -> None:
@@ -73,41 +116,12 @@ class Version():
     #     development_category_name = "Category:" + self.wiki_page + development_category_suffix
     #     if self.development_category_names is None: self.development_category_names = [development_category_name]
 
-    def add_tag(self, tag:VersionTags.VersionTag) -> None:
+    def add_tag(self, tag:VersionTag.VersionTag) -> None:
         '''Adds a tag to the Version.'''
-        if tag not in self.tags:
-            self.tags.append(tag)
-
-    def validate_version_name(self, name:str) -> None:
-        '''Raises an InvalidVersionNameError if it is not valid.'''
-        version_directory = FileManager.VERSIONS_DIRECTORY.joinpath(name)
-        if version_directory.parent != FileManager.VERSIONS_DIRECTORY: raise Exceptions.InvalidVersionNameError(self)
-
-    def validate_name(self) -> None:
-        '''Sets this Version's `version_directory` attribute based off of the value of `name`. Raises an InvalidVersionNameError if it is not valid.'''
-        self.version_directory = FileManager.get_version_path(self.name)
-        self.validate_version_name(self.name)
-        self.version_directory.mkdir(exist_ok=True)
-
-    def validate_parent(self) -> None:
-        '''Raises a InvalidParentVersionError if it is not valid.'''
-        if self.parent_str is None: return
-        if self.parent_str == self.name:
-            raise Exceptions.InvalidParentVersionError(self, self.parent_str)
-
-    def validate_time(self) -> None:
-        '''Raises an InvalidVersionTimeError if it is not valid.'''
-        if self.time_str is None:
-            self.time = None
-            return
-        self.time = datetime.date.fromisoformat(self.time_str)
-        if self.time > datetime.date.today(): raise Exceptions.InvalidVersionTimeError(self, self.time, "time is after today")
-        # TODO: remove this line or make it ✨data-based✨
-        if self.time.year < 2011: raise Exceptions.InvalidVersionTimeError(self, self.time, "time is before 2011")
-
-    def validate_tags(self, version_tags:VersionTags.VersionTags) -> None:
-        self.tags = [version_tags[tag_str] for tag_str in self.tags_str]
-        self.ordering_tag = VersionTags.get_ordering_tag(self.tags)
+        tags_list, tags_dict = self.get_tags(), self.get_tags_dict()
+        if tag not in tags_dict:
+            tags_list.append(tag)
+            tags_dict[tag.name] = tag
 
     def get_children_recursive(self) -> list["Version"]:
         children = self.children[:]
@@ -118,48 +132,8 @@ class Version():
     def add_child(self, child:"Version") -> None:
         self.children.append(child)
 
-    def assign_files(self, version_file_types:dict[str,VersionFileType.VersionFileType], auto_assigning_version_file_types:list[VersionFileType.VersionFileType], version_tags:VersionTags.VersionTags) -> None:
-        for file_type_name, accessors in self.files_str.items():
-            file_type = version_file_types.get(file_type_name, None)
-            if file_type is None:
-                raise Exceptions.UnrecognizedVersionFileTypeError(file_type_name, self)
-            self.version_files[file_type_name] = VersionFile.VersionFile(self, file_type, accessors, version_tags)
-        for auto_assigning_version_file_type in auto_assigning_version_file_types:
-            if auto_assigning_version_file_type.name in self.version_files: continue
-            else:
-                if auto_assigning_version_file_type.auto_assign is None:
-                    raise Exceptions.InvalidStateError()
-                auto_assigning_accessors = {auto_assigning_version_file_type.auto_assign["accessor"]: auto_assigning_version_file_type.auto_assign["parameters"]}
-                self.version_files[auto_assigning_version_file_type.name] = VersionFile.VersionFile(self, auto_assigning_version_file_type, auto_assigning_accessors, version_tags)
-        for file_type_name, file_type in version_file_types.items():
-            if file_type.must_exist and file_type_name not in self.version_files:
-                raise Exceptions.RequiredVersionFileTypeMissingError(file_type, self)
-
-        if version_tags["unreleased"] in self.tags:
-            if len(self.version_files) == 0:
-                raise Exceptions.UnreleasedDownloadableVersionError(self, version_tags["unreleased"])
-
-    def assign_parent(self, version_dict:dict[str,"Version"]) -> None:
-        if self.parent_str is None:
-            self.parent = None
-            return
-        if self.parent_str not in version_dict:
-            raise Exceptions.UnrecognizedVersionError(self.parent_str, self, "(parent of Version)")
-        self.parent = version_dict[self.parent_str]
-        self.parent.add_child(self)
-        self.siblings = self.parent.children
-
     def get_version_directory(self) -> Path:
-        '''Returns this Version's directory, and raises an error if it does not exist.'''
-        if self.version_directory is None:
-            raise Exceptions.AttributeNoneError("version_directory", self)
         return self.version_directory
-
-    def get_order_tag(self) -> VersionTags.VersionTag:
-        '''Returns this Version's ordering VersionTag, and raises an error if it does not exist.'''
-        if self.ordering_tag is None:
-            raise Exceptions.AttributeNoneError("ordering_tag", self)
-        return self.ordering_tag
 
     def __str__(self) -> str:
         return self.name

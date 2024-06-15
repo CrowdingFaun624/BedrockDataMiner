@@ -1,39 +1,51 @@
-import json
-from typing import Any, TypedDict
+from typing import TYPE_CHECKING, Any, Optional
 
-from typing_extensions import NotRequired, Required
+import Utilities.Exceptions as Exceptions
 
-import Utilities.FileManager as FileManager
-
-
-class AutoAssignTypedDict(TypedDict):
-    accessor: Required[str]
-    parameters: Required[dict[str,Any]]
-
-class FileTypeTypedDict(TypedDict):
-    allowed_accessors: Required[list[str]]
-    auto_assign: NotRequired[AutoAssignTypedDict]
-    install_location: Required[str]
-    must_exist: Required[bool]
+if TYPE_CHECKING:
+    import Downloader.AccessorType as AccessorType
 
 class VersionFileType():
 
-    def __init__(self, name:str, data:FileTypeTypedDict) -> None:
+    def __init__(
+        self,
+        name:str,
+        install_location:str,
+        must_exist:bool,
+        has_auto_assign:bool,
+        auto_assign_arguments:dict[str,Any]|None,
+    ) -> None:
         self.name = name
-        self.allowed_accessors = data["allowed_accessors"]
-        self.install_location = data["install_location"]
-        self.must_exist = data["must_exist"]
-        self.auto_assign = data.get("auto_assign", None)
-    
+        self.install_location = install_location
+        self.must_exist = must_exist
+        self.has_auto_assign = has_auto_assign
+        self.auto_assign_arguments = auto_assign_arguments
+
+        self.allowed_accessor_types:list["AccessorType.AccessorType"]|None = None
+        self.auto_assign_accessor_type:Optional["AccessorType.AccessorType"] = None
+
+    def link_finals(
+        self,
+        allowed_accessor_types:list["AccessorType.AccessorType"],
+        auto_assign_accessor_type:Optional["AccessorType.AccessorType"]
+    ) -> None:
+        self.allowed_accessor_types = allowed_accessor_types
+        self.auto_assign_accessor_type = auto_assign_accessor_type
+
+    def get_allowed_accessor_types(self) -> list["AccessorType.AccessorType"]:
+        if self.allowed_accessor_types is None:
+            raise Exceptions.AttributeNoneError("allowed_accessor_types", self)
+        return self.allowed_accessor_types
+
+    def get_auto_assign_accessor_type(self) -> "AccessorType.AccessorType":
+        if not self.has_auto_assign:
+            raise Exceptions.VersionFileTypeNotAutoAssigning(self)
+        if self.auto_assign_accessor_type is None:
+            raise Exceptions.AttributeNoneError("auto_assign_accessor_type", self)
+        return self.auto_assign_accessor_type
+
     def __hash__(self) -> int:
         return hash(self.name)
 
     def __repr__(self) -> str:
         return "<VersionFileType %s>" % (self.name)
-
-def parse() -> dict[str,VersionFileType]:
-    with open(FileManager.VERSION_FILE_TYPES_FILE, "rt") as f:
-        data:dict[str,FileTypeTypedDict] = json.load(f)
-        return {file_type_name: VersionFileType(file_type_name, file_type_data) for file_type_name, file_type_data in data.items()}
-
-version_file_types = parse()

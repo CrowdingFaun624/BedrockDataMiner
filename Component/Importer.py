@@ -5,6 +5,9 @@ from typing import TYPE_CHECKING, Any, cast
 
 from pathlib2 import Path
 
+import Component.Accessor.AccessorComponent as AccessorComponent
+import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
+import Component.Accessor.AccessorTypeImporterEnvironment as AccessorTypeImporterEnvironment
 import Component.Component as Component
 import Component.ComponentFunctions as ComponentFunctions
 import Component.ComponentTyping as ComponentTyping
@@ -25,12 +28,33 @@ import Component.Structure.StructureImporterEnvironment as StructureImporterEnvi
 import Component.Structure.TagComponent as TagComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
 import Component.Structure.VolumeComponent as VolumeComponent
-import DataMiner.DataMinerCollection as DataMinerCollection
-import Structure.StructureBase as StructureBase
+import Component.Version.VersionComponent as VersionComponent
+import Component.Version.VersionFileComponent as VersionFileComponent
+import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
+import Component.Version.VersionFileTypeImporterEnvironment as VersionFileTypeImporterEnvironment
+import Component.Version.VersionImporterEnvironment as VersionImporterEnvironment
+import Component.VersionTag.LatestSlotComponent as LatestSlotComponent
+import Component.VersionTag.LatestSlotImporterEnvironment as LatestSlotImporterEnvironment
+import Component.VersionTag.RangeVersionTagAutoAssignerComponent as RangeVersionTagAutoAssignerComponent
+import Component.VersionTag.VersionTagComponent as VersionTagComponent
+import Component.VersionTag.VersionTagImporterEnvironment as VersionTagImporterEnvironment
+import Component.VersionTag.VersionTagOrderComponent as VersionTagOrderComponent
+import Component.VersionTag.VersionTagOrderImporterEnvironment as VersionTagOrderImporterEnvironment
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
+if TYPE_CHECKING:
+    import DataMiner.DataMinerCollection as DataMinerCollection
+    import Downloader.AccessorType as AccessorType
+    import Structure.StructureBase as StructureBase
+    import Version.Version as Version
+    import Version.VersionFileType as VersionFileType
+    import Version.VersionTag.VersionTag as VersionTag
+    import Version.VersionTag.VersionTagOrder as VersionTagOrder
+
 component_types:list[type[Component.Component]] = [
+    AccessorComponent.AccessorComponent,
+    AccessorTypeComponent.AccessorTypeComponent,
     BaseComponent.BaseComponent,
     CacheComponent.CacheComponent,
     DataMinerCollectionComponent.DataMinerCollectionComponent,
@@ -38,6 +62,7 @@ component_types:list[type[Component.Component]] = [
     DictComponent.DictComponent,
     GroupComponent.GroupComponent,
     KeymapComponent.KeymapComponent,
+    LatestSlotComponent.LatestSlotComponent,
     ListComponent.ListComponent,
     NbtBaseComponent.NbtBaseComponent,
     NbtTagComponent.NbtKeymapTagCompoundComponent,
@@ -47,14 +72,26 @@ component_types:list[type[Component.Component]] = [
     NbtTagComponent.NbtTagListComponent,
     NbtTagComponent.NbtTagLongArrayComponent,
     NormalizerComponent.NormalizerComponent,
+    RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,
     TagComponent.TagComponent,
     TypeAliasComponent.TypeAliasComponent,
+    VersionComponent.VersionComponent,
+    VersionFileComponent.VersionFileComponent,
+    VersionFileTypeComponent.VersionFileTypeComponent,
+    VersionTagComponent.VersionTagComponent,
+    VersionTagOrderComponent.VersionTagOrderComponent,
     VolumeComponent.VolumeComponent,
 ]
 
 importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] = [
+    AccessorTypeImporterEnvironment.AccessorTypeImporterEnvironment,
     DataMinerImporterEnvironment.DataMinerImporterEnvironment,
+    LatestSlotImporterEnvironment.LatestSlotImporterEnvironment,
     StructureImporterEnvironment.StructureImporterEnvironment,
+    VersionFileTypeImporterEnvironment.VersionFileTypeImporterEnvironment,
+    VersionImporterEnvironment.VersionImporterEnvironment,
+    VersionTagImporterEnvironment.VersionTagImporterEnvironment,
+    VersionTagOrderImporterEnvironment.VersionTagOrderImporterEnvironment,
 ]
 
 component_types_dict:dict[str,type[Component.Component]] = {component_type.class_name: component_type for component_type in component_types}
@@ -178,5 +215,11 @@ def parse_all_component_groups() -> dict[str,Any]:
 
 all_component_groups = parse_all_component_groups()
 
-dataminer_collections:dict[str,DataMinerCollection.DataMinerCollection] = all_component_groups["dataminer_collections"]
-structures:dict[str,StructureBase.StructureBase] = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}
+accessor_types:dict[str,"AccessorType.AccessorType"] = all_component_groups["accessor_types"]
+dataminer_collections:dict[str,"DataMinerCollection.DataMinerCollection"] = all_component_groups["dataminer_collections"]
+latest_slots:list[str] = all_component_groups["latest_slots"]
+structures:dict[str,"StructureBase.StructureBase"] = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}
+version_file_types:dict[str,"VersionFileType.VersionFileType"] = all_component_groups["version_file_types"]
+version_tags_order:"VersionTagOrder.VersionTagOrder" = all_component_groups["version_tags_order"]
+version_tags:dict[str,"VersionTag.VersionTag"] = all_component_groups["version_tags"]
+versions:dict[str,"Version.Version"] = all_component_groups["versions"]

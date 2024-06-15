@@ -17,7 +17,9 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
     assume_type = DataMinerCollectionComponent.DataMinerCollectionComponent.class_name
 
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
-        return {component_group_name: component_group for component_group_name, component_group in all_components.items() if component_group_name.startswith("structures/")}
+        imports = {component_group_name: component_group for component_group_name, component_group in all_components.items() if component_group_name.startswith("structures/")}
+        imports.update({"versions": all_components["versions"], "version_file_types": all_components["version_file_types"]})
+        return imports
 
     def get_component_files(self) -> Iterable[Path]:
         return [FileManager.DATAMINER_COLLECTIONS_FILE]
@@ -52,9 +54,11 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
         used_versions:set[Version.Version] = set()
         for dataminer_collection in output.values():
             for dataminer_settings in dataminer_collection.get_all_dataminer_settings():
-                if dataminer_settings.version_range.start is not None:
-                    used_versions.add(dataminer_settings.version_range.start)
-                if dataminer_settings.version_range.stop is not None:
-                    used_versions.add(dataminer_settings.version_range.stop)
+                start_version = dataminer_settings.get_version_range().start
+                stop_version = dataminer_settings.get_version_range().stop
+                if start_version is not None:
+                    used_versions.add(start_version)
+                if stop_version is not None:
+                    used_versions.add(stop_version)
         exceptions.extend(self.check_for_loops(used_versions, list(output.values())))
         return exceptions

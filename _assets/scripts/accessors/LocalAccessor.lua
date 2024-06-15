@@ -2,7 +2,7 @@ local local_accessor = {}
 
 local_accessor.inherit = "SubDirectoryAccessor"
 
-function local_accessor:get_directory_base(version_tags, file_type_arguments, os, pathlib2)
+function local_accessor:get_directory_base(file_type_arguments, os, pathlib2)
     local has_ipa = false
     local has_double_assets = false
     for tag in python.iter( self.version.tags ) do

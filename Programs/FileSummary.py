@@ -1,13 +1,13 @@
-import Version.VersionParser as VersionParser
+import Component.Importer as Importer
 
 
 def main():
-    version_names = VersionParser.versions
+    version_names = Importer.versions
     selected_version_name = None
     while selected_version_name not in version_names:
         selected_version_name = input("Select a version to analyze: ")
     selected_version = version_names[selected_version_name]
-    files = selected_version.version_files["client"].accessors["download"].get_full_file_list()
+    files = selected_version.get_version_files_dict()["client"].get_accessor().get_full_file_list()
     file_extensions:dict[str,int] = {}
     for file in files:
         file_name = file.split("/")[-1]

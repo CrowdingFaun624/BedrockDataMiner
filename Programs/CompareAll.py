@@ -1,7 +1,7 @@
 import traceback
 from typing import Generator, Iterable, TypeVar
 
-import DataMiner.DataMiner as DataMiner
+import Component.Importer as Importer
 import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMiners as DataMiners
 import Structure.Normalizer as Normalizer
@@ -9,7 +9,6 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Version.Version as Version
-import Version.VersionParser as VersionParser
 
 COMPARING_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing)
 
@@ -88,11 +87,12 @@ def select_dataminers(dataminers:list[DataMinerCollection.DataMinerCollection]) 
 def main() -> None:
     dataminers = DataMiners.dataminers
     selected_dataminers = select_dataminers(dataminers)
-    versions = VersionParser.versions
-    version_tags = VersionParser.version_tags
-    major_tags = {tag for tag in version_tags.tags.values() if tag.is_major_tag}
-    minor_tags_before = {tag for tag in version_tags.tags.values() if not tag.is_major_tag and tag in version_tags.order.tags_before_top_level_tag}
-    minor_tags_after  = {tag for tag in version_tags.tags.values() if not tag.is_major_tag and tag in version_tags.order.tags_after_top_level_tag }
+    versions = Importer.versions
+    version_tags = Importer.version_tags
+    version_tags_order = Importer.version_tags_order
+    major_tags = {tag for tag in version_tags.values() if tag.is_major_tag}
+    minor_tags_before = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.get_tags_before_top_level_tag()}
+    minor_tags_after  = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.get_tags_after_top_level_tag()}
     major_versions:dict[Version.Version,list[Version.Version]] = {version: [] for version in versions.values() if version.get_order_tag() in major_tags}
     for major_version, child_versions in major_versions.items():
         child_versions.extend(child for child in major_version.children if child.get_order_tag() in minor_tags_before)

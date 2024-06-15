@@ -12,6 +12,8 @@ if TYPE_CHECKING:
     import Component.Field.Field as Field
     import Component.ImporterEnvironment as ImporterEnvironment
     import Component.Pattern as Pattern
+    import Component.Version.Field.VersionRangeField as VersionRangeField
+    import Component.Version.VersionComponent as VersionComponent
     import DataMiner.DataMiner as DataMiner
     import DataMiner.DataMinerCollection as DataMinerCollection
     import DataMiner.DataMinerEnvironment as DataMinerEnvironment
@@ -33,7 +35,7 @@ if TYPE_CHECKING:
     import Version.VersionFile as VersionFile
     import Version.VersionFileType as VersionFileType
     import Version.VersionRange as VersionRange
-    import Version.VersionTags as VersionTags
+    import Version.VersionTag.VersionTag as VersionTag
 
 # Within this file, an "Exception" is an abstract type and
 # an "Error" is a concrete type.
@@ -188,7 +190,7 @@ class OpenAllDoneFilePromiseError(Exception):
 class AccessorException(Exception):
     "Abstract Exception class for errors relating to Accessors."
 
-class AccessorTypeInheritUnrecognizedAccessorTypeError(AccessorException):
+class AccessorClassInheritUnrecognizedAccessorClassError(AccessorException):
     "A scripted AccessorType attempts to subclass an unknown built-in AccessorType"
 
     def __init__(self, class_name:str, superclass_name:str, message:Optional[str]=None) -> None:
@@ -207,47 +209,47 @@ class AccessorTypeInheritUnrecognizedAccessorTypeError(AccessorException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class AccessorTypeMissingInheritError(AccessorException):
+class AccessorClassMissingInheritError(AccessorException):
     "A scripted AccessorType is missing the inherit key."
 
-    def __init__(self, accessor_type_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, accessor_class_name:str, message:Optional[str]=None) -> None:
         '''
-        :accessor_type_name: The name of the AccessorType missing the inherit key.
+        :accessor_class_name: The name of the Accessor class missing the inherit key.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(accessor_type_name, message)
-        self.accessor_type_name = accessor_type_name
+        super().__init__(accessor_class_name, message)
+        self.accessor_class_name = accessor_class_name
         self.message = message
 
     def __str__(self) -> str:
-        output = "Scripted AccessorType \"%s\" is missing the \"inherit\" key" % (self.accessor_type_name,)
+        output = "Scripted Accessor class \"%s\" is missing the \"inherit\" key" % (self.accessor_class_name,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class UnrecognizedAccessorTypeError(AccessorException):
+class UnrecognizedAccessorClassError(AccessorException):
     "An AccessorType is not recognized."
 
-    def __init__(self, accessor_type_str:str, source:Optional[object]=None, source_str:Optional[str]=None, message:Optional[str]=None) -> None:
+    def __init__(self, accessor_class_str:str, source:Optional[object]=None, source_str:Optional[str]=None, message:Optional[str]=None) -> None:
         '''
-        :accessor_type_str: The name of the unrecognized AccessorType.
+        :accessor_class_str: The name of the unrecognized Accessor class.
         :source: The object that attempts to reference the unrecognized AccessorType; may be empty.
         :source_str: A string describing the object that attempts to reference the unrecognized AccessorType; may be empty.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(accessor_type_str, source, source_str, message)
-        self.accessor_type_str = accessor_type_str
+        super().__init__(accessor_class_str, source, source_str, message)
+        self.accessor_class_str = accessor_class_str
         self.source = source
         self.source_str = source_str
         self.message = message
 
     def __str__(self) -> str:
-        output = "DataMiner \"%s\"" % (self.accessor_type_str)
+        output = "Accessor class \"%s\"" % (self.accessor_class_str)
         if self.source is not None:
             output += ", as referenced by %r," % (self.source,)
         elif self.source_str is not None:
             output += ", as referenced by %s," % (self.source_str)
         if self.message is None:
-            output += " does note exist!"
+            output += " does not exist!"
         else:
             output += " does not exist %s!" % (self.message,)
         return output
@@ -690,7 +692,7 @@ class UnrecognizedComponentError(ComponentException):
 
 class UnrecognizedComponentGroupError(ComponentException):
     "A Component group is unrecognized"
-    
+
     def __init__(self, component_group_str:str, source_str:str, message:Optional[str]=None) -> None:
         '''
         :component_group_str: The name of the unrecognized Component group.
@@ -701,7 +703,7 @@ class UnrecognizedComponentGroupError(ComponentException):
         self.component_group_str = component_group_str
         self.source_str = source_str
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "Component group \"%s\", as referenced by %s, is unrecognized" % (self.component_group_str, self.source_str)
         output += "!" if self.message is None else " %s!" % (self.message,)
@@ -793,7 +795,7 @@ class DataMinerCollectionFileError(DataMinerException):
 
 class DataMinerDependencyOverwriteError(DataMinerException):
     "Attempted to set an item of a DataMinerDependencies object that already exists."
-    
+
     def __init__(self, dataminer_dependencies:"DataMinerEnvironment.DataMinerDependencies", dependency_name:str, message:Optional[str]=None) -> None:
         '''
         :dataminer_dependencies: The DataMinerDependencies that had an item overwritten.
@@ -804,7 +806,7 @@ class DataMinerDependencyOverwriteError(DataMinerException):
         self.dataminer_dependencies = dataminer_dependencies
         self.dependency_name = dependency_name
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "Attempted to overwrite dependency \"%s\" of %r" % (self.dependency_name, self.dataminer_dependencies)
         output += "!" if self.message is None else " %s!" % (self.message,)
@@ -968,7 +970,7 @@ class DataMinerSettingsInvalidVersionRangeException(DataMinerException):
 class DataMinerSettingsVersionRangeExists(DataMinerSettingsInvalidVersionRangeException):
     "The new/old Version of the first/last DataMinerSettings is not None."
 
-    def __init__(self, dataminer_collection_component:"DataMinerCollectionComponent.DataMinerCollectionComponent", actual_value:str, is_first:bool, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer_collection_component:"DataMinerCollectionComponent.DataMinerCollectionComponent", actual_value:"Version.Version", is_first:bool, message:Optional[str]=None) -> None:
         '''
         :dataminer_collection_component: The DataMinerCollectionComponent with an invalid DataMinerSettings.
         :actual_value: The value that is present in the new Version instead of None.
@@ -983,7 +985,7 @@ class DataMinerSettingsVersionRangeExists(DataMinerSettingsInvalidVersionRangeEx
 
     def __str__(self) -> str:
         first_last_text = ("new", "first") if self.is_first else ("old", "last")
-        output = "The %s Version of the %s DataMinerSettings of %r is not None, but instead \"%s\"" % (first_last_text[0], first_last_text[1], self.dataminer_collection_component, self.actual_value)
+        output = "The %s Version of the %s DataMinerSettings of %r is not None, but instead %r" % (first_last_text[0], first_last_text[1], self.dataminer_collection_component, self.actual_value)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -1249,7 +1251,7 @@ class UnrecognizedDataMinerCollectionError(DataMinerException):
         if self.source is not None:
             output += ", as referenced by %r," % (self.source,)
         if self.message is None:
-            output += " does note exist!"
+            output += " does not exist!"
         else:
             output += " does not exist %s!" % (self.message,)
         return output
@@ -1273,7 +1275,7 @@ class UnrecognizedDataMinerError(DataMinerException):
         if self.source is not None:
             output += ", as referenced by %r," % (self.source,)
         if self.message is None:
-            output += " does note exist!"
+            output += " does not exist!"
         else:
             output += " does not exist %s!" % (self.message,)
         return output
@@ -1366,6 +1368,30 @@ class ManagerUndefinedMethodError(ManagerException):
     def __str__(self) -> str:
         output = "Method %s of %r was not overridden" % (self.function.__name__, self.manager)
         output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class UnrecognizedManagerError(DataMinerException):
+    "The Manager string is not recognized."
+
+    def __init__(self, manager_str:str, source:Optional[object]=None, message:Optional[str]=None) -> None:
+        '''
+        :manager_str: The Manager string that does not correspond to any Manager.
+        :source: The object attempting to reference this Manager.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(manager_str, source, message)
+        self.source = source
+        self.manager_str = manager_str
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Manager \"%s\"" % (self.manager_str)
+        if self.source is not None:
+            output += ", as referenced by %r," % (self.source,)
+        if self.message is None:
+            output += " does not exist!"
+        else:
+            output += " does not exist %s!" % (self.message,)
         return output
 
 class NbtException(Exception):
@@ -1960,22 +1986,45 @@ class DuplicateVersionError(VersionException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class InvalidParentVersionError(VersionException):
-    "A Version has an invalid parent Version."
+class DuplicateVersionTagOrderError(VersionException):
+    "There are two VersionTags with the same name in VersionTagOrder"
 
-    def __init__(self, version:"Version.Version", parent_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, tag:"VersionTag.VersionTag", key:str|tuple[str,...], message:Optional[str]=None) -> None:
         '''
-        :version: The Version with an invalid parent Version.
-        :parent_name: The name of the parent Version.
+        :tag: The VersionTag that is dulicated.
+        :key: The key(s) in version_tags_order.json that has the duplicate VersionTag.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(version, parent_name, message)
-        self.version = version
-        self.parent_name = parent_name
+        super().__init__(tag, key, message)
+        self.tag = tag
+        self.key = key
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has an invalid parent \"%s\"" % (self.version, self.parent_name)
+        output = "%r is duplicated in " % (self.tag,)
+        if isinstance(self.key, tuple):
+            output += "keys [%s] of VersionTagOrder" % (", ".join("\"%s\"" % key for key in self.key),)
+        else:
+            output += "key \"%s\" of VersionTagOrder" % (self.key,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class InvalidParentVersionError(VersionException):
+    "A Version has an invalid parent Version."
+
+    def __init__(self, version:"Version.Version", parent:"Version.Version", message:Optional[str]=None) -> None:
+        '''
+        :version: The Version with an invalid parent Version.
+        :parent: The parent of this Version.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(version, parent, message)
+        self.version = version
+        self.parent = parent
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r has an invalid parent %r" % (self.version, self.parent)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -2020,39 +2069,49 @@ class InvalidVersionTimeError(VersionException):
 class NoOrderVersionTagsFoundError(VersionException):
     "No ordering VersionTags were found."
 
-    def __init__(self, version_tags:list["VersionTags.VersionTag"], message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version.Version", version_tags:list["VersionTag.VersionTag"], message:Optional[str]=None) -> None:
         '''
+        :version: The Version with no ordering tags.
         :version_tags: The list of VersionTags containing no ordering tags.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(version_tags, message)
+        super().__init__(version, version_tags, message)
+        self.version = version
         self.version_tags = version_tags
         self.message = message
 
     def __str__(self) -> str:
-        output = "No ordering tags found within %s" % (self.version_tags,)
+        output = "No ordering tags found within %r's tags: %s" % (self.version, self.version_tags)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
 class NotAllOrderTagsUsedError(VersionException):
     "Not all ordering VersionTags were used."
 
-    def __init__(self, message:Optional[str]=None) -> None:
+    def __init__(self, tag:"VersionTag.VersionTag", key:str|tuple[str,...], message:Optional[str]=None) -> None:
         '''
+        :tag: The VersionTag that is missing.
+        :key: Which key(s) in version_tags_order.json has a missing VersionTag.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(message)
+        super().__init__(tag, key, message)
+        self.tag = tag
+        self.key = key
         self.message = message
 
     def __str__(self) -> str:
-        output = "Not all order tags were used"
+        output = "%r was not used in " % (self.tag,)
+        if isinstance(self.key, tuple):
+            output += "keys [%s] of VersionTagOrder" % (", ".join("\"%s\"" % key for key in self.key))
+        else:
+            output += "key \"%s\" of VersionTagOrder" % (self.key,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
 class NotAnOrderTagError(VersionException):
     "The VersionTag is not an ordering tag."
 
-    def __init__(self, tag:"VersionTags.VersionTag", message:Optional[str]=None) -> None:
+    def __init__(self, tag:"VersionTag.VersionTag", message:Optional[str]=None) -> None:
         '''
         :tag: The VersionTag that is not an ordering tag.
         :message: Additional text to place after the main message.
@@ -2141,7 +2200,7 @@ class UnrecognizedVersionTagError(VersionException):
 class UnreleasedDownloadableVersionError(VersionException):
     "A Version has the unreleased tag and has a method for downloading."
 
-    def __init__(self, version:"Version.Version", version_tag:"VersionTags.VersionTag", message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version.Version", version_tag:"VersionTag.VersionTag", message:Optional[str]=None) -> None:
         '''
         :version: The Version with an unreleased tag and a method for downloading.
         :version_tag: The unreleased VersionTag.
@@ -2160,7 +2219,7 @@ class UnreleasedDownloadableVersionError(VersionException):
 class VersionChildError(VersionException):
     "The parent Version's ordering tag and child Version's ordering tag cannot go together."
 
-    def __init__(self, parent_version:"Version.Version", parent_tag:"VersionTags.VersionTag", child_version:"Version.Version", child_tag:"VersionTags.VersionTag", message:Optional[str]=None) -> None:
+    def __init__(self, parent_version:"Version.Version", parent_tag:"VersionTag.VersionTag", child_version:"Version.Version", child_tag:"VersionTag.VersionTag", message:Optional[str]=None) -> None:
         '''
         :parent_version: The parent Version.
         :parent_tag: The ordering VersionTag of the parent Version.
@@ -2200,7 +2259,7 @@ class VersionChildOfMultipleTopLevelVersionsError(VersionException):
 class VersionChildOrderError(VersionException):
     "The Version's children are in an invalid order."
 
-    def __init__(self, version:"Version.Version", child_tags:list["VersionTags.VersionTag"], error_child:"Version.Version", message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version.Version", child_tags:list["VersionTag.VersionTag"], error_child:"Version.Version", message:Optional[str]=None) -> None:
         '''
         :version: The Version with children in an invalid order.
         :child_tags: The ordering VersionTags of each of the Version's children.
@@ -2221,7 +2280,7 @@ class VersionChildOrderError(VersionException):
 class VersionOrderingTagsError(VersionException):
     "The Version has none or too many ordering VersionTags."
 
-    def __init__(self, version:"Version.Version", count:int, tags:list["VersionTags.VersionTag"], message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version.Version", count:int, tags:list["VersionTag.VersionTag"], message:Optional[str]=None) -> None:
         '''
         :version: The Version that has an invalid number of ordering VersionTags.
         :count: The number of ordering VersionTags this Version has.
@@ -2246,7 +2305,7 @@ class VersionOrderingTagsError(VersionException):
 class VersionOrderSequenceError(VersionException):
     "A Version is before or after a tag that it shouldn't be."
 
-    def __init__(self, parent_version:"Version.Version", parent_tag:"VersionTags.VersionTag", child_version:"Version.Version", child_tag:"VersionTags.VersionTag", time_text:Literal["before", "after"], message:Optional[str]=None) -> None:
+    def __init__(self, parent_version:"Version.Version", parent_tag:"VersionTag.VersionTag", child_version:"Version.Version", child_tag:"VersionTag.VersionTag", time_text:Literal["before", "after"], message:Optional[str]=None) -> None:
         '''
         :parent_version: The parent Version.
         :parent_tag: The ordering VersionTag of the parent Version.
@@ -2292,7 +2351,13 @@ class VersionOutOfRangeError(VersionException):
 class VersionRangeOrderError(VersionException):
     "The old and new Versions of a VersionRange are switched."
 
-    def __init__(self, version_range:"VersionRange.VersionRange", start_version:"Version.Version", stop_version:"Version.Version", message:Optional[str]=None) -> None:
+    def __init__(
+        self,
+        version_range:Union["VersionRange.VersionRange", "VersionRangeField.VersionRangeField"],
+        start_version:Union["Version.Version", "VersionComponent.VersionComponent"],
+        stop_version:Union["Version.Version", "VersionComponent.VersionComponent"],
+        message:Optional[str]=None
+    ) -> None:
         '''
         :version_range: The VersionRange with switched Versions.
         :start_version: The start Version that is newer than the stop Version.
@@ -2309,6 +2374,18 @@ class VersionRangeOrderError(VersionException):
         output = "The Versions of %r, %r (start) and %r (stop), are switched" % (self.version_range, self.start_version, self.stop_version)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
+
+class VersionTagExclusivePropertyError(VersionException):
+    "A VersionTag has properties that are mutually exclusive."
+
+    def __init__(self, source:object, property1:str, property2:str, message:Optional[str]=None) -> None:
+        '''
+        :source: The object that has conflicting properties.
+        :property1: The name of the first mutually exclusive property.
+        :property2: The name of the second mutually exclusive property.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, property1, property2, message)
 
 class VersionTimeTravelError(VersionException):
     "A Version's children are not in order chronologically."
@@ -2338,7 +2415,7 @@ class VersionTimeTravelError(VersionException):
 class VersionTopLevelError(VersionException):
     "A Version is a top-level Version but has no top-level VersionTag."
 
-    def __init__(self, version:"Version.Version", top_level_tag:"VersionTags.VersionTag", message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version.Version", top_level_tag:"VersionTag.VersionTag", message:Optional[str]=None) -> None:
         '''
         :version: The top-level Version missing the top-level VersionTag.
         :top_level_tag: The top-level VersionTag.
@@ -2428,5 +2505,22 @@ class VersionFileNoAccessorsError(VersionFileException):
 
     def __str__(self) -> str:
         output = "%r has no Accessors" % (self.version_file,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class VersionFileTypeNotAutoAssigning(VersionFileException):
+    "The VersionFileType does not auto assign."
+
+    def __init__(self, version_file_type:"VersionFileType.VersionFileType", message:Optional[str]=None) -> None:
+        '''
+        :version_file_type: The VersionFileType that does not have auto assign.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(version_file_type, message)
+        self.version_file_type = version_file_type
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r is not an auto-assigning VersionFileType" % (self.version_file_type,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output

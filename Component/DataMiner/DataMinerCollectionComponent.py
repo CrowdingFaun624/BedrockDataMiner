@@ -12,6 +12,7 @@ import Component.Structure.Field.StructureField as StructureField
 import DataMiner.DataMinerCollection as DataMinerCollection
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Version.Version as Version
 
 DATAMINER_SETTINGS_PATTERN:Pattern.Pattern[DataMinerSettingsComponent.DataMinerSettingsComponent] = Pattern.Pattern([{"is_dataminer_settings": True}])
 
@@ -72,26 +73,28 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
         dataminer_settings_components = list(self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.get_component()))
 
         # ending DataMinerSettings must have null versions on corresponding versions; middle ones cannot be null.
-        used_versions:list[str] = []
+        used_versions:list[Version.Version] = []
         for index, dataminer_settings_component in enumerate(dataminer_settings_components):
+            new_version = dataminer_settings_component.new_field.get_final()
+            old_version = dataminer_settings_component.old_field.get_final()
             if index == 0:
-                if dataminer_settings_component.new is not None:
-                    exceptions.append(Exceptions.DataMinerSettingsVersionRangeExists(self, dataminer_settings_component.new, True))
+                if new_version is not None:
+                    exceptions.append(Exceptions.DataMinerSettingsVersionRangeExists(self, new_version, True))
                     continue
             else:
-                if dataminer_settings_component.new is None:
+                if new_version is None:
                     exceptions.append(Exceptions.DataMinerSettingsVersionRangeMissing(self, index, "new"))
                     continue
-                used_versions.append(dataminer_settings_component.new)
+                used_versions.append(new_version)
             if index == len(dataminer_settings_components) - 1:
-                if dataminer_settings_component.old is not None:
-                    exceptions.append(Exceptions.DataMinerSettingsVersionRangeExists(self, dataminer_settings_component.old, False))
+                if old_version is not None:
+                    exceptions.append(Exceptions.DataMinerSettingsVersionRangeExists(self, old_version, False))
                     continue
             else:
-                if dataminer_settings_component.old is None:
+                if old_version is None:
                     exceptions.append(Exceptions.DataMinerSettingsVersionRangeMissing(self, index, "old"))
                     continue
-                used_versions.append(dataminer_settings_component.old)
+                used_versions.append(old_version)
 
         for new_version, old_version in glue_adjacent(used_versions):
             if new_version != old_version:

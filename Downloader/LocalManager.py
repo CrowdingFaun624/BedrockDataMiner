@@ -8,7 +8,6 @@ from pathlib2 import Path
 import Downloader.Manager as Manager
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
-import Version.VersionTags as VersionTags
 from Utilities.FunctionCaller import FunctionCaller
 
 
@@ -17,12 +16,12 @@ class LocalManagerTypedDict(TypedDict):
 
 class LocalManager(Manager.Manager):
 
-    def get_directory_base(self, version_tags:VersionTags.VersionTags, file_type_arguments:dict[str,Any], os:ModuleType, pathlib2:ModuleType) -> str:
+    def get_directory_base(self, file_type_arguments:dict[str,Any], os:ModuleType, pathlib2:ModuleType) -> str:
         ...
 
-    def prepare_for_install(self, version_tags:VersionTags.VersionTags, file_type_arguments:dict[str,Any]) -> None:
+    def prepare_for_install(self, file_type_arguments:dict[str,Any]) -> None:
         self.file_list:list[str]|None = None
-        self.directory_base = Path(self.get_directory_base(version_tags, file_type_arguments, os, pathlib2))
+        self.directory_base = Path(self.get_directory_base(file_type_arguments, os, pathlib2))
         if not self.directory_base.exists():
             raise Exceptions.ManagerFailureError(self, "Given file \"%s\" does not exist!" % (self.directory_base,))
 

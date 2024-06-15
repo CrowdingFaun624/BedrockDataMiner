@@ -3,27 +3,20 @@ from typing import TYPE_CHECKING, Any
 import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
 import Version.Version as Version
-import Version.VersionParser as VersionParser
+import Version.VersionFileType as VersionFileType
 import Version.VersionRange as VersionRange
 
 if TYPE_CHECKING:
     import DataMiner.DataMiner as DataMiner
     import DataMiner.DataMinerCollection as DataMinerCollection
 
-def str_to_version(version_str:str|None) -> Version.Version|None:
-    if version_str is None: return None
-    versions = VersionParser.versions
-    output = versions.get(version_str)
-    if output is None:
-        raise Exceptions.UnrecognizedVersionError(version_str)
-    return output
-
 class DataMinerSettings():
 
-    def __init__(self, start_version_str:str|None, end_version_str:str|None, files:list[str], kwargs:dict[str,Any]) -> None:
+    def __init__(self, kwargs:dict[str,Any]) -> None:
 
-        self.version_range = VersionRange.VersionRange(str_to_version(start_version_str), str_to_version(end_version_str))
-        self.files = files
+        self.version_range:VersionRange.VersionRange|None = None
+        self.version_file_types:list[VersionFileType.VersionFileType]|None = None
+        self.version_file_types_str:list[str]|None = None
         self.kwargs = kwargs
 
         self.file_name:str|None = None
@@ -32,12 +25,40 @@ class DataMinerSettings():
         self.dataminer_class:type["DataMiner.DataMiner"]|None = None
         self.dependencies:list["DataMinerCollection.DataMinerCollection"]|None = None
 
-    def link_subcomponents(self, file_name:str, name:str, structure:StructureBase.StructureBase, dataminer_class:type["DataMiner.DataMiner"]|None, dependencies:list["DataMinerCollection.DataMinerCollection"]) -> None:
+    def link_subcomponents(
+        self,
+        file_name:str,
+        name:str,
+        structure:StructureBase.StructureBase,
+        dataminer_class:type["DataMiner.DataMiner"]|None,
+        dependencies:list["DataMinerCollection.DataMinerCollection"],
+        start_version:Version.Version|None,
+        end_version:Version.Version|None,
+        version_file_types:list[VersionFileType.VersionFileType],
+    ) -> None:
         self.file_name = file_name
         self.name = name
         self.structure = structure
         self.dataminer_class = dataminer_class
         self.dependencies = dependencies
+        self.version_range = VersionRange.VersionRange(start_version, end_version)
+        self.version_file_types = version_file_types
+        self.version_file_types_str = [version_file_type.name for version_file_type in self.version_file_types]
+
+    def get_version_range(self) -> VersionRange.VersionRange:
+        if self.version_range is None:
+            raise Exceptions.AttributeNoneError("version_range", self)
+        return self.version_range
+
+    def get_version_file_types(self) -> list[VersionFileType.VersionFileType]:
+        if self.version_file_types is None:
+            raise Exceptions.AttributeNoneError("version_file_types", self)
+        return self.version_file_types
+    
+    def get_files_str(self) -> list[str]:
+        if self.version_file_types_str is None:
+            raise Exceptions.AttributeNoneError("version_file_types_str", self)
+        return self.version_file_types_str
 
     def get_dependencies(self) -> list["DataMinerCollection.DataMinerCollection"]:
         if self.dependencies is None:
@@ -67,6 +88,7 @@ class DataMinerSettings():
 
     def __repr__(self) -> str:
         if self.name is None:
-            return "<DataMinerSettings \"%s\"–\"%s\">" % (str(self.version_range.start), str(self.version_range.stop))
+            return "<DataMinerSettings id %i>" % (id(self),)
         else:
-            return "<DataMinerSettings %s \"%s\"–\"%s\">" % (self.name, str(self.version_range.start), str(self.version_range.stop))
+            version_range = self.get_version_range()
+            return "<DataMinerSettings %s \"%s\"–\"%s\">" % (self.get_name(), str(version_range.start), str(version_range.stop))

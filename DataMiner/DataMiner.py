@@ -29,10 +29,11 @@ class DataMiner():
         self.settings = settings
         self.file_name = self.settings.get_file_name()
         self.name = self.settings.get_name()
-        self.files = set(self.settings.files)
+        self.files = set(self.settings.get_version_file_types())
+        self.files_str = {version_file_type.name for version_file_type in self.files}
         self.dependencies = self.settings.get_dependencies()
         self.dependencies_str = [dependency.name for dependency in self.dependencies]
-        if not isinstance(self, NullDataMiner) and self.version not in self.settings.version_range:
+        if not isinstance(self, NullDataMiner) and self.version not in self.settings.get_version_range():
             raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, "in DataMiner %r" % (self,))
 
         self.initialize(**settings.kwargs)
@@ -75,8 +76,8 @@ class DataMiner():
             return json.load(f, cls=CustomJson.decoder)
 
     def get_accessor(self, file_type:str) -> Accessor.Accessor:
-        if file_type not in self.files:
-            raise Exceptions.DataMinerFileTypePermissionError(self, file_type, sorted(self.files))
+        if file_type not in self.files_str:
+            raise Exceptions.DataMinerFileTypePermissionError(self, file_type, sorted(self.files_str))
         return self.version.get_accessor(file_type)
 
     def get_files_in(self, accessor:Accessor.Accessor, parent:str) -> list[str]:

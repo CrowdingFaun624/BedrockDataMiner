@@ -3,17 +3,26 @@ import Utilities.Exceptions as Exceptions
 ALLOWED_CAPABILITIES = set([
     "has_importable_keys", # i.e. Keymap's importable keys
     "has_keys",
+    "is_accessor",
+    "is_accessor_type",
     "is_base",
     "is_dataminer_collection",
     "is_dataminer_settings",
     "is_function",
     "is_group",
-    "is_structure",
+    "is_latest_slot",
     "is_nbt_base",
     "is_nbt_tag",
     "is_normalizer",
+    "is_structure",
     "is_tag",
     "is_type_alias",
+    "is_version",
+    "is_version_file",
+    "is_version_file_type",
+    "is_version_tag",
+    "is_version_tag_auto_assigner",
+    "is_version_tag_order",
 ])
 
 class Capabilities():
