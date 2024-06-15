@@ -131,11 +131,11 @@ class VersionFileTypedDict(TypedDict):
     accessors: Required[list[AccessorTypedDict]]
 
 class VersionFileTypeTypedDict(TypedDict):
-    allowed_accessor_types: list[str]
-    install_location: str
-    must_exist: bool
+    allowed_accessor_types: Required[list[str]]
+    install_location: Required[str]
+    must_exist: Required[bool]
     available_when_unreleased: Required[bool]
-    auto_assign: AccessorTypedDict
+    auto_assign: NotRequired[AccessorTypedDict]
 
 class VersionTagOrderTypedDict(TypedDict):
     type: NotRequired[Literal["VersionTagOrder"]]
