@@ -19,18 +19,22 @@ class Pattern(Generic[a]):
                 if key not in Capabilties.ALLOWED_CAPABILITIES:
                     raise Exceptions.UnrecognizedCapabilityError(key)
         self.capabilities = capabilities
+        self.matching_components:set[int]|None = None
 
-    def __contains__(self, __value: object) -> bool:
-        if isinstance(__value, Capabilties.Capabilities):
-            for self_capability_set in self.capabilities:
-                for capability in self_capability_set:
-                    if capability not in __value.capabilities or self_capability_set[capability] != __value.capabilities[capability]:
-                        break
-                else: # if it never broke, then all capabilities match
-                    return True
-            return False
-        else:
-            return NotImplemented
+    def matches_capabilities(self, capabilities:Capabilties.Capabilities) -> bool:
+        for self_capability_set in self.capabilities:
+            for capability in self_capability_set:
+                if capability not in capabilities.capabilities or self_capability_set[capability] != capabilities.capabilities[capability]:
+                    break
+            else: # if it never broke, then all capabilities match
+                return True
+        return False
+
+    def __contains__(self, capabilities:Capabilties.Capabilities) -> bool:
+        if self.matching_components is None:
+            import Component.ComponentTypes as ComponentTypes
+            self.matching_components = set(id(component_type.my_capabilities) for component_type in ComponentTypes.component_types if self.matches_capabilities(component_type.my_capabilities))
+        return id(capabilities) in self.matching_components
 
     def __repr__(self) -> str:
         return "<Pattern %s>" % (", ".join("(%s)" % (", ".join("%s: %s" % (capability, value) for capability, value in capability_set.items())) for capability_set in self.capabilities))
