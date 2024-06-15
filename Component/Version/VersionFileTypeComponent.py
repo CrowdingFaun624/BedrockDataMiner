@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
-import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
+import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Pattern as Pattern
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.VersionFileType as VersionFileType

@@ -1,6 +1,6 @@
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.TextureList.TextureListDataMiner as TextureListDataMiner
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.TextureList.TextureListDataMiner as TextureListDataMiner
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
