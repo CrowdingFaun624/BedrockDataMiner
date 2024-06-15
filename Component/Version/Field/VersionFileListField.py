@@ -15,7 +15,7 @@ VERSION_FILE_PATTERN:Pattern.Pattern[VersionFileComponent.VersionFileComponent] 
 class VersionFileListField(ComponentListField.ComponentListField[VersionFileComponent.VersionFileComponent]):
 
     def __init__(self, subcomponents_data: Sequence[ComponentTyping.VersionFileTypedDict], path: list[str | int]) -> None:
-        super().__init__(subcomponents_data, VERSION_FILE_PATTERN, path, allow_inline=Field.InLinePermissions.inline, assume_type=VersionFileComponent.VersionFileComponent.class_name)
+        super().__init__(subcomponents_data, VERSION_FILE_PATTERN, path, allow_inline=Field.InlinePermissions.inline, assume_type=VersionFileComponent.VersionFileComponent.class_name)
 
     def set_field(
         self,

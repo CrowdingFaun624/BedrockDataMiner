@@ -27,7 +27,7 @@ class VersionComponent(Component.Component[Version.Version]):
 
     @classmethod
     def normalize_files(cls, files:dict[str,dict[str,Any]]) -> list[ComponentTyping.VersionFileTypedDict]:
-        "Converts the files key in versions.json into a format more suitable for in-line Components."
+        "Converts the files key in versions.json into a format more suitable for inline Components."
         return [{
             "version_file_type": version_file_key,
             "accessors": [{

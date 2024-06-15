@@ -16,10 +16,10 @@ def get_keys_strs(is_capital:bool, keys:list[str|int]) -> str:
 
 a = TypeVar("a")
 
-class InLinePermissions(enum.Enum):
+class InlinePermissions(enum.Enum):
     "Use when creating a Field to specify if it's allowed to have inline Components."
     inline = 0
-    "In-line Components are allowed."
+    "Inline Components are allowed."
     mixed = 1
     "Both inline and reference Components are allowed."
     reference = 2

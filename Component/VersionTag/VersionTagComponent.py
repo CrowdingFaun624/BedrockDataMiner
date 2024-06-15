@@ -45,8 +45,8 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
         self.is_major_tag = data.get("is_major_tag", False)
         self.is_unreleased_tag = data.get("is_unreleased_tag", False)
 
-        self.auto_assigner_field = ComponentListField.ComponentListField(data.get("auto_assign", []), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ["auto_assign"], allow_inline=Field.InLinePermissions.mixed)
-        self.latest_slot_field = OptionalComponentField.OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ["latest_slot"], allow_inline=Field.InLinePermissions.reference)
+        self.auto_assigner_field = ComponentListField.ComponentListField(data.get("auto_assign", []), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ["auto_assign"], allow_inline=Field.InlinePermissions.mixed)
+        self.latest_slot_field = OptionalComponentField.OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ["latest_slot"], allow_inline=Field.InlinePermissions.reference)
         self.fields.extend([self.auto_assigner_field, self.latest_slot_field])
 
     def create_final(self) -> None:

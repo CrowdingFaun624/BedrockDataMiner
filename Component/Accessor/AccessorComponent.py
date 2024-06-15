@@ -34,7 +34,7 @@ class AccessorComponent(Component.Component[WaitValue[Accessor.Accessor]]):
 
         self.arguments = data["arguments"]
 
-        self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ["accessor_type"], allow_inline=Field.InLinePermissions.reference)
+        self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ["accessor_type"], allow_inline=Field.InlinePermissions.reference)
         self.fields.extend([self.accessor_type_field])
 
     def create_accessor(self) -> Accessor.Accessor:

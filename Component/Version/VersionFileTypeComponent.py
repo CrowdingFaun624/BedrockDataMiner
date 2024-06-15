@@ -40,8 +40,8 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
         self.auto_assign_arguments = data["auto_assign"]["arguments"] if self.has_auto_assign else None
         self.auto_assign_dict:ComponentTyping.VersionFileTypedDict|None = {"version_file_type": self.name, "accessors": [data["auto_assign"]]} if self.has_auto_assign else None
 
-        self.allowed_accessor_types_field = ComponentListField.ComponentListField(data["allowed_accessor_types"], ACCESSOR_TYPE_PATTERN, ["allowed_accessor_types"], allow_inline=Field.InLinePermissions.reference)
-        self.auto_assign_accessor_type = OptionalComponentField.OptionalComponentField(data["auto_assign"]["accessor_type"] if self.has_auto_assign else None, ACCESSOR_TYPE_PATTERN, ["auto_assign", "accessor_type"], allow_inline=Field.InLinePermissions.reference)
+        self.allowed_accessor_types_field = ComponentListField.ComponentListField(data["allowed_accessor_types"], ACCESSOR_TYPE_PATTERN, ["allowed_accessor_types"], allow_inline=Field.InlinePermissions.reference)
+        self.auto_assign_accessor_type = OptionalComponentField.OptionalComponentField(data["auto_assign"]["accessor_type"] if self.has_auto_assign else None, ACCESSOR_TYPE_PATTERN, ["auto_assign", "accessor_type"], allow_inline=Field.InlinePermissions.reference)
         self.fields.extend([self.allowed_accessor_types_field, self.auto_assign_accessor_type])
 
     def create_final(self) -> None:

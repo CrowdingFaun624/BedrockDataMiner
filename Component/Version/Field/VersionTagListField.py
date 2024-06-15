@@ -21,7 +21,7 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :version_component: The parent VersionComponent of this Field. If not given, will not auto-assign VersionTags to this Field.
         '''
-        super().__init__(subcomponents_data, VERSION_TAG_PATTERN, path, allow_inline=Field.InLinePermissions.reference)
+        super().__init__(subcomponents_data, VERSION_TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
         self.version_component = version_component
         self.version_tag_components:Iterable["VersionTagComponent.VersionTagComponent"]|None = None
 

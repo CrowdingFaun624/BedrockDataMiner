@@ -13,7 +13,7 @@ VERSION_PATTERN:Pattern.Pattern["VersionComponent.VersionComponent"] = Pattern.P
 class OptionalVersionField(OptionalComponentField.OptionalComponentField["VersionComponent.VersionComponent"]):
 
     def __init__(self, subcomponent_data: str|None, path: list[str|int]) -> None:
-        super().__init__(subcomponent_data, VERSION_PATTERN, path, allow_inline=Field.InLinePermissions.reference)
+        super().__init__(subcomponent_data, VERSION_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
 
     def get_final(self) -> Version.Version|None:
         component = self.get_component()

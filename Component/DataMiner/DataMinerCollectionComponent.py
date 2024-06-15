@@ -48,7 +48,7 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
                 dataminer_settings_data,
                 DATAMINER_SETTINGS_PATTERN,
                 ["dataminers", index],
-                allow_inline=Field.InLinePermissions.inline,
+                allow_inline=Field.InlinePermissions.inline,
                 assume_type=DataMinerSettingsComponent.DataMinerSettingsComponent.class_name
             ) for index, dataminer_settings_data in enumerate(data["dataminers"])
         ], ["dataminers"])

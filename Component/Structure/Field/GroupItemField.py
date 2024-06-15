@@ -11,12 +11,12 @@ if TYPE_CHECKING:
 
 class GroupItemField(FieldContainer.FieldContainer):
 
-    def __init__(self, key:str, value:str|ComponentTyping.StructureTypedDicts|None, path:list[str|int], *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
+    def __init__(self, key:str, value:str|ComponentTyping.StructureTypedDicts|None, path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
         '''
         :key: The type associated with this GroupItemField.
         :value: The name of the reference Component or data of the inline Component for this type.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
-        :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
+        :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         '''
         self.type_field = TypeField.TypeField(key, path)
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(value, path, allow_inline=allow_inline)

@@ -34,8 +34,8 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
 
-        self.version_file_type_field = ComponentField.ComponentField(data["version_file_type"], VERSION_FILE_TYPE_PATTERN, ["version_file_type"], allow_inline=Field.InLinePermissions.reference)
-        self.accessors_field = ComponentListField.ComponentListField(data["accessors"], ACCESSOR_PATTERN, ["accessors"], allow_inline=Field.InLinePermissions.inline, assume_type=AccessorComponent.AccessorComponent.class_name)
+        self.version_file_type_field = ComponentField.ComponentField(data["version_file_type"], VERSION_FILE_TYPE_PATTERN, ["version_file_type"], allow_inline=Field.InlinePermissions.reference)
+        self.accessors_field = ComponentListField.ComponentListField(data["accessors"], ACCESSOR_PATTERN, ["accessors"], allow_inline=Field.InlinePermissions.inline, assume_type=AccessorComponent.AccessorComponent.class_name)
         self.fields.extend([self.version_file_type_field, self.accessors_field])
 
     def create_final(self) -> None:

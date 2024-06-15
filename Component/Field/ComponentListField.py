@@ -11,12 +11,12 @@ a = TypeVar("a", bound=Component.Component, covariant=True)
 class ComponentListField(Field.Field, Generic[a]):
     '''A link to multiple other Components.'''
 
-    def __init__(self, subcomponents_data:Sequence[str|ComponentTyping.ComponentTypedDicts]|str|ComponentTyping.ComponentTypedDicts, pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed, assume_type:str|None=None) -> None:
+    def __init__(self, subcomponents_data:Sequence[str|ComponentTyping.ComponentTypedDicts]|str|ComponentTyping.ComponentTypedDicts, pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed, assume_type:str|None=None) -> None:
         '''
         :subcomponents_data: The names of the reference Components and/or data of the inline Components this Field refers to.
         :pattern: The Pattern used to search for Components.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
-        :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
+        :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         :assume_type: String to use as the type of an inline Component if the type key is missing from it.
         '''
         super().__init__(path)
@@ -49,10 +49,10 @@ class ComponentListField(Field.Field, Generic[a]):
 
     def check(self, source_component:"Component.Component") -> list[Exception]:
         exceptions:list[Exception] = super().check(source_component)
-        if self.has_reference_components and self.allow_inline is Field.InLinePermissions.inline:
+        if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
             exceptions.append(Exceptions.ReferenceComponentError(source_component, self))
-        if self.has_inline_components and self.allow_inline is Field.InLinePermissions.reference:
-            exceptions.append(Exceptions.InLineComponentError(source_component, self))
+        if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
+            exceptions.append(Exceptions.InlineComponentError(source_component, self))
         return exceptions
 
     def extend(self, new_components:Sequence[a]) -> None:

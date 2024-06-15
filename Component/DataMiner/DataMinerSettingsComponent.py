@@ -45,14 +45,14 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
 
         self.new_field = OptionalVersionField.OptionalVersionField(data["new"], ["new"])
         self.old_field = OptionalVersionField.OptionalVersionField(data["old"], ["old"])
-        self.files_field = ComponentListField.ComponentListField(data.get("files", []), VERSION_FILE_TYPE_PATTERN, ["files"], allow_inline=Field.InLinePermissions.reference)
+        self.files_field = ComponentListField.ComponentListField(data.get("files", []), VERSION_FILE_TYPE_PATTERN, ["files"], allow_inline=Field.InlinePermissions.reference)
         self.dataminer_field = OptionalDataMinerTypeField.OptionalDataMinerTypeField(data["name"], ["name"])
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
                 dependency_name,
                 DEPENDENCY_PATTERN,
                 ["dependencies", index],
-                allow_inline=Field.InLinePermissions.reference
+                allow_inline=Field.InlinePermissions.reference
             ) for index, dependency_name in enumerate(data.get("dependencies", []))
         ], ["dependencies"])
         self.fields.extend([self.new_field, self.old_field, self.files_field, self.dataminer_field, self.dependencies_field])

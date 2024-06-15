@@ -49,7 +49,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
             else:
                 subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, TYPE_ALIAS_PATTERN, components, imported_components, self.error_path, create_component_function, None)
                 if is_inline:
-                    raise Exceptions.InLineComponentError(source_component, self, cast(ComponentTyping.TypeAliasTypedDict, subcomponent_data))
+                    raise Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.TypeAliasTypedDict, subcomponent_data))
                 components_used.append(subcomponent)
                 self.type_aliases.append(subcomponent)
         return components_used, []

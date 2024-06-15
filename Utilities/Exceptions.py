@@ -565,7 +565,7 @@ class ImporterEnvironmentPathCollisionError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class InLineComponentError(ComponentException):
+class InlineComponentError(ComponentException):
     "An inline Component exists where it is not allowed."
 
     def __init__(self, component:"Component.Component", field:"Field.Field", subcomponent_data:Optional["ComponentTyping.ComponentTypedDicts"]=None, message:Optional[str]=None) -> None:

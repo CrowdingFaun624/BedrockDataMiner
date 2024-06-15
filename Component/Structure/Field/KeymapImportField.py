@@ -21,7 +21,7 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         :subcomponents_data: The names of the Components this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_data, IMPORTABLE_KEYS_PATTERN, path, allow_inline=Field.InLinePermissions.reference)
+        super().__init__(subcomponents_data, IMPORTABLE_KEYS_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
         self.import_into_keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]|None = None
 
     def set_field(

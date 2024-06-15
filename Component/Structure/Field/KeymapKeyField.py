@@ -13,14 +13,14 @@ if TYPE_CHECKING:
 
 class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 
-    def __init__(self, data:ComponentTyping.KeymapKeyTypedDict, key:str, tag_set:set[str], path:list[str|int], source_component:"Component.Component", *, allow_inline:Field.InLinePermissions=Field.InLinePermissions.mixed) -> None:
+    def __init__(self, data:ComponentTyping.KeymapKeyTypedDict, key:str, tag_set:set[str], path:list[str|int], source_component:"Component.Component", *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
         '''
         :data: A dictionary containing the keys {"type": str|list[str], "subcomponent": str|ComponentTyping.StructroidComponentTypedDicts|None, tags:list[str]}
         :key: The key that this Field corresponds to.
         :tag_set: The set of tags to update when `set_field` is called.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :source_component: The original Component that owns this Field.
-        :allow_inline: An InLinePermissions object describing the type of subcomponent_data allowed.
+        :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         '''
         super().__init__([], path)
         self.key = key
