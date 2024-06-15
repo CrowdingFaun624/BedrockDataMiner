@@ -37,6 +37,7 @@ class Version():
     ) -> None:
         self.parent = parent
         self.tags = tags
+        self.tags_str = [tag.name for tag in self.tags]
         self.version_files = version_files
 
         if self.parent is not None:
@@ -61,6 +62,11 @@ class Version():
         if self.tags is None:
             raise Exceptions.AttributeNoneError("tags", self)
         return self.tags
+
+    def get_tags_str(self) -> list[str]:
+        if self.tags_str is None:
+            raise Exceptions.AttributeNoneError("tags_str", self)
+        return self.tags_str
 
     def get_order_tag(self) -> VersionTag.VersionTag:
         if self.order_tag is None:
@@ -115,6 +121,16 @@ class Version():
     #     if self.wiki_page is None: self.wiki_page = page_name
     #     development_category_name = "Category:" + self.wiki_page + development_category_suffix
     #     if self.development_category_names is None: self.development_category_names = [development_category_name]
+
+    def has_tag(self, search_tag:VersionTag.VersionTag|str) -> bool:
+        '''
+        Returns True if this Version has the given VersionTag.
+        :search_tag: The VersionTag (or name of the VersionTag) to search this Version for.
+        '''
+        if isinstance(search_tag, str):
+            return search_tag in self.get_tags_str()
+        else:
+            return search_tag in self.get_tags()
 
     def add_tag(self, tag:VersionTag.VersionTag) -> None:
         '''Adds a tag to the Version.'''

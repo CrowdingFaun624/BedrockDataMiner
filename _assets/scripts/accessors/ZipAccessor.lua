@@ -5,7 +5,7 @@
 --- @field file_prepension string
 --- @field name string
 --- @field manager table
---- @field version { tags: string[] }
+--- @field version { has_tag: fun( tag: string): (boolean) }
 --- @field initialize fun( self ): ( nil )
 --- @field modify_file_name fun( self, file_name: string ): ( string )
 --- @field trim_file_name fun( self, file_name: string): ( string )
@@ -22,18 +22,9 @@ local zip_accessor = {}
 zip_accessor.inherit = "SubDirectoryAccessor"
 
 function zip_accessor:initialize()
-    local has_ipa = false
-    local has_double_assets = false
-    for tag in python.iter( self.version.tags ) do
-        if tag.__eq__( "ipa" ) then
-            has_ipa = true
-        elseif tag.__eq__( "double_assets" ) then
-            has_double_assets = true
-        end
-    end
-    if has_ipa then
+    if self.version.has_tag("ipa") then
         self.file_prepension = "Payload/minecraftpe.app/data/"
-    elseif has_double_assets then
+    elseif self.version.has_tag("double_assets") then
         self.file_prepension = "assets/assets/"
     else
         self.file_prepension = "assets/"
