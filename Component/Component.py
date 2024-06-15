@@ -89,6 +89,8 @@ class Component(Generic[a]):
 
     def create_final(self) -> None:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''
+        for field in self.fields:
+            field.resolve_create_finals()
         if self.inline_components is None:
             raise Exceptions.AttributeNoneError("inline_components", self)
         for inline_component in self.inline_components:
@@ -97,7 +99,7 @@ class Component(Generic[a]):
     def link_finals(self) -> None:
         '''Links this Component's final object to other final objects.'''
         for field in self.fields:
-            field.resolve()
+            field.resolve_link_finals()
         if self.inline_components is None:
             raise Exceptions.AttributeNoneError("inline_components", self)
         for inline_component in self.inline_components:

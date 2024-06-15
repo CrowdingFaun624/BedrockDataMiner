@@ -44,9 +44,9 @@ class TypeField(AbstractTypeField.AbstractTypeField):
             self.subcomponent = component
             return [component], []
 
-    def resolve(self) -> None:
+    def resolve_link_finals(self) -> None:
         if self.subcomponent is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.resolve, self)
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.resolve_link_finals, self)
         if isinstance(self.subcomponent, type):
             self.types = [self.subcomponent]
         else:
@@ -54,5 +54,5 @@ class TypeField(AbstractTypeField.AbstractTypeField):
 
     def get_types(self) -> list[type]:
         if self.types is None:
-            raise Exceptions.FieldSequenceBreakError(self.resolve, self.get_types, self)
+            raise Exceptions.FieldSequenceBreakError(self.resolve_link_finals, self.get_types, self)
         return self.types

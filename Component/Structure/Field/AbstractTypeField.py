@@ -33,13 +33,13 @@ class AbstractTypeField(Field.Field):
                     exceptions.append(Exceptions.ComponentMismatchedTypesError(source_component, sorted(component_types, key=lambda type: type.__name__), subcomponent, sorted(subcomponent.my_type, key=lambda type: type.__name__)))
         return exceptions
 
-    def resolve(self) -> None:
+    def resolve_link_finals(self) -> None:
         '''
         Resolves all TypeAliases into types.
         Cannot be called before all TypeAliases are set.
         Cannot be called before `set_field`.
         '''
-        super().resolve()
+        super().resolve_link_finals()
 
     def verify_with(self, component_field:VerifyComponentType) -> None:
         '''

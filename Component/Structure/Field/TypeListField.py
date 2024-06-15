@@ -54,9 +54,9 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
                 self.type_aliases.append(subcomponent)
         return components_used, []
 
-    def resolve(self) -> None:
+    def resolve_link_finals(self) -> None:
         if self.primitive_types is None or self.type_aliases is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.resolve, self)
+            raise Exceptions.FieldSequenceBreakError(self.set_field, self.resolve_link_finals, self)
         self.types = []
         self.types.extend(self.primitive_types)
         for type_alias_component in self.type_aliases:
@@ -64,5 +64,5 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
 
     def get_types(self) -> list[type]:
         if self.types is None:
-            raise Exceptions.FieldSequenceBreakError(self.resolve, self.get_types, self)
+            raise Exceptions.FieldSequenceBreakError(self.resolve_link_finals, self.get_types, self)
         return self.types

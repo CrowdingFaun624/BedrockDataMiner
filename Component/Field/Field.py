@@ -101,9 +101,17 @@ class Field():
         '''
         return [], []
 
-    def resolve(self) -> None:
+    def resolve_create_finals(self) -> None:
         '''
         Used for setting an attribute of this Field that requires a linked Component to be set.
+        Ran during the create_finals stage.
+        '''
+        ...
+
+    def resolve_link_finals(self) -> None:
+        '''
+        Used for setting an attribute of this Field that requires a linked Component to have its final created.
+        Ran during the link_finals stage.
         '''
         ...
 
