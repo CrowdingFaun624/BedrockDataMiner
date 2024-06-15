@@ -1,4 +1,3 @@
-import DataMiner.Splashes.SplashesDataMiner0 as SplashesDataMiner0
 import DataMiner.Splashes.SplashesDataMiner1 as SplashesDataMiner1
 
 dataminers = [

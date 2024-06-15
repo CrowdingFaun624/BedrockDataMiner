@@ -57,13 +57,13 @@ class UnionTypedDict(TypedDict):
 TypedVerifierTypedDicts:TypeAlias = DictTypedDict|TypedDictTypedDict|ListTypedDict|TupleTypedDict|EnumTypedDict|UnionTypedDict
 
 allowed_types = {
-    "bool": bool, 
-    "dict": dict, 
-    "float": float, 
-    "int": int, 
-    "list": list, 
-    "null": type(None), 
-    "str": str, 
+    "bool": bool,
+    "dict": dict,
+    "float": float,
+    "int": int,
+    "list": list,
+    "null": type(None),
+    "str": str,
     "tuple": tuple
 }
 

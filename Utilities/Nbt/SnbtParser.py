@@ -10,7 +10,7 @@ class Reader():
         self.data = data
         self.position = 0
         self.stack:list[int] = []
-    
+
     def __repr__(self) -> str:
         return "<%s pos %i/%i, stacklen %i>" % (self.__class__.__name__, self.position, len(self.data), len(self.stack))
 

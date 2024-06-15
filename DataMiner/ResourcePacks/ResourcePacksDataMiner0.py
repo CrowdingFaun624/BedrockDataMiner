@@ -31,7 +31,7 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
                 if name in resource_pack_names: continue # so they aren't recorded multiple times - wonky behavior
                 resource_pack_names.add(name)
                 resource_packs.append({"name": name, "path": "%s/%s/" % (self.resource_packs_directory, name)})
-        
+
         if len(resource_packs) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
         return sorted(resource_packs, key=lambda pack: resource_pack_order[pack["name"]])

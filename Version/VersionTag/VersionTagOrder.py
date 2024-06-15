@@ -44,7 +44,7 @@ class VersionTagOrder():
         if self.tags_before_top_level_tag is None:
             raise Exceptions.AttributeNoneError("tags_before_top_level_tag", self)
         return self.tags_before_top_level_tag
-    
+
     def get_tags_after_top_level_tag(self) -> list[VersionTag.VersionTag]:
         if self.tags_after_top_level_tag is None:
             raise Exceptions.AttributeNoneError("tags_after_top_level_tag", self)

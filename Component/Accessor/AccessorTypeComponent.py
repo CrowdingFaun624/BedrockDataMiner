@@ -9,7 +9,7 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
-    
+
     class_name = "AccessorType"
     class_name_article = "an AccessorType"
     my_capabilities = Capabilities.Capabilities(is_accessor_type=True)
@@ -18,16 +18,16 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
         TypeVerifier.TypedDictKeyTypeVerifier("manager_class", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("parameters", "a TypeVerifier", True, dict)
     )
-    
+
     def __init__(self, data: ComponentTyping.AccessorTypeTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
-        
+
         self.accessor_class_field = AccessorClassField.AccessorClassField(data["accessor_class"], ["accessor_class"])
         self.manager_class_field = ManagerClassField.ManagerClassField(data["manager_class"], ["manager_class"])
         self.parameters_field = TypeVerifierField.TypeVerifierField(data["parameters"], ["parameters"])
         self.fields.extend([self.accessor_class_field, self.manager_class_field, self.parameters_field])
-    
+
     def create_final(self) -> None:
         super().create_final()
         self.final = AccessorType.AccessorType(

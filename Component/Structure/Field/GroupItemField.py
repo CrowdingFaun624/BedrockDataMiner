@@ -25,6 +25,6 @@ class GroupItemField(FieldContainer.FieldContainer):
 
     def get_types(self) -> list[type]:
         return self.type_field.get_types()
-    
+
     def get_component(self) -> Union["StructureComponent.StructureComponent",None]:
         return self.subcomponent_field.get_component()

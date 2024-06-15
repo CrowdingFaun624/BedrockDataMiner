@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     import Component.Version.VersionComponent as VersionComponent
 
 class VersionTagAutoAssignerComponent(Component.Component[None]):
-    
+
     class_name = "VersionTagAutoAssigner"
     class_name_article = "a VersionTagAutoAssigner"
     my_capabilities = Capabilities.Capabilities(is_version_tag_auto_assigner=True)

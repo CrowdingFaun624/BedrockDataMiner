@@ -84,7 +84,7 @@ class NullNormalizerDependencies(LocalNormalizerDependencies):
 
     def get_data(self, version: Version.Version, dataminer_name: str) -> Any:
         raise Exceptions.NullNormalizerDependenciesAccessorError(self, version, dataminer_name)
-    
+
     def __repr__(self) -> str:
         return "<%s>" % (self.__class__.__name__)
 

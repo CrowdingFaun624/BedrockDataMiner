@@ -30,7 +30,7 @@ class SplashesDataMiner0(SplashesDataMiner.SplashesDataMiner):
         files:dict[str,DataMinerTyping.SplashesFile] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
-        
+
         output:DataMinerTyping.Splashes = {}
         for resource_pack_file, splashes in files.items():
             resource_pack_name = resource_pack_files[resource_pack_file]

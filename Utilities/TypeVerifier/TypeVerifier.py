@@ -45,7 +45,7 @@ class Trace():
                     result += "%s of " % (index)
         result += "data"
         return result
-    
+
     def __repr__(self) -> str:
         return "<%s len %i>" % (self.__class__.__name__, len(self.trace))
 
@@ -66,7 +66,7 @@ class TypeVerifier(Generic[type_verifier_typevar]):
             for exception in exceptions:
                 traceback.print_exception(exception)
             raise Exceptions.TypeVerificationFailedError(self)
-    
+
     def __repr__(self) -> str:
         return "<%s>" % (self.__class__.__name__)
 
@@ -202,7 +202,7 @@ class TypedDictKeyTypeVerifier(TypeVerifier[tuple[key_typevar, value_typevar]]):
                 exceptions.append(Exceptions.TypeVerificationFunctionError(trace.copy(key, TraceItemType.KEY), function_message, value))
                 return exceptions
         return exceptions
-    
+
     def __repr__(self) -> str:
         return "<%s %s \"%s\">" % (self.__class__.__name__, self.key, self.value_type_str)
 
@@ -456,7 +456,7 @@ class UnionTypeVerifier(TypeVerifier[item_typevar]):
         else:
             exceptions.append(Exceptions.TypeVerificationUnionError(trace, self.type_str, type(data), union_exceptions))
         return exceptions
-    
+
     def __repr__(self) -> str:
         return "<%s \"%s\">" % (self.__class__.__name__, self.type_str)
 

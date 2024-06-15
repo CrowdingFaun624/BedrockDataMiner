@@ -18,6 +18,6 @@ class VersionFileTypeImporterEnvironment(ImporterEnvironment.ImporterEnvironment
 
     def get_component_files(self) -> Iterable[Path]:
         return [FileManager.VERSION_FILE_TYPES_FILE]
-    
+
     def get_component_group_name(self, file_path: Path) -> str:
         return "version_file_types"

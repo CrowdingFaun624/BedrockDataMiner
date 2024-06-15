@@ -36,7 +36,7 @@ class AccessorType():
         if self.accessor_class is None:
             raise Exceptions.AttributeNoneError("accessor_class", self)
         return self.accessor_class
-    
+
     def get_parameters(self) -> TypeVerifier.TypeVerifier:
         if self.parameters is None:
             raise Exceptions.AttributeNoneError("parameters", self)

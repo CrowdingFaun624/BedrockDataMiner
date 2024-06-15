@@ -54,7 +54,7 @@ class DataMinerSettings():
         if self.version_file_types is None:
             raise Exceptions.AttributeNoneError("version_file_types", self)
         return self.version_file_types
-    
+
     def get_files_str(self) -> list[str]:
         if self.version_file_types_str is None:
             raise Exceptions.AttributeNoneError("version_file_types_str", self)

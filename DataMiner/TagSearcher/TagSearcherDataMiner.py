@@ -43,7 +43,7 @@ class DataReader():
 
     def back(self, amount:int=1) -> None:
         self.position -= amount
-    
+
     def is_at_last_index(self) -> bool:
         return self.position == len(self.data)
 

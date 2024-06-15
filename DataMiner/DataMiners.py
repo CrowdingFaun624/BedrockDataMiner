@@ -70,7 +70,7 @@ def run(
             dataminer.remove_data_file(version)
     else:
         # remove dataminers that are already stored if recalculate everything is False
-        i = 0 
+        i = 0
         while i < len(dataminer_order):
             if dataminer_order[i].get_data_file_path(version).exists():
                 dataminer_environment.dependency_data.set_item(dataminer_order[i].name, dataminer_order[i].get_data_file(version))

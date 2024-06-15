@@ -37,6 +37,6 @@ class Capabilities():
             if capability not in capabilities:
                 capabilities[capability] = False
         self.capabilities = capabilities
-    
+
     def __repr__(self) -> str:
         return "<Capabilities %s>" % (", ".join(property for property, value in self.capabilities.items() if value is True))

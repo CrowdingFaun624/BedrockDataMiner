@@ -56,7 +56,7 @@ for dataminer_collection in dataminer_collections:
     all_dataminers.update({dataminer.__name__: dataminer for dataminer in dataminer_collection})
 
 class OptionalDataMinerTypeField(Field.Field):
-    
+
     def __init__(self, dataminer_name:str|None, path: list[str | int]) -> None:
         '''
         :dataminer_name: The name of the DataMiner referenced by this Field.
@@ -64,7 +64,7 @@ class OptionalDataMinerTypeField(Field.Field):
         '''
         super().__init__(path)
         self.dataminer = all_dataminers[dataminer_name] if dataminer_name is not None else DataMiner.NullDataMiner
-    
+
     def get_final(self) -> type[DataMiner.DataMiner]|type[DataMiner.NullDataMiner]:
         return self.dataminer
 

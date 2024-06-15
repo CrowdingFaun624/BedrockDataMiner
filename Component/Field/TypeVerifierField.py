@@ -4,7 +4,7 @@ import Utilities.TypeVerifier.TypeVerifierImporter as TypeVerifierImporter
 
 
 class TypeVerifierField(Field.Field):
-    
+
     def __init__(self, data:TypeVerifierImporter.TypedVerifierTypedDicts, path:list[str|int]) -> None:
         '''
         :data: The data of the TypeVerifier.
@@ -12,6 +12,6 @@ class TypeVerifierField(Field.Field):
         '''
         super().__init__(path)
         self.type_verifier = TypeVerifierImporter.parse_type_verifier(data)
-    
+
     def get_final(self) -> TypeVerifier.TypeVerifier:
         return self.type_verifier

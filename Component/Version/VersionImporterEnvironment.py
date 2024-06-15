@@ -32,7 +32,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
         for version_tag in version_tags.values():
             if version_tag.latest_slot is not None:
                 latest_tags[version_tag.latest_slot].add(version_tag)
-        
+
         for latest_slot, latest_slot_tags in latest_tags.items():
             for version in reversed(output.values()):
                 if version.released and version.get_order_tag() in latest_slot_tags:
@@ -40,7 +40,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                     if version.parent is not None:
                         version.parent.assign_latest()
                     break
-        
+
         for version_directory in FileManager.VERSIONS_DIRECTORY.iterdir():
             if not version_directory.is_dir(): continue
             if version_directory.name not in output:

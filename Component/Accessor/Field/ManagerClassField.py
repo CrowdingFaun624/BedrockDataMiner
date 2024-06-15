@@ -14,7 +14,7 @@ MANAGER_CLASSES:dict[str,type[Manager.Manager]] = {manager_class.__name__: manag
 ]}
 
 class ManagerClassField(Field.Field):
-    
+
     def __init__(self, manager_class_str:str, path: list[str | int]) -> None:
         '''
         :manager_class_str: The name of the Manager class that this Field references.
@@ -25,6 +25,6 @@ class ManagerClassField(Field.Field):
         if manager_class is None:
             raise Exceptions.UnrecognizedManagerError(manager_class_str, self)
         self.manager_class = manager_class
-    
+
     def get_final(self) -> type[Manager.Manager]:
         return self.manager_class

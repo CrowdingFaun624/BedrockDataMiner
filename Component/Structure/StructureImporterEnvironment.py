@@ -42,9 +42,9 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
         base_component = list(base_components.values())[0]
         unused_components = self.get_unused_components([base_component], components)
         return base_component.get_final(), unused_components
-    
+
     def get_component_files(self) -> Iterable[Path]:
         return FileManager.STRUCTURES_DIRECTORY.iterdir()
-    
+
     def get_component_group_name(self, file_path:Path) -> str:
         return "structures/" + file_path.stem

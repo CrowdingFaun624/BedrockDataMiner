@@ -9,9 +9,9 @@ import Utilities.FileManager as FileManager
 
 
 class LatestSlotImporterEnvironment(ImporterEnvironment.ImporterEnvironment[list[str]]):
-    
+
     assume_type=LatestSlotComponent.LatestSlotComponent.class_name
-    
+
     def get_component_files(self) -> Iterable[Path]:
         return [FileManager.LATEST_SLOTS_FILE]
 

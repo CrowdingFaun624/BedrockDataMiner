@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] = Pattern.Pattern([{"is_version_tag": True}])
 
 class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrder]):
-    
+
     class_name = "VersionTagOrder"
     class_name_article = "a VersionTagOrder"
     my_capabilities = Capabilities.Capabilities(is_version_tag_order=True)
@@ -35,7 +35,7 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
     def __init__(self, data: ComponentTyping.VersionTagOrderTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
-        
+
         self.order_field = FieldListField.FieldListField([
             ComponentListField.ComponentListField(tags, VERSION_TAG_PATTERN, ["order", index], allow_inline=Field.InLinePermissions.reference)
             for index, tags in enumerate(data["order"])
@@ -48,11 +48,11 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
         self.tags_before_top_level_tag = ComponentListField.ComponentListField(data["tags_before_top_level_tag"], VERSION_TAG_PATTERN, ["tags_before_top_level_tag"], allow_inline=Field.InLinePermissions.reference)
         self.tags_after_top_level_tag = ComponentListField.ComponentListField(data["tags_after_top_level_tag"], VERSION_TAG_PATTERN, ["tags_after_top_level_tag"], allow_inline=Field.InLinePermissions.reference)
         self.fields.extend([self.order_field, self.allowed_children_field, self.top_level_tag_field, self.tags_before_top_level_tag, self.tags_after_top_level_tag])
-    
+
     def create_final(self) -> None:
         super().create_final()
         self.final = VersionTagOrder.VersionTagOrder()
-    
+
     def link_finals(self) -> None:
         super().link_finals()
         self.get_final().link_finals(

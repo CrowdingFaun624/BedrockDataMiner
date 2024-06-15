@@ -47,13 +47,13 @@ class Line():
     def indent(self, amount:int=1) -> "Line":
         self.indents += amount
         return self
-    
+
     def __mod__(self, data:Any) -> "Line":
         self.text %= data
         return self
 
     def __str__(self) -> str:
         return "\t" * self.indents + self.text
-    
+
     def __repr__(self) -> str:
         return "<%s indent %i; len %i>" % (self.__class__.__name__, self.indents, len(self.text))

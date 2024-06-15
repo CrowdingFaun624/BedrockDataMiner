@@ -42,12 +42,12 @@ class DataMinerDependencies():
             raise Exceptions.DataMinerUnregisteredDependencyError(dataminer, dataminer_name)
         output = self.data.get(dataminer_name, default) # DataMiners cannot output None
         return output
-    
+
     def set_item(self, name:str, value:Any) -> None:
         if name in self.data:
             raise Exceptions.DataMinerDependencyOverwriteError(self, name)
         self.data[name] = value
-    
+
     def __repr__(self) -> str:
         return "<%s [%s]>" % (self.__class__.__name__, ", ".join(dependency for dependency in self.data.keys()))
 
