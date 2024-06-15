@@ -157,6 +157,10 @@ def parse_all_component_groups() -> dict[str,Any]:
     for name, component_group_output in output.items():
         importer_environment = importer_environments[name]
         exceptions.extend(importer_environment.check(component_group_output, output))
+    if len(exceptions) > 0:
+        for exception in exceptions:
+            traceback.print_exception(exception)
+        raise Exceptions.ComponentParseError()
 
     return output
 
