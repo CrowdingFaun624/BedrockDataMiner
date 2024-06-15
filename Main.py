@@ -1,9 +1,11 @@
 # import cProfile
-# from pathlib2 import Path
 # import pstats
+
+# from pathlib2 import Path
+
 # profile = cProfile.Profile()
 # profile.run('''
-# import DataMiners.DataMiners as DataMiners
+# import DataMiner.DataMiners as DataMiners
 # import Programs.AllVersions as AllVersions
 # import Programs.Cleaner as Cleaner
 # import Programs.CompareAll as CompareAll
