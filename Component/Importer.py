@@ -164,7 +164,11 @@ def parse_all_component_groups() -> dict[str,Any]:
         for unused_component in unused_components:
             print("Warning: Unused %r in %s." % (unused_component, name))
         output[name] = importer_environment_output
-    
+
+    for name, component_group_output in output.items():
+        importer_environment = importer_environments[name]
+        importer_environment.finalize(component_group_output, output)
+
     exceptions:list[Exception] = []
     for name, component_group_output in output.items():
         importer_environment = importer_environments[name]

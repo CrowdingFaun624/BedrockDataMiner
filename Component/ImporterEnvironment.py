@@ -65,7 +65,15 @@ class ImporterEnvironment(Generic[a]):
         for component in components.values():
             if component not in visited_nodes: output.append(component)
         return output
-    
+
+    def finalize(self, output:a, other_outputs:dict[str,Any]) -> None:
+        '''
+        Run any final actions on the output.
+        :output: The output that `get_output` returned.
+        :other_outputs: The outputs of all Component groups.
+        '''
+        ...
+
     def check(self, output:a, other_outputs:dict[str,Any]) -> list[Exception]:
         '''
         Make sure that this Component's types are all in order; no error could occur.
