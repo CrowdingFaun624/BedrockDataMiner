@@ -24,14 +24,6 @@ class KeymapStructure(DictStructure.DictStructure[d]):
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
-        ''' * `name` is what the key of this dictionary is.
-         * `types` is a dictionary with keys of tuples of strings and types and values of Structures or Nones.
-         * `types` is indexed using the key and the type of the key.
-         * If a value of `types` is a Structure, then it will compare and print values using that Structure.
-         * If a value of `types` is None, then it will use `stringify` in place of a printer and not compare.
-         * If `measure_length` is True, then it will show how the length of the data changed when comparing.
-         * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.
-         * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
         super().__init__(name, field, False, None, measure_length, print_all, children_has_normalizer, children_tags)
 
         self.keys:dict[tuple[str,type],Structure.Structure[d]|None]|None = None

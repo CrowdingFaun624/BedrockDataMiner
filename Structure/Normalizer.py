@@ -12,15 +12,24 @@ IN = TypeVar("IN")
 OUT = TypeVar("OUT")
 
 class Normalizer(Generic[IN, OUT]):
+    '''Changes data before a Structure looks at it.'''
 
     def __init__(self, function:Callable[[IN, DataMinerTyping.DependenciesTypedDict], OUT], dependencies:list[str]):
-        '''`function` is a Callable that modifies the original object and returns nothing.
-        `dependencies` is a list of DataMinerCollection names.'''
+        '''
+        :function: A Callable that modifies the original object and returns nothing.
+        :dependencies: A list of DataMinerCollection names.
+        '''
 
         self.function = function
         self.dependencies = cast(list[DataMinerTyping.DependenciesLiterals], dependencies)
 
     def __call__(self, data:IN, normalizer_dependencies:"LocalNormalizerDependencies", version_number:Literal[1,2]) -> OUT|None:
+        '''
+        Activates the Normalizer.
+        :data: The argument of the Normalizer's function.
+        :normalizer_dependencies: The LocalNormalizerDependencies containing other data files this Normalizer depends on.
+        :version_number: Integer describing if the first Version or second Version of the normalizer dependencies is used.
+        '''
         version = normalizer_dependencies.get_version(version_number)
         this_data:DataMinerTyping.DependenciesTypedDict
         if version is None:

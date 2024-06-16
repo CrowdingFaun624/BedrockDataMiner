@@ -28,16 +28,6 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             children_has_normalizer:bool,
             children_tags:set[str]
         ) -> None:
-        ''' * `name` is what the key of this list is.
-         * If `structure` is a Structure, then it will compare and print all items using that Structure.
-         * If `structure` is None, then it will use `stringify` in place of a printer and not compare.
-         * If `structure` is a dictionary with keys of tuples of types and values of Structures or Nones, then it will use the type of each item to choose the Structure.
-         * `types` is a tuple of types. All items of this list must be one of those types.
-         * If `print_flat` is True, then lists are printed such as [item1, item2, item3].
-         * If `print_flat` is False: then lists are printed such as 0: item1\\n1: item2\\n2: item3
-         * If `measure_length` is True, then it will show how the length of the data changed when comparing.
-         * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.
-         * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
         super().__init__(name, field, children_has_normalizer, children_tags)
 
         self.print_flat = print_flat

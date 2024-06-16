@@ -1,5 +1,7 @@
 from typing import Any
 
+from typing_extensions import Self
+
 import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
@@ -8,7 +10,10 @@ import Utilities.Nbt.NbtTypes as NbtTypes
 NoneType = type(None)
 
 def stringify(data:Any) -> str:
-    '''Returns the string of data containing no Diffs. Is used in the comparison reporter.'''
+    '''
+    Returns the string of data containing no Diffs. Is used in the comparison reporter.
+    :data: The data to stringify.
+    '''
     match data:
         case NbtTypes.TAG():
             return str(data)
@@ -32,8 +37,13 @@ def stringify(data:Any) -> str:
             raise Exceptions.CannotStringifyError(type(data))
 
 class Line():
+    "A line of text in a comparison report."
 
     def __init__(self, text:str, *, indent:int=0) -> None:
+        '''
+        :text: The text to start this Line with.
+        :indent: The number of indents this Line starts with.
+        '''
         self.text = text
         self.indents = indent
 
@@ -44,11 +54,15 @@ class Line():
         '''
         self.indents = indents
 
-    def indent(self, amount:int=1) -> "Line":
+    def indent(self, amount:int=1) -> Self:
+        '''
+        Increases the indent of this line.
+        :amount: The amount to increase the indent by.
+        '''
         self.indents += amount
         return self
 
-    def __mod__(self, data:Any) -> "Line":
+    def __mod__(self, data:Any) -> Self:
         self.text %= data
         return self
 

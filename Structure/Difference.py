@@ -4,7 +4,8 @@ from typing import Any, Generic, NoReturn, Sequence, TypeVar
 import Utilities.Exceptions as Exceptions
 
 
-class NoExist(): # class that is different from None
+class NoExist():
+    "Class that is different from None."
 
     def __hash__(self) -> int:
         return hash(None)
@@ -34,8 +35,13 @@ Dt3 = TypeVar("Dt3")
 Dt4 = TypeVar("Dt4")
 
 class Diff(Generic[Dt1,Dt2]):
+    "A difference in data from an old version to a new version."
 
     def __init__(self, old:Dt1=NoExist(), new:Dt2=NoExist()) -> None:
+        '''
+        :old: The older version of data.
+        :new: The newer version of data.
+        '''
         self.old:Dt1 = old
         self.new:Dt2 = new
         self.change_type = exist_change_type[not isinstance(old, NoExist), not isinstance(new, NoExist)]
@@ -51,6 +57,7 @@ class Diff(Generic[Dt1,Dt2]):
             return self.new
 
     def iter(self) -> list[tuple[Dt1|Dt2,DiffType]]:
+        "Returns each existing member of this Diff from oldest to newest."
         match self.change_type:
             case ChangeType.addition:
                 return [(self.new, DiffType.new)]
@@ -109,18 +116,33 @@ b = TypeVar("b")
 c = TypeVar("c")
 
 def first_existing_property(item:a|Diff[b,c]) -> a|b|c:
+    '''
+    Returns the first existing property if the item is a diff,
+    and just the item otherwise.
+    :item: The Diff or non-Diff.
+    '''
     if isinstance(item, Diff):
         return item.first_existing_property()
     else:
         return item
 
 def iter_diff(thing:a|Diff[Dt1,Dt2]) -> Sequence[tuple[a|Dt1|Dt2,DiffType]]:
+    '''
+    Returns each existing member of this Diff from oldest to newest if it's a Diff,
+    otherwise return the item with the `not_diff` DiffType.
+    :thing: The data to iterate over.
+    '''
     if isinstance(thing, Diff):
         return thing.iter()
     else:
         return [(thing, DiffType.not_diff)]
 
 def double_iter_diff(thing1:a|Diff[Dt1,Dt2], thing2:b|Diff[Dt3,Dt4]) -> list[tuple[a|Dt1|Dt2,b|Dt3|Dt4,DiffType,DiffType]]:
+    '''
+    Zips the existing members of `thing1` and `thing2`.
+    :thing1: The first Diff or non-Diff to iterate over.
+    :thing2: The second Diff or non-Diff to iterate over.
+    '''
     thing1_iter = iter_diff(thing1)
     thing2_iter = iter_diff(thing2)
     if len(thing1_iter) == 2 or len(thing2_iter) == 2:
@@ -129,6 +151,11 @@ def double_iter_diff(thing1:a|Diff[Dt1,Dt2], thing2:b|Diff[Dt3,Dt4]) -> list[tup
     return [(iter1[0], iter2[0], iter1[1], iter2[1]) for iter1, iter2 in zip(thing1_iter, thing2_iter)]
 
 def get_diff_types(thing:object|Diff) -> tuple[DiffType,...]:
+    '''
+    Returns the DiffTypes of `thing`.
+    If `thing` is a Diff, returns DiffTypes based off of the existing members.
+    Otherwise, returns (DiffType.not_diff,).
+    '''
     if isinstance(thing, Diff):
         match thing.change_type:
             case ChangeType.addition:

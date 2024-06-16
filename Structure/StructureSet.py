@@ -12,10 +12,15 @@ if TYPE_CHECKING:
 d = TypeVar("d")
 
 class StructureSet(Generic[d]):
-    '''Contains one or two Structures. Is used internally.
-    Is used for when a value is a Diff and must use two different printers.'''
+    '''
+    Contains one or two Structures. Is used internally.
+    Is used for when a value is a Diff and must use two different printers.
+    '''
 
     def __init__(self, structures:dict[D.DiffType,Union["Structure.Structure",None]]) -> None:
+        '''
+        :structures: The dict of Structures to store in this StructureSet.
+        '''
         self.structures = structures
 
     def __repr__(self) -> str:
@@ -28,12 +33,22 @@ class StructureSet(Generic[d]):
         return item in self.structures
 
     def __getitem__(self, key:D.DiffType|int) -> Union["Structure.Structure",None]:
+        '''
+        Returns a Structure or None.
+        :key: The DiffType or the list-index to choose a Structure with.
+        '''
         if isinstance(key, D.DiffType):
             return self.structures[key]
         elif isinstance(key, int):
             return list(self.structures.values())[key]
 
     def print_text(self, key:D.DiffType|int, data:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
+        '''
+        Generates lines from the data using the Structure given by the key.
+        :key: The DiffType or list-index to choose a Structure with.
+        :data: The data containing no Diffs to print.
+        :environment: The StructureEnvironment to use.
+        '''
         if isinstance(key, D.DiffType) and key not in self:
             return [], [Trace.ErrorTrace(Exceptions.StructureSetKeyError(key, self), None, None, data)]
         structure = self[key]
@@ -43,6 +58,12 @@ class StructureSet(Generic[d]):
             return structure.print_text(data, environment)
 
     def compare_text(self, key:D.DiffType|int, data:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
+        '''
+        Generates comparison lines from the data using the Structure given by the key.
+        :key: The DiffType or list-index to choose a Structure with.
+        :data: The data containing Diffs to compare.
+        :environment: The StructureEnvironment to use.
+        '''
         structure = self[key]
         if structure is None:
             raise Exceptions.CompareWithNoneError(self, key)
@@ -50,6 +71,12 @@ class StructureSet(Generic[d]):
             return structure.compare_text(data, environment)
 
     def compare(self, data1:d, data2:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[d|D.Diff[d,d],bool,list[Trace.ErrorTrace]]:
+        '''
+        Compares data using the Structure given by internal conditions.
+        :data1: The data from the oldest Version.
+        :data2: The data from the newest Version.
+        :environment: The StructureEnvironment to use.
+        '''
         if (len(self) == 1) or (len(self) == 2 and self[0] == self[1]):
             # both items have the same Structure.
             structure = self[0]

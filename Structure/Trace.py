@@ -7,6 +7,12 @@ import Utilities.Exceptions as Exceptions
 class ErrorTrace():
 
     def __init__(self, exception:Exception, current_pos_name:str|None, current_pos_key:Hashable|None, data:Any|None) -> None:
+        '''
+        :exception: The Exception that this ErrorTrace envelops.
+        :current_pos_name: The name of the current Structure.
+        :current_pos_key: Where in the current Structure the error occurs.
+        :data: The data at the current position in the Structure.
+        '''
         self.exception = exception
         self.is_final = False
         self.trace:list[_TraceItem] = []
@@ -16,6 +22,12 @@ class ErrorTrace():
             self.add(current_pos_name, current_pos_key)
 
     def add(self, current_pos_name:str, current_pos_key:Hashable|None, force:bool=False) -> None:
+        '''
+        Adds a Structure to the list of Structures.
+        :current_pos_name: The name of the current Structure.
+        :current_pos_key: Where in the current Structure the error occurs.
+        :force: If True, adds it even if current_pos_name is duplicate.
+        '''
         if self.is_final:
             raise Exceptions.TraceError(self, self.add, self.is_final)
         if force or current_pos_name not in self.already_added_names:
@@ -23,12 +35,14 @@ class ErrorTrace():
             self.already_added_names.add(current_pos_name)
 
     def finalize(self) -> None:
+        "Prevents any more Structures from being added to this ErrorTrace."
         if self.is_final:
             raise Exceptions.TraceError(self, self.finalize, self.is_final)
         self.is_final = True
         self.trace.reverse()
 
     def stringify(self) -> str:
+        "Returns a string representing the ErrorTrace. Can only be called after `finalize`."
         if not self.is_final:
             raise Exceptions.TraceError(self, self.stringify, self.is_final)
         trace_string = ".".join(str(trace_item) for trace_item in self.trace)
@@ -44,8 +58,13 @@ class ErrorTrace():
         return "<ErrorTrace %s len %i>" % (finalized_str, len(self.trace))
 
 class _TraceItem():
+    "A piece of an ErrorTrace containing the name of a Structure and the position inside it."
 
     def __init__(self, name:str, key:Hashable|None) -> None:
+        '''
+        :name: The name of the current Structure.
+        :key: The position in the current Structure.
+        '''
         self.name = name
         self.key = key
 

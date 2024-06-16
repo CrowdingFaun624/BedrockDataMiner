@@ -39,17 +39,6 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
-        ''' * `name` is what the key of this dictionary is.
-         * If `structure` is a Structure, then it will compare and print all values using that Structure.
-         * If `structure` is None, then it will use `stringify` in place of a printer and not compare.
-         * If `structure` is a dictionary with keys of tuples of types and values of Structure or Nones, then it will use the type of each value to choose the Structure.
-         * `types` is a tuple of types. All values of this dictionary must be one of those types.
-         * `detect_key_moves` controls whether it will look for changes in keys.
-         * `comparison_move_function` is called with a key and value, and returns a piece of the value. It is used to compare the change in keys between two data.
-         * If `comparison_move_function` returns None, then it will not attempt to detect moves for that value.
-         * If `measure_length` is True, then it will show how the length of the data changed when comparing.
-         * If `print_all` is True, then if there is a change in one part of the data, then all parts will be printed.
-         * `normalizer` is a list of normalizer functions that modify the data without returning anything.'''
         super().__init__(name, field, children_has_normalizer, children_tags)
 
         self.detect_key_moves = detect_key_moves

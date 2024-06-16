@@ -49,7 +49,13 @@ class StructureBase():
         return "<%s %s>" % (self.__class__.__name__, self.structure_name)
 
     def normalize(self, data:Any, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, environment:StructureEnvironment.StructureEnvironment, *, version_number:Literal[1,2]=1) -> Any:
-        '''Manipulates the data before comparison.'''
+        '''
+        Manipulates the data before comparison.
+        :data: The data to manipulate.
+        :normalizer_dependencies: The Normalizer dependencies to use for the Normalizers.
+        :environment: The StructureEnvironment to use.
+        :version_number: The version number to use on the Normalizer dependencies.
+        '''
         # base normalizer
         exceptions:list[Trace.ErrorTrace] = []
         if self.normalizer is None:
@@ -86,9 +92,21 @@ class StructureBase():
         self.structure.clear_caches(set())
 
     def has_tag(self, tag:str) -> bool:
+        '''
+        Returns if the tag can be found in the Structure.
+        :tag: The name of the tag.
+        '''
         return tag in self.children_tags
 
     def get_tag_paths(self, data:Any, tag:str, version:"Version.Version", normalizer_dependencies:Normalizer.NormalizerDependencies, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
+        '''
+        Returns the DataPaths on which the given tag exists in the Structure for the given data.
+        :data: The data to get the tag paths from.
+        :tag: The tag to search for.
+        :version: The Version to make the Normalizer dependencies with.
+        :normalizer_dependencies: The Normalizer dependencies to use for normalizing.
+        :environment: The StructureEnvironment to use.
+        '''
         if not self.has_tag(tag):
             return []
         if self.structure is None:
@@ -100,6 +118,11 @@ class StructureBase():
         return output
 
     def store(self, report:str, name:str) -> None:
+        '''
+        Stores a comparison report.
+        :report: The comparison report string.
+        :name: The name of the folder to store the report in.
+        '''
         if name in file_counts:
             store_number = file_counts[name] + 1
         else:
@@ -121,7 +144,16 @@ class StructureBase():
             normalizer_dependencies:Normalizer.NormalizerDependencies,
             environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[str,bool]:
-        '''Returns a final string of the comparison report and a boolean if there were any changes.'''
+        '''
+        Returns a final string of the comparison report and a boolean if there were any changes.
+        :data1: The data from the first Version.
+        :data2: The data from the second Version.
+        :version1: The oldest Version.
+        :version2: The newest Version.
+        :versions_between: A list of any Versions between the first and second Versions.
+        :normalizer_dependencies: The Normalizer dependencies to use when normalizing the data.
+        :environment: The StructureEnvironment to use.
+        '''
         header:list[str] = []
         beta_texts:list[str] = ["", ""]
         for index, version in enumerate((version1, version2)):
@@ -160,14 +192,21 @@ class StructureBase():
         return "\n".join(final), any_changes
 
     def check_types(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> None:
-        '''Raises an exception with data about what went wrong if an error occurs.'''
+        '''
+        Raises an exception with data about what went wrong if an error occurs.
+        :data: The data to check.
+        :environment: The StructureEnvironment to use.
+        '''
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         traces = self.structure.check_all_types(data, environment)
         self.print_exception_list(traces)
 
     def print_exception_list(self, traces:list[Trace.ErrorTrace]) -> None:
-        '''Prints all exceptions and traces in list and raises an exception at the end if the list has any items.'''
+        '''
+        Prints all exceptions and traces in list and raises an exception at the end if the list has any items.
+        :traces: The ErrorTraces to print.
+        '''
         for trace in traces:
             trace.add(self.structure_name, None, force=True)
             trace.finalize()
@@ -177,6 +216,12 @@ class StructureBase():
             raise Exceptions.StructureError(self)
 
     def compare(self, data1:Any, data2:Any, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any,bool]:
+        '''
+        Combines the data into a single object with Diffs in it. Returns the combined object and if there are any differences.
+        :data1: The data from the oldest Version.
+        :data2: The data from the newest Version.
+        :environment: The StructureEnvironment to use.
+        '''
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         output, has_changes, traces = self.structure.compare(data1, data2, environment)
@@ -184,7 +229,12 @@ class StructureBase():
         return output, has_changes
 
     def compare_text(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool]:
-        '''Returns a list of lines and if there were any changes'''
+        '''
+        Generates Lines from an object containing Diffs.
+        Returns a list of Lines and if there were any changes.
+        :data: The object containing Diffs.
+        :environment: The StructureEnvironment to use.
+        '''
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         output, has_changes, traces = self.structure.compare_text(data, environment)
@@ -192,6 +242,11 @@ class StructureBase():
         return output, has_changes
 
     def print_text(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> list[SU.Line]:
+        '''
+        Generates Lines from an object containing no Diffs.
+        :data: The object containing no Diffs.
+        :environment: The StructureEnvironment to use.
+        '''
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         output, traces = self.structure.print_text(data, environment)

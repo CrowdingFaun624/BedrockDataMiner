@@ -1,39 +1,54 @@
 from typing import Any, Hashable
 
+from typing_extensions import Self
+
 
 class DataPath():
 
     def __init__(self, path_items:list[tuple[Hashable,type]], root:str, embedded_data:Any|None=None) -> None:
         '''
-         * `path_items` cannot contain None.
-         * `root` is the dataminer/structure in which this DataPath originates.
-         * `embedded_data` is data given to this DataPath when it reaches the correct tag.'''
+        :path_items: Items in the DataPath. Cannot contain None.
+        :root: The dataminer/structure in which this DataPath originates.
+        :embedded_data: Data given to this DataPath when it reaches the correct tag.'''
         self.path_items = path_items
         self.root = root
         self.embedded_data:Any|None = embedded_data
         self.hash = None
 
     def last_key(self) -> Hashable:
+        '''Returns the key of the most recently appended item.'''
         return self[-1][0]
 
-    def remove_embedded_data(self) -> "DataPath":
+    def remove_embedded_data(self) -> Self:
+        '''Removes the embedded data from this DataPath. Returns itself.'''
         self.embedded_data = None
         return self
 
     def copy(self, new_item:tuple[Hashable,type]|None=None) -> "DataPath":
+        '''
+        Returns a new DataPath with a copied `path_items` attribute.
+        :new_item: An optional item to append to the copied DataPath.
+        '''
         output = DataPath(self.path_items.copy(), self.root, self.embedded_data)
         if new_item is not None:
             output.append(new_item)
         return output
 
-    def append(self, new_item:tuple[Hashable,type]) -> "DataPath":
-        '''Item cannot be None'''
+    def append(self, new_item:tuple[Hashable,type]) -> Self:
+        '''
+        Adds a new item to this DataPath. Returns itself.
+        :new_item: The item to add to the end of the DataPath.
+        '''
         self.path_items.append(new_item)
         self.hash = None
         return self
 
-    def embed(self, item:Any) -> "DataPath":
-        '''Used to extract data from within the structure.'''
+    def embed(self, item:Any) -> Self:
+        '''
+        Embeds data into this DataPath. Returns itself.
+        Used to carry data from deep inside Structures out.
+        :item: The data to embed.
+        '''
         self.embedded_data = item
         return self
 
