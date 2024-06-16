@@ -1,33 +1,6 @@
-from typing import Any, Literal, TypedDict
+from typing import Any, TypeAlias, TypedDict
 
 from typing_extensions import NotRequired, Required
-
-DependenciesLiterals = Literal["behavior_packs", "blocks", "credits", "duplicate_sounds", "entities", "entities_client", "items", "language", "languages", "loading_tips", "loot_tables", "models", "music_definitions", "non_existent_sounds", "recipes", "resource_packs", "sound_definitions", "sound_files", "sounds_json", "splashes", "trade_tables", "undefined_sound_events", "unused_sound_events"]
-
-class DependenciesTypedDict(TypedDict):
-    behavior_packs: NotRequired["BehaviorPacks"]
-    blocks: NotRequired["MyBlocksClient"]
-    credits: NotRequired["Credits"]
-    duplicate_sounds: NotRequired["DuplicateSounds"]
-    entities: NotRequired["Entities"]
-    entities_client: NotRequired["EntitiesClient"]
-    items: NotRequired["Items"]
-    language: NotRequired["Language"]
-    languages: NotRequired["Languages"]
-    loading_tips: NotRequired["LoadingTips"]
-    loot_tables: NotRequired["LootTables"]
-    models: NotRequired["Models"]
-    music_definitions: NotRequired["MyMusicDefinitions"]
-    non_existent_sounds: NotRequired["NonExistentSounds"]
-    recipes: NotRequired["Recipes"]
-    resource_packs: NotRequired["ResourcePacks"]
-    sound_definitions: NotRequired["MySoundDefinitionsJson"]
-    sound_files: NotRequired["SoundFiles"]
-    sounds_json: NotRequired["MySoundsJson"]
-    splashes: NotRequired["Splashes"]
-    trade_tables: NotRequired["TradeTables"]
-    undefined_sound_events: NotRequired["UndefinedSoundEvents"]
-    unused_sound_events: NotRequired["UnusedSoundEvents"]
 
 # behavior packs
 
@@ -35,7 +8,7 @@ class BehaviorPackTypedDict(TypedDict):
     name: str
     path: str
 
-BehaviorPacks = list[BehaviorPackTypedDict]
+BehaviorPacks:TypeAlias = list[BehaviorPackTypedDict]
 
 # blocks.json
 
@@ -73,9 +46,7 @@ class NormalizedBlocksJsonClientBlockTypedDict(TypedDict):
     sound: NotRequired[str]
     textures: NotRequired[str|BlocksJsonBlockTexturesTypedDict]
 
-BlocksClient = dict[str,BlocksJsonClientBlockTypedDict]
-MyBlocksClient = list[MyBlocksJsonClientBlockTypedDict]
-NormalizedBlocksClient = dict[str,dict[str,NormalizedBlocksJsonClientBlockTypedDict]]
+MyBlocksClient:TypeAlias = list[MyBlocksJsonClientBlockTypedDict]
 
 # credits
 
@@ -92,17 +63,8 @@ class CreditsSectionTypedDict(TypedDict):
     disciplines: list[CreditsDisciplineTypedDict]
     titles: list[CreditsTitleTypedDict] # outdated
 
-class NormalizedCreditsDisciplineTypedDict(TypedDict):
-    discipline: str
-    titles: dict[str, CreditsTitleTypedDict]
-
-class NormalizedCreditsSectionTypedDict(TypedDict):
-    section: str
-    disciplines: dict[str, CreditsDisciplineTypedDict]
-    titles: dict[str, CreditsTitleTypedDict] # outdated
-
-Credits = list[CreditsSectionTypedDict]
-NormalizedCredits = dict[str,CreditsSectionTypedDict]
+Credits:TypeAlias = list[CreditsSectionTypedDict]
+NormalizedCredits:TypeAlias = dict[str,CreditsSectionTypedDict]
 
 # duplicate sounds
 
@@ -110,20 +72,9 @@ class DuplicateSoundsTypedDict(TypedDict):
     file_name: str
     file_internal_name: str
 
-DuplicateSounds = dict[str,list[DuplicateSoundsTypedDict]]
-NormalizedDuplicateSounds = dict[str,list[DuplicateSoundsTypedDict]]
-
-# entities
-
-Entities = dict[str,dict[str,Any]] # TODO: fill this out
-
-# entities_client
-
-EntitiesClient = dict[str,dict[str,Any]]  #TODO: fill this out
-
 # items
 
-Items = dict[str,dict[str,Any]] # TODO: fill this out
+Items:TypeAlias = dict[str,dict[str,Any]]
 
 # language
 
@@ -131,31 +82,22 @@ class LanguageTypedDict(TypedDict):
     comment: NotRequired[str]
     value: Required[str]
 
-Language = dict[str,dict[str,LanguageTypedDict]]
+Language:TypeAlias = dict[str,dict[str,LanguageTypedDict]]
 
 # languages
 
-class NormalizedLanguagesPropertiesTypedDict():
-    defined_in: list[str]
-
 class LanguagesPropertiesTypedDict(TypedDict):
     name: NotRequired[str]
-
-class NormalizedLanguagesTypedDict(TypedDict):
-    code: str
-    properties: dict[str,NormalizedLanguagesPropertiesTypedDict]
 
 class LanguagesTypedDict(TypedDict):
     code: str
     defined_in: list[str]
     properties: dict[str,LanguagesPropertiesTypedDict]
 
-Languages = list[LanguagesTypedDict]
-NormalizedLanguages = dict[str,dict[str,LanguagesPropertiesTypedDict]]
+Languages:TypeAlias = list[LanguagesTypedDict]
+NormalizedLanguages:TypeAlias = dict[str,dict[str,LanguagesPropertiesTypedDict]]
 
-# loading_tips
-
-LoadingTips = dict[str,dict[str,list[str]]]
+# loot tables
 
 class LootTableConditions(TypedDict):
     condition: NotRequired[str]
@@ -168,10 +110,6 @@ class LootTableFunctions(TypedDict):
 
 class LootTableHasFunctions(TypedDict):
     functions: list[LootTableFunctions]|dict[str,LootTableFunctions]
-
-# loot_tables
-
-LootTables = dict[str,dict[str,object]] # TODO: fill this out
 
 # models
 
@@ -198,8 +136,6 @@ class ModelGeometryTypedDict(TypedDict):
     bones: list[ModelBoneTypedDict]|dict[str,ModelBoneTypedDict]
     description: dict[str,Any]
 
-Models = dict[str,dict[str,Any]] # TODO: fill this out
-
 # music_definitions.json
 
 class MusicDefinitionsEnvironmentTypedDict(TypedDict):
@@ -207,17 +143,12 @@ class MusicDefinitionsEnvironmentTypedDict(TypedDict):
     min_delay: int
     max_delay: int
 
-MusicDefinitions = dict[str,MusicDefinitionsEnvironmentTypedDict]
-MyMusicDefinitions = dict[str,dict[str,MusicDefinitionsEnvironmentTypedDict]]
+MusicDefinitions:TypeAlias = dict[str,MusicDefinitionsEnvironmentTypedDict]
+MyMusicDefinitions:TypeAlias = dict[str,dict[str,MusicDefinitionsEnvironmentTypedDict]]
 
 # non-existent sounds
 
 NonExistentSounds = dict[str,dict[str,list[str]]]
-NormalizedNonExistentSounds = dict[str,dict[str,set[str]]]
-
-# recipes
-
-Recipes = dict[str,dict[str,Any]] # TODO: fill this out
 
 # resource packs
 
@@ -225,7 +156,7 @@ class ResourcePackTypedDict(TypedDict):
     name: str
     path: str
 
-ResourcePacks = list[ResourcePackTypedDict]
+ResourcePacks:TypeAlias = list[ResourcePackTypedDict]
 
 # sound_definitions.json
 
@@ -266,9 +197,8 @@ class NormalizedSoundDefinitionsJsonSoundEventTypedDict(TypedDict):
     sounds: list[str|SoundDefinitionsJsonSoundTypedDict]|dict[str,NormalizedSoundDefinitionsJsonSoundTypedDict]
     subtitle: str # unused
 
-SoundDefinitionsJson = dict[str,SoundDefinitionsJsonSoundEventTypedDict]
-MySoundDefinitionsJson = dict[str,dict[str,SoundDefinitionsJsonSoundEventTypedDict]]
-NormalizedSoundDefinitionsJson = dict[str,dict[str,NormalizedSoundDefinitionsJsonSoundEventTypedDict]]
+SoundDefinitionsJson:TypeAlias = dict[str,SoundDefinitionsJsonSoundEventTypedDict]
+MySoundDefinitionsJson:TypeAlias = dict[str,dict[str,SoundDefinitionsJsonSoundEventTypedDict]]
 
 # sound files
 
@@ -308,8 +238,7 @@ class NormalizedSoundFilesTypedDict(TypedDict):
     streaminfo: SoundFilesStreamInfoTypedDict
     sha1_hash: str # hexadecimal 40-digit string
 
-SoundFiles=dict[str,dict[str,SoundFilesTypedDict]]
-NormalizedSoundFiles=dict[str,dict[str,NormalizedSoundFilesTypedDict]]
+SoundFiles:TypeAlias = dict[str,dict[str,SoundFilesTypedDict]]
 
 # sounds.json
 
@@ -356,24 +285,20 @@ class MySoundsJsonTypedDict(TypedDict):
     entity_sounds: dict[str, ResourcePackSoundsJsonSoundCollectionTypedDict]
     interactive_entity_sounds: dict[str, ResourcePackSoundsJsonSoundCollectionTypedDict]
 
-MySoundsJson = MySoundsJsonTypedDict
+MySoundsJson:TypeAlias = MySoundsJsonTypedDict
 
 # splashes
 
 class SplashesTypedDict(TypedDict):
     splashes: list[str]
 
-SplashesFile = SplashesTypedDict
-Splashes = dict[str,list[str]]
-
-# TradeTables
-
-TradeTables = dict[str,dict[str,dict[str,Any]]] # TODO: fill this out
+SplashesFile:TypeAlias = SplashesTypedDict
+Splashes:TypeAlias = dict[str,list[str]]
 
 # undefined_sound_events
 
-UndefinedSoundEvents = dict[str,list[list[str]]] # TODO: fill this out
+UndefinedSoundEvents:TypeAlias = dict[str,list[list[str]]]
 
 # unused_sound_events
 
-UnusedSoundEvents = list[str]
+UnusedSoundEvents:TypeAlias = list[str]
