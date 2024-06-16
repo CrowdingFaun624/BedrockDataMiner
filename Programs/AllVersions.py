@@ -10,7 +10,7 @@ import Version.Version as Version
 STRUCTURE_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
 
 def datamine_version(version:Version.Version, all_dataminers:dict[str,DataMinerCollection.DataMinerCollection], print_messages:bool=True) -> None:
-    dataminers = DataMiners.get_dataminable_dataminers(version, all_dataminers)
+    dataminers = DataMiners.get_dataminable_dataminers(version)
     already_files = set(DataMiners.currently_has_data_files_from(version))
     needed_files = [dataminer for dataminer in dataminers if dataminer not in already_files]
     if len(needed_files) == 0:

@@ -11,7 +11,7 @@ dataminers = list(Importer.dataminer_collections.values())
 SINGLE_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.datamining)
 MANY_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
 
-def get_dataminable_dataminers(version:Version.Version, all_dataminers:dict[str,DataMinerCollection.DataMinerCollection]) -> list[DataMinerCollection.DataMinerCollection]:
+def get_dataminable_dataminers(version:Version.Version) -> list[DataMinerCollection.DataMinerCollection]:
     '''
     Returns the names of all data files that this Version supports.
     :version: The version to test.
@@ -117,7 +117,7 @@ def user_interface() -> None:
         versions = [version_names[version]]
         dataminable_dataminers_set:set[DataMinerCollection.DataMinerCollection] = set()
         for version in versions:
-            dataminable_dataminers_set.update(get_dataminable_dataminers(version, all_dataminers_dict))
+            dataminable_dataminers_set.update(get_dataminable_dataminers(version))
         dataminable_file_names = sorted(dataminer.name for dataminer in dataminable_dataminers_set)
 
     dataminer_collection = None
