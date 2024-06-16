@@ -4,7 +4,6 @@ from typing import Generator, Iterable, TypeVar
 import Component.Importer as Importer
 import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMiners as DataMiners
-import Structure.Normalizer as Normalizer
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
@@ -31,15 +30,13 @@ def compare(
         version2:Version.Version,
         dataminer_collection:DataMinerCollection.DataMinerCollection,
         undataminable_versions_between:list[Version.Version],
-        normalizer_dependencies:Normalizer.NormalizerDependencies,
     ) -> None:
-    dataminer_collection.compare(version1, version2, undataminable_versions_between, normalizer_dependencies, COMPARING_ENVIRONMENT)
+    dataminer_collection.compare(version1, version2, undataminable_versions_between, COMPARING_ENVIRONMENT)
 
 def compare_all_of(
         dataminer_collection:DataMinerCollection.DataMinerCollection,
         versions:list[Version.Version],
         exception_holder:dict[str,tuple[Exception,Version.Version|None,Version.Version|None]|bool],
-        normalizer_dependencies:Normalizer.NormalizerDependencies,
     ) -> None:
     previous_successful_version = None; version = None
     try:
@@ -54,10 +51,9 @@ def compare_all_of(
         for version in versions:
             if dataminer_collection.supports_version(version):
                 if previous_successful_version is not None:
-                    compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between, normalizer_dependencies)
-                    normalizer_dependencies.forget(previous_successful_version)
+                    compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between)
                 else: # First version that has this file.
-                    compare(None, version, dataminer_collection, undataminable_versions_between, normalizer_dependencies)
+                    compare(None, version, dataminer_collection, undataminable_versions_between)
                 undataminable_versions_between = []
                 previous_successful_version = version
             else:
@@ -101,9 +97,8 @@ def main() -> None:
 
     sorted_versions = list(flatten(child_versions for child_versions in major_versions.values()))
     exception_holder:dict[str,bool|tuple[Exception,Version.Version|None,Version.Version|None]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
-    normalizer_dependencies = Normalizer.NormalizerDependencies({}, dataminers)
     for dataminer_collection in selected_dataminers:
-        compare_all_of(dataminer_collection, sorted_versions, exception_holder, normalizer_dependencies)
+        compare_all_of(dataminer_collection, sorted_versions, exception_holder)
 
     excepted = False
     excepted_threads:list[tuple[str,Version.Version|None,Version.Version|None]] = []

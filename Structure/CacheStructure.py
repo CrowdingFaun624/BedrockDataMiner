@@ -1,8 +1,7 @@
-from typing import Any, Callable, Generic, Iterable, Literal, TypeVar, cast
+from typing import Any, Callable, Generic, Iterable, TypeVar, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
-import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
@@ -74,10 +73,10 @@ class CacheStructure(Structure.Structure[d]):
         cache_item.set_check_all_types(output)
         return output
 
-    def normalize(self, data:d, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:Literal[1,2], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         structure = self.choose_structure_flat(None, type(data), None)
         if not environment.should_cache or not self.cache_normalize:
-            return structure.normalize(data, normalizer_dependencies, version_number, environment)
+            return structure.normalize(data, environment)
         data_hash = hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.normalize:
@@ -87,7 +86,7 @@ class CacheStructure(Structure.Structure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.normalize(data, normalizer_dependencies, version_number, environment)
+        output = structure.normalize(data, environment)
         cache_item.set_normalize(output)
         return output
 

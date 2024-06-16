@@ -4,7 +4,6 @@ import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMiners as DataMiners
 import DataMiner.TagSearcher.TagSearcherDataMiner as TagSearcherDataMiner
 import Structure.DataPath as DataPath
-import Structure.Normalizer as Normalizer
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -23,8 +22,6 @@ class TagSearcherDataMiner0(TagSearcherDataMiner.TagSearcherDataMiner):
         self.none_okay = kwargs.get("none_okay", False)
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataPath.DataPath|Any]:
-        normalizer_dependencies = Normalizer.NormalizerDependencies({}, DataMiners.dataminers)
-
         tag_function, tag_names = TagSearcherDataMiner.parse(self.tags)
         mentioned_tags:dict[str,set[DataPath.DataPath]] = {}
         dependencies = set(self.dependencies)
@@ -33,7 +30,7 @@ class TagSearcherDataMiner0(TagSearcherDataMiner.TagSearcherDataMiner):
             for dataminer_collection in DataMiners.dataminers:
                 if dataminer_collection.has_tag(tag) and dataminer_collection not in dependencies:
                     raise Exceptions.TagSearcherDependencyError(self, tag, dataminer_collection)
-                mentioned_tags[tag].update(dataminer_collection.get_tag_paths(self.version, tag, normalizer_dependencies, environment.structure_environment))
+                mentioned_tags[tag].update(dataminer_collection.get_tag_paths(self.version, tag, environment.structure_environment))
         output = tag_function(mentioned_tags)
 
         if not self.none_okay and len(output) == 0:

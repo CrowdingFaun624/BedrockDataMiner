@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Literal, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Literal, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -48,13 +48,11 @@ class StructureBase():
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.structure_name)
 
-    def normalize(self, data:Any, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, environment:StructureEnvironment.StructureEnvironment, *, version_number:Literal[1,2]=1) -> Any:
+    def normalize(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> Any:
         '''
         Manipulates the data before comparison.
         :data: The data to manipulate.
-        :normalizer_dependencies: The Normalizer dependencies to use for the Normalizers.
         :environment: The StructureEnvironment to use.
-        :version_number: The version number to use on the Normalizer dependencies.
         '''
         # base normalizer
         exceptions:list[Trace.ErrorTrace] = []
@@ -63,7 +61,7 @@ class StructureBase():
         output = data
         for normalizer_index, normalizer in enumerate(self.normalizer):
             try:
-                output = normalizer(output, normalizer_dependencies, version_number)
+                output = normalizer(output)
             except Exception as e:
                 output = None
                 exceptions.append(Trace.ErrorTrace(e, self.component_name, normalizer_index, data))
@@ -78,7 +76,7 @@ class StructureBase():
         self.print_exception_list(exceptions)
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
-        normalizer_output, new_exceptions = self.structure.normalize(cast(Any, output), normalizer_dependencies, version_number, environment)
+        normalizer_output, new_exceptions = self.structure.normalize(output, environment)
         exceptions.extend(new_exceptions)
         if normalizer_output is not None:
             output = normalizer_output
@@ -98,21 +96,18 @@ class StructureBase():
         '''
         return tag in self.children_tags
 
-    def get_tag_paths(self, data:Any, tag:str, version:"Version.Version", normalizer_dependencies:Normalizer.NormalizerDependencies, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
+    def get_tag_paths(self, data:Any, tag:str, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
         '''
         Returns the DataPaths on which the given tag exists in the Structure for the given data.
         :data: The data to get the tag paths from.
         :tag: The tag to search for.
-        :version: The Version to make the Normalizer dependencies with.
-        :normalizer_dependencies: The Normalizer dependencies to use for normalizing.
         :environment: The StructureEnvironment to use.
         '''
         if not self.has_tag(tag):
             return []
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
-        local_normalizer_dependencies = Normalizer.LocalNormalizerDependencies(normalizer_dependencies, version, None)
-        normalized_data = self.normalize(data, local_normalizer_dependencies, environment, version_number=1)
+        normalized_data = self.normalize(data, environment)
         output, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.component_name), environment)
         self.print_exception_list(new_exceptions)
         return output
@@ -141,7 +136,6 @@ class StructureBase():
             version1:Union["Version.Version",None],
             version2:"Version.Version",
             versions_between:list["Version.Version"],
-            normalizer_dependencies:Normalizer.NormalizerDependencies,
             environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[str,bool]:
         '''
@@ -151,7 +145,6 @@ class StructureBase():
         :version1: The oldest Version.
         :version2: The newest Version.
         :versions_between: A list of any Versions between the first and second Versions.
-        :normalizer_dependencies: The Normalizer dependencies to use when normalizing the data.
         :environment: The StructureEnvironment to use.
         '''
         header:list[str] = []
@@ -172,13 +165,12 @@ class StructureBase():
                 header.append("Unable to create data files for %i %s %s: %s" % (len(versions_between), files_word, between_word, ", ".join("\"%s\"" % version.name for version in versions_between)))
         header.append("")
 
-        local_normalizer_dependencies = Normalizer.LocalNormalizerDependencies(normalizer_dependencies, version1, version2)
         if version1 is None:
-            normalized_data2 = self.normalize(data2, local_normalizer_dependencies, environment, version_number=2)
+            normalized_data2 = self.normalize(data2, environment)
             normalized_data1 = type(normalized_data2)() # create new empty.
         else:
-            normalized_data1 = self.normalize(data1, local_normalizer_dependencies, environment, version_number=1)
-            normalized_data2 = self.normalize(data2, local_normalizer_dependencies, environment, version_number=2)
+            normalized_data1 = self.normalize(data1, environment)
+            normalized_data2 = self.normalize(data2, environment)
 
         data_comparison, has_changes = self.compare(normalized_data1, normalized_data2, environment)
         if not has_changes: # skip compare_text part

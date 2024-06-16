@@ -6,7 +6,7 @@ import Utilities.CollapseResourcePacks as CollapseResourcePacks
 import Utilities.Nbt.NbtTypes as NbtTypes
 
 
-def animation_controllers_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def animation_controllers_fix_old(data:dict[str,Any]) -> None:
     if "animation_controllers" in data: return
     if "defined_in" in data:
         del data["defined_in"]
@@ -17,7 +17,7 @@ def animation_controllers_fix_old(data:dict[str,Any], dependencies:DataMinerTypi
         del data[key]
     data["animation_controllers"] = output
 
-def animations_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def animations_fix_old(data:dict[str,Any]) -> None:
     if "animations" in data: return
     if "defined_in" in data:
         del data["defined_in"]
@@ -28,7 +28,7 @@ def animations_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.Dependen
         del data[key]
     data["animations"] = output
 
-def attachables_normalize_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def attachables_normalize_old(data:dict[str,Any]) -> None:
     if "minecraft:attachable" in data:
         return
     attachable_identifier = list(data.keys())[0]
@@ -36,10 +36,10 @@ def attachables_normalize_old(data:dict[str,Any], dependencies:DataMinerTyping.D
     del data[attachable_identifier]
     result["description"]["identifier"] = attachable_identifier
 
-def behavior_packs_normalize(data:DataMinerTyping.BehaviorPacks, dependencies:DataMinerTyping.DependenciesTypedDict) -> list[str]:
+def behavior_packs_normalize(data:DataMinerTyping.BehaviorPacks) -> list[str]:
     return [behavior_pack["name"] for behavior_pack in data]
 
-def biomes_normalize_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def biomes_normalize_old(data:dict[str,Any]) -> None:
     if "minecraft:biome" in data: return
     if len(data) != 1:
         raise RuntimeError("Expected 1 key, but got [%s]" % (list(data.keys()),))
@@ -53,12 +53,12 @@ def biomes_normalize_old(data:dict[str,Any], dependencies:DataMinerTyping.Depend
     del data[biome_name]
     data.update(result)
 
-def blocks_client_fix_MCPE_76182(data:DataMinerTyping.BlocksJsonClientBlockTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def blocks_client_fix_MCPE_76182(data:DataMinerTyping.BlocksJsonClientBlockTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-76182
     if "sounds" in data:
         del data["sounds"]
 
-def blocks_client_normalize(data:DataMinerTyping.MyBlocksClient, dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]:
+def blocks_client_normalize(data:DataMinerTyping.MyBlocksClient) -> dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]:
     return {block["name"]: block["properties"] for block in data}
 
 def blocks_client_resource_pack_comparison_move_function(key:str, value:DataMinerTyping.NormalizedBlocksJsonClientBlockTypedDict) -> DataMinerTyping.NormalizedBlocksJsonClientBlockTypedDict:
@@ -66,14 +66,14 @@ def blocks_client_resource_pack_comparison_move_function(key:str, value:DataMine
     del output["defined_in"]
     return output
 
-def credits_normalize_sections(data:DataMinerTyping.Credits, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedCredits:
+def credits_normalize_sections(data:DataMinerTyping.Credits) -> DataMinerTyping.NormalizedCredits:
     return {section["section"]: section for section in data}
 
-def credits_normalize_disciplines(data:Any, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def credits_normalize_disciplines(data:Any) -> None:
     if "disciplines" not in data: return
     data["disciplines"] = {discipline["discipline"]: discipline for discipline in data["disciplines"]}
 
-def credits_normalize_titles(data:Any, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def credits_normalize_titles(data:Any) -> None:
     if "titles" not in data: return
     data["titles"] = {title["title"]: title for title in data["titles"]}
 
@@ -83,28 +83,28 @@ def entities_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]
         del output["defined_in"]
     return output
 
-def entities_fix_event_bug(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def entities_fix_event_bug(data:dict[str,Any]) -> None:
     if "minecraft:transformation" in data:
         del data["minecraft:transformation"]
 
-def entities_fix_out_of_bounds_components(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def entities_fix_out_of_bounds_components(data:dict[str,Any]) -> None:
     for key_to_delete in [key for key in data if key.startswith("minecraft:")]:
         del data[key_to_delete]
 
-def entities_fix_MCPE_178417(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def entities_fix_MCPE_178417(data:dict[str,Any]) -> None:
     # https://bugs.mojang.com/browse/MCPE-178417
     for key_to_delete in [key for key in data if key.startswith("minecraft:")]:
         del data[key_to_delete]
 
-def entities_fix_invalid_components(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def entities_fix_invalid_components(data:dict[str,Any]) -> None:
     if "minecart:on_hurt_by_player" in data:
         del data["minecart:on_hurt_by_player"]
 
-def entities_fix_priotiry(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def entities_fix_priotiry(data:dict[str,Any]) -> None:
     if "priotiry" in data:
         del data["priotiry"]
 
-def entities_client_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def entities_client_fix_old(data:dict[str,Any]) -> None:
     if "minecraft:client_entity" in data: return
     if "defined_in" in data:
         del data["defined_in"]
@@ -115,33 +115,33 @@ def entities_client_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.Dep
     del data[entity_client_name]
     data["minecraft:client_entity"] = {"description": output}
 
-def features_fix_growing_plant_feature_body_blocks(data:list[list[Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def features_fix_growing_plant_feature_body_blocks(data:list[list[Any]]) -> None:
     for index, item in enumerate(data):
         assert len(item) == 2
         data[index] = {"plant_body_block": item[0], "weight": item[1]}
 
-def features_fix_growing_plant_feature_head_blocks(data:list[list[Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def features_fix_growing_plant_feature_head_blocks(data:list[list[Any]]) -> None:
     for index, item in enumerate(data):
         assert len(item) == 2
         data[index] = {"plant_head_block": item[0], "weight": item[1]}
 
-def features_fix_growing_plant_feature_height_distribution(data:list[list[Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def features_fix_growing_plant_feature_height_distribution(data:list[list[Any]]) -> None:
     for index, item in enumerate(data):
         assert len(item) == 2
         data[index] = {"height": item[0], "weight": item[1]}
 
-def features_fix_tree_feature_canopy_leaf_blocks(data:dict[str,list[Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def features_fix_tree_feature_canopy_leaf_blocks(data:dict[str,list[Any]]) -> None:
     if "leaf_blocks" in data:
         for index, item in enumerate(data):
             assert len(item) == 2
             data[index] = {"leaf_block": item[0], "weight": item[1]}
 
-def features_fix_weighted_random_features(data:list[list[Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def features_fix_weighted_random_features(data:list[list[Any]]) -> None:
     for index, item in enumerate(data):
         assert len(item) == 2
         data[index] = {"feature": item[0], "weight": item[1]}
 
-def flipbook_textures_fix_flipbook_textures(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def flipbook_textures_fix_flipbook_textures(data:dict[str,list[dict[str,str]]]) -> None:
     for resource_pack_name, resource_pack_data in data.items():
         start_length = len(resource_pack_data)
         data[resource_pack_name] = {flipbook_texture["atlas_tile"]: flipbook_texture for flipbook_texture in resource_pack_data}
@@ -150,21 +150,21 @@ def flipbook_textures_fix_flipbook_textures(data:dict[str,list[dict[str,str]]], 
 
 flipbook_textures_texture_move_function:Callable[[str, dict[str,str]],str] = lambda key, value: value["flipbook_texture"]
 
-def fonts_fix_font_aliases(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def fonts_fix_font_aliases(data:dict[str,list[dict[str,str]]]) -> None:
     if "font_aliases" not in data: return
     output:dict[str,dict[str,str]] = {}
     for font in data["font_aliases"]:
         output[font["alias"]] = font
     data["font_aliases"] = output
 
-def fonts_fix_font_references(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def fonts_fix_font_references(data:dict[str,list[dict[str,str]]]) -> None:
     if "fonts" not in data: return
     output:dict[str,dict[str,str]] = {}
     for font in data["fonts"]:
         output[font["font_reference"]] = font
     data["fonts"] = output
 
-def fonts_fix_fonts(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def fonts_fix_fonts(data:dict[str,list[dict[str,str]]]) -> None:
     if "fonts" not in data: return
     output:dict[str,dict[str,str]] = {}
     for font in data["fonts"]:
@@ -174,21 +174,21 @@ def fonts_fix_fonts(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTy
 def fonts_font_comparison_move_function(key:str, value:dict[str,str]) -> str|None:
     return value.get("font_file", None)
 
-def gui_routes_normalize(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def gui_routes_normalize(data:dict[str,list[dict[str,str]]]) -> None:
     assert "routes" in data
     data["routes"] = {route["fileName"]: route for route in data["routes"]}
 
-def gui_routes_supported_routes_normalize(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def gui_routes_supported_routes_normalize(data:dict[str,list[dict[str,str]]]) -> None:
     assert "supportedRoutes" in data
     data["supportedRoutes"] = {route["route"]: route for route in data["supportedRoutes"]}
 
-def gui_routes_params_normalize(data:dict[str,list[dict[str,str]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def gui_routes_params_normalize(data:dict[str,list[dict[str,str]]]) -> None:
     assert "params" in data
     data["params"] = {route["name"]: route for route in data["params"]}
 
 identity_move_function = lambda key, value: value
 
-def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
+def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]]) -> dict[str,Any]:
     output:dict[str,dict[str,Any]] = {}
     for resource_pack_name, item_textures_data in data.items():
         for item, item_data in item_textures_data["texture_data"].items():
@@ -203,7 +203,7 @@ def items_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -
     del output["defined_in"]
     return output
 
-def items_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def items_fix_old(data:dict[str,Any]) -> None:
     if "type" not in data: return
     old_recipe_type = data["type"]
     del data["type"]
@@ -223,7 +223,7 @@ def items_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesT
 
 language_comparison_move_function:Callable[[str, DataMinerTyping.LanguageTypedDict], str] = lambda key, value: value["value"]
 
-def languages_normalize(data:DataMinerTyping.Languages, dependencies:DataMinerTyping.DependenciesTypedDict) -> DataMinerTyping.NormalizedLanguages:
+def languages_normalize(data:DataMinerTyping.Languages) -> DataMinerTyping.NormalizedLanguages:
 
     def fix_properties(unfixed_data:DataMinerTyping.LanguagesTypedDict) -> dict[str,Any]:
         output:dict[str,DataMinerTyping.LanguagesPropertiesTypedDict] = unfixed_data["properties"]
@@ -238,7 +238,7 @@ def loot_tables_behavior_pack_comparison_move_function(key:str, value:dict[str,A
     del output["defined_in"]
     return output
 
-def loot_tables_normalize_conditions(data:DataMinerTyping.LootTableHasConditions, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def loot_tables_normalize_conditions(data:DataMinerTyping.LootTableHasConditions) -> None:
     if "conditions" not in data: return
     output:dict[str,DataMinerTyping.LootTableConditions] = {}
     for condition in data["conditions"]:
@@ -249,7 +249,7 @@ def loot_tables_normalize_conditions(data:DataMinerTyping.LootTableHasConditions
         del condition["condition"]
     data["conditions"] = output
 
-def loot_tables_normalize_functions(data:DataMinerTyping.LootTableHasFunctions, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def loot_tables_normalize_functions(data:DataMinerTyping.LootTableHasFunctions) -> None:
     if "functions" not in data: return
     output:dict[str,DataMinerTyping.LootTableFunctions] = {}
     for function in data["functions"]:
@@ -260,7 +260,7 @@ def loot_tables_normalize_functions(data:DataMinerTyping.LootTableHasFunctions, 
         del function["function"]
     data["functions"] = output
 
-def materials_normalize_material(data:dict[str,dict[str,Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def materials_normalize_material(data:dict[str,dict[str,Any]]) -> None:
     if "materials" in data:
         assert set(data.keys()) == {"defined_in", "materials"}
         version:str = data["materials"]["version"]
@@ -275,7 +275,7 @@ def materials_normalize_material(data:dict[str,dict[str,Any]], dependencies:Data
             del data["materials"]["defined_in"]
             data["defined_in"] = defined_in
 
-def models_model_normalize(data:dict[str,dict[str,dict[str,Any]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
+def models_model_normalize(data:dict[str,dict[str,dict[str,Any]]]) -> dict[str,Any]:
     output:dict[str,Any] = {}
     for model_file_name, resource_packs in data.items():
         for resource_pack_name, model_file_data in resource_packs.items():
@@ -312,7 +312,7 @@ def models_model_normalize(data:dict[str,dict[str,dict[str,Any]]], dependencies:
                         output[model_output_name] = {resource_pack_name: output_data}
     return output
 
-def models_normalize_bones(data:DataMinerTyping.ModelGeometryTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def models_normalize_bones(data:DataMinerTyping.ModelGeometryTypedDict) -> None:
     if "bones" in data:
         output:dict[str,Any] = {}
         for bone in data["bones"]:
@@ -324,12 +324,12 @@ def models_normalize_bones(data:DataMinerTyping.ModelGeometryTypedDict, dependen
         data["bones"] = output
 
 is_valid_color:Callable[[Any],bool] = lambda color: (isinstance(color, list) and len(color) in (3, 4) and all(isinstance(channel, (int, float, str)) for channel in color)) or isinstance(color, str)
-def particles_normalize_component_particle_appearance_tinting_color(data:dict[str,str|list[int]|dict[str,str|list[int]]|list[str|list[int]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def particles_normalize_component_particle_appearance_tinting_color(data:dict[str,str|list[int]|dict[str,str|list[int]]|list[str|list[int]]]) -> None:
     if "color" not in data: return
     if is_valid_color(data["color"]):
         data["color"] = [data["color"]]
 
-def particles_normalize_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def particles_normalize_old(data:dict[str,Any]) -> None:
     if "particles" not in data:
         return
     assert len(data["particles"]) == 1
@@ -339,7 +339,7 @@ def particles_normalize_old(data:dict[str,Any], dependencies:DataMinerTyping.Dep
     data["particle_effect"]["description"] = {"basic_render_parameters": data["particle_effect"]["basic_render_parameters"], "identifier": particle_identifier}
     del data["particle_effect"]["basic_render_parameters"]
 
-def particles_remove_weird_components(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def particles_remove_weird_components(data:dict[str,Any]) -> None:
     if "minecraft:particle_appearance_tinting" in data:
         del data["minecraft:particle_appearance_tinting"]
     if "minecraft:particle_appearance_lighting" in data:
@@ -350,10 +350,10 @@ def recipes_behavior_pack_comparison_move_function(key:str, value:dict[str,Any])
     del output["defined_in"]
     return output
 
-def resource_packs_normalize(data:DataMinerTyping.ResourcePacks, dependencies:DataMinerTyping.DependenciesTypedDict) -> list[str]:
+def resource_packs_normalize(data:DataMinerTyping.ResourcePacks) -> list[str]:
     return [resource_pack["name"] for resource_pack in data]
 
-def render_controllers_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def render_controllers_fix_old(data:dict[str,Any]) -> None:
     if "render_controllers" in data: return
     if "defined_in" in data:
         del data["defined_in"]
@@ -362,26 +362,26 @@ def render_controllers_fix_old(data:dict[str,Any], dependencies:DataMinerTyping.
         del data[key]
     data["render_controllers"] = output
 
-def render_controllers_remove_texures(data:dict[str,Any], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def render_controllers_remove_texures(data:dict[str,Any]) -> None:
     if "texures" in data:
         del data["texures"]
 
-def renderer_platform_configuration_normalize_shadow_config(data:dict[str,str], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def renderer_platform_configuration_normalize_shadow_config(data:dict[str,str]) -> None:
     if "file" in data:
         data["shadow_config"] = {"file": data["file"]}
         del data["file"]
 
-def sound_definitions_fix_MCPE_153558(data:DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def sound_definitions_fix_MCPE_153558(data:DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-153558
     if "pitch" in data:
         del data["pitch"]
 
-def sound_definitions_fix_MCPE_178265(data:DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def sound_definitions_fix_MCPE_178265(data:DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-178265
     if "volume" in data:
         del data["volume"]
 
-def sound_definitions_make_sounds_dict(data:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def sound_definitions_make_sounds_dict(data:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict) -> None:
     if "sounds" in data:
         sounds:dict[str,DataMinerTyping.NormalizedSoundDefinitionsJsonSoundTypedDict] = {}
         for sound in data["sounds"]:
@@ -394,7 +394,7 @@ def sound_definitions_make_sounds_dict(data:DataMinerTyping.NormalizedSoundDefin
                 sounds[name] = sound
         data["sounds"] = sounds
 
-def sound_definitions_fix_MCPE_153561(data:DataMinerTyping.SoundDefinitionsJsonSoundTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def sound_definitions_fix_MCPE_153561(data:DataMinerTyping.SoundDefinitionsJsonSoundTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-153561
     if "pitch:" in data:
         del data["pitch:"]
@@ -407,7 +407,7 @@ def sound_definitions_resource_pack_comparison_move_function(key:str, value:Data
 def sound_definitions_sound_comparison_move_function(key:str, value:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundTypedDict) -> str:
     return key.split("/")[-1]
 
-def sound_files_remove_obj(data:DataMinerTyping.SoundFilesTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def sound_files_remove_obj(data:DataMinerTyping.SoundFilesTypedDict) -> None:
     if "_obj" in data:
         del data["_obj"]
 
@@ -416,7 +416,7 @@ def sound_files_sound_file_comparison_move_function(key:str, value:dict[str,Data
 
 sound_files_internal_sound_file_comparison_move_function = lambda key, value: value["sha1_hash"]
 
-def sounds_json_remove_bad_events(data:dict[str,str|DataMinerTyping.SoundsJsonSoundTypedDict], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def sounds_json_remove_bad_events(data:dict[str,str|DataMinerTyping.SoundsJsonSoundTypedDict]) -> None:
     events_to_delete:list[str] = []
     for event_name, event_properties in data.items():
         if isinstance(event_properties, str): continue
@@ -425,7 +425,7 @@ def sounds_json_remove_bad_events(data:dict[str,str|DataMinerTyping.SoundsJsonSo
     for event_to_delete in events_to_delete:
         del data[event_to_delete]
 
-def sounds_json_remove_bad_interactive_entity_events(data:dict[str,dict[str,str]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def sounds_json_remove_bad_interactive_entity_events(data:dict[str,dict[str,str]]) -> None:
     events_to_delete:list[str] = []
     for event_name, event_properties in data.items():
         if isinstance(event_properties, str): continue
@@ -434,7 +434,7 @@ def sounds_json_remove_bad_interactive_entity_events(data:dict[str,dict[str,str]
     for event_to_delete in events_to_delete:
         del data[event_to_delete]
 
-def sounds_json_fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict, dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def sounds_json_fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict) -> None:
     '''moves key "sounds" to "sound". It occurs a whole lot and for a long time, so it's gotta be on purpose.'''
     # TODO: find out if "sounds" is actually a valid key.
     for key in [key for key in data.keys() if key not in ("sound", "sounds", "volume", "pitch")]:
@@ -446,7 +446,7 @@ def sounds_json_fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict, depend
 
 sounds_json_sound_collections_comparison_move_function = lambda key, value: None if len(value) == 0 else value
 
-def spawn_rules_normalize_herd(data:dict[str,dict[str,Any]|list[dict[str,Any]]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def spawn_rules_normalize_herd(data:dict[str,dict[str,Any]|list[dict[str,Any]]]) -> None:
     if "minecraft:herd" not in data: return
     if isinstance(data["minecraft:herd"], dict):
         data["minecraft:herd"] = {"": data["minecraft:herd"]} # placing it into a nested dict is easier since the base case with the max_size and min_size has the same type as what I'm normalizing it to.
@@ -460,7 +460,7 @@ structures_resource_pack_move:Callable[[str, NbtTypes.TAG_Compound],int|None] = 
 structures_structure_move:Callable[[str, dict[str,NbtTypes.TAG_Compound]],list[int|None]] = lambda key, value: [resource_pack.hash for resource_pack in value.values()]
 
 structures_nbt_normalize_text_keys = ["Text%i" % i for i in range(1, 5)]
-def structures_nbt_normalize_text(data:dict[str,NbtTypes.TAG_String], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def structures_nbt_normalize_text(data:dict[str,NbtTypes.TAG_String]) -> None:
     for key in structures_nbt_normalize_text_keys:
         if key in data:
             data[key] = json.loads(data[key].value)
@@ -468,7 +468,7 @@ def structures_nbt_normalize_text(data:dict[str,NbtTypes.TAG_String], dependenci
 texture_list_comparison_move_function = lambda key, value: key
 
 terrain_textures_normalize_typed_dict = TypedDict("terrain_textures_normalize_typed_dict", {"resource_pack_name": str, "texture_name": str, "padding": int, "num_mip_levels": int, "texture_data": dict[str,dict[str,str]]})
-def terrain_textures_normalize(data:dict[str,terrain_textures_normalize_typed_dict], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,Any]:
+def terrain_textures_normalize(data:dict[str,terrain_textures_normalize_typed_dict]) -> dict[str,Any]:
     normal_keys = set(["resource_pack_name", "texture_name", "padding", "num_mip_levels", "texture_data"])
     other_keys = {"texture_name": {}, "padding": {}, "num_mip_levels": {}}
     texture_data:dict[str,dict[str,Any]] = {}
@@ -486,7 +486,7 @@ def terrain_textures_normalize(data:dict[str,terrain_textures_normalize_typed_di
     output["texture_data"] = texture_data
     return output
 
-def terrain_meta_normalize(data:list[dict[str,Any]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,dict[str,Any]]:
+def terrain_meta_normalize(data:list[dict[str,Any]]) -> dict[str,dict[str,Any]]:
     output:dict[str,dict[str,Any]] = {}
     for item in data:
         output[item["name"]] = item
@@ -494,16 +494,16 @@ def terrain_meta_normalize(data:list[dict[str,Any]], dependencies:DataMinerTypin
     return output
 
 terrain_meta_normalize_uvs_keys = ("x1", "y1", "x2", "y2", "1", "2")
-def terrain_meta_normalize_uv(data:dict[str,list[int]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def terrain_meta_normalize_uv(data:dict[str,list[int]]) -> None:
     if "uv" not in data: return
     data["uv"] = {key: value for key, value in zip(terrain_meta_normalize_uvs_keys, data["uv"])}
 
-def terrain_meta_normalize_uvs(data:list[list[int]], dependencies:DataMinerTyping.DependenciesTypedDict) -> None:
+def terrain_meta_normalize_uvs(data:list[list[int]]) -> None:
     for index, uv in enumerate(data):
         assert len(uv) == 6
         data[index] = {key: value for key, value in zip(terrain_meta_normalize_uvs_keys, uv)}
 
-def texture_list_normalize(data:dict[str,list[str]], dependencies:DataMinerTyping.DependenciesTypedDict) -> dict[str,list[str]]:
+def texture_list_normalize(data:dict[str,list[str]]) -> dict[str,list[str]]:
     output:dict[str,list[str]] = {}
     for resource_pack, textures in data.items():
         for texture in textures:

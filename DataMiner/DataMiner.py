@@ -64,9 +64,8 @@ class DataMiner():
         with open(self.get_data_file_path(), "wt") as f:
             json.dump(data, f, separators=(",", ":"), cls=CustomJson.encoder)
 
-        normalizer_dependencies = Normalizer.LocalNormalizerDependencies(Normalizer.NormalizerDependencies({}, dataminer_collections), self.version, None)
         if self.settings.structure is not None:
-            normalized_data = self.settings.structure.normalize(data, normalizer_dependencies, environment.structure_environment)
+            normalized_data = self.settings.structure.normalize(data, environment.structure_environment)
             self.settings.structure.check_types(normalized_data, environment.structure_environment)
 
         return self.get_data_file() # since the normalizing immediately before may modify it.

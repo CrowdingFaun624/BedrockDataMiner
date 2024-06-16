@@ -1,4 +1,4 @@
-from typing import Iterable, Literal
+from typing import Iterable
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -85,7 +85,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
                 output[diff_type] = self.structure
         return StructureSet.StructureSet(output), exceptions
 
-    def normalize(self, data: NbtReader.NbtBytes, normalizer_dependencies: Normalizer.LocalNormalizerDependencies, version_number: Literal[1,2], environment:StructureEnvironment.StructureEnvironment) -> tuple[NbtTypes.TAG|None, list[Trace.ErrorTrace]]:
+    def normalize(self, data: NbtReader.NbtBytes, environment:StructureEnvironment.StructureEnvironment) -> tuple[NbtTypes.TAG|None, list[Trace.ErrorTrace]]:
         try:
             data_parsed = NbtReader.unpack_bytes(data.open(), gzipped=False, endianness=self.endianness)[1]
         except Exception as e:
@@ -95,7 +95,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
             raise Exceptions.AttributeNoneError("normalizer", self)
         for normalizer in self.normalizer:
             try:
-                normalizer(data_parsed, normalizer_dependencies, version_number)
+                normalizer(data_parsed)
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
@@ -103,7 +103,7 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if structure is not None:
-            normalize_output, new_exceptions = structure.normalize(data_parsed, normalizer_dependencies, version_number, environment)
+            normalize_output, new_exceptions = structure.normalize(data_parsed, environment)
             for exception in new_exceptions: exception.add(self.name, None)
             exceptions.extend(new_exceptions)
             if normalize_output is not None:

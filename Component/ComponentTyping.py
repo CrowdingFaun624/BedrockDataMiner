@@ -109,7 +109,6 @@ class NbtBaseTypedDict(TypedDict):
     types: Required[str|list[str]]
 
 class NormalizerTypedDict(TypedDict):
-    dependencies: Required[list[str]]
     function_name: Required[str]
     type: NotRequired[Literal["Normalizer"]]
 

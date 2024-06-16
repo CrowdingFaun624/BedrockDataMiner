@@ -1,5 +1,4 @@
-from typing import (Any, Callable, Generator, Iterable, Literal,
-                    MutableMapping, TypeVar)
+from typing import Any, Callable, Generator, Iterable, MutableMapping, TypeVar
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -95,13 +94,13 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
                 output.extend(new_exceptions)
         return output
 
-    def normalize(self, data:dict[str,d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:Literal[1,2], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:dict[str,d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
         for normalizer in self.normalizer:
             try:
-                normalizer(data, normalizer_dependencies, version_number)
+                normalizer(data)
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
@@ -110,7 +109,7 @@ class DictStructure(Structure.Structure[MutableMapping[str, d]]):
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                normalizer_output, new_exceptions = structure.normalize(value, normalizer_dependencies, version_number, environment)
+                normalizer_output, new_exceptions = structure.normalize(value, environment)
                 for exception in new_exceptions: exception.add(self.name, key)
                 exceptions.extend(new_exceptions)
                 if normalizer_output is not None:

@@ -27,7 +27,6 @@ class Component(Generic[a]):
         self.parents:list[Component] = []
         self.final:a|None = None
         self.children_has_normalizer = False
-        self.children_has_normalizer_dependencies = False
         self.children_tags:set[str] = set()
         self.fields:list["Field.Field"] = []
         self.inline_components:list[Component]|None = None
@@ -128,9 +127,6 @@ class Component(Generic[a]):
         for child in self.links_to_other_components:
             if child.children_has_normalizer and not self.children_has_normalizer:
                 self.children_has_normalizer = True
-                has_changed = True
-            if child.children_has_normalizer_dependencies and not self.children_has_normalizer_dependencies:
-                self.children_has_normalizer_dependencies = True
                 has_changed = True
             if self.children_tags is not None and child.children_tags is not None:
                 tags_length_before = len(self.children_tags)

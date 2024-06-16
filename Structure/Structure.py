@@ -1,8 +1,7 @@
 import enum
-from typing import Any, Generic, Iterable, Literal, TypeVar, Union
+from typing import Any, Generic, Iterable, TypeVar, Union
 
 import Structure.DataPath as DataPath
-import Structure.Normalizer as Normalizer
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
@@ -170,13 +169,11 @@ class Structure(Generic[a]):
         '''
         ...
 
-    def normalize(self, data:a, normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:Literal[1,2], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         '''
         Manipulates the data before comparison.
         Returns the normalized data and a list of list of ErrorTraces.
         :data: The data to manipulate.
-        :normalizer_dependencies: The Normalizer dependencies to use for the Normalizers.
-        :version_number: The version number to use on the Normalizer dependencies.
         :environment: The StructureEnvironment to use.
         '''
         ...

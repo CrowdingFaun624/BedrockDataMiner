@@ -1,13 +1,11 @@
 import enum
 import json
-from typing import TYPE_CHECKING, Any, Callable, TypedDict, TypeVar, cast
+from typing import Any, Callable, TypedDict, TypeVar, cast
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
-if TYPE_CHECKING:
-    import DataMiner.DataMinerTyping as DataMinerTyping
 
 class ResourcePackTypedDict(TypedDict):
     name: str
@@ -37,8 +35,8 @@ resource_pack_dict = {resource_pack_name: resource_pack for resource_pack_name, 
 
 a = TypeVar("a")
 
-def make_interface(has_defined_in_key:bool=True, extend:bool=True) -> Callable[[dict[str,Any],"DataMinerTyping.DependenciesTypedDict"],None]:
-    def collapse_resource_packs_interface(data:dict[str,Any], dependencies:"DataMinerTyping.DependenciesTypedDict") -> None:
+def make_interface(has_defined_in_key:bool=True, extend:bool=True) -> Callable[[dict[str,Any]],None]:
+    def collapse_resource_packs_interface(data:dict[str,Any]) -> None:
         collapse_resource_packs(data, has_defined_in_key, extend)
     return collapse_resource_packs_interface
 
@@ -81,7 +79,7 @@ def collapse_resource_packs(data:dict[str,a], add_defined_in:bool=True, extend:b
     data.update(output)
     return data
 
-def collapse_resource_pack_list(data:list[str], dependencies:"DataMinerTyping.DependenciesTypedDict") -> list[str]:
+def collapse_resource_pack_list(data:list[str]) -> list[str]:
     for properties_resource_pack in data:
         if properties_resource_pack not in resource_pack_dict:
             raise Exceptions.UnrecognizedPackError(properties_resource_pack, "pack")

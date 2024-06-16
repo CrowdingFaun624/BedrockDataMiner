@@ -1544,27 +1544,6 @@ class NormalizerNoneError(StructureException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class NullNormalizerDependenciesAccessorError(StructureException):
-    "Attempted to access data from a NullNormalizerDependencies"
-
-    def __init__(self, normalizer_dependencies:"Normalizer.NullNormalizerDependencies", version:"Version.Version", dataminer_name:str, message:Optional[str]=None) -> None:
-        '''
-        :normalizer_dependencies: The NullNormalizerDependencies that was accessed.
-        :version: The Version that was used to attempt to access.
-        :dataminer_name: The name of the DataMinerCollection that was used to attempt to access.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(normalizer_dependencies, version, dataminer_name, message)
-        self.normalizer_dependencies = normalizer_dependencies
-        self.version = version
-        self.dataminer_name = dataminer_name
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r cannot be accessed with %r or DataMinerCollection \"%s\"" % (self.normalizer_dependencies, self.version, self.dataminer_name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class StructuresCompareFailureError(StructureException):
     "Multiple Structures failed to compare."
 

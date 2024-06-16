@@ -5,7 +5,6 @@ from pathlib2 import Path
 
 import DataMiner.DataMiner as DataMiner
 import Structure.DataPath as DataPath
-import Structure.Normalizer as Normalizer
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.CustomJson as CustomJson
@@ -66,21 +65,20 @@ class DataMinerCollection():
         '''
         return self.get_structure().has_tag(tag)
 
-    def get_tag_paths(self, version:Version.Version, tag:str, normalizer_dependencies:Normalizer.NormalizerDependencies, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
+    def get_tag_paths(self, version:Version.Version, tag:str, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
         if not self.get_structure().has_tag(tag):
             return []
         dataminer = self.get_version(version)
         if isinstance(dataminer, DataMiner.NullDataMiner):
             return []
         data = dataminer.get_data_file()
-        return self.get_structure().get_tag_paths(data, tag, version, normalizer_dependencies, environment)
+        return self.get_structure().get_tag_paths(data, tag, environment)
 
     def compare(
             self,
             version1:Version.Version|None,
             version2:Version.Version,
             versions_between:list[Version.Version],
-            normalizer_dependencies:Normalizer.NormalizerDependencies,
             environment:StructureEnvironment.StructureEnvironment,
             *,
             store:bool=True,
@@ -93,7 +91,7 @@ class DataMinerCollection():
         else:
             version1_data = self.get_data_file(version1)
             version2_data = self.get_data_file(version2)
-        report, had_changes = self.get_structure().comparison_report(version1_data, version2_data, version1, version2, versions_between, normalizer_dependencies, environment)
+        report, had_changes = self.get_structure().comparison_report(version1_data, version2_data, version1, version2, versions_between, environment)
         if store and had_changes:
             self.get_structure().store(report, self.name)
         return report

@@ -1,6 +1,6 @@
 import math
-from typing import (Any, Iterable, Literal, Mapping, MutableMapping,
-                    MutableSequence, cast)
+from typing import (Any, Iterable, Mapping, MutableMapping, MutableSequence,
+                    cast)
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -114,8 +114,6 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
     def normalize(
             self,
             data:MutableSequence[MutableMapping[str,Any]],
-            normalizer_dependencies:Normalizer.LocalNormalizerDependencies,
-            version_number:Literal[1,2],
             environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
@@ -127,7 +125,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             raise Exceptions.AttributeNoneError("normalizer", self)
         for normalizer in self.normalizer:
             try:
-                normalizer(data_output, normalizer_dependencies, version_number)
+                normalizer(data_output)
             except Exception as e:
                 return data_output, [Trace.ErrorTrace(e, self.name, None, data_output)]
         for index, (coordinate, item) in enumerate(data_output[1].items()):
@@ -135,7 +133,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             for exception in new_exceptions: exception.add(self.name, index)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                normalizer_output, new_exceptions = structure.normalize(item, normalizer_dependencies, version_number, environment)
+                normalizer_output, new_exceptions = structure.normalize(item, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
                 if normalizer_output is not None:

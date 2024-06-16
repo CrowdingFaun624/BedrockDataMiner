@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Literal, Sequence, TypeVar
+from typing import Any, Iterable, Sequence, TypeVar
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -82,13 +82,13 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 output.extend(new_exceptions)
         return output
 
-    def normalize(self, data:list[d], normalizer_dependencies:Normalizer.LocalNormalizerDependencies, version_number:Literal[1,2], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:list[d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
         for normalizer in self.normalizer:
             try:
-                normalizer(data, normalizer_dependencies, version_number)
+                normalizer(data)
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
@@ -97,7 +97,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             for exception in new_exceptions: exception.add(self.name, index)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                normalizer_output, new_exceptions = structure.normalize(item, normalizer_dependencies, version_number, environment)
+                normalizer_output, new_exceptions = structure.normalize(item, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
                 if normalizer_output is not None:
