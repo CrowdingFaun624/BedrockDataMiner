@@ -367,7 +367,7 @@ class ComponentParseError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Failed to parse Structure"
+        output = "Failed to parse Component group(s)"
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
