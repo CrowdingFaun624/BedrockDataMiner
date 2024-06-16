@@ -7,7 +7,6 @@ import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
-import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
