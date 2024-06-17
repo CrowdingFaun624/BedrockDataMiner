@@ -73,11 +73,11 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStru
         final = self.get_final()
         final_structure = self.get_final_structure()
         types = self.types_field.get_types()
-        self.my_type = set(types)
+        self.my_type.update(types)
+        self.my_type.add(NbtReader.NbtBytes)
         final_structure.link_substructures(
             structure=self.subcomponent_field.get_final(),
             types=types,
             normalizer=self.normalizer_field.get_finals(),
         )
-        final[NbtReader.NbtBytes] = final_structure
         for my_type in self.my_type: final[my_type] = final_structure

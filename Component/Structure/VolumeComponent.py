@@ -16,7 +16,6 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent[VolumeStruct
 
     class_name_article = "a Volume"
     class_name = "Volume"
-    my_type = {tuple}
     my_capabilities = Capabilities.Capabilities(is_group=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
@@ -83,5 +82,6 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent[VolumeStruct
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()
         )
-        final[tuple] = final_structure
-        for my_type in self.this_type_field.get_types(): final[my_type] = final_structure
+        self.my_type.update(self.this_type_field.get_types())
+        self.my_type.add(tuple)
+        for my_type in self.my_type: final[my_type] = final_structure
