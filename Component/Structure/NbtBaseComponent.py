@@ -4,12 +4,12 @@ import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Pattern as Pattern
-import Component.Structure.AbstractGroupComponent as AbstractGroupComponent
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.StructroidComponentField as StructroidComponentField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.GroupComponent as GroupComponent
 import Component.Structure.StructureComponent as StructureComponent
+import Structure.GroupStructure as GroupStructure
 import Structure.NbtBaseStructure as NbtBaseStructure
 import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.Endianness as Endianness
@@ -18,11 +18,12 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 COMPONENT_PATTERN:Pattern.Pattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = Pattern.Pattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
 
-class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStructure.NbtBaseStructure]):
+class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.GroupStructure]):
 
     class_name_article = "an NbtBase"
     class_name = "NbtBase"
-    my_capabilities = Capabilities.Capabilities(is_group=True, is_nbt_base=True)
+    children_has_normalizer_default = True
+    my_capabilities = Capabilities.Capabilities(is_group=True, is_nbt_base=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or StructroidComponent", True, (str, dict)),
         TypeVerifier.TypedDictKeyTypeVerifier("endianness", "a str", True, TypeVerifier.EnumTypeVerifier(("big", "little"))),
@@ -37,7 +38,6 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStru
 
         self.endianness:Literal["big", "little"] = data["endianness"]
         self.final_structure:NbtBaseStructure.NbtBaseStructure|None=None
-        self.children_has_normalizer = True
 
         self.subcomponent_field = StructroidComponentField.StructroidComponentField(data["subcomponent"], ["subcomponent"], pattern=COMPONENT_PATTERN)
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
@@ -55,13 +55,17 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStru
 
     def create_final(self) -> None:
         super().create_final()
+        self.final = GroupStructure.GroupStructure(
+            name=self.name,
+            children_has_normalizer=self.children_has_normalizer,
+            children_tags=self.children_tags,
+        )
         self.final_structure = NbtBaseStructure.NbtBaseStructure(
             name = self.name,
             endianness=self.get_endianness(self.endianness),
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
-        self.final = {}
 
     def get_final_structure(self) -> NbtBaseStructure.NbtBaseStructure:
         if self.final_structure is None:
@@ -70,14 +74,16 @@ class NbtBaseComponent(AbstractGroupComponent.AbstractGroupComponent[NbtBaseStru
 
     def link_finals(self) -> None:
         super().link_finals()
-        final = self.get_final()
         final_structure = self.get_final_structure()
         types = self.types_field.get_types()
-        self.my_type.update(types)
-        self.my_type.add(NbtReader.NbtBytes)
+        self.my_type = types.copy()
+        self.my_type.append(NbtReader.NbtBytes)
         final_structure.link_substructures(
             structure=self.subcomponent_field.get_final(),
             types=types,
             normalizer=self.normalizer_field.get_finals(),
         )
-        for my_type in self.my_type: final[my_type] = final_structure
+        self.get_final().link_substructures(
+            substructures={my_type: final_structure for my_type in self.my_type},
+            types=tuple(self.my_type),
+        )

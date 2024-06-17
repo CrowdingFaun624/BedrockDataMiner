@@ -1,22 +1,24 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
-import Component.Structure.AbstractGroupComponent as AbstractGroupComponent
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeField as TypeField
 import Component.Structure.Field.TypeListField as TypeListField
+import Component.Structure.StructureComponent as StructureComponent
+import Structure.GroupStructure as GroupStructure
 import Structure.VolumeStructure as VolumeStructure
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent[VolumeStructure.VolumeStructure]):
+class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.GroupStructure]):
 
     class_name_article = "a Volume"
     class_name = "Volume"
-    my_capabilities = Capabilities.Capabilities(is_group=True)
+    my_capabilities = Capabilities.Capabilities(is_group=True, is_structure=True)
+    children_has_normalizer_default = True
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
@@ -40,7 +42,6 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent[VolumeStruct
         self.state_key = data["state_key"]
         self.children_has_normalizer = True # has to turn into tuple that the thing recognizes.
         self.final_structure:VolumeStructure.VolumeStructure|None=None
-        self.my_type.add(tuple)
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("subcomponent"), ["subcomponent"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
@@ -57,6 +58,11 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent[VolumeStruct
 
     def create_final(self) -> None:
         super().create_final()
+        self.final = GroupStructure.GroupStructure(
+            name=self.name + ".volume_group",
+            children_has_normalizer=self.children_has_normalizer,
+            children_tags=self.children_tags,
+        )
         self.final_structure = VolumeStructure.VolumeStructure(
             name=self.name,
             field=self.field,
@@ -66,7 +72,6 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent[VolumeStruct
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
-        self.final = {}
 
     def get_final_structure(self) -> VolumeStructure.VolumeStructure:
         if self.final_structure is None:
@@ -76,12 +81,14 @@ class VolumeComponent(AbstractGroupComponent.AbstractGroupComponent[VolumeStruct
     def link_finals(self) -> None:
         super().link_finals()
         final_structure = self.get_final_structure()
-        final = self.get_final()
+        self.my_type = self.this_type_field.get_types()
+        self.my_type.append(tuple)
         final_structure.link_substructures(
             structure=self.subcomponent_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
-            tags=self.tags_field.get_finals()
+            tags=self.tags_field.get_finals(),
         )
-        self.my_type.update(self.this_type_field.get_types())
-        self.my_type.add(tuple)
-        for my_type in self.my_type: final[my_type] = final_structure
+        self.get_final().link_substructures(
+            substructures={my_type: final_structure for my_type in self.my_type},
+            types=tuple(self.my_type),
+        )

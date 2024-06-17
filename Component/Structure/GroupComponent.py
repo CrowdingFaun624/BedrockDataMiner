@@ -2,17 +2,18 @@ import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.FieldListField as FieldListField
-import Component.Structure.AbstractGroupComponent as AbstractGroupComponent
+import Component.Structure.StructureComponent as StructureComponent
 import Component.Structure.Field.GroupItemField as GroupItemField
 import Structure.Structure as Structure
+import Structure.GroupStructure as GroupStructure
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class GroupComponent(AbstractGroupComponent.AbstractGroupComponent[Structure.Structure]):
+class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupStructure]):
 
     class_name_article = "a Group"
     class_name = "Group"
-    my_capabilities = Capabilities.Capabilities(is_group=True)
+    my_capabilities = Capabilities.Capabilities(is_group=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, dict, type(None)), "a dict", "a str", "a str, StructureComponent, or None")),
@@ -32,13 +33,23 @@ class GroupComponent(AbstractGroupComponent.AbstractGroupComponent[Structure.Str
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = {}
+        self.final = GroupStructure.GroupStructure(
+            name=self.name,
+            children_has_normalizer=self.children_has_normalizer,
+            children_tags=self.children_tags,
+        )
 
     def link_finals(self) -> None:
         super().link_finals()
-        final = self.get_final()
+        substructures:dict[type,Structure.Structure|None] = {}
+        all_types:set[type] = set()
         for group_field in self.subcomponents_field:
             valid_types = group_field.get_types()
-            self.my_type.update(valid_types)
+            all_types.update(valid_types)
             for valid_type in valid_types:
-                final[valid_type] = group_field.subcomponent_field.get_final()
+                substructures[valid_type] = group_field.subcomponent_field.get_final()
+        self.my_type = list(all_types)
+        self.get_final().link_substructures(
+            substructures=substructures,
+            types=tuple(self.my_type),
+        )
