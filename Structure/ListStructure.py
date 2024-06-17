@@ -35,14 +35,14 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         self.measure_length = measure_length
         self.print_all = print_all
 
-        self.structure:Structure.Structure[d]|dict[type,Structure.Structure[d]|None]|None = None
+        self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.tags:list[str]|None = None
 
     def link_substructures(
         self,
-        structure:Structure.Structure[d]|None|dict[type,Structure.Structure[d]|None],
+        structure:Structure.Structure[d]|None,
         types:list[type],
         normalizer:list[Normalizer.Normalizer],
         tags:list[str],
@@ -54,7 +54,6 @@ class ListStructure(Structure.Structure[Iterable[d]]):
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.structure is None: return []
-        elif isinstance(self.structure, dict): return (substructure for substructure in self.structure.values() if substructure is not None)
         else: return [self.structure]
 
     def check_type(self, index:int, item:d) -> Trace.ErrorTrace|None:
@@ -192,27 +191,10 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             return output, has_changes, exceptions
 
     def choose_structure_flat(self, key:int, value_type:type[d], value:d|None) -> tuple[Structure.Structure|None,list[Trace.ErrorTrace]]:
-        if isinstance(self.structure, dict):
-            output = self.structure.get(value_type, Structure.StructureFailure.choose_structure_failure)
-            if output is Structure.StructureFailure.choose_structure_failure:
-                return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.structure.keys()), value_type, "Item"), self.name, key, value)]
-            return output, []
-        else:
-            return self.structure, []
+        return self.structure, []
 
     def choose_structure(self, index:int, item:d|D.Diff[d,d]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
-        output:dict[D.DiffType,Structure.Structure|None] = {}
-        exceptions:list[Trace.ErrorTrace] = []
-        for item_iter, diff_type in D.iter_diff(item):
-            if isinstance(self.structure, dict):
-                structure = self.structure.get(type(item_iter), Structure.StructureFailure.choose_structure_failure)
-                if structure is Structure.StructureFailure.choose_structure_failure:
-                    exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.structure.keys()), type(item), "Item"), self.name, index, item))
-                    continue
-                output[diff_type] = structure
-            else:
-                output[diff_type] = self.structure
-        return StructureSet.StructureSet(output), exceptions
+        return StructureSet.StructureSet({diff_type: self.structure for item_iter, diff_type in D.iter_diff(item)}), []
 
     def print_item(self, index:int, item:d, substructure_output:list[SU.Line], message:str="") -> list[SU.Line]:
         match len(substructure_output), self.ordered:

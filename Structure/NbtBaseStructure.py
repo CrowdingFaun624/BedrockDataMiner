@@ -27,13 +27,13 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
 
         self.endianness=endianness
 
-        self.structure:Structure.Structure|dict[type,Structure.Structure]|None = None
+        self.structure:Structure.Structure|None = None
         self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
 
     def link_substructures(
         self,
-        structure:Structure.Structure|dict[type,Structure.Structure],
+        structure:Structure.Structure,
         types:list[type],
         normalizer:list[Normalizer.Normalizer],
     ) -> None:
@@ -42,8 +42,8 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         self.normalizer = normalizer
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
-        if self.structure is None: return []
-        elif isinstance(self.structure, dict): return (substructure for substructure in self.structure.values() if substructure is not None)
+        if self.structure is None:
+            raise Exceptions.AttributeNoneError("structure", self)
         else: return [self.structure]
 
     def check_all_types(self, data: NbtTypes.TAG, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
@@ -63,27 +63,10 @@ class NbtBaseStructure(Structure.Structure[NbtTypes.TAG]):
         return output
 
     def choose_structure_flat(self, key:None, value_type:type[NbtTypes.TAG], value:NbtTypes.TAG|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        if isinstance(self.structure, dict):
-            output = self.structure.get(value_type, Structure.StructureFailure.choose_structure_failure)
-            if output is Structure.StructureFailure.choose_structure_failure:
-                return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.structure.keys()), value_type, "Item"), self.name, key, value)]
-            return output, []
-        else:
-            return self.structure, []
+        return self.structure, []
 
     def choose_structure(self, item:NbtTypes.TAG|D.Diff[NbtTypes.TAG,NbtTypes.TAG]) -> tuple[StructureSet.StructureSet,list[Trace.ErrorTrace]]:
-        output:dict[D.DiffType,Structure.Structure|None] = {}
-        exceptions:list[Trace.ErrorTrace] = []
-        for item_iter, diff_type in D.iter_diff(item):
-            if isinstance(self.structure, dict):
-                structure = self.structure.get(type(item_iter), Structure.StructureFailure.choose_structure_failure)
-                if structure is Structure.StructureFailure.choose_structure_failure:
-                    exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.structure.keys()), type(item), "Item"), self.name, None, item))
-                    continue
-                output[diff_type] = structure
-            else:
-                output[diff_type] = self.structure
-        return StructureSet.StructureSet(output), exceptions
+        return StructureSet.StructureSet({diff_type: self.structure for item_iter, diff_type in D.iter_diff(item)}), []
 
     def normalize(self, data: NbtReader.NbtBytes, environment:StructureEnvironment.StructureEnvironment) -> tuple[NbtTypes.TAG|None, list[Trace.ErrorTrace]]:
         try:
