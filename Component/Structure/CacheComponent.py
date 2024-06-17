@@ -1,6 +1,6 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
-import Component.Structure.Field.StructroidComponentField as StructroidComponentField
+import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.CacheStructure as CacheStructure
@@ -13,7 +13,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
     class_name = "Cache"
     my_capabilities = Capabilities.Capabilities(is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructroidComponent or None", True, (str, dict, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a list or str", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("cache_check_all_types", "a bool", False, bool),
@@ -35,7 +35,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.cache_print_text = data.get("cache_print_text", True)
         self.cache_compare = data.get("cache_compare", True)
 
-        self.subcomponent_field = StructroidComponentField.StructroidComponentField(data["subcomponent"], ["subcomponent"])
+        self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.types_field.verify_with(self.subcomponent_field)
         self.fields.extend([self.subcomponent_field, self.types_field])

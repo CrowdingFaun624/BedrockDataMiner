@@ -74,7 +74,7 @@ class GroupTypedDict(TypedDict):
 
 class KeymapKeyTypedDict(TypedDict):
     type: Required[str|list[str]]
-    subcomponent: NotRequired[Union[str,None,"StructroidTypedDicts"]]
+    subcomponent: NotRequired[Union[str,None,"StructureTypedDicts"]]
     tags: NotRequired[str|list[str]]
 
 class KeymapTypedDict(TypedDict):
@@ -199,8 +199,7 @@ ComponentTypedDicts:TypeAlias = Union[
     VersionTypedDict,
     VolumeTypedDict,
 ]
-StructureTypedDicts:TypeAlias = DictTypedDict|KeymapTypedDict|ListTypedDict
-StructroidTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict|VolumeTypedDict
+StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|NbtBaseTypedDict|ListTypedDict|VolumeTypedDict
 
 ComponentGroupFileType:TypeAlias = dict[str,ComponentTypedDicts]
 

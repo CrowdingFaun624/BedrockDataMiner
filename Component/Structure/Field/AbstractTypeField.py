@@ -1,9 +1,7 @@
 from typing import TYPE_CHECKING, TypeAlias
 
 import Component.Field.Field as Field
-import Component.Structure.Field.OptionalStructroidComponentField as OptionalStructroidComponentField
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
-import Component.Structure.Field.StructroidComponentField as StructroidComponentField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.StructureComponent as StructureComponent
 import Utilities.Exceptions as Exceptions
@@ -11,7 +9,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Component.Component as Component
 
-VerifyComponentType:TypeAlias = StructroidComponentField.StructroidComponentField|OptionalStructroidComponentField.OptionalStructroidComponentField|StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
+VerifyComponentType:TypeAlias = StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
 
 class AbstractTypeField(Field.Field):
 

@@ -5,7 +5,7 @@ import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Pattern as Pattern
 import Component.Structure.Field.NormalizerListField as NormalizerListField
-import Component.Structure.Field.StructroidComponentField as StructroidComponentField
+import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.GroupComponent as GroupComponent
 import Component.Structure.StructureComponent as StructureComponent
@@ -25,7 +25,7 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
     children_has_normalizer_default = True
     my_capabilities = Capabilities.Capabilities(is_group=True, is_nbt_base=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or StructroidComponent", True, (str, dict)),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or StructureComponent", True, (str, dict)),
         TypeVerifier.TypedDictKeyTypeVerifier("endianness", "a str", True, TypeVerifier.EnumTypeVerifier(("big", "little"))),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
@@ -39,7 +39,7 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
         self.endianness:Literal["big", "little"] = data["endianness"]
         self.final_structure:NbtBaseStructure.NbtBaseStructure|None=None
 
-        self.subcomponent_field = StructroidComponentField.StructroidComponentField(data["subcomponent"], ["subcomponent"], pattern=COMPONENT_PATTERN)
+        self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"], pattern=COMPONENT_PATTERN)
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field.verify_with(self.subcomponent_field)

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Union
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Field.FieldContainer as FieldContainer
-import Component.Structure.Field.OptionalStructroidComponentField as OptionalStructroidComponentField
+import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 
@@ -15,7 +15,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 
     def __init__(self, data:ComponentTyping.KeymapKeyTypedDict, key:str, tag_set:set[str], path:list[str|int], source_component:"Component.Component", *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
         '''
-        :data: A dictionary containing the keys {"type": str|list[str], "subcomponent": str|ComponentTyping.StructroidComponentTypedDicts|None, tags:list[str]}
+        :data: A dictionary containing the keys {"type": str|list[str], "subcomponent": str|ComponentTyping.StructureComponentTypedDicts|None, tags:list[str]}
         :key: The key that this Field corresponds to.
         :tag_set: The set of tags to update when `set_field` is called.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
@@ -28,7 +28,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         self.allow_inline = allow_inline
 
         self.types_field = TypeListField.TypeListField(data["type"] if isinstance(data["type"], list) else [data["type"]], ["keys", key, "type"])
-        self.subcomponent_field = OptionalStructroidComponentField.OptionalStructroidComponentField(data.get("subcomponent", None), ["keys", key, "subcomponent"], allow_inline=allow_inline)
+        self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("subcomponent", None), ["keys", key, "subcomponent"], allow_inline=allow_inline)
         self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["keys", key, "tags"])
         self.tags_field.add_to_tag_set(tag_set)
         self.types_field.verify_with(self.subcomponent_field)
@@ -53,10 +53,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
     def get_subcomponent_final(self) -> dict[type,Union["Structure.Structure",None]]:
         '''Extracts the data about the structure of this field's components without changing the identity of the data structures.'''
         structure = self.subcomponent_field.get_final()
-        if isinstance(structure, dict):
-            return structure
-        else:
-            return {value_type: structure for value_type in self.types_field.get_types()}
+        return {value_type: structure for value_type in self.types_field.get_types()}
 
     def __repr__(self) -> str:
         return "<%s %s id %i>" % (self.__class__.__name__, self.key, id(self))
