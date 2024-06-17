@@ -1,7 +1,7 @@
 from typing import Iterable, MutableMapping, TypeVar
 
+import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
-import Structure.DictStructure as DictStructure
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
@@ -12,7 +12,7 @@ import Utilities.Exceptions as Exceptions
 
 d = TypeVar("d")
 
-class KeymapStructure(DictStructure.DictStructure[d]):
+class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
 
     def __init__(
             self,
