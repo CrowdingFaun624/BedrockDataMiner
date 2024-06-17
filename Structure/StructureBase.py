@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Literal, TypeVar, Union
+from typing import TYPE_CHECKING, Any, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
