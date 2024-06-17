@@ -25,7 +25,7 @@
 import threading
 from typing import Any, Callable
 
-PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "CustomJson", "DataMiners", "FileSummary", "GetFile", "NbtReader", "Scripts", "StoredVersions", "TestStructures", "UrlValidator", "WikiValidator"]
+PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "CustomJson", "DataMiners", "FileSummary", "GetFile", "NbtReader", "Scripts", "StoredVersions", "TestStructures", "UrlValidator"]
 
 user_input_lock = threading.Lock()
 
