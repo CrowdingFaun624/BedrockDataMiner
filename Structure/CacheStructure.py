@@ -1,7 +1,8 @@
-from typing import Any, Callable, Generic, Iterable, TypeVar
+from typing import Any, Callable, Generic, TypeVar
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
+import Structure.PassthroughStructure as PassthroughStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
@@ -10,10 +11,9 @@ import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
 
-a = TypeVar("a")
 d = TypeVar("d")
 
-class CacheStructure(Structure.Structure[d]):
+class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
 
     def __init__(
             self,
@@ -45,8 +45,7 @@ class CacheStructure(Structure.Structure[d]):
         structure:Structure.Structure[d],
         types:list[type],
     ) -> None:
-        self.structure = structure
-        self.types = tuple(types)
+        super().link_substructures(structure, types, [])
 
     def choose_structure_flat(self, key:None, value_type:type, value:None) -> Structure.Structure:
         if self.structure is None:
@@ -158,11 +157,6 @@ class CacheStructure(Structure.Structure[d]):
     def clear_caches(self, memo:set[Structure.Structure]) -> None:
         super().clear_caches(memo)
         self.cache.clear()
-
-    def iter_structures(self) -> Iterable[Structure.Structure]:
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
-        return [self.structure]
 
 class CacheItem(Generic[d]):
 
