@@ -26,7 +26,7 @@ class Component(Generic[a]):
         self.links_to_other_components:list[Component] = []
         self.parents:list[Component] = []
         self.final:a|None = None
-        self.children_has_normalizer = False
+        self.children_has_normalizer = self.children_has_normalizer_default
         self.children_tags:set[str] = set()
         self.fields:list["Field.Field"] = []
         self.inline_components:list[Component]|None = None

@@ -61,4 +61,3 @@ class NbtKeymapTagCompoundComponent(KeymapComponent.KeymapComponent):
     class_name = "NbtKeymapTagCompound"
     my_type = [NbtTypes.TAG_Compound]
     my_capabilities = Capabilities.Capabilities(has_importable_keys=True, has_keys=True, is_nbt_tag=True, is_structure=True)
-    children_has_normalizer_default = True
