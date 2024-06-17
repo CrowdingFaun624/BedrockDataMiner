@@ -54,7 +54,7 @@ class Structure(Generic[a]):
         '''
         ...
 
-    def print_single(self, key_str:str|int|None, data:a, message:str, output:list[SU.Line], printer:Union["Structure[a]",None], environment:StructureEnvironment.StructureEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
+    def print_single(self, key_str:str|int|None, data:a, message:str, output:list[SU.Line], printer:Union["Structure",None], environment:StructureEnvironment.StructureEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
         '''
         Adds text from a single-type Diff (i.e. an addition or removal). Returns a list of ErrorTraces.
         :key_str: The key to describe the data with. If None, it will not be present.
@@ -93,7 +93,18 @@ class Structure(Generic[a]):
                     output.extend(line.indent() for line in substructure_output)
         return exceptions
 
-    def print_double(self, key_str:str|int|None, data1:a, data2:a, message:str, output:list[SU.Line], printers:"StructureSet.StructureSet", environment:StructureEnvironment.StructureEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
+    def print_double(
+        self,
+        key_str:str|int|None,
+        data1:a,
+        data2:a,
+        message:str,
+        output:list[SU.Line],
+        printers:Union["StructureSet.StructureSet", "Structure", None],
+        environment:StructureEnvironment.StructureEnvironment,
+        *,
+        post_message:str=""
+    ) -> list[Trace.ErrorTrace]:
         '''
         Adds text from a double-type Diff (i.e. a change). Returns a list of ErrorTraces.
         :key_str: The key to describe the data with. If None, it will not be present.
@@ -105,13 +116,28 @@ class Structure(Generic[a]):
         :environment: The StructureEnvironment to use.
         :post_message: A string to put after the field.
         '''
+        if printers is None:
+            printer1 = None
+            printer2 = None
+        elif isinstance(printers, Structure):
+            printer1 = printers
+            printer2 = printers
+        else:
+            printer1 = printers[0]
+            printer2 = printers[-1] # [-1] because it must be the last item anyways.
         exceptions:list[Trace.ErrorTrace] = []
-        substructure_output1, new_exceptions = printers.print_text(0, data1, environment)
-        for exception in new_exceptions: exception.add(self.name, key_str)
-        exceptions.extend(new_exceptions)
-        substructure_output2, new_exceptions = printers.print_text(-1, data2, environment) # [-1] because it must be the last item anyways.
-        for exception in new_exceptions: exception.add(self.name, key_str)
-        exceptions.extend(new_exceptions)
+        if printer1 is None:
+            substructure_output1 = [SU.Line(SU.stringify(data1))]
+        else:
+            substructure_output1, new_exceptions = printer1.print_text(data1, environment)
+            for exception in new_exceptions: exception.add(self.name, key_str)
+            exceptions.extend(new_exceptions)
+        if printer2 is None:
+            substructure_output2 = [SU.Line(SU.stringify(data2))]
+        else:
+            substructure_output2, new_exceptions = printer2.print_text(data2, environment)
+            for exception in new_exceptions: exception.add(self.name, key_str)
+            exceptions.extend(new_exceptions)
         if len(substructure_output1) == 0: substructure_output1 = [SU.Line("empty")]
         if len(substructure_output2) == 0: substructure_output2 = [SU.Line("empty")]
         match len(substructure_output1), len(substructure_output2), key_str is None:

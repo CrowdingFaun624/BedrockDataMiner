@@ -1472,14 +1472,22 @@ class CacheStructureHashError(StructureException):
 class CompareWithNoneError(StructureException):
     "A StructureSet attempted to compare data using None instead of a Structure."
 
-    def __init__(self, structure_set:"StructureSet.StructureSet", key:Union["D.DiffType", int], message:Optional[str]=None) -> None:
-        super().__init__(structure_set, key, message)
-        self.structure_set = structure_set
+    def __init__(self, structure:Union["Structure.Structure", "StructureSet.StructureSet"], key:Union["D.DiffType", int, None]=None, message:Optional[str]=None) -> None:
+        '''
+        :structure_set: The Structure or StructureSet with a None substructure.
+        :key: The key used to access the StructureSet if it is a StructureSet.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(structure, key, message)
+        self.structure = structure
         self.key = key
         self.message = message
 
     def __str__(self) -> str:
-        output = "Attempted to compare with key %s on %r using a NoneType object" % (self.key, self.structure_set)
+        if self.key is None:
+            output = "Attempted to compare with %r using a NoneType object" % (self.structure,)
+        else:
+            output = "Attempted to compare with key %s on %r using a NoneType object" % (self.key, self.structure)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

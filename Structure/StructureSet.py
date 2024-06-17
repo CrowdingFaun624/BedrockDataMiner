@@ -13,8 +13,7 @@ d = TypeVar("d")
 
 class StructureSet(Generic[d]):
     '''
-    Contains one or two Structures. Is used internally.
-    Is used for when a value is a Diff and must use two different printers.
+    Is used when a value is a Diff and can be split between two different Structures.
     '''
 
     def __init__(self, structures:dict[D.DiffType,Union["Structure.Structure",None]]) -> None:

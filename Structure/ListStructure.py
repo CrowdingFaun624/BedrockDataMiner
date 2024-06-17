@@ -1,11 +1,10 @@
-from typing import Any, Iterable, Sequence, TypeVar
+from typing import Any, Iterable, Sequence, TypeVar, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
@@ -147,14 +146,15 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 if item1 == item2:
                     output.append(item1)
                 else:
-                    structure_set, new_exceptions = self.choose_structure(index, D.Diff(item1, item2))
-                    for exception in new_exceptions: exception.add(self.name, index)
-                    exceptions.extend(new_exceptions)
-                    compare_output, subcomponent_has_changes, new_exceptions = structure_set.compare(item1, item2, environment)
-                    has_changes = has_changes or subcomponent_has_changes
-                    output.append(compare_output)
-                    for exception in new_exceptions: exception.add(self.name, index)
-                    exceptions.extend(new_exceptions)
+                    if self.structure is None:
+                        compare_output = D.Diff(item1, item2)
+                        has_changes = True
+                    else:
+                        compare_output, subcomponent_has_changes, new_exceptions = self.structure.compare(item1, item2, environment)
+                        has_changes = has_changes or subcomponent_has_changes
+                        for exception in new_exceptions: exception.add(self.name, index)
+                        exceptions.extend(new_exceptions)
+                    output.append(cast(d, compare_output))
             # now, only the shortest iterable has been consumed.
             if len(data1) != len(data2):
                 if len(data1) > len(data2):
@@ -193,9 +193,6 @@ class ListStructure(Structure.Structure[Iterable[d]]):
     def choose_structure_flat(self, key:int, value_type:type[d], value:d|None) -> tuple[Structure.Structure|None,list[Trace.ErrorTrace]]:
         return self.structure, []
 
-    def choose_structure(self, index:int, item:d|D.Diff[d,d]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
-        return StructureSet.StructureSet({diff_type: self.structure for item_iter, diff_type in D.iter_diff(item)}), []
-
     def print_item(self, index:int, item:d, substructure_output:list[SU.Line], message:str="") -> list[SU.Line]:
         match len(substructure_output), self.ordered:
             case 0, True:
@@ -222,13 +219,12 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         if not isinstance(data, self.valid_types):
             return [], [Trace.ErrorTrace(Exceptions.StructureTypeError(self.valid_types, type(data), "Data"), self.name, None, data)]
         for index, item in enumerate(data):
-            structure_set, new_exceptions = self.choose_structure(index, item)
-            for exception in new_exceptions: exception.add(self.name, index)
-            exceptions.extend(new_exceptions)
-
-            substructure_output, new_exceptions = structure_set.print_text(D.DiffType.not_diff, item, environment)
-            for exception in new_exceptions: exception.add(self.name, index)
-            exceptions.extend(new_exceptions)
+            if self.structure is None:
+                substructure_output = [SU.Line(SU.stringify(item))]
+            else:
+                substructure_output, new_exceptions = self.structure.print_text(item, environment)
+                for exception in new_exceptions: exception.add(self.name, index)
+                exceptions.extend(new_exceptions)
             if self.print_flat:
                 if len(substructure_output) == 1:
                     items_str.append(substructure_output[0].text)
@@ -249,37 +245,33 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
         for index, item in enumerate(data):
-            structure_set, new_exceptions = self.choose_structure(index, item)
-            for exception in new_exceptions: exception.add(self.name, index)
-            exceptions.extend(new_exceptions)
 
             if isinstance(item, D.Diff):
                 any_changes = True
                 print_key_str = index if self.ordered else None
                 size_changed = True
+
                 match item.change_type:
                     case D.ChangeType.addition:
                         current_length += 1; addition_length += 1
-                        new_exceptions = self.print_single(print_key_str, item.new, "Added", output, structure_set[D.DiffType.new], environment)
+                        new_exceptions = self.print_single(print_key_str, item.new, "Added", output, self.structure, environment)
                     case D.ChangeType.change:
                         current_length += 1
-                        new_exceptions = self.print_double(print_key_str, item.old, item.new, "Changed", output, structure_set, environment)
+                        new_exceptions = self.print_double(print_key_str, item.old, item.new, "Changed", output, self.structure, environment)
                     case D.ChangeType.removal:
                         removal_length += 1
-                        new_exceptions = self.print_single(print_key_str, item.old, "Removed", output, structure_set[D.DiffType.old], environment)
+                        new_exceptions = self.print_single(print_key_str, item.old, "Removed", output, self.structure, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
             else:
                 current_length += 1
-                if structure_set[D.DiffType.not_diff] is None:
+                if self.structure is None:
                     if self.print_all:
-                        substructure_output, new_exceptions = structure_set.print_text(D.DiffType.not_diff, item, environment)
-                        for exception in new_exceptions: exception.add(self.name, index)
-                        exceptions.extend(new_exceptions)
+                        substructure_output = [SU.Line(SU.stringify(item))]
                         output.extend(self.print_item(index, item, substructure_output, message="Unchanged "))
                     pass # This means that it is not a Diff and does not contains Diffs, so there is no text to write.
                 else:
-                    substructure_output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, item, environment)
+                    substructure_output, has_changes, new_exceptions = self.structure.compare_text(item, environment)
                     for exception in new_exceptions: exception.add(self.name, index)
                     exceptions.extend(new_exceptions)
                     if has_changes:
@@ -290,7 +282,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                             output.append(SU.Line("Changed %s:") % (self.field))
                         output.extend(line.indent() for line in substructure_output)
                     elif self.print_all:
-                        substructure_output, new_exceptions = structure_set.print_text(D.DiffType.not_diff, item, environment)
+                        substructure_output, new_exceptions = self.structure.print_text(item, environment)
                         for exception in new_exceptions: exception.add(self.name, index)
                         exceptions.extend(new_exceptions)
                         output.extend(self.print_item(index, item, substructure_output, message="Unchanged "))

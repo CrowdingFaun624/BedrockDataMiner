@@ -5,7 +5,6 @@ import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
@@ -58,9 +57,6 @@ class PassthroughStructure(Structure.Structure[a]):
     def choose_structure_flat(self, key:None, value_type:type[a], value:a|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         return self.structure, []
 
-    def choose_structure(self, item:a|D.Diff[a,a]) -> tuple[StructureSet.StructureSet,list[Trace.ErrorTrace]]:
-        return StructureSet.StructureSet({diff_type: self.structure for item_iter, diff_type in D.iter_diff(item)}), []
-
     def normalize(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[None, list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
@@ -96,48 +92,48 @@ class PassthroughStructure(Structure.Structure[a]):
 
     def compare(self, data1:a, data2:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        structure_set, new_exceptions = self.choose_structure(D.Diff(data1, data2))
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
-        output, has_changes, new_exceptions = structure_set.compare(data1, data2, environment)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
+        if self.structure is None:
+            if data1 is data2 or data1 == data2:
+                output, has_changes = data1, False
+            else:
+                output, has_changes = D.Diff(data1, data2), True
+        else:
+            output, has_changes, new_exceptions = self.structure.compare(data1, data2, environment)
+            for exception in new_exceptions: exception.add(self.name, None)
+            exceptions.extend(new_exceptions)
         return output, has_changes, exceptions
 
     def print_text(self, data: a, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.choose_structure(data)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
-        output, new_exceptions = structure.print_text(D.DiffType.not_diff, data, environment)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
+        if self.structure is None:
+            output = [SU.Line(SU.stringify(data))]
+        else:
+            output, new_exceptions = self.structure.print_text(data, environment)
+            for exception in new_exceptions: exception.add(self.name, None)
+            exceptions.extend(new_exceptions)
         return output, exceptions
 
     def compare_text(self, data:a|D.Diff[a,a], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        structure_set, new_exceptions = self.choose_structure(data)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
         if isinstance(data, D.Diff):
             output:list[SU.Line] = []
             match data.change_type:
                 case D.ChangeType.addition:
-                    new_exceptions = self.print_single(None, data.new, "Added", output, structure_set[D.DiffType.new], environment)
+                    new_exceptions = self.print_single(None, data.new, "Added", output, self.structure, environment)
                 case D.ChangeType.change:
-                    new_exceptions = self.print_double(None, data.old, data.new, "Changed", output, structure_set, environment)
+                    new_exceptions = self.print_double(None, data.old, data.new, "Changed", output, self.structure, environment)
                 case D.ChangeType.removal:
-                    new_exceptions = self.print_single(None, data.old, "Removed", output, structure_set[D.DiffType.old], environment)
+                    new_exceptions = self.print_single(None, data.old, "Removed", output, self.structure, environment)
             for exception in new_exceptions: exception.add(self.name, None)
             exceptions.extend(new_exceptions)
             return output, True, exceptions
         else:
-            if structure_set[D.DiffType.not_diff] is None:
+            if self.structure is None:
                 output = []
                 has_changes = False
                 pass # guaranteed no changes in here.
             else:
-                output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, data, environment)
+                output, has_changes, new_exceptions = self.structure.compare_text(data, environment)
                 for exception in new_exceptions: exception.add(self.name, None)
                 exceptions.extend(new_exceptions)
             return output, has_changes, exceptions
