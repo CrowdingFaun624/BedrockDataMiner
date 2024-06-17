@@ -45,7 +45,7 @@ class Structure(Generic[a]):
             memo.add(self)
             substructure.clear_caches(memo)
 
-    def choose_structure_flat(self, key:Any, value_type:type, value:Any) -> Union["Structure",None]:
+    def choose_structure_flat(self, key:Any, value_type:type, value:Any) -> tuple[Union["Structure",None], list[Trace.ErrorTrace]]:
         '''
         Returns a substructure or None.
         :The key/index of this Structure at the current position.
