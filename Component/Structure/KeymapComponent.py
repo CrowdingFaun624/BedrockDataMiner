@@ -62,11 +62,8 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
     def link_finals(self) -> None:
         super().link_finals()
         self.get_final().link_substructures(
-            keys_intermediate={key.key: key.get_subcomponent_final() for key in self.keys},
+            keys={key.key: key.get_subcomponent() for key in self.keys},
+            key_types={key.key: tuple(key.get_types()) for key in self.keys},
             normalizer=self.normalizer_field.get_finals(),
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys}
         )
-
-    def finalize(self) -> None:
-        super().finalize()
-        self.get_final().finalize()

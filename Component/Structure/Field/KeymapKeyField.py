@@ -50,10 +50,13 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         '''
         self.tags_field.add_to_tag_set(tag_set)
 
-    def get_subcomponent_final(self) -> dict[type,Union["Structure.Structure",None]]:
-        '''Extracts the data about the structure of this field's components without changing the identity of the data structures.'''
-        structure = self.subcomponent_field.get_final()
-        return {value_type: structure for value_type in self.types_field.get_types()}
+    def get_types(self) -> list[type]:
+        '''Return the list of types that this key can be.'''
+        return self.types_field.get_types()
+
+    def get_subcomponent(self) -> Union["Structure.Structure", None]:
+        '''Return the Structure that this KeymapKeyField refers to.'''
+        return self.subcomponent_field.get_final()
 
     def __repr__(self) -> str:
         return "<%s %s id %i>" % (self.__class__.__name__, self.key, id(self))
