@@ -74,7 +74,7 @@ class PassthroughStructure(Structure.Structure[a]):
         exceptions:list[Trace.ErrorTrace] = []
         if self.structure is None:
             return [], exceptions
-        output, new_exceptions = self.structure.get_tag_paths(data, tag, data_path.copy(("", type(data))), environment)
+        output, new_exceptions = self.structure.get_tag_paths(data, tag, data_path.copy(), environment)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         return output, exceptions

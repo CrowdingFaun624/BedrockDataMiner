@@ -103,10 +103,10 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         if self.tags is None:
             raise Exceptions.AttributeNoneError("tags", self)
         if tag in self.tags:
-            output.extend(data_path.copy((index, type(value))).embed(value) for index, value in enumerate(data))
+            output.extend(data_path.copy(index).embed(value) for index, value in enumerate(data))
         for index, value in enumerate(data):
             if self.structure is not None:
-                new_tags, new_exceptions = self.structure.get_tag_paths(value, tag, data_path.copy((index, type(value))), environment)
+                new_tags, new_exceptions = self.structure.get_tag_paths(value, tag, data_path.copy(index), environment)
                 output.extend(new_tags)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)

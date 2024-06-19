@@ -5,7 +5,7 @@ from typing_extensions import Self
 
 class DataPath():
 
-    def __init__(self, path_items:list[tuple[Hashable,type]], root:str, embedded_data:Any|None=None) -> None:
+    def __init__(self, path_items:list[Hashable], root:str, embedded_data:Any|None=None) -> None:
         '''
         :path_items: Items in the DataPath. Cannot contain None.
         :root: The dataminer/structure in which this DataPath originates.
@@ -17,14 +17,14 @@ class DataPath():
 
     def last_key(self) -> Hashable:
         '''Returns the key of the most recently appended item.'''
-        return self[-1][0]
+        return self[-1]
 
     def remove_embedded_data(self) -> Self:
         '''Removes the embedded data from this DataPath. Returns itself.'''
         self.embedded_data = None
         return self
 
-    def copy(self, new_item:tuple[Hashable,type]|None=None) -> "DataPath":
+    def copy(self, new_item:Hashable|None=None) -> "DataPath":
         '''
         Returns a new DataPath with a copied `path_items` attribute.
         :new_item: An optional item to append to the copied DataPath.
@@ -34,7 +34,7 @@ class DataPath():
             output.append(new_item)
         return output
 
-    def append(self, new_item:tuple[Hashable,type]) -> Self:
+    def append(self, new_item:Hashable) -> Self:
         '''
         Adds a new item to this DataPath. Returns itself.
         :new_item: The item to add to the end of the DataPath.
@@ -58,10 +58,10 @@ class DataPath():
     def __repr__(self) -> str:
         return "<%s len %i; %s>" % (self.__class__.__name__, len(self.path_items), self.last_key())
 
-    def __getitem__(self, index:int) -> tuple[Hashable,type]:
+    def __getitem__(self, index:int) -> Hashable:
         return self.path_items[index]
 
-    def __iter__(self) -> list[tuple[Hashable,type]]:
+    def __iter__(self) -> list[Hashable]:
         return self.path_items
 
     def __len__(self) -> int:

@@ -73,7 +73,7 @@ class GroupStructure(Structure.Structure[a]):
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if structure is not None:
-            new_tags, new_exceptions = structure.get_tag_paths(data, tag, data_path.copy((None, type(data))), environment)
+            new_tags, new_exceptions = structure.get_tag_paths(data, tag, data_path.copy(type(data)), environment)
             output.extend(new_tags)
             for exception in new_exceptions: exception.add(self.name, None)
             exceptions.extend(new_exceptions)

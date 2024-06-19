@@ -61,13 +61,13 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         if self.tags is None:
             raise Exceptions.AttributeNoneError("tags", self)
         if tag in self.tags:
-            output.extend(data_path.copy((key, type(value))).embed(value) for key, value in data.items())
+            output.extend(data_path.copy(key).embed(value) for key, value in data.items())
         for key, value in data.items():
             structure, new_exceptions = self.get_structure(key, value)
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
             if structure is not None:
-                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((key, type(value))), environment)
+                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy(key), environment)
                 output.extend(new_tags)
                 for exception in new_exceptions: exception.add(self.name, key)
                 exceptions.extend(new_exceptions)

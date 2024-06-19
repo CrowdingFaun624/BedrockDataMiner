@@ -146,10 +146,10 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             raise Exceptions.AttributeNoneError("tags", self)
         block_data = data[1]
         if tag in self.tags:
-            output.extend(data_path.copy((position, type(value))).embed(value) for position, value in block_data.items())
+            output.extend(data_path.copy(position).embed(value) for position, value in block_data.items())
         for position, value in block_data.items():
             if self.structure is not None:
-                new_tags, new_exceptions = self.structure.get_tag_paths(value, tag, data_path.copy((position, type(value))), environment)
+                new_tags, new_exceptions = self.structure.get_tag_paths(value, tag, data_path.copy(position), environment)
                 output.extend(new_tags)
                 for exception in new_exceptions: exception.add(self.name, position)
                 exceptions.extend(new_exceptions)
