@@ -45,16 +45,16 @@ class GroupStructure(Structure.Structure[a]):
         else:
             return []
 
-    def choose_structure_flat(self, key:None, value_type: type, value: a) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        output = self.get_substructures().get(value_type, Structure.StructureFailure.choose_structure_failure)
+    def get_structure(self, data: a) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+        output = self.get_substructures().get(type(data), Structure.StructureFailure.choose_structure_failure)
         if output is Structure.StructureFailure.choose_structure_failure:
-            return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.get_types()), value_type, "Data"), self.name, key, value)]
+            return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.get_types()), type(data), "Data"), self.name, None, data)]
         else:
             return output, []
 
     def normalize(self, data: a, environment: StructureEnvironment.StructureEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.choose_structure_flat(None, type(data), data)
+        structure, new_exceptions = self.get_structure(data)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if structure is None:
@@ -69,7 +69,7 @@ class GroupStructure(Structure.Structure[a]):
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.choose_structure_flat(None, type(data), data)
+        structure, new_exceptions = self.get_structure(data)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         if structure is not None:

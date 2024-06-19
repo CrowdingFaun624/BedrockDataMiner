@@ -26,7 +26,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
     """
     Abstract class of dict-using Structures.
     In subclasses, must provide methods `iter_structures`, `check_type`,
-    `choose_structure_flat`, `choose_structure`, and `get_tag_paths`.
+    `get_structure`, `choose_structure`, and `get_tag_paths`.
     """
 
     valid_types = (dict, NbtTypes.TAG_Compound)
@@ -62,6 +62,14 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None: ...
 
+    def get_structure(self, key:Any, value:Any) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+        '''
+        Returns a substructure or None.
+        :The key of this Structure at the current position.
+        :value: The value at the current position.
+        '''
+        ...
+
     def choose_structure(self, key:str|D.Diff[str,str], value:d|D.Diff[d,d]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]: ...
 
     def check_all_types(self, data:MutableMapping[str,d], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
@@ -76,7 +84,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                 output.append(check_type_output)
                 continue
 
-            structure, new_exceptions = self.choose_structure_flat(key, type(value), value)
+            structure, new_exceptions = self.get_structure(key, value)
             for exception in new_exceptions: exception.add(self.name, key)
             output.extend(new_exceptions)
             if structure is not None:
@@ -96,10 +104,10 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
-            structure, new_exceptions = self.choose_structure_flat(key, type(value), value)
+            structure, new_exceptions = self.get_structure(key, value)
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
-            if structure is not None:
+            if structure is not None and structure.children_has_normalizer:
                 normalizer_output, new_exceptions = structure.normalize(value, environment)
                 for exception in new_exceptions: exception.add(self.name, key)
                 exceptions.extend(new_exceptions)

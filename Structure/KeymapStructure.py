@@ -54,7 +54,7 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         if not isinstance(value, self.key_types[key]):
             return Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.key_types[key]), type(value), "Value"), self.name, key, value)
 
-    def choose_structure_flat(self, key: str, value_type:type[d], value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+    def get_structure(self, key: str, value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         if self.keys is None:
             raise Exceptions.AttributeNoneError("keys", self)
         output = self.keys.get(key, Structure.StructureFailure.choose_structure_failure)
@@ -71,7 +71,7 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         for key, value in data.items():
             if tag in self.tags[key]:
                 output.append(data_path.copy((key, type(value))).embed(value))
-            structure, new_exceptions = self.choose_structure_flat(key, type(value), value)
+            structure, new_exceptions = self.get_structure(key, value)
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
             if structure is not None:

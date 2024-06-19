@@ -63,7 +63,7 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         if tag in self.tags:
             output.extend(data_path.copy((key, type(value))).embed(value) for key, value in data.items())
         for key, value in data.items():
-            structure, new_exceptions = self.choose_structure_flat(key, type(value), value)
+            structure, new_exceptions = self.get_structure(key, value)
             for exception in new_exceptions: exception.add(self.name, key)
             exceptions.extend(new_exceptions)
             if structure is not None:
@@ -73,7 +73,7 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 exceptions.extend(new_exceptions)
         return output, exceptions
 
-    def choose_structure_flat(self, key:str, value_type: type[d], value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+    def get_structure(self, key:str, value:d) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         return self.structure, []
 
     def choose_structure(self, key:str|D.Diff[str,str], value:d|D.Diff[d,d]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:

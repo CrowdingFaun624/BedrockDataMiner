@@ -71,11 +71,8 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 output.append(check_type_output)
                 continue
 
-            structure, new_exceptions = self.choose_structure_flat(index, type(item), item)
-            for exception in new_exceptions: exception.add(self.name, index)
-            output.extend(new_exceptions)
-            if structure is not None:
-                new_exceptions = structure.check_all_types(item, environment)
+            if self.structure is not None:
+                new_exceptions = self.structure.check_all_types(item, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 output.extend(new_exceptions)
         return output
@@ -91,11 +88,8 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
         for index, item in enumerate(data):
-            structure, new_exceptions = self.choose_structure_flat(index, type(item), item)
-            for exception in new_exceptions: exception.add(self.name, index)
-            exceptions.extend(new_exceptions)
-            if structure is not None:
-                normalizer_output, new_exceptions = structure.normalize(item, environment)
+            if self.structure is not None:
+                normalizer_output, new_exceptions = self.structure.normalize(item, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
                 if normalizer_output is not None:
@@ -111,11 +105,8 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         if tag in self.tags:
             output.extend(data_path.copy((index, type(value))).embed(value) for index, value in enumerate(data))
         for index, value in enumerate(data):
-            structure, new_exceptions = self.choose_structure_flat(index, type(value), value)
-            for exception in new_exceptions: exception.add(self.name, index)
-            exceptions.extend(new_exceptions)
-            if structure is not None:
-                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((index, type(value))), environment)
+            if self.structure is not None:
+                new_tags, new_exceptions = self.structure.get_tag_paths(value, tag, data_path.copy((index, type(value))), environment)
                 output.extend(new_tags)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
@@ -189,9 +180,6 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     output.append(D.Diff(new=item))
                     has_changes = True
             return output, has_changes, exceptions
-
-    def choose_structure_flat(self, key:int, value_type:type[d], value:d|None) -> tuple[Structure.Structure|None,list[Trace.ErrorTrace]]:
-        return self.structure, []
 
     def print_item(self, index:int, item:d, substructure_output:list[SU.Line], message:str="") -> list[SU.Line]:
         match len(substructure_output), self.ordered:

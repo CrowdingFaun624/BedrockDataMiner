@@ -51,21 +51,16 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         if self.structure is None: return []
         else: return [self.structure]
 
-    def choose_structure_flat(self, key:int, value_type:type, value:Any|None) -> tuple[Structure.Structure|None,list[Trace.ErrorTrace]]:
-        return self.structure, []
-
     def check_all_types(self, data:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[Trace.ErrorTrace] = []
         # most of this stuff was checked in `normalize`
         for index, (position, additional_data) in enumerate(data[1].items()):
-            structure, new_exceptions = self.choose_structure_flat(index, type(additional_data), additional_data)
-            for exception in new_exceptions: exception.add(self.name, index)
-            output.extend(new_exceptions)
-            if structure is None and len(additional_data) > 0:
-                output.append(Trace.ErrorTrace(Exceptions.VolumeStructureUnrecognizedKeysError(list(additional_data.keys())), self.name, index, additional_data))
-            if structure is not None:
-                new_exceptions = structure.check_all_types(additional_data, environment)
+            if self.structure is None:
+                if  len(additional_data) > 0:
+                    output.append(Trace.ErrorTrace(Exceptions.VolumeStructureUnrecognizedKeysError(list(additional_data.keys())), self.name, index, additional_data))
+            else:
+                new_exceptions = self.structure.check_all_types(additional_data, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 output.extend(new_exceptions)
         return output
@@ -129,11 +124,8 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             except Exception as e:
                 return data_output, [Trace.ErrorTrace(e, self.name, None, data_output)]
         for index, (coordinate, item) in enumerate(data_output[1].items()):
-            structure, new_exceptions = self.choose_structure_flat(index, type(item), item)
-            for exception in new_exceptions: exception.add(self.name, index)
-            exceptions.extend(new_exceptions)
-            if structure is not None:
-                normalizer_output, new_exceptions = structure.normalize(item, environment)
+            if self.structure is not None:
+                normalizer_output, new_exceptions = self.structure.normalize(item, environment)
                 for exception in new_exceptions: exception.add(self.name, index)
                 exceptions.extend(new_exceptions)
                 if normalizer_output is not None:
@@ -152,16 +144,14 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         exceptions:list[Trace.ErrorTrace] = []
         if self.tags is None:
             raise Exceptions.AttributeNoneError("tags", self)
+        block_data = data[1]
         if tag in self.tags:
-            output.extend(data_path.copy((index, type(value))).embed(value) for index, value in enumerate(data))
-        for index, value in enumerate(data):
-            structure, new_exceptions = self.choose_structure_flat(index, type(value), value)
-            for exception in new_exceptions: exception.add(self.name, index)
-            exceptions.extend(new_exceptions)
-            if structure is not None:
-                new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy((index, type(value))), environment)
+            output.extend(data_path.copy((position, type(value))).embed(value) for position, value in block_data.items())
+        for position, value in block_data.items():
+            if self.structure is not None:
+                new_tags, new_exceptions = self.structure.get_tag_paths(value, tag, data_path.copy((position, type(value))), environment)
                 output.extend(new_tags)
-                for exception in new_exceptions: exception.add(self.name, index)
+                for exception in new_exceptions: exception.add(self.name, position)
                 exceptions.extend(new_exceptions)
         return output, exceptions
 

@@ -26,7 +26,7 @@ class PassthroughStructure(Structure.Structure[a]):
 
     def link_substructures(
         self,
-        structure:Structure.Structure,
+        structure:Structure.Structure|None,
         types:list[type],
         normalizer:list[Normalizer.Normalizer],
     ) -> None:
@@ -45,17 +45,11 @@ class PassthroughStructure(Structure.Structure[a]):
         if not isinstance(data, self.types):
             output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(data), "Data"), self.name, None, data))
             return output
-        structure, new_exceptions = self.choose_structure_flat(None, type(data), data)
-        for exception in new_exceptions: exception.add(self.name, None)
-        output.extend(new_exceptions)
-        if structure is not None:
-            new_exceptions = structure.check_all_types(data, environment)
+        if self.structure is not None:
+            new_exceptions = self.structure.check_all_types(data, environment)
             for exception in new_exceptions: exception.add(self.name, None)
             output.extend(new_exceptions)
         return output
-
-    def choose_structure_flat(self, key:None, value_type:type[a], value:a|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        return self.structure, []
 
     def normalize(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[None, list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
@@ -67,11 +61,8 @@ class PassthroughStructure(Structure.Structure[a]):
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.choose_structure_flat(None, type(data), data)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
-        if structure is not None:
-            normalize_output, new_exceptions = structure.normalize(data, environment)
+        if self.structure is not None:
+            normalize_output, new_exceptions = self.structure.normalize(data, environment)
             for exception in new_exceptions: exception.add(self.name, None)
             exceptions.extend(new_exceptions)
             if normalize_output is not None:
@@ -81,11 +72,9 @@ class PassthroughStructure(Structure.Structure[a]):
     def get_tag_paths(self, data:a, tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
         exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.choose_structure_flat(None, type(data), data)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
-        if structure is None: return [], exceptions
-        output, new_exceptions = structure.get_tag_paths(data, tag, data_path.copy(("", type(data))), environment)
+        if self.structure is None:
+            return [], exceptions
+        output, new_exceptions = self.structure.get_tag_paths(data, tag, data_path.copy(("", type(data))), environment)
         for exception in new_exceptions: exception.add(self.name, None)
         exceptions.extend(new_exceptions)
         return output, exceptions

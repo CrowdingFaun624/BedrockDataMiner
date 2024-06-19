@@ -45,15 +45,6 @@ class Structure(Generic[a]):
             memo.add(self)
             substructure.clear_caches(memo)
 
-    def choose_structure_flat(self, key:Any, value_type:type, value:Any) -> tuple[Union["Structure",None], list[Trace.ErrorTrace]]:
-        '''
-        Returns a substructure or None.
-        :The key/index of this Structure at the current position.
-        :value_type: The type of the value/item at the current position.
-        :value: The value/item at the current position.
-        '''
-        ...
-
     def print_single(self, key_str:str|int|None, data:a, message:str, output:list[SU.Line], printer:Union["Structure",None], environment:StructureEnvironment.StructureEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
         '''
         Adds text from a single-type Diff (i.e. an addition or removal). Returns a list of ErrorTraces.

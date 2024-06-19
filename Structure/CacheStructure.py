@@ -47,13 +47,13 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
     ) -> None:
         super().link_substructures(structure, types, [])
 
-    def choose_structure_flat(self, key:None, value_type:type, value:None) -> tuple[Structure.Structure, list[Trace.ErrorTrace]]:
+    def get_structure(self) -> Structure.Structure:
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
-        return self.structure, []
+        return self.structure
 
     def check_all_types(self, data: d, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
-        structure, _ = self.choose_structure_flat(None, type(data), None)
+        structure = self.get_structure()
         if not environment.should_cache or not self.cache_check_all_types:
             return structure.check_all_types(data, environment)
         data_hash = hash_data(data)
@@ -70,7 +70,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         return output
 
     def normalize(self, data:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
-        structure, _ = self.choose_structure_flat(None, type(data), None)
+        structure = self.get_structure()
         if not environment.should_cache or not self.cache_normalize:
             return structure.normalize(data, environment)
         data_hash = hash_data(data)
@@ -87,7 +87,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         return output
 
     def get_tag_paths(self, data:d, tag:str, data_path:DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
-        structure, _ = self.choose_structure_flat(None, type(data), None)
+        structure = self.get_structure()
         if not environment.should_cache or not self.cache_get_tag_paths:
             return structure.get_tag_paths(data, tag, data_path, environment)
         data_hash = hash_data(data)
@@ -104,7 +104,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         return output
 
     def compare_text(self, data: d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
-        structure, _ = self.choose_structure_flat(None, type(data), None)
+        structure = self.get_structure()
         if not environment.should_cache or not self.cache_compare_text:
             return structure.compare_text(data, environment)
         data_hash = hash_data(data)
@@ -121,7 +121,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         return output
 
     def print_text(self, data: d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
-        structure, _ = self.choose_structure_flat(None, type(data), None)
+        structure = self.get_structure()
         if environment.should_cache or not self.cache_print_text:
             return structure.print_text(data, environment)
         data_hash = hash_data(data)
@@ -138,7 +138,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         return output
 
     def compare(self, data1: d, data2: d, environment:StructureEnvironment.StructureEnvironment) -> tuple[d, bool, list[Trace.ErrorTrace]]:
-        structure, _ = self.choose_structure_flat(None, type(data1), None)
+        structure = self.get_structure()
         if environment.should_cache or not self.cache_compare:
             return structure.compare(data1, data2, environment)
         data_hash = hash((hash_data(data1), hash_data(data2)))
