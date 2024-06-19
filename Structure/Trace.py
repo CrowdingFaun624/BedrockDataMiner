@@ -1,6 +1,8 @@
 import traceback
 from typing import Any, Hashable
 
+from typing_extensions import Self
+
 import Utilities.Exceptions as Exceptions
 
 
@@ -34,12 +36,16 @@ class ErrorTrace():
             self.trace.append(_TraceItem(current_pos_name, current_pos_key))
             self.already_added_names.add(current_pos_name)
 
-    def finalize(self) -> None:
-        "Prevents any more Structures from being added to this ErrorTrace."
+    def finalize(self) -> Self:
+        """
+        Prevents any more Structures from being added to this ErrorTrace.
+        Returns itself.
+        """
         if self.is_final:
             raise Exceptions.TraceError(self, self.finalize, self.is_final)
         self.is_final = True
         self.trace.reverse()
+        return self
 
     def stringify(self) -> str:
         "Returns a string representing the ErrorTrace. Can only be called after `finalize`."

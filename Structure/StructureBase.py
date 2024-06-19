@@ -201,9 +201,7 @@ class StructureBase():
         '''
         for trace in traces:
             trace.add(self.structure_name, None, force=True)
-            trace.finalize()
-            print(trace.stringify())
-            print()
+            print(trace.finalize().stringify(), end="\n\n")
         if len(traces) > 0:
             raise Exceptions.StructureError(self)
 
