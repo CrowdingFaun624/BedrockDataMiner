@@ -73,8 +73,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
 
             if self.structure is not None:
                 new_exceptions = self.structure.check_all_types(item, environment)
-                for exception in new_exceptions: exception.add(self.name, index)
-                output.extend(new_exceptions)
+                output.extend(exception.add(self.name, index) for exception in new_exceptions)
         return output
 
     def normalize(self, data:list[d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
@@ -90,8 +89,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         for index, item in enumerate(data):
             if self.structure is not None:
                 normalizer_output, new_exceptions = self.structure.normalize(item, environment)
-                for exception in new_exceptions: exception.add(self.name, index)
-                exceptions.extend(new_exceptions)
+                exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
                 if normalizer_output is not None:
                     data[index] = normalizer_output
         return None, exceptions
@@ -108,8 +106,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
             if self.structure is not None:
                 new_tags, new_exceptions = self.structure.get_tag_paths(value, tag, data_path.copy(index), environment)
                 output.extend(new_tags)
-                for exception in new_exceptions: exception.add(self.name, index)
-                exceptions.extend(new_exceptions)
+                exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
         return output, exceptions
 
     def compare(
@@ -143,8 +140,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     else:
                         compare_output, subcomponent_has_changes, new_exceptions = self.structure.compare(item1, item2, environment)
                         has_changes = has_changes or subcomponent_has_changes
-                        for exception in new_exceptions: exception.add(self.name, index)
-                        exceptions.extend(new_exceptions)
+                        exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
                     output.append(cast(d, compare_output))
             # now, only the shortest iterable has been consumed.
             if len(data1) != len(data2):
@@ -211,8 +207,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 substructure_output = [SU.Line(SU.stringify(item))]
             else:
                 substructure_output, new_exceptions = self.structure.print_text(item, environment)
-                for exception in new_exceptions: exception.add(self.name, index)
-                exceptions.extend(new_exceptions)
+                exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
             if self.print_flat:
                 if len(substructure_output) == 1:
                     items_str.append(substructure_output[0].text)
@@ -249,8 +244,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     case D.ChangeType.removal:
                         removal_length += 1
                         new_exceptions = self.print_single(print_key_str, item.old, "Removed", output, self.structure, environment)
-                for exception in new_exceptions: exception.add(self.name, index)
-                exceptions.extend(new_exceptions)
+                exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
             else:
                 current_length += 1
                 if self.structure is None:
@@ -260,8 +254,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     pass # This means that it is not a Diff and does not contains Diffs, so there is no text to write.
                 else:
                     substructure_output, has_changes, new_exceptions = self.structure.compare_text(item, environment)
-                    for exception in new_exceptions: exception.add(self.name, index)
-                    exceptions.extend(new_exceptions)
+                    exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
                     if has_changes:
                         any_changes = True
                         if self.ordered:
@@ -271,8 +264,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                         output.extend(line.indent() for line in substructure_output)
                     elif self.print_all:
                         substructure_output, new_exceptions = self.structure.print_text(item, environment)
-                        for exception in new_exceptions: exception.add(self.name, index)
-                        exceptions.extend(new_exceptions)
+                        exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
                         output.extend(self.print_item(index, item, substructure_output, message="Unchanged "))
         if self.measure_length and size_changed:
             output = [SU.Line("Total %s: %i (+%i, -%i)") % (self.field, current_length, addition_length, removal_length)] + output

@@ -47,8 +47,7 @@ class PassthroughStructure(Structure.Structure[a]):
             return output
         if self.structure is not None:
             new_exceptions = self.structure.check_all_types(data, environment)
-            for exception in new_exceptions: exception.add(self.name, None)
-            output.extend(new_exceptions)
+            output.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output
 
     def normalize(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[None, list[Trace.ErrorTrace]]:
@@ -63,8 +62,7 @@ class PassthroughStructure(Structure.Structure[a]):
         exceptions:list[Trace.ErrorTrace] = []
         if self.structure is not None:
             normalize_output, new_exceptions = self.structure.normalize(data, environment)
-            for exception in new_exceptions: exception.add(self.name, None)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
             if normalize_output is not None:
                 data = normalize_output
         return None, exceptions
@@ -75,8 +73,7 @@ class PassthroughStructure(Structure.Structure[a]):
         if self.structure is None:
             return [], exceptions
         output, new_exceptions = self.structure.get_tag_paths(data, tag, data_path.copy(), environment)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
     def compare(self, data1:a, data2:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
@@ -88,8 +85,7 @@ class PassthroughStructure(Structure.Structure[a]):
                 output, has_changes = D.Diff(data1, data2), True
         else:
             output, has_changes, new_exceptions = self.structure.compare(data1, data2, environment)
-            for exception in new_exceptions: exception.add(self.name, None)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions
 
     def print_text(self, data: a, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
@@ -98,8 +94,7 @@ class PassthroughStructure(Structure.Structure[a]):
             output = [SU.Line(SU.stringify(data))]
         else:
             output, new_exceptions = self.structure.print_text(data, environment)
-            for exception in new_exceptions: exception.add(self.name, None)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
     def compare_text(self, data:a|D.Diff[a,a], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
@@ -113,8 +108,7 @@ class PassthroughStructure(Structure.Structure[a]):
                     new_exceptions = self.print_double(None, data.old, data.new, "Changed", output, self.structure, environment)
                 case D.ChangeType.removal:
                     new_exceptions = self.print_single(None, data.old, "Removed", output, self.structure, environment)
-            for exception in new_exceptions: exception.add(self.name, None)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
             return output, True, exceptions
         else:
             if self.structure is None:
@@ -123,6 +117,5 @@ class PassthroughStructure(Structure.Structure[a]):
                 pass # guaranteed no changes in here.
             else:
                 output, has_changes, new_exceptions = self.structure.compare_text(data, environment)
-                for exception in new_exceptions: exception.add(self.name, None)
-                exceptions.extend(new_exceptions)
+                exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
             return output, has_changes, exceptions

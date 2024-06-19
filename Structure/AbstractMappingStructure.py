@@ -85,12 +85,10 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                 continue
 
             structure, new_exceptions = self.get_structure(key, value)
-            for exception in new_exceptions: exception.add(self.name, key)
-            output.extend(new_exceptions)
+            output.extend(exception.add(self.name, key) for exception in new_exceptions)
             if structure is not None:
                 new_exceptions = structure.check_all_types(value, environment)
-                for exception in new_exceptions: exception.add(self.name, key)
-                output.extend(new_exceptions)
+                output.extend(exception.add(self.name, key) for exception in new_exceptions)
         return output
 
     def normalize(self, data:dict[str,d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
@@ -105,12 +103,10 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
             structure, new_exceptions = self.get_structure(key, value)
-            for exception in new_exceptions: exception.add(self.name, key)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
             if structure is not None and structure.children_has_normalizer:
                 normalizer_output, new_exceptions = structure.normalize(value, environment)
-                for exception in new_exceptions: exception.add(self.name, key)
-                exceptions.extend(new_exceptions)
+                exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
                 if normalizer_output is not None:
                     data[key] = normalizer_output
         return None, exceptions
@@ -194,12 +190,10 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                     output[key] = value1
                 else:
                     structure_set, new_exceptions = self.choose_structure(key, D.Diff(value1, value2))
-                    for exception in new_exceptions: exception.add(self.name, D.first_existing_property(key))
-                    exceptions.extend(new_exceptions)
+                    exceptions.extend(exception.add(self.name, D.first_existing_property(key)) for exception in new_exceptions)
                     output[key], subcomponent_has_changes, new_exceptions = structure_set.compare(value1, value2, environment)
                     has_changes = has_changes or subcomponent_has_changes
-                    for exception in new_exceptions: exception.add(self.name, D.first_existing_property(key))
-                    exceptions.extend(new_exceptions)
+                    exceptions.extend(exception.add(self.name, D.first_existing_property(key)) for exception in new_exceptions)
                     continue
             elif len(occurrences) == 1:
                 # since there's now only one value, there's no more comparing to do.
@@ -240,12 +234,10 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
             structure_set, new_exceptions = self.choose_structure(key, value)
-            for exception in new_exceptions: exception.add(self.name, key)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
             new_lines, new_exceptions = self.print_item(key, value, structure_set, environment)
             output.extend(new_lines)
-            for exception in new_exceptions: exception.add(self.name, key)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
         return output, exceptions
 
     def compare_text(self, data:MutableMapping[str, d], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
@@ -260,8 +252,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             can_print_print_all = True # if the print_all thing is overridden for whatever reason.
             key_str = key.first_existing_property() if isinstance(key, D.Diff) else key
             structure_set, new_exceptions = self.choose_structure(key, value)
-            for exception in new_exceptions: exception.add(self.name, key)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
 
             if isinstance(key, D.Diff) and key.is_change:
                 can_print_print_all = False
@@ -280,21 +271,18 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                     case D.ChangeType.removal:
                         removal_length += 1
                         new_exceptions = self.print_single(key_str, value.old, "Removed", output, structure_set[D.DiffType.old], environment)
-                for exception in new_exceptions: exception.add(self.name, key)
-                exceptions.extend(new_exceptions)
+                exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
             else:
                 current_length += 1
                 if structure_set[D.DiffType.not_diff] is None:
                     if self.print_all and can_print_print_all:
                         new_lines, new_exceptions = self.print_item(key_str, value, structure_set, environment, message="Unchanged ")
                         output.extend(new_lines)
-                        for exception in new_exceptions: exception.add(self.name, key)
-                        exceptions.extend(new_exceptions)
+                        exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
                     pass # This means that it is not a difference and does not contain differences.
                 else:
                     substructure_output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, value, environment)
-                    for exception in new_exceptions: exception.add(self.name, key)
-                    exceptions.extend(new_exceptions)
+                    exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
                     if has_changes:
                         any_changes = True
                         output.append(SU.Line("Changed %s %s:") % (self.field, SU.stringify(key_str)))
@@ -302,8 +290,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                     elif self.print_all and can_print_print_all:
                         new_lines, new_exceptions = self.print_item(key_str, value, structure_set, environment, message="Unchanged ")
                         output.extend(new_lines)
-                        for exception in new_exceptions: exception.add(self.name, key)
-                        exceptions.extend(new_exceptions)
+                        exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
         if self.measure_length and size_changed:
             output = [SU.Line("Total %s: %i (+%i, -%i)") % (self.field, current_length, addition_length, removal_length)] + output
         return output, any_changes, exceptions

@@ -23,9 +23,9 @@ class ErrorTrace():
         if current_pos_name is not None:
             self.add(current_pos_name, current_pos_key)
 
-    def add(self, current_pos_name:str, current_pos_key:Hashable|None, force:bool=False) -> None:
+    def add(self, current_pos_name:str, current_pos_key:Hashable|None, force:bool=False) -> Self:
         '''
-        Adds a Structure to the list of Structures.
+        Adds a Structure to the list of Structures. Returns itself.
         :current_pos_name: The name of the current Structure.
         :current_pos_key: Where in the current Structure the error occurs.
         :force: If True, adds it even if current_pos_name is duplicate.
@@ -35,6 +35,7 @@ class ErrorTrace():
         if force or current_pos_name not in self.already_added_names:
             self.trace.append(_TraceItem(current_pos_name, current_pos_key))
             self.already_added_names.add(current_pos_name)
+        return self
 
     def finalize(self) -> Self:
         """

@@ -55,14 +55,12 @@ class GroupStructure(Structure.Structure[a]):
     def normalize(self, data: a, environment: StructureEnvironment.StructureEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.get_structure(data)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         if structure is None:
             return None, exceptions
         else:
             output, new_exceptions = structure.normalize(data, environment)
-            for exception in new_exceptions: exception.add(self.name, None)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
             return output, exceptions
 
     def get_tag_paths(self, data:a, tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
@@ -70,13 +68,11 @@ class GroupStructure(Structure.Structure[a]):
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.get_structure(data)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         if structure is not None:
             new_tags, new_exceptions = structure.get_tag_paths(data, tag, data_path.copy(type(data)), environment)
             output.extend(new_tags)
-            for exception in new_exceptions: exception.add(self.name, None)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
     def choose_structure(self, data:a|D.Diff[a,a]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
@@ -93,28 +89,23 @@ class GroupStructure(Structure.Structure[a]):
     def compare(self, data1: a, data2: a, environment:StructureEnvironment.StructureEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure_set, new_exceptions = self.choose_structure(D.Diff(data1, data2))
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         output, has_changes, new_exceptions = structure_set.compare(data1, data2, environment)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions
 
     def print_text(self, data: a, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.choose_structure(data)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         output, new_exceptions = structure.print_text(D.DiffType.not_diff, data, environment)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
     def compare_text(self, data:a|D.Diff[a,a], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure_set, new_exceptions = self.choose_structure(data)
-        for exception in new_exceptions: exception.add(self.name, None)
-        exceptions.extend(new_exceptions)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         if isinstance(data, D.Diff):
             output:list[SU.Line] = []
             match data.change_type:
@@ -124,8 +115,7 @@ class GroupStructure(Structure.Structure[a]):
                     new_exceptions = self.print_double(None, data.old, data.new, "Changed", output, structure_set, environment)
                 case D.ChangeType.removal:
                     new_exceptions = self.print_single(None, data.old, "Removed", output, structure_set[D.DiffType.old], environment)
-            for exception in new_exceptions: exception.add(self.name, None)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
             return output, True, exceptions
         else:
             if structure_set[D.DiffType.not_diff] is None:
@@ -134,6 +124,5 @@ class GroupStructure(Structure.Structure[a]):
                 pass # guaranteed no changes in here.
             else:
                 output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, data, environment)
-                for exception in new_exceptions: exception.add(self.name, None)
-                exceptions.extend(new_exceptions)
+                exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions

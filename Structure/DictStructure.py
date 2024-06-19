@@ -64,13 +64,11 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             output.extend(data_path.copy(key).embed(value) for key, value in data.items())
         for key, value in data.items():
             structure, new_exceptions = self.get_structure(key, value)
-            for exception in new_exceptions: exception.add(self.name, key)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
             if structure is not None:
                 new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy(key), environment)
                 output.extend(new_tags)
-                for exception in new_exceptions: exception.add(self.name, key)
-                exceptions.extend(new_exceptions)
+                exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
         return output, exceptions
 
     def get_structure(self, key:str, value:d) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:

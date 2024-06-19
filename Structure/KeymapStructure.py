@@ -72,13 +72,11 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             if tag in self.tags[key]:
                 output.append(data_path.copy(key).embed(value))
             structure, new_exceptions = self.get_structure(key, value)
-            for exception in new_exceptions: exception.add(self.name, key)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
             if structure is not None:
                 new_tags, new_exceptions = structure.get_tag_paths(value, tag, data_path.copy(key), environment)
                 output.extend(new_tags)
-                for exception in new_exceptions: exception.add(self.name, key)
-                exceptions.extend(new_exceptions)
+                exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
         return output, exceptions
 
     def choose_structure(self, key:str, value:d) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:

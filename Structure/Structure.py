@@ -65,8 +65,7 @@ class Structure(Generic[a]):
                 output.append(SU.Line("%s %s%s %s of %s.") % (message, self.field, post_message, SU.stringify(key_str), stringified_data))
         else:
             substructure_output, new_exceptions = printer.print_text(data, environment)
-            for exception in new_exceptions: exception.add(self.name, key_str)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, key_str) for exception in new_exceptions)
             match len(substructure_output), key_str is None:
                 case 0, True:
                     output.append(SU.Line("%s empty %s%s.") % (message, self.field, post_message))
@@ -121,14 +120,12 @@ class Structure(Generic[a]):
             substructure_output1 = [SU.Line(SU.stringify(data1))]
         else:
             substructure_output1, new_exceptions = printer1.print_text(data1, environment)
-            for exception in new_exceptions: exception.add(self.name, key_str)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, key_str) for exception in new_exceptions)
         if printer2 is None:
             substructure_output2 = [SU.Line(SU.stringify(data2))]
         else:
             substructure_output2, new_exceptions = printer2.print_text(data2, environment)
-            for exception in new_exceptions: exception.add(self.name, key_str)
-            exceptions.extend(new_exceptions)
+            exceptions.extend(exception.add(self.name, key_str) for exception in new_exceptions)
         if len(substructure_output1) == 0: substructure_output1 = [SU.Line("empty")]
         if len(substructure_output2) == 0: substructure_output2 = [SU.Line("empty")]
         match len(substructure_output1), len(substructure_output2), key_str is None:
