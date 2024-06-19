@@ -230,7 +230,7 @@ def languages_normalize(data:DataMinerTyping.Languages) -> DataMinerTyping.Norma
         for resource_pack in unfixed_data["defined_in"]:
             if resource_pack not in output:
                 output[resource_pack] = {}
-        return CollapseResourcePacks.collapse_resource_packs(output)
+        return CollapseResourcePacks.collapse_resource_packs_dict(output, True)
     return {language["code"]: fix_properties(language) for language in data}
 
 def loot_tables_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
@@ -514,12 +514,11 @@ def texture_list_normalize(data:dict[str,list[str]]) -> dict[str,list[str]]:
     return output
 
 functions:dict[str,Callable] = {
-    "collapse_behavior_pack_list": CollapseResourcePacks.collapse_resource_pack_list,
-    "collapse_resource_pack_list": CollapseResourcePacks.collapse_resource_pack_list,
-    "collapse_resource_packs_with_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=True),
-    "collapse_resource_packs_with_defined_in_without_extend": CollapseResourcePacks.make_interface(has_defined_in_key=True, extend=False),
-    "collapse_resource_packs_without_defined_in": CollapseResourcePacks.make_interface(has_defined_in_key=False),
-    "collapse_resource_packs_without_defined_in_without_extend": CollapseResourcePacks.make_interface(has_defined_in_key=False, extend=False),
+    "collapse_resource_pack_names": CollapseResourcePacks.collapse_resource_pack_names,
+    "collapse_resource_packs_dict_with_defined_in": CollapseResourcePacks.make_dict_interface(has_defined_in_key=True),
+    "collapse_resource_packs_dict_without_defined_in": CollapseResourcePacks.make_dict_interface(has_defined_in_key=False),
+    "collapse_resource_packs_list": CollapseResourcePacks.collapse_resource_packs_list,
+    "collapse_resource_packs_flat": CollapseResourcePacks.collapse_resource_packs_flat,
     "animation_controllers_fix_old": animation_controllers_fix_old,
     "animations_fix_old": animations_fix_old,
     "attachables_normalize_old": attachables_normalize_old,
