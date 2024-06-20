@@ -1,7 +1,6 @@
 import Component.Field.Field as Field
 import Downloader.DownloadManager as DownloadManager
 import Downloader.DummyManager as DummyManager
-import Downloader.LocalManager as LocalManager
 import Downloader.Manager as Manager
 import Downloader.StoredManager as StoredManager
 import Utilities.Exceptions as Exceptions
@@ -9,7 +8,6 @@ import Utilities.Exceptions as Exceptions
 MANAGER_CLASSES:dict[str,type[Manager.Manager]] = {manager_class.__name__: manager_class for manager_class in [
     DownloadManager.DownloadManager,
     DummyManager.DummyManager,
-    LocalManager.LocalManager,
     StoredManager.StoredManager,
 ]}
 
