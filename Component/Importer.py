@@ -82,7 +82,8 @@ def propagate_variables(all_components:dict[str,dict[str,Component.Component]]) 
     all_components_flat:list[Component.Component] = []
     all_components_flat_memo:set[Component.Component] = set()
     for components in all_components.values():
-        for component in components.values(): all_components_flat.extend(component.get_all_descendants(all_components_flat_memo))
+        for component in components.values():
+            all_components_flat.extend(component.get_all_descendants(all_components_flat_memo))
     components_queue = deque(all_components_flat) # components_queue and unvisited_components should mirror each other
     unvisited_components = all_components_flat_memo # the set of Components that need to be updated or re-updated.
     while len(components_queue) > 0:
@@ -124,20 +125,24 @@ def get_imports(all_components:dict[str,dict[str,Component.Component]], importer
 
 def set_components(all_components:dict[str,dict[str,Component.Component]], component_imports:dict[str,dict[str,dict[str,Component.Component]]], functions:dict[str,Callable]) -> None:
     for name, components in all_components.items():
-        for component in components.values(): component.set_component(components, component_imports[name], functions, create_inline_component)
+        for component in components.values():
+            component.set_component(components, component_imports[name], functions, create_inline_component)
 
 def create_finals(all_components:dict[str,dict[str,Component.Component]]) -> None:
     for components in all_components.values():
-        for component in components.values(): component.create_final()
+        for component in components.values():
+            component.create_final()
 
 def link_finals(all_components:dict[str,dict[str,Component.Component]]) -> None:
     for components in all_components.values():
-        for component in components.values(): component.link_finals()
+        for component in components.values():
+            component.link_finals()
 
 def check_components(all_components:dict[str,dict[str,Component.Component]]) -> None:
     exceptions:list[Exception] = []
     for components in all_components.values():
-        for component in components.values(): exceptions.extend(component.check())
+        for component in components.values():
+            exceptions.extend(component.check())
     if len(exceptions) > 0:
         for exception in exceptions:
             traceback.print_exception(exception)
@@ -145,7 +150,8 @@ def check_components(all_components:dict[str,dict[str,Component.Component]]) -> 
 
 def finalize_components(all_components:dict[str,dict[str,Component.Component]]) -> None:
     for components in all_components.values():
-        for component in components.values(): component.finalize()
+        for component in components.values():
+            component.finalize()
 
 def get_outputs(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> dict[str,Any]:
     output:dict[str,Any] = {}
@@ -158,14 +164,12 @@ def get_outputs(all_components:dict[str,dict[str,Component.Component]], importer
 
 def finalize_importer_environments(output:dict[str,Any], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
     for name, component_group_output in output.items():
-        importer_environment = importer_environments[name]
-        importer_environment.finalize(component_group_output, output)
+        importer_environments[name].finalize(component_group_output, output)
 
 def check_importer_environments(output:dict[str,Any], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
     exceptions:list[Exception] = []
     for name, component_group_output in output.items():
-        importer_environment = importer_environments[name]
-        exceptions.extend(importer_environment.check(component_group_output, output))
+        exceptions.extend(importer_environments[name].check(component_group_output, output))
     if len(exceptions) > 0:
         for exception in exceptions:
             traceback.print_exception(exception)

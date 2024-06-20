@@ -16,7 +16,7 @@ def import_accessor_classes() -> dict[str,type[Accessor.Accessor]]:
     for file_name, script in accessor_scripts.items():
         class_name = file_name.removeprefix("accessors/").removesuffix(".lua").replace("/", ".")
         attributes = dict(script())
-        inherit_from:str = attributes.pop("inherit", None)
+        inherit_from:str|None = attributes.pop("inherit", None)
         if inherit_from is None:
             raise Exceptions.AccessorClassMissingInheritError(class_name)
         superclass = BUILT_IN_ACCESSOR_CLASSES.get(inherit_from)

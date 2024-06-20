@@ -2,8 +2,8 @@ from typing import Iterable
 
 from pathlib2 import Path
 
-import Component.ImporterEnvironment as ImporterEnvironment
 import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
+import Component.ImporterEnvironment as ImporterEnvironment
 import Downloader.AccessorType as AccessorType
 import Utilities.FileManager as FileManager
 from Utilities.FunctionCaller import WaitValue

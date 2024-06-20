@@ -33,7 +33,11 @@ class Pattern(Generic[a]):
     def __contains__(self, capabilities:Capabilties.Capabilities) -> bool:
         if self.matching_components is None:
             import Component.ComponentTypes as ComponentTypes
-            self.matching_components = set(id(component_type.my_capabilities) for component_type in ComponentTypes.component_types if self.matches_capabilities(component_type.my_capabilities))
+            self.matching_components = set(
+                id(component_type.my_capabilities)
+                for component_type in ComponentTypes.component_types
+                if self.matches_capabilities(component_type.my_capabilities)
+            )
         return id(capabilities) in self.matching_components
 
     def __repr__(self) -> str:

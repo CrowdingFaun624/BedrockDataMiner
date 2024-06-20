@@ -137,12 +137,16 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                     case True, D.DiffType.old:
                         comparison_move_function_return = self.comparison_move_function(key, data1[key])
                         # If `comparison_move_function_return` is None, do not detect key change.
-                        if comparison_move_function_return is None: data_for_add_remove_change_compare[key] = ((D.DiffType.old, data1[key]),)
-                        else: old_comparison_values.append((key, comparison_move_function_return))
+                        if comparison_move_function_return is None:
+                            data_for_add_remove_change_compare[key] = ((D.DiffType.old, data1[key]),)
+                        else:
+                            old_comparison_values.append((key, comparison_move_function_return))
                     case True, D.DiffType.new:
                         comparison_move_function_return = self.comparison_move_function(key, data2[key])
-                        if comparison_move_function_return is None: data_for_add_remove_change_compare[key] = ((D.DiffType.new, data2[key]),)
-                        else: new_comparison_values.append((key, comparison_move_function_return))
+                        if comparison_move_function_return is None:
+                            data_for_add_remove_change_compare[key] = ((D.DiffType.new, data2[key]),)
+                        else:
+                            new_comparison_values.append((key, comparison_move_function_return))
                     case False, D.DiffType.old:
                         data_for_add_remove_change_compare[key] = ((D.DiffType.old, data1[key]),)
                     case False, D.DiffType.new:
@@ -191,9 +195,12 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                 # key can only be a D.Diff when len(occurrences) == 2
                 if isinstance(key, D.Diff):
                     raise Exceptions.InvalidStateError(self, key)
-                if occurrences[0][0] == D.DiffType.old: diff_key, diff_value = D.Diff(old=key), D.Diff(old=occurrences[0][1])
-                elif occurrences[0][0] == D.DiffType.new: diff_key, diff_value = D.Diff(new=key), D.Diff(new=occurrences[0][1])
-                else: raise Exceptions.InvalidStateError(self)
+                if occurrences[0][0] == D.DiffType.old:
+                    diff_key, diff_value = D.Diff(old=key), D.Diff(old=occurrences[0][1])
+                elif occurrences[0][0] == D.DiffType.new:
+                    diff_key, diff_value = D.Diff(new=key), D.Diff(new=occurrences[0][1])
+                else:
+                    raise Exceptions.InvalidStateError(self)
                 has_changes = True
                 output[diff_key] = diff_value
                 continue

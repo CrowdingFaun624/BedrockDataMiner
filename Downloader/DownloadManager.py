@@ -77,23 +77,22 @@ class DownloadManager(Manager.Manager):
         else:
             return data
 
+    def clear_temp_file(self, temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
+        path_that_zipfile_puts_it_in.unlink()
+        directories_to_remove:list[Path] = [temp_path] # with `temp_path` so that it removes the base, temporary path name
+        current_path = temp_path
+        while True:
+            children = list(current_path.iterdir())
+            if len(children) == 0:
+                break
+            if len(children) != 1:
+                raise Exceptions.InvalidStateError(self, children, "too many children!")
+            directories_to_remove.extend(children)
+            current_path = children[0]
+        for directory_to_remove in reversed(directories_to_remove):
+            directory_to_remove.rmdir()
+
     def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> FileManager.FilePromise:
-
-        def clear_temp_file(temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
-            path_that_zipfile_puts_it_in.unlink()
-            directories_to_remove:list[Path] = [temp_path] # with `temp_path` so that it removes the base, temporary path name
-            current_path = temp_path
-            while True:
-                children = list(current_path.iterdir())
-                if len(children) == 0:
-                    break
-                if len(children) != 1:
-                    raise Exceptions.InvalidStateError(self, children, "too many children!")
-                directories_to_remove.extend(children)
-                current_path = children[0]
-            for directory_to_remove in reversed(directories_to_remove):
-                directory_to_remove.rmdir()
-
         if not self.installed.get():
             self.install_all()
         self.open_zip_file()
@@ -105,7 +104,7 @@ class DownloadManager(Manager.Manager):
             temp_path = FileManager.get_temp_file_path()
             path_that_zipfile_puts_it_in = temp_path.joinpath(file_name)
             self.zip_file.extract(file_name, temp_path)
-            return FileManager.FilePromise(FunctionCaller(open, [path_that_zipfile_puts_it_in, "rt"]), file_name.split("/")[-1], mode, FunctionCaller(clear_temp_file, [temp_path, path_that_zipfile_puts_it_in]))
+            return FileManager.FilePromise(FunctionCaller(open, [path_that_zipfile_puts_it_in, "rt"]), file_name.split("/")[-1], mode, FunctionCaller(self.clear_temp_file, [temp_path, path_that_zipfile_puts_it_in]))
 
     def install_all(self, destination:Path|None=None) -> None:
         if destination is None: destination = self.apk_location
@@ -114,12 +113,11 @@ class DownloadManager(Manager.Manager):
             response_length = 0
             tries = 0
             while response_supposed_length is None or response_supposed_length != response_length:
-                with open(destination, "wb") as f:
-                    with requests.get(self.url) as response:
-                        response_length = len(response.content)
-                        response_supposed_length = int(response.headers.get("Content-Length", "0"))
-                        DownloadLog.log(self.version, response, response_length)
-                        f.write(response.content)
+                with open(destination, "wb") as f, requests.get(self.url) as response:
+                    response_length = len(response.content)
+                    response_supposed_length = int(response.headers.get("Content-Length", "0"))
+                    DownloadLog.log(self.version, response, response_length)
+                    f.write(response.content)
                 tries += 1
                 if tries >= 5:
                     raise Exceptions.DownloadManagerFailError(self, self.url)

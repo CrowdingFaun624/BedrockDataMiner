@@ -15,16 +15,6 @@ FlattenType = TypeVar("FlattenType")
 def flatten(matrix:Iterable[Iterable[FlattenType]]) -> Generator[FlattenType, None, None]:
     yield from (item for row in matrix for item in row)
 
-PairsType = TypeVar("PairsType")
-def pairs(_list:Iterable[PairsType]) -> Generator[tuple[PairsType,PairsType], None, None]:
-    previous_item = None
-    for index, item in enumerate(_list):
-        if index != 0:
-            if previous_item is None:
-                raise Exceptions.InvalidStateError(previous_item, "is None!")
-            yield (previous_item, item)
-        previous_item = item
-
 def compare(
         version1:Version.Version|None,
         version2:Version.Version,
