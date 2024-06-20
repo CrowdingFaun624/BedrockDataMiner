@@ -28,13 +28,9 @@ def cache_new_item(fsb_hash:str, data:dict[str,str]) -> None:
 
 def cache_read_item(fsb_hash:str) -> dict[str,str]|None:
     '''Returns a dict of wav file names and file hashes in `./_assests/file_storage/objects` or None if the fsb file is unfamiliar.'''
-    cache = fsb_cache.get()
-    if fsb_hash in cache:
-        return cache[fsb_hash]
-    else:
-        return None
+    return fsb_cache.get().get(fsb_hash, None)
 
-fsb_cache = WaitValue(FunctionCaller(read_cache))
+fsb_cache = WaitValue(read_cache)
 
 def __output_file_all_done(input_file_releases:dict[str,bool], file_path:Path) -> None:
     input_file_releases[file_path.name] = True
@@ -74,7 +70,10 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
         # return FilePromises
         temp_file.unlink()
         input_file_releases = {result_file_path.name: False for result_file_path in result_file_paths} # the all_done function will set its thing to True, and then delete the directory if all are True.
-        return {result_file_path.name: FileManager.FilePromise(FunctionCaller(open, [result_file_path, "rb"]), "%s %s" % (input_file.name, result_file_path.name), "b", FunctionCaller(__output_file_all_done, [input_file_releases, result_file_path])) for result_file_path in result_file_paths}
+        return {
+            result_file_path.name: FileManager.FilePromise(FunctionCaller(open, [result_file_path, "rb"]), "%s %s" % (input_file.name, result_file_path.name), "b", FunctionCaller(__output_file_all_done, [input_file_releases, result_file_path]))
+            for result_file_path in result_file_paths
+        }
 
     else: # If the fsb has been seen before, then it returns its wav files from FileStorage
         input_file.all_done()

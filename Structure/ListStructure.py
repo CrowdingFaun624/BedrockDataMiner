@@ -59,8 +59,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         if self.types is None:
             raise Exceptions.AttributeNoneError("types", self)
         if not isinstance(item, self.types):
-            item_types_string = ", ".join(type_key.__name__ for type_key in self.types)
-            return Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(item), "Item"), self.name, None, item)
+            return Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(item), "Item"), self.name, index, item)
 
     def check_all_types(self, data:list[d], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
@@ -72,8 +71,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 continue
 
             if self.structure is not None:
-                new_exceptions = self.structure.check_all_types(item, environment)
-                output.extend(exception.add(self.name, index) for exception in new_exceptions)
+                output.extend(exception.add(self.name, index) for exception in self.structure.check_all_types(item, environment))
         return output
 
     def normalize(self, data:list[d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:

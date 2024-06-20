@@ -46,8 +46,7 @@ class PassthroughStructure(Structure.Structure[a]):
             output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(data), "Data"), self.name, None, data))
             return output
         if self.structure is not None:
-            new_exceptions = self.structure.check_all_types(data, environment)
-            output.extend(exception.add(self.name, None) for exception in new_exceptions)
+            output.extend(exception.add(self.name, None) for exception in self.structure.check_all_types(data, environment))
         return output
 
     def normalize(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[None, list[Trace.ErrorTrace]]:

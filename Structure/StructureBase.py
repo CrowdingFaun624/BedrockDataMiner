@@ -200,8 +200,7 @@ class StructureBase():
         :traces: The ErrorTraces to print.
         '''
         for trace in traces:
-            trace.add(self.structure_name, None, force=True)
-            print(trace.finalize().stringify(), end="\n\n")
+            print(trace.add(self.structure_name, None, force=True).finalize().stringify(), end="\n\n")
         if len(traces) > 0:
             raise Exceptions.StructureError(self)
 
