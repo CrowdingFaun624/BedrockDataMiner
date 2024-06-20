@@ -1,4 +1,5 @@
-from typing import Any, Callable, Generator, Iterable, MutableMapping, TypeVar
+from itertools import chain, repeat
+from typing import Any, Callable, MutableMapping, TypeVar
 
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
@@ -10,17 +11,7 @@ import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.NbtTypes as NbtTypes
 
-b = TypeVar("b")
 d = TypeVar("d")
-
-def infinite_generator(item:d) -> Generator[d,None,None]:
-    '''A generator that returns the same value forever.'''
-    while True:
-        yield item
-
-def glue_iterables(iter1:Iterable[b], iter2:Iterable[d]) -> Generator[b|d,None,None]:
-    yield from iter1
-    yield from iter2
 
 class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
     """
@@ -126,9 +117,9 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         exceptions:list[Trace.ErrorTrace] = []
 
         # get occurrence counts
-        data1_iterator = zip(infinite_generator(D.DiffType.old), data1.items()) # since zip stops at the shortest iterator, this will not run forever.
-        data2_iterator = zip(infinite_generator(D.DiffType.new), data2.items())
-        for diff_type, (key, value) in glue_iterables(data1_iterator, data2_iterator):
+        data1_iterator = zip(repeat(D.DiffType.old), data1.items()) # since zip stops at the shortest iterator, this will not run forever.
+        data2_iterator = zip(repeat(D.DiffType.new), data2.items())
+        for diff_type, (key, value) in chain(data1_iterator, data2_iterator):
             if (check_type_exception := self.check_type(key, value)) is not None:
                 exceptions.append(check_type_exception)
             if key in key_occurrences:
