@@ -23,7 +23,7 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data, name)
 
-        self.subcomponents_field:FieldListField.FieldListField[GroupItemField.GroupItemField] = FieldListField.FieldListField([
+        self.subcomponents_field = FieldListField.FieldListField([
             GroupItemField.GroupItemField(type_str, subcomponent_str, ["subcomponents", index])
             for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())], ["subcomponents"])
         self.fields.extend([self.subcomponents_field])

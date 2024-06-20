@@ -40,8 +40,8 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
-        self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
-        self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
+        self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
+        self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "list"), ["this_type"])
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)

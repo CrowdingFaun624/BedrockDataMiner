@@ -38,7 +38,7 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
 
         self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
-        self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
+        self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field.verify_with(self.subcomponent_field)
         self.types_field.must_be(StructureComponent.NBT_TYPES)
         self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field])
