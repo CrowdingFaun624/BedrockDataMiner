@@ -5,6 +5,7 @@ import Component.Structure.Field.KeymapImportField as KeymapImportField
 import Component.Structure.Field.KeymapKeyField as KeymapKeyField
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.TagListField as TagListField
+import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.KeymapStructure as KeymapStructure
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -14,7 +15,6 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
 
     class_name_article = "a Keymap"
     class_name = "Keymap"
-    my_type = [dict]
     my_capabilities = Capabilities.Capabilities(has_importable_keys=True, has_keys=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
@@ -23,6 +23,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -43,10 +44,12 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(key_data, key, self.children_tags, ["keys", key], self) for key, key_data in data["keys"].items()], ["keys"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_for_all_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
+        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"])
         self.tags_for_all_field.add_to_tag_set(self.children_tags)
         self.keys.for_each(lambda key: key.add_tag_fields(self.tags_for_all_field))
         self.import_field.import_into(self.keys)
-        self.fields.extend([self.import_field, self.tags_for_all_field, self.keys, self.normalizer_field])
+        self.this_type_field.must_be(StructureComponent.MAPPING_TYPES)
+        self.fields.extend([self.import_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -67,3 +70,4 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             normalizer=self.normalizer_field.get_finals(),
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys}
         )
+        self.my_type = self.this_type_field.get_types()

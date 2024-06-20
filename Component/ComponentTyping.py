@@ -65,6 +65,7 @@ class DictTypedDict(TypedDict):
     normalizer: NotRequired[str|list[str]]
     type: NotRequired[Literal["Dict"]]
     print_all: NotRequired[bool]
+    this_type: NotRequired[str|list[str]]
     types: Required[str|list[str]]
     tags: NotRequired[str|list[str]]
 
@@ -83,6 +84,7 @@ class KeymapTypedDict(TypedDict):
     measure_length: NotRequired[bool]
     normalizer: NotRequired[str|list[str]]
     tags: NotRequired[str|list[str]]
+    this_type: NotRequired[str|list[str]]
     type: NotRequired[Literal["Keymap"]]
     keys: Required[dict[str,KeymapKeyTypedDict]]
 
@@ -97,6 +99,7 @@ class ListTypedDict(TypedDict):
     ordered: NotRequired[bool]
     print_all: NotRequired[bool]
     print_flat: NotRequired[bool]
+    this_type: NotRequired[str|list[str]]
     type: NotRequired[Literal["List"]]
     types: Required[str|list[str]]
     tags: NotRequired[str|list[str]]
@@ -170,7 +173,7 @@ class VolumeTypedDict(TypedDict):
     state_key: Required[str]
     subcomponent: Required[str|None]
     tags: NotRequired[str|list[str]]
-    this_type: Required[str]
+    this_type: NotRequired[str|list[str]]
     type: NotRequired[Literal["Volume"]]
     types: Required[str|list[str]]
 

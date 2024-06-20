@@ -10,7 +10,6 @@ import Component.Structure.GroupComponent as GroupComponent
 import Component.Structure.KeymapComponent as KeymapComponent
 import Component.Structure.ListComponent as ListComponent
 import Component.Structure.NbtBaseComponent as NbtBaseComponent
-import Component.Structure.NbtTagComponent as NbtTagComponent
 import Component.Structure.NormalizerComponent as NormalizerComponent
 import Component.Structure.TagComponent as TagComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
@@ -36,12 +35,6 @@ component_types:list[type[Component.Component]] = [
     LatestSlotComponent.LatestSlotComponent,
     ListComponent.ListComponent,
     NbtBaseComponent.NbtBaseComponent,
-    NbtTagComponent.NbtKeymapTagCompoundComponent,
-    NbtTagComponent.NbtTagByteArrayComponent,
-    NbtTagComponent.NbtTagCompoundComponent,
-    NbtTagComponent.NbtTagIntArrayComponent,
-    NbtTagComponent.NbtTagListComponent,
-    NbtTagComponent.NbtTagLongArrayComponent,
     NormalizerComponent.NormalizerComponent,
     RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,
     TagComponent.TagComponent,

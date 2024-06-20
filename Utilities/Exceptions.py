@@ -371,6 +371,49 @@ class ComponentParseError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class ComponentTypeContainmentError(ComponentException):
+    "A Component has a type that cannot be contained by its current container type."
+
+    def __init__(self, source_component:"Component.Component", container_type:type, containee_type:type, message:Optional[str]=None) -> None:
+        '''
+        :source_component: The Component with the disallowed type.
+        :container_type: The type of the container.
+        :containee_type: The type contained by the container type.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source_component, container_type, containee_type, message)
+        self.source_component = source_component
+        self.container_type = container_type
+        self.containee_type = containee_type
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Type \"%s\" of %r cannot be contained by type \"%s\"" % (self.containee_type, self.source_component, self.container_type)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ComponentTypeInvalidTypeError(ComponentException):
+    "A Component has a value in a TypeField that is not allowed."
+
+    def __init__(self, source_component:"Component.Component", observed_type:type, allowed_types:set[type], message:Optional[str]=None) -> None:
+        '''
+        :source_component: The Component with the disallowed type.
+        :observed_type: The type that is not allowed.
+        :allowed_types: The set of types that this TypeField must be.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source_component, observed_type, allowed_types, message)
+        self.type_field = source_component
+        self.observed_type = observed_type
+        self.allowed_types = allowed_types
+        self.message = message
+
+    def __str__(self) -> str:
+        type_list = ", ".join(type.__name__ for type in sorted(self.allowed_types, key=lambda value: value.__name__))
+        output = "%r has field with type %s, which is not one of [%s]" % (self.type_field, self.observed_type, type_list)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class ComponentTypeMissingError(ComponentException):
     "A Component is missing the type key and there is no type assumption."
 

@@ -14,7 +14,6 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
 
     class_name_article = "a Dict"
     class_name = "Dict"
-    my_type = [dict]
     my_capabilities = Capabilities.Capabilities(has_keys=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent or None", True, (str, dict, type(None))),
@@ -25,6 +24,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
@@ -41,11 +41,13 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
         self.comparison_move_function_field = OptionalFunctionField.OptionalFunctionField(data.get("comparison_move_function", None), ["comparison_move_function"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
+        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)
-        self.fields.extend([self.subcomponent_field, self.comparison_move_function_field, self.normalizer_field, self.types_field, self.tags_field])
+        self.this_type_field.must_be(StructureComponent.MAPPING_TYPES)
+        self.fields.extend([self.subcomponent_field, self.comparison_move_function_field, self.normalizer_field, self.this_type_field, self.types_field, self.tags_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -68,3 +70,4 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()
         )
+        self.my_type = self.this_type_field.get_types()

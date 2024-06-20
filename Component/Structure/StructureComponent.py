@@ -32,6 +32,34 @@ DEFAULT_TYPES:dict[str,type] = {
 }
 REQUIRES_SUBCOMPONENT_TYPES = set([dict, list, NbtTypes.TAG_Byte_Array, NbtTypes.TAG_List, NbtTypes.TAG_Compound, NbtTypes.TAG_Int_Array, NbtTypes.TAG_Long_Array])
 
+ARBITRARY_ITERABLE_TYPES = set((list, tuple, NbtTypes.TAG_List))
+"""Iterable that allows for arbitrary/any data inside."""
+ITERABLE_TYPES = set((list, tuple, NbtTypes.TAG_List, NbtTypes.TAG_Byte_Array, NbtTypes.TAG_Int_Array, NbtTypes.TAG_Long_Array))
+"""Any iterable."""
+MAPPING_TYPES = set((dict, NbtTypes.TAG_Compound))
+"""Any mapping."""
+NBT_TYPES = set((
+    NbtTypes.TAG_Byte,
+    NbtTypes.TAG_Byte_Array,
+    NbtTypes.TAG_Compound,
+    NbtTypes.TAG_Double,
+    NbtTypes.TAG_Float,
+    NbtTypes.TAG_Int,
+    NbtTypes.TAG_Int_Array,
+    NbtTypes.TAG_List,
+    NbtTypes.TAG_Long,
+    NbtTypes.TAG_Long_Array,
+    NbtTypes.TAG_Short,
+    NbtTypes.TAG_String
+))
+"""Any NBT Tag."""
+
+CONTAINMENT_TYPES:dict[type,set[type]] = {
+    NbtTypes.TAG_Byte_Array: {NbtTypes.TAG_Byte},
+    NbtTypes.TAG_Int_Array: {NbtTypes.TAG_Int},
+    NbtTypes.TAG_Long_Array: {NbtTypes.TAG_Long},
+}
+
 class StructureComponent(Component.Component[a]):
 
     class_name_article = "a StructureComponent"

@@ -12,7 +12,6 @@ ALLOWED_CAPABILITIES = set([
     "is_group",
     "is_latest_slot",
     "is_nbt_base",
-    "is_nbt_tag",
     "is_normalizer",
     "is_structure",
     "is_tag",

@@ -3,11 +3,9 @@ from typing import Literal
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
-import Component.Pattern as Pattern
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
-import Component.Structure.GroupComponent as GroupComponent
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.GroupStructure as GroupStructure
 import Structure.NbtBaseStructure as NbtBaseStructure
@@ -16,7 +14,6 @@ import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
-COMPONENT_PATTERN:Pattern.Pattern[StructureComponent.StructureComponent|GroupComponent.GroupComponent] = Pattern.Pattern([{"is_nbt_tag": True, "is_structure": True}, {"is_group": True}])
 
 class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.GroupStructure]):
 
@@ -39,10 +36,11 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
         self.endianness:Literal["big", "little"] = data["endianness"]
         self.final_structure:NbtBaseStructure.NbtBaseStructure|None=None
 
-        self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"], pattern=COMPONENT_PATTERN)
+        self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field.verify_with(self.subcomponent_field)
+        self.types_field.must_be(StructureComponent.NBT_TYPES)
         self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field])
 
     def get_subcomponents(self) -> list[Component.Component]:

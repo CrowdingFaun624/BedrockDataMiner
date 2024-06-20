@@ -13,7 +13,6 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
 
     class_name_article = "a List"
     class_name = "List"
-    my_type = [list]
     my_capabilities = Capabilities.Capabilities(is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent, or None", True, (str, dict, type(None))),
@@ -24,6 +23,7 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
@@ -42,9 +42,12 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
+        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "list"), ["this_type"])
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)
-        self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.tags_field])
+        self.this_type_field.must_be(StructureComponent.ITERABLE_TYPES)
+        self.this_type_field.contained_by(self.types_field)
+        self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.this_type_field, self.tags_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -67,3 +70,4 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()
         )
+        self.my_type = self.this_type_field.get_types()

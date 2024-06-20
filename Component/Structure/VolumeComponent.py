@@ -27,7 +27,7 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
         TypeVerifier.TypedDictKeyTypeVerifier("state_key", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
@@ -46,10 +46,11 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("subcomponent"), ["subcomponent"])
         self.normalizer_field:NormalizerListField.NormalizerListField = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
-        self.this_type_field = TypeField.TypeField(data["this_type"], ["this_type"])
+        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "list"), ["this_type"])
         self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)
+        self.this_type_field.must_be(StructureComponent.ARBITRARY_ITERABLE_TYPES)
         self.fields.extend([self.subcomponent_field, self.normalizer_field, self.types_field, self.this_type_field, self.tags_field])
 
     def get_subcomponents(self) -> list[Component.Component]:
