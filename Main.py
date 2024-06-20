@@ -72,20 +72,26 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
 def main() -> None:
     with user_input_lock:
         if user_input[0] is not None:
+            # import pprofile
+            # profile = pprofile.Profile()
+            # with profile():
+            #     PROGRAM_FUNCTIONS[user_input[0]]()
+            # profile.dump_stats("./time_report.txt")
+
+            # import cProfile
+            # from pathlib2 import Path
+            # import pstats
+            # profile = cProfile.Profile()
+            # profile.run("PROGRAM_FUNCTIONS[user_input[0]]()")
+            # with open(Path("./time_report.txt"), "wt") as stream:
+            #     stats = pstats.Stats(profile, stream=stream)
+            #     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
+
             PROGRAM_FUNCTIONS[user_input[0]]()
+    FileManager.clear_temp()
 
 if __name__ == "__main__":
     main()
-    # import cProfile
-    # from pathlib2 import Path
-    # import pstats
-    # profile = cProfile.Profile()
-    # profile.run("main()")
-    # with open(Path("./time_report.txt"), "wt") as stream:
-    #     stats = pstats.Stats(profile, stream=stream)
-    #     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
-
-    FileManager.clear_temp()
 
 pass
 # TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions
