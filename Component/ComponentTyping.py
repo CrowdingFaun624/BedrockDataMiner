@@ -9,105 +9,105 @@ if TYPE_CHECKING:
 
 ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotRequired[str], "component": Required[str]})
 
-ImportTypedDict = TypedDict("ImportTypedDict", {"from": Required[str], "components": Required[list[ImportedComponentTypedDict]]})
+ImportTypedDict = TypedDict("ImportTypedDict", {"components": Required[list[ImportedComponentTypedDict]], "from": Required[str]})
 
 class AccessorTypedDict(TypedDict):
-    type: NotRequired[Literal["Accessor"]]
     accessor_type: Required[str]
     arguments: Required[dict[str,Any]]
+    type: NotRequired[Literal["Accessor"]]
 
 class AccessorTypeTypedDict(TypedDict):
-    type: NotRequired[Literal["AccessorType"]]
     accessor_class: Required[str]
     manager_class: Required[str]
     parameters: Required["TypeVerifierImporter.TypedVerifierTypedDicts"]
+    type: NotRequired[Literal["AccessorType"]]
 
 class BaseTypedDict(TypedDict):
-    subcomponent: Required[str]
     imports: NotRequired[list[ImportTypedDict]]
     name: Required[str]
     normalizer: NotRequired[str|list[str]]
+    subcomponent: Required[str]
     type: NotRequired[Literal["Base"]]
 
 class CacheTypedDict(TypedDict):
+    cache_check_all_types: NotRequired[bool]
+    cache_compare: NotRequired[bool]
+    cache_compare_text: NotRequired[bool]
+    cache_get_tag_paths: NotRequired[bool]
+    cache_normalize: NotRequired[bool]
+    cache_print_text: NotRequired[bool]
+    subcomponent: Required[str]
     type: NotRequired[Literal["Cache"]]
     types: Required[str|list[str]]
-    subcomponent: Required[str]
-    cache_check_all_types: NotRequired[bool]
-    cache_normalize: NotRequired[bool]
-    cache_get_tag_paths: NotRequired[bool]
-    cache_compare_text: NotRequired[bool]
-    cache_print_text: NotRequired[bool]
-    cache_compare: NotRequired[bool]
 
 class DataMinerCollectionTypedDict(TypedDict):
-    type: NotRequired[Literal["DataMinerCollection"]]
+    dataminers: Required[list["DataMinerSettingsTypedDict"]]
+    disabled: NotRequired[bool]
     file_name: Required[str]
     structure: Required[str]
-    disabled: NotRequired[bool]
-    dataminers: Required[list["DataMinerSettingsTypedDict"]]
+    type: NotRequired[Literal["DataMinerCollection"]]
 
 class DataMinerSettingsTypedDict(TypedDict):
-    type: NotRequired[Literal["DataMinerSettings"]]
+    dependencies: NotRequired[list[str]]
+    files: NotRequired[list[str]]
+    name: Required[str|None]
     new: Required[str|None]
     old: Required[str|None]
-    name: Required[str|None]
-    files: NotRequired[list[str]]
-    dependencies: NotRequired[list[str]]
     parameters: NotRequired[dict[str,Any]]
+    type: NotRequired[Literal["DataMinerSettings"]]
 
 class DictTypedDict(TypedDict):
-    subcomponent: Required[str|None]
     comparison_move_function: NotRequired[str]
     detect_key_moves: NotRequired[bool]
     field: NotRequired[str]
     measure_length: NotRequired[bool]
     normalizer: NotRequired[str|list[str]]
-    type: NotRequired[Literal["Dict"]]
     print_all: NotRequired[bool]
-    this_type: NotRequired[str|list[str]]
-    types: Required[str|list[str]]
+    subcomponent: Required[str|None]
     tags: NotRequired[str|list[str]]
+    this_type: NotRequired[str|list[str]]
+    type: NotRequired[Literal["Dict"]]
+    types: Required[str|list[str]]
 
 class GroupTypedDict(TypedDict):
-    type: NotRequired[Literal["Group"]]
     subcomponents: Required[dict[str,str|None]]
+    type: NotRequired[Literal["Group"]]
 
 class KeymapKeyTypedDict(TypedDict):
-    type: Required[str|list[str]]
     subcomponent: NotRequired[Union[str,None,"StructureTypedDicts"]]
     tags: NotRequired[str|list[str]]
+    type: Required[str|list[str]]
 
 class KeymapTypedDict(TypedDict):
     field: NotRequired[str]
     imports: NotRequired[str|list[str]]
+    keys: Required[dict[str,KeymapKeyTypedDict]]
     measure_length: NotRequired[bool]
     normalizer: NotRequired[str|list[str]]
     tags: NotRequired[str|list[str]]
     this_type: NotRequired[str|list[str]]
     type: NotRequired[Literal["Keymap"]]
-    keys: Required[dict[str,KeymapKeyTypedDict]]
 
 class LatestSlotTypedDict(TypedDict):
     ...
 
 class ListTypedDict(TypedDict):
-    subcomponent: Required[str|None]
     field: NotRequired[str]
     measure_length: NotRequired[bool]
     normalizer: NotRequired[str|list[str]]
     ordered: NotRequired[bool]
     print_all: NotRequired[bool]
     print_flat: NotRequired[bool]
+    subcomponent: Required[str|None]
+    tags: NotRequired[str|list[str]]
     this_type: NotRequired[str|list[str]]
     type: NotRequired[Literal["List"]]
     types: Required[str|list[str]]
-    tags: NotRequired[str|list[str]]
 
 class NbtBaseTypedDict(TypedDict):
-    subcomponent: Required[str]
     endianness: Required[Literal["big", "little"]]
     normalizer: NotRequired[str|list[str]]
+    subcomponent: Required[str]
     type: NotRequired[Literal["NbtBase"]]
     types: Required[str|list[str]]
 
@@ -116,9 +116,9 @@ class NormalizerTypedDict(TypedDict):
     type: NotRequired[Literal["Normalizer"]]
 
 class RangeVersionTagAutoAssignerTypedDict(TypedDict):
-    type: NotRequired[Literal["RangeVersionTagAutoAssign"]]
-    oldest: Required[str|None]
     newest: Required[str|None]
+    oldest: Required[str|None]
+    type: NotRequired[Literal["RangeVersionTagAutoAssign"]]
 
 class TagTypedDict(TypedDict):
     type: NotRequired[Literal["Tag"]]
@@ -128,42 +128,42 @@ class TypeAliasTypedDict(TypedDict):
     types: Required[str|list[str]]
 
 class VersionFileTypedDict(TypedDict):
+    accessors: Required[list[AccessorTypedDict]]
     type: NotRequired[Literal["VersionFileType"]]
     version_file_type: Required[str]
-    accessors: Required[list[AccessorTypedDict]]
 
 class VersionFileTypeTypedDict(TypedDict):
     allowed_accessor_types: Required[list[str]]
+    auto_assign: NotRequired[AccessorTypedDict]
+    available_when_unreleased: Required[bool]
     install_location: Required[str]
     must_exist: Required[bool]
-    available_when_unreleased: Required[bool]
-    auto_assign: NotRequired[AccessorTypedDict]
 
 class VersionTagOrderTypedDict(TypedDict):
-    type: NotRequired[Literal["VersionTagOrder"]]
-    order: Required[list[list[str]]]
     allowed_children: Required[dict[str,list[str]]]
-    top_level_tag: Required[str]
-    tags_before_top_level_tag: Required[list[str]]
+    order: Required[list[list[str]]]
     tags_after_top_level_tag: Required[list[str]]
+    tags_before_top_level_tag: Required[list[str]]
+    top_level_tag: Required[str]
+    type: NotRequired[Literal["VersionTagOrder"]]
 
 class VersionTagTypedDict(TypedDict):
-    type: NotRequired[Literal["VersionTag"]]
-    is_development_tag: NotRequired[bool]
-    development_name: NotRequired[str]
-    is_fork_tag: NotRequired[bool]
-    is_order_tag: NotRequired[bool]
-    is_major_tag: NotRequired[bool]
-    latest_slot: NotRequired[str]
     auto_assign: NotRequired["AutoAssignerTypedDicts"]
+    development_name: NotRequired[str]
+    is_development_tag: NotRequired[bool]
+    is_fork_tag: NotRequired[bool]
+    is_major_tag: NotRequired[bool]
+    is_order_tag: NotRequired[bool]
+    latest_slot: NotRequired[str]
+    type: NotRequired[Literal["VersionTag"]]
 
 class VersionTypedDict(TypedDict):
-    type: NotRequired[Literal["Version"]]
-    id: Required[str]
     files: Required[dict[str,dict[str,Any]]]
+    id: Required[str]
     parent: Required[str|None]
-    time: Required[str|None]
     tags: Required[list[str]]
+    time: Required[str|None]
+    type: NotRequired[Literal["Version"]]
 
 class VolumeTypedDict(TypedDict):
     field: NotRequired[str]
@@ -205,5 +205,4 @@ ComponentTypedDicts:TypeAlias = Union[
 StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|NbtBaseTypedDict|ListTypedDict|VolumeTypedDict
 
 ComponentGroupFileType:TypeAlias = dict[str,ComponentTypedDicts]
-
 CreateComponentFunction:TypeAlias = Callable[[ComponentTypedDicts,"Component.Component",str|None],"Component.Component"]
