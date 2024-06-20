@@ -81,9 +81,8 @@ def run(
     for dataminer_collection in dataminer_order:
         try:
             dataminer = dataminer_collection.get_version(version)
-            for dependency in dataminer.dependencies:
-                if dependency in failure_dataminers_set:
-                    continue # no use trying to datamine this if any of its dependencies excepted.
+            if any(dependency in failure_dataminers_set for dependency in dataminer.dependencies):
+                continue # no use trying to datamine this if any of its dependencies excepted.
             dataminer_output = dataminer.store(dataminer_environment, dataminers_list)
             dataminer_environment.dependency_data.set_item(dataminer_collection.name, dataminer_output)
         except Exception as e:
