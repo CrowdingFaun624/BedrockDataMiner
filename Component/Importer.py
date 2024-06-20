@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, Any, Callable, cast
 
 from pathlib2 import Path
 
-import Component.ComponentTypes as ComponentTypes
 import Component.Accessor.AccessorTypeImporterEnvironment as AccessorTypeImporterEnvironment
 import Component.Component as Component
 import Component.ComponentFunctions as ComponentFunctions
+import Component.ComponentTypes as ComponentTypes
 import Component.ComponentTyping as ComponentTyping
 import Component.DataMiner.DataMinerImporterEnvironment as DataMinerImporterEnvironment
 import Component.ImporterEnvironment as ImporterEnvironment
