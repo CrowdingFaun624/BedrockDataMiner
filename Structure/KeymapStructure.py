@@ -1,4 +1,4 @@
-from typing import Iterable, MutableMapping, TypeVar
+from typing import Any, Iterable, MutableMapping, TypeVar
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
@@ -28,6 +28,7 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         self.keys:dict[str,Structure.Structure[d]|None]|None = None
         self.tags:dict[str,list[str]]|None = None
         self.key_types:dict[str,tuple[type,...]]|None = None
+        self.keys_with_normalizers:list[str]|None = None
 
     def link_substructures(
             self,
@@ -35,11 +36,13 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             key_types:dict[str,tuple[type,...]],
             normalizer:list[Normalizer.Normalizer],
             tags:dict[str,list[str]],
-            ) -> None:
+            keys_with_normalizers:list[str],
+        ) -> None:
         self.keys = keys
         self.key_types = key_types
         self.normalizer = normalizer
         self.tags = tags
+        self.keys_with_normalizers = keys_with_normalizers
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.keys is None:
@@ -78,6 +81,30 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 output.extend(new_tags)
                 exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
         return output, exceptions
+
+    def normalize(self, data:dict[str,d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+        if not self.children_has_normalizer: return None, []
+        if self.normalizer is None:
+            raise Exceptions.AttributeNoneError("normalizer", self)
+        if self.keys_with_normalizers is None:
+            raise Exceptions.AttributeNoneError("keys_with_normalizers", self)
+        for normalizer in self.normalizer:
+            try:
+                normalizer(data)
+            except Exception as e:
+                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+        exceptions:list[Trace.ErrorTrace] = []
+        for key in self.keys_with_normalizers:
+            if key not in data: continue
+            value = data[key]
+            structure, new_exceptions = self.get_structure(key, value)
+            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
+            if structure is not None and structure.children_has_normalizer:
+                normalizer_output, new_exceptions = structure.normalize(value, environment)
+                exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
+                if normalizer_output is not None:
+                    data[key] = normalizer_output
+        return None, exceptions
 
     def choose_structure(self, key:str, value:d) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
         if self.keys is None:

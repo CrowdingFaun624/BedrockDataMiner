@@ -18,7 +18,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
     """
     Abstract class of dict-using Structures.
     In subclasses, must provide methods `iter_structures`, `check_type`,
-    `get_structure`, `choose_structure`, and `get_tag_paths`.
+    `get_structure`, `choose_structure`, `get_tag_paths`, and `normalize`.
     """
 
     valid_types = (dict, NbtTypes.TAG_Compound)
@@ -80,26 +80,6 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             if structure is not None:
                 output.extend(exception.add(self.name, key) for exception in structure.check_all_types(value, environment))
         return output
-
-    def normalize(self, data:dict[str,d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
-        if not self.children_has_normalizer: return None, []
-        if self.normalizer is None:
-            raise Exceptions.AttributeNoneError("normalizer", self)
-        for normalizer in self.normalizer:
-            try:
-                normalizer(data)
-            except Exception as e:
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
-        exceptions:list[Trace.ErrorTrace] = []
-        for key, value in data.items():
-            structure, new_exceptions = self.get_structure(key, value)
-            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
-            if structure is not None and structure.children_has_normalizer:
-                normalizer_output, new_exceptions = structure.normalize(value, environment)
-                exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
-                if normalizer_output is not None:
-                    data[key] = normalizer_output
-        return None, exceptions
 
     def compare(
             self,

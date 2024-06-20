@@ -71,6 +71,26 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
         return output, exceptions
 
+    def normalize(self, data:dict[str,d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+        if not self.children_has_normalizer: return None, []
+        if self.normalizer is None:
+            raise Exceptions.AttributeNoneError("normalizer", self)
+        for normalizer in self.normalizer:
+            try:
+                normalizer(data)
+            except Exception as e:
+                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+        exceptions:list[Trace.ErrorTrace] = []
+        for key, value in data.items():
+            structure, new_exceptions = self.get_structure(key, value)
+            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
+            if structure is not None and structure.children_has_normalizer:
+                normalizer_output, new_exceptions = structure.normalize(value, environment)
+                exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
+                if normalizer_output is not None:
+                    data[key] = normalizer_output
+        return None, exceptions
+
     def get_structure(self, key:str, value:d) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         return self.structure, []
 
