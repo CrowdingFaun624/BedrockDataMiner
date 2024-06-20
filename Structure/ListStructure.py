@@ -175,7 +175,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     has_changes = True
             return output, has_changes, exceptions
 
-    def print_item(self, index:int, item:d, substructure_output:list[SU.Line], message:str="") -> list[SU.Line]:
+    def print_item(self, index:int, substructure_output:list[SU.Line], message:str="") -> list[SU.Line]:
         match len(substructure_output), self.ordered:
             case 0, True:
                 return [SU.Line("%s%s %i: empty") % (message, self.field, index)]
@@ -212,7 +212,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 else:
                     exceptions.append(Trace.ErrorTrace(Exceptions.StructureCannotPrintFlatError(), self.name, index, item))
             else:
-                output.extend(self.print_item(index, item, substructure_output))
+                output.extend(self.print_item(index, substructure_output))
         if self.print_flat:
             output.append(SU.Line("[" + ", ".join(items_str) + "]"))
         return output, exceptions
@@ -248,7 +248,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                 if self.structure is None:
                     if self.print_all:
                         substructure_output = [SU.Line(SU.stringify(item))]
-                        output.extend(self.print_item(index, item, substructure_output, message="Unchanged "))
+                        output.extend(self.print_item(index, substructure_output, message="Unchanged "))
                     pass # This means that it is not a Diff and does not contains Diffs, so there is no text to write.
                 else:
                     substructure_output, has_changes, new_exceptions = self.structure.compare_text(item, environment)
@@ -263,7 +263,7 @@ class ListStructure(Structure.Structure[Iterable[d]]):
                     elif self.print_all:
                         substructure_output, new_exceptions = self.structure.print_text(item, environment)
                         exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
-                        output.extend(self.print_item(index, item, substructure_output, message="Unchanged "))
+                        output.extend(self.print_item(index, substructure_output, message="Unchanged "))
         if self.measure_length and size_changed:
             output = [SU.Line("Total %s: %i (+%i, -%i)") % (self.field, current_length, addition_length, removal_length)] + output
         return output, any_changes, exceptions
