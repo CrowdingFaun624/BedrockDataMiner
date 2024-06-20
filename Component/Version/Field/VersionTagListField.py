@@ -31,12 +31,16 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
         :version_component: The VersionComponent to test for inclusion.
         '''
         already_names = {linked_component.name for linked_component in self.get_components()}
-        for version_tag_component in version_tag_components:
-            if version_tag_component.name in already_names:
-                continue
-            for auto_assigner_component in version_tag_component.auto_assigner_field.get_components():
-                if auto_assigner_component.contains_version(version_component):
-                    cast(list["VersionTagComponent.VersionTagComponent"], self.subcomponents).append(version_tag_component)
+        subcomponents = cast(list["VersionTagComponent.VersionTagComponent"], self.subcomponents)
+        subcomponents.extend(
+            version_tag_component
+            for version_tag_component in version_tag_components
+            if version_tag_component.name not in already_names
+            if any(
+                auto_assigner_component.contains_version(version_component)
+                for auto_assigner_component in version_tag_component.auto_assigner_field.get_components()
+            )
+        )
 
     def resolve_create_finals(self) -> None:
         if self.version_tag_components is None:

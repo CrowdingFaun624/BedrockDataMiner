@@ -17,7 +17,8 @@ import Version.Version as Version
 DATAMINER_SETTINGS_PATTERN:Pattern.Pattern[DataMinerSettingsComponent.DataMinerSettingsComponent] = Pattern.Pattern([{"is_dataminer_settings": True}])
 
 a = TypeVar("a")
-def glue_adjacent(iter:list[a]) -> Generator[tuple[a, a], None, None]:
+def batched(iter:list[a]) -> Generator[tuple[a, a], None, None]:
+    # patched isn't in itertools in 3.10
     if len(iter) == 0: return
     for i in range(0, len(iter) - 1, 2):
         yield iter[i], iter[i + 1]
@@ -70,7 +71,7 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
 
     def check(self) -> list[Exception]:
         exceptions = super().check()
-        dataminer_settings_components = list(self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.get_component()))
+        dataminer_settings_components = self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.get_component())
 
         # ending DataMinerSettings must have null versions on corresponding versions; middle ones cannot be null.
         used_versions:list[Version.Version] = []
@@ -86,7 +87,7 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
                     exceptions.append(Exceptions.DataMinerSettingsVersionRangeMissing(self, index, "new"))
                     continue
                 used_versions.append(new_version)
-            if index == len(dataminer_settings_components) - 1:
+            if index == len(self.dataminer_settings_field) - 1:
                 if old_version is not None:
                     exceptions.append(Exceptions.DataMinerSettingsVersionRangeExists(self, old_version, False))
                     continue
@@ -96,7 +97,7 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
                     continue
                 used_versions.append(old_version)
 
-        for new_version, old_version in glue_adjacent(used_versions):
+        for new_version, old_version in batched(used_versions):
             if new_version != old_version:
                 exceptions.append(Exceptions.DataMinerSettingsVersionRangeGap(self, new_version, old_version))
 

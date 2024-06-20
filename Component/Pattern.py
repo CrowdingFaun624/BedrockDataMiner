@@ -22,13 +22,13 @@ class Pattern(Generic[a]):
         self.matching_components:set[int]|None = None
 
     def matches_capabilities(self, capabilities:Capabilties.Capabilities) -> bool:
-        for self_capability_set in self.capabilities:
-            for capability in self_capability_set:
-                if capability not in capabilities.capabilities or self_capability_set[capability] != capabilities.capabilities[capability]:
-                    break
-            else: # if it never broke, then all capabilities match
-                return True
-        return False
+        return any(
+            all(
+                self_capability_set[capability] == capabilities.capabilities.get(capability, None)
+                for capability in self_capability_set
+            )
+            for self_capability_set in self.capabilities
+        )
 
     def __contains__(self, capabilities:Capabilties.Capabilities) -> bool:
         if self.matching_components is None:

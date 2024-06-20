@@ -83,7 +83,7 @@ class ComponentListField(Field.Field, Generic[a]):
         '''
         if self.subcomponents is None:
             raise Exceptions.FieldSequenceBreakError(self.set_field, self.map, self)
-        return (function(subcomponent) for subcomponent in self.subcomponents)
+        return map(function, self.subcomponents)
 
     def get_components(self) -> list[a]:
         '''

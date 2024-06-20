@@ -118,10 +118,10 @@ def create_all_components() -> tuple[dict[str,dict[str,Component.Component]], di
     return all_components, importer_environments
 
 def get_imports(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> dict[str,dict[str,dict[str,Component.Component]]]:
-    component_imports:dict[str,dict[str,dict[str,Component.Component]]] = {}
-    for name, components in all_components.items():
-        component_imports[name] = importer_environments[name].get_imports(components, all_components, name)
-    return component_imports
+    return {
+        name: importer_environments[name].get_imports(components, all_components, name)
+        for name, components in all_components.items()
+    }
 
 def set_components(all_components:dict[str,dict[str,Component.Component]], component_imports:dict[str,dict[str,dict[str,Component.Component]]], functions:dict[str,Callable]) -> None:
     for name, components in all_components.items():

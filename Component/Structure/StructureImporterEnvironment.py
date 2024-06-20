@@ -33,13 +33,14 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
         return output
 
     def get_output(self, components: dict[str,Component.Component], name: str) -> tuple[StructureBase.StructureBase,list[Component.Component]]:
-        base_components:dict[str,BaseComponent.BaseComponent] = {}
-        for component_name, component in components.items():
-            if isinstance(component, BaseComponent.BaseComponent):
-                base_components[component_name] = component
+        base_components:dict[str,BaseComponent.BaseComponent] = {
+            component_name: component
+            for component_name, component in components.items()
+            if isinstance(component, BaseComponent.BaseComponent)
+        }
         if len(base_components) != 1:
             raise Exceptions.BaseComponentCountError(name, len(base_components), "(names: [%s])" % (", ".join(base_components.keys()),))
-        base_component = list(base_components.values())[0]
+        base_component = next(iter(base_components.values()))
         unused_components = self.get_unused_components([base_component], components)
         return base_component.get_final(), unused_components
 

@@ -55,16 +55,17 @@ class ImporterEnvironment(Generic[a]):
         while len(unvisited_nodes) > 0:
             unvisited_node = unvisited_nodes.pop()
             if unvisited_node in visited_nodes: continue
-            for neighbor in unvisited_node.links_to_other_components:
-                if neighbor in visited_nodes:
-                    continue
-                else:
-                    unvisited_nodes.append(neighbor)
+            unvisited_nodes.extend(
+                neighbor
+                for neighbor in unvisited_node.links_to_other_components
+                if neighbor not in visited_nodes
+            )
             visited_nodes.add(unvisited_node)
-        output:list[Component.Component] = []
-        for component in components.values():
-            if component not in visited_nodes: output.append(component)
-        return output
+        return [
+            component
+            for component in components.values()
+            if component not in visited_nodes
+        ]
 
     def finalize(self, output:a, other_outputs:dict[str,Any]) -> None:
         '''

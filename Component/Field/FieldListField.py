@@ -42,7 +42,10 @@ class FieldListField(FieldContainer.FieldContainer[a]):
         Calls the given function on each Field in this Field, and returns the results in the same order.
         :function: The function to use.
         '''
-        return (function(field) for field in self.fields)
+        return map(function, self.fields)
 
     def __iter__(self) -> Iterator[a]:
         yield from self.fields
+
+    def __len__(self) -> int:
+        return len(self.fields)

@@ -1,3 +1,5 @@
+from collections import Counter
+from itertools import chain
 from typing import Any, Iterable
 
 from pathlib2 import Path
@@ -32,20 +34,24 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
         order_version_tags = [version_tag for version_tag in version_tags.values() if version_tag.is_order_tag]
         # all tags in output are guaranteed to be order tags because VersionTagOrderComponent made sure of it.
 
-        order_tags_used:dict[VersionTag.VersionTag,int] = {order_tag: 0 for order_tag in order_version_tags}
-        for order_set in output.get_order():
-            for order_tag in order_set:
-                order_tags_used[order_tag] += 1
-        for order_tag, times_used in order_tags_used.items():
-            if times_used == 0:
-                exceptions.append(Exceptions.NotAllOrderTagsUsedError(order_tag, "order"))
-            elif times_used > 1:
-                exceptions.append(Exceptions.DuplicateVersionTagOrderError(order_tag, "order"))
+        order_tags_used:Counter[VersionTag.VersionTag] = Counter(
+            order_tag
+            for order_set in output.get_order()
+            for order_tag in order_set
+        )
+        exceptions.extend(
+            Exceptions.NotAllOrderTagsUsedError(order_tag, "order") if times_used == 0
+            else Exceptions.DuplicateVersionTagOrderError(order_tag, "order")
+            for order_tag in order_version_tags
+            if (times_used := order_tags_used[order_tag]) != 1
+        )
 
         allowed_children = output.get_allowed_children()
-        for order_tag in order_version_tags:
-            if order_tag not in allowed_children:
-                exceptions.append(Exceptions.NotAllOrderTagsUsedError(order_tag, "allowed_children"))
+        exceptions.extend(
+            Exceptions.NotAllOrderTagsUsedError(order_tag, "allowed_children")
+            for order_tag in order_version_tags
+            if order_tag not in allowed_children
+        )
         for key_tag, children in allowed_children.items():
             already_children:set[VersionTag.VersionTag] = set()
             for child in children:
@@ -53,16 +59,12 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
                     exceptions.append(Exceptions.DuplicateVersionTagOrderError(child, ("allowed_children", key_tag.name)))
                 already_children.add(child)
 
-        top_level_tags_used:dict[VersionTag.VersionTag,int] = {order_tag: 0 for order_tag in order_version_tags}
-        top_level_tags_used[output.get_top_level_tag()] += 1
-        for tag_before in output.get_tags_before_top_level_tag():
-            top_level_tags_used[tag_before] += 1
-        for tag_after in output.get_tags_after_top_level_tag():
-            top_level_tags_used[tag_after] += 1
-        for tag, times_used in top_level_tags_used.items():
-            if times_used == 0:
-                exceptions.append(Exceptions.NotAllOrderTagsUsedError(tag, ("top_level_tag", "tags_before_top_level_tag", "tags_after_top_level_tag")))
-            elif times_used > 1:
-                exceptions.append(Exceptions.DuplicateVersionTagOrderError(tag, ("top_level_tag", "tags_before_top_level_tag", "tags_after_top_level_tag")))
+        top_level_tags_used:Counter[VersionTag.VersionTag] = Counter(chain([output.get_top_level_tag()], output.get_tags_before_top_level_tag(), output.get_tags_after_top_level_tag()))
+        exceptions.extend(
+            Exceptions.NotAllOrderTagsUsedError(tag, "order") if times_used == 0
+            else Exceptions.DuplicateVersionTagOrderError(tag, "order")
+            for tag in chain([output.get_top_level_tag()], output.get_tags_before_top_level_tag(), output.get_tags_after_top_level_tag())
+            if (times_used := top_level_tags_used[tag]) != 1
+        )
 
         return exceptions

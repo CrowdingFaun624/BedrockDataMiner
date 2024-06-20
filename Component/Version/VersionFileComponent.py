@@ -54,7 +54,9 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
     def check(self) -> list[Exception]:
         exceptions = super().check()
         allowed_accessors = set(self.version_file_type_field.get_component().allowed_accessor_types_field.get_components())
-        for accessor in self.accessors_field.get_components():
-            if accessor.accessor_type_field.get_component() not in allowed_accessors:
-                exceptions.append(Exceptions.VersionFileInvalidAccessorError(self.get_final(), accessor.name))
+        exceptions.extend(
+            Exceptions.VersionFileInvalidAccessorError(self.get_final(), accessor.name)
+            for accessor in self.accessors_field.get_components()
+            if accessor.accessor_type_field.get_component() not in allowed_accessors
+        )
         return exceptions

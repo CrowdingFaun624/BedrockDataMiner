@@ -1,3 +1,4 @@
+from collections import defaultdict
 from itertools import chain, repeat
 from typing import Any, Callable, MutableMapping, TypeVar
 
@@ -70,16 +71,14 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.valid_types, type(data), "Data"), self.name, None, data))
             return output
         for key, value in data.items():
-            check_type_output = self.check_type(key, value)
-            if check_type_output is not None:
+            if (check_type_output := self.check_type(key, value)) is not None:
                 output.append(check_type_output)
                 continue
 
             structure, new_exceptions = self.get_structure(key, value)
             output.extend(exception.add(self.name, key) for exception in new_exceptions)
             if structure is not None:
-                new_exceptions = structure.check_all_types(value, environment)
-                output.extend(exception.add(self.name, key) for exception in new_exceptions)
+                output.extend(exception.add(self.name, key) for exception in structure.check_all_types(value, environment))
         return output
 
     def normalize(self, data:dict[str,d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
@@ -113,7 +112,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             return data1, False, [] # type: ignore
 
         has_changes = False
-        key_occurrences:dict[str,list[D.DiffType]] = {}
+        key_occurrences:defaultdict[str,list[D.DiffType]] = defaultdict(lambda: [])
         exceptions:list[Trace.ErrorTrace] = []
 
         # get occurrence counts
@@ -122,10 +121,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         for diff_type, (key, value) in chain(data1_iterator, data2_iterator):
             if (check_type_exception := self.check_type(key, value)) is not None:
                 exceptions.append(check_type_exception)
-            if key in key_occurrences:
-                key_occurrences[key].append(diff_type)
-            else:
-                key_occurrences[key] = [diff_type]
+            key_occurrences[key].append(diff_type)
 
         data_for_add_remove_change_compare:dict[str|D.Diff[str,str],tuple[tuple[D.DiffType, d],...]] = {}
         # assemble key change dicts.

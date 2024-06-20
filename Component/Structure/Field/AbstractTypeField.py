@@ -25,25 +25,28 @@ class AbstractTypeField(Field.Field):
             subcomponent = self.verify_with_component.get_component()
             component_types = self.get_types()
             if subcomponent is None:
-                for value_type in component_types:
-                    if value_type in StructureComponent.REQUIRES_SUBCOMPONENT_TYPES:
-                        exceptions.append(Exceptions.ComponentTypeRequiresComponentError(source_component, value_type))
+                exceptions.extend(
+                    Exceptions.ComponentTypeRequiresComponentError(source_component, value_type)
+                    for value_type in component_types
+                    if value_type in StructureComponent.REQUIRES_SUBCOMPONENT_TYPES
+                )
             else:
                 if set(component_types) != set(subcomponent.my_type):
                     exceptions.append(Exceptions.ComponentMismatchedTypesError(source_component, sorted(component_types, key=lambda type: type.__name__), subcomponent, sorted(subcomponent.my_type, key=lambda type: type.__name__)))
         if self.must_be_types is not None:
-            for type in self.get_types():
-                if type not in self.must_be_types:
-                    exceptions.append(Exceptions.ComponentTypeInvalidTypeError(source_component, type, self.must_be_types))
+            exceptions.extend(
+                Exceptions.ComponentTypeInvalidTypeError(source_component, type, self.must_be_types)
+                for type in self.get_types()
+                if type not in self.must_be_types
+            )
         if self.contained_by_field is not None:
-            component_types = self.get_types()
-            for supercomponent_type in self.contained_by_field.get_types():
-                containment_types = StructureComponent.CONTAINMENT_TYPES.get(supercomponent_type)
-                if containment_types is None:
-                    continue # the container gives no hints as to what should be contained within it.
-                for component_type in component_types:
-                    if component_type not in containment_types:
-                        exceptions.append(Exceptions.ComponentTypeContainmentError(source_component, supercomponent_type, component_type))
+            exceptions.extend(
+                Exceptions.ComponentTypeContainmentError(source_component, supercomponent_type, component_type)
+                for component_type in self.get_types()
+                for supercomponent_type in self.contained_by_field.get_types()
+                if (containment_types := StructureComponent.CONTAINMENT_TYPES.get(supercomponent_type)) is not None
+                if component_type not in containment_types
+            )
         return exceptions
 
     def resolve_link_finals(self) -> None:

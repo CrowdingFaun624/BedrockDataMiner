@@ -35,8 +35,12 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         subcomponents, inline_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
         if self.import_into_keys is None:
             raise Exceptions.FieldSequenceBreakError(self.import_into, self.set_field, self)
-        for component in subcomponents:
-            self.import_into_keys.extend(key for key in iter(component.keys) if key.source_component is component)
+        self.import_into_keys.extend(
+            key
+            for component in subcomponents
+            for key in component.keys
+            if key.source_component is component
+        )
         return subcomponents, inline_components
 
     def import_into(self, keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]) -> None:

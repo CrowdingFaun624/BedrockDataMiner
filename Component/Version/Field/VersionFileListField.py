@@ -27,8 +27,11 @@ class VersionFileListField(ComponentListField.ComponentListField[VersionFileComp
     ) -> tuple[list[VersionFileComponent.VersionFileComponent],list[VersionFileComponent.VersionFileComponent]]:
         # adding the auto-assigning VersionFileTypes.
         version_file_type_components = cast(dict[str,"VersionFileTypeComponent.VersionFileTypeComponent"], imported_components["version_file_types"])
-        already_version_file_types = {version_file["version_file_type"] for version_file in cast(Sequence[ComponentTyping.VersionFileTypedDict], self.subcomponents_data)}
-        for version_file_type_component in version_file_type_components.values():
-            if version_file_type_component.auto_assign_dict is not None and version_file_type_component.name not in already_version_file_types:
-                cast(list[ComponentTyping.VersionFileTypedDict], self.subcomponents_data).append(version_file_type_component.auto_assign_dict)
+        subcomponents_data = cast(list[ComponentTyping.VersionFileTypedDict], self.subcomponents_data)
+        already_version_file_types = {version_file["version_file_type"] for version_file in subcomponents_data}
+        subcomponents_data.extend(
+            version_file_type_component.auto_assign_dict
+            for version_file_type_component in version_file_type_components.values()
+            if version_file_type_component.auto_assign_dict is not None and version_file_type_component.name not in already_version_file_types
+        )
         return super().set_field(source_component, components, imported_components, functions, create_component_function)

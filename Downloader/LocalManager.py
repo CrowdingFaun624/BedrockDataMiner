@@ -35,10 +35,10 @@ class LocalManager(Manager.Manager):
         if path is None:
             if self.file_list is None:
                 strip_string = self.directory_base.as_posix() + "/"
-                output:list[str] = []
-                for file_path in self.get_file_list(self.directory_base):
-                    output.append(file_path.replace(strip_string, "", 1))
-                self.file_list = output
+                self.file_list = [
+                    file_path.replace(strip_string, "", 1)
+                    for file_path in self.get_file_list(self.directory_base)
+                ]
             return self.file_list
         else:
             output:list[str] = []

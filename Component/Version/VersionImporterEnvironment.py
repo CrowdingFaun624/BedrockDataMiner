@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Any, Iterable, cast
 
 from pathlib2 import Path
@@ -8,9 +9,9 @@ import Component.Version.VersionComponent as VersionComponent
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Version.Version as Version
+import Version.VersionFileType as VersionFileType
 import Version.VersionTag.VersionTag as VersionTag
 import Version.VersionTag.VersionTagOrder as VersionTagOrder
-import Version.VersionFileType as VersionFileType
 
 
 class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,Version.Version]]):
@@ -28,13 +29,12 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
 
     def finalize(self, output:dict[str, Version.Version], other_outputs:dict[str,Any]) -> None:
         version_tags:dict[str,VersionTag.VersionTag] = other_outputs["version_tags"]
-        latest_slots:list[str] = other_outputs["latest_slots"]
-        latest_tags:dict[str,set[VersionTag.VersionTag]] = {latest_slot: set() for latest_slot in latest_slots}
+        latest_tags:defaultdict[str,set[VersionTag.VersionTag]] = defaultdict(lambda: set())
         for version_tag in version_tags.values():
             if version_tag.latest_slot is not None:
                 latest_tags[version_tag.latest_slot].add(version_tag)
 
-        for latest_slot, latest_slot_tags in latest_tags.items():
+        for latest_slot_tags in latest_tags.values():
             for version in reversed(output.values()):
                 if version.released and version.get_order_tag() in latest_slot_tags:
                     version.assign_latest()
@@ -78,15 +78,17 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                 else: already_seen_versions.add(version)
             else: raise Exceptions.InvalidStateError("A duplicate version exists, but unable to find it!")
 
-        for version in top_level_versions:
-            if TOP_LEVEL_TAG not in version.get_tags():
-                exceptions.append(Exceptions.VersionTopLevelError(version, TOP_LEVEL_TAG))
-        for version in output.values():
-            version_order_tag = version.get_order_tag()
-            for child in version.children:
-                child_order_tag = child.get_order_tag()
-                if child_order_tag not in ALLOWED_CHILDREN[version_order_tag]:
-                    exceptions.append(Exceptions.VersionChildError(version, version_order_tag, child, child_order_tag))
+        exceptions.extend(
+            Exceptions.VersionTopLevelError(version, TOP_LEVEL_TAG)
+            for version in top_level_versions
+            if TOP_LEVEL_TAG not in version.get_tags()
+        )
+        exceptions.extend(
+            Exceptions.VersionChildError(version, version.get_order_tag(), child, child.get_order_tag())
+            for version in output.values()
+            for child in version.children
+            if child.get_order_tag() not in ALLOWED_CHILDREN[version.get_order_tag()]
+        )
 
         def order_contains_at_index(ordering_tag:VersionTag.VersionTag) -> bool:
             order_at_index = ORDER[order_index]
@@ -126,13 +128,18 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
         # some VersionFileTypes require a VersionFile to exist on every Version.
         version_file_types = cast(dict[str,VersionFileType.VersionFileType], other_outputs["version_file_types"])
         required_version_file_types = {version_file_type_name: version_file_type for version_file_type_name, version_file_type in version_file_types.items() if version_file_type.must_exist}
+        exceptions.extend(
+            Exceptions.UnreleasedDownloadableVersionError(version, version_file)
+            for version in output.values()
+            if not version.released
+            for version_file in version.get_version_files()
+            if version_file.has_accessors() and not version_file.get_version_file_type().available_when_unreleased
+        )
         for version in output.values():
-            if not version.released:
-                for version_file in version.get_version_files():
-                    if version_file.has_accessors() and not version_file.get_version_file_type().available_when_unreleased:
-                        exceptions.append(Exceptions.UnreleasedDownloadableVersionError(version, version_file))
             version_files = version.get_version_files_dict()
-            for required_version_file_type_name, required_version_file_type in required_version_file_types.items():
-                if required_version_file_type_name not in version_files:
-                    exceptions.append(Exceptions.RequiredVersionFileTypeMissingError(required_version_file_type, version))
+            exceptions.extend(
+                Exceptions.RequiredVersionFileTypeMissingError(required_version_file_type, version)
+                for required_version_file_type_name, required_version_file_type in required_version_file_types.items()
+                if required_version_file_type_name not in version_files
+            )
         return exceptions

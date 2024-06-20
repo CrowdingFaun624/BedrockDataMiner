@@ -46,10 +46,11 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
         exceptions:list[Exception] = []
         for version in versions:
             all_dataminer_settings = {dataminer_collection: dataminer_collection.get_dataminer_settings(version) for dataminer_collection in dataminer_collections}
-            for dataminer_settings in all_dataminer_settings.values():
-                duplicated_datminer_settings = self.get_dependencies(dataminer_settings, all_dataminer_settings, set())
-                if len(duplicated_datminer_settings) > 0:
-                    exceptions.append(Exceptions.DataMinerSettingsImporterLoopError(dataminer_settings, duplicated_datminer_settings))
+            exceptions.extend(
+                Exceptions.DataMinerSettingsImporterLoopError(dataminer_settings, duplicated_datminer_settings)
+                for dataminer_settings in all_dataminer_settings.values()
+                if len(duplicated_datminer_settings := self.get_dependencies(dataminer_settings, all_dataminer_settings, set())) > 0
+            )
         return exceptions
 
     def check(self, output: dict[str,DataMinerCollection.DataMinerCollection], other_outputs:dict[str,Any]) -> list[Exception]:
