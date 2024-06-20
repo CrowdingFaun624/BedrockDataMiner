@@ -27,10 +27,6 @@ class DataMinerCollection():
     def link_subcomponents(self, structure:StructureBase.StructureBase, dataminer_settings:list["DataMinerSettings.DataMinerSettings"]) -> None:
         self.structure = structure
         self.dataminer_settings = dataminer_settings
-        for dataminer in self.dataminer_settings:
-            dataminer.file_name = self.file_name
-            dataminer.name = self.name
-            dataminer.structure = self.structure
 
     def get_all_dataminer_settings(self) -> list["DataMinerSettings.DataMinerSettings"]:
         if self.dataminer_settings is None:
@@ -123,11 +119,13 @@ class DataMinerCollection():
         if dataminer_settings.dataminer_class is DataMiner.NullDataMiner:
             return False
         version_files = set(version_file.get_version_file_type() for version_file in version.get_version_files() if version_file.has_accessors())
-        for required_version_file_type in dataminer_settings.get_version_file_types():
-            if required_version_file_type not in version_files:
-                return False # cannot datamine it if required files are inaccessible
-        else:
-            return all(dependency.supports_version(version) for dependency in dataminer_settings.get_dependencies())
+        return all(
+            required_version_file_type in version_files # cannot only datamine it if required files are accessible
+            for required_version_file_type in dataminer_settings.get_version_file_types()
+        ) and all(
+            dependency.supports_version(version)
+            for dependency in dataminer_settings.get_dependencies()
+        )
 
     def get_data_file_path(self, version:Version.Version) -> Path:
         return FileManager.get_version_data_path(version.get_version_directory(), self.file_name)
