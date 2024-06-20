@@ -74,8 +74,8 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
         super().link_finals()
         final_structure = self.get_final_structure()
         types = self.types_field.get_types()
-        self.my_type = types.copy()
-        self.my_type.append(NbtReader.NbtBytes)
+        self.my_type = set(types)
+        self.my_type.add(NbtReader.NbtBytes)
         final_structure.link_substructures(
             structure=self.subcomponent_field.get_final(),
             types=types,

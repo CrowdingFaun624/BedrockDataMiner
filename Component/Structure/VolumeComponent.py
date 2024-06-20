@@ -82,8 +82,8 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
     def link_finals(self) -> None:
         super().link_finals()
         final_structure = self.get_final_structure()
-        self.my_type = self.this_type_field.get_types()
-        self.my_type.append(tuple)
+        self.my_type = set(self.this_type_field.get_types())
+        self.my_type.add(tuple)
         final_structure.link_substructures(
             structure=self.subcomponent_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),

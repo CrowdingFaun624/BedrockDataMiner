@@ -47,7 +47,7 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
             valid_types = group_field.get_types()
             all_types.update(valid_types)
             substructures.update((valid_type, group_field.subcomponent_field.get_final()) for valid_type in valid_types)
-        self.my_type = list(all_types)
+        self.my_type = all_types
         self.get_final().link_substructures(
             substructures=substructures,
             types=tuple(self.my_type),

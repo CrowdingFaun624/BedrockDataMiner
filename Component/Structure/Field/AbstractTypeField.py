@@ -31,7 +31,7 @@ class AbstractTypeField(Field.Field):
                     if value_type in StructureComponent.REQUIRES_SUBCOMPONENT_TYPES
                 )
             else:
-                if set(component_types) != set(subcomponent.my_type):
+                if set(component_types) != subcomponent.my_type:
                     exceptions.append(Exceptions.ComponentMismatchedTypesError(source_component, sorted(component_types, key=lambda type: type.__name__), subcomponent, sorted(subcomponent.my_type, key=lambda type: type.__name__)))
         if self.must_be_types is not None:
             exceptions.extend(

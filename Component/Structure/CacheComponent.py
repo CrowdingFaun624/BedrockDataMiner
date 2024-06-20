@@ -57,7 +57,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
     def link_finals(self) -> None:
         super().link_finals()
         types = self.types_field.get_types()
-        self.my_type = types
+        self.my_type = set(types)
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
             types=types,

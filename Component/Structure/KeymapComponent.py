@@ -70,4 +70,4 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             normalizer=self.normalizer_field.get_finals(),
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys}
         )
-        self.my_type = self.this_type_field.get_types()
+        self.my_type = set(self.this_type_field.get_types())

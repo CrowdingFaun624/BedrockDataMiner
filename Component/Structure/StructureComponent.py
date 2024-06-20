@@ -64,4 +64,4 @@ class StructureComponent(Component.Component[a]):
 
     class_name_article = "a StructureComponent"
     class_name = "StructureComponent"
-    my_type:list[type]
+    my_type:set[type]

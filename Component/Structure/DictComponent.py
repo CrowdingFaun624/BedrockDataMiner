@@ -70,4 +70,4 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()
         )
-        self.my_type = self.this_type_field.get_types()
+        self.my_type = set(self.this_type_field.get_types())
