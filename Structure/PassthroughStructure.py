@@ -1,4 +1,4 @@
-from typing import Iterable, TypeVar
+from typing import Any, Iterable, TypeVar
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -49,7 +49,7 @@ class PassthroughStructure(Structure.Structure[a]):
             output.extend(exception.add(self.name, None) for exception in self.structure.check_all_types(data, environment))
         return output
 
-    def normalize(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[None, list[Trace.ErrorTrace]]:
+    def normalize(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None, list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
@@ -64,7 +64,7 @@ class PassthroughStructure(Structure.Structure[a]):
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
             if normalize_output is not None:
                 data = normalize_output
-        return None, exceptions
+        return data, exceptions
 
     def get_tag_paths(self, data:a, tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
