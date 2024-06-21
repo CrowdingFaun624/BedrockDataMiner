@@ -26,7 +26,7 @@ class NbtBytes():
         elif data_hash is None and value is None:
             raise Exceptions.NbtBytesInvalidArgumentsError(self)
 
-    def open(self) -> bytes:
+    def read(self) -> bytes:
         if self.value is None:
             self.value = FileStorageManager.read_archived(self.hash, "b")
         return self.value
