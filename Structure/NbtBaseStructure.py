@@ -21,7 +21,7 @@ class NbtBaseStructure(PassthroughStructure.PassthroughStructure[NbtTypes.TAG]):
 
     def normalize(self, data: NbtReader.NbtBytes, environment:StructureEnvironment.StructureEnvironment) -> tuple[NbtTypes.TAG|None, list[Trace.ErrorTrace]]:
         try:
-            data_parsed = NbtReader.unpack_bytes(data.open(), gzipped=False, endianness=self.endianness)[1]
+            data_parsed = NbtReader.unpack_bytes(data.read(), gzipped=False, endianness=self.endianness)[1]
         except Exception as e:
             return None, [Trace.ErrorTrace(e, self.name, None, data)]
         new_output, exceptions = super().normalize(data_parsed, environment)
