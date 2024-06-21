@@ -160,9 +160,9 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
         size_changed = False
         for index, item in enumerate(data):
 
+            item_key = self.get_compare_text_key_str(index)
             if isinstance(item, D.Diff):
                 any_changes = True
-                item_key = self.get_compare_text_key_str(index)
                 size_changed = True
 
                 match item.change_type:
@@ -188,7 +188,7 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
                     exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
                     if has_changes:
                         any_changes = True
-                        output.append(SU.Line("Changed %s%s:") % (self.field, index, item_key))
+                        output.append(SU.Line("Changed %s%s:") % (self.field, self.get_item_key(index)))
                         output.extend(line.indent() for line in substructure_output)
                     elif self.print_all:
                         substructure_output, new_exceptions = self.structure.print_text(item, environment)
