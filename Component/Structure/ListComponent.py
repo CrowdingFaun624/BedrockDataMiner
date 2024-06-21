@@ -5,11 +5,13 @@ import Component.Structure.Field.OptionalStructureComponentField as OptionalStru
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
+import Structure.AbstractIterableStructure as AbstractIterableStructure
 import Structure.ListStructure as ListStructure
+import Structure.SetStructure as SetStructure
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStructure]):
+class ListComponent(StructureComponent.StructureComponent[AbstractIterableStructure.AbstractIterableStructure]):
 
     class_name_article = "a List"
     class_name = "List"
@@ -51,13 +53,13 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = ListStructure.ListStructure(
+        iterable_class = ListStructure.ListStructure if self.ordered else SetStructure.SetStructure
+        self.final = iterable_class(
             name=self.name,
             field=self.field,
             print_flat=self.print_flat,
             print_all=self.print_all,
             measure_length=self.measure_length,
-            ordered=self.ordered,
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
