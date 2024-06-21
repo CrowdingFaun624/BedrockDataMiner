@@ -45,3 +45,6 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
 
     def get_item_key(self, index: int) -> str:
         return ""
+
+    def get_compare_text_key_str(self, index:int) -> str|int|None:
+        return None

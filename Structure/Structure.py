@@ -56,7 +56,6 @@ class Structure(Generic[a]):
         :environment: The StructureEnvironment to use.
         :post_message: A string to put after the field.
         '''
-        if key_str == "": key_str = None
         exceptions:list[Trace.ErrorTrace] = []
         if printer is None:
             stringified_data = SU.stringify(data)
@@ -107,7 +106,6 @@ class Structure(Generic[a]):
         :environment: The StructureEnvironment to use.
         :post_message: A string to put after the field.
         '''
-        if key_str == "": key_str = None
         if printers is None:
             printer1 = None
             printer2 = None

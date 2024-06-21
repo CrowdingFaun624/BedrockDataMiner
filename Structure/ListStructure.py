@@ -63,3 +63,6 @@ class ListStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
 
     def get_item_key(self, index:int) -> str:
         return " %i" % (index,)
+
+    def get_compare_text_key_str(self, index:int) -> str|int|None:
+        return index

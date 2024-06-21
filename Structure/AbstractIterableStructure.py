@@ -115,6 +115,9 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
     def get_item_key(self, index:int) -> str:
         ...
 
+    def get_compare_text_key_str(self, index:int) -> str|int|None:
+        ...
+
     def print_item(self, index:int, substructure_output:list[SU.Line], message:str="") -> list[SU.Line]:
         substructure_output_length = len(substructure_output)
         item_key = self.get_item_key(index)
@@ -159,7 +162,7 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
 
             if isinstance(item, D.Diff):
                 any_changes = True
-                item_key = self.get_item_key(index)
+                item_key = self.get_compare_text_key_str(index)
                 size_changed = True
 
                 match item.change_type:
