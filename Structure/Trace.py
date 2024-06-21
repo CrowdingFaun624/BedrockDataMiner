@@ -37,6 +37,16 @@ class ErrorTrace():
             self.already_added_names.add(current_pos_name)
         return self
 
+    def copy(self) -> Self:
+        '''
+        Copies this ErrorTrace.
+        '''
+        output = type(self)(self.exception, None, None, self.data)
+        output.is_final = self.is_final
+        output.trace = self.trace.copy()
+        output.already_added_names = self.already_added_names
+        return output
+
     def finalize(self) -> Self:
         """
         Prevents any more Structures from being added to this ErrorTrace.

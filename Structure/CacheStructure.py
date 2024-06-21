@@ -179,29 +179,29 @@ class CacheItem(Generic[d]):
     def get_check_all_types_data(self) -> list[Trace.ErrorTrace]:
         if self.check_all_types_data is None:
             raise Exceptions.AttributeNoneError("check_all_types_data", self)
-        return self.check_all_types_data
+        return [trace.copy() for trace in self.check_all_types_data]
 
     def set_check_all_types(self, data:list[Trace.ErrorTrace]) -> None:
         self.check_all_types = True
-        self.check_all_types_data = data
+        self.check_all_types_data = [trace.copy() for trace in data]
 
     def get_normalize_data(self) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if self.normalize_data is None:
             raise Exceptions.AttributeNoneError("normalize_data", self)
-        return self.normalize_data
+        return self.normalize_data[0], [trace.copy() for trace in self.normalize_data[1]]
 
     def set_normalize(self, data:tuple[Any|None,list[Trace.ErrorTrace]]) -> None:
         self.normalize = True
-        self.normalize_data = data
+        self.normalize_data = (data[0], [trace.copy() for trace in data[1]])
 
     def get_get_tag_paths_data(self) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
         if self.get_tag_paths_data is None:
             raise Exceptions.AttributeNoneError("get_tag_paths_data", self)
-        return self.get_tag_paths_data
+        return self.get_tag_paths_data[0], [trace.copy() for trace in self.get_tag_paths_data[1]]
 
     def set_get_tag_paths(self, data:tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]) -> None:
         self.get_tag_paths = True
-        self.get_tag_paths_data = data
+        self.get_tag_paths_data = (data[0], [trace.copy() for trace in data[1]])
 
     def get_compare_text_data(self) -> tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]:
         if self.compare_text_data is None:
@@ -210,11 +210,11 @@ class CacheItem(Generic[d]):
             raise Exceptions.AttributeNoneError("compare_text_indents", self)
         for line, indents in zip(self.compare_text_data[0], self.compare_text_indents):
             line.set_indent(indents)
-        return self.compare_text_data
+        return self.compare_text_data[0], self.compare_text_data[1], [trace.copy() for trace in self.compare_text_data[2]]
 
     def set_compare_text(self, data:tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]) -> None:
         self.compare_text = True
-        self.compare_text_data = data
+        self.compare_text_data = (data[0], data[1], [trace.copy() for trace in data[2]])
         self.compare_text_indents = [line.indents for line in data[0]]
 
     def get_print_text_data(self) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
@@ -224,21 +224,21 @@ class CacheItem(Generic[d]):
             raise Exceptions.AttributeNoneError("print_text_indents", self)
         for line, indents in zip(self.print_text_data[0], self.print_text_indents):
             line.set_indent(indents)
-        return self.print_text_data
+        return self.print_text_data[0], [trace.copy() for trace in self.print_text_data[1]]
 
     def set_print_text(self, data:tuple[list[SU.Line], list[Trace.ErrorTrace]]) -> None:
         self.print_text = True
-        self.print_text_data = data
+        self.print_text_data = (data[0], [trace.copy() for trace in data[1]])
         self.print_text_indents = [line.indents for line in data[0]]
 
     def get_compare_data(self) -> tuple[d, bool, list[Trace.ErrorTrace]]:
         if self.compare_data is None:
             raise Exceptions.AttributeNoneError("compare_data", self)
-        return self.compare_data
+        return self.compare_data[0], self.compare_data[1], [trace.copy() for trace in self.compare_data[2]]
 
     def set_compare(self, data:tuple[d, bool, list[Trace.ErrorTrace]]) -> None:
         self.compare = True
-        self.compare_data = data
+        self.compare_data = (data[0], data[1], [trace.copy() for trace in data[2]])
 
 def hash_data(data:Any) -> int:
     '''
