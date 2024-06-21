@@ -74,7 +74,7 @@ class Component(Generic[a]):
             component.parents.append(self)
 
     def verify_arguments(self, data:Mapping[str,Any], name:str) -> None:
-        self.type_verifier.base_verify(data, ["%s \"%s\"" % (self.class_name, name), self.component_group])
+        self.type_verifier.base_verify(data, [repr(self)])
 
     def set_component(self, components:dict[str,"Component"], imported_components:dict[str,dict[str,"Component"]], functions:dict[str,Callable], create_component_function:ComponentTyping.CreateComponentFunction) -> None:
         '''Links this Component to other Components'''
