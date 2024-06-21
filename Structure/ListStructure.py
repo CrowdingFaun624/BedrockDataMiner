@@ -13,6 +13,9 @@ import Utilities.Nbt.NbtTypes as NbtTypes
 d = TypeVar("d")
 
 class ListStructure(Structure.Structure[Iterable[d]]):
+    """
+    Ordered data structure.
+    """
 
     valid_types = (list, NbtTypes.TAG_List, NbtTypes.TAG_Byte_Array, NbtTypes.TAG_Int_Array, NbtTypes.TAG_Long_Array)
 
@@ -64,6 +67,9 @@ class ListStructure(Structure.Structure[Iterable[d]]):
     def check_all_types(self, data:list[d], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[Trace.ErrorTrace] = []
+        if not isinstance(data, self.valid_types):
+            output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.valid_types, type(data), "Data"), self.name, None, data))
+            return output
         for index, item in enumerate(data):
             check_type_output = self.check_type(index, item)
             if check_type_output is not None:
@@ -198,8 +204,6 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         output:list[SU.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         items_str:list[str] = [] # print_flat only
-        if not isinstance(data, self.valid_types):
-            return [], [Trace.ErrorTrace(Exceptions.StructureTypeError(self.valid_types, type(data), "Data"), self.name, None, data)]
         for index, item in enumerate(data):
             if self.structure is None:
                 substructure_output = [SU.Line(SU.stringify(item))]
@@ -221,8 +225,6 @@ class ListStructure(Structure.Structure[Iterable[d]]):
         output:list[SU.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         any_changes = False
-        if not isinstance(data, self.valid_types):
-            return [], False, [Trace.ErrorTrace(Exceptions.StructureTypeError(self.valid_types, type(data), "Data"), self.name, None, data)]
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
         for index, item in enumerate(data):

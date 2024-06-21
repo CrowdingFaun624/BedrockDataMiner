@@ -9,13 +9,10 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
-import Utilities.Nbt.NbtTypes as NbtTypes
 
 d = TypeVar("d")
 
 class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
-
-    valid_types = (dict, NbtTypes.TAG_Compound)
 
     def __init__(
             self,
