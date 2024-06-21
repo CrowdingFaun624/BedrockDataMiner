@@ -16,7 +16,7 @@ class TagComponent(Component.Component[str]):
 
     def __init__(self, data: ComponentTyping.TagTypedDict, name: str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data, name)
+        self.verify_arguments(data)
 
         self.final:str|None = None
 

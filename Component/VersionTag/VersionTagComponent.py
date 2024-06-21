@@ -36,7 +36,7 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
 
     def __init__(self, data: ComponentTyping.VersionTagTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data, name)
+        self.verify_arguments(data)
 
         self.is_development_tag = data.get("is_development_tag", False)
         self.development_name = data.get("development_name", "dev")

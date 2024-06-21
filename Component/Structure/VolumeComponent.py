@@ -34,7 +34,7 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
 
     def __init__(self, data:ComponentTyping.VolumeTypedDict, name: str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data, name)
+        self.verify_arguments(data)
 
         self.field = data.get("field", "block")
         self.position_key = data["position_key"]

@@ -26,7 +26,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
 
     def __init__(self, data:ComponentTyping.CacheTypedDict, name: str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data, name)
+        self.verify_arguments(data)
 
         self.cache_check_all_types = data.get("cache_check_all_types", True)
         self.cache_normalize = data.get("cache_normalize", True)

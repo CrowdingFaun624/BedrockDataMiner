@@ -73,7 +73,7 @@ class Component(Generic[a]):
         for component in components:
             component.parents.append(self)
 
-    def verify_arguments(self, data:Mapping[str,Any], name:str) -> None:
+    def verify_arguments(self, data:Mapping[str,Any]) -> None:
         self.type_verifier.base_verify(data, [repr(self)])
 
     def set_component(self, components:dict[str,"Component"], imported_components:dict[str,dict[str,"Component"]], functions:dict[str,Callable], create_component_function:ComponentTyping.CreateComponentFunction) -> None:

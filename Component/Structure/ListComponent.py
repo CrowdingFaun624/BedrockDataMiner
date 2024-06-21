@@ -32,7 +32,7 @@ class ListComponent(StructureComponent.StructureComponent[AbstractIterableStruct
 
     def __init__(self, data:ComponentTyping.ListTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data, name)
+        self.verify_arguments(data)
 
         self.field = data.get("field", "item")
         self.measure_length = data.get("measure_length", False)

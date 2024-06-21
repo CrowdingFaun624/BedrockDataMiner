@@ -20,7 +20,7 @@ class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent.Versi
 
     def __init__(self, data: ComponentTyping.RangeVersionTagAutoAssignerTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data, name)
+        self.verify_arguments(data)
 
         self.version_range_field = VersionRangeField.VersionRangeField(data["oldest"], data["newest"], [])
         self.fields.extend([self.version_range_field])

@@ -34,7 +34,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
 
     def __init__(self, data:ComponentTyping.KeymapTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data, name)
+        self.verify_arguments(data)
 
         self.field = data.get("field", "field")
         self.measure_length = data.get("measure_length", False)

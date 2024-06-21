@@ -33,7 +33,7 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
 
     def __init__(self, data: ComponentTyping.VersionFileTypeTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data, name)
+        self.verify_arguments(data)
 
         self.install_location = data["install_location"]
         self.must_exist = data["must_exist"]
