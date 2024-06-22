@@ -1,15 +1,13 @@
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 import Structure.DataPath as DataPath
-import Structure.Difference as D
+import Structure.Hashing as Hashing
 import Structure.PassthroughStructure as PassthroughStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
-import Utilities.Nbt.NbtReader as NbtReader
-import Utilities.Nbt.NbtTypes as NbtTypes
 
 d = TypeVar("d")
 
@@ -56,7 +54,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.should_cache or not self.cache_check_all_types:
             return structure.check_all_types(data, environment)
-        data_hash = hash_data(data)
+        data_hash = Hashing.hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.check_all_types:
             return cache_item.get_check_all_types_data()
@@ -73,7 +71,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.should_cache or not self.cache_normalize:
             return structure.normalize(data, environment)
-        data_hash = hash_data(data)
+        data_hash = Hashing.hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.normalize:
             return cache_item.get_normalize_data()
@@ -90,7 +88,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.should_cache or not self.cache_get_tag_paths:
             return structure.get_tag_paths(data, tag, data_path, environment)
-        data_hash = hash_data(data)
+        data_hash = Hashing.hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.get_tag_paths:
             return cache_item.get_get_tag_paths_data()
@@ -107,7 +105,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.should_cache or not self.cache_compare_text:
             return structure.compare_text(data, environment)
-        data_hash = hash_data(data)
+        data_hash = Hashing.hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.compare_text:
             return cache_item.get_compare_text_data()
@@ -124,7 +122,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if environment.should_cache or not self.cache_print_text:
             return structure.print_text(data, environment)
-        data_hash = hash_data(data)
+        data_hash = Hashing.hash_data(data)
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.print_text:
             return cache_item.get_print_text_data()
@@ -141,7 +139,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if environment.should_cache or not self.cache_compare:
             return structure.compare(data1, data2, environment)
-        data_hash = hash((hash_data(data1), hash_data(data2)))
+        data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2)))
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.compare:
             return cache_item.get_compare_data()
@@ -239,53 +237,3 @@ class CacheItem(Generic[d]):
     def set_compare(self, data:tuple[d, bool, list[Trace.ErrorTrace]]) -> None:
         self.compare = True
         self.compare_data = (data[0], data[1], [trace.copy() for trace in data[2]])
-
-def hash_data(data:Any) -> int:
-    '''
-    Tries its best to hash anything, including mutable objects. Will throw an exception if it can't figure out how.
-    :data: The data to hash
-    '''
-    hash_function = hash_type_table.get(type(data))
-    if hash_function is not None:
-        return hash_function(data)
-    else:
-        raise Exceptions.CacheStructureHashError(data.__class__)
-
-class HashTableItem():
-
-    def __new__(cls, function:Callable[[d],int], type_form:type[d]) -> Callable[[d],int]:
-        return function
-
-hash_type_table:dict[type,Callable] = { # I will have type hinting no matter how weird
-    bool: HashTableItem(lambda data: hash(data), bool),
-    bytearray: HashTableItem(lambda data: hash(tuple(item for item in data)), bytearray),
-    bytes: HashTableItem(lambda data: hash(data), bytes),
-    complex: HashTableItem(lambda data: hash(data), complex),
-    D.Diff: HashTableItem(lambda data: hash((hash_data(data.old), hash_data(data.new))), D.Diff),
-    D.NoExist: HashTableItem(lambda data: hash(data), D.NoExist),
-    dict: HashTableItem(lambda data: hash(tuple((hash(key), hash_data(value)) for key, value in data.items())), dict),
-    float: HashTableItem(lambda data: hash(data), float),
-    frozenset: HashTableItem(lambda data: hash(tuple(item for item in data)), frozenset),
-    int: HashTableItem(lambda data: hash(data), int),
-    list: HashTableItem(lambda data: hash(tuple(hash_data(item) for item in data)), list),
-    memoryview: HashTableItem(lambda data: hash(data), memoryview),
-    NbtReader.NbtBytes: HashTableItem(lambda data: hash(data), NbtReader.NbtBytes),
-    NbtTypes.TAG_Byte: HashTableItem(lambda data: hash(data), NbtTypes.TAG_Byte),
-    NbtTypes.TAG_End: HashTableItem(lambda data: hash(data), NbtTypes.TAG_End),
-    NbtTypes.TAG_Short: HashTableItem(lambda data: hash(data), NbtTypes.TAG_Short),
-    NbtTypes.TAG_Int: HashTableItem(lambda data: hash(data), NbtTypes.TAG_Int),
-    NbtTypes.TAG_Long: HashTableItem(lambda data: hash(data), NbtTypes.TAG_Long),
-    NbtTypes.TAG_Float: HashTableItem(lambda data: hash(data), NbtTypes.TAG_Float),
-    NbtTypes.TAG_Double: HashTableItem(lambda data: hash(data), NbtTypes.TAG_Double),
-    NbtTypes.TAG_Byte_Array: HashTableItem(lambda data: hash(tuple(hash_data(item) for item in data)), NbtTypes.TAG_Byte_Array),
-    NbtTypes.TAG_String: HashTableItem(lambda data: hash(data), NbtTypes.TAG_String),
-    NbtTypes.TAG_List: HashTableItem(lambda data: hash(tuple(hash_data(item) for item in data)), NbtTypes.TAG_List),
-    NbtTypes.TAG_Compound: HashTableItem(lambda data: hash(tuple((hash(key), hash_data(value)) for key, value in data.items())), NbtTypes.TAG_Compound),
-    NbtTypes.TAG_Int_Array: HashTableItem(lambda data: hash(tuple(hash_data(item) for item in data)), NbtTypes.TAG_Int_Array),
-    NbtTypes.TAG_Long_Array: HashTableItem(lambda data: hash(tuple(hash_data(item) for item in data)), NbtTypes.TAG_Long_Array),
-    type(None): HashTableItem(lambda data: hash(data), type(None)),
-    range: HashTableItem(lambda data: hash(data), range),
-    set: HashTableItem(lambda data: hash(tuple(item for item in data)), set),
-    str: HashTableItem(lambda data: hash(data), str),
-    tuple: HashTableItem(lambda data: hash(tuple(hash_data(item) for item in data)), tuple),
-}
