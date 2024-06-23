@@ -7,10 +7,6 @@ if TYPE_CHECKING:
     import Component.Component as Component
     import Utilities.TypeVerifier.TypeVerifierImporter as TypeVerifierImporter
 
-ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotRequired[str], "component": Required[str]})
-
-ImportTypedDict = TypedDict("ImportTypedDict", {"components": Required[list[ImportedComponentTypedDict]], "from": Required[str]})
-
 class AccessorTypedDict(TypedDict):
     accessor_type: Required[str]
     arguments: Required[dict[str,Any]]
@@ -21,6 +17,10 @@ class AccessorTypeTypedDict(TypedDict):
     manager_class: Required[str]
     parameters: Required["TypeVerifierImporter.TypedVerifierTypedDicts"]
     type: NotRequired[Literal["AccessorType"]]
+
+ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotRequired[str], "component": Required[str]})
+
+ImportTypedDict = TypedDict("ImportTypedDict", {"components": Required[list[ImportedComponentTypedDict]], "from": Required[str]})
 
 class BaseTypedDict(TypedDict):
     imports: NotRequired[list[ImportTypedDict]]
