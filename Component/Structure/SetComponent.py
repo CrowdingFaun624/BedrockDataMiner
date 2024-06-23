@@ -5,14 +5,14 @@ import Component.Structure.Field.OptionalStructureComponentField as OptionalStru
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
-import Structure.ListStructure as ListStructure
+import Structure.SetStructure as SetStructure
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStructure]):
+class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructure]):
 
-    class_name_article = "a List"
-    class_name = "List"
+    class_name_article = "a Set"
+    class_name = "Set"
     my_capabilities = Capabilities.Capabilities(is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent, or None", True, (str, dict, type(None))),
@@ -49,7 +49,7 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = ListStructure.ListStructure(
+        self.final = SetStructure.SetStructure(
             name=self.name,
             field=self.field,
             print_flat=self.print_flat,
