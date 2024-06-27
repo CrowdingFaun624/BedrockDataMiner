@@ -20,8 +20,7 @@
         "field": "structure",
         "types": ["dict"],
         "measure_length": true,
-        "detect_key_moves": true,
-        "comparison_move_function": "structures_structure_move",
+        "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
@@ -32,8 +31,7 @@
             "function_name": "collapse_resource_packs_flat"
         },
         "measure_length": true,
-        "detect_key_moves": true,
-        "comparison_move_function": "structures_resource_pack_move",
+        "sort": "by_key",
         "subcomponent": "cache"
     },
     "cache": {
@@ -70,20 +68,22 @@
     "structure": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
+        "sort": "by_component_order",
         "keys": {
             "format_version": {"type": "TAG_Int"},
             "size": {"type": "TAG_List", "subcomponent": "vector_tag_int"},
-            "structure": {"type": "TAG_Compound", "subcomponent": "structure.structure"},
-            "structure_world_origin": {"type": "TAG_List", "subcomponent": "vector_tag_int"}
+            "structure_world_origin": {"type": "TAG_List", "subcomponent": "vector_tag_int"},
+            "structure": {"type": "TAG_Compound", "subcomponent": "structure.structure"}
         }
     },
     "structure.structure": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
+        "sort": "by_component_order",
         "keys": {
-            "block_indices": {"type": "TAG_List", "subcomponent": "block_indices"},
             "entities": {"type": "TAG_List", "subcomponent": "entities"},
-            "palette": {"type": "TAG_Compound", "subcomponent": "palette"}
+            "palette": {"type": "TAG_Compound", "subcomponent": "palette"},
+            "block_indices": {"type": "TAG_List", "subcomponent": "block_indices"}
         }
     },
     "item": {
@@ -109,7 +109,7 @@
         }
     },
     "item.tag.ench": {
-        "type": "List",
+        "type": "Set",
         "field": "enchantment",
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
@@ -150,6 +150,7 @@
     "entity": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
+        "sort": "by_key",
         "keys": {
             "Age": {"type": "TAG_Short"},
             "Air": {"type": "TAG_Short"},
@@ -283,7 +284,7 @@
         }
     },
     "entity.attributes.item.modifiers": {
-        "type": "List",
+        "type": "Set",
         "field": "modifier",
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
@@ -307,6 +308,7 @@
         "this_type": "TAG_List",
         "types": ["TAG_String"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "entity.internal_components": {
@@ -358,6 +360,7 @@
         "this_type": "TAG_List",
         "types": ["TAG_String"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "palette": {
@@ -395,6 +398,7 @@
     "block_states": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
+        "sort": "by_key",
         "keys": {
             "age": {"type": "TAG_Int"},
             "allow_underwater_bit": {"type": "TAG_Byte"},
@@ -492,6 +496,7 @@
         "this_type": "TAG_Compound",
         "types": ["TAG_Compound"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "palette.default.block_position_data.item"
     },
     "palette.default.block_position_data.item": {
@@ -534,6 +539,7 @@
     "block_entity_data": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
+        "sort": "by_key",
         "keys": {
             "animationMode": {"type": "TAG_Byte"},
             "animationSeconds": {"type": "TAG_Float"},
@@ -676,6 +682,7 @@
         "this_type": "TAG_Compound",
         "field": "key",
         "types": ["TAG_Int"],
+        "sort": "by_key",
         "measure_length": true,
         "subcomponent": null
     },

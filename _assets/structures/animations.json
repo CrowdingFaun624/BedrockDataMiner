@@ -12,6 +12,7 @@
         "type": "Dict",
         "field": "file",
         "types": ["dict"],
+        "sort": "by_key",
         "measure_length": true,
         "detect_key_moves": true,
         "subcomponent": "resource_packs"
@@ -22,6 +23,7 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
+        "sort": "by_key",
         "normalizer": {
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
@@ -33,10 +35,11 @@
         "normalizer": {
             "function_name": "animations_fix_old"
         },
+        "sort": "by_component_order",
         "keys": {
-            "animations": {"type": "dict", "subcomponent": "animations"},
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
-            "format_version": {"type": "str"}
+            "format_version": {"type": "str"},
+            "animations": {"type": "dict", "subcomponent": "animations"}
         }
     },
     "defined_in": {
@@ -50,6 +53,7 @@
         "type": "Dict",
         "field": "animation",
         "types": ["dict"],
+        "sort": "by_key",
         "measure_length": true,
         "subcomponent": "animation"
     },
@@ -77,6 +81,7 @@
     },
     "lerp": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
             "lerp_mode": {"type": "str"},
             "pre": {"type": "list", "subcomponent": "vector_special"},
@@ -96,6 +101,7 @@
                 "decimal": null,
                 "dict": {
                     "type": "Keymap",
+                    "sort": "by_component_order",
                     "keys": {
                         "x": {"type": "str"},
                         "y": {"type": "str"},
@@ -108,15 +114,16 @@
     },
     "animation": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
             "anim_time_update": {"type": "str"},
             "animation_length": {"type": "decimal"},
-            "bones": {"type": "dict", "subcomponent": "bones"},
             "loop": {"type": ["bool", "str"]},
             "override_previous_animation": {"type": "bool"},
+            "start_delay": {"type": "str"},
+            "bones": {"type": "dict", "subcomponent": "bones"},
             "particle_effects": {"type": "dict", "subcomponent": "particle_effects"},
-            "sound_effects": {"type": "dict", "subcomponent": "sound_effects"},
-            "start_delay": {"type": "str"}
+            "sound_effects": {"type": "dict", "subcomponent": "sound_effects"}
         }
     },
     "bones": {
@@ -124,10 +131,12 @@
         "field": "bone",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "bone"
     },
     "bone": {
         "type": "Keymap",
+        "sort": "by_key",
         "keys": {
             "relative_to": {"type": "dict", "subcomponent": "bone.relative_to"},
             "rotation": {"type": ["list", "dict"], "subcomponent": "timestamps_and_vectors_or_vector_or_lerp"},
@@ -156,6 +165,7 @@
         "types": ["dict"],
         "detect_key_moves": false,
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": {
             "type": "Keymap",
             "keys": {
@@ -170,6 +180,7 @@
         "types": ["dict"],
         "detect_key_moves": false,
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": {
             "type": "Keymap",
             "keys": {

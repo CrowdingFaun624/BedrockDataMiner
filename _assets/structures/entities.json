@@ -41,6 +41,7 @@
         "types": ["dict"],
         "detect_key_moves": false,
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
@@ -52,26 +53,29 @@
         "normalizer": {
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
+        "sort": "by_key",
         "subcomponent": "entity"
     },
     "entity": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
-            "definitions": {"type": "dict", "subcomponent": "definitions", "tags": ["outdated"]},
             "format_version": {"type": "str"},
+            "definitions": {"type": "dict", "subcomponent": "definitions", "tags": ["outdated"]},
             "minecraft:entity": {"type": "dict", "subcomponent": {
                 "type": "Keymap",
                 "normalizer": {
                     "function_name": "entities_fix_out_of_bounds_components"
                 },
+                "sort": "by_component_order",
                 "keys": {
+                    "format_version": {"type": ["decimal", "str"], "tags": ["outdated"]},
+                    "version": {"type": "decimal", "tags": ["outdated"]},
                     "description": {"type": "dict", "subcomponent": "description"},
                     "component_groups": {"type": "dict", "subcomponent": "component_groups"},
                     "components": {"type": "dict", "subcomponent": "components"},
-                    "events": {"type": "dict", "subcomponent": "events"},
-                    "format_version": {"type": ["decimal", "str"], "tags": ["outdated"]},
-                    "version": {"type": "decimal", "tags": ["outdated"]}
+                    "events": {"type": "dict", "subcomponent": "events"}
                 }
             }},
             "version": {"type": "decimal", "tags": ["outdated"]}
@@ -82,6 +86,8 @@
         "field": "behavior pack",
         "measure_length": true,
         "types": ["str"],
+        "print_all": true,
+        "sort": true,
         "subcomponent": null
     },
     "definitions": {
@@ -89,11 +95,14 @@
         "field": "definition",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "empty"
     },
     "description": {
         "type": "Keymap",
         "field": "description",
+        "sort": "by_key",
+        "detect_key_moves": true,
         "keys": {
             "identifier": {"type": "str"},
             "is_spawnable": {"type": "bool"},
@@ -124,10 +133,12 @@
         "field": "property",
         "measure_length": true,
         "types": ["dict"],
+        "sort": "by_key",
         "subcomponent": "property"
     },
     "property": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
             "type": {"type": "str"},
             "client_sync": {"type": "bool"},
@@ -140,6 +151,7 @@
         "field": "possible property",
         "measure_length": true,
         "types": ["str"],
+        "sort": true,
         "subcomponent": null
     },
     "events": {
@@ -147,6 +159,7 @@
         "field": "event",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "events_event"
     },
     "events_event": {
@@ -154,16 +167,17 @@
         "normalizer": {
             "function_name": "entities_fix_event_bug"
         },
+        "sort": "by_component_order",
         "keys": {
+            "trigger": {"type": "str"},
+            "weight": {"type": "int"},
             "add": {"type": "dict", "subcomponent": "component_groups_add_remove"},
             "emit_vibration": {"type": "dict", "subcomponent": "event:emit_vibration"},
             "filters": {"type": "dict", "subcomponent": "filter"},
             "randomize": {"type": "list", "subcomponent": "event:randomize"},
             "remove": {"type": "dict", "subcomponent": "component_groups_add_remove"},
             "sequence": {"type": "list", "subcomponent": "event:sequence"},
-            "set_property": {"type": "dict", "subcomponent": "event:set_property"},
-            "trigger": {"type": "str"},
-            "weight": {"type": "int"}
+            "set_property": {"type": "dict", "subcomponent": "event:set_property"}
         }
     },
     "component_groups_add_remove": {
@@ -180,6 +194,7 @@
         "field": "component group",
         "measure_length": true,
         "types": ["str"],
+        "sort": true,
         "subcomponent": null
     },
     "component_list": {
@@ -187,6 +202,7 @@
         "field": "component",
         "measure_length": true,
         "types": ["str"],
+        "sort": true,
         "subcomponent": null
     },
     "component_list_or_component": {
@@ -221,6 +237,7 @@
         "field": "property",
         "types": ["bool", "str"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": null
     },
     "component_groups": {
@@ -228,6 +245,7 @@
         "field": "component group",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "components"
     },
     "components": {
@@ -238,6 +256,7 @@
         },
         "measure_length": true,
         "tags": ["entity_component"],
+        "sort": "by_component_order",
         "keys": {
             "minecraft:absorption": {"type": "dict", "subcomponent": "component.absorption", "tags": ["outdated"]},
             "minecraft:addrider": {"type": "dict", "subcomponent": "component.addrider"},
@@ -643,6 +662,7 @@
         "field": "armor",
         "measure_length": true,
         "types": ["str"],
+        "sort": true,
         "subcomponent": null
     },
     "block_list": {
@@ -650,6 +670,7 @@
         "field": "block",
         "measure_length": true,
         "types": ["str"],
+        "sort": true,
         "subcomponent": null
     },
     "block_list_or_block": {
@@ -664,6 +685,7 @@
         "field": "damage source",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "empty": {
@@ -675,6 +697,7 @@
         "field": "entity",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "entity_list_or_entity": {
@@ -701,6 +724,7 @@
     "entity_types.item": {
         "type": "Keymap",
         "imports": ["component.spawn_entity:entities.item"],
+        "detect_key_moves": true,
         "keys": {
             "attack_interval": {"type": "int", "tags": ["outdated"]},
             "check_if_outnumbered": {"type": "bool"},
@@ -728,6 +752,7 @@
         "field": "environment",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "environment_list_or_environment": {
@@ -785,6 +810,7 @@
         "subcomponent": null,
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "field": "family"
     },
     "family_or_family_list": {
@@ -860,6 +886,7 @@
         "field": "item",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "item_list_or_item": {
@@ -874,6 +901,7 @@
         "field": "projectile",
         "measure_length": true,
         "types": ["str"],
+        "sort": true,
         "subcomponent": null
     },
     "range_decimal_or_decimal": {
@@ -887,6 +915,7 @@
     "range_dict_decimal": {
         "type": "Keymap",
         "print_all": true,
+        "sort": "by_component_order",
         "keys": {
             "range_max": {"type": "decimal"},
             "range_min": {"type": "decimal"}
@@ -895,6 +924,7 @@
     "range_dict_int": {
         "type": "Keymap",
         "print_all": true,
+        "sort": "by_component_order",
         "keys": {
             "range_max": {"type": "int"},
             "range_min": {"type": "int"}
@@ -983,6 +1013,7 @@
     },
     "component.ageable": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "drop_items": {"type": ["list", "str"], "subcomponent": "item_list_or_item"},
             "duration": {"type": "decimal"},
@@ -1027,6 +1058,7 @@
     },
     "component.ageable:feed_items.dict_item": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
             "item": {"type": "str"},
             "growth": {"type": "decimal"}
@@ -1070,7 +1102,7 @@
         }
     },
     "component.anger_level:on_increase_sounds": {
-        "type": "List",
+        "type": "Set",
         "field": "sound",
         "measure_length": true,
         "types": ["dict"],
@@ -1210,6 +1242,7 @@
     },
     "component.boostable:boost_items.item": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "damage": {"type": "int"},
             "item": {"type": "str"},
@@ -1234,6 +1267,7 @@
     },
     "component.breathable": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "breathe_blocks": {"type": "list", "subcomponent": "block_list"},
             "breathes_air": {"type": "bool"},
@@ -1256,6 +1290,7 @@
     },
     "component.breedable": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "allow_sitting": {"type": "bool"},
             "allowSitting": {"type": "bool", "tags": ["outdated"]},
@@ -1301,6 +1336,7 @@
     },
     "component.breedable:breeds_with.item": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "baby_type": {"type": "str"},
             "babyType": {"type": "str", "tags": ["outdated"]},
@@ -1340,10 +1376,12 @@
         "field": "attribute",
         "measure_length": true,
         "types": ["str"],
+        "sort": true,
         "subcomponent": null
     },
     "component.bribeable": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "bribe_cooldown": {"type": "decimal"},
             "bribe_items": {"type": ["list", "str"], "subcomponent": "item_list_or_item"},
@@ -1467,6 +1505,7 @@
     },
     "component.damage_over_time": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "damage_per_hurt": {"type": "int"},
             "damagePerHurt": {"type": "decimal", "tags": ["outdated"]},
@@ -1726,6 +1765,7 @@
     },
     "component.explode": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "allow_damage_underwater": {"type": "bool", "tags": ["outdated"]},
             "breaks_blocks": {"type": "bool"},
@@ -2046,6 +2086,7 @@
         "type": "Dict",
         "types": ["bool", "int", "str"],
         "field": "state",
+        "sort": "by_key",
         "subcomponent": null
     },
     "component.insomnia": {
@@ -2221,6 +2262,7 @@
     },
     "component.lookat": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "allow_invulnerable": {"type": "bool"},
             "filters": {"type": "dict", "subcomponent": "filter"},
@@ -2265,6 +2307,7 @@
         "field": "mob effect",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "component.movement": {
@@ -2342,6 +2385,7 @@
     },
     "component.nameable": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "allow_name_tag_renaming": {"type": "bool"},
             "allowNameTagRenaming": {"type": "bool", "tags": ["outdated"]},
@@ -2515,6 +2559,7 @@
     },
     "component.projectile": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "anchor": {"type": "int"},
             "angle_offset": {"type": "decimal"},
@@ -2611,6 +2656,7 @@
     },
     "component.projectiles:on_hit.catch_fire": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "fire_affected_by_griefing": {"type": "bool"},
             "fireAffectedByGriefing": {"type": "bool", "tags": ["outdated"]}
@@ -2618,6 +2664,7 @@
     },
     "component.projectile:on_hit.definition_event": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "affect_projectile": {"type": "bool"},
             "affectProjectile": {"type": "bool", "tags": ["outdated"]},
@@ -2661,6 +2708,7 @@
     },
     "component.projectile:on_hit.impact_damage": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "catch_fire": {"type": "bool"},
             "catchFire": {"type": "bool", "tags": ["outdated"]},
@@ -2751,6 +2799,7 @@
     },
     "component.projectile:on_hit.spawn_chance": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "first_spawn_chance": {"type": "int", "tags": ["not_in_documentation"]},
             "first_spawn_count": {"type": "int"},
@@ -2969,6 +3018,7 @@
     },
     "component.shooter": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "aux_val": {"type": "int"},
             "auxVal": {"type": "int", "tags": ["outdated"]},
@@ -3106,6 +3156,7 @@
         "subcomponent": null,
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "field": "effect"
     },
     "component.strength": {
@@ -3117,6 +3168,7 @@
     },
     "component.tameable": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "probability": {"type": "decimal"},
             "tame_event": {"type": "dict", "subcomponent": "event_target"},
@@ -3126,6 +3178,7 @@
     },
     "component.tamemount": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "attempt_temper_mod": {"type": "int"},
             "auto_reject_items": {"type": "list", "subcomponent": "component.tamemount:auto_reject_items"},
@@ -3163,6 +3216,7 @@
     },
     "component.tamemount:feed_items.item": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "item": {"type": "str"},
             "temper_mod": {"type": "int"},
@@ -3182,6 +3236,7 @@
     },
     "component.teleport": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "dark_teleport_chance": {"type": "decimal"},
             "light_teleport_chance": {"type": "decimal"},
@@ -3268,6 +3323,7 @@
         "types": ["str"],
         "field": "component group",
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "component.transformation:delay_group": {
@@ -3316,6 +3372,7 @@
         "measure_length": true,
         "types": ["str"],
         "subcomponent": null,
+        "sort": true,
         "field": "family"
     },
     "component.underwater_movement": {
@@ -3927,6 +3984,7 @@
     },
     "behavior.float_wander": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "float_duration": {"type": "range", "subcomponent": "range_group_decimal"},
             "must_reach": {"type": "bool"},
@@ -4149,6 +4207,7 @@
         "field": "angle",
         "types": ["decimal"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "behavior.jump_to_block": {
@@ -4534,6 +4593,7 @@
         "measure_length": true,
         "print_flat": true,
         "print_all": true,
+        "sort": true,
         "subcomponent": null
     },
     "behavior.move_towards_target": {
@@ -4825,6 +4885,7 @@
     },
     "behavior.random_fly": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "avoid_damage_blocks": {"type": "bool"},
             "can_land_on_trees": {"type": "bool"},
@@ -4928,6 +4989,7 @@
     },
     "behavior.random_stroll": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "interval": {"type": "int"},
             "priority": {"type": "int"},
@@ -4941,6 +5003,7 @@
     },
     "behavior.random_swim": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "avoid_surface": {"type": "bool"},
             "interval": {"type": "int"},
@@ -5240,6 +5303,7 @@
     },
     "behavior.sniff": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "cooldown_range": {"type": "range", "subcomponent": "range_group_decimal"},
             "duration": {"type": "decimal"},
@@ -5385,6 +5449,7 @@
     },
     "behavior.summon_entity": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "attacks": {"type": "list", "subcomponent": "behavior.summon_entity:summon_choices", "tags": ["outdated"]},
             "priority": {"type": "int"},
@@ -5400,6 +5465,7 @@
     },
     "behavior.summon_entity:summon_choices.item": {
         "type": "Keymap",
+        "detect_key_moves": true,
         "keys": {
             "attack_type": {"type": "str", "tags": ["outdated"]},
             "base_delay": {"type": "int", "tags": ["outdated"]},
@@ -5552,6 +5618,7 @@
         "types": ["str"],
         "field": "control flag",
         "measure_length": true,
+        "sort": true,
         "print_flat": true
     },
     "behavior.trade_intereset": {

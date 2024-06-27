@@ -17,6 +17,7 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
+        "sort": "by_key",
         "subcomponent": "resource_packs"
     },
     "resource_packs": {
@@ -29,6 +30,7 @@
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
         "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "sort": "by_key",
         "subcomponent": "material"
     },
     "material": {
@@ -36,10 +38,11 @@
         "normalizer": {
             "function_name": "materials_normalize_material"
         },
+        "sort": "by_component_order",
         "keys": {
+            "version": {"type": "str"},
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
-            "materials": {"type": "dict", "subcomponent": "material.materials"},
-            "version": {"type": "str"}
+            "materials": {"type": "dict", "subcomponent": "material.materials"}
         }
     },
     "defined_in": {
@@ -47,6 +50,7 @@
         "field": "resource pack",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "material.materials": {
@@ -54,6 +58,7 @@
         "field": "material",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "material.material"
     },
     "material.material": {
@@ -102,6 +107,7 @@
         "field": "definition",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "face": {
@@ -150,10 +156,11 @@
         "field": "statement",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "textures": {
-        "type": "List",
+        "type": "Set",
         "field": "texture",
         "types": ["dict"],
         "measure_length": true,

@@ -76,6 +76,7 @@
         "field": "particle",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "resource_packs"
     },
     "resource_packs": {
@@ -87,7 +88,7 @@
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
         "detect_key_moves": true,
-        "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "sort": "by_key",
         "subcomponent": "particle"
     },
     "particle": {
@@ -95,17 +96,19 @@
         "normalizer": {
             "function_name": "particles_normalize_old"
         },
+        "sort": "by_component_order",
         "keys": {
-            "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "particle_effect": {"type": "dict", "subcomponent": "particle_effect"}
         }
     },
     "defined_in": {
-        "type": "List",
+        "type": "Set",
         "field": "resource pack",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "particle_effect": {
@@ -125,6 +128,7 @@
         "field": "curve",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "curve"
     },
     "curve": {
@@ -147,6 +151,7 @@
     },
     "description": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
             "identifier": {"type": "str"},
             "basic_render_parameters": {"type": "dict", "subcomponent": "description.basic_render_parameters"}
@@ -164,6 +169,7 @@
         "field": "event",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "event"
     },
     "event": {
@@ -189,6 +195,7 @@
     "components": {
         "type": "Keymap",
         "measure_length": true,
+        "sort": "by_key",
         "keys": {
             "minecraft:emitter_initialization": {"type": "dict", "subcomponent": "component.emitter_initialization"},
             "minecraft:emitter_local_space": {"type": "dict", "subcomponent": "component.emitter_local_space"},
@@ -243,6 +250,7 @@
         "field": "distance",
         "types": ["list", "str"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "event_list_or_event"
     },
     "component.emitter_lifetime_events:timeline": {
@@ -250,6 +258,7 @@
         "field": "timestamp",
         "types": ["list", "str"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "event_list_or_event"
     },
     "component.emitter_lifetime_events:travel_distance_events": {
@@ -257,6 +266,7 @@
         "field": "distance",
         "types": ["list", "str"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "event_list_or_event"
     },
     "component.emitter_lifetime_expression": {
@@ -444,6 +454,7 @@
         "field": "value",
         "types": ["list", "str"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "color"
     },
     "component.particle_appearance_tinting:color.list": {
@@ -489,6 +500,7 @@
         "field": "timestamp",
         "types": ["list", "str"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "event_list_or_event"
     },
     "component.particle_lifetime_expression": {

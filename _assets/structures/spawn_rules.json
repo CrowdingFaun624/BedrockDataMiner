@@ -29,7 +29,7 @@
         }
     },
     "block_list": {
-        "type": "List",
+        "type": "Set",
         "field": "block",
         "types": ["dict", "str"],
         "measure_length": true,
@@ -79,7 +79,7 @@
         "field": "spawn rules",
         "types": ["dict"],
         "measure_length": true,
-        "detect_key_moves": true,
+        "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
@@ -90,15 +90,15 @@
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
         "measure_length": true,
-        "detect_key_moves": true,
-        "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "sort": "by_key",
         "subcomponent": "spawn_rules_item"
     },
     "spawn_rules_item": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
-            "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "minecraft:spawn_rules": {"type": "dict", "subcomponent": "minecraft:spawn_rules"}
         }
     },
@@ -107,24 +107,27 @@
         "field": "behavior pack",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "minecraft:spawn_rules": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
-            "conditions": {"type": "list", "subcomponent": "condition_sets"},
-            "description": {"type": "dict", "subcomponent": "description"}
+            "description": {"type": "dict", "subcomponent": "description"},
+            "conditions": {"type": "list", "subcomponent": "condition_sets"}
         }
     },
     "description": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
             "identifier": {"type": "str"},
             "population_control": {"type": "str"}
         }
     },
     "condition_sets": {
-        "type": "List",
+        "type": "Set",
         "field": "condition set",
         "types": ["dict"],
         "measure_length": true,
@@ -135,6 +138,7 @@
         "normalizer": {
             "function_name": "spawn_rules_normalize_herd"
         },
+        "sort": "by_key",
         "keys": {
             "minecraft:biome_filter": {"type": ["dict", "list"], "subcomponent": "filter_or_filter_list"},
             "minecraft:brightness_filter": {"type": "dict", "subcomponent": "condition.brightness_filter"},
@@ -232,7 +236,7 @@
         }
     },
     "condition.permute_type": {
-        "type": "List",
+        "type": "Set",
         "field": "permute type",
         "types": ["dict"],
         "measure_length": true,

@@ -26,6 +26,7 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
+        "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
@@ -37,11 +38,12 @@
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
         "detect_key_moves": true,
-        "comparison_move_function": "blocks_client_resource_pack_comparison_move_function",
+        "sort": "by_key",
         "subcomponent": "behavior_tree"
     },
     "behavior_tree": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "minecraft:behavior_tree": {"type": "dict", "subcomponent": {
@@ -73,14 +75,16 @@
         }
     },
     "root.sequence.children": {
-        "type": "List",
+        "type": "Set",
         "field": "child",
         "types": ["dict"],
         "measure_length": true,
+        "min_similarity_threshold": 0.3,
         "subcomponent": "root.sequence.children.item"
     },
     "root.sequence.children.item": {
         "type": "Keymap",
+        "sort": "by_key",
         "keys": {
             "minecraft:activate_tool": {"type": "dict", "subcomponent": "behavior.activate_tool"},
             "minecraft:attack": {"type": "dict", "subcomponent": "behavior.attack"},

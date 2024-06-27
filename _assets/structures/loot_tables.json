@@ -28,6 +28,7 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
+        "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
@@ -38,7 +39,7 @@
         "normalizer": {
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
-        "comparison_move_function": "loot_tables_behavior_pack_comparison_move_function",
+        "sort": "by_key",
         "subcomponent": "loot_table"
     },
     "empty": {
@@ -92,11 +93,12 @@
     },
     "loot_table": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
-            "pools": {"type": "list", "subcomponent": "pools"},
+            "type": {"type": "str"},
             "random_sequence": {"type": "str", "tags": ["outdated"]},
-            "type": {"type": "str"}
+            "pools": {"type": "list", "subcomponent": "pools"}
         }
     },
     "defined_in": {
@@ -104,6 +106,7 @@
         "field": "behavior pack",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "pools": {
@@ -160,6 +163,7 @@
         "type": "Keymap",
         "field": "function",
         "measure_length": true,
+        "sort": "by_key",
         "keys": {
             "enchant_book_for_trading": {"type": "dict", "subcomponent": "function.enchant_book_for_trading"},
             "enchant_random_gear": {"type": "dict", "subcomponent": "function.enchant_random_gear"},
@@ -412,6 +416,7 @@
     "conditions": {
         "type": "Keymap",
         "field": "condition",
+        "sort": "by_key",
         "keys": {
             "entity_killed": {"type": "dict", "subcomponent": "condition.entity_killed"},
             "entity_properties": {"type": "dict", "subcomponent": "condition.entity_properties"},

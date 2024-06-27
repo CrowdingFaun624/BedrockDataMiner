@@ -20,14 +20,16 @@
         "field": "section",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "section"
     },
     "section": {
         "type": "Keymap",
         "normalizer": ["normalize_disciplines", "normalize_titles"],
+        "sort": "by_component_order",
         "keys": {
-            "disciplines": {"type": "dict", "subcomponent": "disciplines"},
             "section": {"type": "str"},
+            "disciplines": {"type": "dict", "subcomponent": "disciplines"},
             "titles": {"type": "dict", "subcomponent": "titles"}
         }
     },
@@ -36,11 +38,13 @@
         "field": "discipline",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "discipline"
     },
     "discipline": {
         "type": "Keymap",
         "normalizer": "normalize_titles",
+        "sort": "by_component_order",
         "keys": {
             "discipline": {"type": "str"},
             "titles": {"type": "dict", "subcomponent": "titles"}
@@ -51,13 +55,15 @@
         "field": "title",
         "types": ["dict"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "title"
     },
     "title": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
-            "names": {"type": "list", "subcomponent": "names"},
-            "title": {"type": "str"}
+            "title": {"type": "str"},
+            "names": {"type": "list", "subcomponent": "names"}
         }
     },
     "names": {
@@ -65,6 +71,7 @@
         "field": "name",
         "measure_length": true,
         "subcomponent": null,
+        "sort": true,
         "types": ["str"]
     }
 }

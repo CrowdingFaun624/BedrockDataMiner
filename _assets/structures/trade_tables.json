@@ -32,25 +32,25 @@
         "field": "trade table",
         "types": ["dict"],
         "measure_length": true,
-        "detect_key_moves": true,
+        "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
         "types": ["dict"],
         "field": "behavior pack",
-        "detect_key_moves": true,
         "normalizer": {
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
-        "comparison_move_function": "loot_tables_behavior_pack_comparison_move_function",
+        "sort": "by_key",
         "subcomponent": "trade_table"
     },
     "trade_table": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
-            "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "tiers": {"type": "list", "subcomponent": "tiers"}
         }
     },
@@ -59,6 +59,7 @@
         "field": "behavior pack",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "tiers": {
@@ -77,7 +78,7 @@
         }
     },
     "groups": {
-        "type": "List",
+        "type": "Set",
         "field": "group",
         "types": ["dict"],
         "measure_length": true,
@@ -95,6 +96,7 @@
         "field": "biome",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "trade": {

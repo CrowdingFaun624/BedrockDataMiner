@@ -381,18 +381,10 @@ def sound_definitions_fix_MCPE_178265(data:DataMinerTyping.SoundDefinitionsJsonS
     if "volume" in data:
         del data["volume"]
 
-def sound_definitions_make_sounds_dict(data:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict) -> None:
-    if "sounds" in data:
-        sounds:dict[str,DataMinerTyping.NormalizedSoundDefinitionsJsonSoundTypedDict] = {}
-        for sound in data["sounds"]:
-            if isinstance(sound, str):
-                sounds[sound] = {}
-            else:
-                name = sound["name"]
-                sound = cast(DataMinerTyping.NormalizedSoundDefinitionsJsonSoundTypedDict, sound)
-                del sound["name"]
-                sounds[name] = sound
-        data["sounds"] = sounds
+def sound_definitions_make_strings_to_dict(data:list[str|DataMinerTyping.SoundDefinitionsJsonSoundTypedDict]) -> None:
+    indexes = [index for index, sound in enumerate(data) if isinstance(sound, str)]
+    for index in indexes:
+        data[index] = {"name": data[index]}
 
 def sound_definitions_fix_MCPE_153561(data:DataMinerTyping.SoundDefinitionsJsonSoundTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-153561
@@ -573,7 +565,7 @@ functions:dict[str,Callable] = {
     "renderer_platform_configuration_normalize_shadow_config": renderer_platform_configuration_normalize_shadow_config,
     "sound_definitions_fix_MCPE_153558": sound_definitions_fix_MCPE_153558,
     "sound_definitions_fix_MCPE_178265": sound_definitions_fix_MCPE_178265,
-    "sound_definitions_make_sounds_dict": sound_definitions_make_sounds_dict,
+    "sound_definitions_make_strings_to_dict": sound_definitions_make_strings_to_dict,
     "sound_definitions_fix_MCPE_153561": sound_definitions_fix_MCPE_153561,
     "sound_definitions_resource_pack_comparison_move_function": sound_definitions_resource_pack_comparison_move_function,
     "sound_definitions_sound_comparison_move_function": sound_definitions_sound_comparison_move_function,

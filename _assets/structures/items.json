@@ -19,28 +19,30 @@
         "types": ["dict"],
         "field": "item",
         "measure_length": true,
-        "detect_key_moves": false,
+        "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
         "types": ["dict"],
         "field": "behavior pack",
-        "detect_key_moves": true,
         "normalizer": {
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
         "comparison_move_function": "items_behavior_pack_comparison_move_function",
+        "sort": "by_key",
         "subcomponent": "item"
     },
     "item": {
         "type": "Keymap",
         "imports": ["minecraft:item.old"],
+        "sort": "by_component_order",
         "keys": {
-            "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "minecraft:item": {"type": "dict", "subcomponent": {
                 "type": "Keymap",
+                "sort": "by_component_order",
                 "keys": {
                     "description": {"type": "dict", "subcomponent": "description"},
                     "components": {"type": "dict", "subcomponent": "components"}
@@ -90,6 +92,7 @@
         "field": "block",
         "measure_length": true,
         "types": ["str"],
+        "sort": true,
         "subcomponent": null
     },
     "block_list_or_block": {
@@ -108,6 +111,7 @@
         "field": "item",
         "measure_length": true,
         "types": ["str"],
+        "sort": true,
         "subcomponent": null
     },
     "vector_int": {
@@ -121,6 +125,7 @@
     "components": {
         "type": "Keymap",
         "field": "component",
+        "sort": "by_key",
         "keys": {
             "minecraft:allow_off_hand": {"type": "dict", "subcomponent": "component.allow_off_hand"},
             "minecraft:block": {"type": "str", "tags": ["not_in_documentation"]},

@@ -34,6 +34,7 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
+        "sort": "by_key",
         "subcomponent": "resource_packs"
     },
     "resource_packs": {
@@ -45,20 +46,22 @@
             "function_name": "collapse_resource_packs_dict_without_defined_in"
         },
         "detect_key_moves": true,
-        "comparison_move_function": "entities_behavior_pack_comparison_move_function",
+        "sort": "by_key",
         "subcomponent": "model"
     },
     "model": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
-            "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": ["null", "str"]},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "minecraft:geometry": {"type": "dict", "subcomponent": {
                 "type": "Keymap",
                 "normalizer": "normalize_bones",
+                "sort": "by_component_order",
                 "keys": {
-                    "bones": {"type": "dict", "subcomponent": "bones"},
-                    "description": {"type": "dict", "subcomponent": "description"}
+                    "description": {"type": "dict", "subcomponent": "description"},
+                    "bones": {"type": "dict", "subcomponent": "bones"}
                 }
             }}
         }
@@ -68,11 +71,14 @@
         "field": "resource pack",
         "types": ["str"],
         "measure_length": true,
+        "sort": true,
         "subcomponent": null
     },
     "description": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
+            "identifier": {"type": "str"},
             "animationArmsDown": {"type": "bool", "tags": ["outdated"]},
             "animationArmsOutFront": {"type": "bool", "tags": ["outdated"]},
             "animationDontShowArmor": {"type": "bool", "tags": ["outdated"]},
@@ -83,7 +89,6 @@
             "animationStationaryLegs": {"type": "bool", "tags": ["outdated"]},
             "animationStatueOfLibertyArms": {"type": "bool", "tags": ["outdated"]},
             "animationUpsideDown": {"type": "bool", "tags": ["outdated"]},
-            "identifier": {"type": "str"},
             "META_ModelVersion": {"type": "str", "tags": ["outdated"]},
             "rigtype": {"type": ["null", "str"], "tags": ["outdated"]},
             "texture_height": {"type": "decimal"},
@@ -101,6 +106,7 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
+        "sort": "by_key",
         "subcomponent": "bone"
     },
     "bone": {
@@ -148,13 +154,14 @@
         "subcomponents": {
             "dict": {
                 "type": "Keymap",
+                "sort": "by_component_order",
                 "keys": {
-                    "down": {"type": "dict", "subcomponent": "uv_dict.item"},
-                    "east": {"type": "dict", "subcomponent": "uv_dict.item"},
                     "north": {"type": "dict", "subcomponent": "uv_dict.item"},
+                    "east": {"type": "dict", "subcomponent": "uv_dict.item"},
                     "south": {"type": "dict", "subcomponent": "uv_dict.item"},
+                    "west": {"type": "dict", "subcomponent": "uv_dict.item"},
                     "up": {"type": "dict", "subcomponent": "uv_dict.item"},
-                    "west": {"type": "dict", "subcomponent": "uv_dict.item"}
+                    "down": {"type": "dict", "subcomponent": "uv_dict.item"}
                 }
             },
             "list": "uv_list"
@@ -188,6 +195,7 @@
         "field": "locator",
         "types": ["list"],
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "vector_decimal"
     },
     "texture_meshes": {

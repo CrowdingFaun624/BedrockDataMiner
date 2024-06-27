@@ -11,6 +11,7 @@
     "categories": {
         "type": "Keymap",
         "field": "category",
+        "sort": "by_component_order",
         "keys": {
             "individual_event_sounds": {"type": "dict", "subcomponent": "flat_sound_collection"},
             "block_sounds": {"type": "dict", "subcomponent": "block_sound_collections"},
@@ -23,17 +24,15 @@
         "type": "Dict",
         "field": "block",
         "types": ["dict"],
-        "detect_key_moves": true,
-        "comparison_move_function": "sounds_json_sound_collections_comparison_move_function",
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "sound_collection"
     },
     "interactive_block_sound_collections": {
         "type": "Dict",
         "field": "interactive block",
         "types": ["dict"],
-        "detect_key_moves": true,
-        "comparison_move_function": "sounds_json_sound_collections_comparison_move_function",
+        "sort": "by_key",
         "measure_length": true,
         "subcomponent": "sound_collection"
     },
@@ -41,17 +40,15 @@
         "type": "Dict",
         "field": "entity",
         "types": ["dict"],
-        "detect_key_moves": true,
-        "comparison_move_function": "sounds_json_sound_collections_comparison_move_function",
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "sound_collection"
     },
     "interactive_entity_sound_collections": {
         "type": "Dict",
         "field": "interactive entity",
         "types": ["dict"],
-        "detect_key_moves": true,
-        "comparison_move_function": "sounds_json_sound_collections_comparison_move_function",
+        "sort": "by_key",
         "measure_length": true,
         "subcomponent": "interactive_entity_sound_collection"
     },
@@ -65,19 +62,21 @@
     "sound_collection": {
         "type": "Keymap",
         "field": "property",
+        "sort": "by_component_order",
         "keys": {
-            "events": {"type": "dict", "subcomponent": "events"},
+            "volume": {"type": "dict", "subcomponent": "volume_resource_packs"},
             "pitch": {"type": "dict", "subcomponent": "pitch_resource_packs"},
-            "volume": {"type": "dict", "subcomponent": "volume_resource_packs"}
+            "events": {"type": "dict", "subcomponent": "events"}
         }
     },
     "interactive_entity_sound_collection": {
         "type": "Keymap",
         "field": "property",
+        "sort": "by_component_order",
         "keys": {
-            "events": {"type": "dict", "subcomponent": "interactive_entity_events"},
+            "volume": {"type": "dict", "subcomponent": "volume_resource_packs"},
             "pitch": {"type": "dict", "subcomponent": "pitch_resource_packs"},
-            "volume": {"type": "dict", "subcomponent": "volume_resource_packs"}
+            "events": {"type": "dict", "subcomponent": "interactive_entity_events"}
         }
     },
     "pitch_resource_packs": {
@@ -85,6 +84,7 @@
         "field": "resource pack",
         "types": ["float", "int", "list"],
         "subcomponent": "pitch_group",
+        "sort": "by_key",
         "normalizer": "collapse_resource_packs_flat"
     },
     "volume_resource_packs": {
@@ -92,6 +92,7 @@
         "field": "resource pack",
         "types": ["float", "int", "list"],
         "subcomponent": "volume_group",
+        "sort": "by_key",
         "normalizer": "collapse_resource_packs_flat"
     },
     "pitch_group": {
@@ -130,25 +131,25 @@
         "type": "Dict",
         "field": "event",
         "types": ["dict"],
-        "detect_key_moves": true,
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "events_resource_packs"
     },
     "interactive_entity_events": {
         "type": "Dict",
         "field": "event",
         "types": ["dict"],
-        "detect_key_moves": true,
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "interactive_entity_events_resource_packs"
     },
     "events_resource_packs": {
         "type": "Dict",
         "field": "resource pack",
         "types": ["str", "dict"],
-        "detect_key_moves": true,
         "subcomponent": "sound_group",
         "measure_length": true,
+        "sort": "by_key",
         "normalizer": [
             "collapse_resource_packs_flat",
             {
@@ -160,9 +161,9 @@
         "type": "Dict",
         "field": "resource pack",
         "types": ["dict"],
-        "detect_key_moves": true,
         "subcomponent": "sound_case",
         "measure_length": true,
+        "sort": "by_key",
         "normalizer": [
             "collapse_resource_packs_flat",
             {
@@ -175,7 +176,7 @@
         "field": "case",
         "types": ["str", "dict"],
         "subcomponent": "sound_group",
-        "detect_key_moves": true,
+        "sort": "by_key",
         "measure_length": true
     },
     "sound_group": {
@@ -191,10 +192,11 @@
         "normalizer": {
             "function_name": "sounds_json_fix_sounds"
         },
+        "sort": "by_component_order",
         "keys": {
+            "volume": {"type": ["float", "int", "list"], "subcomponent": "volume_group"},
             "pitch": {"type": ["float", "int", "list"], "subcomponent": "pitch_group"},
-            "sound": {"type": "str"},
-            "volume": {"type": ["float", "int", "list"], "subcomponent": "volume_group"}
+            "sound": {"type": "str"}
         }
     }
 }

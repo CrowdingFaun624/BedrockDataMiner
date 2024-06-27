@@ -8,7 +8,7 @@
         "type": "Dict",
         "field": "sound event",
         "types": ["dict"],
-        "detect_key_moves": true,
+        "sort": "by_key",
         "measure_length": true,
         "subcomponent": "resource_pack"
     },
@@ -17,7 +17,7 @@
         "field": "resource pack",
         "types": ["dict"],
         "detect_key_moves": true,
-        "comparison_move_function": "sound_definitions_resource_pack_comparison_move_function",
+        "sort": "by_key",
         "normalizer": {
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
@@ -33,28 +33,27 @@
             },
             {
                 "function_name": "sound_definitions_fix_MCPE_178265"
-            },
-            {
-                "function_name": "sound_definitions_make_sounds_dict"
             }
         ],
+        "sort": "by_component_order",
         "keys": {
             "category": {"type": "str"},
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "max_distance": {"type": ["float", "int"]},
             "min_distance": {"type": ["float", "int"]},
-            "sounds": {"type": "dict", "subcomponent": "sounds"},
-            "subtitle": {"type": "str"}
+            "subtitle": {"type": "str"},
+            "sounds": {"type": "list", "subcomponent": "sounds"}
         }
     },
     "sounds": {
-        "type": "Dict",
+        "type": "Set",
         "field": "sound",
         "types": ["dict"],
         "measure_length": true,
         "print_all": true,
-        "detect_key_moves": true,
-        "comparison_move_function": "sound_definitions_sound_comparison_move_function",
+        "normalizer": {
+            "function_name": "sound_definitions_make_strings_to_dict"
+        },
         "subcomponent": "sound_properties"
     },
     "sound_properties": {
@@ -63,13 +62,15 @@
         "normalizer": {
             "function_name": "sound_definitions_fix_MCPE_153561"
         },
+        "sort": "by_component_order",
         "keys": {
+            "name": {"type": "str"},
+            "type": {"type": "str"},
             "exclude_from_pocket_platforms": {"type": "bool"},
             "is3D": {"type": "bool"},
             "load_on_low_memory": {"type": "bool"},
             "pitch": {"type": ["float", "int"]},
             "stream": {"type": "bool"},
-            "type": {"type": "str"},
             "volume": {"type": ["float", "int"]},
             "weight": {"type": "int"}
         }
@@ -79,6 +80,7 @@
         "field": "resource pack",
         "types": ["str"],
         "subcomponent": null,
+        "sort": true,
         "print_flat": true
     }
 }

@@ -9,7 +9,7 @@
         "field": "sound file",
         "types": ["dict"],
         "detect_key_moves": true,
-        "comparison_move_function": "sound_files_sound_file_comparison_move_function",
+        "sort": "by_key",
         "measure_length": true,
         "subcomponent": "internal_sound_file"
     },
@@ -18,8 +18,8 @@
         "field": "internal sound file",
         "types": ["dict"],
         "detect_key_moves": true,
-        "comparison_move_function": "sound_files_internal_sound_file_comparison_move_function",
         "measure_length": true,
+        "sort": "by_key",
         "subcomponent": "sound_property"
     },
     "sound_property": {
@@ -28,13 +28,14 @@
         "normalizer": {
             "function_name": "sound_files_remove_obj"
         },
+        "sort": "by_component_order",
         "keys": {
+            "sha1_hash": {"type": "str"},
             "filesize": {"type": "int"},
             "pictures": {"type": "list", "subcomponent": "pictures"},
             "tags": {"type": "dict", "subcomponent": "tags"},
             "_subchunks": {"type": "list", "subcomponent": "subchunks"},
-            "streaminfo": {"type": "dict", "subcomponent": "streaminfo"},
-            "sha1_hash": {"type": "str"}
+            "streaminfo": {"type": "dict", "subcomponent": "streaminfo"}
         }
     },
     "pictures": {
@@ -47,6 +48,7 @@
     "tags": {
         "type": "Keymap",
         "field": "tag type",
+        "sort": "by_key",
         "keys": {
             "comment": {"type": "list", "subcomponent": "tag"},
             "encoder": {"type": "list", "subcomponent": "tag"},
@@ -58,6 +60,7 @@
         "type": "Set",
         "field": "tag",
         "types": ["str"],
+        "sort": true,
         "subcomponent": null
     },
     "subchunks": {
@@ -69,6 +72,7 @@
     "streaminfo": {
         "type": "Keymap",
         "field": "property",
+        "sort": "by_key",
         "keys": {
             "_start": {"type": "int"},
             "_size": {"type": "int"},
