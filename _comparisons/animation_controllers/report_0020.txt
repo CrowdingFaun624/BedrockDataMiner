@@ -3,37 +3,21 @@ Difference of "animation_controllers" between "1.13.0.9" (beta of "1.13.0") and 
 Changed file "player.animation_controllers":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.player.first_person_map":
-				Changed field "states":
-					Changed state "one_hand":
-						Changed field "animations":
-							Total animation dict: 2 (+1, -1)
-							Removed animation dict animation "first_person_map_hold_main_hand": "query.get_rendered_item_name == 'map'".
-							Added animation dict animation "first_person_map_hold_main_hand": "query.get_equipped_item_name(0, 1) == 'map'".
-						Changed field "transitions":
-							Total transition list: 2 (+1, -1)
-							Removed transition list transition "default": "query.get_rendered_item_name != 'map' && query.get_equipped_item_name('off_hand') != 'map'".
-							Added transition list transition "default": "query.get_equipped_item_name(0, 1) != 'map' && query.get_equipped_item_name('off_hand') != 'map'".
-					Changed state "two_hand":
-						Changed field "transitions":
-							Total transition list: 2 (+1, -1)
-							Removed transition list transition "default": "query.get_rendered_item_name != 'map' && query.get_equipped_item_name('off_hand') != 'map'".
-							Added transition list transition "default": "query.get_equipped_item_name(0, 1) != 'map' && query.get_equipped_item_name('off_hand') != 'map'".
 			Changed animation controller "controller.animation.player.root":
 				Changed field "states":
 					Total state: 4 (+1, -0)
 					Changed state "first_person":
+						Changed field "transitions":
+							Total transition list: 3 (+2, -1)
+							Removed transition list transition "third_person": "variable.is_third_person".
+							Added transition list transition "third_person": "!variable.is_first_person".
+							Added transition list transition "map_player": "variable.map_face_icon".
 						Changed field "animations":
 							Total animation dict: 6 (+2, -2)
 							Removed animation dict animation "first_person_map_controller": "(query.get_rendered_item_name == 'map' || query.get_equipped_item_name('off_hand') == 'map')".
 							Removed animation dict animation "first_person_base_pose": "query.get_rendered_item_name != 'map'".
 							Added animation dict animation "first_person_map_controller": "(query.get_equipped_item_name(0, 1) == 'map' || query.get_equipped_item_name('off_hand') == 'map')".
 							Added animation dict animation "first_person_base_pose": "query.get_equipped_item_name(0, 1) != 'map'".
-						Changed field "transitions":
-							Total transition list: 3 (+2, -1)
-							Removed transition list transition "third_person": "variable.is_third_person".
-							Added transition list transition "third_person": "!variable.is_first_person".
-							Added transition list transition "map_player": "variable.map_face_icon".
 					Added state "map_player":
 						field "transitions":
 							transition list: transition "paperdoll": "variable.is_paperdoll"
@@ -49,3 +33,19 @@ Changed file "player.animation_controllers":
 						Changed field "transitions":
 							Total transition list: 3 (+1, -0)
 							Added transition list transition "map_player": "variable.map_face_icon".
+			Changed animation controller "controller.animation.player.first_person_map":
+				Changed field "states":
+					Changed state "one_hand":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "default": "query.get_rendered_item_name != 'map' && query.get_equipped_item_name('off_hand') != 'map'".
+							Added transition list transition "default": "query.get_equipped_item_name(0, 1) != 'map' && query.get_equipped_item_name('off_hand') != 'map'".
+						Changed field "animations":
+							Total animation dict: 2 (+1, -1)
+							Removed animation dict animation "first_person_map_hold_main_hand": "query.get_rendered_item_name == 'map'".
+							Added animation dict animation "first_person_map_hold_main_hand": "query.get_equipped_item_name(0, 1) == 'map'".
+					Changed state "two_hand":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "default": "query.get_rendered_item_name != 'map' && query.get_equipped_item_name('off_hand') != 'map'".
+							Added transition list transition "default": "query.get_equipped_item_name(0, 1) != 'map' && query.get_equipped_item_name('off_hand') != 'map'".

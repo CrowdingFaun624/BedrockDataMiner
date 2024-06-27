@@ -135,6 +135,16 @@ Changed entity "armadillo":
 							Changed trigger:
 								Changed field "event" from "minecraft:relax" to "minecraft:unroll".
 							Removed trigger:
+								field "event": "minecraft:stop_trying_to_relax"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "domain": "minecraft:is_threatened"
+											filter property "test": "bool_property"
+										filter:
+											filter property "domain": "minecraft:is_trying_to_relax"
+											filter property "test": "bool_property"
+							Removed trigger:
 								field "event": "minecraft:start_trying_to_relax"
 								field "filters":
 									filter property "all_of":
@@ -145,16 +155,6 @@ Changed entity "armadillo":
 										filter:
 											filter property "domain": "minecraft:is_trying_to_relax"
 											filter property "operator": "!="
-											filter property "test": "bool_property"
-							Removed trigger:
-								field "event": "minecraft:stop_trying_to_relax"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "domain": "minecraft:is_threatened"
-											filter property "test": "bool_property"
-										filter:
-											filter property "domain": "minecraft:is_trying_to_relax"
 											filter property "test": "bool_property"
 					Added component "minecraft:movement" of field "value": 0.0.
 				Removed component group "minecraft:rolled_up_trying_to_relax":
@@ -312,10 +312,10 @@ Changed entity "armadillo":
 									Added component group "minecraft:rolled_up_with_threats".
 							Removed field "emit_vibration" of field "vibration": "entity_act".
 							Changed field "filters":
-								Removed filter property "operator" of ">".
-								Removed filter property "test" of "actor_health".
 								Removed filter property "value" of 0.
 								Removed filter property "subject" of "self".
+								Removed filter property "test" of "actor_health".
+								Removed filter property "operator" of ">".
 								Added filter property "all_of":
 									filter:
 										filter property "domain": "minecraft:armadillo_state"

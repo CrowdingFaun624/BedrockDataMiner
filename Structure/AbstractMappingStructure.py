@@ -161,7 +161,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         ]
         output = same_keys_list + similarities_list
         # sort by weighted similarities using the thresholds.
-        output.sort(key=lambda item: item[2] * (1 - self.min_key_similarity_threshold) + item[3] * (1 - self.min_value_similarity_threshold), reverse=True)
+        output.sort(key=lambda item: (item[2] * (1 - self.min_key_similarity_threshold) + item[3] * (1 - self.min_value_similarity_threshold), item[0]), reverse=True)
         return output
 
     def compare(
