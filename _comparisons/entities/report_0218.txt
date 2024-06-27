@@ -7,33 +7,17 @@ Changed entity "armadillo":
 				Changed component group "minecraft:rolled_up":
 					Changed component "minecraft:environment_sensor":
 						Changed field "triggers":
-							Total trigger: 3 (+1, -1)
-							Removed trigger:
-								field "event": "minecraft:relax"
-								field "filters":
-									filter property "any_of":
-										filter: filter property "test": "in_water"
-										filter: filter property "test": "is_panicking"
-										filter: filter property "test": "is_leashed"
-										filter: filter property "test": "is_riding"
-							Added trigger:
-								field "event": "minecraft:relax"
-								field "filters":
-									filter property "any_of":
-										filter: filter property "test": "on_fire"
-										filter: filter property "test": "in_water"
-										filter: filter property "test": "is_panicking"
-										filter: filter property "test": "is_leashed"
-										filter: filter property "test": "is_riding"
+							Changed trigger:
+								Changed field "filters":
+									Changed filter property "any_of":
+										Total filter: 5 (+1, -0)
+										Added filter filter property "test": "on_fire".
 			Changed field "components":
 				Changed component "minecraft:entity_sensor":
 					Changed field "subsensors":
-						Total subsensor: 2 (+2, -2)
-						Removed subsensor:
-							field "cooldown": 0.2
-							field "event": "minecraft:no_threat_detected"
-							field "event_filters":
-								filter property "all_of":
+						Changed subsensor:
+							Changed field "event_filters":
+								Removed filter property "all_of":
 									filter:
 										filter property "test": "in_water"
 										filter property "value": false
@@ -75,14 +59,31 @@ Changed entity "armadillo":
 															filter:
 																filter property "subject": "other"
 																filter property "test": "is_riding"
-							field "maximum_count": 0
-							field "minimum_count": 0
-							field "range": [7.0, 2.0]
-						Removed subsensor:
-							field "cooldown": 0.2
-							field "event": "minecraft:threat_detected"
-							field "event_filters":
-								filter property "all_of":
+								Added filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "undead"
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "player"
+											filter:
+												filter property "any_of":
+													filter:
+														filter property "subject": "other"
+														filter property "test": "was_last_hurt_by"
+													filter:
+														filter property "subject": "other"
+														filter property "test": "is_sprinting"
+													filter:
+														filter property "subject": "other"
+														filter property "test": "is_riding"
+						Changed subsensor:
+							Changed field "event_filters":
+								Removed filter property "all_of":
 									filter:
 										filter property "test": "in_water"
 										filter property "value": false
@@ -124,13 +125,7 @@ Changed entity "armadillo":
 															filter:
 																filter property "subject": "other"
 																filter property "test": "is_riding"
-							field "minimum_count": 1
-							field "range": [7.0, 2.0]
-						Added subsensor:
-							field "cooldown": 0.2
-							field "event": "minecraft:no_threat_detected"
-							field "event_filters":
-								filter property "any_of":
+								Added filter property "any_of":
 									filter:
 										filter property "subject": "other"
 										filter property "test": "is_family"
@@ -152,37 +147,6 @@ Changed entity "armadillo":
 													filter:
 														filter property "subject": "other"
 														filter property "test": "is_riding"
-							field "maximum_count": 0
-							field "minimum_count": 0
-							field "range": [7.0, 2.0]
-						Added subsensor:
-							field "cooldown": 0.2
-							field "event": "minecraft:threat_detected"
-							field "event_filters":
-								filter property "any_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "undead"
-									filter:
-										filter property "all_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "player"
-											filter:
-												filter property "any_of":
-													filter:
-														filter property "subject": "other"
-														filter property "test": "was_last_hurt_by"
-													filter:
-														filter property "subject": "other"
-														filter property "test": "is_sprinting"
-													filter:
-														filter property "subject": "other"
-														filter property "test": "is_riding"
-							field "minimum_count": 1
-							field "range": [7.0, 2.0]
 			Changed field "events":
 				Changed event "minecraft:relax":
 					Changed field "sequence":
@@ -199,6 +163,9 @@ Changed entity "armadillo":
 					Changed field "sequence":
 						Changed sequence item 1:
 							Changed field "filters":
+								Removed filter property "domain" of "minecraft:is_rolled_up".
+								Removed filter property "operator" of "!=".
+								Removed filter property "test" of "bool_property".
 								Added filter property "all_of":
 									filter:
 										filter property "domain": "minecraft:is_rolled_up"
@@ -222,9 +189,6 @@ Changed entity "armadillo":
 									filter:
 										filter property "test": "is_riding"
 										filter property "value": false
-								Removed filter property "domain" of "minecraft:is_rolled_up".
-								Removed filter property "operator" of "!=".
-								Removed filter property "test" of "bool_property".
 Changed entity "breeze":
 	Changed behavior pack "experimental":
 		Changed field "format_version" from "1.16.0" to "1.20.60".
@@ -272,31 +236,28 @@ Changed entity "breeze":
 										filter property "value": "slime"
 				Changed component "minecraft:behavior.nearest_attackable_target":
 					Changed field "entity_types":
-						Total entity type: 2 (+2, -1)
-						Removed entity type:
-							field "filters":
-								filter property "all_of":
+						Total entity type: 2 (+1, -0)
+						Changed entity type:
+							Changed field "filters":
+								Removed filter property "all_of":
 									filter:
 										filter property "subject": "other"
 										filter property "test": "is_family"
 										filter property "value": "player"
-							field "max_dist": 24
+								Added filter property "test" of "is_family".
+								Added filter property "subject" of "other".
+								Added filter property "value" of "irongolem".
 						Added entity type:
 							field "filters":
 								filter property "subject": "other"
 								filter property "test": "is_family"
 								filter property "value": "player"
 							field "max_dist": 24
-						Added entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "irongolem"
-							field "max_dist": 24
 Changed entity "cave_spider":
 	Changed behavior pack "experimental":
 		Changed field "defined_in":
 			Total behavior pack: 2 (+1, -0)
+			Unchanged behavior pack: "experimental_armadillo"
 			Added behavior pack "experimental_update_announced_live2023".
 Changed entity "husk":
 	Added behavior pack "experimental":
@@ -1209,6 +1170,7 @@ Changed entity "spider":
 	Changed behavior pack "experimental":
 		Changed field "defined_in":
 			Total behavior pack: 2 (+1, -0)
+			Unchanged behavior pack: "experimental_armadillo"
 			Added behavior pack "experimental_update_announced_live2023".
 Changed entity "stray":
 	Added behavior pack "experimental":

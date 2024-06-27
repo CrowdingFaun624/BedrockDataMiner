@@ -157,8 +157,28 @@ Changed entity "creeper":
 				Total component: 29 (+1, -0)
 				Added component "minecraft:experience_reward" of field "on_death": "query.last_hit_by_player ? 5 : 0".
 				Changed component "minecraft:interact":
-					Removed field "hurt_item" of 1.
+					Removed field "swing" of true.
+					Removed field "play_sounds" of "ignite".
+					Removed field "on_interact":
+						field "event": "minecraft:start_exploding_forced"
+						field "filters":
+							filter property "all_of":
+								filter:
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "player"
+								filter:
+									filter property "domain": "hand"
+									filter property "subject": "other"
+									filter property "test": "has_equipment"
+									filter property "value": "flint_and_steel"
+								filter:
+									filter property "operator": "!="
+									filter property "test": "has_component"
+									filter property "value": "minecraft:explode"
+						field "target": "self"
 					Removed field "interact_text" of "action.interact.creeper".
+					Removed field "hurt_item" of 1.
 					Added field "interactions":
 						field "hurt_item": 1
 						field "interact_text": "action.interact.creeper"
@@ -182,26 +202,6 @@ Changed entity "creeper":
 							field "target": "self"
 						field "play_sounds": "ignite"
 						field "swing": true
-					Removed field "on_interact":
-						field "event": "minecraft:start_exploding_forced"
-						field "filters":
-							filter property "all_of":
-								filter:
-									filter property "subject": "other"
-									filter property "test": "is_family"
-									filter property "value": "player"
-								filter:
-									filter property "domain": "hand"
-									filter property "subject": "other"
-									filter property "test": "has_equipment"
-									filter property "value": "flint_and_steel"
-								filter:
-									filter property "operator": "!="
-									filter property "test": "has_component"
-									filter property "value": "minecraft:explode"
-						field "target": "self"
-					Removed field "play_sounds" of "ignite".
-					Removed field "swing" of true.
 				Changed component "minecraft:type_family":
 					Changed field "family":
 						Total family: 3 (+1, -0)
@@ -379,119 +379,60 @@ Changed entity "drowned":
 					Total component: 5 (+1, -0)
 					Added component "minecraft:experience_reward" of field "on_death": "query.last_hit_by_player ? 12 + (query.equipment_count * Math.Random(1,3)) : 0".
 			Changed field "components":
-				Changed component "minecraft:behavior.nearest_attackable_target":
-					Changed field "entity_types":
-						Total entity type: 3 (+2, -2)
-						Removed entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "player"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "snowgolem"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "irongolem"
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "in_water"
-												filter property "value": true
-											filter:
-												filter property "operator": "<"
-												filter property "subject": "other"
-												filter property "test": "is_brightness"
-												filter property "value": 0.49
-							field "max_dist": 20
-						Removed entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "villager"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "wandering_trader"
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "in_water"
-												filter property "value": true
-											filter:
-												filter property "operator": "<"
-												filter property "subject": "other"
-												filter property "test": "is_brightness"
-												filter property "value": 0.49
-							field "max_dist": 20
-							field "must_see": false
-						Added entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "player"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "snowgolem"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "irongolem"
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "in_water"
-												filter property "value": true
-											filter:
-												filter property "test": "is_daytime"
-												filter property "value": false
-							field "max_dist": 20
-						Added entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "villager"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "wandering_trader"
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "in_water"
-												filter property "value": true
-											filter:
-												filter property "test": "is_daytime"
-												filter property "value": false
-							field "max_dist": 20
-							field "must_see": false
 				Changed component "minecraft:type_family":
 					Changed field "family":
 						Total family: 5 (+1, -0)
 						Added family "mob".
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "filters":
+								Changed filter property "all_of":
+									Total filter: 2 (+1, -1)
+									Removed filter:
+										filter property "any_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "in_water"
+												filter property "value": true
+											filter:
+												filter property "operator": "<"
+												filter property "subject": "other"
+												filter property "test": "is_brightness"
+												filter property "value": 0.49
+									Added filter:
+										filter property "any_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "in_water"
+												filter property "value": true
+											filter:
+												filter property "test": "is_daytime"
+												filter property "value": false
+						Changed entity type:
+							Changed field "filters":
+								Changed filter property "all_of":
+									Total filter: 2 (+1, -1)
+									Removed filter:
+										filter property "any_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "in_water"
+												filter property "value": true
+											filter:
+												filter property "operator": "<"
+												filter property "subject": "other"
+												filter property "test": "is_brightness"
+												filter property "value": 0.49
+									Added filter:
+										filter property "any_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "in_water"
+												filter property "value": true
+											filter:
+												filter property "test": "is_daytime"
+												filter property "value": false
 Changed entity "elder_guardian":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -744,12 +685,6 @@ Changed entity "fox":
 											filter property "value": false
 			Changed field "components":
 				Total component: 30 (+1, -0)
-				Added component "minecraft:behavior.tempt":
-					field "can_get_scared": true
-					field "items": item: "sweet_berries"
-					field "priority": 3
-					field "speed_multiplier": 0.5
-					field "within_radius": 16
 				Changed component "minecraft:environment_sensor" from:
 					trigger:
 						field "event": "minecraft:fox_configure_night"
@@ -785,18 +720,6 @@ Changed entity "fox":
 										filter property "value": true
 						Removed scheduled event:
 							field "scheduled_event":
-								field "event": "minecraft:ambient_night"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "test": "is_daytime"
-											filter property "value": false
-										filter:
-											filter property "operator": ">"
-											filter property "test": "distance_to_nearest_player"
-											filter property "value": 16
-						Removed scheduled event:
-							field "scheduled_event":
 								field "event": "minecraft:ambient_normal"
 								field "filters":
 									filter property "all_of":
@@ -812,23 +735,18 @@ Changed entity "fox":
 													filter property "operator": "<="
 													filter property "test": "distance_to_nearest_player"
 													filter property "value": 16
-						Added scheduled event:
-							field "event": "minecraft:ambient_sleep"
-							field "filters":
-								filter:
-									filter property "test": "is_sleeping"
-									filter property "value": true
-						Added scheduled event:
-							field "event": "minecraft:ambient_night"
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "test": "is_daytime"
-										filter property "value": false
-									filter:
-										filter property "operator": ">"
-										filter property "test": "distance_to_nearest_player"
-										filter property "value": 16
+						Removed scheduled event:
+							field "scheduled_event":
+								field "event": "minecraft:ambient_night"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_daytime"
+											filter property "value": false
+										filter:
+											filter property "operator": ">"
+											filter property "test": "distance_to_nearest_player"
+											filter property "value": 16
 						Added scheduled event:
 							field "event": "minecraft:ambient_normal"
 							field "filters":
@@ -845,6 +763,23 @@ Changed entity "fox":
 												filter property "operator": "<="
 												filter property "test": "distance_to_nearest_player"
 												filter property "value": 16
+						Added scheduled event:
+							field "event": "minecraft:ambient_night"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_daytime"
+										filter property "value": false
+									filter:
+										filter property "operator": ">"
+										filter property "test": "distance_to_nearest_player"
+										filter property "value": 16
+						Added scheduled event:
+							field "event": "minecraft:ambient_sleep"
+							field "filters":
+								filter:
+									filter property "test": "is_sleeping"
+									filter property "value": true
 				Changed component "minecraft:shareables":
 					Changed field "items":
 						Total item: 38 (+1, -0)
@@ -856,6 +791,12 @@ Changed entity "fox":
 					Changed field "family":
 						Total family: 2 (+1, -0)
 						Added family "mob".
+				Added component "minecraft:behavior.tempt":
+					field "can_get_scared": true
+					field "items": item: "sweet_berries"
+					field "priority": 3
+					field "speed_multiplier": 0.5
+					field "within_radius": 16
 Changed entity "ghast":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -896,12 +837,12 @@ Changed entity "husk":
 			Changed field "component_groups":
 				Changed component group "minecraft:look_to_start_zombie_transformation":
 					Changed component "minecraft:environment_sensor":
-						Removed field "event" of "minecraft:start_transforming".
 						Removed field "filters":
 							filter property "operator": "=="
 							filter property "subject": "self"
 							filter property "test": "is_underwater"
 							filter property "value": true
+						Removed field "event" of "minecraft:start_transforming".
 						Added field "triggers":
 							field "event": "minecraft:start_transforming"
 							field "filters":
@@ -1661,29 +1602,16 @@ Changed entity "mooshroom":
 							component group: "minecraft:cow_baby"
 				Changed event "minecraft:entity_spawned":
 					Changed field "randomize":
-						Total randomize item: 2 (+2, -2)
-						Removed randomize item:
-							field "add": field "component_groups": component group: "minecraft:cow_adult"
-							field "remove": empty
-							field "weight": 95
-						Removed randomize item:
-							field "add": field "component_groups": component group: "minecraft:cow_baby"
-							field "remove": empty
-							field "weight": 5
-						Added randomize item:
-							field "add":
-								field "component_groups":
-									component group: "minecraft:cow_adult"
-									component group: "minecraft:mooshroom_red"
-							field "remove": empty
-							field "weight": 95
-						Added randomize item:
-							field "add":
-								field "component_groups":
-									component group: "minecraft:cow_baby"
-									component group: "minecraft:mooshroom_red"
-							field "remove": empty
-							field "weight": 5
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 2 (+1, -0)
+									Added component group "minecraft:mooshroom_red".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 2 (+1, -0)
+									Added component group "minecraft:mooshroom_red".
 				Added event "minecraft:flowerless" of field "add": field "component_groups": component group: "minecraft:mooshroom_fed_nothing".
 Changed entity "mule":
 	Changed behavior pack "core":
@@ -1776,10 +1704,10 @@ Changed entity "panda":
 							Added family "mob".
 			Changed field "components":
 				Changed component "minecraft:giveable":
-					Removed field "cooldown" of 3.0.
 					Removed field "items":
 						item: "bamboo"
 						item: "cake"
+					Removed field "cooldown" of 3.0.
 					Removed field "on_give":
 						field "event": "minecraft:on_calm"
 						field "target": "self"
@@ -1896,6 +1824,18 @@ Changed entity "pillager":
 								filter property "value": false
 				Changed component group "minecraft:patrol_captain":
 					Total component: 10 (+5, -0)
+					Added component "minecraft:on_friendly_anger":
+						field "event": "minecraft:synchronized_ranged_mode"
+						field "target": "self"
+					Added component "minecraft:on_hurt":
+						field "event": "minecraft:synchronized_ranged_mode"
+						field "target": "self"
+					Added component "minecraft:on_hurt_by_player":
+						field "event": "minecraft:synchronized_ranged_mode"
+						field "target": "self"
+					Added component "minecraft:on_target_escape":
+						field "event": "minecraft:calm"
+						field "target": "self"
 					Added component "minecraft:behavior.hold_ground":
 						field "broadcast": true
 						field "broadcast_range": 8
@@ -1909,6 +1849,8 @@ Changed entity "pillager":
 							field "target": "self"
 					Changed component "minecraft:behavior.move_to_random_block":
 						Changed field "priority" from 5 to 6.
+				Changed component group "minecraft:patrol_follower":
+					Total component: 6 (+5, -0)
 					Added component "minecraft:on_friendly_anger":
 						field "event": "minecraft:synchronized_ranged_mode"
 						field "target": "self"
@@ -1921,8 +1863,6 @@ Changed entity "pillager":
 					Added component "minecraft:on_target_escape":
 						field "event": "minecraft:calm"
 						field "target": "self"
-				Changed component group "minecraft:patrol_follower":
-					Total component: 6 (+5, -0)
 					Added component "minecraft:behavior.hold_ground":
 						field "broadcast": true
 						field "broadcast_range": 8
@@ -1934,18 +1874,6 @@ Changed entity "pillager":
 						field "within_radius_event":
 							field "event": "minecraft:synchronized_ranged_mode"
 							field "target": "self"
-					Added component "minecraft:on_friendly_anger":
-						field "event": "minecraft:synchronized_ranged_mode"
-						field "target": "self"
-					Added component "minecraft:on_hurt":
-						field "event": "minecraft:synchronized_ranged_mode"
-						field "target": "self"
-					Added component "minecraft:on_hurt_by_player":
-						field "event": "minecraft:synchronized_ranged_mode"
-						field "target": "self"
-					Added component "minecraft:on_target_escape":
-						field "event": "minecraft:calm"
-						field "target": "self"
 				Changed component group "minecraft:ranged_attack":
 					Changed component "minecraft:environment_sensor":
 						Removed field "on_environment":
@@ -1969,17 +1897,17 @@ Changed entity "pillager":
 						field "duration": -1
 			Changed field "components":
 				Total component: 24 (+1, -0)
+				Added component "minecraft:experience_reward" of field "on_death": "query.last_hit_by_player ? (query.is_baby ? 12 : 5) + (Math.die_roll(query.equipment_count,1,3)) : 0".
+				Changed component "minecraft:type_family":
+					Changed field "family":
+						Total family: 4 (+1, -0)
+						Added family "mob".
 				Changed component "minecraft:behavior.look_at_player":
 					Changed field "priority" from 7 to 8.
 				Changed component "minecraft:behavior.random_look_around":
 					Changed field "priority" from 7 to 8.
 				Changed component "minecraft:behavior.random_stroll":
 					Changed field "priority" from 6 to 7.
-				Added component "minecraft:experience_reward" of field "on_death": "query.last_hit_by_player ? (query.is_baby ? 12 : 5) + (Math.die_roll(query.equipment_count,1,3)) : 0".
-				Changed component "minecraft:type_family":
-					Changed field "family":
-						Total family: 4 (+1, -0)
-						Added family "mob".
 			Changed field "events":
 				Total event: 12 (+4, -0)
 				Added event "minecraft:calm":
@@ -2011,7 +1939,6 @@ Changed entity "player":
 			Changed field "components":
 				Total component: 21 (+1, -0)
 				Changed component "minecraft:environment_sensor":
-					Removed field "event" of "minecraft:trigger_raid".
 					Removed field "filters":
 						filter property "all_of":
 							filter:
@@ -2022,6 +1949,7 @@ Changed entity "player":
 								filter property "subject": "self"
 								filter property "test": "is_in_village"
 								filter property "value": true
+					Removed field "event" of "minecraft:trigger_raid".
 					Added field "triggers":
 						field "event": "minecraft:trigger_raid"
 						field "filters":
@@ -2183,8 +2111,8 @@ Changed entity "pufferfish":
 					Changed field "add":
 						Changed field "component_groups":
 							Total component group: 1 (+1, -1)
-							Removed component group "minecraft:pufferfish_deflated".
 							Added component group "minecraft:normal_puff".
+							Removed component group "minecraft:pufferfish_deflated".
 				Added event "minecraft:from_full_puff":
 					field "add": field "component_groups": component group: "minecraft:start_deflate"
 					field "remove": field "component_groups": component group: "minecraft:deflate_sensor"
@@ -2192,13 +2120,13 @@ Changed entity "pufferfish":
 					Changed field "add":
 						Changed field "component_groups":
 							Total component group: 1 (+1, -1)
-							Removed component group "minecraft:pufferfish_deflated".
 							Added component group "minecraft:half_puff_deflate".
+							Removed component group "minecraft:pufferfish_deflated".
 					Changed field "remove":
 						Changed field "component_groups":
 							Total component group: 2 (+2, -1)
-							Removed component group "minecraft:pufferfish_puffed".
 							Added component group "minecraft:full_puff".
+							Removed component group "minecraft:pufferfish_puffed".
 							Added component group "minecraft:start_deflate".
 				Added event "minecraft:on_full_puff":
 					field "add":
@@ -3571,24 +3499,24 @@ Changed entity "villager_v2":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 0
+												filter property "value": 10000
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
+												filter property "value": 11000
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_gather_villager"
+									field "event": "minecraft:schedule_bed_villager"
 									field "filters":
 										filter property "all_of":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
+												filter property "value": 12000
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
+												filter property "value": 24000
 							Removed scheduled event:
 								field "scheduled_event":
 									field "event": "minecraft:schedule_wander_villager"
@@ -3597,11 +3525,11 @@ Changed entity "villager_v2":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
+												filter property "value": 0
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
+												filter property "value": 8000
 							Removed scheduled event:
 								field "scheduled_event":
 									field "event": "minecraft:schedule_home_villager"
@@ -3617,17 +3545,17 @@ Changed entity "villager_v2":
 												filter property "value": 12000
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
+									field "event": "minecraft:schedule_gather_villager"
 									field "filters":
 										filter property "all_of":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
+												filter property "value": 8000
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
+												filter property "value": 10000
 							Added scheduled event:
 								field "event": "minecraft:schedule_wander_villager"
 								field "filters":
@@ -3641,18 +3569,6 @@ Changed entity "villager_v2":
 											filter property "test": "hourly_clock_time"
 											filter property "value": 8000
 							Added scheduled event:
-								field "event": "minecraft:schedule_gather_villager"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": ">="
-											filter property "test": "hourly_clock_time"
-											filter property "value": 8000
-										filter:
-											filter property "operator": "<"
-											filter property "test": "hourly_clock_time"
-											filter property "value": 10000
-							Added scheduled event:
 								field "event": "minecraft:schedule_wander_villager"
 								field "filters":
 									filter property "all_of":
@@ -3664,6 +3580,18 @@ Changed entity "villager_v2":
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
 											filter property "value": 11000
+							Added scheduled event:
+								field "event": "minecraft:schedule_bed_villager"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": ">="
+											filter property "test": "hourly_clock_time"
+											filter property "value": 12000
+										filter:
+											filter property "operator": "<"
+											filter property "test": "hourly_clock_time"
+											filter property "value": 24000
 							Added scheduled event:
 								field "event": "minecraft:schedule_home_villager"
 								field "filters":
@@ -3677,17 +3605,17 @@ Changed entity "villager_v2":
 											filter property "test": "hourly_clock_time"
 											filter property "value": 12000
 							Added scheduled event:
-								field "event": "minecraft:schedule_bed_villager"
+								field "event": "minecraft:schedule_gather_villager"
 								field "filters":
 									filter property "all_of":
 										filter:
 											filter property "operator": ">="
 											filter property "test": "hourly_clock_time"
-											filter property "value": 12000
+											filter property "value": 8000
 										filter:
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
-											filter property "value": 24000
+											filter property "value": 10000
 				Changed component group "become_zombie":
 					Changed component "minecraft:transformation":
 						Added field "keep_level" of true.
@@ -3720,19 +3648,6 @@ Changed entity "villager_v2":
 												filter property "value": 11000
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_home_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-							Removed scheduled event:
-								field "scheduled_event":
 									field "event": "minecraft:schedule_bed_villager"
 									field "filters":
 										filter property "all_of":
@@ -3744,18 +3659,19 @@ Changed entity "villager_v2":
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
 												filter property "value": 24000
-							Added scheduled event:
-								field "event": "minecraft:schedule_play_villager"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": ">="
-											filter property "test": "hourly_clock_time"
-											filter property "value": 0
-										filter:
-											filter property "operator": "<"
-											filter property "test": "hourly_clock_time"
-											filter property "value": 11000
+							Removed scheduled event:
+								field "scheduled_event":
+									field "event": "minecraft:schedule_home_villager"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "operator": ">="
+												filter property "test": "hourly_clock_time"
+												filter property "value": 11000
+											filter:
+												filter property "operator": "<"
+												filter property "test": "hourly_clock_time"
+												filter property "value": 12000
 							Added scheduled event:
 								field "event": "minecraft:schedule_home_villager"
 								field "filters":
@@ -3768,6 +3684,18 @@ Changed entity "villager_v2":
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
 											filter property "value": 12000
+							Added scheduled event:
+								field "event": "minecraft:schedule_play_villager"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": ">="
+											filter property "test": "hourly_clock_time"
+											filter property "value": 0
+										filter:
+											filter property "operator": "<"
+											filter property "test": "hourly_clock_time"
+											filter property "value": 11000
 							Added scheduled event:
 								field "event": "minecraft:schedule_bed_villager"
 								field "filters":
@@ -3796,30 +3724,17 @@ Changed entity "villager_v2":
 							Total scheduled event: 5 (+5, -5)
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_work_farmer"
+									field "event": "minecraft:schedule_bed_villager"
 									field "filters":
 										filter property "all_of":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 0
+												filter property "value": 12000
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-							Removed scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_gather_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
+												filter property "value": 24000
 							Removed scheduled event:
 								field "scheduled_event":
 									field "event": "minecraft:schedule_work_farmer"
@@ -3848,53 +3763,42 @@ Changed entity "villager_v2":
 												filter property "value": 12000
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
+									field "event": "minecraft:schedule_work_farmer"
 									field "filters":
 										filter property "all_of":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
+												filter property "value": 0
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
+												filter property "value": 8000
+							Removed scheduled event:
+								field "scheduled_event":
+									field "event": "minecraft:schedule_gather_villager"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "operator": ">="
+												filter property "test": "hourly_clock_time"
+												filter property "value": 8000
+											filter:
+												filter property "operator": "<"
+												filter property "test": "hourly_clock_time"
+												filter property "value": 10000
 							Added scheduled event:
-								field "event": "minecraft:schedule_work_farmer"
+								field "event": "minecraft:schedule_bed_villager"
 								field "filters":
 									filter property "all_of":
 										filter:
 											filter property "operator": ">="
 											filter property "test": "hourly_clock_time"
-											filter property "value": 0
+											filter property "value": 12000
 										filter:
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
-											filter property "value": 8000
-							Added scheduled event:
-								field "event": "minecraft:schedule_gather_villager"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": ">="
-											filter property "test": "hourly_clock_time"
-											filter property "value": 8000
-										filter:
-											filter property "operator": "<"
-											filter property "test": "hourly_clock_time"
-											filter property "value": 10000
-							Added scheduled event:
-								field "event": "minecraft:schedule_work_farmer"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": ">="
-											filter property "test": "hourly_clock_time"
-											filter property "value": 10000
-										filter:
-											filter property "operator": "<"
-											filter property "test": "hourly_clock_time"
-											filter property "value": 11000
+											filter property "value": 24000
 							Added scheduled event:
 								field "event": "minecraft:schedule_home_villager"
 								field "filters":
@@ -3908,17 +3812,41 @@ Changed entity "villager_v2":
 											filter property "test": "hourly_clock_time"
 											filter property "value": 12000
 							Added scheduled event:
-								field "event": "minecraft:schedule_bed_villager"
+								field "event": "minecraft:schedule_work_farmer"
 								field "filters":
 									filter property "all_of":
 										filter:
 											filter property "operator": ">="
 											filter property "test": "hourly_clock_time"
-											filter property "value": 12000
+											filter property "value": 0
 										filter:
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
-											filter property "value": 24000
+											filter property "value": 8000
+							Added scheduled event:
+								field "event": "minecraft:schedule_work_farmer"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": ">="
+											filter property "test": "hourly_clock_time"
+											filter property "value": 10000
+										filter:
+											filter property "operator": "<"
+											filter property "test": "hourly_clock_time"
+											filter property "value": 11000
+							Added scheduled event:
+								field "event": "minecraft:schedule_gather_villager"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": ">="
+											filter property "test": "hourly_clock_time"
+											filter property "value": 8000
+										filter:
+											filter property "operator": "<"
+											filter property "test": "hourly_clock_time"
+											filter property "value": 10000
 				Changed component group "fisher_schedule":
 					Changed component "minecraft:scheduler":
 						Changed field "scheduled_events":
@@ -3938,19 +3866,6 @@ Changed entity "villager_v2":
 												filter property "value": 8000
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_gather_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-							Removed scheduled event:
-								field "scheduled_event":
 									field "event": "minecraft:schedule_work_fisher"
 									field "filters":
 										filter property "all_of":
@@ -3962,6 +3877,19 @@ Changed entity "villager_v2":
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
 												filter property "value": 11000
+							Removed scheduled event:
+								field "scheduled_event":
+									field "event": "minecraft:schedule_bed_villager"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "operator": ">="
+												filter property "test": "hourly_clock_time"
+												filter property "value": 12000
+											filter:
+												filter property "operator": "<"
+												filter property "test": "hourly_clock_time"
+												filter property "value": 24000
 							Removed scheduled event:
 								field "scheduled_event":
 									field "event": "minecraft:schedule_home_villager"
@@ -3977,17 +3905,17 @@ Changed entity "villager_v2":
 												filter property "value": 12000
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
+									field "event": "minecraft:schedule_gather_villager"
 									field "filters":
 										filter property "all_of":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
+												filter property "value": 8000
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
+												filter property "value": 10000
 							Added scheduled event:
 								field "event": "minecraft:schedule_work_fisher"
 								field "filters":
@@ -4000,6 +3928,30 @@ Changed entity "villager_v2":
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
 											filter property "value": 8000
+							Added scheduled event:
+								field "event": "minecraft:schedule_bed_villager"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": ">="
+											filter property "test": "hourly_clock_time"
+											filter property "value": 12000
+										filter:
+											filter property "operator": "<"
+											filter property "test": "hourly_clock_time"
+											filter property "value": 24000
+							Added scheduled event:
+								field "event": "minecraft:schedule_home_villager"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": ">="
+											filter property "test": "hourly_clock_time"
+											filter property "value": 11000
+										filter:
+											filter property "operator": "<"
+											filter property "test": "hourly_clock_time"
+											filter property "value": 12000
 							Added scheduled event:
 								field "event": "minecraft:schedule_gather_villager"
 								field "filters":
@@ -4024,30 +3976,6 @@ Changed entity "villager_v2":
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
 											filter property "value": 11000
-							Added scheduled event:
-								field "event": "minecraft:schedule_home_villager"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": ">="
-											filter property "test": "hourly_clock_time"
-											filter property "value": 11000
-										filter:
-											filter property "operator": "<"
-											filter property "test": "hourly_clock_time"
-											filter property "value": 12000
-							Added scheduled event:
-								field "event": "minecraft:schedule_bed_villager"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": ">="
-											filter property "test": "hourly_clock_time"
-											filter property "value": 12000
-										filter:
-											filter property "operator": "<"
-											filter property "test": "hourly_clock_time"
-											filter property "value": 24000
 				Changed component group "fisherman":
 					Changed component "minecraft:type_family":
 						Changed field "family":
@@ -4064,19 +3992,6 @@ Changed entity "villager_v2":
 							Total scheduled event: 4 (+4, -4)
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_wander_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 2000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 13000
-							Removed scheduled event:
-								field "scheduled_event":
 									field "event": "minecraft:schedule_home_villager"
 									field "filters":
 										filter property "all_of":
@@ -4090,17 +4005,17 @@ Changed entity "villager_v2":
 												filter property "value": 14000
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
+									field "event": "minecraft:schedule_wander_villager"
 									field "filters":
 										filter property "all_of":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 14000
+												filter property "value": 2000
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
+												filter property "value": 13000
 							Removed scheduled event:
 								field "scheduled_event":
 									field "event": "minecraft:schedule_bed_villager"
@@ -4114,18 +4029,19 @@ Changed entity "villager_v2":
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
 												filter property "value": 2000
-							Added scheduled event:
-								field "event": "minecraft:schedule_wander_villager"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": ">="
-											filter property "test": "hourly_clock_time"
-											filter property "value": 2000
-										filter:
-											filter property "operator": "<"
-											filter property "test": "hourly_clock_time"
-											filter property "value": 13000
+							Removed scheduled event:
+								field "scheduled_event":
+									field "event": "minecraft:schedule_bed_villager"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "operator": ">="
+												filter property "test": "hourly_clock_time"
+												filter property "value": 14000
+											filter:
+												filter property "operator": "<"
+												filter property "test": "hourly_clock_time"
+												filter property "value": 24000
 							Added scheduled event:
 								field "event": "minecraft:schedule_home_villager"
 								field "filters":
@@ -4162,6 +4078,18 @@ Changed entity "villager_v2":
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
 											filter property "value": 2000
+							Added scheduled event:
+								field "event": "minecraft:schedule_wander_villager"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": ">="
+											filter property "test": "hourly_clock_time"
+											filter property "value": 2000
+										filter:
+											filter property "operator": "<"
+											filter property "test": "hourly_clock_time"
+											filter property "value": 13000
 				Changed component group "leatherworker":
 					Changed component "minecraft:type_family":
 						Changed field "family":
@@ -4191,30 +4119,17 @@ Changed entity "villager_v2":
 												filter property "value": 8000
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_gather_villager"
+									field "event": "minecraft:schedule_bed_villager"
 									field "filters":
 										filter property "all_of":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
+												filter property "value": 12000
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-							Removed scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_work_librarian"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
+												filter property "value": 24000
 							Removed scheduled event:
 								field "scheduled_event":
 									field "event": "minecraft:schedule_home_villager"
@@ -4230,17 +4145,42 @@ Changed entity "villager_v2":
 												filter property "value": 12000
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
+									field "event": "minecraft:schedule_work_librarian"
 									field "filters":
 										filter property "all_of":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
+												filter property "value": 10000
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
+												filter property "value": 11000
+							Removed scheduled event:
+								field "scheduled_event":
+									field "event": "minecraft:schedule_gather_villager"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "operator": ">="
+												filter property "test": "hourly_clock_time"
+												filter property "value": 8000
+											filter:
+												filter property "operator": "<"
+												filter property "test": "hourly_clock_time"
+												filter property "value": 10000
+							Added scheduled event:
+								field "event": "minecraft:schedule_bed_villager"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": ">="
+											filter property "test": "hourly_clock_time"
+											filter property "value": 12000
+										filter:
+											filter property "operator": "<"
+											filter property "test": "hourly_clock_time"
+											filter property "value": 24000
 							Added scheduled event:
 								field "event": "minecraft:schedule_work_librarian"
 								field "filters":
@@ -4253,6 +4193,18 @@ Changed entity "villager_v2":
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
 											filter property "value": 8000
+							Added scheduled event:
+								field "event": "minecraft:schedule_home_villager"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": ">="
+											filter property "test": "hourly_clock_time"
+											filter property "value": 11000
+										filter:
+											filter property "operator": "<"
+											filter property "test": "hourly_clock_time"
+											filter property "value": 12000
 							Added scheduled event:
 								field "event": "minecraft:schedule_gather_villager"
 								field "filters":
@@ -4277,30 +4229,6 @@ Changed entity "villager_v2":
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
 											filter property "value": 11000
-							Added scheduled event:
-								field "event": "minecraft:schedule_home_villager"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": ">="
-											filter property "test": "hourly_clock_time"
-											filter property "value": 11000
-										filter:
-											filter property "operator": "<"
-											filter property "test": "hourly_clock_time"
-											filter property "value": 12000
-							Added scheduled event:
-								field "event": "minecraft:schedule_bed_villager"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": ">="
-											filter property "test": "hourly_clock_time"
-											filter property "value": 12000
-										filter:
-											filter property "operator": "<"
-											filter property "test": "hourly_clock_time"
-											filter property "value": 24000
 				Changed component group "mason":
 					Changed component "minecraft:type_family":
 						Changed field "family":
@@ -4337,6 +4265,19 @@ Changed entity "villager_v2":
 							Total scheduled event: 5 (+5, -5)
 							Removed scheduled event:
 								field "scheduled_event":
+									field "event": "minecraft:schedule_bed_villager"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "operator": ">="
+												filter property "test": "hourly_clock_time"
+												filter property "value": 12000
+											filter:
+												filter property "operator": "<"
+												filter property "test": "hourly_clock_time"
+												filter property "value": 24000
+							Removed scheduled event:
+								field "scheduled_event":
 									field "event": "minecraft:schedule_work_pro_villager"
 									field "filters":
 										filter property "all_of":
@@ -4348,32 +4289,6 @@ Changed entity "villager_v2":
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
 												filter property "value": 8000
-							Removed scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_gather_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-							Removed scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_work_pro_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
 							Removed scheduled event:
 								field "scheduled_event":
 									field "event": "minecraft:schedule_home_villager"
@@ -4389,17 +4304,42 @@ Changed entity "villager_v2":
 												filter property "value": 12000
 							Removed scheduled event:
 								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
+									field "event": "minecraft:schedule_work_pro_villager"
 									field "filters":
 										filter property "all_of":
 											filter:
 												filter property "operator": ">="
 												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
+												filter property "value": 10000
 											filter:
 												filter property "operator": "<"
 												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
+												filter property "value": 11000
+							Removed scheduled event:
+								field "scheduled_event":
+									field "event": "minecraft:schedule_gather_villager"
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "operator": ">="
+												filter property "test": "hourly_clock_time"
+												filter property "value": 8000
+											filter:
+												filter property "operator": "<"
+												filter property "test": "hourly_clock_time"
+												filter property "value": 10000
+							Added scheduled event:
+								field "event": "minecraft:schedule_bed_villager"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": ">="
+											filter property "test": "hourly_clock_time"
+											filter property "value": 12000
+										filter:
+											filter property "operator": "<"
+											filter property "test": "hourly_clock_time"
+											filter property "value": 24000
 							Added scheduled event:
 								field "event": "minecraft:schedule_work_pro_villager"
 								field "filters":
@@ -4412,18 +4352,6 @@ Changed entity "villager_v2":
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
 											filter property "value": 8000
-							Added scheduled event:
-								field "event": "minecraft:schedule_gather_villager"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": ">="
-											filter property "test": "hourly_clock_time"
-											filter property "value": 8000
-										filter:
-											filter property "operator": "<"
-											filter property "test": "hourly_clock_time"
-											filter property "value": 10000
 							Added scheduled event:
 								field "event": "minecraft:schedule_work_pro_villager"
 								field "filters":
@@ -4449,17 +4377,17 @@ Changed entity "villager_v2":
 											filter property "test": "hourly_clock_time"
 											filter property "value": 12000
 							Added scheduled event:
-								field "event": "minecraft:schedule_bed_villager"
+								field "event": "minecraft:schedule_gather_villager"
 								field "filters":
 									filter property "all_of":
 										filter:
 											filter property "operator": ">="
 											filter property "test": "hourly_clock_time"
-											filter property "value": 12000
+											filter property "value": 8000
 										filter:
 											filter property "operator": "<"
 											filter property "test": "hourly_clock_time"
-											filter property "value": 24000
+											filter property "value": 10000
 			Changed field "components":
 				Changed component "minecraft:type_family":
 					Changed field "family" from "villager" to:
@@ -7099,12 +7027,12 @@ Changed entity "zombie":
 			Changed field "component_groups":
 				Changed component group "minecraft:look_to_start_drowned_transformation":
 					Changed component "minecraft:environment_sensor":
-						Removed field "event" of "minecraft:start_transforming".
 						Removed field "filters":
 							filter property "operator": "=="
 							filter property "subject": "self"
 							filter property "test": "is_underwater"
 							filter property "value": true
+						Removed field "event" of "minecraft:start_transforming".
 						Added field "triggers":
 							field "event": "minecraft:start_transforming"
 							field "filters":
@@ -7500,6 +7428,21 @@ Changed entity "zombie_villager":
 							Added family "mob".
 			Changed field "components":
 				Changed component "minecraft:interact":
+					Removed field "on_interact":
+						field "event": "villager_converted"
+						field "filters":
+							filter property "all_of":
+								filter:
+									filter property "domain": "hand"
+									filter property "subject": "other"
+									filter property "test": "has_equipment"
+									filter property "value": "golden_apple"
+								filter:
+									filter property "subject": "self"
+									filter property "test": "has_component"
+									filter property "value": "minecraft:effect.weakness"
+						field "target": "self"
+					Removed field "use_item" of true.
 					Removed field "interact_text" of "action.interact.cure".
 					Added field "interactions":
 						field "interact_text": "action.interact.cure"
@@ -7518,21 +7461,6 @@ Changed entity "zombie_villager":
 										filter property "value": "minecraft:effect.weakness"
 							field "target": "self"
 						field "use_item": true
-					Removed field "on_interact":
-						field "event": "villager_converted"
-						field "filters":
-							filter property "all_of":
-								filter:
-									filter property "domain": "hand"
-									filter property "subject": "other"
-									filter property "test": "has_equipment"
-									filter property "value": "golden_apple"
-								filter:
-									filter property "subject": "self"
-									filter property "test": "has_component"
-									filter property "value": "minecraft:effect.weakness"
-						field "target": "self"
-					Removed field "use_item" of true.
 Changed entity "zombie_villager_v2":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -7623,6 +7551,21 @@ Changed entity "zombie_villager_v2":
 							Added family "mob".
 			Changed field "components":
 				Changed component "minecraft:interact":
+					Removed field "on_interact":
+						field "event": "villager_converted"
+						field "filters":
+							filter property "all_of":
+								filter:
+									filter property "domain": "hand"
+									filter property "subject": "other"
+									filter property "test": "has_equipment"
+									filter property "value": "golden_apple"
+								filter:
+									filter property "subject": "self"
+									filter property "test": "has_component"
+									filter property "value": "minecraft:effect.weakness"
+						field "target": "self"
+					Removed field "use_item" of true.
 					Removed field "interact_text" of "action.interact.cure".
 					Added field "interactions":
 						field "interact_text": "action.interact.cure"
@@ -7641,21 +7584,6 @@ Changed entity "zombie_villager_v2":
 										filter property "value": "minecraft:effect.weakness"
 							field "target": "self"
 						field "use_item": true
-					Removed field "on_interact":
-						field "event": "villager_converted"
-						field "filters":
-							filter property "all_of":
-								filter:
-									filter property "domain": "hand"
-									filter property "subject": "other"
-									filter property "test": "has_equipment"
-									filter property "value": "golden_apple"
-								filter:
-									filter property "subject": "self"
-									filter property "test": "has_component"
-									filter property "value": "minecraft:effect.weakness"
-						field "target": "self"
-					Removed field "use_item" of true.
 	Added behavior pack "extra":
 		field "format_version": "1.12.0"
 		field "minecraft:entity":

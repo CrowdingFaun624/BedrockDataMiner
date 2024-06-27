@@ -1,17 +1,16 @@
 Difference of "entities" between "1.17.0.50" (beta of "1.17.0") and "1.17.0.52" (beta of "1.17.0").
 
 Changed entity "axolotl":
-	Added behavior pack "core":
-		field "format_version": "1.16.0"
-		field "minecraft:entity":
-			field "component_groups":
-				component group "attack_cooldown":
-					component "minecraft:attack_cooldown":
-						field "attack_cooldown_complete_event":
-							field "event": "attack_cooldown_complete_event"
-							field "target": "self"
-						field "attack_cooldown_time": 120.0
-				component group "axolotl_adult":
+	Moved behavior pack "experimental" to "core".
+	Changed behavior pack "core":
+		Changed field "defined_in":
+			Total behavior pack: 1 (+1, -1)
+			Removed behavior pack "experimental_caves_and_cliffs".
+			Added behavior pack "vanilla_1.17.0".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 12 (+11, -11)
+				Added component group "axolotl_adult":
 					component "minecraft:behavior.breed":
 						field "priority": 1
 						field "speed_multiplier": 1.0
@@ -29,7 +28,7 @@ Changed entity "axolotl":
 					component "minecraft:experience_reward":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
-				component group "axolotl_baby":
+				Added component group "axolotl_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
 						field "feed_items": "tropical_fish_bucket"
@@ -41,14 +40,14 @@ Changed entity "axolotl":
 						field "speed_multiplier": 1.1
 					component "minecraft:is_baby": empty
 					component "minecraft:scale": field "value": 0.5
-				component group "axolotl_blue": component "minecraft:variant": field "value": 4
-				component group "axolotl_cyan": component "minecraft:variant": field "value": 1
-				component group "axolotl_dried":
+				Added component group "axolotl_blue" of component "minecraft:variant": field "value": 4.
+				Added component group "axolotl_cyan" of component "minecraft:variant": field "value": 1.
+				Added component group "axolotl_dried":
 					component "minecraft:damage_over_time":
 						field "damage_per_hurt": 1
 						field "time_between_hurt": 0
-				component group "axolotl_gold": component "minecraft:variant": field "value": 2
-				component group "axolotl_in_water":
+				Added component group "axolotl_gold" of component "minecraft:variant": field "value": 2.
+				Added component group "axolotl_in_water":
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -57,15 +56,15 @@ Changed entity "axolotl":
 									filter property "operator": "!="
 									filter property "test": "in_water"
 									filter property "value": true
-				component group "axolotl_lucy": component "minecraft:variant": field "value": 0
-				component group "axolotl_on_land":
+				Added component group "axolotl_lucy" of component "minecraft:variant": field "value": 0.
+				Added component group "axolotl_on_land":
 					component "minecraft:drying_out_timer":
 						field "dried_out_event": field "event": "dried_out"
 						field "recover_after_dried_out_event": field "event": "recover_after_dried_out"
 						field "stopped_drying_out_event": field "event": "stop_drying_out"
 						field "total_time": 300
 						field "water_bottle_refill_time": 90
-				component group "axolotl_on_land_in_rain":
+				Added component group "axolotl_on_land_in_rain":
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -80,238 +79,8 @@ Changed entity "axolotl":
 									filter property "operator": "=="
 									filter property "test": "in_water"
 									filter property "value": true
-				component group "axolotl_wild": component "minecraft:variant": field "value": 3
-			field "components":
-				component "minecraft:attack": field "damage": 2
-				component "minecraft:behavior.look_at_player":
-					field "priority": 10
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.melee_attack":
-					field "on_kill":
-						field "event": "killed_enemy_event"
-						field "target": "self"
-					field "priority": 4
-				component "minecraft:behavior.move_to_water":
-					field "goal_radius": 0.1
-					field "priority": 6
-					field "search_count": 1
-					field "search_height": 5
-					field "search_range": 16
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "in_water"
-										filter property "value": true
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "self"
-										filter property "test": "has_component"
-										filter property "value": "minecraft:attack_cooldown"
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "squid"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "fish"
-							field "max_dist": 8
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "in_water"
-										filter property "value": true
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "drowned"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "guardian"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "guardian_elder"
-							field "max_dist": 8
-					field "must_see": true
-					field "must_see_forget_duration": 17.0
-					field "priority": 3
-					field "reselect_targets": true
-					field "within_radius": 20.0
-				component "minecraft:behavior.play_dead":
-					field "apply_regeneration": true
-					field "damage_sources":
-						damage source: "contact"
-						damage source: "entity_attack"
-						damage source: "entity_explosion"
-						damage source: "magic"
-						damage source: "projectile"
-						damage source: "thorns"
-						damage source: "wither"
-					field "duration": 10
-					field "force_below_health": 8
-					field "priority": 0
-					field "random_damage_range": [0, 2]
-					field "random_start_chance": 0.33
-				component "minecraft:behavior.random_stroll":
-					field "interval": 100
-					field "priority": 9
-				component "minecraft:behavior.random_swim":
-					field "interval": 0
-					field "priority": 8
-					field "xz_dist": 30
-					field "y_dist": 15
-				component "minecraft:behavior.swim_idle":
-					field "idle_time": 5.0
-					field "priority": 7
-					field "success_rate": 0.05
-				component "minecraft:behavior.tempt":
-					field "can_tempt_vertically": true
-					field "items": item: "tropical_fish_bucket"
-					field "priority": 2
-					field "speed_multiplier": 1.1
-				component "minecraft:breathable":
-					field "breathes_air": true
-					field "breathes_water": true
-					field "generates_bubbles": false
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:collision_box":
-					field "height": 0.42
-					field "width": 0.75
-				component "minecraft:combat_regeneration": empty
-				component "minecraft:damage_sensor":
-					field "triggers":
-						field "cause": "lightning"
-						field "damage_multiplier": 2000.0
-						field "deals_damage": true
-				component "minecraft:despawn": field "despawn_from_distance": empty
-				component "minecraft:health": field "value": 14
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:jump.static": empty
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "soft_distance": 4.0
-				component "minecraft:movement": field "value": 0.1
-				component "minecraft:movement.amphibious": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.generic":
-					field "avoid_damage_blocks": true
-					field "can_path_over_water": true
-					field "can_sink": false
-					field "can_swim": true
-					field "can_walk": true
-					field "is_amphibious": true
-				component "minecraft:physics": empty
-				component "minecraft:pushable":
-					field "is_pushable": true
-					field "is_pushable_by_piston": true
-				component "minecraft:type_family":
-					field "family":
-						family: "axolotl"
-						family: "mob"
-				component "minecraft:underwater_movement": field "value": 0.2
-			field "description":
-				description "identifier": "minecraft:axolotl"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
-			field "events":
-				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group: "attack_cooldown"
-				event "dried_out": field "add": field "component_groups": component group: "axolotl_dried"
-				event "enter_water":
-					field "add": field "component_groups": component group: "axolotl_in_water"
-					field "remove":
-						field "component_groups":
-							component group: "axolotl_on_land"
-							component group: "axolotl_on_land_in_rain"
-							component group: "axolotl_dried"
-				event "killed_enemy_event": field "add": field "component_groups": component group: "attack_cooldown"
-				event "minecraft:ageable_grow_up":
-					field "add": field "component_groups": component group: "axolotl_adult"
-					field "remove": field "component_groups": component group: "axolotl_baby"
-				event "minecraft:entity_born":
-					field "sequence":
-						sequence item 0:
-							field "add":
-								field "component_groups":
-									component group: "axolotl_baby"
-									component group: "axolotl_in_water"
-							field "remove": field "component_groups": component group: "axolotl_adult"
-						sequence item 1:
-							field "add": field "component_groups": component group: "axolotl_blue"
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-				event "minecraft:entity_spawned":
-					field "sequence":
-						sequence item 0:
-							field "add":
-								field "component_groups":
-									component group: "axolotl_adult"
-									component group: "axolotl_in_water"
-						sequence item 1:
-							field "randomize":
-								randomize item:
-									field "add": field "component_groups": component group: "axolotl_cyan"
-									field "weight": 25
-								randomize item:
-									field "add": field "component_groups": component group: "axolotl_gold"
-									field "weight": 25
-								randomize item:
-									field "add": field "component_groups": component group: "axolotl_lucy"
-									field "weight": 25
-								randomize item:
-									field "add": field "component_groups": component group: "axolotl_wild"
-									field "weight": 25
-				event "recover_after_dried_out": field "remove": field "component_groups": component group: "axolotl_dried"
-				event "start_drying_out":
-					field "add": field "component_groups": component group: "axolotl_on_land"
-					field "remove":
-						field "component_groups":
-							component group: "axolotl_on_land_in_rain"
-							component group: "axolotl_in_water"
-				event "stop_drying_out":
-					field "add": field "component_groups": component group: "axolotl_on_land_in_rain"
-					field "remove":
-						field "component_groups":
-							component group: "axolotl_on_land"
-							component group: "axolotl_dried"
-		field "defined_in": behavior pack: "vanilla_1.17.0"
-	Removed behavior pack "experimental":
-		field "format_version": "1.16.0"
-		field "minecraft:entity":
-			field "component_groups":
-				component group "attack_cooldown":
-					component "minecraft:attack_cooldown":
-						field "attack_cooldown_complete_event":
-							field "event": "attack_cooldown_complete_event"
-							field "target": "self"
-						field "attack_cooldown_time": 120.0
-				component group "minecraft:axolotl_adult":
+				Added component group "axolotl_wild" of component "minecraft:variant": field "value": 3.
+				Removed component group "minecraft:axolotl_adult":
 					component "minecraft:behavior.breed":
 						field "priority": 1
 						field "speed_multiplier": 1.0
@@ -329,7 +98,7 @@ Changed entity "axolotl":
 					component "minecraft:experience_reward":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
-				component group "minecraft:axolotl_baby":
+				Removed component group "minecraft:axolotl_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
 						field "feed_items": "tropical_fish_bucket"
@@ -341,14 +110,14 @@ Changed entity "axolotl":
 						field "speed_multiplier": 1.1
 					component "minecraft:is_baby": empty
 					component "minecraft:scale": field "value": 0.5
-				component group "minecraft:axolotl_blue": component "minecraft:variant": field "value": 4
-				component group "minecraft:axolotl_cyan": component "minecraft:variant": field "value": 1
-				component group "minecraft:axolotl_dried":
+				Removed component group "minecraft:axolotl_blue" of component "minecraft:variant": field "value": 4.
+				Removed component group "minecraft:axolotl_cyan" of component "minecraft:variant": field "value": 1.
+				Removed component group "minecraft:axolotl_dried":
 					component "minecraft:damage_over_time":
 						field "damage_per_hurt": 1
 						field "time_between_hurt": 0
-				component group "minecraft:axolotl_gold": component "minecraft:variant": field "value": 2
-				component group "minecraft:axolotl_in_water":
+				Removed component group "minecraft:axolotl_gold" of component "minecraft:variant": field "value": 2.
+				Removed component group "minecraft:axolotl_in_water":
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -357,8 +126,8 @@ Changed entity "axolotl":
 									filter property "operator": "!="
 									filter property "test": "in_water"
 									filter property "value": true
-				component group "minecraft:axolotl_lucy": component "minecraft:variant": field "value": 0
-				component group "minecraft:axolotl_on_land":
+				Removed component group "minecraft:axolotl_lucy" of component "minecraft:variant": field "value": 0.
+				Removed component group "minecraft:axolotl_on_land":
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -371,7 +140,7 @@ Changed entity "axolotl":
 						field "looping": false
 						field "time": 300
 						field "time_down_event": field "event": "minecraft:dried_out"
-				component group "minecraft:axolotl_on_land_in_rain":
+				Removed component group "minecraft:axolotl_on_land_in_rain":
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -386,230 +155,130 @@ Changed entity "axolotl":
 									filter property "operator": "=="
 									filter property "test": "in_water"
 									filter property "value": true
-				component group "minecraft:axolotl_wild": component "minecraft:variant": field "value": 3
-			field "components":
-				component "minecraft:attack": field "damage": 2
-				component "minecraft:behavior.look_at_player":
-					field "priority": 10
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.melee_attack":
-					field "on_kill":
-						field "event": "killed_enemy_event"
-						field "target": "self"
-					field "priority": 4
-				component "minecraft:behavior.move_to_water":
-					field "goal_radius": 0.1
-					field "priority": 6
-					field "search_count": 1
-					field "search_height": 5
-					field "search_range": 16
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "in_water"
-										filter property "value": true
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "self"
-										filter property "test": "has_component"
-										filter property "value": "minecraft:attack_cooldown"
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "squid"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "fish"
-							field "max_dist": 8
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "in_water"
-										filter property "value": true
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "drowned"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "guardian"
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "guardian_elder"
-							field "max_dist": 8
-					field "must_see": true
-					field "must_see_forget_duration": 17.0
-					field "priority": 3
-					field "reselect_targets": true
-					field "within_radius": 20.0
-				component "minecraft:behavior.play_dead":
-					field "apply_regeneration": true
-					field "damage_sources":
-						damage source: "contact"
-						damage source: "entity_attack"
-						damage source: "entity_explosion"
-						damage source: "magic"
-						damage source: "projectile"
-						damage source: "thorns"
-						damage source: "wither"
-					field "duration": 10
-					field "force_below_health": 8
-					field "priority": 0
-					field "random_damage_range": [0, 2]
-					field "random_start_chance": 0.33
-				component "minecraft:behavior.random_stroll":
-					field "interval": 100
-					field "priority": 9
-				component "minecraft:behavior.random_swim":
-					field "interval": 0
-					field "priority": 8
-					field "xz_dist": 30
-					field "y_dist": 15
-				component "minecraft:behavior.swim_idle":
-					field "idle_time": 5.0
-					field "priority": 7
-					field "success_rate": 0.5
-				component "minecraft:behavior.tempt":
-					field "can_tempt_vertically": true
-					field "items": item: "tropical_fish_bucket"
-					field "priority": 2
-					field "speed_multiplier": 1.1
-				component "minecraft:breathable":
-					field "breathes_air": true
-					field "breathes_water": true
-					field "generates_bubbles": false
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:collision_box":
-					field "height": 0.42
-					field "width": 0.75
-				component "minecraft:combat_regeneration": empty
-				component "minecraft:damage_sensor":
-					field "triggers":
-						field "cause": "lightning"
-						field "damage_multiplier": 2000.0
-						field "deals_damage": true
-				component "minecraft:despawn": field "despawn_from_distance": empty
-				component "minecraft:health": field "value": 14
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:jump.static": empty
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "soft_distance": 4.0
-				component "minecraft:movement": field "value": 0.1
-				component "minecraft:movement.amphibious": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.generic":
-					field "avoid_damage_blocks": true
-					field "can_path_over_water": true
-					field "can_sink": false
-					field "can_swim": true
-					field "can_walk": true
-					field "is_amphibious": true
-				component "minecraft:physics": empty
-				component "minecraft:pushable":
-					field "is_pushable": true
-					field "is_pushable_by_piston": true
-				component "minecraft:type_family":
-					field "family":
-						family: "axolotl"
-						family: "mob"
-				component "minecraft:underwater_movement": field "value": 0.2
-			field "description":
-				description "identifier": "minecraft:axolotl"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
-			field "events":
-				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group: "attack_cooldown"
-				event "killed_enemy_event": field "add": field "component_groups": component group: "attack_cooldown"
-				event "minecraft:ageable_grow_up":
-					field "add": field "component_groups": component group: "minecraft:axolotl_adult"
-					field "remove": field "component_groups": component group: "minecraft:axolotl_baby"
-				event "minecraft:dried_out": field "add": field "component_groups": component group: "minecraft:axolotl_dried"
-				event "minecraft:enter_water":
+				Removed component group "minecraft:axolotl_wild" of component "minecraft:variant": field "value": 3.
+			Changed field "components":
+				Changed component "minecraft:behavior.swim_idle":
+					Changed field "success_rate" from 0.5 to 0.05.
+			Changed field "events":
+				Total event: 10 (+5, -4)
+				Added event "dried_out" of field "add": field "component_groups": component group: "axolotl_dried".
+				Added event "enter_water":
+					field "add": field "component_groups": component group: "axolotl_in_water"
+					field "remove":
+						field "component_groups":
+							component group: "axolotl_on_land"
+							component group: "axolotl_on_land_in_rain"
+							component group: "axolotl_dried"
+				Changed event "minecraft:ageable_grow_up":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 1 (+1, -1)
+							Added component group "axolotl_adult".
+							Removed component group "minecraft:axolotl_adult".
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 1 (+1, -1)
+							Added component group "axolotl_baby".
+							Removed component group "minecraft:axolotl_baby".
+				Removed event "minecraft:dried_out" of field "add": field "component_groups": component group: "minecraft:axolotl_dried".
+				Removed event "minecraft:enter_water":
 					field "add": field "component_groups": component group: "minecraft:axolotl_in_water"
 					field "remove":
 						field "component_groups":
 							component group: "minecraft:axolotl_on_land"
 							component group: "minecraft:axolotl_on_land_in_rain"
 							component group: "minecraft:axolotl_dried"
-				event "minecraft:entity_born":
-					field "sequence":
-						sequence item 0:
-							field "add":
-								field "component_groups":
-									component group: "minecraft:axolotl_baby"
-									component group: "minecraft:axolotl_in_water"
-							field "remove": field "component_groups": component group: "minecraft:axolotl_adult"
-						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:axolotl_blue"
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-				event "minecraft:entity_spawned":
-					field "sequence":
-						sequence item 0:
-							field "add":
-								field "component_groups":
-									component group: "minecraft:axolotl_adult"
-									component group: "minecraft:axolotl_in_water"
-						sequence item 1:
-							field "randomize":
-								randomize item:
-									field "add": field "component_groups": component group: "minecraft:axolotl_cyan"
-									field "weight": 25
-								randomize item:
-									field "add": field "component_groups": component group: "minecraft:axolotl_gold"
-									field "weight": 25
-								randomize item:
-									field "add": field "component_groups": component group: "minecraft:axolotl_lucy"
-									field "weight": 25
-								randomize item:
-									field "add": field "component_groups": component group: "minecraft:axolotl_wild"
-									field "weight": 25
-				event "minecraft:start_dryingout":
+				Changed event "minecraft:entity_born":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 2 (+2, -2)
+									Added component group "axolotl_baby".
+									Added component group "axolotl_in_water".
+									Removed component group "minecraft:axolotl_baby".
+									Removed component group "minecraft:axolotl_in_water".
+							Changed field "remove":
+								Changed field "component_groups":
+									Total component group: 1 (+1, -1)
+									Added component group "axolotl_adult".
+									Removed component group "minecraft:axolotl_adult".
+						Changed sequence item 1:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 1 (+1, -1)
+									Added component group "axolotl_blue".
+									Removed component group "minecraft:axolotl_blue".
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 2 (+2, -2)
+									Added component group "axolotl_adult".
+									Added component group "axolotl_in_water".
+									Removed component group "minecraft:axolotl_adult".
+									Removed component group "minecraft:axolotl_in_water".
+						Changed sequence item 1:
+							Changed field "randomize":
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 1 (+1, -1)
+											Added component group "axolotl_cyan".
+											Removed component group "minecraft:axolotl_gold".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 1 (+1, -1)
+											Added component group "axolotl_wild".
+											Removed component group "minecraft:axolotl_cyan".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 1 (+1, -1)
+											Added component group "axolotl_lucy".
+											Removed component group "minecraft:axolotl_wild".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 1 (+1, -1)
+											Added component group "axolotl_gold".
+											Removed component group "minecraft:axolotl_lucy".
+				Removed event "minecraft:start_dryingout":
 					field "add": field "component_groups": component group: "minecraft:axolotl_on_land"
 					field "remove":
 						field "component_groups":
 							component group: "minecraft:axolotl_on_land_in_rain"
 							component group: "minecraft:axolotl_in_water"
-				event "minecraft:stop_dryingout":
+				Removed event "minecraft:stop_dryingout":
 					field "add": field "component_groups": component group: "minecraft:axolotl_on_land_in_rain"
 					field "remove":
 						field "component_groups":
 							component group: "minecraft:axolotl_on_land"
 							component group: "minecraft:axolotl_dried"
-		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
+				Added event "recover_after_dried_out" of field "remove": field "component_groups": component group: "axolotl_dried".
+				Added event "start_drying_out":
+					field "add": field "component_groups": component group: "axolotl_on_land"
+					field "remove":
+						field "component_groups":
+							component group: "axolotl_on_land_in_rain"
+							component group: "axolotl_in_water"
+				Added event "stop_drying_out":
+					field "add": field "component_groups": component group: "axolotl_on_land_in_rain"
+					field "remove":
+						field "component_groups":
+							component group: "axolotl_on_land"
+							component group: "axolotl_dried"
 Changed entity "bee":
 	Changed behavior pack "core":
 		Changed field "defined_in":
 			Total behavior pack: 6 (+1, -0)
+			Unchanged behavior pack: "vanilla_1.14"
+			Unchanged behavior pack: "vanilla_1.15"
+			Unchanged behavior pack: "vanilla_1.16"
+			Unchanged behavior pack: "vanilla_1.16.100"
+			Unchanged behavior pack: "vanilla_1.16.200"
 			Added behavior pack "vanilla_1.17.0".
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
@@ -617,8 +286,8 @@ Changed entity "bee":
 					Changed component "minecraft:breedable":
 						Changed field "breed_items":
 							Total item: 9 (+2, -0)
-							Added item "minecraft:flowering_azalea".
 							Added item "minecraft:azalea_leaves_flowered".
+							Added item "minecraft:flowering_azalea".
 				Changed component group "bee_baby":
 					Changed component "minecraft:ageable":
 						Changed field "feed_items":
@@ -633,14 +302,14 @@ Changed entity "bee":
 						Changed field "goal_radius" from 1.0 to 1.2.
 						Changed field "target_blocks":
 							Total block: 10 (+2, -0)
-							Added block "minecraft:flowering_azalea".
 							Added block "minecraft:azalea_leaves_flowered".
+							Added block "minecraft:flowering_azalea".
 			Changed field "components":
 				Changed component "minecraft:behavior.tempt":
 					Changed field "items":
 						Total item: 9 (+2, -0)
-						Added item "minecraft:flowering_azalea".
 						Added item "minecraft:azalea_leaves_flowered".
+						Added item "minecraft:flowering_azalea".
 	Removed behavior pack "experimental":
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
@@ -1200,30 +869,26 @@ Changed entity "blaze":
 	Changed behavior pack "core":
 		Changed field "defined_in":
 			Total behavior pack: 5 (+1, -0)
+			Unchanged behavior pack: "vanilla"
+			Unchanged behavior pack: "vanilla_1.15"
+			Unchanged behavior pack: "vanilla_1.16"
+			Unchanged behavior pack: "vanilla_1.16.100"
 			Added behavior pack "vanilla_1.17.0".
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:hurt_on_condition":
 					Changed field "damage_conditions":
-						Total damage condition: 1 (+1, -1)
-						Removed damage condition:
-							field "cause": "drowning"
-							field "damage_per_tick": 1
-							field "filters":
-								filter property "operator": "=="
-								filter property "test": "in_water_or_rain"
-								filter property "value": true
-						Added damage condition:
-							field "cause": "drowning"
-							field "damage_per_tick": 1
-							field "filters":
-								filter property "operator": "=="
-								filter property "test": "in_contact_with_water"
-								filter property "value": true
+						Changed damage condition:
+							Changed field "filters":
+								Changed filter property "test" from "in_water_or_rain" to "in_contact_with_water".
 Changed entity "creeper":
 	Changed behavior pack "core":
 		Changed field "defined_in":
 			Total behavior pack: 5 (+1, -0)
+			Unchanged behavior pack: "vanilla"
+			Unchanged behavior pack: "vanilla_1.15"
+			Unchanged behavior pack: "vanilla_1.16"
+			Unchanged behavior pack: "vanilla_1.16.100"
 			Added behavior pack "vanilla_1.17.0".
 		Changed field "minecraft:entity":
 			Changed field "components":
@@ -1453,6 +1118,11 @@ Changed entity "dolphin":
 	Changed behavior pack "core":
 		Changed field "defined_in":
 			Total behavior pack: 6 (+1, -0)
+			Unchanged behavior pack: "vanilla"
+			Unchanged behavior pack: "vanilla_1.14"
+			Unchanged behavior pack: "vanilla_1.15"
+			Unchanged behavior pack: "vanilla_1.16"
+			Unchanged behavior pack: "vanilla_1.16.100"
 			Added behavior pack "vanilla_1.17.0".
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
@@ -1483,26 +1153,18 @@ Changed entity "enderman":
 	Changed behavior pack "core":
 		Changed field "defined_in":
 			Total behavior pack: 5 (+1, -0)
+			Unchanged behavior pack: "vanilla"
+			Unchanged behavior pack: "vanilla_1.15"
+			Unchanged behavior pack: "vanilla_1.16"
+			Unchanged behavior pack: "vanilla_1.16.100"
 			Added behavior pack "vanilla_1.17.0".
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:hurt_on_condition":
 					Changed field "damage_conditions":
-						Total damage condition: 2 (+1, -1)
-						Removed damage condition:
-							field "cause": "drowning"
-							field "damage_per_tick": 1
-							field "filters":
-								filter property "operator": "=="
-								filter property "test": "in_water_or_rain"
-								filter property "value": true
-						Added damage condition:
-							field "cause": "drowning"
-							field "damage_per_tick": 1
-							field "filters":
-								filter property "operator": "=="
-								filter property "test": "in_contact_with_water"
-								filter property "value": true
+						Changed damage condition:
+							Changed field "filters":
+								Changed filter property "test" from "in_water_or_rain" to "in_contact_with_water".
 Changed entity "fox":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -1518,15 +1180,6 @@ Changed entity "fox":
 							item: "sweet_berries"
 							item: "glow_berries"
 			Changed field "components":
-				Changed component "minecraft:behavior.raid_garden":
-					Changed field "blocks":
-						Total block: 3 (+2, -0)
-						Added block "minecraft:cave_vines_head_with_berries".
-						Added block "minecraft:cave_vines_body_with_berries".
-				Changed component "minecraft:behavior.tempt":
-					Changed field "items":
-						Total item: 2 (+1, -0)
-						Added item "glow_berries".
 				Changed component "minecraft:shareables":
 					Changed field "items":
 						Total item: 39 (+1, -0)
@@ -1534,6 +1187,15 @@ Changed entity "fox":
 							field "item": "minecraft:glow_berries"
 							field "max_amount": 1
 							field "priority": 0
+				Changed component "minecraft:behavior.raid_garden":
+					Changed field "blocks":
+						Total block: 3 (+2, -0)
+						Added block "minecraft:cave_vines_body_with_berries".
+						Added block "minecraft:cave_vines_head_with_berries".
+				Changed component "minecraft:behavior.tempt":
+					Changed field "items":
+						Total item: 2 (+1, -0)
+						Added item "glow_berries".
 	Removed behavior pack "experimental":
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
@@ -2318,6 +1980,8 @@ Changed entity "piglin":
 	Changed behavior pack "core":
 		Changed field "defined_in":
 			Total behavior pack: 3 (+1, -0)
+			Unchanged behavior pack: "vanilla_1.16"
+			Unchanged behavior pack: "vanilla_1.16.100"
 			Added behavior pack "vanilla_1.17.0".
 		Changed field "minecraft:entity":
 			Changed field "components":
@@ -3130,47 +2794,29 @@ Changed entity "snow_golem":
 	Changed behavior pack "core":
 		Changed field "defined_in":
 			Total behavior pack: 5 (+1, -0)
+			Unchanged behavior pack: "vanilla"
+			Unchanged behavior pack: "vanilla_1.15"
+			Unchanged behavior pack: "vanilla_1.16"
+			Unchanged behavior pack: "vanilla_1.16.100"
 			Added behavior pack "vanilla_1.17.0".
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:hurt_on_condition":
 					Changed field "damage_conditions":
-						Total damage condition: 3 (+1, -1)
-						Removed damage condition:
-							field "cause": "drowning"
-							field "damage_per_tick": 1
-							field "filters":
-								filter property "operator": "=="
-								filter property "test": "in_water_or_rain"
-								filter property "value": true
-						Added damage condition:
-							field "cause": "drowning"
-							field "damage_per_tick": 1
-							field "filters":
-								filter property "operator": "=="
-								filter property "test": "in_contact_with_water"
-								filter property "value": true
+						Changed damage condition:
+							Changed field "filters":
+								Changed filter property "test" from "in_water_or_rain" to "in_contact_with_water".
 Changed entity "strider":
 	Changed behavior pack "core":
 		Changed field "defined_in":
 			Total behavior pack: 3 (+1, -0)
+			Unchanged behavior pack: "vanilla_1.16"
+			Unchanged behavior pack: "vanilla_1.16.100"
 			Added behavior pack "vanilla_1.17.0".
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:hurt_on_condition":
 					Changed field "damage_conditions":
-						Total damage condition: 1 (+1, -1)
-						Removed damage condition:
-							field "cause": "drowning"
-							field "damage_per_tick": 1
-							field "filters":
-								filter property "operator": "=="
-								filter property "test": "in_water_or_rain"
-								filter property "value": true
-						Added damage condition:
-							field "cause": "drowning"
-							field "damage_per_tick": 1
-							field "filters":
-								filter property "operator": "=="
-								filter property "test": "in_contact_with_water"
-								filter property "value": true
+						Changed damage condition:
+							Changed field "filters":
+								Changed filter property "test" from "in_water_or_rain" to "in_contact_with_water".

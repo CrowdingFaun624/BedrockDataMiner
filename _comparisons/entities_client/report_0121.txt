@@ -1,74 +1,29 @@
-Difference of "entities_client" between "1.20.70.22" (beta of "1.20.71") and "1.20.70.24" (beta of "1.20.71").
+Difference of "entities_client" between "1.20.70.21" (beta of "1.20.71") and "1.20.70.22" (beta of "1.20.71").
 
-Total entity: 173 (+2, -0)
-Added entity "bogged.entity":
-	resource pack "experimental":
-		field "format_version": "1.8.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animation_controllers":
-					animation controller group: animation controller "look_at_target": "controller.animation.humanoid.look_at_target"
-					animation controller group: animation controller "move": "controller.animation.humanoid.move"
-					animation controller group: animation controller "riding": "controller.animation.humanoid.riding"
-					animation controller group: animation controller "holding": "controller.animation.humanoid.holding"
-					animation controller group: animation controller "brandish_spear": "controller.animation.humanoid.brandish_spear"
-					animation controller group: animation controller "charging": "controller.animation.humanoid.charging"
-					animation controller group: animation controller "attack": "controller.animation.humanoid.attack"
-					animation controller group: animation controller "sneaking": "controller.animation.humanoid.sneaking"
-					animation controller group: animation controller "bob": "controller.animation.humanoid.bob"
-					animation controller group: animation controller "damage_nearby_mobs": "controller.animation.humanoid.damage_nearby_mobs"
-					animation controller group: animation controller "bow_and_arrow": "controller.animation.humanoid.bow_and_arrow"
-					animation controller group: animation controller "swimming": "controller.animation.zombie.swimming"
-					animation controller group: animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress"
-					animation controller group: animation controller "skeleton_attack": "controller.animation.skeleton.attack"
-				field "animations":
-					animation "attack.rotations": "animation.humanoid.attack.rotations"
-					animation "bob": "animation.humanoid.bob"
-					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow"
-					animation "brandish_spear": "animation.humanoid.brandish_spear"
-					animation "charging": "animation.humanoid.charging"
-					animation "damage_nearby_mobs": "animation.humanoid.damage_nearby_mobs"
-					animation "holding": "animation.humanoid.holding"
-					animation "look_at_target_default": "animation.humanoid.look_at_target.default"
-					animation "look_at_target_gliding": "animation.humanoid.look_at_target.gliding"
-					animation "look_at_target_swimming": "animation.humanoid.look_at_target.swimming"
-					animation "move": "animation.humanoid.move"
-					animation "riding.arms": "animation.humanoid.riding.arms"
-					animation "riding.legs": "animation.humanoid.riding.legs"
-					animation "skeleton_attack": "animation.skeleton.attack"
-					animation "sneaking": "animation.humanoid.sneaking"
-					animation "swimming": "animation.zombie.swimming"
-					animation "use_item_progress": "animation.humanoid.use_item_progress"
-				field "enable_attachables": true
-				field "geometry":
-					geometry "default": "geometry.skeleton.bogged"
-					geometry "overlay": "geometry.bogged.armor"
-				field "identifier": "minecraft:bogged"
-				field "materials":
-					materials "default": "bogged"
-					materials "overlay": "bogged_clothes"
-				field "min_engine_version": "1.8.0"
-				field "render_controllers":
-					render controller: "controller.render.bogged_clothes"
-					render controller: "controller.render.bogged"
-				field "scripts": field "pre_animation": script: "variable.tcos0 = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"
-				field "spawn_egg":
-					field "base_color": "#8A9C72"
-					field "overlay_color": "#314D1B"
-				field "textures":
-					texture "default": "textures/entity/bogged"
-					texture "overlay": "textures/entity/bogged_clothes"
-		field "defined_in": resource pack: "experimental_update_announced_live2023"
-Added entity "breeze_wind_charge_projectile.entity":
-	resource pack "experimental":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations": animation "rotate": "animation.wind_charge.rotate"
-				field "geometry": geometry "default": "geometry.wind_charge"
-				field "identifier": "minecraft:breeze_wind_charge_projectile"
-				field "materials": materials "default": "breeze_wind"
-				field "render_controllers": render controller: "controller.render.wind_charge"
-				field "scripts": field "animate": script: "rotate"
-				field "textures": texture "default": "textures/entity/wind_charge"
-		field "defined_in": resource pack: "experimental_update_announced_live2023"
+Changed entity "armadillo.entity":
+	Changed resource pack "experimental":
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Changed field "animations":
+					Total animation: 9 (+2, -0)
+					Added animation "peek" of "animation.armadillo.peek".
+					Added animation "unroll_fast" of "animation.armadillo.unroll_fast".
+				Changed field "scripts":
+					Changed field "pre_animation":
+						Total script: 10 (+6, -4)
+						Removed script "variable.last_rolled_up_time = variable.rolled_up_time;".
+						Removed script "variable.use_rolled_up_model = variable.rolled_up_time >= 0.2083;".
+						Removed script "variable.is_rolled_up = query.property('minecraft:is_rolled_up');".
+						Removed script "variable.rolled_up_time = variable.is_rolled_up ? ((variable.last_rolled_up_time ?? 0.0) + query.delta_time) : 0.0;".
+						Added script "variable.use_rolled_up_model = variable.rolled_up_time >= 0.2083 && (variable.unrolling_time == 0.0 || variable.unrolling_time <= 1.25 );".
+						Added script "variable.is_rolled_up = query.property('minecraft:armadillo_state') != 'unrolled';".
+						Added script "variable.unrolling_time = variable.is_unrolling ? ((variable.unrolling_time ?? 0.0) + query.delta_time) : 0.0;".
+						Added script "variable.is_peeking = query.property('minecraft:armadillo_state') == 'rolled_up_peeking';".
+						Added script "variable.rolled_up_time = variable.is_rolled_up ? ((variable.rolled_up_time ?? 0.0) + query.delta_time) : 0.0;".
+						Added script "variable.is_unrolling = query.property('minecraft:armadillo_state') == 'rolled_up_unrolling';".
+				Changed field "sound_effects":
+					Total sound effect: 5 (+3, -1)
+					Added sound effect "peek" of "mob.armadillo.peek".
+					Removed sound effect "unroll" of "mob.armadillo.unroll".
+					Added sound effect "unroll_finish" of "mob.armadillo.unroll_finish".
+					Added sound effect "unroll_start" of "mob.armadillo.unroll_start".

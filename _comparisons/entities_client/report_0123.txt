@@ -1,35 +1,72 @@
-Difference of "entities_client" between "1.20.80.20" (beta of "1.20.80") and "1.20.80.21" (beta of "1.20.80").
+Difference of "entities_client" between "1.20.73" and "1.20.80.20" (beta of "1.20.80").
 
-Changed entity "wolf.entity":
+Changed entity "armadillo.entity":
+	Moved resource pack "experimental" to "core".
 	Changed resource pack "core":
+		Changed field "defined_in":
+			Total resource pack: 1 (+1, -1)
+			Removed resource pack "experimental_armadillo".
+			Added resource pack "vanilla_1.20.80".
+Changed entity "wolf.entity":
+	Total resource pack: 1 (+0, -1)
+	Changed resource pack "core":
+		Changed field "defined_in":
+			Total resource pack: 2 (+1, -0)
+			Added resource pack "vanilla_1.20.80".
 		Changed field "minecraft:client_entity":
 			Changed field "description":
-				Changed field "textures":
-					Total texture: 27 (+24, -0)
-					Added texture "ashen_angry" of "textures/entity/wolf/wolf_ashen_angry".
-					Added texture "ashen_default" of "textures/entity/wolf/wolf_ashen".
-					Added texture "ashen_tame" of "textures/entity/wolf/wolf_ashen_tame".
-					Added texture "black_angry" of "textures/entity/wolf/wolf_black_angry".
-					Added texture "black_default" of "textures/entity/wolf/wolf_black".
-					Added texture "black_tame" of "textures/entity/wolf/wolf_black_tame".
-					Added texture "chestnut_angry" of "textures/entity/wolf/wolf_chestnut_angry".
-					Added texture "chestnut_default" of "textures/entity/wolf/wolf_chestnut".
-					Added texture "chestnut_tame" of "textures/entity/wolf/wolf_chestnut_tame".
-					Moved texture "angry" to "pale_angry".
-					Moved texture "default" to "pale_default".
-					Moved texture "tame" to "pale_tame".
-					Added texture "rusty_angry" of "textures/entity/wolf/wolf_rusty_angry".
-					Added texture "rusty_default" of "textures/entity/wolf/wolf_rusty".
-					Added texture "rusty_tame" of "textures/entity/wolf/wolf_rusty_tame".
-					Added texture "snowy_angry" of "textures/entity/wolf/wolf_snowy_angry".
-					Added texture "snowy_default" of "textures/entity/wolf/wolf_snowy".
-					Added texture "snowy_tame" of "textures/entity/wolf/wolf_snowy_tame".
-					Added texture "spotted_angry" of "textures/entity/wolf/wolf_spotted_angry".
-					Added texture "spotted_default" of "textures/entity/wolf/wolf_spotted".
-					Added texture "spotted_tame" of "textures/entity/wolf/wolf_spotted_tame".
-					Added texture "striped_angry" of "textures/entity/wolf/wolf_striped_angry".
-					Added texture "striped_default" of "textures/entity/wolf/wolf_striped".
-					Added texture "striped_tame" of "textures/entity/wolf/wolf_striped_tame".
-					Added texture "woods_angry" of "textures/entity/wolf/wolf_woods_angry".
-					Added texture "woods_default" of "textures/entity/wolf/wolf_woods".
-					Added texture "woods_tame" of "textures/entity/wolf/wolf_woods_tame".
+				Added field "enable_attachables" of true.
+	Removed resource pack "experimental":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animation_controllers":
+					animation controller group: animation controller "wolf_setup": "controller.animation.wolf.setup"
+					animation controller group: animation controller "wolf_look_at": "controller.animation.wolf.look_at"
+					animation controller group: animation controller "wolf_baby_scaling": "controller.animation.wolf.baby_scaling"
+					animation controller group: animation controller "wolf_head_rot_z": "controller.animation.wolf.head_rot_z"
+					animation controller group: animation controller "wolf_tail_default": "controller.animation.wolf.tail_default"
+					animation controller group: animation controller "wolf_angry": "controller.animation.wolf.angry"
+					animation controller group: animation controller "wolf_sitting": "controller.animation.wolf.sitting"
+					animation controller group: animation controller "wolf_shaking": "controller.animation.wolf.shaking"
+				field "animations":
+					animation "wolf_angry": "animation.wolf.angry"
+					animation "wolf_baby_scaling": "animation.wolf.baby_scaling"
+					animation "wolf_head_rot_z": "animation.wolf.head_rot_z"
+					animation "wolf_leg_default": "animation.wolf.leg_default"
+					animation "wolf_look_at": "animation.common.look_at_target"
+					animation "wolf_setup": "animation.wolf.setup"
+					animation "wolf_shaking": "animation.wolf.shaking"
+					animation "wolf_sitting": "animation.wolf.sitting"
+					animation "wolf_tail_default": "animation.wolf.tail_default"
+				field "geometry":
+					geometry "default": "geometry.wolf"
+					geometry "overlay": "geometry.wolf.armor"
+				field "identifier": "minecraft:wolf"
+				field "materials":
+					materials "default": "wolf"
+					materials "overlay": "wolf_armor"
+				field "render_controllers":
+					render controller: "controller.render.wolf"
+					render controller: "controller.render.wolf_armor"
+				field "scripts":
+					field "pre_animation":
+						script: "variable.body_shake_angle = 0.05 * query.frame_alpha + query.shake_angle;"
+						script: "variable.body_roll_progress = Math.clamp((variable.body_shake_angle - 0.16) / 1.8, 0, 1);"
+						script: "variable.body_rot_z = Math.sin(variable.body_roll_progress * 180) * Math.sin(variable.body_roll_progress * 1980) * 27;"
+						script: "variable.upper_body_roll_progress = Math.clamp((variable.body_shake_angle - 0.08) / 1.8, 0, 1);"
+						script: "variable.upper_body_rot_z = (Math.sin(variable.upper_body_roll_progress * 180) * Math.sin(variable.upper_body_roll_progress * 1980) * 27) - variable.body_rot_z;"
+						script: "variable.tail_roll_progress = Math.clamp((variable.body_shake_angle - 0.2) / 1.8, 0, 1);"
+						script: "variable.tail_rot_z = (Math.sin(variable.tail_roll_progress * 180) * Math.sin(variable.tail_roll_progress * 1980) * 27) - variable.body_rot_z;"
+						script: "variable.head_roll_progress = Math.clamp(variable.body_shake_angle / 1.8, 0, 1);"
+						script: "variable.head_rot_z = (Math.sin(variable.head_roll_progress * 180) * Math.sin(variable.head_roll_progress * 1980) * 27) - variable.body_rot_z;"
+						script: "variable.has_armor = query.property('minecraft:has_armor');"
+				field "spawn_egg":
+					field "texture": "spawn_egg"
+					field "texture_index": 4
+				field "textures":
+					texture "angry": "textures/entity/wolf/wolf_angry"
+					texture "default": "textures/entity/wolf/wolf"
+					texture "overlay": "textures/entity/wolf/wolf_armor"
+					texture "tame": "textures/entity/wolf/wolf_tame"
+		field "defined_in": resource pack: "experimental_armadillo"

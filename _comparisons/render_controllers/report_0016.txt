@@ -61,17 +61,21 @@ Changed file "horse.render_controllers":
 	Changed resource pack "core":
 		Changed field "render_controllers":
 			Changed render controller "controller.render.horse":
+				Changed field "materials":
+					Total material dict: 4 (+1, -1)
+					Removed material dict material "*": "Material.default".
+					Added material dict material "*": "(query.armor_texture_slot(1) == 1.0) ? Material.horse_leather_armor : Material.default".
 				Changed field "arrays":
 					Changed field "textures":
 						Total array: 4 (+1, -0)
 						Changed array "Array.base":
-							Total array item: 6 (+0, -6)
-							Removed array item "Texture.base_white".
-							Removed array item "Texture.base_creamy".
-							Removed array item "Texture.base_chestnut".
+							Total array item: 5 (+0, -6)
 							Removed array item "Texture.base_black".
-							Removed array item "Texture.base_gray".
+							Removed array item "Texture.base_chestnut".
+							Removed array item "Texture.base_creamy".
 							Removed array item "Texture.base_darkbrown".
+							Removed array item "Texture.base_gray".
+							Removed array item "Texture.base_white".
 						Added array "Array.variant":
 							array item: "Texture.base_white"
 							array item: "Texture.base_creamy"
@@ -81,10 +85,14 @@ Changed file "horse.render_controllers":
 							array item: "Texture.base_black"
 							array item: "Texture.base_gray"
 							array item: "Texture.base_darkbrown"
-				Changed field "materials":
-					Total material dict: 4 (+1, -1)
-					Removed material dict material "*": "Material.default".
-					Added material dict material "*": "(query.armor_texture_slot(1) == 1.0) ? Material.horse_leather_armor : Material.default".
+				Changed field "textures":
+					Total texture: 3 (+3, -3)
+					Added texture "Array.armor[query.armor_texture_slot(1)]".
+					Removed texture "Array.armor[variable.ArmorTextureIndex]".
+					Removed texture "Array.base[variable.BaseTextureIndex]".
+					Added texture "Array.markings[query.mark_variant]".
+					Removed texture "Array.markings[variable.MarkingsTextureIndex]".
+					Added texture "variable.horse.is_horse ? Array.variant[query.variant] : Array.base[query.sub_variant] ".
 				Added field "part_visibility":
 					part visibility dict: part visibility "*saddle*": "query.is_saddled"
 					part visibility dict: part visibility "SaddleMouthLine": "query.is_saddled && query.has_rider"
@@ -92,14 +100,6 @@ Changed file "horse.render_controllers":
 					part visibility dict: part visibility "Ear*": "!variable.horse.large_ears"
 					part visibility dict: part visibility "MuleEar*": "variable.horse.large_ears"
 					part visibility dict: part visibility "Bag*": "query.is_chested"
-				Changed field "textures":
-					Total texture: 3 (+3, -3)
-					Removed texture "Array.base[variable.BaseTextureIndex]".
-					Removed texture "Array.markings[variable.MarkingsTextureIndex]".
-					Removed texture "Array.armor[variable.ArmorTextureIndex]".
-					Added texture "variable.horse.is_horse ? Array.variant[query.variant] : Array.base[query.sub_variant] ".
-					Added texture "Array.markings[query.mark_variant]".
-					Added texture "Array.armor[query.armor_texture_slot(1)]".
 Added file "player.render_controllers":
 	resource pack "core":
 		field "format_version": "1.8.0"
@@ -147,8 +147,8 @@ Changed file "villager_v2.render_controllers":
 					Changed field "textures":
 						Changed array "Array.levels":
 							Total array item: 5 (+2, -0)
-							Added array item "Texture.level_stone".
 							Added array item "Texture.level_emerald".
+							Added array item "Texture.level_stone".
 				Changed field "part_visibility":
 					Total part visibility dict: 1 (+1, -1)
 					Removed part visibility dict part visibility "*": "!query.is_baby".

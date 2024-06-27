@@ -18,16 +18,16 @@ Changed file "agent":
 							Removed transition list transition "swinging_arms": "entity.agent.swinganimationtick > 0".
 							Added transition list transition "swinging_arms": "variable.agent.swinganimationtick > 0".
 					Changed state "swinging_arms":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "moving": "entity.agent.swinganimationtick <= 0".
+							Added transition list transition "moving": "variable.agent.swinganimationtick <= 0".
 						Changed field "animations" from:
 							animation "look_at_target": empty
 							animation "swing_arms": empty
 						to:
 							animation dict: animation "swing_arms": empty
 							animation dict: animation "look_at_target": empty
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "moving": "entity.agent.swinganimationtick <= 0".
-							Added transition list transition "moving": "variable.agent.swinganimationtick <= 0".
 Changed file "bat":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -61,6 +61,84 @@ Changed file "cat":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
 			Total animation controller: 3 (+2, -0)
+			Changed animation controller "controller.animation.cat.move":
+				Changed field "states":
+					Changed state "lie_down":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.WalkBlendAmount".
+							Added parameter "query.walk_speed".
+						Changed field "animations" from animation "lie_down": empty to animation dict: animation "lie_down": empty.
+						Changed field "transitions":
+							Total transition list: 4 (+4, -4)
+							Removed transition list transition "sitting": "Entity.State == 2".
+							Removed transition list transition "sprinting": "Entity.State == 1".
+							Removed transition list transition "sneaking": "Entity.State == 0".
+							Removed transition list transition "walking": "Entity.State == 3".
+							Added transition list transition "sitting": "variable.State == 2".
+							Added transition list transition "walking": "variable.State == 3".
+							Added transition list transition "sneaking": "variable.State == 0".
+							Added transition list transition "sprinting": "variable.State == 1".
+					Changed state "sitting":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.WalkBlendAmount".
+							Added parameter "query.walk_speed".
+						Changed field "animations" from animation "sit": empty to animation dict: animation "sit": empty.
+						Changed field "transitions":
+							Total transition list: 4 (+4, -4)
+							Removed transition list transition "walking": "Entity.State == 3".
+							Removed transition list transition "sprinting": "Entity.State == 1".
+							Removed transition list transition "sneaking": "Entity.State == 0".
+							Removed transition list transition "lie_down": "Entity.State == 4".
+							Added transition list transition "walking": "variable.State == 3".
+							Added transition list transition "sneaking": "variable.State == 0".
+							Added transition list transition "lie_down": "variable.State == 4".
+							Added transition list transition "sprinting": "variable.State == 1".
+					Changed state "sneaking":
+						Changed field "animations" from animation "sneak": empty to animation dict: animation "sneak": empty.
+						Changed field "transitions":
+							Total transition list: 4 (+4, -4)
+							Removed transition list transition "sitting": "Entity.State == 2".
+							Removed transition list transition "sprinting": "Entity.State == 1".
+							Removed transition list transition "walking": "Entity.State == 3".
+							Removed transition list transition "lie_down": "Entity.State == 4".
+							Added transition list transition "sitting": "variable.State == 2".
+							Added transition list transition "walking": "variable.State == 3".
+							Added transition list transition "lie_down": "variable.State == 4".
+							Added transition list transition "sprinting": "variable.State == 1".
+					Changed state "sprinting":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.WalkBlendAmount".
+							Added parameter "query.walk_speed".
+						Changed field "animations" from animation "sprint": empty to animation dict: animation "sprint": empty.
+						Changed field "transitions":
+							Total transition list: 4 (+4, -4)
+							Removed transition list transition "sitting": "Entity.State == 2".
+							Removed transition list transition "sneaking": "Entity.State == 0".
+							Removed transition list transition "walking": "Entity.State == 3".
+							Removed transition list transition "lie_down": "Entity.State == 4".
+							Added transition list transition "sitting": "variable.State == 2".
+							Added transition list transition "sneaking": "variable.State == 0".
+							Added transition list transition "lie_down": "variable.State == 4".
+							Added transition list transition "walking": "variable.State == 3".
+					Changed state "walking":
+						Changed field "animations" from animation "walk": empty to animation dict: animation "walk": empty.
+						Changed field "transitions":
+							Total transition list: 4 (+4, -4)
+							Removed transition list transition "sitting": "Entity.State == 2".
+							Removed transition list transition "sprinting": "Entity.State == 1".
+							Removed transition list transition "sneaking": "Entity.State == 0".
+							Removed transition list transition "lie_down": "Entity.State == 4".
+							Added transition list transition "sitting": "variable.State == 2".
+							Added transition list transition "sneaking": "variable.State == 0".
+							Added transition list transition "lie_down": "variable.State == 4".
+							Added transition list transition "sprinting": "variable.State == 1".
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.WalkBlendAmount".
+							Added parameter "query.walk_speed".
 			Added animation controller "controller.animation.cat.baby":
 				field "states":
 					state "baby":
@@ -72,87 +150,27 @@ Changed file "cat":
 										timestamp "1.0": 1.0
 						field "parameters": parameter: "query.is_baby"
 			Added animation controller "controller.animation.cat.look_at_target" of field "states": state "default": field "animations": animation dict: animation "look_at_target": empty.
-			Changed animation controller "controller.animation.cat.move":
-				Changed field "states":
-					Changed state "lie_down":
-						Changed field "animations" from animation "lie_down": empty to animation dict: animation "lie_down": empty.
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.WalkBlendAmount".
-							Added parameter "query.walk_speed".
-						Changed field "transitions":
-							Total transition list: 4 (+4, -4)
-							Removed transition list transition "sneaking": "Entity.State == 0".
-							Removed transition list transition "sprinting": "Entity.State == 1".
-							Removed transition list transition "sitting": "Entity.State == 2".
-							Removed transition list transition "walking": "Entity.State == 3".
-							Added transition list transition "sneaking": "variable.State == 0".
-							Added transition list transition "sprinting": "variable.State == 1".
-							Added transition list transition "sitting": "variable.State == 2".
-							Added transition list transition "walking": "variable.State == 3".
-					Changed state "sitting":
-						Changed field "animations" from animation "sit": empty to animation dict: animation "sit": empty.
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.WalkBlendAmount".
-							Added parameter "query.walk_speed".
-						Changed field "transitions":
-							Total transition list: 4 (+4, -4)
-							Removed transition list transition "sneaking": "Entity.State == 0".
-							Removed transition list transition "sprinting": "Entity.State == 1".
-							Removed transition list transition "walking": "Entity.State == 3".
-							Removed transition list transition "lie_down": "Entity.State == 4".
-							Added transition list transition "sneaking": "variable.State == 0".
-							Added transition list transition "sprinting": "variable.State == 1".
-							Added transition list transition "walking": "variable.State == 3".
-							Added transition list transition "lie_down": "variable.State == 4".
-					Changed state "sneaking":
-						Changed field "animations" from animation "sneak": empty to animation dict: animation "sneak": empty.
-						Changed field "transitions":
-							Total transition list: 4 (+4, -4)
-							Removed transition list transition "sprinting": "Entity.State == 1".
-							Removed transition list transition "sitting": "Entity.State == 2".
-							Removed transition list transition "walking": "Entity.State == 3".
-							Removed transition list transition "lie_down": "Entity.State == 4".
-							Added transition list transition "sprinting": "variable.State == 1".
-							Added transition list transition "sitting": "variable.State == 2".
-							Added transition list transition "walking": "variable.State == 3".
-							Added transition list transition "lie_down": "variable.State == 4".
-					Changed state "sprinting":
-						Changed field "animations" from animation "sprint": empty to animation dict: animation "sprint": empty.
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.WalkBlendAmount".
-							Added parameter "query.walk_speed".
-						Changed field "transitions":
-							Total transition list: 4 (+4, -4)
-							Removed transition list transition "sneaking": "Entity.State == 0".
-							Removed transition list transition "sitting": "Entity.State == 2".
-							Removed transition list transition "walking": "Entity.State == 3".
-							Removed transition list transition "lie_down": "Entity.State == 4".
-							Added transition list transition "sneaking": "variable.State == 0".
-							Added transition list transition "sitting": "variable.State == 2".
-							Added transition list transition "walking": "variable.State == 3".
-							Added transition list transition "lie_down": "variable.State == 4".
-					Changed state "walking":
-						Changed field "animations" from animation "walk": empty to animation dict: animation "walk": empty.
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.WalkBlendAmount".
-							Added parameter "query.walk_speed".
-						Changed field "transitions":
-							Total transition list: 4 (+4, -4)
-							Removed transition list transition "sneaking": "Entity.State == 0".
-							Removed transition list transition "sprinting": "Entity.State == 1".
-							Removed transition list transition "sitting": "Entity.State == 2".
-							Removed transition list transition "lie_down": "Entity.State == 4".
-							Added transition list transition "sneaking": "variable.State == 0".
-							Added transition list transition "sprinting": "variable.State == 1".
-							Added transition list transition "sitting": "variable.State == 2".
-							Added transition list transition "lie_down": "variable.State == 4".
 Changed file "chicken":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.chicken.move":
+				Changed field "states":
+					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.Member.WalkSpeed".
+							Added parameter "query.walk_speed".
+						Changed field "animations" from:
+							animation "move":
+								item:
+									timestamp "0.0": 0.0
+									timestamp "1.0": 1.0
+						to:
+							animation dict:
+								animation "move":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
 			Changed animation controller "controller.animation.chicken.baby":
 				Changed field "states":
 					Changed state "baby":
@@ -175,27 +193,33 @@ Changed file "chicken":
 				Changed field "states":
 					Changed state "default":
 						Changed field "animations" from animation "general": empty to animation dict: animation "general": empty.
-			Changed animation controller "controller.animation.chicken.move":
+Changed file "cow":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.cow.setup":
 				Changed field "states":
 					Changed state "default":
+						Changed field "animations" from animation "setup": empty to animation dict: animation "setup": empty.
+			Changed animation controller "controller.animation.cow.move":
+				Changed field "states":
+					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.Member.WalkSpeed".
+							Added parameter "query.walk_speed".
 						Changed field "animations" from:
-							animation "move":
+							animation "look_at_target": empty
+							animation "walk":
 								item:
 									timestamp "0.0": 0.0
 									timestamp "1.0": 1.0
 						to:
 							animation dict:
-								animation "move":
+								animation "walk":
 									item:
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.Member.WalkSpeed".
-							Added parameter "query.walk_speed".
-Changed file "cow":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
+							animation dict: animation "look_at_target": empty
 			Changed animation controller "controller.animation.cow.baby":
 				Changed field "states":
 					Changed state "baby":
@@ -214,30 +238,6 @@ Changed file "cow":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "Entity.Flags.BABY".
 							Added parameter "query.is_baby".
-			Changed animation controller "controller.animation.cow.move":
-				Changed field "states":
-					Changed state "default":
-						Changed field "animations" from:
-							animation "look_at_target": empty
-							animation "walk":
-								item:
-									timestamp "0.0": 0.0
-									timestamp "1.0": 1.0
-						to:
-							animation dict:
-								animation "walk":
-									item:
-										timestamp "0.0": 0.0
-										timestamp "1.0": 1.0
-							animation dict: animation "look_at_target": empty
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.Member.WalkSpeed".
-							Added parameter "query.walk_speed".
-			Changed animation controller "controller.animation.cow.setup":
-				Changed field "states":
-					Changed state "default":
-						Changed field "animations" from animation "setup": empty to animation dict: animation "setup": empty.
 Changed file "dolphin":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -271,17 +271,17 @@ Changed file "fish":
 			Changed animation controller "controller.animation.fish.general":
 				Changed field "states":
 					Changed state "flopping":
-						Changed field "animations" from animation "flop": empty to animation dict: animation "flop": empty.
 						Changed field "transitions":
 							Total transition list: 1 (+1, -1)
 							Removed transition list transition "swimming": "Entity.IsInWater".
 							Added transition list transition "swimming": "query.is_in_water".
+						Changed field "animations" from animation "flop": empty to animation dict: animation "flop": empty.
 					Changed state "swimming":
-						Changed field "animations" from animation "swim": empty to animation dict: animation "swim": empty.
 						Changed field "transitions":
 							Total transition list: 1 (+1, -1)
 							Removed transition list transition "flopping": "!Entity.IsInWater".
 							Added transition list transition "flopping": "!query.is_in_water".
+						Changed field "animations" from animation "swim": empty to animation dict: animation "swim": empty.
 Changed file "ghast":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -399,6 +399,10 @@ Changed file "llama":
 			Changed animation controller "controller.animation.llama.move":
 				Changed field "states":
 					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.Member.WalkSpeed".
+							Added parameter "query.walk_speed".
 						Changed field "animations" from:
 							animation "look_at_target": empty
 							animation "setup": empty
@@ -414,13 +418,33 @@ Changed file "llama":
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
 							animation dict: animation "look_at_target": empty
+Changed file "mooshroom":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.mooshroom.move":
+				Changed field "states":
+					Changed state "default":
 						Changed field "parameters":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "Entity.Member.WalkSpeed".
 							Added parameter "query.walk_speed".
-Changed file "mooshroom":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
+						Changed field "animations" from:
+							animation "look_at_target": empty
+							animation "walk":
+								item:
+									timestamp "0.0": 0.0
+									timestamp "1.0": 1.0
+						to:
+							animation dict:
+								animation "walk":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+							animation dict: animation "look_at_target": empty
+			Changed animation controller "controller.animation.mooshroom.setup":
+				Changed field "states":
+					Changed state "default":
+						Changed field "animations" from animation "setup": empty to animation dict: animation "setup": empty.
 			Changed animation controller "controller.animation.mooshroom.baby":
 				Changed field "states":
 					Changed state "baby":
@@ -439,30 +463,6 @@ Changed file "mooshroom":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "Entity.Flags.BABY".
 							Added parameter "query.is_baby".
-			Changed animation controller "controller.animation.mooshroom.move":
-				Changed field "states":
-					Changed state "default":
-						Changed field "animations" from:
-							animation "look_at_target": empty
-							animation "walk":
-								item:
-									timestamp "0.0": 0.0
-									timestamp "1.0": 1.0
-						to:
-							animation dict:
-								animation "walk":
-									item:
-										timestamp "0.0": 0.0
-										timestamp "1.0": 1.0
-							animation dict: animation "look_at_target": empty
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.Member.WalkSpeed".
-							Added parameter "query.walk_speed".
-			Changed animation controller "controller.animation.mooshroom.setup":
-				Changed field "states":
-					Changed state "default":
-						Changed field "animations" from animation "setup": empty to animation dict: animation "setup": empty.
 Changed file "ocelot":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -484,64 +484,64 @@ Changed file "ocelot":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "Entity.Flags.BABY".
 							Added parameter "query.is_baby".
-			Changed animation controller "controller.animation.ocelot.look_at_target":
-				Changed field "states":
-					Changed state "default":
-						Changed field "animations" from animation "look_at_target": empty to animation dict: animation "look_at_target": empty.
 			Changed animation controller "controller.animation.ocelot.move":
 				Changed field "states":
 					Changed state "sitting":
-						Changed field "animations" from animation "sit": empty to animation dict: animation "sit": empty.
 						Changed field "parameters":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "Entity.Member.WalkSpeed".
 							Added parameter "query.walk_speed".
 						Changed field "transitions":
 							Total transition list: 3 (+3, -3)
-							Removed transition list transition "sneaking": "Entity.State == 0".
-							Removed transition list transition "sprinting": "Entity.State == 1".
 							Removed transition list transition "walking": "Entity.State == 3".
+							Removed transition list transition "sprinting": "Entity.State == 1".
+							Removed transition list transition "sneaking": "Entity.State == 0".
+							Added transition list transition "walking": "variable.State == 3".
 							Added transition list transition "sneaking": "variable.State == 0".
 							Added transition list transition "sprinting": "variable.State == 1".
-							Added transition list transition "walking": "variable.State == 3".
+						Changed field "animations" from animation "sit": empty to animation dict: animation "sit": empty.
 					Changed state "sneaking":
 						Changed field "animations" from animation "sneak": empty to animation dict: animation "sneak": empty.
 						Changed field "transitions":
 							Total transition list: 3 (+3, -3)
-							Removed transition list transition "sprinting": "Entity.State == 1".
 							Removed transition list transition "sitting": "Entity.State == 2".
+							Removed transition list transition "sprinting": "Entity.State == 1".
 							Removed transition list transition "walking": "Entity.State == 3".
-							Added transition list transition "sprinting": "variable.State == 1".
 							Added transition list transition "sitting": "variable.State == 2".
 							Added transition list transition "walking": "variable.State == 3".
+							Added transition list transition "sprinting": "variable.State == 1".
 					Changed state "sprinting":
-						Changed field "animations" from animation "sprint": empty to animation dict: animation "sprint": empty.
 						Changed field "parameters":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "Entity.Member.WalkSpeed".
 							Added parameter "query.walk_speed".
+						Changed field "animations" from animation "sprint": empty to animation dict: animation "sprint": empty.
 						Changed field "transitions":
 							Total transition list: 3 (+3, -3)
-							Removed transition list transition "sneaking": "Entity.State == 0".
 							Removed transition list transition "sitting": "Entity.State == 2".
+							Removed transition list transition "sneaking": "Entity.State == 0".
 							Removed transition list transition "walking": "Entity.State == 3".
-							Added transition list transition "sneaking": "variable.State == 0".
 							Added transition list transition "sitting": "variable.State == 2".
+							Added transition list transition "sneaking": "variable.State == 0".
 							Added transition list transition "walking": "variable.State == 3".
 					Changed state "walking":
 						Changed field "animations" from animation "walk": empty to animation dict: animation "walk": empty.
+						Changed field "transitions":
+							Total transition list: 3 (+3, -3)
+							Removed transition list transition "sitting": "Entity.State == 2".
+							Removed transition list transition "sprinting": "Entity.State == 1".
+							Removed transition list transition "sneaking": "Entity.State == 0".
+							Added transition list transition "sitting": "variable.State == 2".
+							Added transition list transition "sneaking": "variable.State == 0".
+							Added transition list transition "sprinting": "variable.State == 1".
 						Changed field "parameters":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "Entity.Member.WalkSpeed".
 							Added parameter "query.walk_speed".
-						Changed field "transitions":
-							Total transition list: 3 (+3, -3)
-							Removed transition list transition "sneaking": "Entity.State == 0".
-							Removed transition list transition "sprinting": "Entity.State == 1".
-							Removed transition list transition "sitting": "Entity.State == 2".
-							Added transition list transition "sneaking": "variable.State == 0".
-							Added transition list transition "sprinting": "variable.State == 1".
-							Added transition list transition "sitting": "variable.State == 2".
+			Changed animation controller "controller.animation.ocelot.look_at_target":
+				Changed field "states":
+					Changed state "default":
+						Changed field "animations" from animation "look_at_target": empty to animation dict: animation "look_at_target": empty.
 Added file "ocelot_v1.0":
 	resource pack "core":
 		field "animation_controllers":
@@ -591,14 +591,14 @@ Added file "ocelot_v1.0":
 Changed file "phantom":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.phantom.base_pose":
-				Changed field "states":
-					Changed state "default":
-						Changed field "animations" from animation "phantom_base_pose": empty to animation dict: animation "phantom_base_pose": empty.
 			Changed animation controller "controller.animation.phantom.move":
 				Changed field "states":
 					Changed state "default":
 						Changed field "animations" from animation "move": empty to animation dict: animation "move": empty.
+			Changed animation controller "controller.animation.phantom.base_pose":
+				Changed field "states":
+					Changed state "default":
+						Changed field "animations" from animation "phantom_base_pose": empty to animation dict: animation "phantom_base_pose": empty.
 Changed file "pig":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -620,9 +620,17 @@ Changed file "pig":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "Entity.Flags.BABY".
 							Added parameter "query.is_baby".
+			Changed animation controller "controller.animation.pig.setup":
+				Changed field "states":
+					Changed state "default":
+						Changed field "animations" from animation "setup": empty to animation dict: animation "setup": empty.
 			Changed animation controller "controller.animation.pig.move":
 				Changed field "states":
 					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.Member.WalkSpeed".
+							Added parameter "query.walk_speed".
 						Changed field "animations" from:
 							animation "look_at_target": empty
 							animation "walk":
@@ -636,14 +644,6 @@ Changed file "pig":
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
 							animation dict: animation "look_at_target": empty
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.Member.WalkSpeed".
-							Added parameter "query.walk_speed".
-			Changed animation controller "controller.animation.pig.setup":
-				Changed field "states":
-					Changed state "default":
-						Changed field "animations" from animation "setup": empty to animation dict: animation "setup": empty.
 Changed file "sheep":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -665,9 +665,25 @@ Changed file "sheep":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "Entity.Flags.BABY".
 							Added parameter "query.is_baby".
+			Changed animation controller "controller.animation.sheep.setup":
+				Changed field "states":
+					Total state: 1 (+1, -1)
+					Removed state "baby" of field "animations": animation "setup": empty.
+					Added state "default":
+						field "animations":
+							animation dict: animation "setup": empty
+							animation dict: animation "look_at_target": empty
 			Changed animation controller "controller.animation.sheep.move":
 				Changed field "states":
 					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.Member.WalkSpeed".
+							Added parameter "query.walk_speed".
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "grazing": "Entity.IsGrazing".
+							Added transition list transition "grazing": "variable.IsGrazing".
 						Changed field "animations" from:
 							animation "walk":
 								item:
@@ -679,28 +695,12 @@ Changed file "sheep":
 									item:
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.Member.WalkSpeed".
-							Added parameter "query.walk_speed".
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "grazing": "Entity.IsGrazing".
-							Added transition list transition "grazing": "variable.IsGrazing".
 					Changed state "grazing":
 						Changed field "animations" from animation "grazing": empty to animation dict: animation "grazing": empty.
 						Changed field "transitions":
 							Total transition list: 1 (+1, -1)
 							Removed transition list transition "default": "!Entity.IsGrazing".
 							Added transition list transition "default": "!variable.IsGrazing".
-			Changed animation controller "controller.animation.sheep.setup":
-				Changed field "states":
-					Total state: 1 (+1, -1)
-					Removed state "baby" of field "animations": animation "setup": empty.
-					Added state "default":
-						field "animations":
-							animation dict: animation "setup": empty
-							animation dict: animation "look_at_target": empty
 Changed file "shulker":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -728,41 +728,12 @@ Changed file "skeleton":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
 			Total animation controller: 1 (+0, -14)
-			Removed animation controller "controller.animation.humanoid.attack":
-				field "states":
-					state "attacking":
-						field "animations":
-							animation "attack.positions": empty
-							animation "attack.rotations": empty
-						field "transitions": transition list: transition "default": "Entity.AttackTime <= 0.0"
-					state "default": field "transitions": transition list: transition "attacking": "Entity.AttackTime > 0.0"
+			Changed animation controller "controller.animation.skeleton.attack":
+				Changed field "states":
+					Total state: 1 (+1, -1)
+					Removed state "attack" of field "animations": animation "skeleton_attack": empty.
+					Added state "default" of field "animations": animation dict: animation "skeleton_attack": empty.
 			Removed animation controller "controller.animation.humanoid.base_pose" of field "states": state "default": field "animations": animation "humanoid_base_pose": empty.
-			Removed animation controller "controller.animation.humanoid.bob" of field "states": state "default": field "animations": animation "bob": empty.
-			Removed animation controller "controller.animation.humanoid.bow_and_arrow":
-				field "states":
-					state "bow_and_arrow":
-						field "animations": animation "bow_and_arrow": empty
-						field "transitions": transition list: transition "default": "!Entity.IsBowAndArrow"
-					state "default": field "transitions": transition list: transition "bow_and_arrow": "Entity.IsBowAndArrow"
-			Removed animation controller "controller.animation.humanoid.brandish_spear":
-				field "states":
-					state "brandish_spear":
-						field "animations": animation "brandish_spear": empty
-						field "transitions": transition list: transition "default": "!Entity.IsBrandishingSpear"
-					state "default": field "transitions": transition list: transition "brandish_spear": "Entity.IsBrandishingSpear"
-			Removed animation controller "controller.animation.humanoid.charging":
-				field "states":
-					state "charging":
-						field "animations": animation "charging": empty
-						field "transitions": transition list: transition "default": "!Entity.IsCharging"
-					state "default": field "transitions": transition list: transition "charging": "Entity.IsCharging"
-			Removed animation controller "controller.animation.humanoid.damage_nearby_mobs":
-				field "states":
-					state "damage_nearby_mobs":
-						field "animations": animation "damage_nearby_mobs": empty
-						field "transitions": transition list: transition "default": "!Entity.DamageNearbyMobs"
-					state "default": field "transitions": transition list: transition "damage_nearby_mobs": "Entity.DamageNearbyMobs"
-			Removed animation controller "controller.animation.humanoid.holding" of field "states": state "default": field "animations": animation "holding": empty.
 			Removed animation controller "controller.animation.humanoid.look_at_target":
 				field "states":
 					state "default":
@@ -780,7 +751,12 @@ Changed file "skeleton":
 						field "transitions":
 							transition list: transition "gliding": "Entity.Flags.GLIDING"
 							transition list: transition "default": "!Entity.Flags.SWIMMING"
-			Removed animation controller "controller.animation.humanoid.move" of field "states": state "default": field "animations": animation "move": empty.
+			Removed animation controller "controller.animation.humanoid.charging":
+				field "states":
+					state "charging":
+						field "animations": animation "charging": empty
+						field "transitions": transition list: transition "default": "!Entity.IsCharging"
+					state "default": field "transitions": transition list: transition "charging": "Entity.IsCharging"
 			Removed animation controller "controller.animation.humanoid.riding":
 				field "states":
 					state "default": field "transitions": transition list: transition "riding": "Entity.IsRiding"
@@ -789,35 +765,63 @@ Changed file "skeleton":
 							animation "riding.arms": empty
 							animation "riding.legs": empty
 						field "transitions": transition list: transition "default": "!Entity.IsRiding"
-			Removed animation controller "controller.animation.humanoid.sneaking":
-				field "states":
-					state "default": field "transitions": transition list: transition "sneaking": "Entity.IsSneaking"
-					state "sneaking":
-						field "animations": animation "sneaking": empty
-						field "transitions": transition list: transition "default": "!Entity.IsSneaking"
+			Removed animation controller "controller.animation.humanoid.holding" of field "states": state "default": field "animations": animation "holding": empty.
 			Removed animation controller "controller.animation.humanoid.swimming":
 				field "states":
 					state "default": field "transitions": transition list: transition "swimming": "Entity.SwimAmount > 0.0"
 					state "swimming":
 						field "animations": animation "swimming": empty
 						field "transitions": transition list: transition "default": "Entity.SwimAmount <= 0.0"
+			Removed animation controller "controller.animation.humanoid.damage_nearby_mobs":
+				field "states":
+					state "damage_nearby_mobs":
+						field "animations": animation "damage_nearby_mobs": empty
+						field "transitions": transition list: transition "default": "!Entity.DamageNearbyMobs"
+					state "default": field "transitions": transition list: transition "damage_nearby_mobs": "Entity.DamageNearbyMobs"
 			Removed animation controller "controller.animation.humanoid.use_item_progress":
 				field "states":
 					state "default": field "transitions": transition list: transition "use_item_progress": "( Entity.UseItemIntervalProgress > 0.0 ) || ( Entity.UseItemStartupProgress > 0.0 )"
 					state "use_item_progress":
 						field "animations": animation "use_item_progress": empty
 						field "transitions": transition list: transition "default": "( Entity.UseItemIntervalProgress <= 0.0 ) && ( Entity.UseItemStartupProgress <= 0.0 )"
-			Changed animation controller "controller.animation.skeleton.attack":
-				Changed field "states":
-					Total state: 1 (+1, -1)
-					Removed state "attack" of field "animations": animation "skeleton_attack": empty.
-					Added state "default" of field "animations": animation dict: animation "skeleton_attack": empty.
+			Removed animation controller "controller.animation.humanoid.move" of field "states": state "default": field "animations": animation "move": empty.
+			Removed animation controller "controller.animation.humanoid.brandish_spear":
+				field "states":
+					state "brandish_spear":
+						field "animations": animation "brandish_spear": empty
+						field "transitions": transition list: transition "default": "!Entity.IsBrandishingSpear"
+					state "default": field "transitions": transition list: transition "brandish_spear": "Entity.IsBrandishingSpear"
+			Removed animation controller "controller.animation.humanoid.attack":
+				field "states":
+					state "attacking":
+						field "animations":
+							animation "attack.positions": empty
+							animation "attack.rotations": empty
+						field "transitions": transition list: transition "default": "Entity.AttackTime <= 0.0"
+					state "default": field "transitions": transition list: transition "attacking": "Entity.AttackTime > 0.0"
+			Removed animation controller "controller.animation.humanoid.sneaking":
+				field "states":
+					state "default": field "transitions": transition list: transition "sneaking": "Entity.IsSneaking"
+					state "sneaking":
+						field "animations": animation "sneaking": empty
+						field "transitions": transition list: transition "default": "!Entity.IsSneaking"
+			Removed animation controller "controller.animation.humanoid.bob" of field "states": state "default": field "animations": animation "bob": empty.
+			Removed animation controller "controller.animation.humanoid.bow_and_arrow":
+				field "states":
+					state "bow_and_arrow":
+						field "animations": animation "bow_and_arrow": empty
+						field "transitions": transition list: transition "default": "!Entity.IsBowAndArrow"
+					state "default": field "transitions": transition list: transition "bow_and_arrow": "Entity.IsBowAndArrow"
 Changed file "spider":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
 			Changed animation controller "controller.animation.spider.move":
 				Changed field "states":
 					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.Member.WalkSpeed".
+							Added parameter "query.walk_speed".
 						Changed field "animations" from:
 							animation "default_leg_pose": empty
 							animation "look_at_target": empty
@@ -833,10 +837,6 @@ Changed file "spider":
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
 							animation dict: animation "look_at_target": empty
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.Member.WalkSpeed".
-							Added parameter "query.walk_speed".
 Changed file "squid":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -859,35 +859,29 @@ Changed file "turtle":
 			Changed animation controller "controller.animation.turtle.move":
 				Changed field "states":
 					Changed state "default":
-						Changed field "animations" from animation "look_at_target": empty to animation dict: animation "look_at_target": empty.
 						Changed field "transitions":
 							Total transition list: 2 (+2, -2)
 							Removed transition list transition "swimming": "Entity.IsInWater && !Entity.IsOnGround".
 							Removed transition list transition "walking": "!Entity.IsInWater && Entity.IsOnGround".
-							Added transition list transition "swimming": "query.is_in_water && !query.is_on_ground".
 							Added transition list transition "walking": "!query.is_in_water && query.is_on_ground".
+							Added transition list transition "swimming": "query.is_in_water && !query.is_on_ground".
+						Changed field "animations" from animation "look_at_target": empty to animation dict: animation "look_at_target": empty.
 					Changed state "swimming":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.Member.WalkSpeed".
+							Added parameter "query.walk_speed".
 						Changed field "animations" from:
 							animation "look_at_target": empty
 							animation "move": empty
 						to:
 							animation dict: animation "move": empty
 							animation dict: animation "look_at_target": empty
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.Member.WalkSpeed".
-							Added parameter "query.walk_speed".
 						Changed field "transitions":
 							Total transition list: 1 (+1, -1)
 							Removed transition list transition "walking": "!Entity.IsInWater && Entity.IsOnGround".
 							Added transition list transition "walking": "!query.is_in_water && query.is_on_ground".
 					Changed state "walking":
-						Changed field "animations" from:
-							animation "ground_move": empty
-							animation "look_at_target": empty
-						to:
-							animation dict: animation "ground_move": empty
-							animation dict: animation "look_at_target": empty
 						Changed field "parameters":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "Entity.Member.WalkSpeed".
@@ -896,6 +890,12 @@ Changed file "turtle":
 							Total transition list: 1 (+1, -1)
 							Removed transition list transition "swimming": "Entity.IsInWater && !Entity.IsOnGround".
 							Added transition list transition "swimming": "query.is_in_water && !query.is_on_ground".
+						Changed field "animations" from:
+							animation "ground_move": empty
+							animation "look_at_target": empty
+						to:
+							animation dict: animation "ground_move": empty
+							animation dict: animation "look_at_target": empty
 Changed file "vex":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -906,6 +906,24 @@ Changed file "vex":
 Changed file "villager":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.villager.move":
+				Changed field "states":
+					Changed state "default":
+						Changed field "parameters":
+							Total parameter: 1 (+1, -1)
+							Removed parameter "Entity.Member.WalkSpeed".
+							Added parameter "query.walk_speed".
+						Changed field "animations" from:
+							animation "move":
+								item:
+									timestamp "0.0": 0.0
+									timestamp "1.0": 1.0
+						to:
+							animation dict:
+								animation "move":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
 			Changed animation controller "controller.animation.villager.baby":
 				Changed field "states":
 					Changed state "baby":
@@ -933,24 +951,6 @@ Changed file "villager":
 						to:
 							animation dict: animation "general": empty
 							animation dict: animation "look_at_target": empty
-			Changed animation controller "controller.animation.villager.move":
-				Changed field "states":
-					Changed state "default":
-						Changed field "animations" from:
-							animation "move":
-								item:
-									timestamp "0.0": 0.0
-									timestamp "1.0": 1.0
-						to:
-							animation dict:
-								animation "move":
-									item:
-										timestamp "0.0": 0.0
-										timestamp "1.0": 1.0
-						Changed field "parameters":
-							Total parameter: 1 (+1, -1)
-							Removed parameter "Entity.Member.WalkSpeed".
-							Added parameter "query.walk_speed".
 Changed file "vindicator":
 	Changed resource pack "core":
 		Changed field "animation_controllers":

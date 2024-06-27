@@ -4,24 +4,17 @@ Changed file "piglin.animation_controllers":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
 			Total animation controller: 4 (+1, -0)
-			Added animation controller "controller.animation.piglin.admire":
-				field "initial_state": "default"
-				field "states":
-					state "admiring":
-						field "animations": animation dict: "admire"
-						field "transitions": transition list: transition "default": "!query.is_admiring"
-					state "default": field "transitions": transition list: transition "admiring": "query.is_admiring"
 			Changed animation controller "controller.animation.piglin.attack":
 				Changed field "states":
 					Changed state "default":
 						Changed field "transitions":
 							Total transition list: 3 (+3, -3)
-							Removed transition list transition "ranged_hold": "query.variant == 0 && variable.attack_state == 1".
-							Removed transition list transition "ranged_charge": "query.variant == 0 && variable.attack_state == 2".
 							Removed transition list transition "melee_attack": "variable.has_target && query.variant == 1 && variable.attack_time >= 0.0".
+							Removed transition list transition "ranged_charge": "query.variant == 0 && variable.attack_state == 2".
+							Removed transition list transition "ranged_hold": "query.variant == 0 && variable.attack_state == 1".
+							Added transition list transition "melee_attack": "variable.has_target && query.variant == 1 && variable.attack_time >= 0.0 && !query.is_admiring".
 							Added transition list transition "ranged_hold": "query.variant == 0 && variable.attack_state == 1 && !query.is_admiring".
 							Added transition list transition "ranged_charge": "query.variant == 0 && variable.attack_state == 2 && !query.is_admiring".
-							Added transition list transition "melee_attack": "variable.has_target && query.variant == 1 && variable.attack_time >= 0.0 && !query.is_admiring".
 					Changed state "melee_attack":
 						Changed field "transitions":
 							Total transition list: 1 (+1, -1)
@@ -37,3 +30,10 @@ Changed file "piglin.animation_controllers":
 							Total transition list: 2 (+1, -1)
 							Removed transition list transition "default": "variable.attack_state == 0".
 							Added transition list transition "default": "variable.attack_state == 0  ||  query.is_admiring".
+			Added animation controller "controller.animation.piglin.admire":
+				field "initial_state": "default"
+				field "states":
+					state "admiring":
+						field "animations": animation dict: "admire"
+						field "transitions": transition list: transition "default": "!query.is_admiring"
+					state "default": field "transitions": transition list: transition "admiring": "query.is_admiring"

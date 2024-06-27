@@ -2,6 +2,9 @@ Difference of "animation_controllers" between "1.14.60" and "1.15.0.51" (beta of
 
 Changed file "iron_golem.animation_controllers":
 	Changed resource pack "core":
+		Changed field "defined_in":
+			Total resource pack: 2 (+1, -0)
+			Added resource pack "vanilla_1.15".
 		Changed field "animation_controllers":
 			Changed animation controller "controller.animation.iron_golem.arm_movement":
 				Changed field "states":
@@ -37,13 +40,27 @@ Changed file "iron_golem.animation_controllers":
 					Added state "has_target":
 						field "animations": animation dict: animation "walk_to_target": "query.modified_move_speed"
 						field "transitions": transition list: transition "default": "!query.has_target"
+Changed file "player.animation_controllers":
+	Changed resource pack "core":
 		Changed field "defined_in":
 			Total resource pack: 2 (+1, -0)
 			Added resource pack "vanilla_1.15".
-Changed file "player.animation_controllers":
-	Changed resource pack "core":
 		Changed field "animation_controllers":
 			Total animation controller: 5 (+1, -0)
+			Changed animation controller "controller.animation.player.root":
+				Changed field "states":
+					Changed state "paperdoll":
+						Changed field "animations":
+							Total animation dict: 5 (+1, -1)
+							Removed animation dict "look_at_target_ui".
+							Added animation dict animation "look_at_target_ui": "variable.should_look_at_target_ui".
+					Changed state "third_person":
+						Changed field "animations":
+							Total animation dict: 24 (+2, -2)
+							Removed animation dict animation "look_at_target": "!query.is_sleeping".
+							Removed animation dict animation "shield_block_off_hand": "query.blocking && query.get_equipped_item_name('off_hand') == 'shield'".
+							Added animation dict animation "look_at_target": "!query.is_sleeping && !query.is_emoting".
+							Added animation dict animation "shield_block_off_hand": "query.blocking && query.get_equipped_item_name('off_hand') == 'shield' && !(variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0)".
 			Added animation controller "controller.animation.player.hudplayer":
 				field "initial_state": "default"
 				field "states":
@@ -73,20 +90,3 @@ Changed file "player.animation_controllers":
 							animation dict: animation "shield_block_off_hand": "query.blocking && query.get_equipped_item_name('off_hand') == 'shield' && !(variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0)"
 							animation dict: animation "crossbow_controller": "query.get_equipped_item_name == 'crossbow'"
 							animation dict: animation "third_person_bow_equipped": "query.get_equipped_item_name == 'bow' && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0)"
-			Changed animation controller "controller.animation.player.root":
-				Changed field "states":
-					Changed state "paperdoll":
-						Changed field "animations":
-							Total animation dict: 5 (+1, -1)
-							Removed animation dict "look_at_target_ui".
-							Added animation dict animation "look_at_target_ui": "variable.should_look_at_target_ui".
-					Changed state "third_person":
-						Changed field "animations":
-							Total animation dict: 24 (+2, -2)
-							Removed animation dict animation "look_at_target": "!query.is_sleeping".
-							Removed animation dict animation "shield_block_off_hand": "query.blocking && query.get_equipped_item_name('off_hand') == 'shield'".
-							Added animation dict animation "look_at_target": "!query.is_sleeping && !query.is_emoting".
-							Added animation dict animation "shield_block_off_hand": "query.blocking && query.get_equipped_item_name('off_hand') == 'shield' && !(variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0)".
-		Changed field "defined_in":
-			Total resource pack: 2 (+1, -0)
-			Added resource pack "vanilla_1.15".

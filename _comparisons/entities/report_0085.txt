@@ -35,36 +35,44 @@ Changed entity "wandering_trader":
 			Changed field "component_groups":
 				Changed component group "minecraft:scared":
 					Changed component "minecraft:angry":
-						Added field "broadcastAnger" of true.
-						Added field "broadcastRange" of 10.
 						Added field "broadcast_filters":
 							filter property "subject": "other"
 							filter property "test": "is_leashed_to"
 							filter property "value": true
 						Added field "broadcast_targets" of entity: "llama".
+						Added field "broadcastRange" of 10.
+						Added field "broadcastAnger" of true.
 			Changed field "components":
+				Changed component "minecraft:damage_sensor":
+					Changed field "triggers":
+						Changed trigger:
+							Changed field "on_damage":
+								Removed field "filters":
+									filter property "operator": "!="
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "player"
+						Changed trigger:
+							Changed field "on_damage":
+								Removed field "filters":
+									filter property "operator": "!="
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "player"
+						Changed trigger:
+							Changed field "on_damage":
+								Removed field "filters":
+									filter property "operator": "!="
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "player"
 				Changed component "minecraft:behavior.drink_potion":
 					Changed field "potions":
-						Total potion: 2 (+1, -1)
-						Removed potion:
-							field "chance": 1.0
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 18000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-									filter:
-										filter property "subject": "self"
-										filter property "test": "is_visible"
-										filter property "value": true
-									filter:
+						Changed potion:
+							Changed field "filters":
+								Changed filter property "all_of":
+									Total filter: 3 (+1, -1)
+									Removed filter:
 										filter property "any_of":
 											filter:
 												filter property "subject": "self"
@@ -74,26 +82,7 @@ Changed entity "wandering_trader":
 												filter property "subject": "self"
 												filter property "test": "has_component"
 												filter property "value": "minecraft:angry"
-							field "id": 7
-						Added potion:
-							field "chance": 1.0
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 18000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-									filter:
-										filter property "subject": "self"
-										filter property "test": "is_visible"
-										filter property "value": true
-									filter:
+									Added filter:
 										filter property "any_of":
 											filter:
 												filter property "subject": "self"
@@ -110,49 +99,3 @@ Changed entity "wandering_trader":
 														filter property "subject": "target"
 														filter property "test": "is_family"
 														filter property "value": "player"
-							field "id": 7
-				Changed component "minecraft:damage_sensor":
-					Changed field "triggers":
-						Total trigger: 3 (+3, -3)
-						Removed trigger:
-							field "cause": "entity_attack"
-							field "deals_damage": true
-							field "on_damage":
-								field "event": "minecraft:become_scared"
-								field "filters":
-									filter property "operator": "!="
-									filter property "subject": "other"
-									filter property "test": "is_family"
-									filter property "value": "player"
-						Removed trigger:
-							field "cause": "projectile"
-							field "deals_damage": true
-							field "on_damage":
-								field "event": "minecraft:become_scared"
-								field "filters":
-									filter property "operator": "!="
-									filter property "subject": "other"
-									filter property "test": "is_family"
-									filter property "value": "player"
-						Removed trigger:
-							field "cause": "magic"
-							field "deals_damage": true
-							field "on_damage":
-								field "event": "minecraft:become_scared"
-								field "filters":
-									filter property "operator": "!="
-									filter property "subject": "other"
-									filter property "test": "is_family"
-									filter property "value": "player"
-						Added trigger:
-							field "cause": "entity_attack"
-							field "deals_damage": true
-							field "on_damage": field "event": "minecraft:become_scared"
-						Added trigger:
-							field "cause": "projectile"
-							field "deals_damage": true
-							field "on_damage": field "event": "minecraft:become_scared"
-						Added trigger:
-							field "cause": "magic"
-							field "deals_damage": true
-							field "on_damage": field "event": "minecraft:become_scared"

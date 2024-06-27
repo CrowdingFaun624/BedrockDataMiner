@@ -1,15 +1,115 @@
-Difference of "entities_client" between "1.20.62" and "1.20.70.20" (beta of "1.20.71").
+Difference of "entities_client" between "1.20.60.22" (beta of "1.20.60") and "1.20.60.23" (beta of "1.20.60").
 
-Changed entity "armadillo.entity":
+Total entity: 171 (+1, -0)
+Added entity "armadillo.entity":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animations":
+					animation "look_at_target": "animation.armadillo.look_at_target"
+					animation "roll_up": "animation.armadillo.roll_up"
+					animation "roll_up_controller": "controller.animation.armadillo.roll_up"
+					animation "rolled_up": "animation.armadillo.rolled_up"
+					animation "unroll": "animation.armadillo.unroll"
+					animation "walk": "animation.armadillo.walk"
+					animation "walk_controller": "controller.animation.armadillo.walk"
+				field "geometry": geometry "default": "geometry.armadillo"
+				field "identifier": "minecraft:armadillo"
+				field "materials": materials "default": "armadillo"
+				field "render_controllers": render controller: "controller.render.armadillo"
+				field "scripts":
+					field "animate":
+						script: "look_at_target"
+						script: "walk_controller"
+						script: "roll_up_controller"
+					field "pre_animation":
+						script: "variable.x_head_rotation = math.clamp(query.target_x_rotation, -32.5, 32.5);"
+						script: "variable.y_head_rotation = math.clamp(query.target_y_rotation, -22.5, 25);"
+						script: "variable.is_rolled_up = query.property('minecraft:is_rolled_up');"
+						script: "variable.rolled_up_time = variable.is_rolled_up ? ((variable.last_rolled_up_time ?? 0.0) + query.delta_time) : 0.0;"
+						script: "variable.last_rolled_up_time = variable.rolled_up_time;"
+						script: "variable.use_rolled_up_model = variable.rolled_up_time >= 0.2083;"
+						script: "variable.walking = query.modified_move_speed > 0.01 && !variable.is_rolled_up;"
+						script: "variable.walk_anim_time_update = query.anim_time + math.max(1.215, math.pow(12, query.modified_move_speed)) * query.delta_time;"
+				field "sound_effects":
+					sound effect "land": "mob.armadillo.land"
+					sound effect "roll": "mob.armadillo.roll"
+					sound effect "unroll": "mob.armadillo.unroll"
+				field "spawn_egg":
+					field "base_color": "#a67775"
+					field "overlay_color": "#734b4f"
+				field "textures": texture "default": "textures/entity/armadillo"
+		field "defined_in": resource pack: "experimental_armadillo"
+Changed entity "breeze.entity":
 	Changed resource pack "experimental":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
-				Changed field "spawn_egg":
-					Changed field "base_color" from "#a67775" to "#ad716d".
-					Changed field "overlay_color" from "#734b4f" to "#824848".
-Changed entity "wind_charge_projectile.entity":
-	Changed resource pack "experimental":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Added field "animations" of animation "rotate": "animation.wind_charge.rotate".
-				Added field "scripts" of field "animate": script: "rotate".
+				Changed field "animation_controllers":
+					Total animation controller group: 7 (+1, -0)
+					Added animation controller group animation controller "idle_ground_sound_controller": "controller.animation.breeze.idle_ground_sound".
+				Changed field "animations":
+					Total animation: 9 (+2, -0)
+					Added animation "idle_ground_sound" of "animation.breeze.idle_ground_sound".
+					Added animation "whirl_sound" of "animation.breeze.whirl_sound".
+				Changed field "sound_effects":
+					Total sound effect: 5 (+3, -0)
+					Added sound effect "idle_ground_sound" of "mob.breeze.idle_ground".
+					Added sound effect "inhale" of "mob.breeze.inhale".
+					Added sound effect "whirl" of "mob.breeze.whirl".
+Changed entity "wolf.entity":
+	Total resource pack: 2 (+1, -0)
+	Added resource pack "experimental":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animation_controllers":
+					animation controller group: animation controller "wolf_setup": "controller.animation.wolf.setup"
+					animation controller group: animation controller "wolf_look_at": "controller.animation.wolf.look_at"
+					animation controller group: animation controller "wolf_baby_scaling": "controller.animation.wolf.baby_scaling"
+					animation controller group: animation controller "wolf_head_rot_z": "controller.animation.wolf.head_rot_z"
+					animation controller group: animation controller "wolf_tail_default": "controller.animation.wolf.tail_default"
+					animation controller group: animation controller "wolf_angry": "controller.animation.wolf.angry"
+					animation controller group: animation controller "wolf_sitting": "controller.animation.wolf.sitting"
+					animation controller group: animation controller "wolf_shaking": "controller.animation.wolf.shaking"
+				field "animations":
+					animation "wolf_angry": "animation.wolf.angry"
+					animation "wolf_baby_scaling": "animation.wolf.baby_scaling"
+					animation "wolf_head_rot_z": "animation.wolf.head_rot_z"
+					animation "wolf_leg_default": "animation.wolf.leg_default"
+					animation "wolf_look_at": "animation.common.look_at_target"
+					animation "wolf_setup": "animation.wolf.setup"
+					animation "wolf_shaking": "animation.wolf.shaking"
+					animation "wolf_sitting": "animation.wolf.sitting"
+					animation "wolf_tail_default": "animation.wolf.tail_default"
+				field "geometry":
+					geometry "default": "geometry.wolf"
+					geometry "overlay": "geometry.wolf.armor"
+				field "identifier": "minecraft:wolf"
+				field "materials":
+					materials "default": "wolf"
+					materials "overlay": "wolf_armor"
+				field "render_controllers":
+					render controller: "controller.render.wolf"
+					render controller: "controller.render.wolf_armor"
+				field "scripts":
+					field "pre_animation":
+						script: "variable.body_shake_angle = 0.05 * query.frame_alpha + query.shake_angle;"
+						script: "variable.body_roll_progress = Math.clamp((variable.body_shake_angle - 0.16) / 1.8, 0, 1);"
+						script: "variable.body_rot_z = Math.sin(variable.body_roll_progress * 180) * Math.sin(variable.body_roll_progress * 1980) * 27;"
+						script: "variable.upper_body_roll_progress = Math.clamp((variable.body_shake_angle - 0.08) / 1.8, 0, 1);"
+						script: "variable.upper_body_rot_z = (Math.sin(variable.upper_body_roll_progress * 180) * Math.sin(variable.upper_body_roll_progress * 1980) * 27) - variable.body_rot_z;"
+						script: "variable.tail_roll_progress = Math.clamp((variable.body_shake_angle - 0.2) / 1.8, 0, 1);"
+						script: "variable.tail_rot_z = (Math.sin(variable.tail_roll_progress * 180) * Math.sin(variable.tail_roll_progress * 1980) * 27) - variable.body_rot_z;"
+						script: "variable.head_roll_progress = Math.clamp(variable.body_shake_angle / 1.8, 0, 1);"
+						script: "variable.head_rot_z = (Math.sin(variable.head_roll_progress * 180) * Math.sin(variable.head_roll_progress * 1980) * 27) - variable.body_rot_z;"
+						script: "variable.has_armor = query.property('minecraft:has_armor');"
+				field "spawn_egg":
+					field "texture": "spawn_egg"
+					field "texture_index": 4
+				field "textures":
+					texture "angry": "textures/entity/wolf/wolf_angry"
+					texture "default": "textures/entity/wolf/wolf"
+					texture "overlay": "textures/entity/wolf/wolf_armor"
+					texture "tame": "textures/entity/wolf/wolf_tame"
+		field "defined_in": resource pack: "experimental_armadillo"
