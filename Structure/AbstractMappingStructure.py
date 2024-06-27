@@ -205,9 +205,6 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                 exceptions.extend(exception.add(self.name, key1) for exception in new_exceptions)
                 structure2, new_exceptions = self.get_structure(key2, value2)
                 exceptions.extend(exception.add(self.name, key2) for exception in new_exceptions)
-                if self.name == "textures":
-                    if key1 != key2:
-                        print(key1, key2)
                 if key1 == key2:
                     key_compare_output = key1
                 else:
