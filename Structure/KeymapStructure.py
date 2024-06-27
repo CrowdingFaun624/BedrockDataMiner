@@ -79,7 +79,11 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         if self.tags is None:
             raise Exceptions.AttributeNoneError("tags", self)
         for key, value in data.items():
-            if tag in self.tags[key]:
+            key_tags = self.tags.get(key)
+            if key_tags is None:
+                exceptions.append(Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value))
+                continue
+            if tag in key_tags:
                 output.append(data_path.copy(key).embed(value))
             structure, new_exceptions = self.get_structure(key, value)
             exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
