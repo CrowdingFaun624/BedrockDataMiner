@@ -56,6 +56,9 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             raise Exceptions.AttributeNoneError("keys", self)
         return (substructure for substructure in self.keys.values() if substructure is not None)
 
+    def allow_key_move(self, key1: str, value1: d, key2: str, value2: d) -> bool:
+        return self.get_structure(key1, value1) is self.get_structure(key2, value2)
+
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
         if self.key_types is None:
             raise Exceptions.AttributeNoneError("key_types", self)

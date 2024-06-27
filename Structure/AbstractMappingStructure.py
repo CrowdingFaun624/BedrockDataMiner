@@ -138,6 +138,16 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         else:
             return 0.0
 
+    def allow_key_move(self, key1:str, value1:d, key2:str, value2:d) -> bool:
+        '''
+        Returns True if the key in key1 may move to key2.
+        :key1: The older key.
+        :value1: The older value.
+        :key2: The newer key.
+        :value2: The newer value.
+        '''
+        return True
+
     def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[str,d]], data2_exclusive_items:dict[int,tuple[str,d]], same_keys:set[str]) -> list[tuple[int,int,float,float]]:
         keys1_hashes = {key1: hash1 for hash1, (key1, value1) in data1_exclusive_items.items()}
         keys2_hashes = {key2: hash2 for hash2, (key2, value2) in data2_exclusive_items.items()}
@@ -146,22 +156,25 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             for key in same_keys
             if key in keys1_hashes # same_keys has all keys that are similar, not just ones with different values.
         ]
-        similarities_list:list[tuple[int, int, float, float]] = [ # maps similarity of older items to newer items
-            (hash1, hash2, key_similarity, value_similarity)
-            for hash1, (key1, value1) in data1_exclusive_items.items()
-            if key1 not in same_keys
-            for hash2, (key2, value2) in data2_exclusive_items.items()
-            if key2 not in same_keys # key1 cannot equal key2
-            if all([ # if the keys match or it's acceptable to move them.
-                self.detect_key_moves,
-                not (key1 in same_keys or key2 in same_keys), # prevent keys present in both old and new from moving.
-                (key_similarity := self.get_key_similarity(key1, key2)) >= self.min_key_similarity_threshold,
-                (value_similarity := self.get_value_similarity(key1, value1, key2, value2)) > self.min_value_similarity_threshold,
-            ])
-        ]
+        if self.detect_key_moves:
+            similarities_list:list[tuple[int, int, float, float]] = [ # maps similarity of older items to newer items
+                (hash1, hash2, key_similarity, value_similarity)
+                for hash1, (key1, value1) in data1_exclusive_items.items()
+                if key1 not in same_keys
+                for hash2, (key2, value2) in data2_exclusive_items.items()
+                if key2 not in same_keys # key1 cannot equal key2
+                if all([ # if the keys match or it's acceptable to move them.
+                    self.allow_key_move(key1, value1, key2, value2),
+                    key2 not in same_keys, # prevent keys present in both old and new from moving.
+                    (key_similarity := self.get_key_similarity(key1, key2)) >= self.min_key_similarity_threshold,
+                    (value_similarity := self.get_value_similarity(key1, value1, key2, value2)) > self.min_value_similarity_threshold,
+                ])
+            ]
+        else:
+            similarities_list = []
         output = same_keys_list + similarities_list
         # sort by weighted similarities using the thresholds.
-        output.sort(key=lambda item: (item[2] * (1 - self.min_key_similarity_threshold) + item[3] * (1 - self.min_value_similarity_threshold), item[0]), reverse=True)
+        output.sort(key=lambda item: (item[2] * (1 - self.min_key_similarity_threshold) + item[3] * (1 - self.min_value_similarity_threshold), data2_exclusive_items[item[1]][0]), reverse=True)
         return output
 
     def compare(

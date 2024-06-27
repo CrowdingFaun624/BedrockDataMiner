@@ -67,7 +67,7 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
             for hash2, item2 in data2_exclusive_items.items()
             if (similarity := structure.get_similarity(item1, item2)) > self.min_similarity_threshold # similarities less than the threshold don't matter.
         ]
-        similarities_list.sort(key=lambda item: (item[2], item[0]), reverse=True) # sort by similarity; highest similarity is first
+        similarities_list.sort(key=lambda item: item[2], reverse=True) # sort by similarity; highest similarity is first
         return similarities_list
 
     def compare(
