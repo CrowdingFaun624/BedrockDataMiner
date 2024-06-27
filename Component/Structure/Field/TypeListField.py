@@ -66,3 +66,8 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         if self.types is None:
             raise Exceptions.FieldSequenceBreakError(self.resolve_link_finals, self.get_types, self)
         return self.types
+
+    def __len__(self) -> int:
+        if self.types is None:
+            raise Exceptions.FieldSequenceBreakError(self.resolve_link_finals, self.__len__, self)
+        return len(self.types)

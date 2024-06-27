@@ -32,6 +32,7 @@ DEFAULT_TYPES:dict[str,type] = {
 }
 REQUIRES_SUBCOMPONENT_TYPES = set([dict, list, NbtTypes.TAG_Byte_Array, NbtTypes.TAG_List, NbtTypes.TAG_Compound, NbtTypes.TAG_Int_Array, NbtTypes.TAG_Long_Array])
 SORTABLE_TYPES = set([bool, float, int, type(None), str, NbtTypes.TAG_Byte, NbtTypes.TAG_Double, NbtTypes.TAG_Float, NbtTypes.TAG_Int, NbtTypes.TAG_Long, NbtTypes.TAG_Short, NbtTypes.TAG_String])
+MUTUALLY_SORTABLE:list[set[type]] = [{bool, float, int, NbtTypes.TAG_Byte, NbtTypes.TAG_Double, NbtTypes.TAG_Float, NbtTypes.TAG_Int, NbtTypes.TAG_Long, NbtTypes.TAG_Short}, {str, NbtTypes.TAG_String}, {type(None)}]
 
 ARBITRARY_ITERABLE_TYPES = set((list, tuple, NbtTypes.TAG_List))
 """Iterable that allows for arbitrary/any data inside."""

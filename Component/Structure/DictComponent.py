@@ -9,6 +9,7 @@ import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.DictStructure as DictStructure
+import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
@@ -28,8 +29,8 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("min_key_similarity_threshold", "a float", False, float),
-        TypeVerifier.TypedDictKeyTypeVerifier("min_value_similarity_threshold", "a float", False, float),
+        TypeVerifier.TypedDictKeyTypeVerifier("min_key_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
+        TypeVerifier.TypedDictKeyTypeVerifier("min_value_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("sort", "a str", False, TypeVerifier.EnumTypeVerifier([item.value for item in DictSorting])),
@@ -96,3 +97,17 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             tags=self.tags_field.get_finals()
         )
         self.my_type = set(self.this_type_field.get_types())
+
+    def check(self) -> list[Exception]:
+        exceptions = super().check()
+        if self.sort == DictSorting.by_value and len(self.types_field) > 0:
+            first_type = self.types_field.get_types()[0]
+            for category in StructureComponent.MUTUALLY_SORTABLE:
+                if first_type not in category: continue
+                exceptions.extend(
+                    Exceptions.ComponentTypeInvalidTypeError(self, type, category)
+                    for type in self.types_field.get_types()
+                    if type not in category
+                )
+                break
+        return exceptions
