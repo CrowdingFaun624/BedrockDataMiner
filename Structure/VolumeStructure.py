@@ -151,6 +151,26 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
                 exceptions.extend(exception.add(self.name, position) for exception in new_exceptions)
         return output, exceptions
 
+    def get_similarity(
+            self,
+            data1:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],
+            data2:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],
+        ) -> float:
+        states1, additional_data1, size1 = data1
+        states2, additional_data2, size2 = data2
+        maximum_blocks_length = max(len(states1), len(states2))
+        positions_in_common = states1.keys() & states2.keys()
+        similarity = len(positions_in_common) / maximum_blocks_length
+        if self.structure is not None:
+            block_data_in_common = additional_data1.keys() & additional_data2.keys()
+            similarity += sum(
+                self.structure.get_similarity(additional_data1[position], additional_data2[position])
+                for position in block_data_in_common
+            ) / maximum_blocks_length
+        if similarity < 0.0 or similarity > 1.0:
+            raise Exceptions.InvalidSimilarityError(self, similarity, data1, data2)
+        return similarity
+
     def compare(
             self,
             data1:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],

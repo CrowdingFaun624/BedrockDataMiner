@@ -18,16 +18,18 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent, or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("min_similarity_threshold", "a float", False, float),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("sort", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
-    def __init__(self, data:ComponentTyping.ListTypedDict, name:str, component_group:str, index:int|None) -> None:
+    def __init__(self, data:ComponentTyping.SetTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data)
 
@@ -35,6 +37,8 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         self.measure_length = data.get("measure_length", False)
         self.print_all = data.get("print_all", False)
         self.print_flat = data.get("print_flat", False)
+        self.sort = data.get("sort", False)
+        self.min_similarity_threshold = data.get("min_similarity_threshold", SetStructure.MIN_SIMILARITY_THRESHOLD)
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
@@ -42,6 +46,8 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "list"), ["this_type"])
         self.types_field.verify_with(self.subcomponent_field)
+        if self.sort:
+            self.types_field.must_be(StructureComponent.SORTABLE_TYPES)
         self.tags_field.add_to_tag_set(self.children_tags)
         self.this_type_field.must_be(StructureComponent.ITERABLE_TYPES)
         self.this_type_field.contained_by(self.types_field)
@@ -55,6 +61,8 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
             print_flat=self.print_flat,
             print_all=self.print_all,
             measure_length=self.measure_length,
+            sort=self.sort,
+            min_similarity_threshold=self.min_similarity_threshold,
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )

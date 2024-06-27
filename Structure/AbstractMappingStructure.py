@@ -1,8 +1,7 @@
-from collections import defaultdict
-from itertools import chain, repeat
-from typing import Any, Callable, MutableMapping, TypeVar
+from typing import Any, Callable, MutableMapping, TypeVar, cast
 
 import Structure.Difference as D
+import Structure.Hashing as Hashing
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
@@ -31,6 +30,9 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             comparison_move_function:Callable[[str, d], Any]|None,
             measure_length:bool,
             print_all:bool,
+            sorting_function:Callable[[tuple[str|D.Diff,Any]],Any]|None,
+            min_key_similarity_threshold:float,
+            min_value_similarity_threshold:float,
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
@@ -40,6 +42,9 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         self.comparison_move_function = (lambda key, value: value) if comparison_move_function is None else comparison_move_function
         self.measure_length = measure_length
         self.print_all = print_all
+        self.sorting_function = sorting_function
+        self.min_key_similarity_threshold = min_key_similarity_threshold
+        self.min_value_similarity_threshold = min_value_similarity_threshold
 
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.tags:list[str]|None = None
@@ -54,7 +59,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None: ...
 
-    def get_structure(self, key:Any, value:Any) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+    def get_structure(self, key:str, value:d) -> tuple[Structure.Structure[d]|None, list[Trace.ErrorTrace]]:
         '''
         Returns a substructure or None.
         :The key of this Structure at the current position.
@@ -81,6 +86,74 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                 output.extend(exception.add(self.name, key) for exception in structure.check_all_types(value, environment))
         return output
 
+    def get_similarity(self, data1: MutableMapping[str, d], data2: MutableMapping[str, d]) -> float:
+        data1_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data1.items()}
+        data2_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data2.items()}
+
+        same_keys = data1.keys() & data2.keys() # keys present in both old and new data.
+        same_hashes = data1_hashes.keys() & data2_hashes.keys()
+        data1_exclusive_items = {exclusive_hash: data1_hashes[exclusive_hash] for exclusive_hash in data1_hashes.keys() - data2_hashes.keys()}
+        data2_exclusive_items = {exclusive_hash: data2_hashes[exclusive_hash] for exclusive_hash in data2_hashes.keys() - data1_hashes.keys()}
+        maximum_length = max(len(data1), len(data2))
+
+        similarity = len(same_hashes) / maximum_length
+        if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
+            already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
+            already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
+            for hash1, hash2, key_similarity, value_similarity in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
+                if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
+                    continue
+                already_data1_hashes.add(hash1)
+                already_data2_hashes.add(hash2)
+                similarity += (key_similarity * (1 - self.min_key_similarity_threshold) + value_similarity * (1 - self.min_value_similarity_threshold)) / (key_similarity + value_similarity) / (2 * maximum_length)
+        if similarity < 0.0 or similarity > 1.0:
+            raise Exceptions.InvalidSimilarityError(self, similarity, data1, data2)
+        return similarity
+
+    def get_key_similarity(self, key1:str, key2:str) -> float:
+        '''
+        Gets the similarity between two keys of this Structure's data.
+        :key1: The key of the older key-value pair.
+        :key2: The key of the newer key-value pair.
+        '''
+        return float(key1 == key2)
+
+    def get_value_similarity(self, key1:str, value1:d, key2:str, value2:d) -> float:
+        '''
+        Gets the similarity between two values of this Structure's data.
+        :key1: The key of the older key-value pair.
+        :value1: The value of the older key-value pair.
+        :key2: The key of the newer key-value pair.
+        :value2: The value of the newer key-value pair.
+        '''
+        if value1 == value2:
+            return 1.0
+        structure1, exceptions1 = self.get_structure(key1, value1)
+        structure2, exceptions2 = self.get_structure(key2, value2)
+        if len(exceptions1) > 0 or len(exceptions2) > 0:
+            raise Exceptions.StructureExceptionError(self, self.get_value_similarity, exceptions1 + exceptions2)
+        if structure1 is structure2 and structure1 is not None:
+            output = structure1.get_similarity(value1, value2)
+            return output
+        else:
+            return 0.0
+
+    def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[str,d]], data2_exclusive_items:dict[int,tuple[str,d]], same_keys:set[str]) -> list[tuple[int,int,float,float]]:
+        similarities_list:list[tuple[int, int, float, float]] = [ # maps similarity of older items to newer items
+            (hash1, hash2, 1.0 if keys_match else key_similarity, 1.0 if keys_match else value_similarity)
+            for hash1, (key1, value1) in data1_exclusive_items.items()
+            for hash2, (key2, value2) in data2_exclusive_items.items()
+            if (keys_match := (key1 == key2)) or all([ # if the keys match or it's acceptable to move them.
+                self.detect_key_moves,
+                not (key1 in same_keys or key2 in same_keys), # prevent keys present in both old and new from moving.
+                (key_similarity := self.get_key_similarity(key1, key2)) >= self.min_key_similarity_threshold,
+                (value_similarity := self.get_value_similarity(key1, value1, key2, value2)) > self.min_value_similarity_threshold,
+            ])
+        ]
+        # sort by weighted similarities using the thresholds.
+        similarities_list.sort(key=lambda item: item[2] * (1 - self.min_key_similarity_threshold) + item[3] * (1 - self.min_value_similarity_threshold), reverse=True)
+        return similarities_list
+
     def compare(
             self,
             data1:MutableMapping[str,d],
@@ -89,104 +162,71 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         ) -> tuple[MutableMapping[str|D.Diff[str,str],d|D.Diff[d,d]],bool,list[Trace.ErrorTrace]]:
 
         if data1 is data2 or data1 == data2:
-            return data1, False, [] # type: ignore
-
-        has_changes = False
-        key_occurrences:defaultdict[str,list[D.DiffType]] = defaultdict(lambda: [])
+            return cast(Any, data1), False, []
         exceptions:list[Trace.ErrorTrace] = []
 
-        # get occurrence counts
-        data1_iterator = zip(repeat(D.DiffType.old), data1.items()) # since zip stops at the shortest iterator, this will not run forever.
-        data2_iterator = zip(repeat(D.DiffType.new), data2.items())
-        for diff_type, (key, value) in chain(data1_iterator, data2_iterator):
-            if (check_type_exception := self.check_type(key, value)) is not None:
-                exceptions.append(check_type_exception)
-            key_occurrences[key].append(diff_type)
+        data1_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data1.items()}
+        data2_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data2.items()}
 
-        data_for_add_remove_change_compare:dict[str|D.Diff[str,str],tuple[tuple[D.DiffType, d],...]] = {}
-        # assemble key change dicts.
-        old_comparison_values:list[tuple[str,d]] = []
-        new_comparison_values:list[tuple[str,d]] = []
-        for key, occurrences in key_occurrences.items():
-            if len(occurrences) == 1:
-                match self.detect_key_moves, occurrences[0]:
-                    case True, D.DiffType.old:
-                        comparison_move_function_return = self.comparison_move_function(key, data1[key])
-                        # If `comparison_move_function_return` is None, do not detect key change.
-                        if comparison_move_function_return is None:
-                            data_for_add_remove_change_compare[key] = ((D.DiffType.old, data1[key]),)
-                        else:
-                            old_comparison_values.append((key, comparison_move_function_return))
-                    case True, D.DiffType.new:
-                        comparison_move_function_return = self.comparison_move_function(key, data2[key])
-                        if comparison_move_function_return is None:
-                            data_for_add_remove_change_compare[key] = ((D.DiffType.new, data2[key]),)
-                        else:
-                            new_comparison_values.append((key, comparison_move_function_return))
-                    case False, D.DiffType.old:
-                        data_for_add_remove_change_compare[key] = ((D.DiffType.old, data1[key]),)
-                    case False, D.DiffType.new:
-                        data_for_add_remove_change_compare[key] = ((D.DiffType.new, data2[key]),)
-            elif len(occurrences) == 2:
-                data_for_add_remove_change_compare[key] = ((D.DiffType.old, data1[key]), (D.DiffType.new, data2[key]))
-            else:
-                raise Exceptions.InvalidStateError(self)
+        same_keys = data1.keys() & data2.keys() # keys that existed both before and after.
+        same_hashes = data1_hashes.keys() & data2_hashes.keys()
+        data1_exclusive_items = {exclusive_hash: data1_hashes[exclusive_hash] for exclusive_hash in data1_hashes.keys() - data2_hashes.keys()}
+        data2_exclusive_items = {exclusive_hash: data2_hashes[exclusive_hash] for exclusive_hash in data2_hashes.keys() - data1_hashes.keys()}
+        output:dict[str|D.Diff,d|D.Diff] = cast(Any, type(data1)())
+        has_changes = len(data1_exclusive_items) > 0 or len(data2_exclusive_items) > 0
 
-        if self.detect_key_moves: # if False, then additions and removals are added to data_for_add_remove_change_compare above.
-            # find matching values.
-            new_keys_involved_in_key_change:set[str] = set()
-            for old_key, old_comparison_value in old_comparison_values:
-                for new_key, new_comparison_value in new_comparison_values:
-                    if new_key in new_keys_involved_in_key_change: continue # to prevent multiple things moving to the same place.
-                    # old_key cannot equal new_key
-                    if old_comparison_value == new_comparison_value:
-                        key_diff = D.Diff(old_key, new_key)
-                        data_for_add_remove_change_compare[key_diff] = ((D.DiffType.old, data1[old_key]), (D.DiffType.new, data2[new_key]))
-                        new_keys_involved_in_key_change.add(new_key)
-                        break
-                else: # when this old_key's comparison value has no matching new_key's comparison value; when this old key has no corresponding new key whatsoever.
-                    data_for_add_remove_change_compare[old_key] = ((D.DiffType.old, data1[old_key]),)
-            # find new keys that are not involved in a key move so they can be documented as additions.
-            for new_key, new_comparison_value in new_comparison_values:
-                if new_key in new_keys_involved_in_key_change: continue
-                data_for_add_remove_change_compare[new_key] = ((D.DiffType.new, data2[new_key]),)
+        # unchanged items
+        for same_hash in same_hashes:
+            key, value = data1_hashes[same_hash]
+            output[key] = value
 
-        output:dict[str|D.Diff,d|D.Diff] = {}
-        for key, occurrences in data_for_add_remove_change_compare.items():
-            if len(occurrences) == 2:
-                value1, value2 = occurrences[0][1], occurrences[1][1]
+        # changed items
+        already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
+        already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
+        if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
+            for hash1, hash2, key_similarity, value_similarity in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
+                if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
+                    continue # if either side is already involved in a change, it's unneeded.
+                already_data1_hashes.add(hash1)
+                already_data2_hashes.add(hash2)
+                key1, value1 = data1_exclusive_items[hash1]
+                key2, value2 = data2_exclusive_items[hash2]
+                structure1, new_exceptions = self.get_structure(key1, value1)
+                exceptions.extend(exception.add(self.name, key1) for exception in new_exceptions)
+                structure2, new_exceptions = self.get_structure(key2, value2)
+                exceptions.extend(exception.add(self.name, key2) for exception in new_exceptions)
+                if self.name == "textures":
+                    if key1 != key2:
+                        print(key1, key2)
+                if key1 == key2:
+                    key_compare_output = key1
+                else:
+                    key_compare_output = D.Diff(key1, key2)
                 if value1 is value2 or value1 == value2:
-                    # no change occurred, so nothing needs to be done whatsoever on this data. If the previous, identical data was
-                    # verified, then this would be correct data too.
-                    output[key] = value1
+                    value_compare_output = value1
+                elif structure1 is not structure2 or structure1 is None:
+                    value_compare_output = D.Diff(value1, value2)
                 else:
-                    structure_set, new_exceptions = self.choose_structure(key, D.Diff(value1, value2))
-                    exceptions.extend(exception.add(self.name, D.first_existing_property(key)) for exception in new_exceptions)
-                    output[key], subcomponent_has_changes, new_exceptions = structure_set.compare(value1, value2, environment)
-                    has_changes = has_changes or subcomponent_has_changes
-                    exceptions.extend(exception.add(self.name, D.first_existing_property(key)) for exception in new_exceptions)
-                    continue
-            elif len(occurrences) == 1:
-                # since there's now only one value, there's no more comparing to do.
-                # key can only be a D.Diff when len(occurrences) == 2
-                if isinstance(key, D.Diff):
-                    raise Exceptions.InvalidStateError(self, key)
-                if occurrences[0][0] == D.DiffType.old:
-                    diff_key, diff_value = D.Diff(old=key), D.Diff(old=occurrences[0][1])
-                elif occurrences[0][0] == D.DiffType.new:
-                    diff_key, diff_value = D.Diff(new=key), D.Diff(new=occurrences[0][1])
-                else:
-                    raise Exceptions.InvalidStateError(self)
-                has_changes = True
-                output[diff_key] = diff_value
-                continue
-            else:
-                raise Exceptions.InvalidStateError(self, key, occurrences)
+                    value_compare_output, _, new_exceptions = structure1.compare(value1, value2, environment)
+                    exceptions.extend(exception.add(self.name, key2) for exception in new_exceptions)
+                output[key_compare_output] = value_compare_output
 
-        sorted_output:dict[str|D.Diff,d|D.Diff] = type(data1)() # type: ignore # why does it even error anyways
-        for key, value in sorted(output.items()):
-            sorted_output[key] = value
-        return sorted_output, has_changes, exceptions
+        # added/removed items
+        output.update(
+            (D.Diff(old=key), D.Diff(old=value))
+            for exclusive_hash, (key, value) in data1_exclusive_items.items()
+            if exclusive_hash not in already_data1_hashes
+        )
+        output.update(
+            (D.Diff(new=key), D.Diff(new=value))
+            for exclusive_hash, (key, value) in data2_exclusive_items.items()
+            if exclusive_hash not in already_data2_hashes
+        )
+        if self.sorting_function is not None:
+            output_copy:dict[str|D.Diff,d|D.Diff] = cast(Any, type(output)())
+            output_copy.update((key, value) for key, value in sorted(output.items(), key=self.sorting_function))
+            output = output_copy
+        return output, has_changes, exceptions
 
     def print_item(self, key:str, value:d, structure_set:StructureSet.StructureSet[d], environment:StructureEnvironment.StructureEnvironment, *,message:str="") -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
         substructure_output, exceptions = structure_set.print_text(D.DiffType.not_diff, value, environment)

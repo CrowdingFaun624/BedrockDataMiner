@@ -12,6 +12,9 @@ import Utilities.Exceptions as Exceptions
 
 d = TypeVar("d")
 
+MIN_KEY_SIMILARITY_THRESHOLD = 0.0
+MIN_VALUE_SIMILARITY_THRESHOLD = 0.5
+
 class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
 
     def __init__(
@@ -22,10 +25,13 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             comparison_move_function:Callable[[str, d], Any]|None,
             measure_length:bool,
             print_all:bool,
+            sorting_function:Callable[[tuple[str|D.Diff,Any]],Any]|None,
+            min_key_similarity_threshold:float,
+            min_value_similarity_threshold:float,
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
-        super().__init__(name, field, detect_key_moves, comparison_move_function, measure_length, print_all, children_has_normalizer, children_tags)
+        super().__init__(name, field, detect_key_moves, comparison_move_function, measure_length, print_all, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, children_has_normalizer, children_tags)
 
         self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None

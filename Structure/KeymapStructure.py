@@ -1,4 +1,4 @@
-from typing import Any, Iterable, MutableMapping, TypeVar
+from typing import Any, Callable, Iterable, MutableMapping, TypeVar
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
@@ -12,6 +12,9 @@ import Utilities.Exceptions as Exceptions
 
 d = TypeVar("d")
 
+MIN_KEY_SIMILARITY_THRESHOLD = 0.0
+MIN_VALUE_SIMILARITY_THRESHOLD = 0.5
+
 class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
 
     def __init__(
@@ -20,10 +23,14 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             field:str,
             measure_length:bool,
             print_all:bool,
+            sorting_function:Callable[[tuple[str|D.Diff,Any]],Any]|None,
+            min_key_similarity_threshold:float,
+            min_value_similarity_threshold:float,
+            detect_key_moves:bool,
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
-        super().__init__(name, field, False, None, measure_length, print_all, children_has_normalizer, children_tags)
+        super().__init__(name, field, detect_key_moves, None, measure_length, print_all, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, children_has_normalizer, children_tags)
 
         self.keys:dict[str,Structure.Structure[d]|None]|None = None
         self.tags:dict[str,list[str]]|None = None

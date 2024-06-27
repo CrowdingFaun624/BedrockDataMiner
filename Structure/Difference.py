@@ -12,6 +12,9 @@ class NoExist():
 
     def __str__(self) -> NoReturn:
         raise Exceptions.CannotStringifyError(NoExist)
+    
+    def __eq__(self, value: object) -> bool:
+        return isinstance(value, NoExist)
 
 class ChangeType(enum.Enum):
     removal = "removal"
@@ -101,15 +104,22 @@ class Diff(Generic[Dt1,Dt2]):
         return hash((self.old, self.new))
 
     def __lt__(self, other:Any) -> bool:
-        if self.is_removal:
-            return self.old < other
+        if isinstance(other, Diff):
+            return self.first_existing_property() < other.first_existing_property()
         else:
-            return self.new < other
+            return self.first_existing_property() < other
     def __gt__(self, other:Any) -> bool:
-        if self.is_removal:
-            return self.old > other
+        if isinstance(other, Diff):
+            return self.first_existing_property() > other.first_existing_property()
         else:
-            return self.new > other
+            return self.first_existing_property() > other
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, Diff):
+            return self.old == value.old and self.new == value.new
+        elif self.is_change:
+            return False # changes Diffs have two different values; both cannot equal value.
+        else:
+            return self.first_existing_property() == value
 
 a = TypeVar("a")
 b = TypeVar("b")

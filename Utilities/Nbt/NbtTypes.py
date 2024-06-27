@@ -5,6 +5,7 @@ from typing import Generic, Iterable, Iterator, Mapping, TypeVar
 
 import mutf8
 
+import Structure.Difference as D
 import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.DataReader as DataReader
 import Utilities.Nbt.Endianness as Endianness
@@ -436,7 +437,7 @@ class TAG_List(TAG[list[TAG]]):
         self.value.reverse()
 
     def sort(self) -> None:
-        self.value.sort(key=lambda item: item.value)
+        self.value.sort() # type: ignore
 
 class TAG_Compound(TAG[dict[str,TAG]]):
 
@@ -465,7 +466,7 @@ class TAG_Compound(TAG[dict[str,TAG]]):
             if self.should_enquote_key(key):
                 output += "\"%s\"" % escape_string(key)
             else:
-                output += key
+                output += str(key)
             output += ": "
             output += str(value)
             if index != len(self.value) - 1:
@@ -474,6 +475,7 @@ class TAG_Compound(TAG[dict[str,TAG]]):
         return output
 
     def should_enquote_key(self, key:str, pattern=re.compile(r'[^a-zA-Z0-9._]').search) -> bool:
+        if isinstance(key, D.Diff): return False
         if len(key) == 0: return True
         return bool(pattern(key))
 

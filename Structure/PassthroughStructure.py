@@ -20,13 +20,13 @@ class PassthroughStructure(Structure.Structure[a]):
     def __init__(self, name: str, field: str, children_has_normalizer: bool, children_tags: set[str]) -> None:
         super().__init__(name, field, children_has_normalizer, children_tags)
 
-        self.structure:Structure.Structure|None = None
+        self.structure:Structure.Structure[a]|None = None
         self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
 
     def link_substructures(
         self,
-        structure:Structure.Structure|None,
+        structure:Structure.Structure[a]|None,
         types:list[type],
         normalizer:list[Normalizer.Normalizer],
     ) -> None:
@@ -74,6 +74,12 @@ class PassthroughStructure(Structure.Structure[a]):
         output, new_exceptions = self.structure.get_tag_paths(data, tag, data_path.copy(), environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
+
+    def get_similarity(self, data1: a, data2: a) -> float:
+        if self.structure is None:
+            return float(data1 == data2)
+        else:
+            return self.structure.get_similarity(data1, data2)
 
     def compare(self, data1:a, data2:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []

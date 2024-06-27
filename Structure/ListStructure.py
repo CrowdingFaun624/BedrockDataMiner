@@ -4,6 +4,7 @@ import Structure.AbstractIterableStructure as AbstractIterableStructure
 import Structure.Difference as D
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
+import Utilities.Exceptions as Exceptions
 
 d = TypeVar("d")
 
@@ -11,6 +12,16 @@ class ListStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
     """
     Ordered data structure.
     """
+
+    def get_similarity(self, data1: Sequence[d], data2: Sequence[d]) -> float:
+        maximum_length = max(len(data1), len(data2))
+        if self.structure is None:
+            similarity = sum(item1 == item2 for item1, item2 in zip(data1, data2)) / maximum_length
+        else:
+            similarity = sum(self.structure.get_similarity(item1, item2) for item1, item2 in zip(data1, data2)) / maximum_length
+        if similarity < 0.0 or similarity > 1.0:
+            raise Exceptions.InvalidSimilarityError(self, similarity, data1, data2)
+        return similarity
 
     def compare(
         self,

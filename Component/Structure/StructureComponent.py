@@ -31,6 +31,7 @@ DEFAULT_TYPES:dict[str,type] = {
     "TAG_Long_Array": NbtTypes.TAG_Long_Array,
 }
 REQUIRES_SUBCOMPONENT_TYPES = set([dict, list, NbtTypes.TAG_Byte_Array, NbtTypes.TAG_List, NbtTypes.TAG_Compound, NbtTypes.TAG_Int_Array, NbtTypes.TAG_Long_Array])
+SORTABLE_TYPES = set([bool, float, int, type(None), str, NbtTypes.TAG_Byte, NbtTypes.TAG_Double, NbtTypes.TAG_Float, NbtTypes.TAG_Int, NbtTypes.TAG_Long, NbtTypes.TAG_Short, NbtTypes.TAG_String])
 
 ARBITRARY_ITERABLE_TYPES = set((list, tuple, NbtTypes.TAG_List))
 """Iterable that allows for arbitrary/any data inside."""

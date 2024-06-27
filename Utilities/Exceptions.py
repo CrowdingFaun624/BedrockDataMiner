@@ -1559,6 +1559,30 @@ class DiffKeyError(StructureException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class InvalidSimilarityError(StructureException):
+    "A calulated similarity is not in [0.0, 1.0]"
+    
+    def __init__(self, structure:"Structure.Structure", similarity:float, data1:Any, data2:Any, message:Optional[str]=None) -> None:
+        '''
+        :structure: The Structure that returned an invalid similarity.
+        :similarity: The similarity that is out of range.
+        :data1: The older data that caused an invalid similarity
+        :data2: The newer data that caused an invalid similarity
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(structure, similarity, data1, data2, message)
+        self.structure = structure
+        self.similarity = similarity
+        self.data1 = data1
+        self.data2 = data2
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "%r has a similarity of %.4f" % (self.structure, self.similarity)
+        output += ": " if self.message is None else " %s: " % (self.message,)
+        output += "on data %s and %s" % (self.data1, self.data2)
+        return output
+
 class NormalizerError(StructureException):
     "A Normalizer's function has failed."
 
@@ -1642,6 +1666,28 @@ class StructureError(StructureException):
     def __str__(self) -> str:
         output = "%r has failed" % (self.structure_base,)
         output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class StructureExceptionError(StructureException):
+    "An error occured where it should not."
+
+    def __init__(self, structure:"Structure.Structure", function:Callable, exceptions:list["Trace.ErrorTrace"], message:Optional[str]=None) -> None:
+        '''
+        :structure: The Structure with the errors inside its function.
+        :function: The function of the Structure where the errors occured.
+        :exceptions: The exceptions that should not exist.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(structure, function, exceptions, message)
+        self.structure = structure
+        self.function = function
+        self.exceptions = exceptions
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r has errors in function \"%s\" where it should not" % (self.structure, self.function.__name__)
+        output += ": " if self.message is None else " %s: " % (self.message,)
+        output += "[%s]" % (", ".join(str(exception) for exception in self.exceptions))
         return output
 
 class StructureSetKeyError(StructureException):

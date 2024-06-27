@@ -211,6 +211,14 @@ class Structure(Generic[a]):
         '''
         ...
 
+    def get_similarity(self, data1:a, data2:a) -> float:
+        '''
+        Returns the similarity of data1 to data2. Is at most the greater of the complexities of the data.
+        :data1: The data from the oldest Version.
+        :data2: The data from the newest Version.
+        '''
+        ...
+
     def iter_structures(self) -> Iterable["Structure"]:
         '''Returns an Iterable of this Structure's substructures.'''
         ...
