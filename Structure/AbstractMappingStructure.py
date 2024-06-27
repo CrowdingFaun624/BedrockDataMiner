@@ -139,20 +139,30 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             return 0.0
 
     def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[str,d]], data2_exclusive_items:dict[int,tuple[str,d]], same_keys:set[str]) -> list[tuple[int,int,float,float]]:
+        keys1_hashes = {key1: hash1 for hash1, (key1, value1) in data1_exclusive_items.items()}
+        keys2_hashes = {key2: hash2 for hash2, (key2, value2) in data2_exclusive_items.items()}
+        same_keys_list:list[tuple[int, int, float, float]] = [
+            (keys1_hashes[key], keys2_hashes[key], 1.0, 1.0)
+            for key in same_keys
+            if key in keys1_hashes # same_keys has all keys that are similar, not just ones with different values.
+        ]
         similarities_list:list[tuple[int, int, float, float]] = [ # maps similarity of older items to newer items
-            (hash1, hash2, 1.0 if keys_match else key_similarity, 1.0 if keys_match else value_similarity)
+            (hash1, hash2, key_similarity, value_similarity)
             for hash1, (key1, value1) in data1_exclusive_items.items()
+            if key1 not in same_keys
             for hash2, (key2, value2) in data2_exclusive_items.items()
-            if (keys_match := (key1 == key2)) or all([ # if the keys match or it's acceptable to move them.
+            if key2 not in same_keys # key1 cannot equal key2
+            if all([ # if the keys match or it's acceptable to move them.
                 self.detect_key_moves,
                 not (key1 in same_keys or key2 in same_keys), # prevent keys present in both old and new from moving.
                 (key_similarity := self.get_key_similarity(key1, key2)) >= self.min_key_similarity_threshold,
                 (value_similarity := self.get_value_similarity(key1, value1, key2, value2)) > self.min_value_similarity_threshold,
             ])
         ]
+        output = same_keys_list + similarities_list
         # sort by weighted similarities using the thresholds.
-        similarities_list.sort(key=lambda item: item[2] * (1 - self.min_key_similarity_threshold) + item[3] * (1 - self.min_value_similarity_threshold), reverse=True)
-        return similarities_list
+        output.sort(key=lambda item: item[2] * (1 - self.min_key_similarity_threshold) + item[3] * (1 - self.min_value_similarity_threshold), reverse=True)
+        return output
 
     def compare(
             self,
