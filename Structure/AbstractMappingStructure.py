@@ -100,7 +100,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
             already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
             already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
-            for hash1, hash2, key_similarity, value_similarity in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
+            for hash1, hash2, key_similarity, value_similarity, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
                     continue
                 already_data1_hashes.add(hash1)
@@ -148,17 +148,17 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         '''
         return True
 
-    def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[str,d]], data2_exclusive_items:dict[int,tuple[str,d]], same_keys:set[str]) -> list[tuple[int,int,float,float]]:
+    def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[str,d]], data2_exclusive_items:dict[int,tuple[str,d]], same_keys:set[str]) -> list[tuple[int,int,float,float,str,str]]:
         keys1_hashes = {key1: hash1 for hash1, (key1, value1) in data1_exclusive_items.items()}
         keys2_hashes = {key2: hash2 for hash2, (key2, value2) in data2_exclusive_items.items()}
-        same_keys_list:list[tuple[int, int, float, float]] = [
-            (keys1_hashes[key], keys2_hashes[key], 1.0, 1.0)
+        same_keys_list:list[tuple[int, int, float, float, str, str]] = [
+            (keys1_hashes[key], keys2_hashes[key], 1.0, 1.0, key, key)
             for key in same_keys
             if key in keys1_hashes # same_keys has all keys that are similar, not just ones with different values.
         ]
         if self.detect_key_moves:
-            similarities_list:list[tuple[int, int, float, float]] = [ # maps similarity of older items to newer items
-                (hash1, hash2, key_similarity, value_similarity)
+            similarities_list:list[tuple[int, int, float, float, str, str]] = [ # maps similarity of older items to newer items
+                (hash1, hash2, key_similarity, value_similarity, key1, key2)
                 for hash1, (key1, value1) in data1_exclusive_items.items()
                 if key1 not in same_keys
                 for hash2, (key2, value2) in data2_exclusive_items.items()
@@ -174,7 +174,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             similarities_list = []
         output = same_keys_list + similarities_list
         # sort by weighted similarities using the thresholds.
-        output.sort(key=lambda item: (item[2] * (1 - self.min_key_similarity_threshold) + item[3] * (1 - self.min_value_similarity_threshold), data2_exclusive_items[item[1]][0]), reverse=True)
+        output.sort(key=lambda item: (item[2] * (1 - self.min_key_similarity_threshold) + item[3] * (1 - self.min_value_similarity_threshold), item[4], item[5]), reverse=True)
         return output
 
     def compare(
@@ -192,22 +192,20 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         data2_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data2.items()}
 
         same_keys = data1.keys() & data2.keys() # keys that existed both before and after.
-        same_hashes = data1_hashes.keys() & data2_hashes.keys()
-        data1_exclusive_items = {exclusive_hash: data1_hashes[exclusive_hash] for exclusive_hash in data1_hashes.keys() - data2_hashes.keys()}
-        data2_exclusive_items = {exclusive_hash: data2_hashes[exclusive_hash] for exclusive_hash in data2_hashes.keys() - data1_hashes.keys()}
+        same_hashes = [hash for hash in data1_hashes.keys() if hash in data2_hashes] # retain order
+        data1_exclusive_items = {exclusive_hash: data1_hashes[exclusive_hash] for exclusive_hash in data1_hashes if exclusive_hash not in data2_hashes}
+        data2_exclusive_items = {exclusive_hash: data2_hashes[exclusive_hash] for exclusive_hash in data2_hashes if exclusive_hash not in data1_hashes}
         output:dict[str|D.Diff,d|D.Diff] = cast(Any, type(data1)())
         has_changes = len(data1_exclusive_items) > 0 or len(data2_exclusive_items) > 0
 
         # unchanged items
-        for same_hash in same_hashes:
-            key, value = data1_hashes[same_hash]
-            output[key] = value
+        output.update(data1_hashes[same_hash] for same_hash in same_hashes)
 
         # changed items
         already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
         already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
         if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
-            for hash1, hash2, key_similarity, value_similarity in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
+            for hash1, hash2, _, _, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
                     continue # if either side is already involved in a change, it's unneeded.
                 already_data1_hashes.add(hash1)
