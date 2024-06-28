@@ -61,8 +61,8 @@ Changed entity "armadillo":
 				Changed component group "minecraft:baby":
 					Changed component "minecraft:ageable":
 						Changed field "interact_filters":
-							Changed filter property "domain" from "minecraft:is_rolled_up" to "minecraft:armadillo_state".
 							Changed filter property "test" from "bool_property" to "enum_property".
+							Changed filter property "domain" from "minecraft:is_rolled_up" to "minecraft:armadillo_state".
 							Removed filter property "operator" of "!=".
 							Added filter property "value" of "unrolled".
 				Removed component group "minecraft:baby_relaxed":
@@ -135,16 +135,6 @@ Changed entity "armadillo":
 							Changed trigger:
 								Changed field "event" from "minecraft:relax" to "minecraft:unroll".
 							Removed trigger:
-								field "event": "minecraft:stop_trying_to_relax"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "domain": "minecraft:is_threatened"
-											filter property "test": "bool_property"
-										filter:
-											filter property "domain": "minecraft:is_trying_to_relax"
-											filter property "test": "bool_property"
-							Removed trigger:
 								field "event": "minecraft:start_trying_to_relax"
 								field "filters":
 									filter property "all_of":
@@ -155,6 +145,16 @@ Changed entity "armadillo":
 										filter:
 											filter property "domain": "minecraft:is_trying_to_relax"
 											filter property "operator": "!="
+											filter property "test": "bool_property"
+							Removed trigger:
+								field "event": "minecraft:stop_trying_to_relax"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "domain": "minecraft:is_threatened"
+											filter property "test": "bool_property"
+										filter:
+											filter property "domain": "minecraft:is_trying_to_relax"
 											filter property "test": "bool_property"
 					Added component "minecraft:movement" of field "value": 0.0.
 				Removed component group "minecraft:rolled_up_trying_to_relax":
@@ -233,8 +233,8 @@ Changed entity "armadillo":
 									Removed component group "minecraft:adult_relaxed".
 									Added component group "minecraft:adult_unrolled".
 							Changed field "filters":
-								Changed filter property "domain" from "minecraft:is_rolled_up" to "minecraft:armadillo_state".
 								Changed filter property "test" from "bool_property" to "enum_property".
+								Changed filter property "domain" from "minecraft:is_rolled_up" to "minecraft:armadillo_state".
 								Removed filter property "operator" of "!=".
 								Added filter property "value" of "unrolled".
 				Changed event "minecraft:no_threat_detected":
@@ -312,10 +312,10 @@ Changed entity "armadillo":
 									Added component group "minecraft:rolled_up_with_threats".
 							Removed field "emit_vibration" of field "vibration": "entity_act".
 							Changed field "filters":
-								Removed filter property "value" of 0.
+								Removed filter property "operator" of ">".
 								Removed filter property "subject" of "self".
 								Removed filter property "test" of "actor_health".
-								Removed filter property "operator" of ">".
+								Removed filter property "value" of 0.
 								Added filter property "all_of":
 									filter:
 										filter property "domain": "minecraft:armadillo_state"

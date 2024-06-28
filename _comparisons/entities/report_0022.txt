@@ -10,8 +10,8 @@ Changed entity "agent":
 				Added empty component "minecraft:physics".
 				Changed component "minecraft:behavior.look_at_entity":
 					Changed field "filters":
-						Removed filter property "other_with_families" of "player".
 						Removed filter property "other_is_owner" of true.
+						Removed filter property "other_with_families" of "player".
 						Added filter property "all_of":
 							filter:
 								filter property "subject": "other"
@@ -73,14 +73,14 @@ Changed entity "arrow":
 						Changed sequence item 0:
 							Changed field "filters":
 								Removed filter property "is_world_difficulty" of "hard".
-								Added filter property "value" of "hard".
 								Added filter property "test" of "is_difficulty".
+								Added filter property "value" of "hard".
 						Changed sequence item 1:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "player".
-								Added filter property "subject" of "other".
 Changed entity "bat":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -91,8 +91,8 @@ Changed entity "bat":
 					Changed field "value" from 0.3 to 0.1.
 				Added empty component "minecraft:physics".
 				Changed component "minecraft:behavior.float_wander":
-					Added field "random_reselect" of true.
 					Added field "float_duration" of [0.1, 0.35].
+					Added field "random_reselect" of true.
 Changed entity "blaze":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -105,9 +105,9 @@ Changed entity "blaze":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "player".
-								Added filter property "subject" of "other".
 Changed entity "boat":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -149,9 +149,9 @@ Changed entity "cave_spider":
 						Changed field "on_environment":
 							Changed field "filters":
 								Removed filter property "with_environment_any" of "brightness_greater:0.49".
-								Added filter property "value" of 0.49.
-								Added filter property "test" of "is_brightness".
 								Added filter property "operator" of ">".
+								Added filter property "test" of "is_brightness".
+								Added filter property "value" of 0.49.
 					Changed component "minecraft:behavior.nearest_attackable_target":
 						Changed field "entity_types":
 							Changed entity type:
@@ -178,9 +178,9 @@ Changed entity "cave_spider":
 						Changed field "on_environment":
 							Changed field "filters":
 								Removed filter property "with_environment_any" of "brightness_less:0.49".
-								Added filter property "value" of 0.49.
-								Added filter property "test" of "is_brightness".
 								Added filter property "operator" of "<".
+								Added filter property "test" of "is_brightness".
+								Added filter property "value" of 0.49.
 			Changed field "components":
 				Total component: 20 (+1, -0)
 				Added empty component "minecraft:physics".
@@ -190,39 +190,56 @@ Changed entity "cave_spider":
 						Changed sequence item 1:
 							Changed field "filters":
 								Removed filter property "is_world_difficulty" of "easy".
-								Added filter property "value" of "easy".
 								Added filter property "test" of "is_difficulty".
+								Added filter property "value" of "easy".
 						Changed sequence item 2:
 							Changed field "filters":
 								Removed filter property "is_world_difficulty" of "normal".
-								Added filter property "value" of "normal".
 								Added filter property "test" of "is_difficulty".
+								Added filter property "value" of "normal".
 						Changed sequence item 3:
 							Changed field "filters":
 								Removed filter property "is_world_difficulty" of "hard".
-								Added filter property "value" of "hard".
 								Added filter property "test" of "is_difficulty".
+								Added filter property "value" of "hard".
 				Changed event "minecraft:become_hostile":
 					Changed field "sequence":
 						Changed sequence item 1:
 							Changed field "filters":
 								Removed filter property "is_world_difficulty" of "easy".
-								Added filter property "value" of "easy".
 								Added filter property "test" of "is_difficulty".
+								Added filter property "value" of "easy".
 						Changed sequence item 2:
 							Changed field "filters":
 								Removed filter property "is_world_difficulty" of "normal".
-								Added filter property "value" of "normal".
 								Added filter property "test" of "is_difficulty".
+								Added filter property "value" of "normal".
 						Changed sequence item 3:
 							Changed field "filters":
 								Removed filter property "is_world_difficulty" of "hard".
-								Added filter property "value" of "hard".
 								Added filter property "test" of "is_difficulty".
+								Added filter property "value" of "hard".
 				Changed event "minecraft:entity_spawned":
 					Changed field "randomize":
 						Changed randomize item:
 							Changed field "randomize":
+								Changed randomize item:
+									Changed field "filters":
+										Removed filter property "with_environment_any":
+											environment: "night"
+											environment: "underground"
+										Added filter property "all_of":
+											filter:
+												filter property "test": "is_daytime"
+												filter property "value": false
+											filter:
+												filter property "test": "is_underground"
+												filter property "value": true
+								Changed randomize item:
+									Changed field "filters":
+										Removed filter property "with_environment_any" of environment: "biome:the_nether".
+										Added filter property "test" of "is_biome".
+										Added filter property "value" of "the_nether".
 								Changed randomize item:
 									Changed field "filters":
 										Removed filter property "with_environment_every":
@@ -239,23 +256,6 @@ Changed entity "cave_spider":
 											filter:
 												filter property "test": "is_underground"
 												filter property "value": false
-								Changed randomize item:
-									Changed field "filters":
-										Removed filter property "with_environment_any":
-											environment: "night"
-											environment: "underground"
-										Added filter property "all_of":
-											filter:
-												filter property "test": "is_daytime"
-												filter property "value": false
-											filter:
-												filter property "test": "is_underground"
-												filter property "value": true
-								Changed randomize item:
-									Changed field "filters":
-										Removed filter property "with_environment_any" of environment: "biome:the_nether".
-										Added filter property "value" of "the_nether".
-										Added filter property "test" of "is_biome".
 Changed entity "chest_minecart":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -284,6 +284,7 @@ Changed entity "cow":
 				Changed component group "minecraft:cow_adult":
 					Changed component "minecraft:interact":
 						Changed interaction:
+							Changed field "use_item" from "true" to true.
 							Changed field "on_interact":
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
@@ -298,7 +299,6 @@ Changed entity "cow":
 											filter property "subject": "other"
 											filter property "test": "has_equipment"
 											filter property "value": "bucket:0"
-							Changed field "use_item" from "true" to true.
 			Changed field "components":
 				Total component: 23 (+1, -0)
 				Changed component "minecraft:navigation.walk":
@@ -315,15 +315,15 @@ Changed entity "creeper":
 						Changed field "on_damage":
 							Changed field "filters":
 								Removed filter property "other_with_families" of "lightning".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "lightning".
-								Added filter property "subject" of "other".
 				Changed component "minecraft:interact":
 					Changed field "on_interact":
 						Changed field "filters":
-							Removed filter property "without_components" of "minecraft:explode".
-							Removed filter property "other_with_item" of "flint_and_steel".
 							Removed filter property "other_with_families" of "player".
+							Removed filter property "other_with_item" of "flint_and_steel".
+							Removed filter property "without_components" of "minecraft:explode".
 							Added filter property "all_of":
 								filter:
 									filter property "subject": "other"
@@ -345,17 +345,17 @@ Changed entity "creeper":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "ocelot".
-								Added filter property "value" of "ocelot".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
+								Added filter property "value" of "ocelot".
 				Changed component "minecraft:behavior.nearest_attackable_target":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "player".
-								Added filter property "subject" of "other".
 			Changed field "events":
 				Changed event "minecraft:start_exploding":
 					Changed field "sequence":
@@ -378,6 +378,7 @@ Changed entity "donkey":
 				Changed component group "minecraft:donkey_unchested":
 					Changed component "minecraft:interact":
 						Changed interaction:
+							Changed field "use_item" from "true" to true.
 							Changed field "on_interact":
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
@@ -392,7 +393,6 @@ Changed entity "donkey":
 											filter property "subject": "other"
 											filter property "test": "has_equipment"
 											filter property "value": "chest:0"
-							Changed field "use_item" from "true" to true.
 			Changed field "components":
 				Total component: 19 (+1, -0)
 				Changed component "minecraft:navigation.walk":
@@ -461,9 +461,9 @@ Changed entity "ender_pearl":
 						Changed sequence item 0:
 							Changed field "filters":
 								Removed filter property "is_game_rule_false" of "domobspawning".
-								Added filter property "value" of false.
-								Added filter property "test" of "is_game_rule".
 								Added filter property "domain" of "domobspawning".
+								Added filter property "test" of "is_game_rule".
+								Added filter property "value" of false.
 Changed entity "enderman":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -491,9 +491,9 @@ Changed entity "enderman":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of family: "endermite".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "endermite".
-								Added filter property "subject" of "other".
 Changed entity "endermite":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -530,15 +530,15 @@ Changed entity "evocation_illager":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "player".
-								Added filter property "subject" of "other".
 				Changed component "minecraft:behavior.look_at_entity":
 					Changed field "filters":
 						Removed filter property "other_with_families" of "mob".
+						Added filter property "subject" of "other".
 						Added filter property "test" of "is_family".
 						Added filter property "value" of "mob".
-						Added filter property "subject" of "other".
 				Changed component "minecraft:behavior.nearest_attackable_target":
 					Changed field "entity_types":
 						Changed entity type:
@@ -568,6 +568,9 @@ Changed entity "evocation_illager":
 				Changed component "minecraft:behavior.send_event":
 					Changed field "event_choices":
 						Changed choice:
+							Changed field "sequence":
+								Changed event:
+									Added field "sound_event" of "prepare.wololo".
 							Changed field "filters":
 								Removed filter property "other_with_color" of 11.
 								Removed filter property "other_with_families" of "sheep".
@@ -580,9 +583,6 @@ Changed entity "evocation_illager":
 										filter property "subject": "other"
 										filter property "test": "is_color"
 										filter property "value": "blue"
-							Changed field "sequence":
-								Changed event:
-									Added field "sound_event" of "prepare.wololo".
 							Added field "start_sound_event" of "cast.spell".
 				Changed component "minecraft:behavior.summon_entity":
 					Changed field "summon_choices":
@@ -680,9 +680,9 @@ Changed entity "guardian":
 							Changed entity type:
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
+									Added filter property "subject" of "other".
 									Added filter property "test" of "is_family".
 									Added filter property "value" of "player".
-									Added filter property "subject" of "other".
 			Changed field "components":
 				Total component: 21 (+1, -0)
 				Added empty component "minecraft:physics".
@@ -779,10 +779,10 @@ Changed entity "iron_golem":
 						Changed field "entity_types":
 							Changed field "filters":
 								Removed filter property "other_without_families" of family: "creeper".
-								Added filter property "value" of "creeper".
-								Added filter property "test" of "is_family".
 								Added filter property "operator" of "!=".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
+								Added filter property "value" of "creeper".
 			Changed field "components":
 				Total component: 25 (+1, -0)
 				Changed component "minecraft:navigation.walk":
@@ -792,8 +792,8 @@ Changed entity "iron_golem":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
-								Removed filter property "other_without_families" of "creeper".
 								Removed filter property "other_with_families" of "monster".
+								Removed filter property "other_without_families" of "creeper".
 								Added filter property "all_of":
 									filter:
 										filter property "subject": "other"
@@ -825,6 +825,7 @@ Changed entity "llama":
 				Changed component group "minecraft:llama_unchested":
 					Changed component "minecraft:interact":
 						Changed interaction:
+							Changed field "use_item" from "true" to true.
 							Changed field "on_interact":
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
@@ -839,7 +840,6 @@ Changed entity "llama":
 											filter property "subject": "other"
 											filter property "test": "has_equipment"
 											filter property "value": "chest:0"
-							Changed field "use_item" from "true" to true.
 			Changed field "components":
 				Total component: 26 (+1, -0)
 				Changed component "minecraft:damage_sensor":
@@ -884,15 +884,15 @@ Changed entity "llama":
 					Changed field "entity_types":
 						Changed field "filters":
 							Removed filter property "other_with_families" of family: "llama".
+							Added filter property "subject" of "other".
 							Added filter property "test" of "is_family".
 							Added filter property "value" of "llama".
-							Added filter property "subject" of "other".
 				Changed component "minecraft:behavior.nearest_attackable_target":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
-								Removed filter property "other_without_components" of component: "minecraft:is_tamed".
 								Removed filter property "other_with_families" of family: "wolf".
+								Removed filter property "other_without_components" of component: "minecraft:is_tamed".
 								Added filter property "all_of":
 									filter:
 										filter property "subject": "other"
@@ -926,9 +926,9 @@ Changed entity "magma_cube":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "player".
-								Added filter property "subject" of "other".
 Changed entity "minecart":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -946,6 +946,7 @@ Changed entity "mooshroom":
 				Changed component group "minecraft:cow_adult":
 					Changed component "minecraft:interact":
 						Changed interaction:
+							Changed field "use_item" from "true" to true.
 							Changed field "on_interact":
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
@@ -960,7 +961,6 @@ Changed entity "mooshroom":
 											filter property "subject": "other"
 											filter property "test": "is_family"
 											filter property "value": "player"
-							Changed field "use_item" from "true" to true.
 						Changed interaction:
 							Removed field "on_interact":
 								field "event": "become_cow"
@@ -968,7 +968,7 @@ Changed entity "mooshroom":
 									filter property "other_with_item": "shears"
 									filter property "without_components": "minecraft:transformation"
 								field "target": "self"
-							Added field "target" of "self".
+							Added field "event" of "become_cow".
 							Added field "filters":
 								filter property "all_of":
 									filter:
@@ -980,7 +980,7 @@ Changed entity "mooshroom":
 										filter property "operator": "!="
 										filter property "test": "has_component"
 										filter property "value": "minecraft:transformation"
-							Added field "event" of "become_cow".
+							Added field "target" of "self".
 						Changed interaction:
 							Changed field "use_item" from "true" to true.
 							Removed field "on_interact":
@@ -1016,6 +1016,7 @@ Changed entity "mule":
 				Changed component group "minecraft:mule_unchested":
 					Changed component "minecraft:interact":
 						Changed interaction:
+							Changed field "use_item" from "true" to true.
 							Changed field "on_interact":
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
@@ -1030,7 +1031,6 @@ Changed entity "mule":
 											filter property "subject": "other"
 											filter property "test": "is_family"
 											filter property "value": "player"
-							Changed field "use_item" from "true" to true.
 			Changed field "components":
 				Total component: 19 (+1, -0)
 				Changed component "minecraft:navigation.walk":
@@ -1058,16 +1058,16 @@ Changed entity "ocelot":
 							Changed entity type:
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
+									Added filter property "subject" of "other".
 									Added filter property "test" of "is_family".
 									Added filter property "value" of "player".
-									Added filter property "subject" of "other".
 					Changed component "minecraft:behavior.nearest_attackable_target":
 						Changed field "entity_types":
 							Changed entity type:
 								Changed field "filters":
 									Removed filter property "other_with_families" of "chicken".
-									Added filter property "test" of "is_family".
 									Added filter property "subject" of "other".
+									Added filter property "test" of "is_family".
 									Added filter property "value" of "chicken".
 			Changed field "components":
 				Total component: 21 (+1, -1)
@@ -1254,9 +1254,9 @@ Changed entity "pig":
 								Changed field "filters":
 									Removed filter property "other_with_item" of "saddle".
 									Added filter property "domain" of "hand".
+									Added filter property "subject" of "other".
 									Added filter property "test" of "has_equipment".
 									Added filter property "value" of "saddle".
-									Added filter property "subject" of "other".
 			Changed field "components":
 				Total component: 21 (+2, -0)
 				Added component "minecraft:collision_box":
@@ -1266,9 +1266,9 @@ Changed entity "pig":
 					Changed field "on_damage":
 						Changed field "filters":
 							Removed filter property "other_with_families" of "lightning".
+							Added filter property "subject" of "other".
 							Added filter property "test" of "is_family".
 							Added filter property "value" of "lightning".
-							Added filter property "subject" of "other".
 				Changed component "minecraft:navigation.walk":
 					Added field "avoid_damage_blocks" of true.
 				Added empty component "minecraft:physics".
@@ -1307,9 +1307,9 @@ Changed entity "polar_bear":
 							Changed entity type:
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
+									Added filter property "subject" of "other".
 									Added filter property "test" of "is_family".
 									Added filter property "value" of "player".
-									Added filter property "subject" of "other".
 					Removed component "minecraft:behavior.panic":
 						field "priority": 1
 						field "speed_multiplier": 2.0
@@ -1333,25 +1333,25 @@ Changed entity "rabbit":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "monster".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "monster".
 						Changed entity type:
 							Changed field "walk_speed_multiplier" from 2.2 to 1.5.
 							Changed field "sprint_speed_multiplier" from 2.2 to 1.8.
 							Changed field "filters":
 								Removed filter property "other_with_families" of "wolf".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "wolf".
-								Added filter property "subject" of "other".
 						Changed entity type:
 							Changed field "walk_speed_multiplier" from 2.2 to 1.5.
+							Changed field "sprint_speed_multiplier" from 2.2 to 1.8.
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "player".
-								Added filter property "subject" of "other".
-							Changed field "sprint_speed_multiplier" from 2.2 to 1.8.
 			Changed field "events":
 				Changed event "minecraft:entity_born":
 					Changed field "sequence":
@@ -1406,10 +1406,10 @@ Changed entity "sheep":
 					Changed interaction:
 						Changed field "on_interact":
 							Changed field "filters":
-								Removed filter property "without_components" of "minecraft:is_baby".
 								Removed filter property "other_with_families" of "player".
-								Removed filter property "with_components" of "minecraft:is_dyeable".
 								Removed filter property "other_with_item" of "shears".
+								Removed filter property "with_components" of "minecraft:is_dyeable".
+								Removed filter property "without_components" of "minecraft:is_baby".
 								Added filter property "all_of":
 									filter:
 										filter property "domain": "hand"
@@ -1436,15 +1436,15 @@ Changed entity "sheep":
 								Changed randomize item:
 									Changed field "add":
 										Changed field "component_groups":
-											Total component group: 4 (+1, -0)
-											Added component group "minecraft:loot_wooly".
-								Changed randomize item:
-									Changed field "add":
-										Changed field "component_groups":
 											Total component group: 4 (+2, -1)
 											Added component group "minecraft:loot_sheared".
 											Added component group "minecraft:rideable_sheared".
 											Removed component group "rideable_sheared".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 4 (+1, -0)
+											Added component group "minecraft:loot_wooly".
 				Changed event "minecraft:on_eat_block":
 					Changed field "sequence":
 						Changed sequence item 1:
@@ -1455,9 +1455,9 @@ Changed entity "sheep":
 							Changed field "filters":
 								Removed filter property "without_components" of "minecraft:is_baby".
 								Added filter property "operator" of "!=".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "has_component".
 								Added filter property "value" of "minecraft:is_baby".
-								Added filter property "subject" of "other".
 							Added field "remove" of field "component_groups": component group: "minecraft:loot_sheared".
 				Changed event "minecraft:on_sheared":
 					Changed field "add":
@@ -1482,90 +1482,10 @@ Changed entity "shulker":
 					Total interaction: 16 (+16, -16)
 					Removed interaction:
 						field "on_interact":
-							field "event": "minecraft:turn_blue"
-							field "filters":
-								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:4"
-								filter property "player_with_instabuild": true
-						field "use_item": "true"
-					Removed interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_silver"
-							field "filters":
-								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:7"
-								filter property "player_with_instabuild": true
-						field "use_item": "true"
-					Removed interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_red"
-							field "filters":
-								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:1"
-								filter property "player_with_instabuild": true
-						field "use_item": "true"
-					Removed interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_cyan"
-							field "filters":
-								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:6"
-								filter property "player_with_instabuild": true
-						field "use_item": "true"
-					Removed interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_pink"
-							field "filters":
-								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:9"
-								filter property "player_with_instabuild": true
-						field "use_item": "true"
-					Removed interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_orange"
-							field "filters":
-								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:14"
-								filter property "player_with_instabuild": true
-						field "use_item": "true"
-					Removed interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_brown"
-							field "filters":
-								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:3"
-								filter property "player_with_instabuild": true
-						field "use_item": "true"
-					Removed interaction:
-						field "on_interact":
 							field "event": "minecraft:turn_black"
 							field "filters":
 								filter property "other_with_families": "player"
 								filter property "other_with_item": "dye:0"
-								filter property "player_with_instabuild": true
-						field "use_item": "true"
-					Removed interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_purple"
-							field "filters":
-								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:5"
-								filter property "player_with_instabuild": true
-						field "use_item": "true"
-					Removed interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_green"
-							field "filters":
-								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:2"
-								filter property "player_with_instabuild": true
-						field "use_item": "true"
-					Removed interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_white"
-							field "filters":
-								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:15"
 								filter property "player_with_instabuild": true
 						field "use_item": "true"
 					Removed interaction:
@@ -1578,10 +1498,18 @@ Changed entity "shulker":
 						field "use_item": "true"
 					Removed interaction:
 						field "on_interact":
-							field "event": "minecraft:turn_magenta"
+							field "event": "minecraft:turn_silver"
 							field "filters":
 								filter property "other_with_families": "player"
-								filter property "other_with_item": "dye:13"
+								filter property "other_with_item": "dye:7"
+								filter property "player_with_instabuild": true
+						field "use_item": "true"
+					Removed interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_white"
+							field "filters":
+								filter property "other_with_families": "player"
+								filter property "other_with_item": "dye:15"
 								filter property "player_with_instabuild": true
 						field "use_item": "true"
 					Removed interaction:
@@ -1590,6 +1518,62 @@ Changed entity "shulker":
 							field "filters":
 								filter property "other_with_families": "player"
 								filter property "other_with_item": "dye:12"
+								filter property "player_with_instabuild": true
+						field "use_item": "true"
+					Removed interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_orange"
+							field "filters":
+								filter property "other_with_families": "player"
+								filter property "other_with_item": "dye:14"
+								filter property "player_with_instabuild": true
+						field "use_item": "true"
+					Removed interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_red"
+							field "filters":
+								filter property "other_with_families": "player"
+								filter property "other_with_item": "dye:1"
+								filter property "player_with_instabuild": true
+						field "use_item": "true"
+					Removed interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_blue"
+							field "filters":
+								filter property "other_with_families": "player"
+								filter property "other_with_item": "dye:4"
+								filter property "player_with_instabuild": true
+						field "use_item": "true"
+					Removed interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_purple"
+							field "filters":
+								filter property "other_with_families": "player"
+								filter property "other_with_item": "dye:5"
+								filter property "player_with_instabuild": true
+						field "use_item": "true"
+					Removed interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_magenta"
+							field "filters":
+								filter property "other_with_families": "player"
+								filter property "other_with_item": "dye:13"
+								filter property "player_with_instabuild": true
+						field "use_item": "true"
+					Removed interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_pink"
+							field "filters":
+								filter property "other_with_families": "player"
+								filter property "other_with_item": "dye:9"
+								filter property "player_with_instabuild": true
+						field "use_item": "true"
+					Removed interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_brown"
+							field "filters":
+								filter property "other_with_families": "player"
+								filter property "other_with_item": "dye:3"
 								filter property "player_with_instabuild": true
 						field "use_item": "true"
 					Removed interaction:
@@ -1608,16 +1592,32 @@ Changed entity "shulker":
 								filter property "other_with_item": "dye:10"
 								filter property "player_with_instabuild": true
 						field "use_item": "true"
+					Removed interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_green"
+							field "filters":
+								filter property "other_with_families": "player"
+								filter property "other_with_item": "dye:2"
+								filter property "player_with_instabuild": true
+						field "use_item": "true"
+					Removed interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_cyan"
+							field "filters":
+								filter property "other_with_families": "player"
+								filter property "other_with_item": "dye:6"
+								filter property "player_with_instabuild": true
+						field "use_item": "true"
 					Added interaction:
 						field "on_interact":
-							field "event": "minecraft:turn_red"
+							field "event": "minecraft:turn_black"
 							field "filters":
 								filter property "all_of":
 									filter:
 										filter property "domain": "hand"
 										filter property "subject": "other"
 										filter property "test": "has_equipment"
-										filter property "value": "dye:1"
+										filter property "value": "dye:0"
 									filter:
 										filter property "subject": "other"
 										filter property "test": "is_family"
@@ -1648,71 +1648,14 @@ Changed entity "shulker":
 						field "use_item": true
 					Added interaction:
 						field "on_interact":
-							field "event": "minecraft:turn_black"
+							field "event": "minecraft:turn_silver"
 							field "filters":
 								filter property "all_of":
 									filter:
 										filter property "domain": "hand"
 										filter property "subject": "other"
 										filter property "test": "has_equipment"
-										filter property "value": "dye:0"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "player"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "has_ability"
-										filter property "value": "instabuild"
-						field "use_item": true
-					Added interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_brown"
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "domain": "hand"
-										filter property "subject": "other"
-										filter property "test": "has_equipment"
-										filter property "value": "dye:3"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "player"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "has_ability"
-										filter property "value": "instabuild"
-						field "use_item": true
-					Added interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_light_blue"
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "domain": "hand"
-										filter property "subject": "other"
-										filter property "test": "has_equipment"
-										filter property "value": "dye:12"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "player"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "has_ability"
-										filter property "value": "instabuild"
-						field "use_item": true
-					Added interaction:
-						field "on_interact":
-							field "event": "minecraft:turn_purple"
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "domain": "hand"
-										filter property "subject": "other"
-										filter property "test": "has_equipment"
-										filter property "value": "dye:5"
+										filter property "value": "dye:7"
 									filter:
 										filter property "subject": "other"
 										filter property "test": "is_family"
@@ -1743,14 +1686,90 @@ Changed entity "shulker":
 						field "use_item": true
 					Added interaction:
 						field "on_interact":
-							field "event": "minecraft:turn_pink"
+							field "event": "minecraft:turn_light_blue"
 							field "filters":
 								filter property "all_of":
 									filter:
 										filter property "domain": "hand"
 										filter property "subject": "other"
 										filter property "test": "has_equipment"
-										filter property "value": "dye:9"
+										filter property "value": "dye:12"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "has_ability"
+										filter property "value": "instabuild"
+						field "use_item": true
+					Added interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_orange"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "domain": "hand"
+										filter property "subject": "other"
+										filter property "test": "has_equipment"
+										filter property "value": "dye:14"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "has_ability"
+										filter property "value": "instabuild"
+						field "use_item": true
+					Added interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_red"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "domain": "hand"
+										filter property "subject": "other"
+										filter property "test": "has_equipment"
+										filter property "value": "dye:1"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "has_ability"
+										filter property "value": "instabuild"
+						field "use_item": true
+					Added interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_blue"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "domain": "hand"
+										filter property "subject": "other"
+										filter property "test": "has_equipment"
+										filter property "value": "dye:4"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "has_ability"
+										filter property "value": "instabuild"
+						field "use_item": true
+					Added interaction:
+						field "on_interact":
+							field "event": "minecraft:turn_purple"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "domain": "hand"
+										filter property "subject": "other"
+										filter property "test": "has_equipment"
+										filter property "value": "dye:5"
 									filter:
 										filter property "subject": "other"
 										filter property "test": "is_family"
@@ -1781,14 +1800,14 @@ Changed entity "shulker":
 						field "use_item": true
 					Added interaction:
 						field "on_interact":
-							field "event": "minecraft:turn_silver"
+							field "event": "minecraft:turn_pink"
 							field "filters":
 								filter property "all_of":
 									filter:
 										filter property "domain": "hand"
 										filter property "subject": "other"
 										filter property "test": "has_equipment"
-										filter property "value": "dye:7"
+										filter property "value": "dye:9"
 									filter:
 										filter property "subject": "other"
 										filter property "test": "is_family"
@@ -1800,14 +1819,14 @@ Changed entity "shulker":
 						field "use_item": true
 					Added interaction:
 						field "on_interact":
-							field "event": "minecraft:turn_orange"
+							field "event": "minecraft:turn_brown"
 							field "filters":
 								filter property "all_of":
 									filter:
 										filter property "domain": "hand"
 										filter property "subject": "other"
 										filter property "test": "has_equipment"
-										filter property "value": "dye:14"
+										filter property "value": "dye:3"
 									filter:
 										filter property "subject": "other"
 										filter property "test": "is_family"
@@ -1876,25 +1895,6 @@ Changed entity "shulker":
 						field "use_item": true
 					Added interaction:
 						field "on_interact":
-							field "event": "minecraft:turn_blue"
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "domain": "hand"
-										filter property "subject": "other"
-										filter property "test": "has_equipment"
-										filter property "value": "dye:4"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "player"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "has_ability"
-										filter property "value": "instabuild"
-						field "use_item": true
-					Added interaction:
-						field "on_interact":
 							field "event": "minecraft:turn_cyan"
 							field "filters":
 								filter property "all_of":
@@ -1917,9 +1917,9 @@ Changed entity "shulker":
 					Changed field "entity_types":
 						Changed field "filters":
 							Removed filter property "other_with_families" of family: "player".
+							Added filter property "subject" of "other".
 							Added filter property "test" of "is_family".
 							Added filter property "value" of "player".
-							Added filter property "subject" of "other".
 			Changed field "events":
 				Changed event "minecraft:entity_spawned":
 					Changed field "add":
@@ -1974,17 +1974,17 @@ Changed entity "skeleton":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "wolf".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "wolf".
-								Added filter property "subject" of "other".
 				Changed component "minecraft:behavior.nearest_attackable_target":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "player".
-								Added filter property "subject" of "other".
 Changed entity "skeleton_horse":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -1997,9 +1997,9 @@ Changed entity "skeleton_horse":
 							Changed field "on_damage":
 								Changed field "filters":
 									Removed filter property "other_with_families" of "lightning".
+									Added filter property "subject" of "other".
 									Added filter property "test" of "is_family".
 									Added filter property "value" of "lightning".
-									Added filter property "subject" of "other".
 				Changed component group "minecraft:skeleton_horse_adult":
 					Total component: 2 (+0, -1)
 					Removed component "minecraft:tamemount":
@@ -2062,8 +2062,8 @@ Changed entity "slime":
 						Changed field "height" from 1.04 to 2.08.
 				Changed component group "minecraft:slime_medium":
 					Changed component "minecraft:collision_box":
-						Changed field "height" from 0.78 to 1.04.
 						Changed field "width" from 0.78 to 1.04.
+						Changed field "height" from 0.78 to 1.04.
 			Changed field "components":
 				Total component: 16 (+1, -0)
 				Added empty component "minecraft:physics".
@@ -2107,8 +2107,8 @@ Changed entity "snow_golem":
 						Changed field "on_interact":
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
-								Removed filter property "without_components" of "minecraft:is_sheared".
 								Removed filter property "other_with_item" of "shears".
+								Removed filter property "without_components" of "minecraft:is_sheared".
 								Added filter property "all_of":
 									filter:
 										filter property "domain": "hand"
@@ -2130,8 +2130,8 @@ Changed entity "snow_golem":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "monster".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "monster".
 Changed entity "snowball":
 	Changed behavior pack "core":
@@ -2150,9 +2150,9 @@ Changed entity "spider":
 						Changed field "on_environment":
 							Changed field "filters":
 								Removed filter property "with_environment_any" of "brightness_greater:0.49".
-								Added filter property "value" of 0.49.
-								Added filter property "test" of "is_brightness".
 								Added filter property "operator" of ">".
+								Added filter property "test" of "is_brightness".
+								Added filter property "value" of 0.49.
 					Changed component "minecraft:behavior.nearest_attackable_target":
 						Changed field "entity_types":
 							Changed entity type:
@@ -2179,9 +2179,9 @@ Changed entity "spider":
 						Changed field "on_environment":
 							Changed field "filters":
 								Removed filter property "with_environment_any" of "brightness_less:0.49".
-								Added filter property "value" of 0.49.
-								Added filter property "test" of "is_brightness".
 								Added filter property "operator" of "<".
+								Added filter property "test" of "is_brightness".
+								Added filter property "value" of 0.49.
 			Changed field "components":
 				Total component: 21 (+1, -0)
 				Added empty component "minecraft:physics".
@@ -2190,6 +2190,23 @@ Changed entity "spider":
 					Changed field "randomize":
 						Changed randomize item:
 							Changed field "randomize":
+								Changed randomize item:
+									Changed field "filters":
+										Removed filter property "with_environment_any":
+											environment: "night"
+											environment: "underground"
+										Added filter property "any_of":
+											filter:
+												filter property "test": "is_daytime"
+												filter property "value": false
+											filter:
+												filter property "test": "is_underground"
+												filter property "value": true
+								Changed randomize item:
+									Changed field "filters":
+										Removed filter property "with_environment_any" of environment: "biome:the_nether".
+										Added filter property "test" of "is_biome".
+										Added filter property "value" of "the_nether".
 								Changed randomize item:
 									Changed field "filters":
 										Removed filter property "with_environment_every":
@@ -2206,23 +2223,6 @@ Changed entity "spider":
 											filter:
 												filter property "test": "is_underground"
 												filter property "value": false
-								Changed randomize item:
-									Changed field "filters":
-										Removed filter property "with_environment_any":
-											environment: "night"
-											environment: "underground"
-										Added filter property "any_of":
-											filter:
-												filter property "test": "is_daytime"
-												filter property "value": false
-											filter:
-												filter property "test": "is_underground"
-												filter property "value": true
-								Changed randomize item:
-									Changed field "filters":
-										Removed filter property "with_environment_any" of environment: "biome:the_nether".
-										Added filter property "value" of "the_nether".
-										Added filter property "test" of "is_biome".
 Changed entity "splash_potion":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -2249,25 +2249,25 @@ Changed entity "stray":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "wolf".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "wolf".
-								Added filter property "subject" of "other".
 				Changed component "minecraft:behavior.nearest_attackable_target":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "player".
-								Added filter property "subject" of "other".
 			Changed field "events":
 				Changed event "change_to_skeleton":
 					Changed field "sequence":
 						Changed sequence item 0:
 							Changed field "filters":
 								Removed filter property "with_environment_any" of environment: "underground".
-								Added filter property "value" of true.
 								Added filter property "test" of "is_underground".
+								Added filter property "value" of true.
 Changed entity "tnt":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -2289,6 +2289,11 @@ Changed entity "tnt_minecart":
 									Removed filter property "other_with_item":
 										item: "flint_and_steel"
 										item: "fireball:0"
+									Added filter property "all_of":
+										filter:
+											filter property "subject": "other"
+											filter property "test": "is_family"
+											filter property "value": "player"
 									Added filter property "any_of":
 										filter:
 											filter property "domain": "hand"
@@ -2300,18 +2305,13 @@ Changed entity "tnt_minecart":
 											filter property "subject": "other"
 											filter property "test": "has_equipment"
 											filter property "value": "flint_and_steel"
-									Added filter property "all_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "player"
 						Changed interaction:
 							Changed field "on_interact":
 								Changed field "filters":
 									Removed filter property "other_with_components" of "fire_aspect".
-									Added filter property "value" of "fire_aspect".
-									Added filter property "test" of "has_component".
 									Added filter property "subject" of "other".
+									Added filter property "test" of "has_component".
+									Added filter property "value" of "fire_aspect".
 			Changed field "components":
 				Total component: 6 (+1, -0)
 				Added empty component "minecraft:physics".
@@ -2336,9 +2336,9 @@ Changed entity "vex":
 				Changed component "minecraft:behavior.look_at_entity":
 					Changed field "filters":
 						Removed filter property "other_with_families" of "mob".
+						Added filter property "subject" of "other".
 						Added filter property "test" of "is_family".
 						Added filter property "value" of "mob".
-						Added filter property "subject" of "other".
 				Changed component "minecraft:behavior.nearest_attackable_target":
 					Changed field "entity_types":
 						Changed entity type:
@@ -2369,9 +2369,9 @@ Changed entity "villager":
 						Changed field "on_damage":
 							Changed field "filters":
 								Removed filter property "other_with_families" of "lightning".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "lightning".
-								Added filter property "subject" of "other".
 					Removed trigger:
 						field "on_damage":
 							field "event": "become_zombie"
@@ -2442,13 +2442,13 @@ Changed entity "villager":
 						Changed sequence item 0:
 							Changed field "filters":
 								Removed filter property "is_world_difficulty" of "normal".
-								Added filter property "value" of "normal".
 								Added filter property "test" of "is_difficulty".
+								Added filter property "value" of "normal".
 						Changed sequence item 1:
 							Changed field "filters":
 								Removed filter property "is_world_difficulty" of "hard".
-								Added filter property "value" of "hard".
 								Added filter property "test" of "is_difficulty".
+								Added filter property "value" of "hard".
 				Changed event "minecraft:entity_spawned":
 					Changed field "sequence":
 						Changed sequence item 0:
@@ -2468,88 +2468,88 @@ Changed entity "villager":
 						Changed sequence item 0:
 							Changed field "filters":
 								Removed filter property "other_with_components" of "minecraft:is_baby".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "has_component".
 								Added filter property "value" of "minecraft:is_baby".
-								Added filter property "subject" of "other".
 						Changed sequence item 1:
 							Changed field "filters":
 								Removed filter property "other_without_components" of "minecraft:is_baby".
 								Added filter property "operator" of "!=".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "has_component".
 								Added filter property "value" of "minecraft:is_baby".
-								Added filter property "subject" of "other".
 						Changed sequence item 2:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "farmer".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "farmer".
-								Added filter property "subject" of "other".
 						Changed sequence item 3:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "fisherman".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "fisherman".
-								Added filter property "subject" of "other".
 						Changed sequence item 4:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "shepherd".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "shepherd".
-								Added filter property "subject" of "other".
 						Changed sequence item 5:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "fletcher".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "fletcher".
 						Changed sequence item 6:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "librarian".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "librarian".
-								Added filter property "subject" of "other".
 						Changed sequence item 7:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "cartographer".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "cartographer".
 						Changed sequence item 8:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "cleric".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "cleric".
-								Added filter property "subject" of "other".
 						Changed sequence item 9:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "armorer".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "armorer".
 						Changed sequence item 10:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "weaponsmith".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "weaponsmith".
-								Added filter property "subject" of "other".
 						Changed sequence item 11:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "toolsmith".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "toolsmith".
 						Changed sequence item 12:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "butcher".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "butcher".
 						Changed sequence item 13:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "leatherworker".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "leatherworker".
-								Added filter property "subject" of "other".
 Changed entity "vindication_illager":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -2561,10 +2561,10 @@ Changed entity "vindication_illager":
 							Changed entity type:
 								Changed field "filters":
 									Removed filter property "other_without_families" of family: "illager".
-									Added filter property "test" of "is_family".
 									Added filter property "operator" of "!=".
-									Added filter property "value" of "illager".
 									Added filter property "subject" of "other".
+									Added filter property "test" of "is_family".
+									Added filter property "value" of "illager".
 			Changed field "components":
 				Total component: 23 (+1, -0)
 				Added empty component "minecraft:physics".
@@ -2637,16 +2637,16 @@ Changed entity "wither":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_without_families" of "undead".
-								Added filter property "test" of "is_family".
-								Added filter property "value" of "player".
+								Added filter property "operator" of "!=".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
+								Added filter property "value" of "undead".
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
-								Added filter property "test" of "is_family".
-								Added filter property "operator" of "!=".
 								Added filter property "subject" of "other".
-								Added filter property "value" of "undead".
+								Added filter property "test" of "is_family".
+								Added filter property "value" of "player".
 				Added component "minecraft:behavior.wither_target_highest_damage" of field "priority": 1.
 Changed entity "wither_skeleton":
 	Changed behavior pack "core":
@@ -2664,9 +2664,9 @@ Changed entity "wither_skeleton":
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "player".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "player".
-								Added filter property "subject" of "other".
 Changed entity "wither_skull":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -2692,18 +2692,18 @@ Changed entity "wolf":
 							Changed entity type:
 								Changed field "filters":
 									Removed filter property "other_with_families" of "skeleton".
+									Added filter property "subject" of "other".
 									Added filter property "test" of "is_family".
 									Added filter property "value" of "skeleton".
-									Added filter property "subject" of "other".
 				Changed component group "minecraft:wolf_wild":
 					Changed component "minecraft:behavior.avoid_mob_type":
 						Changed field "entity_types":
 							Changed entity type:
 								Changed field "filters":
 									Removed filter property "other_with_families" of "llama".
+									Added filter property "subject" of "other".
 									Added filter property "test" of "is_family".
 									Added filter property "value" of "llama".
-									Added filter property "subject" of "other".
 					Changed component "minecraft:behavior.nearest_attackable_target":
 						Changed field "entity_types":
 							Changed entity type:
@@ -2804,6 +2804,7 @@ Changed entity "zombie_villager":
 			Changed field "components":
 				Total component: 22 (+1, -0)
 				Changed component "minecraft:interact":
+					Changed field "use_item" from "true" to true.
 					Changed field "on_interact":
 						Changed field "filters":
 							Removed filter property "other_with_item" of "golden_apple".
@@ -2818,7 +2819,6 @@ Changed entity "zombie_villager":
 									filter property "subject": "self"
 									filter property "test": "has_component"
 									filter property "value": "minecraft:effect.weakness"
-					Changed field "use_item" from "true" to true.
 				Added empty component "minecraft:physics".
 				Changed component "minecraft:behavior.nearest_attackable_target":
 					Changed field "entity_types":
@@ -2871,85 +2871,85 @@ Changed entity "zombie_villager":
 						Changed sequence item 0:
 							Changed field "filters":
 								Removed filter property "other_with_components" of "minecraft:is_baby".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "has_component".
 								Added filter property "value" of "minecraft:is_baby".
-								Added filter property "subject" of "other".
 						Changed sequence item 1:
 							Changed field "filters":
 								Removed filter property "other_without_components" of "minecraft:is_baby".
 								Added filter property "operator" of "!=".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "has_component".
 								Added filter property "value" of "minecraft:is_baby".
-								Added filter property "subject" of "other".
 						Changed sequence item 2:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "farmer".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "farmer".
-								Added filter property "subject" of "other".
 						Changed sequence item 3:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "fisherman".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "fisherman".
-								Added filter property "subject" of "other".
 						Changed sequence item 4:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "shepherd".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "shepherd".
-								Added filter property "subject" of "other".
 						Changed sequence item 5:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "fletcher".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "fletcher".
 						Changed sequence item 6:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "librarian".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "librarian".
-								Added filter property "subject" of "other".
 						Changed sequence item 7:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "cartographer".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "cartographer".
 						Changed sequence item 8:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "cleric".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "cleric".
-								Added filter property "subject" of "other".
 						Changed sequence item 9:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "armorer".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "armorer".
 						Changed sequence item 10:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "weaponsmith".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "weaponsmith".
-								Added filter property "subject" of "other".
 						Changed sequence item 11:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "toolsmith".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "toolsmith".
 						Changed sequence item 12:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "butcher".
-								Added filter property "test" of "is_family".
 								Added filter property "subject" of "other".
+								Added filter property "test" of "is_family".
 								Added filter property "value" of "butcher".
 						Changed sequence item 13:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "leatherworker".
+								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "leatherworker".
-								Added filter property "subject" of "other".
