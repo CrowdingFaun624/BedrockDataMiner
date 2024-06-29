@@ -122,6 +122,12 @@ class NormalizerTypedDict(TypedDict):
     function_name: Required[str]
     type: NotRequired[Literal["Normalizer"]]
 
+class PrimitiveComponentTypedDict(TypedDict):
+    normalizer: NotRequired[str|list[str]]
+    tags: NotRequired[str|list[str]]
+    type: NotRequired[Literal["Primitive"]]
+    types: Required[str|list[str]]
+
 class RangeVersionTagAutoAssignerTypedDict(TypedDict):
     newest: Required[str|None]
     oldest: Required[str|None]

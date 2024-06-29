@@ -11,6 +11,7 @@ import Component.Structure.KeymapComponent as KeymapComponent
 import Component.Structure.ListComponent as ListComponent
 import Component.Structure.NbtBaseComponent as NbtBaseComponent
 import Component.Structure.NormalizerComponent as NormalizerComponent
+import Component.Structure.PrimitiveComponent as PrimitiveComponent
 import Component.Structure.SetComponent as SetComponent
 import Component.Structure.TagComponent as TagComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
@@ -37,6 +38,7 @@ component_types:list[type[Component.Component]] = [
     ListComponent.ListComponent,
     NbtBaseComponent.NbtBaseComponent,
     NormalizerComponent.NormalizerComponent,
+    PrimitiveComponent.PrimitiveComponent,
     SetComponent.SetComponent,
     RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,
     TagComponent.TagComponent,
