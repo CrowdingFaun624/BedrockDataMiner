@@ -13,6 +13,7 @@ import Component.Structure.NbtBaseComponent as NbtBaseComponent
 import Component.Structure.NormalizerComponent as NormalizerComponent
 import Component.Structure.PrimitiveComponent as PrimitiveComponent
 import Component.Structure.SetComponent as SetComponent
+import Component.Structure.StringComponent as StringComponent
 import Component.Structure.TagComponent as TagComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
 import Component.Structure.VolumeComponent as VolumeComponent
@@ -40,6 +41,7 @@ component_types:list[type[Component.Component]] = [
     NormalizerComponent.NormalizerComponent,
     PrimitiveComponent.PrimitiveComponent,
     SetComponent.SetComponent,
+    StringComponent.StringComponent,
     RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,
     TagComponent.TagComponent,
     TypeAliasComponent.TypeAliasComponent,

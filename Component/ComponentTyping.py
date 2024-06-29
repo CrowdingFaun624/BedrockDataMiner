@@ -148,6 +148,12 @@ class SetTypedDict(TypedDict):
     type: NotRequired[Literal["List"]]
     types: Required[str|list[str]]
 
+class StringComponentTypedDict(TypedDict):
+    normalizer: NotRequired[str|list[str]]
+    tags: NotRequired[str|list[str]]
+    type: NotRequired[Literal["Primitive"]]
+    types: NotRequired[str|list[str]]
+
 class TagTypedDict(TypedDict):
     type: NotRequired[Literal["Tag"]]
 

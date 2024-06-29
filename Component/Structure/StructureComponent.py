@@ -55,6 +55,7 @@ NBT_TYPES = set((
     NbtTypes.TAG_String
 ))
 """Any NBT Tag."""
+STRING_TYPES = set((str, NbtTypes.TAG_String))
 
 CONTAINMENT_TYPES:dict[type,set[type]] = {
     NbtTypes.TAG_Byte_Array: {NbtTypes.TAG_Byte},
