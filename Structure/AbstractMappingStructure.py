@@ -27,7 +27,6 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             name:str,
             field:str,
             detect_key_moves:bool,
-            comparison_move_function:Callable[[str, d], Any]|None,
             measure_length:bool,
             print_all:bool,
             sorting_function:Callable[[tuple[str|D.Diff,Any]],Any]|None,
@@ -39,7 +38,6 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         super().__init__(name, field, children_has_normalizer, children_tags)
 
         self.detect_key_moves = detect_key_moves
-        self.comparison_move_function = (lambda key, value: value) if comparison_move_function is None else comparison_move_function
         self.measure_length = measure_length
         self.print_all = print_all
         self.sorting_function = sorting_function

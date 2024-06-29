@@ -57,7 +57,6 @@ class DataMinerSettingsTypedDict(TypedDict):
     type: NotRequired[Literal["DataMinerSettings"]]
 
 class DictTypedDict(TypedDict):
-    comparison_move_function: NotRequired[str]
     detect_key_moves: NotRequired[bool]
     field: NotRequired[str]
     measure_length: NotRequired[bool]

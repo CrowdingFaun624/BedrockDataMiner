@@ -61,11 +61,6 @@ def blocks_client_fix_MCPE_76182(data:DataMinerTyping.BlocksJsonClientBlockTyped
 def blocks_client_normalize(data:DataMinerTyping.MyBlocksClient) -> dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]:
     return {block["name"]: block["properties"] for block in data}
 
-def blocks_client_resource_pack_comparison_move_function(key:str, value:DataMinerTyping.NormalizedBlocksJsonClientBlockTypedDict) -> DataMinerTyping.NormalizedBlocksJsonClientBlockTypedDict:
-    output = value.copy()
-    del output["defined_in"]
-    return output
-
 def credits_normalize_sections(data:DataMinerTyping.Credits) -> DataMinerTyping.NormalizedCredits:
     return {section["section"]: section for section in data}
 
@@ -76,12 +71,6 @@ def credits_normalize_disciplines(data:Any) -> None:
 def credits_normalize_titles(data:Any) -> None:
     if "titles" not in data: return
     data["titles"] = {title["title"]: title for title in data["titles"]}
-
-def entities_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
-    output = value.copy()
-    if "defined_in" in output:
-        del output["defined_in"]
-    return output
 
 def entities_fix_event_bug(data:dict[str,Any]) -> None:
     if "minecraft:transformation" in data:
@@ -148,8 +137,6 @@ def flipbook_textures_fix_flipbook_textures(data:dict[str,list[dict[str,str]]]) 
         if len(resource_pack_data) != start_length:
             raise RuntimeError("Duplicate `atlas_tile` keys detected!")
 
-flipbook_textures_texture_move_function:Callable[[str, dict[str,str]],str] = lambda key, value: value["flipbook_texture"]
-
 def fonts_fix_font_aliases(data:dict[str,list[dict[str,str]]]) -> None:
     if "font_aliases" not in data: return
     output:dict[str,dict[str,str]] = {}
@@ -171,9 +158,6 @@ def fonts_fix_fonts(data:dict[str,list[dict[str,str]]]) -> None:
         output[font["font_name"]] = font
     data["fonts"] = output
 
-def fonts_font_comparison_move_function(key:str, value:dict[str,str]) -> str|None:
-    return value.get("font_file", None)
-
 def gui_routes_normalize(data:dict[str,list[dict[str,str]]]) -> None:
     assert "routes" in data
     data["routes"] = {route["fileName"]: route for route in data["routes"]}
@@ -186,8 +170,6 @@ def gui_routes_params_normalize(data:dict[str,list[dict[str,str]]]) -> None:
     assert "params" in data
     data["params"] = {route["name"]: route for route in data["params"]}
 
-identity_move_function = lambda key, value: value
-
 def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]]) -> dict[str,Any]:
     output:dict[str,dict[str,Any]] = {}
     for resource_pack_name, item_textures_data in data.items():
@@ -196,11 +178,6 @@ def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]]) ->
                 output[item][resource_pack_name] = item_data
             else:
                 output[item] = {resource_pack_name: item_data}
-    return output
-
-def items_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
-    output = value.copy()
-    del output["defined_in"]
     return output
 
 def items_fix_old(data:dict[str,Any]) -> None:
@@ -221,8 +198,6 @@ def items_fix_old(data:dict[str,Any]) -> None:
         del data[key]
     data[new_recipe_type] = output
 
-language_comparison_move_function:Callable[[str, DataMinerTyping.LanguageTypedDict], str] = lambda key, value: value["value"]
-
 def languages_normalize(data:DataMinerTyping.Languages) -> DataMinerTyping.NormalizedLanguages:
 
     def fix_properties(unfixed_data:DataMinerTyping.LanguagesTypedDict) -> dict[str,Any]:
@@ -232,11 +207,6 @@ def languages_normalize(data:DataMinerTyping.Languages) -> DataMinerTyping.Norma
                 output[resource_pack] = {}
         return CollapseResourcePacks.collapse_resource_packs_dict(output, True)
     return {language["code"]: fix_properties(language) for language in data}
-
-def loot_tables_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
-    output = value.copy()
-    del output["defined_in"]
-    return output
 
 def loot_tables_normalize_conditions(data:DataMinerTyping.LootTableHasConditions) -> None:
     if "conditions" not in data: return
@@ -345,11 +315,6 @@ def particles_remove_weird_components(data:dict[str,Any]) -> None:
     if "minecraft:particle_appearance_lighting" in data:
         del data["minecraft:particle_appearance_lighting"]
 
-def recipes_behavior_pack_comparison_move_function(key:str, value:dict[str,Any]) -> dict[str,Any]:
-    output = value.copy()
-    del output["defined_in"]
-    return output
-
 def resource_packs_normalize(data:DataMinerTyping.ResourcePacks) -> list[str]:
     return [resource_pack["name"] for resource_pack in data]
 
@@ -391,22 +356,9 @@ def sound_definitions_fix_MCPE_153561(data:DataMinerTyping.SoundDefinitionsJsonS
     if "pitch:" in data:
         del data["pitch:"]
 
-def sound_definitions_resource_pack_comparison_move_function(key:str, value:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict) -> DataMinerTyping.NormalizedSoundDefinitionsJsonSoundEventTypedDict:
-    output = value.copy()
-    del value["defined_in"]
-    return output
-
-def sound_definitions_sound_comparison_move_function(key:str, value:DataMinerTyping.NormalizedSoundDefinitionsJsonSoundTypedDict) -> str:
-    return key.split("/")[-1]
-
 def sound_files_remove_obj(data:DataMinerTyping.SoundFilesTypedDict) -> None:
     if "_obj" in data:
         del data["_obj"]
-
-def sound_files_sound_file_comparison_move_function(key:str, value:dict[str,DataMinerTyping.NormalizedSoundFilesTypedDict]) -> dict[str,str]:
-    return {internal_sound_file_name: internal_sound_file_properties["sha1_hash"] for internal_sound_file_name, internal_sound_file_properties in value.items()}
-
-sound_files_internal_sound_file_comparison_move_function = lambda key, value: value["sha1_hash"]
 
 def sounds_json_remove_bad_events(data:dict[str,str|DataMinerTyping.SoundsJsonSoundTypedDict]) -> None:
     events_to_delete:list[str] = []
@@ -436,8 +388,6 @@ def sounds_json_fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict) -> Non
         data["sound"] = data["sounds"]
         del data["sounds"]
 
-sounds_json_sound_collections_comparison_move_function = lambda key, value: None if len(value) == 0 else value
-
 def spawn_rules_normalize_herd(data:dict[str,dict[str,Any]|list[dict[str,Any]]]) -> None:
     if "minecraft:herd" not in data: return
     if isinstance(data["minecraft:herd"], dict):
@@ -447,17 +397,11 @@ def spawn_rules_normalize_herd(data:dict[str,dict[str,Any]|list[dict[str,Any]]])
         for item in data["minecraft:herd"].values():
             del item["event"]
 
-structures_resource_pack_move:Callable[[str, NbtTypes.TAG_Compound],int|None] = lambda key, value: value.hash
-
-structures_structure_move:Callable[[str, dict[str,NbtTypes.TAG_Compound]],list[int|None]] = lambda key, value: [resource_pack.hash for resource_pack in value.values()]
-
 structures_nbt_normalize_text_keys = ["Text%i" % i for i in range(1, 5)]
 def structures_nbt_normalize_text(data:dict[str,NbtTypes.TAG_String]) -> None:
     for key in structures_nbt_normalize_text_keys:
         if key in data:
             data[key] = json.loads(data[key].value)
-
-texture_list_comparison_move_function = lambda key, value: key
 
 terrain_textures_normalize_typed_dict = TypedDict("terrain_textures_normalize_typed_dict", {"resource_pack_name": str, "texture_name": str, "padding": int, "num_mip_levels": int, "texture_data": dict[str,dict[str,str]]})
 def terrain_textures_normalize(data:dict[str,terrain_textures_normalize_typed_dict]) -> dict[str,Any]:
@@ -518,11 +462,9 @@ functions:dict[str,Callable] = {
     "biomes_normalize_old": biomes_normalize_old,
     "blocks_client_fix_MCPE_76182": blocks_client_fix_MCPE_76182,
     "blocks_client_normalize": blocks_client_normalize,
-    "blocks_client_resource_pack_comparison_move_function": blocks_client_resource_pack_comparison_move_function,
     "credits_normalize_sections": credits_normalize_sections,
     "credits_normalize_disciplines": credits_normalize_disciplines,
     "credits_normalize_titles": credits_normalize_titles,
-    "entities_behavior_pack_comparison_move_function": entities_behavior_pack_comparison_move_function,
     "entities_fix_event_bug": entities_fix_event_bug,
     "entities_fix_out_of_bounds_components": entities_fix_out_of_bounds_components,
     "entities_fix_MCPE_178417": entities_fix_MCPE_178417,
@@ -535,21 +477,15 @@ functions:dict[str,Callable] = {
     "features_fix_tree_feature_canopy_leaf_blocks": features_fix_tree_feature_canopy_leaf_blocks,
     "features_fix_weighted_random_features": features_fix_weighted_random_features,
     "flipbook_textures_fix_flipbook_textures": flipbook_textures_fix_flipbook_textures,
-    "flipbook_textures_texture_move_function": flipbook_textures_texture_move_function,
     "fonts_fix_font_aliases": fonts_fix_font_aliases,
     "fonts_fix_font_references": fonts_fix_font_references,
     "fonts_fix_fonts": fonts_fix_fonts,
-    "fonts_font_comparison_move_function": fonts_font_comparison_move_function,
     "gui_routes_normalize": gui_routes_normalize,
     "gui_routes_supported_routes_normalize": gui_routes_supported_routes_normalize,
     "gui_routes_params_normalize": gui_routes_params_normalize,
-    "identity_move_function": identity_move_function,
     "item_textures_normalize": item_textures_normalize,
-    "items_behavior_pack_comparison_move_function": items_behavior_pack_comparison_move_function,
     "items_fix_old": items_fix_old,
-    "language_comparison_move_function": language_comparison_move_function,
     "languages_normalize": languages_normalize,
-    "loot_tables_behavior_pack_comparison_move_function": loot_tables_behavior_pack_comparison_move_function,
     "loot_tables_normalize_conditions": loot_tables_normalize_conditions,
     "loot_tables_normalize_functions": loot_tables_normalize_functions,
     "materials_normalize_material": materials_normalize_material,
@@ -558,7 +494,6 @@ functions:dict[str,Callable] = {
     "particles_normalize_component_particle_appearance_tinting_color": particles_normalize_component_particle_appearance_tinting_color,
     "particles_normalize_old": particles_normalize_old,
     "particles_remove_weird_components": particles_remove_weird_components,
-    "recipes_behavior_pack_comparison_move_function": recipes_behavior_pack_comparison_move_function,
     "resource_packs_normalize": resource_packs_normalize,
     "render_controllers_fix_old": render_controllers_fix_old,
     "render_controllers_remove_texures": render_controllers_remove_texures,
@@ -567,23 +502,15 @@ functions:dict[str,Callable] = {
     "sound_definitions_fix_MCPE_178265": sound_definitions_fix_MCPE_178265,
     "sound_definitions_make_strings_to_dict": sound_definitions_make_strings_to_dict,
     "sound_definitions_fix_MCPE_153561": sound_definitions_fix_MCPE_153561,
-    "sound_definitions_resource_pack_comparison_move_function": sound_definitions_resource_pack_comparison_move_function,
-    "sound_definitions_sound_comparison_move_function": sound_definitions_sound_comparison_move_function,
     "sound_files_remove_obj": sound_files_remove_obj,
-    "sound_files_sound_file_comparison_move_function": sound_files_sound_file_comparison_move_function,
-    "sound_files_internal_sound_file_comparison_move_function": sound_files_internal_sound_file_comparison_move_function,
     "sounds_json_remove_bad_events": sounds_json_remove_bad_events,
     "sounds_json_remove_bad_interactive_entity_events": sounds_json_remove_bad_interactive_entity_events,
     "sounds_json_fix_sounds": sounds_json_fix_sounds,
-    "sounds_json_sound_collections_comparison_move_function": sounds_json_sound_collections_comparison_move_function,
     "spawn_rules_normalize_herd": spawn_rules_normalize_herd,
-    "structures_resource_pack_move": structures_resource_pack_move,
-    "structures_structure_move": structures_structure_move,
     "structures_nbt_normalize_text": structures_nbt_normalize_text,
     "terrain_textures_normalize": terrain_textures_normalize,
     "terrain_meta_normalize": terrain_meta_normalize,
     "terrain_meta_normalize_uv": terrain_meta_normalize_uv,
     "terrain_meta_normalize_uvs": terrain_meta_normalize_uvs,
-    "texture_list_comparison_move_function": texture_list_comparison_move_function,
     "texture_list_normalize": texture_list_normalize,
 }
