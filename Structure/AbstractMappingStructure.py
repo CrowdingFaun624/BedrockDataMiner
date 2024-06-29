@@ -149,10 +149,10 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         return True
 
     def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[str,d]], data2_exclusive_items:dict[int,tuple[str,d]], same_keys:set[str]) -> list[tuple[int,int,float,float,str,str]]:
-        keys1_hashes = {key1: hash1 for hash1, (key1, value1) in data1_exclusive_items.items()}
-        keys2_hashes = {key2: hash2 for hash2, (key2, value2) in data2_exclusive_items.items()}
+        keys1_hashes = {key1: (hash1, value1) for hash1, (key1, value1) in data1_exclusive_items.items()}
+        keys2_hashes = {key2: (hash2, value2) for hash2, (key2, value2) in data2_exclusive_items.items()}
         same_keys_list:list[tuple[int, int, float, float, str, str]] = [
-            (keys1_hashes[key], keys2_hashes[key], 1.0, 1.0, key, key)
+            (keys1_hashes[key][0], keys2_hashes[key][0], 1.0, self.get_value_similarity(key, keys1_hashes[key][1], key, keys2_hashes[key][1]), key, key)
             for key in same_keys
             if key in keys1_hashes # same_keys has all keys that are similar, not just ones with different values.
         ]
