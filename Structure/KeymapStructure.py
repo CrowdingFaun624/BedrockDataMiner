@@ -44,13 +44,14 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             self,
             keys:dict[str,Structure.Structure|None],
             key_types:dict[str,tuple[type,...]],
+            key_structure:Structure.Structure[str]|None,
             normalizer:list[Normalizer.Normalizer],
             tags:dict[str,list[str]],
             keys_with_normalizers:list[str],
         ) -> None:
+        super().link_substructures(key_structure, normalizer)
         self.keys = keys
         self.key_types = key_types
-        self.normalizer = normalizer
         self.tags = tags
         self.keys_with_normalizers = keys_with_normalizers
 

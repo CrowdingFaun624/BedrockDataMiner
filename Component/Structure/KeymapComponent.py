@@ -6,6 +6,7 @@ import Component.Field.FieldListField as FieldListField
 import Component.Structure.Field.KeymapImportField as KeymapImportField
 import Component.Structure.Field.KeymapKeyField as KeymapKeyField
 import Component.Structure.Field.NormalizerListField as NormalizerListField
+import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
@@ -30,6 +31,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("imports", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("key_component", "a str, StructureComponent or None", False, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("min_key_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("min_value_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
@@ -61,6 +63,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
 
         self.import_field = KeymapImportField.KeymapImportField(data.get("imports", []), ["imports"])
         self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(key_data, key, self.children_tags, ["keys", key], self) for key, key_data in data["keys"].items()], ["keys"])
+        self.key_structure_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("key_component", None), ["key_component"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_for_all_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"])
@@ -70,7 +73,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.keys.for_each(lambda key: key.add_tag_fields(self.tags_for_all_field))
         self.import_field.import_into(self.keys)
         self.this_type_field.must_be(StructureComponent.MAPPING_TYPES)
-        self.fields.extend([self.import_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field])
+        self.fields.extend([self.import_field, self.key_structure_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -103,6 +106,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.get_final().link_substructures(
             keys={key.key: key.get_subcomponent() for key in self.keys},
             key_types={key.key: tuple(key.get_types()) for key in self.keys},
+            key_structure=self.key_structure_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys},
             keys_with_normalizers=[key.key for key in self.keys if (subcomponent := key.get_subcomponent()) is not None and subcomponent.children_has_normalizer] if self.children_has_normalizer else [],

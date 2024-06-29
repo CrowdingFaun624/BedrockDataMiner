@@ -44,23 +44,23 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         self.min_key_similarity_threshold = min_key_similarity_threshold
         self.min_value_similarity_threshold = min_value_similarity_threshold
 
+        self.key_structure:Structure.Structure[str]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
-        self.tags:list[str]|None = None
 
     def link_substructures(
         self,
+        key_structure:Structure.Structure[str]|None,
         normalizer:list[Normalizer.Normalizer],
-        tags:list[str],
     ) -> None:
+        self.key_structure = key_structure
         self.normalizer = normalizer
-        self.tags = tags
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None: ...
 
     def get_structure(self, key:str, value:d) -> tuple[Structure.Structure[d]|None, list[Trace.ErrorTrace]]:
         '''
         Returns a substructure or None.
-        :The key of this Structure at the current position.
+        :key: The key of this Structure at the current position.
         :value: The value at the current position.
         '''
         ...
@@ -115,7 +115,12 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         :key1: The key of the older key-value pair.
         :key2: The key of the newer key-value pair.
         '''
-        return float(key1 == key2)
+        if key1 == key2:
+            return 1.0
+        elif self.key_structure is not None:
+            return self.key_structure.get_similarity(key2, key2)
+        else:
+            return 0.0
 
     def get_value_similarity(self, key1:str, value1:d, key2:str, value2:d) -> float:
         '''

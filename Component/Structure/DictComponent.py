@@ -25,6 +25,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
     my_capabilities = Capabilities.Capabilities(has_keys=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent or None", True, (str, dict, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("key_component", "a str, StructureComponent or None", False, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
@@ -52,6 +53,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.sort = DictSorting[data.get("sort", "none")]
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
+        self.key_structure_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("key_component", None), ["key_component"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
@@ -61,7 +63,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)
         self.this_type_field.must_be(StructureComponent.MAPPING_TYPES)
-        self.fields.extend([self.subcomponent_field, self.normalizer_field, self.this_type_field, self.types_field, self.tags_field])
+        self.fields.extend([self.subcomponent_field, self.key_structure_field, self.normalizer_field, self.this_type_field, self.types_field, self.tags_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -89,6 +91,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         super().link_finals()
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
+            key_structure=self.key_structure_field.get_final(),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
             tags=self.tags_field.get_finals()

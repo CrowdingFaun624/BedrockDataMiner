@@ -34,17 +34,20 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
 
         self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None
+        self.tags:list[str]|None = None
 
     def link_substructures(
         self,
         structure:Structure.Structure[d]|None,
+        key_structure:Structure.Structure[str]|None,
         types:list[type],
         normalizer:list[Normalizer.Normalizer],
         tags:list[str],
     ) -> None:
-        super().link_substructures(normalizer, tags)
+        super().link_substructures(key_structure, normalizer)
         self.structure = structure
         self.types = tuple(types)
+        self.tags = tags
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.structure is None: return []

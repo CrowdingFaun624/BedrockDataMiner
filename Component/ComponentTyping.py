@@ -59,6 +59,7 @@ class DataMinerSettingsTypedDict(TypedDict):
 class DictTypedDict(TypedDict):
     detect_key_moves: NotRequired[bool]
     field: NotRequired[str]
+    key_component: NotRequired[str]
     measure_length: NotRequired[bool]
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
@@ -85,6 +86,7 @@ class KeymapTypedDict(TypedDict):
     detect_key_moves: NotRequired[bool]
     field: NotRequired[str]
     imports: NotRequired[str|list[str]]
+    key_component: NotRequired[str]
     keys: Required[dict[str,KeymapKeyTypedDict]]
     measure_length: NotRequired[bool]
     min_key_similarity_threshold: NotRequired[float]
