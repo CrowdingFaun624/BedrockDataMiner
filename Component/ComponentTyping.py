@@ -76,6 +76,7 @@ class GroupTypedDict(TypedDict):
     type: NotRequired[Literal["Group"]]
 
 class KeymapKeyTypedDict(TypedDict):
+    matters_for_similarity: NotRequired[bool]
     subcomponent: NotRequired[Union[str,None,"StructureTypedDicts"]]
     tags: NotRequired[str|list[str]]
     type: Required[str|list[str]]

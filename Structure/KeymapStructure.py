@@ -27,10 +27,13 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             min_key_similarity_threshold:float,
             min_value_similarity_threshold:float,
             detect_key_moves:bool,
+            keys_that_matter_for_similarity:dict[str,bool],
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
         super().__init__(name, field, detect_key_moves, measure_length, print_all, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, children_has_normalizer, children_tags)
+
+        self.keys_that_matter_for_similarity:dict[str,bool] = keys_that_matter_for_similarity
 
         self.keys:dict[str,Structure.Structure[d]|None]|None = None
         self.tags:dict[str,list[str]]|None = None
@@ -58,6 +61,9 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
 
     def allow_key_move(self, key1: str, value1: d, key2: str, value2: d) -> bool:
         return self.get_structure(key1, value1) is self.get_structure(key2, value2)
+
+    def keys_matter_for_similarity(self, key:str) -> bool:
+        return self.keys_that_matter_for_similarity[key]
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
         if self.key_types is None:

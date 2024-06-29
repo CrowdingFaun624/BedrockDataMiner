@@ -92,18 +92,19 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         same_hashes = data1_hashes.keys() & data2_hashes.keys()
         data1_exclusive_items = {exclusive_hash: data1_hashes[exclusive_hash] for exclusive_hash in data1_hashes.keys() - data2_hashes.keys()}
         data2_exclusive_items = {exclusive_hash: data2_hashes[exclusive_hash] for exclusive_hash in data2_hashes.keys() - data1_hashes.keys()}
-        maximum_length = max(len(data1), len(data2))
 
-        similarity = len(same_hashes) / maximum_length
+        similarity_count = sum(1 for hash in same_hashes if self.keys_matter_for_similarity(data1_hashes[hash][0]))
+        maximum_similarity = sum(1 for key in data1.keys() | data2.keys() if self.keys_matter_for_similarity(key))
         if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
             already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
             already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
-            for hash1, hash2, key_similarity, value_similarity, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
-                if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
+            for hash1, hash2, key_similarity, value_similarity, key1, key2 in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
+                if hash1 in already_data1_hashes or hash2 in already_data2_hashes or not self.keys_matter_for_similarity(key1) or not self.keys_matter_for_similarity(key2):
                     continue
                 already_data1_hashes.add(hash1)
                 already_data2_hashes.add(hash2)
-                similarity += (key_similarity * (1 - self.min_key_similarity_threshold) + value_similarity * (1 - self.min_value_similarity_threshold)) / (key_similarity + value_similarity) / (2 * maximum_length)
+                similarity_count += (key_similarity * (1 - self.min_key_similarity_threshold) + value_similarity * (1 - self.min_value_similarity_threshold)) / (2 * (key_similarity + value_similarity))
+        similarity = similarity_count / maximum_similarity
         if similarity < 0.0 or similarity > 1.0:
             raise Exceptions.InvalidSimilarityError(self, similarity, data1, data2)
         return similarity
@@ -143,6 +144,12 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         :value1: The older value.
         :key2: The newer key.
         :value2: The newer value.
+        '''
+        return True
+
+    def keys_matter_for_similarity(self, key:str) -> bool:
+        '''
+        Returns True if key1 and key2 should be accounted for in similarity calculations.
         '''
         return True
 

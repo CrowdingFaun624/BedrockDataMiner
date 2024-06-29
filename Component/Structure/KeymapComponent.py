@@ -43,6 +43,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
             TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent, or None", False, (str, dict, type(None))),
             TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+            TypeVerifier.TypedDictKeyTypeVerifier("matters_for_similarity", "a bool", False, bool),
         ), "a dict", "a str", "a dict")),
     )
 
@@ -92,6 +93,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             detect_key_moves=self.detect_key_moves,
             min_key_similarity_threshold=self.min_key_similarity_threshold,
             min_value_similarity_threshold=self.min_value_similarity_threshold,
+            keys_that_matter_for_similarity={key.key: key.matters_for_similarity for key in self.keys},
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
