@@ -51,6 +51,7 @@
         "types": ["dict"],
         "measure_length": true,
         "print_all": true,
+        "min_similarity_threshold": 0.3,
         "normalizer": {
             "function_name": "sound_definitions_make_strings_to_dict"
         },
@@ -64,15 +65,17 @@
         },
         "sort": "by_component_order",
         "keys": {
-            "name": {"type": "str"},
-            "type": {"type": "str"},
-            "exclude_from_pocket_platforms": {"type": "bool"},
-            "is3D": {"type": "bool"},
-            "load_on_low_memory": {"type": "bool"},
-            "pitch": {"type": ["float", "int"]},
-            "stream": {"type": "bool"},
-            "volume": {"type": ["float", "int"]},
-            "weight": {"type": "int"}
+            "name": {"type": "str", "subcomponent": {
+                "type": "String"
+            }},
+            "type": {"type": "str", "matters_for_similarity": false},
+            "exclude_from_pocket_platforms": {"type": "bool", "matters_for_similarity": false},
+            "is3D": {"type": "bool", "matters_for_similarity": false},
+            "load_on_low_memory": {"type": "bool", "matters_for_similarity": false},
+            "pitch": {"type": ["float", "int"], "matters_for_similarity": false},
+            "stream": {"type": "bool", "matters_for_similarity": false},
+            "volume": {"type": ["float", "int"], "matters_for_similarity": false},
+            "weight": {"type": "int", "matters_for_similarity": false}
         }
     },
     "defined_in": {
