@@ -1,6 +1,5 @@
 import Structure.Difference as D
 import Structure.PrimitiveStructure as PrimitiveStructure
-import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 
