@@ -161,12 +161,6 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         maximum_blocks_length = max(len(states1), len(states2))
         positions_in_common = states1.keys() & states2.keys()
         similarity = len(positions_in_common) / maximum_blocks_length
-        if self.structure is not None:
-            block_data_in_common = additional_data1.keys() & additional_data2.keys()
-            similarity += sum(
-                self.structure.get_similarity(additional_data1[position], additional_data2[position])
-                for position in block_data_in_common
-            ) / maximum_blocks_length
         if similarity < 0.0 or similarity > 1.0:
             raise Exceptions.InvalidSimilarityError(self, similarity, data1, data2)
         return similarity
