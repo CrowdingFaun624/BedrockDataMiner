@@ -14,6 +14,8 @@ d = TypeVar("d")
 
 MIN_KEY_SIMILARITY_THRESHOLD = 0.0
 MIN_VALUE_SIMILARITY_THRESHOLD = 0.5
+KEY_WEIGHT = 0.0
+VALUE_WEIGHT = 1.0
 
 class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
 
@@ -26,14 +28,16 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             sorting_function:Callable[[tuple[str|D.Diff,Any]],Any]|None,
             min_key_similarity_threshold:float,
             min_value_similarity_threshold:float,
+            key_weight:float,
+            value_weight:float,
             detect_key_moves:bool,
-            keys_that_matter_for_similarity:dict[str,bool],
+            key_weights:dict[str,int],
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
-        super().__init__(name, field, detect_key_moves, measure_length, print_all, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, children_has_normalizer, children_tags)
+        super().__init__(name, field, detect_key_moves, measure_length, print_all, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer, children_tags)
 
-        self.keys_that_matter_for_similarity:dict[str,bool] = keys_that_matter_for_similarity
+        self.key_weights:dict[str,int] = key_weights
 
         self.keys:dict[str,Structure.Structure[d]|None]|None = None
         self.tags:dict[str,list[str]]|None = None
@@ -63,8 +67,8 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
     def allow_key_move(self, key1: str, value1: d, key2: str, value2: d) -> bool:
         return self.get_structure(key1, value1) is self.get_structure(key2, value2)
 
-    def keys_matter_for_similarity(self, key:str) -> bool:
-        return self.keys_that_matter_for_similarity[key]
+    def get_key_weight(self, key:str) -> int:
+        return self.key_weights[key]
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
         if self.key_types is None:

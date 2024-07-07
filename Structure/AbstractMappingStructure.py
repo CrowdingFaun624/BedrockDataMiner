@@ -32,6 +32,8 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             sorting_function:Callable[[tuple[str|D.Diff,Any]],Any]|None,
             min_key_similarity_threshold:float,
             min_value_similarity_threshold:float,
+            key_weight:float,
+            value_weight:float,
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
@@ -43,6 +45,8 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         self.sorting_function = sorting_function
         self.min_key_similarity_threshold = min_key_similarity_threshold
         self.min_value_similarity_threshold = min_value_similarity_threshold
+        self.key_weight = key_weight
+        self.value_weight = value_weight
 
         self.key_structure:Structure.Structure[str]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
@@ -93,18 +97,18 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         data1_exclusive_items = {exclusive_hash: data1_hashes[exclusive_hash] for exclusive_hash in data1_hashes.keys() - data2_hashes.keys()}
         data2_exclusive_items = {exclusive_hash: data2_hashes[exclusive_hash] for exclusive_hash in data2_hashes.keys() - data1_hashes.keys()}
 
-        similarity_count = sum(1 for hash in same_hashes if self.keys_matter_for_similarity(data1_hashes[hash][0]))
-        maximum_similarity = sum(1 for key in data1.keys() | data2.keys() if self.keys_matter_for_similarity(key))
-        if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
+        similarity_count = sum(self.get_key_weight(data1_hashes[hash][0]) for hash in same_hashes)
+        total_weight = sum(self.get_key_weight(key) for key in data1.keys() | data2.keys())
+        if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0 and total_weight != 0:
             already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
             already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
             for hash1, hash2, key_similarity, value_similarity, key1, key2 in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
-                if hash1 in already_data1_hashes or hash2 in already_data2_hashes or not self.keys_matter_for_similarity(key1) or not self.keys_matter_for_similarity(key2):
+                if hash1 in already_data1_hashes or hash2 in already_data2_hashes or not self.get_key_weight(key1) or not self.get_key_weight(key2):
                     continue
                 already_data1_hashes.add(hash1)
                 already_data2_hashes.add(hash2)
-                similarity_count += (key_similarity * (1 - self.min_key_similarity_threshold) + value_similarity * (1 - self.min_value_similarity_threshold)) / (2 * (key_similarity + value_similarity))
-        similarity = similarity_count / maximum_similarity
+                similarity_count += ((self.get_key_weight(key1) + self.get_key_weight(key2))) * ((key_similarity * self.key_weight + value_similarity * self.value_weight)) / (2 * (self.key_weight + self.value_weight))
+        similarity = similarity_count / total_weight if total_weight != 0 else 1.0
         if similarity < 0.0 or similarity > 1.0:
             raise Exceptions.InvalidSimilarityError(self, similarity, data1, data2)
         return similarity
@@ -118,7 +122,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         if key1 == key2:
             return 1.0
         elif self.key_structure is not None:
-            return self.key_structure.get_similarity(key2, key2)
+            return self.key_structure.get_similarity(key1, key2)
         else:
             return 0.0
 
@@ -152,11 +156,11 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         '''
         return True
 
-    def keys_matter_for_similarity(self, key:str) -> bool:
+    def get_key_weight(self, key:str) -> int:
         '''
-        Returns True if key1 and key2 should be accounted for in similarity calculations.
+        Returns the weight that the key has in similarity calculations.
         '''
-        return True
+        return 1
 
     def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[str,d]], data2_exclusive_items:dict[int,tuple[str,d]], same_keys:set[str]) -> list[tuple[int,int,float,float,str,str]]:
         keys1_hashes = {key1: (hash1, value1) for hash1, (key1, value1) in data1_exclusive_items.items()}
@@ -184,7 +188,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             similarities_list = []
         output = same_keys_list + similarities_list
         # sort by weighted similarities using the thresholds.
-        output.sort(key=lambda item: (item[2] * (1 - self.min_key_similarity_threshold) + item[3] * (1 - self.min_value_similarity_threshold), item[4], item[5]), reverse=True)
+        output.sort(key=lambda item: ((item[2] * self.key_weight + item[3] * self.value_weight) / (self.key_weight + self.value_weight), item[4], item[5]), reverse=True)
         return output
 
     def compare(

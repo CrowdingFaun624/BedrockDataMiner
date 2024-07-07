@@ -26,7 +26,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         self.key = key
         self.source_component = source_component # used to make sure keys cannot be imported in chains.
         self.allow_inline = allow_inline
-        self.matters_for_similarity = data.get("matters_for_similarity", True)
+        self.weight = data.get("weight", 1)
 
         self.types_field = TypeListField.TypeListField(data["type"] if isinstance(data["type"], list) else [data["type"]], ["keys", key, "type"])
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("subcomponent", None), ["keys", key, "subcomponent"], allow_inline=allow_inline)

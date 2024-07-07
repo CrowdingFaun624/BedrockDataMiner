@@ -63,6 +63,8 @@ class DictTypedDict(TypedDict):
     measure_length: NotRequired[bool]
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
+    key_weight: NotRequired[float]
+    value_weight: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
     print_all: NotRequired[bool]
     sort: NotRequired[Literal["none", "by_key", "by_value"]]
@@ -77,10 +79,10 @@ class GroupTypedDict(TypedDict):
     type: NotRequired[Literal["Group"]]
 
 class KeymapKeyTypedDict(TypedDict):
-    matters_for_similarity: NotRequired[bool]
     subcomponent: NotRequired[Union[str,None,"StructureTypedDicts"]]
     tags: NotRequired[str|list[str]]
     type: Required[str|list[str]]
+    weight: NotRequired[int]
 
 class KeymapTypedDict(TypedDict):
     detect_key_moves: NotRequired[bool]
@@ -91,6 +93,8 @@ class KeymapTypedDict(TypedDict):
     measure_length: NotRequired[bool]
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
+    key_weight: NotRequired[float]
+    value_weight: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
     sort: NotRequired[Literal["none", "by_key", "by_value", "by_component_order"]]
     tags: NotRequired[str|list[str]]

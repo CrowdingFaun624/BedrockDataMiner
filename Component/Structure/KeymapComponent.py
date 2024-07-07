@@ -35,6 +35,8 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("min_key_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("min_value_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
+        TypeVerifier.TypedDictKeyTypeVerifier("key_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
+        TypeVerifier.TypedDictKeyTypeVerifier("value_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("sort", "a str", False, TypeVerifier.EnumTypeVerifier([item.value for item in KeymapSorting])),
@@ -45,7 +47,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
             TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent, or None", False, (str, dict, type(None))),
             TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-            TypeVerifier.TypedDictKeyTypeVerifier("matters_for_similarity", "a bool", False, bool),
+            TypeVerifier.TypedDictKeyTypeVerifier("weight", "a int", False, int, lambda key, value: (value >= 0, "must be at least 0")),
         ), "a dict", "a str", "a dict")),
     )
 
@@ -58,6 +60,8 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.measure_length = data.get("measure_length", False)
         self.min_key_similarity_threshold = data.get("min_key_similarity_threshold", KeymapStructure.MIN_KEY_SIMILARITY_THRESHOLD)
         self.min_value_similarity_threshold = data.get("min_value_similarity_threshold", KeymapStructure.MIN_VALUE_SIMILARITY_THRESHOLD)
+        self.key_weight = data.get("key_weight", KeymapStructure.KEY_WEIGHT)
+        self.value_weight = data.get("value_weight", KeymapStructure.VALUE_WEIGHT)
         self.print_all = data.get("print_all", False)
         self.sort = KeymapSorting[data.get("sort", "none")]
 
@@ -96,7 +100,9 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             detect_key_moves=self.detect_key_moves,
             min_key_similarity_threshold=self.min_key_similarity_threshold,
             min_value_similarity_threshold=self.min_value_similarity_threshold,
-            keys_that_matter_for_similarity={key.key: key.matters_for_similarity for key in self.keys},
+            key_weight=self.key_weight,
+            value_weight=self.value_weight,
+            key_weights={key.key: key.weight for key in self.keys},
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )

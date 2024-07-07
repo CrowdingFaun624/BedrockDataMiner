@@ -14,6 +14,8 @@ d = TypeVar("d")
 
 MIN_KEY_SIMILARITY_THRESHOLD = 0.0
 MIN_VALUE_SIMILARITY_THRESHOLD = 0.5
+KEY_WEIGHT = 0.2
+VALUE_WEIGHT = 0.8
 
 class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
 
@@ -27,10 +29,12 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             sorting_function:Callable[[tuple[str|D.Diff,Any]],Any]|None,
             min_key_similarity_threshold:float,
             min_value_similarity_threshold:float,
+            key_weight:float,
+            value_weight:float,
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
-        super().__init__(name, field, detect_key_moves, measure_length, print_all, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, children_has_normalizer, children_tags)
+        super().__init__(name, field, detect_key_moves, measure_length, print_all, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer, children_tags)
 
         self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None
