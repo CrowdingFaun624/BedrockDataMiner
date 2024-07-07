@@ -46,7 +46,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data)
 
-        self.detect_key_moves = data.get("detect_key_moves", False)
+        self.detect_key_moves = data.get("detect_key_moves", True)
         self.field = data.get("field", "field")
         self.measure_length = data.get("measure_length", False)
         self.min_key_similarity_threshold = data.get("min_key_similarity_threshold", DictStructure.MIN_KEY_SIMILARITY_THRESHOLD)
@@ -87,6 +87,8 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             sorting_function=sorting_function,
             min_key_similarity_threshold=self.min_key_similarity_threshold,
             min_value_similarity_threshold=self.min_value_similarity_threshold,
+            key_weight=self.key_weight,
+            value_weight=self.value_weight,
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
