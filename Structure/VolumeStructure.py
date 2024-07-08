@@ -155,6 +155,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             self,
             data1:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],
             data2:tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],
+            environment:StructureEnvironment.StructureEnvironment,
         ) -> float:
         states1, additional_data1, size1 = data1
         states2, additional_data2, size2 = data2

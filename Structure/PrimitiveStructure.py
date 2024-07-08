@@ -92,5 +92,5 @@ class PrimitiveStructure(Structure.Structure[d]):
         else:
             return cast(d, D.Diff(old=data1, new=data2)), True, []
 
-    def get_similarity(self, data1: d, data2: d) -> float:
+    def get_similarity(self, data1: d, data2: d, environment:StructureEnvironment.StructureEnvironment) -> float:
         return float(data1 == data2)

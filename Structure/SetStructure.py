@@ -38,7 +38,7 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         self.min_similarity_threshold=min_similarity_threshold
         self.sort = sort
 
-    def get_similarity(self, data1:Sequence[d], data2:Sequence[d]) -> float:
+    def get_similarity(self, data1:Sequence[d], data2:Sequence[d], environment:StructureEnvironment.StructureEnvironment) -> float:
         data1_hashes:dict[int,tuple[int,d]] = {Hashing.hash_data(item): (index, item) for index, item in enumerate(data1)}
         data2_hashes:dict[int,tuple[int,d]] = {Hashing.hash_data(item): (index, item) for index, item in enumerate(data2)}
 
@@ -50,7 +50,7 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         if self.structure is not None and len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
             already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
             already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
-            for hash1, hash2, item_similarity, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, self.structure):
+            for hash1, hash2, item_similarity, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, self.structure, environment):
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
                     continue
                 already_data1_hashes.add(hash1)
@@ -60,12 +60,12 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
             raise Exceptions.InvalidSimilarityError(self, similarity, data1, data2)
         return similarity
 
-    def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[int,d]], data2_exclusive_items:dict[int,tuple[int,d]], structure:Structure.Structure[d]) -> list[tuple[int,int,float,int,int]]:
+    def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[int,d]], data2_exclusive_items:dict[int,tuple[int,d]], structure:Structure.Structure[d], environment:StructureEnvironment.StructureEnvironment) -> list[tuple[int,int,float,int,int]]:
         similarities_list = [ # maps similarity of older items to newer items
             (hash1, hash2, similarity, index1, index2)
             for hash1, (index1, item1) in data1_exclusive_items.items()
             for hash2, (index2, item2) in data2_exclusive_items.items()
-            if (similarity := structure.get_similarity(item1, item2)) > self.min_similarity_threshold # similarities less than the threshold don't matter.
+            if (similarity := structure.get_similarity(item1, item2, environment)) > self.min_similarity_threshold # similarities less than the threshold don't matter.
         ]
         similarities_list.sort(key=lambda item: (item[2], item[3], item[4]), reverse=True) # sort by similarity; highest similarity is first
         return similarities_list
@@ -98,7 +98,7 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
         # if there is no structure, there's no similarity between items so the change step can be skipped.
         if self.structure is not None and len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
-            for hash1, hash2, _, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, self.structure):
+            for hash1, hash2, _, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, self.structure, environment):
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
                     continue # if either side is already involved in a change, it's unneeded.
                 already_data1_hashes.add(hash1)

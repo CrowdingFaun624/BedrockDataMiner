@@ -88,7 +88,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                 output.extend(exception.add(self.name, key) for exception in structure.check_all_types(value, environment))
         return output
 
-    def get_similarity(self, data1: MutableMapping[str, d], data2: MutableMapping[str, d]) -> float:
+    def get_similarity(self, data1: MutableMapping[str, d], data2: MutableMapping[str, d], environment:StructureEnvironment.StructureEnvironment) -> float:
         data1_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data1.items()}
         data2_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data2.items()}
 
@@ -102,7 +102,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0 and total_weight != 0:
             already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
             already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
-            for hash1, hash2, key_similarity, value_similarity, key1, key2 in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
+            for hash1, hash2, key_similarity, value_similarity, key1, key2 in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys, environment):
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes or not self.get_key_weight(key1) or not self.get_key_weight(key2):
                     continue
                 already_data1_hashes.add(hash1)
@@ -113,26 +113,28 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
             raise Exceptions.InvalidSimilarityError(self, similarity, data1, data2)
         return similarity
 
-    def get_key_similarity(self, key1:str, key2:str) -> float:
+    def get_key_similarity(self, key1:str, key2:str, environment:StructureEnvironment.StructureEnvironment) -> float:
         '''
         Gets the similarity between two keys of this Structure's data.
         :key1: The key of the older key-value pair.
         :key2: The key of the newer key-value pair.
+        :environment: The StructureEnvironment to use.
         '''
         if key1 == key2:
             return 1.0
         elif self.key_structure is not None:
-            return self.key_structure.get_similarity(key1, key2)
+            return self.key_structure.get_similarity(key1, key2, environment)
         else:
             return 0.0
 
-    def get_value_similarity(self, key1:str, value1:d, key2:str, value2:d) -> float:
+    def get_value_similarity(self, key1:str, value1:d, key2:str, value2:d, environment:StructureEnvironment.StructureEnvironment) -> float:
         '''
         Gets the similarity between two values of this Structure's data.
         :key1: The key of the older key-value pair.
         :value1: The value of the older key-value pair.
         :key2: The key of the newer key-value pair.
         :value2: The value of the newer key-value pair.
+        :environment: The StructureEnvironment to use.
         '''
         if value1 == value2:
             return 1.0
@@ -141,7 +143,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         if len(exceptions1) > 0 or len(exceptions2) > 0:
             raise Exceptions.StructureExceptionError(self, self.get_value_similarity, exceptions1 + exceptions2)
         if structure1 is structure2 and structure1 is not None:
-            output = structure1.get_similarity(value1, value2)
+            output = structure1.get_similarity(value1, value2, environment)
             return output
         else:
             return 0.0
@@ -162,11 +164,11 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         '''
         return 1
 
-    def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[str,d]], data2_exclusive_items:dict[int,tuple[str,d]], same_keys:set[str]) -> list[tuple[int,int,float,float,str,str]]:
+    def get_similarities_list(self, data1_exclusive_items:dict[int,tuple[str,d]], data2_exclusive_items:dict[int,tuple[str,d]], same_keys:set[str], environment:StructureEnvironment.StructureEnvironment) -> list[tuple[int,int,float,float,str,str]]:
         keys1_hashes = {key1: (hash1, value1) for hash1, (key1, value1) in data1_exclusive_items.items()}
         keys2_hashes = {key2: (hash2, value2) for hash2, (key2, value2) in data2_exclusive_items.items()}
         same_keys_list:list[tuple[int, int, float, float, str, str]] = [
-            (keys1_hashes[key][0], keys2_hashes[key][0], 1.0, self.get_value_similarity(key, keys1_hashes[key][1], key, keys2_hashes[key][1]), key, key)
+            (keys1_hashes[key][0], keys2_hashes[key][0], 1.0, self.get_value_similarity(key, keys1_hashes[key][1], key, keys2_hashes[key][1], environment), key, key)
             for key in same_keys
             if key in keys1_hashes # same_keys has all keys that are similar, not just ones with different values.
         ]
@@ -178,8 +180,8 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                 for hash2, (key2, value2) in data2_exclusive_items.items()
                 if key2 not in same_keys and self.allow_key_move(key1, value1, key2, value2)
                 # key1 cannot equal key2
-                if (key_similarity := self.get_key_similarity(key1, key2)) >= self.min_key_similarity_threshold
-                if (value_similarity := self.get_value_similarity(key1, value1, key2, value2)) > self.min_value_similarity_threshold
+                if (key_similarity := self.get_key_similarity(key1, key2, environment)) >= self.min_key_similarity_threshold
+                if (value_similarity := self.get_value_similarity(key1, value1, key2, value2, environment)) > self.min_value_similarity_threshold
             ]
         else:
             similarities_list = []
@@ -216,7 +218,7 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
         already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
         already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
         if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
-            for hash1, hash2, _, _, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys):
+            for hash1, hash2, _, _, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys, environment):
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
                     continue # if either side is already involved in a change, it's unneeded.
                 already_data1_hashes.add(hash1)

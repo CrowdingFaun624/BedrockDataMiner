@@ -21,7 +21,7 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
                 )
         return distances[len(data2)][len(data1)]
     
-    def get_similarity(self, data1: str, data2: str) -> float:
+    def get_similarity(self, data1: str, data2: str, environment:StructureEnvironment.StructureEnvironment) -> float:
         max_length = len(data1) if len(data1) > len(data2) else len(data2)
         levenshtein_distance = self.get_levenshtein_distance(data1, data2)
         return 1 - (levenshtein_distance / max_length)
