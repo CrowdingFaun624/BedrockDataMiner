@@ -83,47 +83,19 @@ Changed entity "dolphin":
 			Added behavior pack "vanilla_1.16.100".
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 7 (+7, -7)
-				Added component group "dolphin_adult":
-					component "minecraft:behavior.melee_attack":
-						field "priority": 2
-						field "track_target": true
-					component "minecraft:bribeable":
-						field "bribe_items":
-							item: "fish"
-							item: "salmon"
-					component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
-					component "minecraft:loot": field "table": "loot_tables/entities/dolphin.json"
-				Added component group "dolphin_angry":
-					component "minecraft:angry":
-						field "broadcast_anger": true
-						field "broadcast_range": 16
-						field "calm_event":
-							field "event": "on_calm"
-							field "target": "self"
-						field "duration": 25
-					component "minecraft:on_target_acquired": empty
-				Added component group "dolphin_baby":
-					component "minecraft:ageable":
-						field "duration": 1200
-						field "feed_items":
-							item: "fish"
-							item: "salmon"
-						field "grow_up":
-							field "event": "ageable_grow_up"
-							field "target": "self"
-					component "minecraft:behavior.follow_parent":
-						field "priority": 4
-						field "speed_multiplier": 1.1
-					component "minecraft:behavior.panic":
-						field "priority": 1
-						field "speed_multiplier": 1.25
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.65
-				Added component group "dolphin_dried":
-					component "minecraft:damage_over_time":
-						field "damage_per_hurt": 1
-						field "time_between_hurt": 0
+				Total component group: 7 (+2, -2)
+				Moved component group "minecraft:dolphin_adult" to "dolphin_adult".
+				Moved component group "minecraft:dolphin_angry" to "dolphin_angry".
+				Changed component group "dolphin_angry":
+					Changed component "minecraft:angry":
+						Changed field "calm_event":
+							Changed field "event" from "minecraft:on_calm" to "on_calm".
+				Moved component group "minecraft:dolphin_baby" to "dolphin_baby".
+				Changed component group "dolphin_baby":
+					Changed component "minecraft:ageable":
+						Changed field "grow_up":
+							Changed field "event" from "minecraft:ageable_grow_up" to "ageable_grow_up".
+				Moved component group "minecraft:dolphin_dried" to "dolphin_dried".
 				Added component group "dolphin_on_land":
 					component "minecraft:environment_sensor":
 						field "triggers":
@@ -166,13 +138,24 @@ Changed entity "dolphin":
 						field "can_swim": true
 						field "can_walk": true
 						field "is_amphibious": true
-				Added component group "dolphin_swimming_navigation":
-					component "minecraft:behavior.look_at_player":
-						field "look_distance": 6
-						field "priority": 8
-					component "minecraft:environment_sensor":
-						field "triggers":
-							trigger:
+				Moved component group "minecraft:dolphin_swimming_navigation" to "dolphin_swimming_navigation".
+				Changed component group "dolphin_swimming_navigation":
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers":
+							Total trigger: 1 (+1, -1)
+							Removed trigger:
+								field "event": "minecraft:navigation_on_land"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": "=="
+											filter property "test": "on_ground"
+											filter property "value": true
+										filter:
+											filter property "operator": "!="
+											filter property "test": "in_water"
+											filter property "value": true
+							Added trigger:
 								field "event": "navigation_on_land"
 								field "filters":
 									filter property "all_of":
@@ -184,53 +167,6 @@ Changed entity "dolphin":
 											filter property "operator": "!="
 											filter property "test": "in_water"
 											filter property "value": true
-					component "minecraft:navigation.generic":
-						field "can_breach": true
-						field "can_path_over_water": false
-						field "can_sink": false
-						field "can_swim": true
-						field "can_walk": false
-						field "is_amphibious": true
-				Removed component group "minecraft:dolphin_adult":
-					component "minecraft:behavior.melee_attack":
-						field "priority": 2
-						field "track_target": true
-					component "minecraft:bribeable":
-						field "bribe_items":
-							item: "fish"
-							item: "salmon"
-					component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
-					component "minecraft:loot": field "table": "loot_tables/entities/dolphin.json"
-				Removed component group "minecraft:dolphin_angry":
-					component "minecraft:angry":
-						field "broadcast_anger": true
-						field "broadcast_range": 16
-						field "calm_event":
-							field "event": "minecraft:on_calm"
-							field "target": "self"
-						field "duration": 25
-					component "minecraft:on_target_acquired": empty
-				Removed component group "minecraft:dolphin_baby":
-					component "minecraft:ageable":
-						field "duration": 1200
-						field "feed_items":
-							item: "fish"
-							item: "salmon"
-						field "grow_up":
-							field "event": "minecraft:ageable_grow_up"
-							field "target": "self"
-					component "minecraft:behavior.follow_parent":
-						field "priority": 4
-						field "speed_multiplier": 1.1
-					component "minecraft:behavior.panic":
-						field "priority": 1
-						field "speed_multiplier": 1.25
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.65
-				Removed component group "minecraft:dolphin_dried":
-					component "minecraft:damage_over_time":
-						field "damage_per_hurt": 1
-						field "time_between_hurt": 0
 				Removed component group "minecraft:dolphin_on_land":
 					component "minecraft:environment_sensor":
 						field "triggers":
@@ -273,31 +209,6 @@ Changed entity "dolphin":
 						field "can_swim": true
 						field "can_walk": true
 						field "is_amphibious": true
-				Removed component group "minecraft:dolphin_swimming_navigation":
-					component "minecraft:behavior.look_at_player":
-						field "look_distance": 6
-						field "priority": 8
-					component "minecraft:environment_sensor":
-						field "triggers":
-							trigger:
-								field "event": "minecraft:navigation_on_land"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": "=="
-											filter property "test": "on_ground"
-											filter property "value": true
-										filter:
-											filter property "operator": "!="
-											filter property "test": "in_water"
-											filter property "value": true
-					component "minecraft:navigation.generic":
-						field "can_breach": true
-						field "can_path_over_water": false
-						field "can_sink": false
-						field "can_swim": true
-						field "can_walk": false
-						field "is_amphibious": true
 			Changed field "components":
 				Changed component "minecraft:on_target_acquired":
 					Changed field "event" from "minecraft:become_angry" to "become_angry".
@@ -317,22 +228,31 @@ Changed entity "dolphin":
 				Removed event "minecraft:dried_out" of field "add": field "component_groups": component group: "minecraft:dolphin_dried".
 				Changed event "minecraft:entity_spawned":
 					Changed field "randomize":
-						Changed randomize item:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 2 (+2, -2)
-									Added component group "dolphin_baby".
-									Added component group "dolphin_swimming_navigation".
-									Removed component group "minecraft:dolphin_baby".
-									Removed component group "minecraft:dolphin_swimming_navigation".
-						Changed randomize item:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 2 (+2, -2)
-									Added component group "dolphin_adult".
-									Added component group "dolphin_swimming_navigation".
-									Removed component group "minecraft:dolphin_adult".
-									Removed component group "minecraft:dolphin_swimming_navigation".
+						Total randomize item: 2 (+2, -2)
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:dolphin_adult"
+									component group: "minecraft:dolphin_swimming_navigation"
+							field "weight": 90
+						Removed randomize item:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:dolphin_baby"
+									component group: "minecraft:dolphin_swimming_navigation"
+							field "weight": 10
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "dolphin_adult"
+									component group: "dolphin_swimming_navigation"
+							field "weight": 90
+						Added randomize item:
+							field "add":
+								field "component_groups":
+									component group: "dolphin_baby"
+									component group: "dolphin_swimming_navigation"
+							field "weight": 10
 				Removed event "minecraft:navigation_off_land":
 					field "add": field "component_groups": component group: "minecraft:dolphin_swimming_navigation"
 					field "remove":

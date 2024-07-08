@@ -201,7 +201,7 @@ Changed entity "goat":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 9 (+8, -2)
+				Total component group: 9 (+7, -1)
 				Added component group "goat_adult":
 					component "minecraft:attack": field "damage": 2
 					component "minecraft:behavior.breed":
@@ -221,19 +221,29 @@ Changed entity "goat":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
 					component "minecraft:loot": field "table": "loot_tables/entities/goat.json"
-				Added component group "goat_baby":
-					component "minecraft:ageable":
-						field "duration": 1200
-						field "feed_items": "wheat"
-						field "grow_up":
-							field "event": "minecraft:ageable_grow_up"
-							field "target": "self"
-					component "minecraft:attack": field "damage": 1
-					component "minecraft:behavior.follow_parent":
-						field "priority": 6
-						field "speed_multiplier": 1
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.5
+				Moved component group "minecraft:goat_baby" to "goat_baby".
+				Changed component group "goat_baby":
+					Total component: 5 (+1, -2)
+					Added component "minecraft:attack" of field "damage": 1.
+					Removed component "minecraft:behavior.jump_to_block":
+						field "cooldown_range": [5.0, 10.0]
+						field "minimum_distance": 1
+						field "minimum_path_length": 7
+						field "priority": 8
+						field "scale_factor": 0.6
+						field "search_height": 9
+						field "search_width": 7
+					Removed component "minecraft:behavior.ram_attack":
+						field "knockback_force": 2.5
+						field "knockback_height": 0.04
+						field "on_start":
+							event:
+								field "event": "start_event"
+								field "target": "self"
+						field "priority": 5
+						field "ram_distance": 9.0
+						field "ram_speed": 1.8
+						field "run_speed": 0.7
 				Added component group "goat_default" of component "minecraft:variant": field "value": 0.
 				Added component group "goat_screamer" of component "minecraft:variant": field "value": 1.
 				Added component group "interact_default":
@@ -341,37 +351,6 @@ Changed entity "goat":
 								field "transform_to_item": "bucket:1"
 								field "use_item": true
 					component "minecraft:loot": field "table": "loot_tables/entities/goat.json"
-				Removed component group "minecraft:goat_baby":
-					component "minecraft:ageable":
-						field "duration": 1200
-						field "feed_items": "wheat"
-						field "grow_up":
-							field "event": "minecraft:ageable_grow_up"
-							field "target": "self"
-					component "minecraft:behavior.follow_parent":
-						field "priority": 6
-						field "speed_multiplier": 1.0
-					component "minecraft:behavior.jump_to_block":
-						field "cooldown_range": [5.0, 10.0]
-						field "minimum_distance": 1
-						field "minimum_path_length": 7
-						field "priority": 8
-						field "scale_factor": 0.6
-						field "search_height": 9
-						field "search_width": 7
-					component "minecraft:behavior.ram_attack":
-						field "knockback_force": 2.5
-						field "knockback_height": 0.04
-						field "on_start":
-							event:
-								field "event": "start_event"
-								field "target": "self"
-						field "priority": 5
-						field "ram_distance": 9.0
-						field "ram_speed": 1.8
-						field "run_speed": 0.7
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.5
 				Added component group "ram_default":
 					component "minecraft:behavior.ram_attack":
 						field "cooldown_range": [30, 300]
@@ -484,18 +463,19 @@ Changed entity "goat":
 							Removed component group "minecraft:goat_baby".
 				Changed event "minecraft:entity_spawned":
 					Changed field "randomize":
-						Changed randomize item:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 1 (+1, -1)
-									Added component group "goat_baby".
-									Removed component group "minecraft:goat_baby".
-						Changed randomize item:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 1 (+1, -1)
-									Added component group "goat_adult".
-									Removed component group "minecraft:goat_adult".
+						Total randomize item: 2 (+2, -2)
+						Removed randomize item:
+							field "add": field "component_groups": component group: "minecraft:goat_adult"
+							field "weight": 95
+						Removed randomize item:
+							field "add": field "component_groups": component group: "minecraft:goat_baby"
+							field "weight": 5
+						Added randomize item:
+							field "add": field "component_groups": component group: "goat_adult"
+							field "weight": 95
+						Added randomize item:
+							field "add": field "component_groups": component group: "goat_baby"
+							field "weight": 5
 				Removed event "minecraft:entity_transformed":
 					field "add": field "component_groups": component group: "minecraft:goat_adult"
 					field "remove": empty

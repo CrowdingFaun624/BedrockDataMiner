@@ -611,14 +611,14 @@ Changed entity "pufferfish":
 			Added behavior pack "vanilla_1.15".
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 7 (+3, -2)
+				Total component group: 7 (+1, -0)
 				Changed component group "minecraft:deflate_sensor":
 					Changed component "minecraft:entity_sensor":
-						Changed field "sensor_range" from 10 to 2.9.
 						Changed field "event_filters":
 							Added filter property "operator" of ">".
 							Added filter property "test" of "distance_to_nearest_player".
 							Added filter property "value" of 2.9.
+						Changed field "sensor_range" from 10 to 2.9.
 						Added field "relative_range" of false.
 				Added component group "minecraft:deflate_sensor_buffer":
 					component "minecraft:timer":
@@ -626,29 +626,16 @@ Changed entity "pufferfish":
 						field "randomInterval": false
 						field "time": 0.01
 						field "time_down_event": field "event": "minecraft:on_full_puff"
-				Removed component group "minecraft:half_puff_deflate":
-					component "minecraft:timer":
-						field "looping": false
-						field "randomInterval": false
-						field "time": 1
-						field "time_down_event": field "event": "minecraft:on_normal_puff"
-					component "minecraft:variant": field "value": 1
-				Removed component group "minecraft:half_puff_inflate":
-					component "minecraft:timer":
-						field "looping": false
-						field "randomInterval": false
-						field "time": 0.05
-						field "time_down_event": field "event": "minecraft:on_full_puff"
-					component "minecraft:variant": field "value": 1
-				Added component group "minecraft:half_puff_primary":
-					component "minecraft:timer":
-						field "looping": false
-						field "randomInterval": false
-						field "time": 2
-						field "time_down_event": field "event": "minecraft:on_half_puff"
-					component "minecraft:variant": field "value": 1
-				Added component group "minecraft:half_puff_secondary":
-					component "minecraft:entity_sensor":
+				Moved component group "minecraft:half_puff_inflate" to "minecraft:half_puff_primary".
+				Changed component group "minecraft:half_puff_primary":
+					Changed component "minecraft:timer":
+						Changed field "time_down_event":
+							Changed field "event" from "minecraft:on_full_puff" to "minecraft:on_half_puff".
+						Changed field "time" from 0.05 to 2.
+				Moved component group "minecraft:half_puff_deflate" to "minecraft:half_puff_secondary".
+				Changed component group "minecraft:half_puff_secondary":
+					Total component: 3 (+1, -0)
+					Added component "minecraft:entity_sensor":
 						field "event": "minecraft:start_full_puff"
 						field "event_filters":
 							filter property "any_of":
@@ -670,12 +657,8 @@ Changed entity "pufferfish":
 						field "minimum_count": 1
 						field "relative_range": false
 						field "sensor_range": 2.5
-					component "minecraft:timer":
-						field "looping": false
-						field "randomInterval": false
-						field "time": 2
-						field "time_down_event": field "event": "minecraft:on_normal_puff"
-					component "minecraft:variant": field "value": 1
+					Changed component "minecraft:timer":
+						Changed field "time" from 1 to 2.
 				Changed component group "minecraft:normal_puff":
 					Changed component "minecraft:entity_sensor":
 						Changed field "sensor_range" from 1.5 to 2.5.

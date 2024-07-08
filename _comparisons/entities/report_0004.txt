@@ -956,23 +956,14 @@ Changed entity "skeleton_horse":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 4 (+2, -2)
-				Added component group "minecraft:lightning_immune":
-					component "minecraft:damage_sensor":
-						trigger:
-							field "deals_damage": false
-							field "on_damage": field "filters": filter property "other_with_families": "lightning"
+				Total component group: 4 (+1, -1)
+				Moved component group "trap_spawned" to "minecraft:lightning_immune".
 				Added component group "minecraft:skeleton_trap":
 					component "minecraft:behavior.skeleton_horse_trap":
 						field "duration": 900.0
 						field "priority": 2
 						field "within_radius": 10.0
 				Removed component group "skeleton_trap" of component "minecraft:is_trap": empty.
-				Removed component group "trap_spawned":
-					component "minecraft:damage_sensor":
-						trigger:
-							field "deals_damage": false
-							field "on_damage": field "filters": filter property "other_with_families": "lightning"
 			Changed field "components":
 				Total component: 15 (+1, -2)
 				Added component "minecraft:breathable":
@@ -1051,12 +1042,12 @@ Changed entity "thrownenderpearl":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:projectile":
-					Changed field "power" from 0.5 to 1.5.
 					Changed field "onHit":
 						Added field "spawn_chance":
 							field "firstSpawnCount": 1
 							field "firstSpawnPercentChance": 5.0
 							field "spawnDefinition": "minecraft:endermite"
+					Changed field "power" from 0.5 to 1.5.
 					Changed field "gravity" from 0.05 to 0.025.
 					Changed field "angleoffset" from -20.0 to 0.0.
 					Added field "inertia" of 1.
@@ -1079,21 +1070,12 @@ Changed entity "villager":
 					field "suffocateTime": 0
 					field "totalSupply": 15
 				Changed component "minecraft:damage_sensor":
-					Total trigger: 2 (+1, -1)
-					Removed trigger:
-						field "on_damage":
-							field "event": "become_zombie"
-							field "filters":
-								filter property "other_with_families": "zombie"
-								filter property "with_damage_fatal": true
-					Added trigger:
-						field "on_damage":
-							field "event": "become_zombie"
-							field "filters":
-								filter property "other_with_families":
+					Changed trigger:
+						Changed field "on_damage":
+							Changed field "filters":
+								Changed filter property "other_with_families" from "zombie" to:
 									family: "zombie"
 									family: "husk"
-								filter property "with_damage_fatal": true
 				Added component "minecraft:behavior.avoid_mob_type":
 					field "entity_types":
 						entity type:

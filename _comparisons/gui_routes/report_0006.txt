@@ -3,7 +3,7 @@ Difference of "gui_routes" between "1.18.20.29" (beta of "1.18.30") and "1.18.30
 Changed field "routes":
 	Changed route "/hbui/index.html":
 		Changed field "supportedRoutes":
-			Total supported route: 6 (+2, -1)
+			Total supported route: 6 (+1, -0)
 			Changed supported route "/achievement-detail/:id":
 				Added field "knownEntries" of entry: field "id": "0".
 			Changed supported route "/achievements/:status?":
@@ -12,8 +12,14 @@ Changed field "routes":
 					entry: field "status": "locked"
 			Changed supported route "/create-new-world":
 				Added empty field "knownEntries".
-			Added supported route "/create-new-world/:tab/:worldTemplateId?":
-				field "knownEntries":
+			Moved supported route "/create-new-world/:tab?/:worldTemplateId?" to "/create-new-world/:tab/:worldTemplateId?".
+			Changed supported route "/create-new-world/:tab/:worldTemplateId?":
+				Changed field "route" from "/create-new-world/:tab?/:worldTemplateId?" to "/create-new-world/:tab/:worldTemplateId?".
+				Changed field "params":
+					Changed parameter "tab":
+						Changed field "optional" from true to false.
+				Changed field "regexp" from "^\/create-new-world(?:\/([^\/]+?))?(?:\/([^\/]+?))?(?:\/)?$" to "^\/create-new-world\/([^\/]+?)(?:\/([^\/]+?))?(?:\/)?$".
+				Added field "knownEntries":
 					entry: field "tab": "advanced"
 					entry: field "tab": "behavior-packs"
 					entry: field "tab": "cheats"
@@ -21,43 +27,6 @@ Changed field "routes":
 					entry: field "tab": "general"
 					entry: field "tab": "multiplayer"
 					entry: field "tab": "resource-packs"
-				field "modes": empty
-				field "params":
-					parameter "tab":
-						field "delimiter": "/"
-						field "name": "tab"
-						field "optional": false
-						field "pattern": "[^\/]+?"
-						field "prefix": "/"
-						field "repeat": false
-					parameter "worldTemplateId":
-						field "delimiter": "/"
-						field "name": "worldTemplateId"
-						field "optional": true
-						field "pattern": "[^\/]+?"
-						field "prefix": "/"
-						field "repeat": false
-				field "regexp": "^\/create-new-world\/([^\/]+?)(?:\/([^\/]+?))?(?:\/)?$"
-				field "route": "/create-new-world/:tab/:worldTemplateId?"
-			Removed supported route "/create-new-world/:tab?/:worldTemplateId?":
-				field "modes": empty
-				field "params":
-					parameter "tab":
-						field "delimiter": "/"
-						field "name": "tab"
-						field "optional": true
-						field "pattern": "[^\/]+?"
-						field "prefix": "/"
-						field "repeat": false
-					parameter "worldTemplateId":
-						field "delimiter": "/"
-						field "name": "worldTemplateId"
-						field "optional": true
-						field "pattern": "[^\/]+?"
-						field "prefix": "/"
-						field "repeat": false
-				field "regexp": "^\/create-new-world(?:\/([^\/]+?))?(?:\/([^\/]+?))?(?:\/)?$"
-				field "route": "/create-new-world/:tab?/:worldTemplateId?"
 			Added supported route "/create-new-world/seed-templates":
 				field "knownEntries": empty
 				field "modes": empty

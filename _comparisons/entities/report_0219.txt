@@ -29,35 +29,8 @@ Changed entity "armadillo":
 						field "default": false
 						field "type": "bool"
 			Changed field "component_groups":
-				Total component group: 8 (+5, -4)
-				Removed component group "minecraft:adult_relaxed":
-					component "minecraft:behavior.breed":
-						field "priority": 2
-						field "speed_multiplier": 1.0
-					component "minecraft:breedable":
-						field "breed_items": item: "spider_eye"
-						field "breeds_with":
-							entity:
-								field "baby_type": "minecraft:armadillo"
-								field "breed_event":
-									field "event": "minecraft:entity_born"
-									field "target": "baby"
-								field "mate_type": "minecraft:armadillo"
-						field "require_tame": false
-				Added component group "minecraft:adult_unrolled":
-					component "minecraft:behavior.breed":
-						field "priority": 2
-						field "speed_multiplier": 1.0
-					component "minecraft:breedable":
-						field "breed_items": item: "spider_eye"
-						field "breeds_with":
-							entity:
-								field "baby_type": "minecraft:armadillo"
-								field "breed_event":
-									field "event": "minecraft:entity_born"
-									field "target": "baby"
-								field "mate_type": "minecraft:armadillo"
-						field "require_tame": false
+				Total component group: 8 (+2, -1)
+				Moved component group "minecraft:adult_relaxed" to "minecraft:adult_unrolled".
 				Changed component group "minecraft:baby":
 					Changed component "minecraft:ageable":
 						Changed field "interact_filters":
@@ -65,45 +38,7 @@ Changed entity "armadillo":
 							Changed filter property "domain" from "minecraft:is_rolled_up" to "minecraft:armadillo_state".
 							Removed filter property "operator" of "!=".
 							Added filter property "value" of "unrolled".
-				Removed component group "minecraft:baby_relaxed":
-					component "minecraft:behavior.follow_parent":
-						field "priority": 5
-						field "speed_multiplier": 1.25
-				Added component group "minecraft:baby_unrolled":
-					component "minecraft:behavior.follow_parent":
-						field "priority": 5
-						field "speed_multiplier": 1.25
-				Removed component group "minecraft:relaxed":
-					component "minecraft:ambient_sound_interval": empty
-					component "minecraft:behavior.look_at_player":
-						field "max_look_time": 80
-						field "min_look_time": 40
-						field "priority": 7
-						field "probability": 0.02
-						field "target_distance": 6.0
-					component "minecraft:behavior.random_look_around": field "priority": 8
-					component "minecraft:behavior.random_stroll":
-						field "priority": 6
-						field "speed_multiplier": 1.0
-					component "minecraft:behavior.tempt":
-						field "can_tempt_vertically": true
-						field "items": item: "spider_eye"
-						field "priority": 3
-						field "speed_multiplier": 1.25
-					component "minecraft:damage_sensor":
-						field "triggers":
-							field "on_damage":
-								field "event": "minecraft:threat_detected"
-								field "filters":
-									filter property "any_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "mob"
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "player"
+				Moved component group "minecraft:baby_relaxed" to "minecraft:baby_unrolled".
 				Changed component group "minecraft:rolled_up":
 					Total component: 3 (+1, -0)
 					Changed component "minecraft:damage_sensor":
@@ -131,9 +66,16 @@ Changed entity "armadillo":
 								field "damage_multiplier": 0.5
 					Changed component "minecraft:environment_sensor":
 						Changed field "triggers":
-							Total trigger: 1 (+0, -2)
-							Changed trigger:
-								Changed field "event" from "minecraft:relax" to "minecraft:unroll".
+							Total trigger: 1 (+1, -3)
+							Removed trigger:
+								field "event": "minecraft:relax"
+								field "filters":
+									filter property "any_of":
+										filter: filter property "test": "on_fire"
+										filter: filter property "test": "in_water"
+										filter: filter property "test": "is_panicking"
+										filter: filter property "test": "is_leashed"
+										filter: filter property "test": "is_riding"
 							Removed trigger:
 								field "event": "minecraft:start_trying_to_relax"
 								field "filters":
@@ -156,6 +98,15 @@ Changed entity "armadillo":
 										filter:
 											filter property "domain": "minecraft:is_trying_to_relax"
 											filter property "test": "bool_property"
+							Added trigger:
+								field "event": "minecraft:unroll"
+								field "filters":
+									filter property "any_of":
+										filter: filter property "test": "on_fire"
+										filter: filter property "test": "in_water"
+										filter: filter property "test": "is_panicking"
+										filter: filter property "test": "is_leashed"
+										filter: filter property "test": "is_riding"
 					Added component "minecraft:movement" of field "value": 0.0.
 				Removed component group "minecraft:rolled_up_trying_to_relax":
 					component "minecraft:timer":
@@ -181,38 +132,10 @@ Changed entity "armadillo":
 						field "randomInterval": false
 						field "time": 4
 						field "time_down_event": field "event": "minecraft:unroll"
-				Added component group "minecraft:unrolled":
-					component "minecraft:ambient_sound_interval": empty
-					component "minecraft:behavior.look_at_player":
-						field "max_look_time": 80
-						field "min_look_time": 40
-						field "priority": 7
-						field "probability": 0.02
-						field "target_distance": 6.0
-					component "minecraft:behavior.random_look_around": field "priority": 8
-					component "minecraft:behavior.random_stroll":
-						field "priority": 6
-						field "speed_multiplier": 1.0
-					component "minecraft:behavior.tempt":
-						field "can_tempt_vertically": true
-						field "items": item: "spider_eye"
-						field "priority": 3
-						field "speed_multiplier": 1.25
-					component "minecraft:damage_sensor":
-						field "triggers":
-							field "on_damage":
-								field "event": "minecraft:threat_detected"
-								field "filters":
-									filter property "any_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "mob"
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "player"
-					component "minecraft:movement": field "value": 0.14
+				Moved component group "minecraft:relaxed" to "minecraft:unrolled".
+				Changed component group "minecraft:unrolled":
+					Total component: 7 (+1, -0)
+					Added component "minecraft:movement" of field "value": 0.14.
 			Changed field "components":
 				Total component: 20 (+0, -1)
 				Removed component "minecraft:movement" of field "value": 0.14.

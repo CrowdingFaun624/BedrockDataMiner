@@ -378,7 +378,6 @@ Changed entity "donkey":
 				Changed component group "minecraft:donkey_unchested":
 					Changed component "minecraft:interact":
 						Changed interaction:
-							Changed field "use_item" from "true" to true.
 							Changed field "on_interact":
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
@@ -393,6 +392,7 @@ Changed entity "donkey":
 											filter property "subject": "other"
 											filter property "test": "has_equipment"
 											filter property "value": "chest:0"
+							Changed field "use_item" from "true" to true.
 			Changed field "components":
 				Total component: 19 (+1, -0)
 				Changed component "minecraft:navigation.walk":
@@ -591,11 +591,11 @@ Changed entity "evocation_illager":
 								Changed spell sequence step 0:
 									Added field "sound_event" of "prepare.summon".
 						Changed choice:
-							Added field "start_sound_event" of "cast.spell".
-						Changed choice:
 							Changed field "sequence":
 								Changed spell sequence step 0:
 									Added field "sound_event" of "prepare.attack".
+							Added field "start_sound_event" of "cast.spell".
+						Changed choice:
 							Added field "start_sound_event" of "cast.spell".
 Changed entity "eye_of_ender_signal":
 	Changed behavior pack "core":
@@ -825,7 +825,6 @@ Changed entity "llama":
 				Changed component group "minecraft:llama_unchested":
 					Changed component "minecraft:interact":
 						Changed interaction:
-							Changed field "use_item" from "true" to true.
 							Changed field "on_interact":
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
@@ -840,6 +839,7 @@ Changed entity "llama":
 											filter property "subject": "other"
 											filter property "test": "has_equipment"
 											filter property "value": "chest:0"
+							Changed field "use_item" from "true" to true.
 			Changed field "components":
 				Total component: 26 (+1, -0)
 				Changed component "minecraft:damage_sensor":
@@ -945,6 +945,7 @@ Changed entity "mooshroom":
 			Changed field "component_groups":
 				Changed component group "minecraft:cow_adult":
 					Changed component "minecraft:interact":
+						Total interaction: 3 (+1, -1)
 						Changed interaction:
 							Changed field "use_item" from "true" to true.
 							Changed field "on_interact":
@@ -981,14 +982,17 @@ Changed entity "mooshroom":
 										filter property "test": "has_component"
 										filter property "value": "minecraft:transformation"
 							Added field "target" of "self".
-						Changed interaction:
-							Changed field "use_item" from "true" to true.
-							Removed field "on_interact":
+						Removed interaction:
+							field "interact_text": "action.interact.moostew"
+							field "on_interact":
 								field "filters":
 									filter property "other_with_families": "player"
 									filter property "other_with_item": "bowl"
 									filter property "without_components": "minecraft:transformation"
-							Added field "filters":
+							field "transform_to_item": "mushroom_stew:0"
+							field "use_item": "true"
+						Added interaction:
+							field "filters":
 								filter property "all_of":
 									filter:
 										filter property "domain": "hand"
@@ -1003,6 +1007,9 @@ Changed entity "mooshroom":
 										filter property "operator": "!="
 										filter property "test": "has_component"
 										filter property "value": "minecraft:transformation"
+							field "interact_text": "action.interact.moostew"
+							field "transform_to_item": "mushroom_stew:0"
+							field "use_item": true
 			Changed field "components":
 				Total component: 23 (+1, -0)
 				Changed component "minecraft:navigation.walk":
@@ -1016,7 +1023,6 @@ Changed entity "mule":
 				Changed component group "minecraft:mule_unchested":
 					Changed component "minecraft:interact":
 						Changed interaction:
-							Changed field "use_item" from "true" to true.
 							Changed field "on_interact":
 								Changed field "filters":
 									Removed filter property "other_with_families" of "player".
@@ -1031,6 +1037,7 @@ Changed entity "mule":
 											filter property "subject": "other"
 											filter property "test": "is_family"
 											filter property "value": "player"
+							Changed field "use_item" from "true" to true.
 			Changed field "components":
 				Total component: 19 (+1, -0)
 				Changed component "minecraft:navigation.walk":
@@ -1330,28 +1337,39 @@ Changed entity "rabbit":
 				Added empty component "minecraft:physics".
 				Changed component "minecraft:behavior.avoid_mob_type":
 					Changed field "entity_types":
+						Total entity type: 3 (+2, -2)
 						Changed entity type:
 							Changed field "filters":
 								Removed filter property "other_with_families" of "monster".
 								Added filter property "subject" of "other".
 								Added filter property "test" of "is_family".
 								Added filter property "value" of "monster".
-						Changed entity type:
-							Changed field "walk_speed_multiplier" from 2.2 to 1.5.
-							Changed field "sprint_speed_multiplier" from 2.2 to 1.8.
-							Changed field "filters":
-								Removed filter property "other_with_families" of "wolf".
-								Added filter property "subject" of "other".
-								Added filter property "test" of "is_family".
-								Added filter property "value" of "wolf".
-						Changed entity type:
-							Changed field "walk_speed_multiplier" from 2.2 to 1.5.
-							Changed field "sprint_speed_multiplier" from 2.2 to 1.8.
-							Changed field "filters":
-								Removed filter property "other_with_families" of "player".
-								Added filter property "subject" of "other".
-								Added filter property "test" of "is_family".
-								Added filter property "value" of "player".
+						Removed entity type:
+							field "filters": filter property "other_with_families": "player"
+							field "max_dist": 8
+							field "sprint_speed_multiplier": 2.2
+							field "walk_speed_multiplier": 2.2
+						Removed entity type:
+							field "filters": filter property "other_with_families": "wolf"
+							field "max_dist": 4
+							field "sprint_speed_multiplier": 2.2
+							field "walk_speed_multiplier": 2.2
+						Added entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "player"
+							field "max_dist": 8
+							field "sprint_speed_multiplier": 1.8
+							field "walk_speed_multiplier": 1.5
+						Added entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "wolf"
+							field "max_dist": 4
+							field "sprint_speed_multiplier": 1.8
+							field "walk_speed_multiplier": 1.5
 			Changed field "events":
 				Changed event "minecraft:entity_born":
 					Changed field "sequence":
@@ -1436,15 +1454,15 @@ Changed entity "sheep":
 								Changed randomize item:
 									Changed field "add":
 										Changed field "component_groups":
+											Total component group: 4 (+1, -0)
+											Added component group "minecraft:loot_wooly".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
 											Total component group: 4 (+2, -1)
 											Added component group "minecraft:loot_sheared".
 											Added component group "minecraft:rideable_sheared".
 											Removed component group "rideable_sheared".
-								Changed randomize item:
-									Changed field "add":
-										Changed field "component_groups":
-											Total component group: 4 (+1, -0)
-											Added component group "minecraft:loot_wooly".
 				Changed event "minecraft:on_eat_block":
 					Changed field "sequence":
 						Changed sequence item 1:
@@ -1993,13 +2011,17 @@ Changed entity "skeleton_horse":
 				Total component group: 4 (+0, -2)
 				Changed component group "minecraft:lightning_immune":
 					Changed component "minecraft:damage_sensor":
-						Changed trigger:
-							Changed field "on_damage":
-								Changed field "filters":
-									Removed filter property "other_with_families" of "lightning".
-									Added filter property "subject" of "other".
-									Added filter property "test" of "is_family".
-									Added filter property "value" of "lightning".
+						Total trigger: 1 (+1, -1)
+						Removed trigger:
+							field "deals_damage": false
+							field "on_damage": field "filters": filter property "other_with_families": "lightning"
+						Added trigger:
+							field "deals_damage": false
+							field "on_damage":
+								field "filters":
+									filter property "subject": "other"
+									filter property "test": "is_family"
+									filter property "value": "lightning"
 				Changed component group "minecraft:skeleton_horse_adult":
 					Total component: 2 (+0, -1)
 					Removed component "minecraft:tamemount":
@@ -2804,7 +2826,6 @@ Changed entity "zombie_villager":
 			Changed field "components":
 				Total component: 22 (+1, -0)
 				Changed component "minecraft:interact":
-					Changed field "use_item" from "true" to true.
 					Changed field "on_interact":
 						Changed field "filters":
 							Removed filter property "other_with_item" of "golden_apple".
@@ -2819,6 +2840,7 @@ Changed entity "zombie_villager":
 									filter property "subject": "self"
 									filter property "test": "has_component"
 									filter property "value": "minecraft:effect.weakness"
+					Changed field "use_item" from "true" to true.
 				Added empty component "minecraft:physics".
 				Changed component "minecraft:behavior.nearest_attackable_target":
 					Changed field "entity_types":
