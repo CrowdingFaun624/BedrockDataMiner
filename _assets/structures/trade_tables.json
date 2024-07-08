@@ -71,10 +71,10 @@
     "tier": {
         "type": "Keymap",
         "keys": {
-            "groups": {"type": "list", "subcomponent": "groups"},
+            "groups": {"type": "list", "subcomponent": "groups", "weight": 10},
             "num_to_select": {"type": "int"},
             "total_exp_required": {"type": "int"},
-            "trades": {"type": "list", "subcomponent": "trades"}
+            "trades": {"type": "list", "subcomponent": "trades", "weight": 10}
         }
     },
     "groups": {
@@ -82,6 +82,7 @@
         "field": "group",
         "types": ["dict"],
         "measure_length": true,
+        "min_similarity_threshold": 0.3,
         "subcomponent": "tier"
     },
     "trades": {
@@ -89,6 +90,7 @@
         "field": "trade",
         "types": ["dict"],
         "measure_length": true,
+        "min_similarity_threshold": 0.3,
         "subcomponent": "trade"
     },
     "biome_list": {
@@ -101,14 +103,15 @@
     },
     "trade": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
-            "gives": {"type": "list", "subcomponent": "trade:gives"},
+            "weight": {"type": "int"},
             "max_uses": {"type": "int"},
             "reward_exp": {"type": "bool"},
             "total_exp_required": {"type": "int"},
             "trader_exp": {"type": "int"},
-            "wants": {"type": "list", "subcomponent": "trade:wants"},
-            "weight": {"type": "int"}
+            "gives": {"type": "list", "subcomponent": "trade:gives"},
+            "wants": {"type": "list", "subcomponent": "trade:wants"}
         }
     },
     "trade:gives": {
@@ -116,6 +119,7 @@
         "field": "given item",
         "types": ["dict"],
         "measure_length": true,
+        "min_similarity_threshold": 0.75,
         "subcomponent": "trade:gives.item"
     },
     "trade:wants": {
@@ -123,18 +127,22 @@
         "field": "wanted item",
         "types": ["dict"],
         "measure_length": true,
+        "min_similarity_threshold": 0.75,
         "subcomponent": "trade:wants.item"
     },
     "trade:gives.item": {
         "type": "Keymap",
         "normalizer": "normalize_functions",
+        "sort": "by_component_order",
         "keys": {
+            "item": {"type": "str", "subcomponent": {
+                "type": "String"
+            }, "weight": 12},
+            "quantity": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
             "biomes": {"type": "list", "subcomponent": "biome_list"},
             "choice": {"type": "list", "subcomponent": "trade:gives.item.choice"},
             "filters": {"type": "dict", "subcomponent": "filter"},
-            "functions": {"type": "dict", "subcomponent": "functions"},
-            "item": {"type": "str"},
-            "quantity": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"}
+            "functions": {"type": "dict", "subcomponent": "functions"}
         }
     },
     "trade:gives.item.choice": {
@@ -147,14 +155,17 @@
     "trade:wants.item": {
         "type": "Keymap",
         "normalizer": "normalize_functions",
+        "sort": "by_component_order",
         "keys": {
+            "item": {"type": "str", "subcomponent": {
+                "type": "String"
+            }, "weight": 12},
+            "quantity": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
             "choice": {"type": "list", "subcomponent": "trade:wants.item.choice"},
             "biomes": {"type": "list", "subcomponent": "biome_list", "tags": ["outdated"]},
             "filters": {"type": "dict", "subcomponent": "filter"},
             "functions": {"type": "dict", "subcomponent": "functions", "tags": ["outdated"]},
-            "item": {"type": "str"},
-            "price_multiplier": {"type": "decimal"},
-            "quantity": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"}
+            "price_multiplier": {"type": "decimal"}
         }
     },
     "trade:wants.item.choice": {

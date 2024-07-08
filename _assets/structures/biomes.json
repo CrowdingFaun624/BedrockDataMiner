@@ -26,6 +26,12 @@
         "types": ["dict"],
         "measure_length": true,
         "sort": "by_key",
+        "detect_key_moves": true,
+        "min_key_similarity_threshold": 0.25,
+        "min_value_similarity_threshold": 0.5,
+        "key_component": {
+            "type": "String"
+        },
         "subcomponent": "biome"
     },
     "biome": {
@@ -36,12 +42,12 @@
         "sort": "by_component_order",
         "keys": {
             "format_version": {"type": "str"},
-            "minecraft:biome": {"type": "dict", "subcomponent": {
+            "minecraft:biome": {"type": "dict", "weight": 20, "subcomponent": {
                 "type": "Keymap",
                 "sort": "by_component_order",
                 "keys": {
                     "description": {"type": "dict", "subcomponent": "description"},
-                    "components": {"type": "dict", "subcomponent": "components"}
+                    "components": {"type": "dict", "subcomponent": "components", "weight": 3}
                 }
             }}
         }
@@ -49,7 +55,9 @@
     "description": {
         "type": "Keymap",
         "keys": {
-            "identifier": {"type": "str"}
+            "identifier": {"type": "str", "subcomponent": {
+                "type": "String"
+            }}
         }
     },
     "block": {

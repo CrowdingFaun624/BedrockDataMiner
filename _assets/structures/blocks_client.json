@@ -13,8 +13,14 @@
         "types": ["dict"],
         "detect_key_moves": true,
         "measure_length": true,
-        "min_value_similarity_threshold": 0.75,
+        "min_key_similarity_threshold": 0.2,
+        "min_value_similarity_threshold": 0.4,
+        "key_weight": 0.5,
+        "value_weight": 0.5,
         "sort": "by_key",
+        "key_component": {
+            "type": "String"
+        },
         "subcomponent": "resource_pack"
     },
     "resource_pack": {
@@ -23,7 +29,7 @@
         "types": ["dict"],
         "detect_key_moves": true,
         "sort": "by_key",
-        "min_value_similarity_threshold": 0.2,
+        "min_value_similarity_threshold": 0.25,
         "measure_length": true,
         "normalizer": {
             "function_name": "collapse_resource_packs_dict_with_defined_in"
@@ -38,20 +44,20 @@
         },
         "sort": "by_component_order",
         "keys": {
-            "blockshape": {"type": "str"},
+            "blockshape": {"type": "str", "weight": 4},
             "brightness_gamma": {"type": "float"},
-            "carried_textures": {"type": ["dict", "str"], "subcomponent": "textures_group"},
-            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "carried_textures": {"type": ["dict", "str"], "subcomponent": "textures_group", "weight": 4},
+            "defined_in": {"type": "list", "subcomponent": "defined_in", "weight": 0},
             "isotropic": {"type": ["bool", "dict"], "subcomponent": "isotropic_group"},
-            "sound": {"type": "str"},
-            "textures": {"type": ["dict", "str"], "subcomponent": "textures_group"}
+            "sound": {"type": "str", "weight": 2},
+            "textures": {"type": ["dict", "str"], "subcomponent": "textures_group", "weight": 4}
         }
     },
     "textures_group": {
         "type": "Group",
         "subcomponents": {
             "dict": "textures",
-            "str": null
+            "str": "texture"
         }
     },
     "isotropic_group": {
@@ -73,14 +79,17 @@
         "field": "direction",
         "sort": "by_component_order",
         "keys": {
-            "down": {"type": "str"},
-            "east": {"type": "str"},
-            "north": {"type": "str"},
-            "side": {"type": "str"},
-            "south": {"type": "str"},
-            "up": {"type": "str"},
-            "west": {"type": "str"}
+            "down": {"type": "str", "subcomponent": "texture"},
+            "east": {"type": "str", "subcomponent": "texture"},
+            "north": {"type": "str", "subcomponent": "texture"},
+            "side": {"type": "str", "subcomponent": "texture"},
+            "south": {"type": "str", "subcomponent": "texture"},
+            "up": {"type": "str", "subcomponent": "texture"},
+            "west": {"type": "str", "subcomponent": "texture"}
         }
+    },
+    "texture": {
+        "type": "String"
     },
     "isotropic": {
         "type": "Keymap",

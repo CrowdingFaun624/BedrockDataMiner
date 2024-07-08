@@ -15,6 +15,7 @@
         "sort": "by_key",
         "measure_length": true,
         "detect_key_moves": true,
+        "key_weight": 0.5,
         "subcomponent": "resource_packs"
     },
     "resource_packs": {
@@ -38,7 +39,7 @@
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
-            "animations": {"type": "dict", "subcomponent": "animations"}
+            "animations": {"type": "dict", "subcomponent": "animations", "weight": 20}
         }
     },
     "defined_in": {
@@ -54,6 +55,7 @@
         "types": ["dict"],
         "sort": "by_key",
         "measure_length": true,
+        "min_value_similarity_threshold": 0.75,
         "subcomponent": "animation"
     },
     "timestamps_and_vectors_or_vector_or_lerp": {
@@ -107,7 +109,9 @@
                         "z": {"type": "str"}
                     }
                 },
-                "str": null
+                "str": {
+                    "type": "String"
+                }
             }
         }
     },
@@ -131,6 +135,13 @@
         "types": ["dict"],
         "measure_length": true,
         "sort": "by_key",
+        "min_value_similarity_threshold": 0.3,
+        "min_key_similarity_threshold": 0.5,
+        "key_weight": 0.3,
+        "value_weight": 0.5,
+        "key_component": {
+            "type": "String"
+        },
         "subcomponent": "bone"
     },
     "bone": {

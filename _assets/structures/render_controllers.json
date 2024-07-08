@@ -140,6 +140,7 @@
         "field": "part visibility dict",
         "types": ["dict"],
         "measure_length": true,
+        "min_similarity_threshold": 0.3,
         "subcomponent": "part_visibility_dict"
     },
     "part_visibility_dict": {
@@ -148,7 +149,23 @@
         "types": ["bool", "int", "str"],
         "measure_length": true,
         "sort": "by_key",
-        "subcomponent": null
+        "min_key_similarity_threshold": 0.5,
+        "min_value_similarity_threshold": 0.1,
+        "key_weight": 0.9,
+        "value_weight": 0.1,
+        "key_component": {
+            "type": "String"
+        },
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "bool": null,
+                "int": null,
+                "str": {
+                    "type": "String"
+                }
+            }
+        }
     },
     "textures": {
         "type": "Set",

@@ -16,11 +16,12 @@
     },
     "terrain_textures": {
         "type": "Keymap",
+        "sort": "by_component_order",
         "keys": {
             "num_mip_levels": {"type": "dict", "subcomponent": "simple_int_resource_pack_dict"},
             "padding": {"type": "dict", "subcomponent": "simple_int_resource_pack_dict"},
-            "texture_data": {"type": "dict", "subcomponent": "texture_data"},
-            "texture_name": {"type": "dict", "subcomponent": "simple_str_resource_pack_dict"}
+            "texture_name": {"type": "dict", "subcomponent": "simple_str_resource_pack_dict"},
+            "texture_data": {"type": "dict", "subcomponent": "texture_data"}
         }
     },
     "simple_int_resource_pack_dict": {
@@ -47,6 +48,10 @@
         "types": ["dict"],
         "measure_length": true,
         "sort": "by_key",
+        "key_component": {
+            "type": "String"
+        },
+        "min_key_similarity_threshold": 0.5,
         "subcomponent": "resource_packs"
     },
     "resource_packs": {
@@ -56,6 +61,7 @@
         "normalizer": {
             "function_name": "collapse_resource_packs_dict_with_defined_in"
         },
+        "min_value_similarity_threshold": 0.4,
         "measure_length": true,
         "sort": "by_key",
         "subcomponent": "terrain"
@@ -64,11 +70,11 @@
         "type": "Keymap",
         "keys": {
             "blockshape": {"type": "str", "tags": ["outdated"]},
-            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in", "weight": 0},
             "mip_fade_amount": {"type": "float", "tags": ["outdated"]},
             "mip_fade_color": {"type": "list", "subcomponent": "color", "tags": ["outdated"]},
             "quad": {"type": "int"},
-            "textures": {"type": ["dict", "list", "str"], "subcomponent": "textures_group"}
+            "textures": {"type": ["dict", "list", "str"], "subcomponent": "textures_group", "weight": 2}
         }
     },
     "defined_in": {
@@ -93,7 +99,9 @@
         "subcomponents": {
             "dict": "texture_dict",
             "list": "texture_list",
-            "str": null
+            "str": {
+                "type": "String"
+            }
         }
     },
     "texture_list": {
@@ -107,7 +115,9 @@
         "type": "Group",
         "subcomponents": {
             "dict": "texture_dict",
-            "str": null
+            "str": {
+                "type": "String"
+            }
         }
     },
     "texture_dict": {
@@ -116,7 +126,9 @@
             "mip_fade_amount": {"type": "float", "tags": ["outdated"]},
             "mip_fade_color": {"type": "list", "subcomponent": "color", "tags": ["outdated"]},
             "overlay_color": {"type": "str"},
-            "path": {"type": "str"},
+            "path": {"type": "str", "subcomponent": {
+                "type": "String"
+            }},
             "tint_color": {"type": "str"}
         }
     }

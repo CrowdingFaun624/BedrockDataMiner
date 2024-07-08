@@ -719,6 +719,7 @@
         "field": "entity type",
         "types": ["dict"],
         "measure_length": true,
+        "min_similarity_threshold": 0.3,
         "subcomponent": "entity_types.item"
     },
     "entity_types.item": {
@@ -729,8 +730,8 @@
             "attack_interval": {"type": "int", "tags": ["outdated"]},
             "check_if_outnumbered": {"type": "bool"},
             "cooldown": {"type": "int", "tags": ["not_in_documentation"]},
-            "entity_filter": {"type": ["list", "str"], "subcomponent": "entity_list_or_entity", "tags": ["outdated"]},
-            "filters": {"type": "dict", "subcomponent": "filter"},
+            "entity_filter": {"type": ["list", "str"], "subcomponent": "entity_list_or_entity", "tags": ["outdated"], "weight": 7},
+            "filters": {"type": "dict", "subcomponent": "filter", "weight": 7},
             "max_dist": {"type": "decimal"},
             "max_distance": {"type": "decimal", "tags": ["outdated"]},
             "max_flee": {"type": "int", "tags": ["not_in_documentation"]},
@@ -824,6 +825,8 @@
         "type": "Keymap",
         "field": "filter property",
         "imports": "filter_old",
+        "detect_key_moves": true,
+        "min_value_similarity_threshold": 0.9,
         "keys": {
             "all_of": {"type": ["dict", "list"], "subcomponent": "filter_or_filter_list"},
             "any_of": {"type": ["dict", "list"], "subcomponent": "filter_or_filter_list"},
