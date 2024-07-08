@@ -33,6 +33,7 @@ class CacheTypedDict(TypedDict):
     cache_check_all_types: NotRequired[bool]
     cache_compare: NotRequired[bool]
     cache_compare_text: NotRequired[bool]
+    cache_get_similarity: NotRequired[bool]
     cache_get_tag_paths: NotRequired[bool]
     cache_normalize: NotRequired[bool]
     cache_print_text: NotRequired[bool]

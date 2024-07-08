@@ -21,6 +21,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         TypeVerifier.TypedDictKeyTypeVerifier("cache_get_tag_paths", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("cache_compare_text", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("cache_print_text", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("cache_get_similarity", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("cache_compare", "a bool", False, bool),
     )
 
@@ -33,6 +34,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.cache_get_tag_paths = data.get("cache_get_tag_paths", True)
         self.cache_compare_text = data.get("cache_compare_text", True)
         self.cache_print_text = data.get("cache_print_text", True)
+        self.cache_get_similarity = data.get("cache_get_similarity", True)
         self.cache_compare = data.get("cache_compare", True)
 
         self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
@@ -49,6 +51,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
             cache_get_tag_paths=self.cache_get_tag_paths,
             cache_compare_text=self.cache_compare_text,
             cache_print_text=self.cache_print_text,
+            cache_get_similarity=self.cache_get_similarity,
             cache_compare=self.cache_compare,
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
