@@ -176,13 +176,10 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
                 for hash1, (key1, value1) in data1_exclusive_items.items()
                 if key1 not in same_keys
                 for hash2, (key2, value2) in data2_exclusive_items.items()
-                if key2 not in same_keys # key1 cannot equal key2
-                if all([ # if the keys match or it's acceptable to move them.
-                    self.allow_key_move(key1, value1, key2, value2),
-                    key2 not in same_keys, # prevent keys present in both old and new from moving.
-                    (key_similarity := self.get_key_similarity(key1, key2)) >= self.min_key_similarity_threshold,
-                    (value_similarity := self.get_value_similarity(key1, value1, key2, value2)) > self.min_value_similarity_threshold,
-                ])
+                if key2 not in same_keys and self.allow_key_move(key1, value1, key2, value2)
+                # key1 cannot equal key2
+                if (key_similarity := self.get_key_similarity(key1, key2)) >= self.min_key_similarity_threshold
+                if (value_similarity := self.get_value_similarity(key1, value1, key2, value2)) > self.min_value_similarity_threshold
             ]
         else:
             similarities_list = []
