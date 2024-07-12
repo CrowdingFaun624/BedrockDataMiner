@@ -21,17 +21,21 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
         resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = []
         resource_pack_names:set[str] = set()
 
+        unrecognized_resource_packs:set[str] = set()
         for file in file_list:
             if file.startswith(self.resource_packs_directory):
                 if file.count("/") == 1: continue # random file in resource packs directory, such as "flipbook_textures.json" in a0.16.0_build3
                 name = file.split("/")[1]
                 if name == "": continue # relic in old archive.org minecraft-iOS versions. Just a file with no content (b'')
                 if name not in resource_pack_order:
-                    raise Exceptions.UnrecognizedPackError(name, "resource", self)
+                    unrecognized_resource_packs.add(name)
+                    continue
                 if name in resource_pack_names: continue # so they aren't recorded multiple times - wonky behavior
                 resource_pack_names.add(name)
                 resource_packs.append({"name": name, "path": "%s/%s/" % (self.resource_packs_directory, name)})
 
+        if len(unrecognized_resource_packs) > 0:
+            raise Exceptions.UnrecognizedPackError(sorted(unrecognized_resource_packs), "resource", self)
         if len(resource_packs) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
         return sorted(resource_packs, key=lambda pack: resource_pack_order[pack["name"]])
