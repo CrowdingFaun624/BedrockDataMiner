@@ -20,6 +20,8 @@ if TYPE_CHECKING:
 
 EMPTY_FILE = "EMPTY_FILE" # for use in DataMiner.read_files
 
+read_files_typevar = TypeVar("read_files_typevar")
+
 class DataMiner():
 
     parameters:TypeVerifier.TypeVerifier|None = None
@@ -94,8 +96,6 @@ class DataMiner():
     def read_file(self, accessor:Accessor.Accessor, file_name:str, mode:Literal["b", "t"]="t") -> str|bytes:
         return accessor.read(file_name, mode)
 
-    read_files_typevar = TypeVar("read_files_typevar")
-
     def _read_file(self, accessor:Accessor.Accessor, file_name:str, mode:Literal["b", "t"], callable:None|Callable[[IO],read_files_typevar], non_exist_ok:bool) -> str|bytes|Any:
         try:
             if not non_exist_ok or self.file_exists(accessor, file_name):
@@ -133,7 +133,7 @@ class DataMiner():
         normalized_files:list[tuple[str,Literal["b", "t"],None|Callable[[IO],Any]]] = [(file, DEFAULT_MODE, None) if isinstance(file, str) else file for file in files]
 
         exceptions:list[tuple[str, Exception]] = []
-        file_results:dict[str,str|bytes|DataMiner.read_files_typevar] = {}
+        file_results:dict[str,str|bytes|read_files_typevar] = {}
         for file_name, file_mode, callable in normalized_files:
             try:
                 if not non_exist_ok or self.file_exists(accessor, file_name):
