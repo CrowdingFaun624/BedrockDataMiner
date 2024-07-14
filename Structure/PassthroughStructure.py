@@ -27,12 +27,14 @@ class PassthroughStructure(Structure.Structure[a]):
     def link_substructures(
         self,
         structure:Structure.Structure[a]|None,
-        types:list[type],
+        types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
+        pre_normalized_types:tuple[type,...],
     ) -> None:
         self.structure = structure
-        self.types = tuple(types)
+        self.types = types
         self.normalizer = normalizer
+        self.pre_normalized_types = pre_normalized_types
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.structure is None: return []
@@ -53,12 +55,16 @@ class PassthroughStructure(Structure.Structure[a]):
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
+        exceptions:list[Trace.ErrorTrace] = []
+        if not isinstance(data, self.pre_normalized_types):
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
         for normalizer in self.normalizer:
             try:
-                normalizer(data)
+                normalizer_output = normalizer(data)
+                if normalizer_output is not None:
+                    data = normalizer_output
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
-        exceptions:list[Trace.ErrorTrace] = []
         if self.structure is not None:
             normalize_output, new_exceptions = self.structure.normalize(data, environment)
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)

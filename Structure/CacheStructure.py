@@ -45,7 +45,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure:Structure.Structure[d],
         types:list[type],
     ) -> None:
-        super().link_substructures(structure, types, [])
+        super().link_substructures(structure, tuple(types), [], tuple(types))
 
     def get_structure(self) -> Structure.Structure[d]:
         if self.structure is None:

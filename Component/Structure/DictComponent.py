@@ -34,6 +34,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         TypeVerifier.TypedDictKeyTypeVerifier("key_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("value_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("sort", "a str", False, TypeVerifier.EnumTypeVerifier([item.value for item in DictSorting])),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -61,13 +62,14 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
+        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         if self.sort == DictSorting.by_value:
             self.types_field.must_be(StructureComponent.SORTABLE_TYPES)
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)
         self.this_type_field.must_be(StructureComponent.MAPPING_TYPES)
-        self.fields.extend([self.subcomponent_field, self.key_structure_field, self.normalizer_field, self.this_type_field, self.types_field, self.tags_field])
+        self.fields.extend([self.subcomponent_field, self.key_structure_field, self.normalizer_field, self.pre_normalized_types_field, self.this_type_field, self.types_field, self.tags_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -100,6 +102,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             key_structure=self.key_structure_field.get_final(),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
+            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
             tags=self.tags_field.get_finals()
         )
         self.my_type = set(self.this_type_field.get_types())

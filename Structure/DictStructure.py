@@ -46,11 +46,13 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         key_structure:Structure.Structure[str]|None,
         types:list[type],
         normalizer:list[Normalizer.Normalizer],
+        pre_normalized_types:list[type],
         tags:list[str],
     ) -> None:
         super().link_substructures(key_structure, normalizer)
         self.structure = structure
         self.types = tuple(types)
+        self.pre_normalized_types = tuple(pre_normalized_types)
         self.tags = tags
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
@@ -84,12 +86,18 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
+        exceptions:list[Trace.ErrorTrace] = []
+        if not isinstance(data, self.pre_normalized_types):
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+        data_identity_changed = False
         for normalizer in self.normalizer:
             try:
-                normalizer(data)
+                normalizer_output = normalizer(data)
+                if normalizer_output is not None:
+                    data_identity_changed = True
+                    data = normalizer_output
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
-        exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
             structure, new_exceptions = self.get_structure(key, value)
             exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
@@ -98,7 +106,10 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
                 if normalizer_output is not None:
                     data[key] = normalizer_output
-        return None, exceptions
+        if data_identity_changed:
+            return data, exceptions
+        else:
+            return None, exceptions
 
     def get_structure(self, key:str, value:d) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         return self.structure, []

@@ -67,6 +67,7 @@ class DictTypedDict(TypedDict):
     key_weight: NotRequired[float]
     value_weight: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
+    pre_normalized_types: NotRequired[str|list[str]]
     print_all: NotRequired[bool]
     sort: NotRequired[Literal["none", "by_key", "by_value"]]
     subcomponent: Required[str|None]
@@ -76,10 +77,13 @@ class DictTypedDict(TypedDict):
     types: Required[str|list[str]]
 
 class GroupTypedDict(TypedDict):
+    normalizer: NotRequired[str|list[str]]
+    pre_normalized_types: NotRequired[list[str]]
     subcomponents: Required[dict[str,str|None]]
     type: NotRequired[Literal["Group"]]
 
 class KeymapKeyTypedDict(TypedDict):
+    pre_normalized_type: NotRequired[str|list[str]]
     subcomponent: NotRequired[Union[str,None,"StructureTypedDicts"]]
     tags: NotRequired[str|list[str]]
     type: Required[str|list[str]]
@@ -111,6 +115,7 @@ class ListTypedDict(TypedDict):
     measure_length: NotRequired[bool]
     normalizer: NotRequired[str|list[str]]
     ordered: NotRequired[bool]
+    pre_normalized_types: NotRequired[str|list[str]]
     print_all: NotRequired[bool]
     print_flat: NotRequired[bool]
     subcomponent: Required[str|None]
@@ -122,6 +127,7 @@ class ListTypedDict(TypedDict):
 class NbtBaseTypedDict(TypedDict):
     endianness: Required[Literal["big", "little"]]
     normalizer: NotRequired[str|list[str]]
+    pre_normalized_types: NotRequired[str|list[str]]
     subcomponent: Required[str]
     type: NotRequired[Literal["NbtBase"]]
     types: Required[str|list[str]]
@@ -132,6 +138,7 @@ class NormalizerTypedDict(TypedDict):
 
 class PrimitiveComponentTypedDict(TypedDict):
     normalizer: NotRequired[str|list[str]]
+    pre_normalized_types: NotRequired[str|list[str]]
     tags: NotRequired[str|list[str]]
     type: NotRequired[Literal["Primitive"]]
     types: Required[str|list[str]]
@@ -147,6 +154,7 @@ class SetTypedDict(TypedDict):
     min_similarity_threshold: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
     ordered: NotRequired[bool]
+    pre_normalized_types: NotRequired[str|list[str]]
     print_all: NotRequired[bool]
     print_flat: NotRequired[bool]
     sort: NotRequired[bool]
@@ -211,6 +219,7 @@ class VolumeTypedDict(TypedDict):
     field: NotRequired[str]
     normalizer: NotRequired[str|list[str]]
     position_key: Required[str]
+    pre_normalized_types: NotRequired[str|list[str]]
     print_additional_data: NotRequired[bool]
     state_key: Required[str]
     subcomponent: Required[str|None]

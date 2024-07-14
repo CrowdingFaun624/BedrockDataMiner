@@ -26,7 +26,8 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
-        self.fields.extend([self.normalizer_field, self.tags_field, self.types_field])
+        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
+        self.fields.extend([self.normalizer_field, self.tags_field, self.types_field, self.pre_normalized_types_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -39,8 +40,9 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
     def link_finals(self) -> None:
         super().link_finals()
         self.get_final().link_substructures(
-            types=tuple(self.types_field.get_types()),
+            types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
+            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.types_field.get_types(),
             tags=self.tags_field.get_tags(),
         )
         self.my_type = set(self.types_field.get_types())

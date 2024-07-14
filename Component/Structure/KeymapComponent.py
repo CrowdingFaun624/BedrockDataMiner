@@ -38,6 +38,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         TypeVerifier.TypedDictKeyTypeVerifier("key_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("value_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("sort", "a str", False, TypeVerifier.EnumTypeVerifier([item.value for item in KeymapSorting])),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
@@ -69,6 +70,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(key_data, key, self.children_tags, ["keys", key], self) for key, key_data in data["keys"].items()], ["keys"])
         self.key_structure_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("key_component", None), ["key_component"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
+        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         self.tags_for_all_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"])
         if self.sort == KeymapSorting.by_value:
@@ -77,7 +79,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.keys.for_each(lambda key: key.add_tag_fields(self.tags_for_all_field))
         self.import_field.import_into(self.keys)
         self.this_type_field.must_be(StructureComponent.MAPPING_TYPES)
-        self.fields.extend([self.import_field, self.key_structure_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field])
+        self.fields.extend([self.import_field, self.key_structure_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field, self.pre_normalized_types_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -114,6 +116,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             key_types={key.key: tuple(key.get_types()) for key in self.keys},
             key_structure=self.key_structure_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
+            pre_normalized_types=tuple(self.pre_normalized_types_field.get_types()) if len(self.pre_normalized_types_field.get_types()) != 0 else tuple(self.this_type_field.get_types()),
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys},
             keys_with_normalizers=[key.key for key in self.keys if (subcomponent := key.get_subcomponent()) is not None and subcomponent.children_has_normalizer] if self.children_has_normalizer else [],
         )

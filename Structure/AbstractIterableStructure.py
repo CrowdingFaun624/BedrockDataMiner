@@ -46,11 +46,13 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
         structure:Structure.Structure[d]|None,
         types:list[type],
         normalizer:list[Normalizer.Normalizer],
+        pre_normalized_types:list[type],
         tags:list[str],
     ) -> None:
         self.structure = structure
         self.types = tuple(types)
         self.normalizer = normalizer
+        self.pre_normalized_types = tuple(pre_normalized_types)
         self.tags = tags
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
@@ -83,19 +85,28 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
+        exceptions:list[Trace.ErrorTrace] = []
+        if not isinstance(data, self.pre_normalized_types):
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+        data_identity_changed = False
         for normalizer in self.normalizer:
             try:
-                normalizer(data)
+                normalizer_output = normalizer(data)
+                if normalizer_output is not None:
+                    data_identity_changed = True
+                    data = normalizer_output
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
-        exceptions:list[Trace.ErrorTrace] = []
         for index, item in enumerate(data):
             if self.structure is not None:
                 normalizer_output, new_exceptions = self.structure.normalize(item, environment)
                 exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
                 if normalizer_output is not None:
                     data[index] = normalizer_output
-        return None, exceptions
+        if data_identity_changed:
+            return data, exceptions
+        else:
+            return None, exceptions
 
     def get_tag_paths(self, data: list[d], tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []

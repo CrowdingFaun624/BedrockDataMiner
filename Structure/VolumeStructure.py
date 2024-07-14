@@ -39,12 +39,16 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
 
     def link_substructures(
         self,
+        types:list[type],
         structure:Structure.Structure[MutableMapping[str,Any]]|None,
         normalizer:list[Normalizer.Normalizer],
+        pre_normalized_types:list[type],
         tags:list[str]
     ) -> None:
+        self.types = tuple(types)
         self.structure = structure
         self.normalizer = normalizer
+        self.pre_normalized_types = self.types if pre_normalized_types is None else tuple(pre_normalized_types)
         self.tags = tags
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
@@ -64,11 +68,11 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
                 output.extend(exception.add(self.name, index) for exception in new_exceptions)
         return output
 
-    def normalize_data(self, data:MutableSequence[MutableMapping[str,Any]]) -> tuple[tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],list[Trace.ErrorTrace]]:
+    def normalize_data(self, data:MutableSequence[MutableMapping[str,Any]]) -> tuple[tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],MutableMapping[str,Any]],tuple[int,int,int]],list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         max_x, max_y, max_z = 0, 0, 0
         states:dict[tuple[int,int,int],int] = {}
-        additional_data:dict[tuple[int,int,int],dict[str,Any]] = {}
+        additional_data:dict[tuple[int,int,int],MutableMapping[str,Any]] = {}
         for index, block in enumerate(data):
             position_list = block.get(self.position_key, None)
             state = block.get(self.state_key, None)
@@ -102,23 +106,28 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             max_x, max_y, max_z = max(max_x, position[0]), max(max_y, position[1]), max(max_z, position[2])
             states[position] = int(state)
             if len(block) > 2:
-                additional_data[position] = {key: value for key, value in block.items() if key != self.position_key and key != self.state_key}
+                additional_data[position] = type(block)()
+                additional_data[position].update((key, value) for key, value in block.items() if key != self.position_key and key != self.state_key)
         return (states, additional_data, (max_x + 1, max_y + 1, max_z + 1)), exceptions
 
     def normalize(
             self,
             data:MutableSequence[MutableMapping[str,Any]],
             environment:StructureEnvironment.StructureEnvironment,
-        ) -> tuple[tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],dict[str,Any]],tuple[int,int,int]],list[Trace.ErrorTrace]]:
+        ) -> tuple[tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],MutableMapping[str,Any]],tuple[int,int,int]],list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         data_output, new_exceptions = self.normalize_data(data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         if not self.children_has_normalizer: return data_output, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
+        if not isinstance(data, self.pre_normalized_types):
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
         for normalizer in self.normalizer:
             try:
-                normalizer(data_output)
+                normalizer_output = normalizer(data)
+                if normalizer_output is not None:
+                    data = normalizer_output
             except Exception as e:
                 return data_output, [Trace.ErrorTrace(e, self.name, None, data_output)]
         for index, (coordinate, item) in enumerate(data_output[1].items()):

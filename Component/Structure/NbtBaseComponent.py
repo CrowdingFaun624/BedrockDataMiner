@@ -41,7 +41,8 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.types_field.verify_with(self.subcomponent_field)
         self.types_field.must_be(StructureComponent.NBT_TYPES)
-        self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field])
+        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
+        self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.pre_normalized_types_field])
 
     def get_subcomponents(self) -> list[Component.Component]:
         return [self.subcomponent_field.get_component()]
@@ -73,15 +74,19 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
     def link_finals(self) -> None:
         super().link_finals()
         final_structure = self.get_final_structure()
-        types = self.types_field.get_types()
+        types = tuple(self.types_field.get_types())
         self.my_type = set(types)
         self.my_type.add(NbtReader.NbtBytes)
+        pre_normalized_types = tuple(self.pre_normalized_types_field.get_types()) if len(self.pre_normalized_types_field.get_types()) != 0 else types
         final_structure.link_substructures(
             structure=self.subcomponent_field.get_final(),
             types=types,
             normalizer=self.normalizer_field.get_finals(),
+            pre_normalized_types=pre_normalized_types,
         )
         self.get_final().link_substructures(
             substructures={my_type: final_structure for my_type in self.my_type},
             types=tuple(self.my_type),
+            normalizer=[],
+            pre_normalized_types=(NbtReader.NbtBytes,),
         )
