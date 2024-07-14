@@ -261,13 +261,14 @@
         "field": "body block",
         "types": ["dict"],
         "measure_length": true,
-        "normalizer": {
-            "function_name": "features_fix_growing_plant_feature_body_blocks"
-        },
         "subcomponent": "feature.growing_plant_feature:body_blocks.item"
     },
     "feature.growing_plant_feature:body_blocks.item": {
         "type": "Keymap",
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "function_name": "features_fix_growing_plant_feature_body_blocks"
+        },
         "keys": {
             "plant_body_block": {"type": "str"},
             "weight": {"type": "decimal"}
@@ -278,13 +279,14 @@
         "field": "head block",
         "types": ["dict"],
         "measure_length": true,
-        "normalizer": {
-            "function_name": "features_fix_growing_plant_feature_head_blocks"
-        },
         "subcomponent": "feature.growing_plant_feature:head_blocks.item"
     },
     "feature.growing_plant_feature:head_blocks.item": {
         "type": "Keymap",
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "function_name": "features_fix_growing_plant_feature_head_blocks"
+        },
         "keys": {
             "plant_head_block": {"type": "str"},
             "weight": {"type": "decimal"}
@@ -295,13 +297,14 @@
         "field": "height",
         "types": ["dict"],
         "measure_length": true,
-        "normalizer": {
-            "function_name": "features_fix_growing_plant_feature_height_distribution"
-        },
         "subcomponent": "feature.growing_plant_feature:height_distribution.item"
     },
     "feature.growing_plant_feature:height_distribution.item": {
         "type": "Keymap",
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "function_name": "features_fix_growing_plant_feature_height_distribution"
+        },
         "keys": {
             "height": {"type": "decimal"},
             "weight": {"type": "decimal"}
@@ -776,14 +779,14 @@
     },
     "feature.tree_feature:canopy:leaf_blocks.item": {
         "type": "Keymap",
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "function_name": "features_fix_tree_feature_canopy_leaf_blocks"
+        },
         "keys": {
             "leaf_block": {"type": ["str", "dict"], "subcomponent": "block_reference"},
             "weight": {"type": "decimal"}
         }
-    },
-    "fix_tree_feature_canopy_leaf_blocks": {
-        "type": "Normalizer",
-        "function_name": "features_fix_tree_feature_canopy_leaf_blocks"
     },
     "feature.tree_feature:canopy": {
         "type": "Keymap",
@@ -865,7 +868,6 @@
     },
     "feature.tree_feature:canopy.mangrove_canopy": {
         "type": "Keymap",
-        "normalizer": "fix_tree_feature_canopy_leaf_blocks",
         "keys": {
             "canopy_height": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
             "canopy_radius": {"type": "int"},
@@ -925,7 +927,6 @@
     },
     "feature.tree_feature:canopy.random_spread_canopy": {
         "type": "Keymap",
-        "normalizer": "fix_tree_feature_canopy_leaf_blocks",
         "keys": {
             "canopy_height": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
             "canopy_radius": {"type": "int"},
@@ -978,15 +979,16 @@
     "feature.weighted_random_feature:features": {
         "type": "Set",
         "field": "feature",
-        "normalizer": {
-            "function_name": "features_fix_weighted_random_features"
-        },
         "types": ["dict"],
         "measure_length": true,
         "subcomponent": "feature.weighted_random_feature:features.item"
     },
     "feature.weighted_random_feature:features.item": {
         "type": "Keymap",
+        "pre_normalized_types": "list",
+        "normalizer":{
+            "function_name": "features_fix_weighted_random_features"
+        },
         "keys": {
             "feature": {"type": "str"},
             "weight": {"type": "decimal"}

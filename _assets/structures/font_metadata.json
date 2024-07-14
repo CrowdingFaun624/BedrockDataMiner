@@ -20,14 +20,6 @@
     },
     "font_metadata": {
         "type": "Keymap",
-        "normalizer": [
-            {
-                "function_name": "fonts_fix_fonts"
-            },
-            {
-                "function_name": "fonts_fix_font_aliases"
-            }
-        ],
         "sort": "by_component_order",
         "keys": {
             "version": {"type": "int"},
@@ -48,6 +40,10 @@
         "field": "font",
         "types": ["dict"],
         "measure_length": true,
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "function_name": "fonts_fix_fonts"
+        },
         "detect_key_moves": true,
         "sort": "by_key",
         "subcomponent": "font"
@@ -68,14 +64,15 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "function_name": "fonts_fix_font_aliases"
+        },
         "sort": "by_key",
         "subcomponent": "font_alias"
     },
     "font_alias": {
         "type": "Keymap",
-        "normalizer": {
-            "function_name": "fonts_fix_font_references"
-        },
         "keys": {
             "alias": {"type": "str"},
             "font_scale_factor": {"type": "int", "tags": ["outdated"]},
@@ -90,6 +87,10 @@
         "measure_length": true,
         "detect_key_moves": true,
         "sort": "by_key",
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "function_name": "fonts_fix_font_references"
+        },
         "subcomponent": "font_reference"
     },
     "font_reference": {

@@ -420,9 +420,6 @@
     },
     "component.particle_appearance_tinting": {
         "type": "Keymap",
-        "normalizer": {
-            "function_name": "particles_normalize_component_particle_appearance_tinting_color"
-        },
         "keys": {
             "color": {"type": ["dict", "list"], "subcomponent": "component.particle_appearance_tinting:color.group"},
             "interpolant": {"type": ["decimal", "str"]}
@@ -430,6 +427,10 @@
     },
     "component.particle_appearance_tinting:color.group": {
         "type": "Group",
+        "pre_normalized_types": ["str", "list", "dict"],
+        "normalizer": {
+            "function_name": "particles_normalize_component_particle_appearance_tinting_color"
+        },
         "subcomponents": {
             "dict": "component.particle_appearance_tinting:color.dict",
             "list": "component.particle_appearance_tinting:color.list"

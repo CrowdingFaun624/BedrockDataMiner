@@ -1,89 +1,91 @@
 import json
-from typing import Any, Callable, TypedDict, cast
+from collections import defaultdict
+from typing import Any, Callable, TypedDict
 
 import DataMiner.DataMinerTyping as DataMinerTyping
 import Utilities.CollapseResourcePacks as CollapseResourcePacks
 import Utilities.Nbt.NbtTypes as NbtTypes
 
 
-def animation_controllers_fix_old(data:dict[str,Any]) -> None:
+def animation_controllers_fix_old(data:dict[str,Any]) -> dict[str,Any]|None:
     if "animation_controllers" in data: return
-    if "defined_in" in data:
-        del data["defined_in"]
-    output = data.copy()
-    for key in list(data.keys()):
-        if not key.startswith("controller.animation"):
-            raise RuntimeError("Weird animation controller key \"%s\" does not start with \"controller.animation\"!" % key)
-        del data[key]
-    data["animation_controllers"] = output
+    defined_in = data["defined_in"]
+    output = {"defined_in": defined_in, "animation_controllers": data}
+    del output["animation_controllers"]["defined_in"]
+    return output
 
-def animations_fix_old(data:dict[str,Any]) -> None:
+def animations_fix_old(data:dict[str,Any]) -> dict[str,Any]|None:
     if "animations" in data: return
-    if "defined_in" in data:
-        del data["defined_in"]
-    output = data.copy()
-    for key in list(data.keys()):
-        if not key.startswith("animation"):
-            raise RuntimeError("Weird animation key \"%s\" does not start with \"animation\"!" % key)
-        del data[key]
-    data["animations"] = output
+    defined_in = data["defined_in"]
+    output = {"defined_in": defined_in, "animations": data}
+    del output["animations"]["defined_in"]
+    return output
 
-def attachables_normalize_old(data:dict[str,Any]) -> None:
-    if "minecraft:attachable" in data:
-        return
+def attachables_normalize_old(data:dict[str,Any]) -> dict[str,Any]|None:
+    if "minecraft:attachable" in data: return
     attachable_identifier = list(data.keys())[0]
-    result = {"description": data[attachable_identifier]}
-    del data[attachable_identifier]
-    result["description"]["identifier"] = attachable_identifier
+    output = {"minecraft:attachable": {"description": data[attachable_identifier]}}
+    output["minecraft:attachable"]["description"]["identifier"] = attachable_identifier
+    return output
 
 def behavior_packs_normalize(data:DataMinerTyping.BehaviorPacks) -> list[str]:
     return [behavior_pack["name"] for behavior_pack in data]
 
-def biomes_normalize_old(data:dict[str,Any]) -> None:
+def biomes_normalize_old(data:dict[str,Any]) -> dict[str,Any]|None:
     if "minecraft:biome" in data: return
-    if len(data) != 1:
-        raise RuntimeError("Expected 1 key, but got [%s]" % (list(data.keys()),))
     biome_name = list(data.keys())[0]
-    format_version = data[biome_name].get("format_version")
-    result = {}
-    if format_version is not None:
-        del data[biome_name]["format_version"]
-        result["format_version"] = format_version
-    result["minecraft:biome"] = {"components": data[biome_name], "description": {"identifier": biome_name}}
-    del data[biome_name]
-    data.update(result)
+    format_version:str = data[biome_name]["format_version"]
+    output = {"format_version": format_version, "minecraft:biome": {"components": data[biome_name], "description": {"identifier": biome_name}}}
+    del output["minecraft:biome"]["components"]["format_version"]
+    return output
 
 def blocks_client_fix_MCPE_76182(data:DataMinerTyping.BlocksJsonClientBlockTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-76182
     if "sounds" in data:
         del data["sounds"]
 
-def blocks_client_normalize(data:DataMinerTyping.MyBlocksClient) -> dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]:
+def blocks_client_normalize(data:DataMinerTyping.MyBlocksClient) -> dict[str,dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]]:
     return {block["name"]: block["properties"] for block in data}
 
 def credits_normalize_sections(data:DataMinerTyping.Credits) -> DataMinerTyping.NormalizedCredits:
     return {section["section"]: section for section in data}
 
-def credits_normalize_disciplines(data:Any) -> None:
-    if "disciplines" not in data: return
-    data["disciplines"] = {discipline["discipline"]: discipline for discipline in data["disciplines"]}
+def credits_normalize_disciplines(data:list[DataMinerTyping.CreditsDisciplineTypedDict]) -> dict[str,DataMinerTyping.CreditsDisciplineTypedDict]:
+    return {discipline["discipline"]: discipline for discipline in data}
 
-def credits_normalize_titles(data:Any) -> None:
-    if "titles" not in data: return
-    data["titles"] = {title["title"]: title for title in data["titles"]}
+def credits_normalize_titles(data:list[DataMinerTyping.CreditsTitleTypedDict]) -> dict[str,DataMinerTyping.CreditsTitleTypedDict]:
+    return {title["title"]: title for title in data}
 
 def entities_fix_event_bug(data:dict[str,Any]) -> None:
     if "minecraft:transformation" in data:
         del data["minecraft:transformation"]
 
+entities_fix_out_of_bounds_components_keys = ["minecraft:physics", "minecraft:pushable", "minecraft:conditional_bandwidth_optimization", "minecraft:raid_persistence"]
 def entities_fix_out_of_bounds_components(data:dict[str,Any]) -> None:
-    for key_to_delete in [key for key in data if key.startswith("minecraft:")]:
-        del data[key_to_delete]
+    for key_to_delete in entities_fix_out_of_bounds_components_keys:
+        if key_to_delete in data:
+            del data[key_to_delete]
 
 def entities_fix_MCPE_178417(data:dict[str,Any]) -> None:
     # https://bugs.mojang.com/browse/MCPE-178417
-    for key_to_delete in [key for key in data if key.startswith("minecraft:")]:
-        del data[key_to_delete]
+    if len(data) == 0:
+        return
+    key = list(data.keys())[0]
+    if not key.startswith("minecraft:"):
+        return
+    match key:
+        case "minecraft:silverfish_calm":
+            del data["minecraft:silverfish_calm"]
+        case "minecraft:silverfish_angry":
+            del data["minecraft:silverfish_angry"]
+        case "minecraft:enderman_calm":
+            del data["minecraft:enderman_calm"]
+        case "minecraft:enderman_angry":
+            del data["minecraft:enderman_angry"]
+        case "minecraft:sheep_sheared":
+            del data["minecraft:sheep_sheared"]
+        case "minecraft:sheep_dyeable":
+            del data["minecraft:sheep_dyeable"]
 
 def entities_fix_invalid_components(data:dict[str,Any]) -> None:
     if "minecart:on_hurt_by_player" in data:
@@ -93,42 +95,26 @@ def entities_fix_priotiry(data:dict[str,Any]) -> None:
     if "priotiry" in data:
         del data["priotiry"]
 
-def entities_client_fix_old(data:dict[str,Any]) -> None:
+def entities_client_fix_old(data:dict[str,Any]) -> dict[str,Any]|None:
     if "minecraft:client_entity" in data: return
-    if "defined_in" in data:
-        del data["defined_in"]
-    if len(data) != 1:
-        raise ValueError("Data has too many entity clients: [%s]!" % (", ".join(data.keys())))
+    defined_in = data["defined_in"]
     entity_client_name = list(data.keys())[0]
-    output = data[entity_client_name]
-    del data[entity_client_name]
-    data["minecraft:client_entity"] = {"description": output}
+    return {"defined_in": defined_in, "minecraft:client_entity": {"description": data[entity_client_name]}}
 
-def features_fix_growing_plant_feature_body_blocks(data:list[list[Any]]) -> None:
-    for index, item in enumerate(data):
-        assert len(item) == 2
-        data[index] = {"plant_body_block": item[0], "weight": item[1]}
+def features_fix_growing_plant_feature_body_blocks(data:list[Any]) -> dict[str,Any]:
+    return {"plant_body_block": data[0], "weight": data[1]}
 
-def features_fix_growing_plant_feature_head_blocks(data:list[list[Any]]) -> None:
-    for index, item in enumerate(data):
-        assert len(item) == 2
-        data[index] = {"plant_head_block": item[0], "weight": item[1]}
+def features_fix_growing_plant_feature_head_blocks(data:list[Any]) -> dict[str,Any]:
+    return {"plant_head_block": data[0], "weight": data[1]}
 
-def features_fix_growing_plant_feature_height_distribution(data:list[list[Any]]) -> None:
-    for index, item in enumerate(data):
-        assert len(item) == 2
-        data[index] = {"height": item[0], "weight": item[1]}
+def features_fix_growing_plant_feature_height_distribution(data:list[list[Any]]) -> dict[str,Any]:
+    return {"height": data[0], "weight": data[1]}
 
-def features_fix_tree_feature_canopy_leaf_blocks(data:dict[str,list[Any]]) -> None:
-    if "leaf_blocks" in data:
-        for index, item in enumerate(data):
-            assert len(item) == 2
-            data[index] = {"leaf_block": item[0], "weight": item[1]}
+def features_fix_tree_feature_canopy_leaf_blocks(data:list[Any]) -> dict[str,Any]:
+    return {"leaf_blocks": data[0], "weight": data[1]}
 
-def features_fix_weighted_random_features(data:list[list[Any]]) -> None:
-    for index, item in enumerate(data):
-        assert len(item) == 2
-        data[index] = {"feature": item[0], "weight": item[1]}
+def features_fix_weighted_random_features(data:list[Any]) -> dict[str,Any]:
+    return {"feature": data[0], "weight": data[1]}
 
 def flipbook_textures_fix_flipbook_textures(data:dict[str,list[dict[str,str]]]) -> None:
     for resource_pack_name, resource_pack_data in data.items():
@@ -137,38 +123,23 @@ def flipbook_textures_fix_flipbook_textures(data:dict[str,list[dict[str,str]]]) 
         if len(resource_pack_data) != start_length:
             raise RuntimeError("Duplicate `atlas_tile` keys detected!")
 
-def fonts_fix_font_aliases(data:dict[str,list[dict[str,str]]]) -> None:
-    if "font_aliases" not in data: return
-    output:dict[str,dict[str,str]] = {}
-    for font in data["font_aliases"]:
-        output[font["alias"]] = font
-    data["font_aliases"] = output
+def fonts_fix_font_aliases(data:list[dict[str,str]]) -> dict[str,dict[str,str]]:
+    return {font["alias"]: font for font in data}
 
-def fonts_fix_font_references(data:dict[str,list[dict[str,str]]]) -> None:
-    if "fonts" not in data: return
-    output:dict[str,dict[str,str]] = {}
-    for font in data["fonts"]:
-        output[font["font_reference"]] = font
-    data["fonts"] = output
+def fonts_fix_font_references(data:list[dict[str,str]]) -> dict[str,dict[str,str]]:
+    return {font["font_reference"]: font for font in data}
 
-def fonts_fix_fonts(data:dict[str,list[dict[str,str]]]) -> None:
-    if "fonts" not in data: return
-    output:dict[str,dict[str,str]] = {}
-    for font in data["fonts"]:
-        output[font["font_name"]] = font
-    data["fonts"] = output
+def fonts_fix_fonts(data:list[dict[str,str]]) -> dict[str,dict[str,str]]:
+    return {font["font_name"]: font for font in data}
 
-def gui_routes_normalize(data:dict[str,list[dict[str,str]]]) -> None:
-    assert "routes" in data
-    data["routes"] = {route["fileName"]: route for route in data["routes"]}
+def gui_routes_normalize(data:list[dict[str,str]]) -> dict[str,dict[str,str]]:
+    return {route["fileName"]: route for route in data}
 
-def gui_routes_supported_routes_normalize(data:dict[str,list[dict[str,str]]]) -> None:
-    assert "supportedRoutes" in data
-    data["supportedRoutes"] = {route["route"]: route for route in data["supportedRoutes"]}
+def gui_routes_supported_routes_normalize(data:list[dict[str,str]]) -> dict[str,dict[str,str]]:
+    return {route["route"]: route for route in data}
 
-def gui_routes_params_normalize(data:dict[str,list[dict[str,str]]]) -> None:
-    assert "params" in data
-    data["params"] = {route["name"]: route for route in data["params"]}
+def gui_routes_params_normalize(data:list[dict[str,str]]) -> dict[str,dict[str,str]]:
+    return {route["name"]: route for route in data}
 
 def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]]) -> dict[str,Any]:
     output:dict[str,dict[str,Any]] = {}
@@ -180,73 +151,57 @@ def item_textures_normalize(data:dict[str,dict[str,dict[str,dict[str,str]]]]) ->
                 output[item] = {resource_pack_name: item_data}
     return output
 
-def items_fix_old(data:dict[str,Any]) -> None:
-    if "type" not in data: return
-    old_recipe_type = data["type"]
-    del data["type"]
-    del data["defined_in"]
-    new_recipe_types = {
+recipes_fix_old_data = {
         "crafting_shaped": "minecraft:recipe_shaped",
         "crafting_shapeless": "minecraft:recipe_shapeless",
         "furnace_recipe": "minecraft:recipe_furnace",
     }
-    if old_recipe_type not in new_recipe_types:
+def recipes_fix_old(data:dict[str,Any]) -> dict[str,dict[str,Any]]|None:
+    if "type" not in data: return None
+    old_recipe_type = data["type"]
+    del data["type"]
+    del data["defined_in"]
+    new_recipe_type = recipes_fix_old_data.get(old_recipe_type)
+    if new_recipe_type is None:
         raise KeyError("Recipe type \"%s\" not recognized!" % old_recipe_type)
-    new_recipe_type = new_recipe_types[old_recipe_type]
-    output = data.copy()
-    for key in list(data.keys()):
-        del data[key]
-    data[new_recipe_type] = output
+    return {new_recipe_type: data}
+
+def languages_normalize_fix_properties(data:DataMinerTyping.LanguagesTypedDict) -> dict[str,Any]:
+    output:dict[str,DataMinerTyping.LanguagesPropertiesTypedDict] = data["properties"]
+    for resource_pack in data["defined_in"]:
+        if resource_pack not in output:
+            output[resource_pack] = {}
+    return output
 
 def languages_normalize(data:DataMinerTyping.Languages) -> DataMinerTyping.NormalizedLanguages:
+    return {language["code"]: languages_normalize_fix_properties(language) for language in data}
 
-    def fix_properties(unfixed_data:DataMinerTyping.LanguagesTypedDict) -> dict[str,Any]:
-        output:dict[str,DataMinerTyping.LanguagesPropertiesTypedDict] = unfixed_data["properties"]
-        for resource_pack in unfixed_data["defined_in"]:
-            if resource_pack not in output:
-                output[resource_pack] = {}
-        return CollapseResourcePacks.collapse_resource_packs_dict(output, True)
-    return {language["code"]: fix_properties(language) for language in data}
-
-def loot_tables_normalize_conditions(data:DataMinerTyping.LootTableHasConditions) -> None:
-    if "conditions" not in data: return
-    output:dict[str,DataMinerTyping.LootTableConditions] = {}
-    for condition in data["conditions"]:
-        assert isinstance(condition, dict)
-        assert "condition" in condition
-        condition_name = condition["condition"]
-        output[condition_name] = condition
+def loot_tables_normalize_conditions(data:list[dict[str,str]]) -> dict[str,dict[str,str]]:
+    output = {condition["condition"]: (condition) for condition in data}
+    for condition in output.values():
         del condition["condition"]
-    data["conditions"] = output
+    return output
 
-def loot_tables_normalize_functions(data:DataMinerTyping.LootTableHasFunctions) -> None:
-    if "functions" not in data: return
-    output:dict[str,DataMinerTyping.LootTableFunctions] = {}
-    for function in data["functions"]:
-        assert isinstance(function, dict)
-        assert "function" in function
-        function_name = function["function"]
-        output[function_name] = function
+def loot_tables_normalize_functions(data:list[dict[str,str]]) -> dict[str,dict[str,str]]:
+    output = {function["function"]: function for function in data}
+    for function in output.values():
         del function["function"]
-    data["functions"] = output
+    return output
 
-def materials_normalize_material(data:dict[str,dict[str,Any]]) -> None:
+def materials_normalize_material(data:dict[str,dict[str,Any]]) -> dict[str,dict[str,Any]]|None:
     if "materials" in data:
-        assert set(data.keys()) == {"defined_in", "materials"}
-        version:str = data["materials"]["version"]
-        data["version"] = version
-        del data["materials"]["version"]
+        data["version"] = data["materials"]["version"]
     else:
-        materials = data.copy()
-        data.clear()
-        data["materials"] = materials
-        if "defined_in" in data["materials"]:
-            defined_in = data["materials"]["defined_in"]
-            del data["materials"]["defined_in"]
-            data["defined_in"] = defined_in
+        return {"materials": data, "defined_in": data["defined_in"]}
+
+def materials_remove_extra_keys(data:dict[str,str]) -> None:
+    if "version" in data:
+        del data["version"]
+    if "defined_in" in data:
+        del data["defined_in"]
 
 def models_model_normalize(data:dict[str,dict[str,dict[str,Any]]]) -> dict[str,Any]:
-    output:dict[str,Any] = {}
+    output:defaultdict[str,dict[str,Any]] = defaultdict(lambda: {})
     for model_file_name, resource_packs in data.items():
         for resource_pack_name, model_file_data in resource_packs.items():
             if "minecraft:geometry" in model_file_data:
@@ -255,13 +210,9 @@ def models_model_normalize(data:dict[str,dict[str,dict[str,Any]]]) -> dict[str,A
                 for geometry_item in model_file_data["minecraft:geometry"]:
                     name = geometry_item["description"]["identifier"]
                     model_output_name = "%s %s" % (model_file_name, name)
-                    output_data = {"format_version": format_version, "minecraft:geometry": geometry_item}
-                    if model_output_name in output:
-                        if resource_pack_name in output[model_output_name]:
-                            raise KeyError("Multiple models using name \"%s\" and resource pack \"%s\"!" % (model_output_name, resource_pack_name))
-                        output[model_output_name][resource_pack_name] = output_data
-                    else:
-                        output[model_output_name] = {resource_pack_name: output_data}
+                    if resource_pack_name in output[model_output_name]:
+                        raise KeyError("Multiple models using name \"%s\" and resource pack \"%s\"!" % (model_output_name, resource_pack_name))
+                    output[model_output_name][resource_pack_name] = {"format_version": format_version, "minecraft:geometry": geometry_item}
             else:
                 format_version:str|None = model_file_data["format_version"] if "format_version" in model_file_data else None
                 for name, model_data in model_file_data.items():
@@ -273,41 +224,31 @@ def models_model_normalize(data:dict[str,dict[str,dict[str,Any]]]) -> dict[str,A
                         description_dict[description_key] = model_data[description_key]
                         del model_data[description_key]
                     model_data["description"] = description_dict
-                    output_data = {"format_version": format_version, "minecraft:geometry": model_data}
-                    if model_output_name in output:
-                        if resource_pack_name in output[model_output_name]:
-                            raise KeyError("Multiple models using name \"%s\" and resource pack \"%s\"!" % (model_output_name, resource_pack_name))
-                        output[model_output_name][resource_pack_name] = output_data
-                    else:
-                        output[model_output_name] = {resource_pack_name: output_data}
-    return output
+                    if resource_pack_name in output[model_output_name]:
+                        raise KeyError("Multiple models using name \"%s\" and resource pack \"%s\"!" % (model_output_name, resource_pack_name))
+                    output[model_output_name][resource_pack_name] = {"format_version": format_version, "minecraft:geometry": model_data}
+    return dict(output)
 
-def models_normalize_bones(data:DataMinerTyping.ModelGeometryTypedDict) -> None:
-    if "bones" in data:
-        output:dict[str,Any] = {}
-        for bone in data["bones"]:
-            assert "name" in bone
-            assert isinstance(bone, dict)
-            name = bone["name"]
-            del bone["name"]
-            output[name] = bone
-        data["bones"] = output
+def models_normalize_bones(data:list[DataMinerTyping.ModelBoneTypedDict]) -> dict[str,DataMinerTyping.ModelBoneTypedDict]:
+    return {bone["name"]: bone for bone in data}
+
+def models_remove_bone_name(data:dict[str,str]) -> None:
+    del data["name"]
 
 is_valid_color:Callable[[Any],bool] = lambda color: (isinstance(color, list) and len(color) in (3, 4) and all(isinstance(channel, (int, float, str)) for channel in color)) or isinstance(color, str)
-def particles_normalize_component_particle_appearance_tinting_color(data:dict[str,str|list[int]|dict[str,str|list[int]]|list[str|list[int]]]) -> None:
-    if "color" not in data: return
-    if is_valid_color(data["color"]):
-        data["color"] = [data["color"]]
+def particles_normalize_component_particle_appearance_tinting_color(data:str|list[int]|dict[str,str|list[int]]|list[str|list[int]]) -> list|None:
+    if is_valid_color(data):
+        return [data]
 
-def particles_normalize_old(data:dict[str,Any]) -> None:
+def particles_normalize_old(data:dict[str,Any]) -> dict[str,Any]|None:
     if "particles" not in data:
         return
     assert len(data["particles"]) == 1
     particle_identifier:str = list(data["particles"].keys())[0]
-    data["particle_effect"] = data["particles"][particle_identifier]
-    del data["particles"]
-    data["particle_effect"]["description"] = {"basic_render_parameters": data["particle_effect"]["basic_render_parameters"], "identifier": particle_identifier}
-    del data["particle_effect"]["basic_render_parameters"]
+    output = {"format_version": data["format_version"], "defined_in": data["defined_in"], "particle_effect": data["particles"][particle_identifier]}
+    output["particle_effect"]["description"] = {"basic_render_parameters": data["particles"][particle_identifier]["basic_render_parameters"], "identifier": particle_identifier}
+    del output["particle_effect"]["basic_render_parameters"]
+    return output
 
 def particles_remove_weird_components(data:dict[str,Any]) -> None:
     if "minecraft:particle_appearance_tinting" in data:
@@ -318,23 +259,19 @@ def particles_remove_weird_components(data:dict[str,Any]) -> None:
 def resource_packs_normalize(data:DataMinerTyping.ResourcePacks) -> list[str]:
     return [resource_pack["name"] for resource_pack in data]
 
-def render_controllers_fix_old(data:dict[str,Any]) -> None:
+def render_controllers_fix_old(data:dict[str,Any]) -> dict[str,Any]|None:
     if "render_controllers" in data: return
-    if "defined_in" in data:
-        del data["defined_in"]
-    output = data.copy()
-    for key in list(data.keys()):
-        del data[key]
-    data["render_controllers"] = output
+    defined_in = data["defined_in"]
+    del data["defined_in"]
+    return {"defined_in": defined_in, "render_controllers": data}
 
 def render_controllers_remove_texures(data:dict[str,Any]) -> None:
     if "texures" in data:
         del data["texures"]
 
-def renderer_platform_configuration_normalize_shadow_config(data:dict[str,str]) -> None:
+def renderer_platform_configuration_normalize_shadow_config(data:dict[str,str]) -> dict[str,dict[str,str]]|None:
     if "file" in data:
-        data["shadow_config"] = {"file": data["file"]}
-        del data["file"]
+        return {"shadow_config": data}
 
 def sound_definitions_fix_MCPE_153558(data:DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-153558
@@ -346,10 +283,9 @@ def sound_definitions_fix_MCPE_178265(data:DataMinerTyping.SoundDefinitionsJsonS
     if "volume" in data:
         del data["volume"]
 
-def sound_definitions_make_strings_to_dict(data:list[str|DataMinerTyping.SoundDefinitionsJsonSoundTypedDict]) -> None:
-    indexes = [index for index, sound in enumerate(data) if isinstance(sound, str)]
-    for index in indexes:
-        data[index] = {"name": data[index]}
+def sound_definitions_make_strings_to_dict(data:str|DataMinerTyping.SoundDefinitionsJsonSoundTypedDict) -> DataMinerTyping.SoundDefinitionsJsonSoundTypedDict|None:
+    if isinstance(data, str):
+        return {"name": data}
 
 def sound_definitions_fix_MCPE_153561(data:DataMinerTyping.SoundDefinitionsJsonSoundTypedDict) -> None:
     # https://bugs.mojang.com/browse/MCPE-153561
@@ -378,76 +314,62 @@ def sounds_json_remove_bad_interactive_entity_events(data:dict[str,dict[str,str]
     for event_to_delete in events_to_delete:
         del data[event_to_delete]
 
+def sounds_json_remove_weird_keys(data:DataMinerTyping.SoundsJsonSoundTypedDict) -> None:
+    if "ambient" in data:
+        del data["ambient"]
+    if "death" in data:
+        del data["death"]
+    if "hurt" in data:
+        del data["hurt"]
+    if "attenuation_distance" in data:
+        del data["attenuation_distance"]
+
 def sounds_json_fix_sounds(data:DataMinerTyping.SoundsJsonSoundTypedDict) -> None:
     '''moves key "sounds" to "sound". It occurs a whole lot and for a long time, so it's gotta be on purpose.'''
     # TODO: find out if "sounds" is actually a valid key.
-    for key in [key for key in data.keys() if key not in ("sound", "sounds", "volume", "pitch")]:
-        del data[key]
     if "sounds" in data:
-        assert "sound" not in data or data["sound"] == data["sounds"]
         data["sound"] = data["sounds"]
         del data["sounds"]
 
-def spawn_rules_normalize_herd(data:dict[str,dict[str,Any]|list[dict[str,Any]]]) -> None:
-    if "minecraft:herd" not in data: return
-    if isinstance(data["minecraft:herd"], dict):
-        data["minecraft:herd"] = {"": data["minecraft:herd"]} # placing it into a nested dict is easier since the base case with the max_size and min_size has the same type as what I'm normalizing it to.
-    else:
-        data["minecraft:herd"] = {item["event"]: item for item in data["minecraft:herd"]}
-        for item in data["minecraft:herd"].values():
-            del item["event"]
+def spawn_rules_normalize_herd(data:dict[str,Any]|list[dict[str,Any]]) -> list[dict[str,Any]]|None:
+    if isinstance(data, dict):
+        return [data]
 
-structures_nbt_normalize_text_keys = ["Text%i" % i for i in range(1, 5)]
-def structures_nbt_normalize_text(data:dict[str,NbtTypes.TAG_String]) -> None:
-    for key in structures_nbt_normalize_text_keys:
-        if key in data:
-            data[key] = json.loads(data[key].value)
+def structures_nbt_normalize_text(data:NbtTypes.TAG_String) -> dict[str,str]:
+    return json.loads(data.value)
 
 terrain_textures_normalize_typed_dict = TypedDict("terrain_textures_normalize_typed_dict", {"resource_pack_name": str, "texture_name": str, "padding": int, "num_mip_levels": int, "texture_data": dict[str,dict[str,str]]})
 def terrain_textures_normalize(data:dict[str,terrain_textures_normalize_typed_dict]) -> dict[str,Any]:
     normal_keys = set(["resource_pack_name", "texture_name", "padding", "num_mip_levels", "texture_data"])
     other_keys = {"texture_name": {}, "padding": {}, "num_mip_levels": {}}
-    texture_data:dict[str,dict[str,Any]] = {}
+    texture_data:defaultdict[str,dict[str,Any]] = defaultdict(lambda: {})
     for resource_pack_name, terrain_textures_data in data.items():
         assert set(terrain_textures_data.keys()) == normal_keys
         for other_key_key, other_key_values in other_keys.items():
             if other_key_key in terrain_textures_data:
                 other_key_values[resource_pack_name] = terrain_textures_data[other_key_key]
         for terrain, terrain_data in terrain_textures_data["texture_data"].items():
-            if terrain in texture_data:
-                texture_data[terrain][resource_pack_name] = terrain_data
-            else:
-                texture_data[terrain] = {resource_pack_name: terrain_data}
+            texture_data[terrain][resource_pack_name] = terrain_data
     output = other_keys
-    output["texture_data"] = texture_data
+    output["texture_data"] = dict(texture_data)
     return output
 
 def terrain_meta_normalize(data:list[dict[str,Any]]) -> dict[str,dict[str,Any]]:
-    output:dict[str,dict[str,Any]] = {}
-    for item in data:
-        output[item["name"]] = item
-        del item["name"]
-    return output
+    return {item["name"]: item for item in data}
 
 terrain_meta_normalize_uvs_keys = ("x1", "y1", "x2", "y2", "1", "2")
-def terrain_meta_normalize_uv(data:dict[str,list[int]]) -> None:
-    if "uv" not in data: return
-    data["uv"] = {key: value for key, value in zip(terrain_meta_normalize_uvs_keys, data["uv"])}
+def terrain_meta_normalize_uv(data:list[int|float]) -> dict[str,int|float]:
+    return {key: value for key, value in zip(terrain_meta_normalize_uvs_keys, data)}
 
-def terrain_meta_normalize_uvs(data:list[list[int]]) -> None:
-    for index, uv in enumerate(data):
-        assert len(uv) == 6
-        data[index] = {key: value for key, value in zip(terrain_meta_normalize_uvs_keys, uv)}
+def terrain_meta_remove_name(data:dict[str,str]) -> None:
+    del data["name"]
 
 def texture_list_normalize(data:dict[str,list[str]]) -> dict[str,list[str]]:
-    output:dict[str,list[str]] = {}
+    output:defaultdict[str,list[str]] = defaultdict(lambda: [])
     for resource_pack, textures in data.items():
         for texture in textures:
-            if texture in output:
-                output[texture].append(resource_pack)
-            else:
-                output[texture] = [resource_pack]
-    return output
+            output[texture].append(resource_pack)
+    return dict(output)
 
 functions:dict[str,Callable] = {
     "collapse_resource_pack_names": CollapseResourcePacks.collapse_resource_pack_names,
@@ -484,13 +406,15 @@ functions:dict[str,Callable] = {
     "gui_routes_supported_routes_normalize": gui_routes_supported_routes_normalize,
     "gui_routes_params_normalize": gui_routes_params_normalize,
     "item_textures_normalize": item_textures_normalize,
-    "items_fix_old": items_fix_old,
+    "recipes_fix_old": recipes_fix_old,
     "languages_normalize": languages_normalize,
     "loot_tables_normalize_conditions": loot_tables_normalize_conditions,
     "loot_tables_normalize_functions": loot_tables_normalize_functions,
     "materials_normalize_material": materials_normalize_material,
+    "materials_remove_extra_keys": materials_remove_extra_keys,
     "models_model_normalize": models_model_normalize,
     "models_normalize_bones": models_normalize_bones,
+    "models_remove_bone_name": models_remove_bone_name,
     "particles_normalize_component_particle_appearance_tinting_color": particles_normalize_component_particle_appearance_tinting_color,
     "particles_normalize_old": particles_normalize_old,
     "particles_remove_weird_components": particles_remove_weird_components,
@@ -505,12 +429,13 @@ functions:dict[str,Callable] = {
     "sound_files_remove_obj": sound_files_remove_obj,
     "sounds_json_remove_bad_events": sounds_json_remove_bad_events,
     "sounds_json_remove_bad_interactive_entity_events": sounds_json_remove_bad_interactive_entity_events,
+    "sounds_json_remove_weird_keys": sounds_json_remove_weird_keys,
     "sounds_json_fix_sounds": sounds_json_fix_sounds,
     "spawn_rules_normalize_herd": spawn_rules_normalize_herd,
     "structures_nbt_normalize_text": structures_nbt_normalize_text,
     "terrain_textures_normalize": terrain_textures_normalize,
     "terrain_meta_normalize": terrain_meta_normalize,
     "terrain_meta_normalize_uv": terrain_meta_normalize_uv,
-    "terrain_meta_normalize_uvs": terrain_meta_normalize_uvs,
+    "terrain_meta_remove_name": terrain_meta_remove_name,
     "texture_list_normalize": texture_list_normalize,
 }

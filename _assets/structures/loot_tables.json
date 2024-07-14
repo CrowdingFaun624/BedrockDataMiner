@@ -4,14 +4,6 @@
         "name": "loot_tables",
         "subcomponent": "loot_tables"
     },
-    "normalize_conditions": {
-        "type": "Normalizer",
-        "function_name": "loot_tables_normalize_conditions"
-    },
-    "normalize_functions": {
-        "type": "Normalizer",
-        "function_name": "loot_tables_normalize_functions"
-    },
     "not_in_documentation": {
         "type": "Tag"
     },
@@ -118,7 +110,6 @@
     },
     "pool": {
         "type": "Keymap",
-        "normalizer": ["normalize_conditions", "normalize_functions"],
         "keys": {
             "bonus_rolls": {"type": "decimal"},
             "conditions": {"type": "dict", "subcomponent": "conditions"},
@@ -145,7 +136,6 @@
     },
     "entry": {
         "type": "Keymap",
-        "normalizer": ["normalize_functions", "normalize_conditions"],
         "keys": {
             "aux_val": {"type": "int"},
             "auxVal": {"type": "int"},
@@ -163,6 +153,10 @@
         "type": "Keymap",
         "field": "function",
         "measure_length": true,
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "function_name": "loot_tables_normalize_functions"
+        },
         "sort": "by_key",
         "keys": {
             "enchant_book_for_trading": {"type": "dict", "subcomponent": "function.enchant_book_for_trading"},
@@ -255,7 +249,6 @@
     },
     "function.furnace_smelt": {
         "type": "Keymap",
-        "normalizer": "normalize_conditions",
         "keys": {
             "conditions": {"type": "dict", "subcomponent": "conditions"}
         }
@@ -416,6 +409,10 @@
     "conditions": {
         "type": "Keymap",
         "field": "condition",
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "function_name": "loot_tables_normalize_conditions"
+        },
         "sort": "by_key",
         "keys": {
             "entity_killed": {"type": "dict", "subcomponent": "condition.entity_killed"},

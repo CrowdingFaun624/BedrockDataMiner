@@ -122,7 +122,7 @@ class ModelBoneTypedDict(TypedDict):
     material: str
     META_BoneType: None
     mirror: bool
-    name: NotRequired[str]
+    name: str
     neverRender: bool
     parent: None
     pivot: list
@@ -161,15 +161,15 @@ ResourcePacks:TypeAlias = list[ResourcePackTypedDict]
 # sound_definitions.json
 
 class SoundDefinitionsJsonSoundTypedDict(TypedDict):
-    exclude_from_pocket_platforms: bool
-    is3D: bool
-    load_on_low_memory: bool
-    name: str
-    pitch: float
-    stream: bool
-    type: str
-    volume: float
-    weight: int
+    exclude_from_pocket_platforms: NotRequired[bool]
+    is3D: NotRequired[bool]
+    load_on_low_memory: NotRequired[bool]
+    name: Required[str]
+    pitch: NotRequired[float]
+    stream: NotRequired[bool]
+    type: NotRequired[str]
+    volume: NotRequired[float]
+    weight: NotRequired[int]
 
 class NormalizedSoundDefinitionsJsonSoundTypedDict(TypedDict):
     exclude_from_pocket_platforms: NotRequired[bool]

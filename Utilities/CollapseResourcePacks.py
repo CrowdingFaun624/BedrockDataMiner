@@ -54,9 +54,9 @@ empty_dict_lambda = lambda: {}
 empty_list_lambda = lambda: []
 a = TypeVar("a")
 
-def make_dict_interface(has_defined_in_key:bool=True) -> Callable[[dict[str,Any]],None]:
-    def collapse_resource_packs_interface(data:dict[str,dict[str,Any]]) -> None:
-        collapse_resource_packs_dict(data, has_defined_in_key)
+def make_dict_interface(has_defined_in_key:bool=True) -> Callable[[dict[str,dict[str,a]]],dict[str,dict[str,a]]]:
+    def collapse_resource_packs_interface(data:dict[str,dict[str,a]]) -> dict[str,dict[str,a]]:
+        return collapse_resource_packs_dict(data, has_defined_in_key)
     return collapse_resource_packs_interface
 
 def get_resource_packs_by_tag(data:dict[str,Any]) -> Iterable[tuple[str,list[str]]]:
@@ -77,9 +77,7 @@ def collapse_resource_packs_list(data:dict[str,list[a]]) -> dict[str,list[a]]:
         resource_pack_list.sort(key=lambda item: resource_pack_order[item])
         for resource_pack in resource_pack_list:
             output[tag_string].extend(data[resource_pack])
-    data.clear()
-    data.update(output)
-    return data
+    return dict(output)
 
 def collapse_resource_packs_dict(data:dict[str,dict[str,a]], add_defined_in:bool) -> dict[str,dict[str,a]]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
@@ -95,9 +93,10 @@ def collapse_resource_packs_dict(data:dict[str,dict[str,a]], add_defined_in:bool
                     output[tag_string]["defined_in"] = [resource_pack]
                 else:
                     defined_in_key.append(resource_pack)
-    data.clear()
-    data.update(output)
-    return data
+    # aaaa = type(data)(output)
+    # print(type(aaaa))
+    # return aaaa
+    return type(data)(output)
 
 def collapse_resource_packs_flat(data:dict[str,a]) -> dict[str,a]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.'''
@@ -106,9 +105,7 @@ def collapse_resource_packs_flat(data:dict[str,a]) -> dict[str,a]:
         resource_pack_list.sort(key=lambda item: resource_pack_order[item])
         for resource_pack in resource_pack_list:
             output[tag_string] = data[resource_pack]
-    data.clear()
-    data.update(output)
-    return data
+    return output
 
 def collapse_resource_pack_names(data:list[str]) -> list[str]:
     output:list[str] = []
@@ -120,6 +117,4 @@ def collapse_resource_pack_names(data:list[str]) -> list[str]:
         if (tag_str_id := id(tag_str)) not in exists_in_output:
             exists_in_output.add(tag_str_id)
             output.append(tag_str)
-    data.clear()
-    data.extend(reversed(output)) # reversed so it behaves the same as it does before refactor.
-    return data
+    return list(reversed(output)) # reversed so it behaves the same as it does before refactor.

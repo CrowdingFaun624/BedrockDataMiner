@@ -2,16 +2,7 @@
     "base": {
         "type": "Base",
         "name": "models",
-        "subcomponent": "files",
-        "normalizer": "model_normalize"
-    },
-    "model_normalize": {
-        "type": "Normalizer",
-        "function_name": "models_model_normalize"
-    },
-    "normalize_bones": {
-        "type": "Normalizer",
-        "function_name": "models_normalize_bones"
+        "subcomponent": "files"
     },
     "outdated": {
         "type": "Tag"
@@ -35,6 +26,9 @@
         "measure_length": true,
         "detect_key_moves": true,
         "sort": "by_key",
+        "normalizer": {
+            "function_name": "models_model_normalize"
+        },
         "subcomponent": "resource_packs"
     },
     "resource_packs": {
@@ -57,7 +51,6 @@
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "minecraft:geometry": {"type": "dict", "subcomponent": {
                 "type": "Keymap",
-                "normalizer": "normalize_bones",
                 "sort": "by_component_order",
                 "keys": {
                     "description": {"type": "dict", "subcomponent": "description"},
@@ -106,11 +99,19 @@
         "types": ["dict"],
         "measure_length": true,
         "detect_key_moves": true,
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "type": "Normalizer",
+            "function_name": "models_normalize_bones"
+        },
         "sort": "by_key",
         "subcomponent": "bone"
     },
     "bone": {
         "type": "Keymap",
+        "normalizer": {
+            "function_name": "models_remove_bone_name"
+        },
         "keys": {
             "bind_pose_rotation": {"type": "list", "subcomponent": "vector_decimal"},
             "binding": {"type": "str"},

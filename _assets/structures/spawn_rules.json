@@ -135,9 +135,6 @@
     },
     "condition_set": {
         "type": "Keymap",
-        "normalizer": {
-            "function_name": "spawn_rules_normalize_herd"
-        },
         "sort": "by_key",
         "keys": {
             "minecraft:biome_filter": {"type": ["dict", "list"], "subcomponent": "filter_or_filter_list"},
@@ -148,7 +145,7 @@
             "minecraft:disallow_spawns_in_bubble": {"type": "dict", "subcomponent": "empty_dict"},
             "minecraft:distance_filter": {"type": "dict", "subcomponent": "condition.distance_filter"},
             "minecraft:height_filter": {"type": "dict", "subcomponent": "condition.height_filter"},
-            "minecraft:herd": {"type": "dict", "subcomponent": "condition.herd"},
+            "minecraft:herd": {"type": "list", "subcomponent": "condition.herd"},
             "minecraft:is_persistent": {"type": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
             "minecraft:mob_event_filter": {"type": "dict", "subcomponent": "condition.mob_event_filter"},
             "minecraft:permute_type": {"type": "list", "subcomponent": "condition.permute_type"},
@@ -211,17 +208,20 @@
         }
     },
     "condition.herd": {
-        "type": "Dict",
+        "type": "Set",
         "field": "event",
         "types": ["dict"],
         "measure_length": true,
-        "detect_key_moves": false,
+        "pre_normalized_types": ["list", "dict"],
+        "normalizer": {
+            "function_name": "spawn_rules_normalize_herd"
+        },
         "subcomponent": "condition.herd:item"
     },
     "condition.herd:item": {
         "type": "Keymap",
         "keys": {
-            "event": {"type": "str"},
+            "event": {"type": "str", "weight": 20},
             "event_skip_count": {"type": "int"},
             "initial_event": {"type": "str"},
             "initial_event_count": {"type": "int"},
