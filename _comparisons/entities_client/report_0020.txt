@@ -1,33 +1,28 @@
 Difference of "entities_client" between "1.9.0" and "1.10.0.3" (beta of "1.10.0").
 
 Total entity: 109 (+5, -0)
-Added entity "agent.entity":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations":
-					animation "look_at_target": "animation.common.look_at_target"
-					animation "move": "animation.agent.move"
-					animation "move_controller": "controller.animation.agent.move"
-					animation "swing_arms": "animation.agent.swing_arms"
-				field "geometry": geometry "default": "geometry.agent"
-				field "identifier": "minecraft:agent"
-				field "materials": materials "default": "agent"
-				field "render_controllers": render controller: "controller.render.agent"
-				field "scripts":
-					field "animate":
+Moved entity "agent" to "agent.entity".
+Changed entity "agent.entity":
+	Changed resource pack "core":
+		Changed field "format_version" from "1.8.0" to "1.10.0".
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Removed field "animation_controllers" of animation controller group: animation controller "move": "controller.animation.agent.move".
+				Changed field "animations":
+					Total animation: 4 (+1, -0)
+					Added animation "move_controller" of "controller.animation.agent.move".
+				Changed field "scripts":
+					Changed field "pre_animation":
+						Total script: 3 (+3, -3)
+						Removed script "variable.Agent.ArmZRotation = (Math.cos(global.life_time * 114.6) + 1.0) * 1.15;".
+						Removed script "variable.Agent.ArmXRotationFactor = Math.sin(global.life_time * 80.0) * 4.6;".
+						Removed script "variable.Agent.LegXRotationFactor = Math.sin(global.life_time * 46.0) * 1.15;".
+						Added script "variable.Agent.ArmZRotation = (Math.cos(query.life_time * 114.6) + 1.0) * 1.15;".
+						Added script "variable.Agent.ArmXRotationFactor = Math.sin(query.life_time * 80.0) * 4.6;".
+						Added script "variable.Agent.LegXRotationFactor = Math.sin(query.life_time * 46.0) * 1.15;".
+					Added field "animate":
 						script: "move_controller"
 						script: "look_at_target"
-					field "pre_animation":
-						script: "variable.Agent.ArmZRotation = (Math.cos(query.life_time * 114.6) + 1.0) * 1.15;"
-						script: "variable.Agent.ArmXRotationFactor = Math.sin(query.life_time * 80.0) * 4.6;"
-						script: "variable.Agent.LegXRotationFactor = Math.sin(query.life_time * 46.0) * 1.15;"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 52
-				field "textures": texture "default": "textures/entity/agent"
-		field "defined_in": resource pack: "vanilla"
 Moved entity "armor_stand" to "armor_stand.entity".
 Moved entity "armor_stand_v1.0" to "armor_stand.v1.0.entity".
 Moved entity "bat" to "bat.entity".
@@ -60,33 +55,26 @@ Changed entity "cat.entity":
 Moved entity "cave_spider" to "cave_spider.entity".
 Moved entity "cave_spider_v1.0" to "cave_spider.v1.0.entity".
 Moved entity "chest_minecart" to "chest_minecart.entity".
-Added entity "chicken.entity":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations":
-					animation "baby_transform": "animation.chicken.baby_transform"
-					animation "general": "animation.chicken.general"
-					animation "look_at_target": "animation.common.look_at_target"
-					animation "move": "animation.chicken.move"
-				field "geometry": geometry "default": "geometry.chicken"
-				field "identifier": "minecraft:chicken"
-				field "materials":
-					materials "default": "chicken"
-					materials "legs": "chicken_legs"
-				field "render_controllers": render controller: "controller.render.chicken"
-				field "scripts":
+Moved entity "chicken" to "chicken.entity".
+Changed entity "chicken.entity":
+	Changed resource pack "core":
+		Changed field "format_version" from "1.8.0" to "1.10.0".
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Removed field "animation_controllers":
+					animation controller group: animation controller "general": "controller.animation.chicken.general"
+					animation controller group: animation controller "move": "controller.animation.chicken.move"
+					animation controller group: animation controller "baby": "controller.animation.chicken.baby"
+				Changed field "animations":
+					Total animation: 4 (+1, -0)
+					Added animation "look_at_target" of "animation.common.look_at_target".
+				Removed field "locators" of locator set "lead": locator "head": [0.0, 9.0, -4.0].
+				Added field "scripts":
 					field "animate":
 						script: "general"
 						script: script item "move": "query.modified_move_speed"
 						script: "look_at_target"
 						script: script item "baby_transform": "query.is_baby"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 0
-				field "textures": texture "default": "textures/entity/chicken"
-		field "defined_in": resource pack: "vanilla"
 Moved entity "cod" to "cod.entity".
 Changed entity "cod.entity":
 	Changed resource pack "core":
@@ -101,57 +89,40 @@ Changed entity "cod.entity":
 						Added script "variable.ZRot = !query.is_in_water ? Math.cos((query.time_stamp + query.frame_alpha) * 14.32) * 90 : 0.0;".
 						Added script "variable.AnimationAmountBlend = Math.lerp(variable.AnimationAmountPrev, variable.AnimationAmount, query.frame_alpha);".
 Moved entity "command_block_minecart" to "command_block_minecart.entity".
-Added entity "cow.entity":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations":
-					animation "baby_transform": "animation.cow.baby_transform"
-					animation "look_at_target": "animation.common.look_at_target"
-					animation "setup": "animation.cow.setup"
-					animation "walk": "animation.quadruped.walk"
-				field "geometry": geometry "default": "geometry.cow.v1.8"
-				field "identifier": "minecraft:cow"
-				field "materials": materials "default": "cow"
-				field "min_engine_version": "1.8.0"
-				field "render_controllers": render controller: "controller.render.cow"
-				field "scripts":
+Moved entity "cow" to "cow.entity".
+Changed entity "cow.entity":
+	Changed resource pack "core":
+		Changed field "format_version" from "1.8.0" to "1.10.0".
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Removed field "animation_controllers":
+					animation controller group: animation controller "setup": "controller.animation.cow.setup"
+					animation controller group: animation controller "move": "controller.animation.cow.move"
+					animation controller group: animation controller "baby": "controller.animation.cow.baby"
+				Removed field "locators" of locator set "lead": locator "head": [0.0, 20.0, -8.0].
+				Added field "scripts":
 					field "animate":
 						script: "setup"
 						script: script item "walk": "query.modified_move_speed"
 						script: "look_at_target"
 						script: script item "baby_transform": "query.is_baby"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 1
-				field "textures": texture "default": "textures/entity/cow/cow"
-		field "defined_in": resource pack: "vanilla"
-Added entity "cow.v1.0.entity":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations":
-					animation "baby_transform": "animation.cow.baby_transform"
-					animation "look_at_target": "animation.common.look_at_target"
-					animation "setup": "animation.cow.setup.v1.0"
-					animation "walk": "animation.quadruped.walk"
-				field "geometry": geometry "default": "geometry.cow"
-				field "identifier": "minecraft:cow"
-				field "materials": materials "default": "cow"
-				field "render_controllers": render controller: "controller.render.cow"
-				field "scripts":
+Moved entity "cow_v1.0" to "cow.v1.0.entity".
+Changed entity "cow.v1.0.entity":
+	Changed resource pack "core":
+		Changed field "format_version" from "1.8.0" to "1.10.0".
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Removed field "animation_controllers":
+					animation controller group: animation controller "setup": "controller.animation.cow.setup"
+					animation controller group: animation controller "move": "controller.animation.cow.move"
+					animation controller group: animation controller "baby": "controller.animation.cow.baby"
+				Removed field "locators" of locator set "lead": locator "head": [0.0, 20.0, -8.0].
+				Added field "scripts":
 					field "animate":
 						script: "setup"
 						script: script item "walk": "query.modified_move_speed"
 						script: "look_at_target"
 						script: script item "baby_transform": "query.is_baby"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 1
-				field "textures": texture "default": "textures/entity/cow/cow"
-		field "defined_in": resource pack: "vanilla"
 Moved entity "creeper" to "creeper.entity".
 Changed entity "creeper.entity":
 	Changed resource pack "core":
@@ -298,45 +269,28 @@ Changed entity "husk.v1.0.entity":
 						Added script "variable.internal_swim_pos = Math.mod(query.modified_distance_moved, 26.0);".
 						Added script "variable.z_bob = Math.cos(query.life_time * 103.13244) * 2.865 + 2.865;".
 						Added script "variable.x_bob = Math.sin(query.life_time * 76.776372) * 2.865;".
-Moved entity "cow_v1.0" to "illager_beast.entity".
-Changed entity "illager_beast.entity":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Changed field "animation_controllers":
-					Total animation controller group: 1 (+1, -3)
-					Removed animation controller group animation controller "setup": "controller.animation.cow.setup".
-					Removed animation controller group animation controller "move": "controller.animation.cow.move".
-					Removed animation controller group animation controller "baby": "controller.animation.cow.baby".
-					Added animation controller group:
+Added entity "illager_beast.entity":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animation_controllers":
+					animation controller group:
 						animation controller "head": "controller.animation.illager_beast.head_movement"
 						animation controller "move": "controller.animation.illager_beast.move"
-				Changed field "animations":
-					Total animation: 3 (+1, -2)
-					Removed animation "baby_transform" of "animation.cow.baby_transform".
-					Added animation "idle_mouth" of "animation.illager_beast.idle_mouth".
-					Removed animation "setup" of "animation.cow.setup.v1.0".
-					Changed animation "walk" from "animation.quadruped.walk" to "animation.illager_beast.walk".
-				Changed field "geometry":
-					Total geometry: 1 (+0, -0)
-					Changed geometry "default" from "geometry.cow" to "geometry.illager_beast".
-				Changed field "identifier" from "minecraft:cow" to "minecraft:illager_beast".
-				Removed field "locators" of locator set "lead": locator "head": [0.0, 20.0, -8.0].
-				Changed field "materials":
-					Total materials: 1 (+0, -0)
-					Changed materials "default" from "cow" to "illager_beast".
-				Changed field "render_controllers":
-					Total render controller: 1 (+1, -1)
-					Removed render controller "controller.render.cow".
-					Added render controller "controller.render.illager_beast".
-				Changed field "spawn_egg":
-					Removed field "texture" of "spawn_egg".
-					Removed field "texture_index" of 1.
-					Added field "base_color" of "#757470".
-					Added field "overlay_color" of "#5b5049".
-				Changed field "textures":
-					Total texture: 1 (+0, -0)
-					Changed texture "default" from "textures/entity/cow/cow" to "textures/entity/illager_beast".
+				field "animations":
+					animation "idle_mouth": "animation.illager_beast.idle_mouth"
+					animation "look_at_target": "animation.common.look_at_target"
+					animation "walk": "animation.illager_beast.walk"
+				field "geometry": geometry "default": "geometry.illager_beast"
+				field "identifier": "minecraft:illager_beast"
+				field "materials": materials "default": "illager_beast"
+				field "render_controllers": render controller: "controller.render.illager_beast"
+				field "spawn_egg":
+					field "base_color": "#757470"
+					field "overlay_color": "#5b5049"
+				field "textures": texture "default": "textures/entity/illager_beast"
+		field "defined_in": resource pack: "vanilla"
 Moved entity "iron_golem" to "iron_golem.entity".
 Changed entity "iron_golem.entity":
 	Changed resource pack "core":
@@ -464,33 +418,23 @@ Changed entity "pig.entity":
 						script: script item "walk": "query.modified_move_speed"
 						script: "look_at_target"
 						script: script item "baby_transform": "query.is_baby"
-Added entity "pig.v1.0.entity":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations":
-					animation "baby_transform": "animation.pig.baby_transform"
-					animation "look_at_target": "animation.common.look_at_target"
-					animation "setup": "animation.pig.setup.v1.0"
-					animation "walk": "animation.quadruped.walk"
-				field "geometry": geometry "default": "geometry.pig"
-				field "identifier": "minecraft:pig"
-				field "materials": materials "default": "pig"
-				field "render_controllers": render controller: "controller.render.pig"
-				field "scripts":
+Moved entity "pig_v1.0" to "pig.v1.0.entity".
+Changed entity "pig.v1.0.entity":
+	Changed resource pack "core":
+		Changed field "format_version" from "1.8.0" to "1.10.0".
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Removed field "animation_controllers":
+					animation controller group: animation controller "setup": "controller.animation.pig.setup"
+					animation controller group: animation controller "move": "controller.animation.pig.move"
+					animation controller group: animation controller "baby": "controller.animation.pig.baby"
+				Removed field "locators" of locator set "lead": locator "head": [0.0, 14.0, -6.0].
+				Added field "scripts":
 					field "animate":
 						script: "setup"
 						script: script item "walk": "query.modified_move_speed"
 						script: "look_at_target"
 						script: script item "baby_transform": "query.is_baby"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 2
-				field "textures":
-					texture "default": "textures/entity/pig/pig"
-					texture "saddled": "textures/entity/pig/pig_saddle"
-		field "defined_in": resource pack: "vanilla"
 Moved entity "pillager" to "pillager.entity".
 Changed entity "pillager.entity":
 	Changed resource pack "core":
@@ -606,34 +550,15 @@ Changed entity "sheep.v1.0.entity":
 						script: "look_at_target"
 						script: "move"
 						script: script item "baby_transform": "query.is_baby"
-Moved entity "chicken" to "shield.entity".
-Changed entity "shield.entity":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Removed field "animation_controllers":
-					animation controller group: animation controller "general": "controller.animation.chicken.general"
-					animation controller group: animation controller "move": "controller.animation.chicken.move"
-					animation controller group: animation controller "baby": "controller.animation.chicken.baby"
-				Removed field "animations":
-					animation "baby_transform": "animation.chicken.baby_transform"
-					animation "general": "animation.chicken.general"
-					animation "move": "animation.chicken.move"
-				Changed field "geometry":
-					Total geometry: 1 (+0, -0)
-					Changed geometry "default" from "geometry.chicken" to "geometry.shield".
-				Changed field "identifier" from "minecraft:chicken" to "minecraft:shield".
-				Removed field "locators" of locator set "lead": locator "head": [0.0, 9.0, -4.0].
-				Removed field "materials":
-					materials "default": "chicken"
-					materials "legs": "chicken_legs"
-				Removed field "render_controllers" of render controller: "controller.render.chicken".
-				Removed field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 0
-				Changed field "textures":
-					Total texture: 1 (+0, -0)
-					Changed texture "default" from "textures/entity/chicken" to "textures/entity/shield".
+Added entity "shield.entity":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "geometry": geometry "default": "geometry.shield"
+				field "identifier": "minecraft:shield"
+				field "textures": texture "default": "textures/entity/shield"
+		field "defined_in": resource pack: "vanilla"
 Moved entity "shulker" to "shulker.entity".
 Moved entity "shulker_v1.0" to "shulker.v1.0.entity".
 Moved entity "silverfish" to "silverfish.entity".
@@ -817,81 +742,69 @@ Changed entity "vex.v1.0.entity":
 						Added script "variable.internal_swim_pos = Math.mod(query.modified_distance_moved, 26.0);".
 Moved entity "villager" to "villager.entity".
 Moved entity "villager_v1.0" to "villager.v1.0.entity".
-Moved entity "agent" to "villager_v2.entity".
-Changed entity "villager_v2.entity":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Changed field "animation_controllers":
-					Total animation controller group: 4 (+4, -1)
-					Removed animation controller group animation controller "move": "controller.animation.agent.move".
-					Added animation controller group animation controller "general": "controller.animation.villager_v2.general".
-					Added animation controller group animation controller "move": "controller.animation.villager_v2.move".
-					Added animation controller group animation controller "raise_arms": "controller.animation.villager_v2.raise_arms".
-					Added animation controller group animation controller "baby": "controller.animation.villager_v2.baby".
-				Changed field "animations":
-					Total animation: 6 (+4, -1)
-					Added animation "baby_transform" of "animation.villager.baby_transform".
-					Added animation "general" of "animation.villager.general".
-					Added animation "get_in_bed" of "animation.villager.get_in_bed".
-					Changed animation "move" from "animation.agent.move" to "animation.villager.move".
-					Added animation "raise_arms" of "animation.villager.raise_arms".
-					Removed animation "swing_arms" of "animation.agent.swing_arms".
-				Changed field "geometry":
-					Total geometry: 1 (+0, -0)
-					Changed geometry "default" from "geometry.agent" to "geometry.villager_v2".
-				Changed field "identifier" from "minecraft:agent" to "minecraft:villager_v2".
-				Changed field "materials":
-					Total materials: 2 (+1, -0)
-					Changed materials "default" from "agent" to "villager_v2".
-					Added materials "masked" of "villager_v2_masked".
-				Changed field "render_controllers":
-					Total render controller: 3 (+3, -1)
-					Removed render controller "controller.render.agent".
-					Added render controller "controller.render.villager_v2_base".
-					Added render controller "controller.render.villager_v2_masked".
-					Added render controller "controller.render.villager_v2_level".
-				Changed field "scripts":
-					Changed field "pre_animation":
-						Total script: 4 (+4, -3)
-						Removed script "variable.Agent.ArmZRotation = (Math.cos(global.life_time * 114.6) + 1.0) * 1.15;".
-						Removed script "variable.Agent.ArmXRotationFactor = Math.sin(global.life_time * 80.0) * 4.6;".
-						Removed script "variable.Agent.LegXRotationFactor = Math.sin(global.life_time * 46.0) * 1.15;".
-						Added script "variable.num_professions = 15;".
-						Added script "variable.num_tiers = 3;".
-						Added script "variable.profession_index = (query.variant < variable.num_professions ? query.variant : 0);".
-						Added script "variable.level_index = query.trade_tier == 0 ? 0 : (query.trade_tier == query.max_trade_tier ? 2 : 1);".
-					Added field "scale" of "0.9375".
-				Changed field "spawn_egg":
-					Changed field "texture_index" from 52 to 14.
-				Changed field "textures":
-					Total texture: 25 (+25, -1)
-					Added texture "armorer" of "textures/entity/villager2/professions/armorer".
-					Added texture "butcher" of "textures/entity/villager2/professions/butcher".
-					Added texture "cartographer" of "textures/entity/villager2/professions/cartographer".
-					Added texture "cleric" of "textures/entity/villager2/professions/cleric".
-					Removed texture "default" of "textures/entity/agent".
-					Added texture "desert" of "textures/entity/villager2/biomes/biome_desert".
-					Added texture "farmer" of "textures/entity/villager2/professions/farmer".
-					Added texture "fisherman" of "textures/entity/villager2/professions/fisherman".
-					Added texture "fletcher" of "textures/entity/villager2/professions/fletcher".
-					Added texture "jungle" of "textures/entity/villager2/biomes/biome_jungle".
-					Added texture "leatherworker" of "textures/entity/villager2/professions/leatherworker".
-					Added texture "level_diamond" of "textures/entity/villager2/levels/level_diamond".
-					Added texture "level_gold" of "textures/entity/villager2/levels/level_gold".
-					Added texture "level_iron" of "textures/entity/villager2/levels/level_iron".
-					Added texture "librarian" of "textures/entity/villager2/professions/librarian".
-					Added texture "nitwit" of "textures/entity/villager2/professions/nitwit".
-					Added texture "plains" of "textures/entity/villager2/biomes/biome_plains".
-					Added texture "savanna" of "textures/entity/villager2/biomes/biome_savanna".
-					Added texture "shepherd" of "textures/entity/villager2/professions/shepherd".
-					Added texture "snow" of "textures/entity/villager2/biomes/biome_snow".
-					Added texture "stonemason" of "textures/entity/villager2/professions/stonemason".
-					Added texture "swamp" of "textures/entity/villager2/biomes/biome_swamp".
-					Added texture "taiga" of "textures/entity/villager2/biomes/biome_taiga".
-					Added texture "tool_smith" of "textures/entity/villager2/professions/toolsmith".
-					Added texture "unskilled" of "textures/entity/villager2/villager".
-					Added texture "weapon_smith" of "textures/entity/villager2/professions/weaponsmith".
+Added entity "villager_v2.entity":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animation_controllers":
+					animation controller group: animation controller "general": "controller.animation.villager_v2.general"
+					animation controller group: animation controller "move": "controller.animation.villager_v2.move"
+					animation controller group: animation controller "raise_arms": "controller.animation.villager_v2.raise_arms"
+					animation controller group: animation controller "baby": "controller.animation.villager_v2.baby"
+				field "animations":
+					animation "baby_transform": "animation.villager.baby_transform"
+					animation "general": "animation.villager.general"
+					animation "get_in_bed": "animation.villager.get_in_bed"
+					animation "look_at_target": "animation.common.look_at_target"
+					animation "move": "animation.villager.move"
+					animation "raise_arms": "animation.villager.raise_arms"
+				field "geometry": geometry "default": "geometry.villager_v2"
+				field "identifier": "minecraft:villager_v2"
+				field "materials":
+					materials "default": "villager_v2"
+					materials "masked": "villager_v2_masked"
+				field "render_controllers":
+					render controller: "controller.render.villager_v2_base"
+					render controller: "controller.render.villager_v2_masked"
+					render controller: "controller.render.villager_v2_level"
+				field "scripts":
+					field "pre_animation":
+						script: "variable.num_professions = 15;"
+						script: "variable.num_tiers = 3;"
+						script: "variable.profession_index = (query.variant < variable.num_professions ? query.variant : 0);"
+						script: "variable.level_index = query.trade_tier == 0 ? 0 : (query.trade_tier == query.max_trade_tier ? 2 : 1);"
+					field "scale": "0.9375"
+				field "spawn_egg":
+					field "texture": "spawn_egg"
+					field "texture_index": 14
+				field "textures":
+					texture "armorer": "textures/entity/villager2/professions/armorer"
+					texture "butcher": "textures/entity/villager2/professions/butcher"
+					texture "cartographer": "textures/entity/villager2/professions/cartographer"
+					texture "cleric": "textures/entity/villager2/professions/cleric"
+					texture "desert": "textures/entity/villager2/biomes/biome_desert"
+					texture "farmer": "textures/entity/villager2/professions/farmer"
+					texture "fisherman": "textures/entity/villager2/professions/fisherman"
+					texture "fletcher": "textures/entity/villager2/professions/fletcher"
+					texture "jungle": "textures/entity/villager2/biomes/biome_jungle"
+					texture "leatherworker": "textures/entity/villager2/professions/leatherworker"
+					texture "level_diamond": "textures/entity/villager2/levels/level_diamond"
+					texture "level_gold": "textures/entity/villager2/levels/level_gold"
+					texture "level_iron": "textures/entity/villager2/levels/level_iron"
+					texture "librarian": "textures/entity/villager2/professions/librarian"
+					texture "nitwit": "textures/entity/villager2/professions/nitwit"
+					texture "plains": "textures/entity/villager2/biomes/biome_plains"
+					texture "savanna": "textures/entity/villager2/biomes/biome_savanna"
+					texture "shepherd": "textures/entity/villager2/professions/shepherd"
+					texture "snow": "textures/entity/villager2/biomes/biome_snow"
+					texture "stonemason": "textures/entity/villager2/professions/stonemason"
+					texture "swamp": "textures/entity/villager2/biomes/biome_swamp"
+					texture "taiga": "textures/entity/villager2/biomes/biome_taiga"
+					texture "tool_smith": "textures/entity/villager2/professions/toolsmith"
+					texture "unskilled": "textures/entity/villager2/villager"
+					texture "weapon_smith": "textures/entity/villager2/professions/weaponsmith"
+		field "defined_in": resource pack: "vanilla"
 Moved entity "vindicator" to "vindicator.entity".
 Moved entity "vindicator_v1.0" to "vindicator.v1.0.entity".
 Changed entity "vindicator.v1.0.entity":
@@ -922,45 +835,26 @@ Changed entity "vindicator.v1.0.entity":
 					Removed texture "leather" of "textures/models/armor/leather_1".
 					Removed texture "leather_leggings" of "textures/models/armor/leather_2".
 					Removed texture "turtle" of "textures/models/armor/turtle_1".
-Moved entity "cow" to "wandering_trader.entity".
-Changed entity "wandering_trader.entity":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Changed field "animation_controllers":
-					Total animation controller group: 2 (+2, -3)
-					Removed animation controller group animation controller "setup": "controller.animation.cow.setup".
-					Removed animation controller group animation controller "move": "controller.animation.cow.move".
-					Removed animation controller group animation controller "baby": "controller.animation.cow.baby".
-					Added animation controller group animation controller "general": "controller.animation.villager.general".
-					Added animation controller group animation controller "move": "controller.animation.villager.move".
-				Changed field "animations":
-					Total animation: 3 (+2, -3)
-					Removed animation "baby_transform" of "animation.cow.baby_transform".
-					Added animation "general" of "animation.villager.general".
-					Added animation "move" of "animation.villager.move".
-					Removed animation "setup" of "animation.cow.setup".
-					Removed animation "walk" of "animation.quadruped.walk".
-				Changed field "geometry":
-					Total geometry: 1 (+0, -0)
-					Changed geometry "default" from "geometry.cow.v1.8" to "geometry.villager_v2".
-				Changed field "identifier" from "minecraft:cow" to "minecraft:wandering_trader".
-				Removed field "locators" of locator set "lead": locator "head": [0.0, 20.0, -8.0].
-				Changed field "materials":
-					Total materials: 1 (+0, -0)
-					Changed materials "default" from "cow" to "wandering_trader".
-				Removed field "min_engine_version" of "1.8.0".
-				Changed field "render_controllers":
-					Total render controller: 1 (+1, -1)
-					Removed render controller "controller.render.cow".
-					Added render controller "controller.render.wandering_trader".
-				Added field "scripts" of field "scale": "0.9375".
-				Changed field "spawn_egg":
-					Changed field "texture" from "spawn_egg" to "spawn_egg_wandering_trader".
-					Removed field "texture_index" of 1.
-				Changed field "textures":
-					Total texture: 1 (+0, -0)
-					Changed texture "default" from "textures/entity/cow/cow" to "textures/entity/wandering_trader".
+Added entity "wandering_trader.entity":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animation_controllers":
+					animation controller group: animation controller "general": "controller.animation.villager.general"
+					animation controller group: animation controller "move": "controller.animation.villager.move"
+				field "animations":
+					animation "general": "animation.villager.general"
+					animation "look_at_target": "animation.common.look_at_target"
+					animation "move": "animation.villager.move"
+				field "geometry": geometry "default": "geometry.villager_v2"
+				field "identifier": "minecraft:wandering_trader"
+				field "materials": materials "default": "wandering_trader"
+				field "render_controllers": render controller: "controller.render.wandering_trader"
+				field "scripts": field "scale": "0.9375"
+				field "spawn_egg": field "texture": "spawn_egg_wandering_trader"
+				field "textures": texture "default": "textures/entity/wandering_trader"
+		field "defined_in": resource pack: "vanilla"
 Moved entity "witch" to "witch.entity".
 Moved entity "witch_v1.0" to "witch.v1.0.entity".
 Moved entity "wither" to "wither.entity".
@@ -1137,73 +1031,58 @@ Changed entity "zombie_villager.v1.0.entity":
 						Added script "variable.internal_swim_pos = Math.mod(query.modified_distance_moved, 26.0);".
 						Added script "variable.z_bob = Math.cos(query.life_time * 103.13244) * 2.865 + 2.865;".
 						Added script "variable.x_bob = Math.sin(query.life_time * 76.776372) * 2.865;".
-Moved entity "pig_v1.0" to "zombie_villager_v2.entity".
-Changed entity "zombie_villager_v2.entity":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Changed field "animation_controllers":
-					Total animation controller group: 16 (+16, -3)
-					Removed animation controller group animation controller "setup": "controller.animation.pig.setup".
-					Removed animation controller group animation controller "move": "controller.animation.pig.move".
-					Removed animation controller group animation controller "baby": "controller.animation.pig.baby".
-					Added animation controller group animation controller "humanoid_baby_big_head": "controller.animation.humanoid.baby_big_head".
-					Added animation controller group animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose".
-					Added animation controller group animation controller "look_at_target": "controller.animation.humanoid.look_at_target".
-					Added animation controller group animation controller "move": "controller.animation.humanoid.move".
-					Added animation controller group animation controller "riding": "controller.animation.humanoid.riding".
-					Added animation controller group animation controller "holding": "controller.animation.humanoid.holding".
-					Added animation controller group animation controller "brandish_spear": "controller.animation.humanoid.brandish_spear".
-					Added animation controller group animation controller "charging": "controller.animation.humanoid.charging".
-					Added animation controller group animation controller "attack": "controller.animation.humanoid.attack".
-					Added animation controller group animation controller "sneaking": "controller.animation.humanoid.sneaking".
-					Added animation controller group animation controller "bob": "controller.animation.humanoid.bob".
-					Added animation controller group animation controller "damage_nearby_mobs": "controller.animation.humanoid.damage_nearby_mobs".
-					Added animation controller group animation controller "bow_and_arrow": "controller.animation.humanoid.bow_and_arrow".
-					Added animation controller group animation controller "swimming": "controller.animation.humanoid.swimming".
-					Added animation controller group animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress".
-					Added animation controller group animation controller "zombie_attack_bare_hand": "controller.animation.zombie.attack_bare_hand".
-				Changed field "animations":
-					Total animation: 19 (+19, -4)
-					Added animation "attack.rotations" of "animation.humanoid.attack.rotations".
-					Removed animation "baby_transform" of "animation.pig.baby_transform".
-					Added animation "bob" of "animation.humanoid.bob".
-					Added animation "bow_and_arrow" of "animation.humanoid.bow_and_arrow".
-					Added animation "brandish_spear" of "animation.humanoid.brandish_spear".
-					Added animation "charging" of "animation.humanoid.charging".
-					Added animation "damage_nearby_mobs" of "animation.humanoid.damage_nearby_mobs".
-					Added animation "holding" of "animation.humanoid.holding".
-					Added animation "humanoid_base_pose" of "animation.humanoid.base_pose".
-					Added animation "humanoid_big_head" of "animation.humanoid.big_head".
-					Removed animation "look_at_target" of "animation.common.look_at_target".
-					Added animation "look_at_target_default" of "animation.humanoid.look_at_target.default".
-					Added animation "look_at_target_gliding" of "animation.humanoid.look_at_target.gliding".
-					Added animation "look_at_target_swimming" of "animation.humanoid.look_at_target.swimming".
-					Added animation "move" of "animation.humanoid.move".
-					Added animation "riding.arms" of "animation.humanoid.riding.arms".
-					Added animation "riding.legs" of "animation.humanoid.riding.legs".
-					Removed animation "setup" of "animation.pig.setup.v1.0".
-					Added animation "sneaking" of "animation.humanoid.sneaking".
-					Added animation "swimming" of "animation.humanoid.swimming".
-					Added animation "use_item_progress" of "animation.humanoid.use_item_progress".
-					Removed animation "walk" of "animation.quadruped.walk".
-					Added animation "zombie_attack_bare_hand" of "animation.zombie.attack_bare_hand".
-				Added field "enable_attachables" of true.
-				Changed field "geometry":
-					Total geometry: 1 (+0, -0)
-					Changed geometry "default" from "geometry.pig" to "geometry.zombie.villager_v2".
-				Changed field "identifier" from "minecraft:pig" to "minecraft:zombie_villager_v2".
-				Removed field "locators" of locator set "lead": locator "head": [0.0, 14.0, -6.0].
-				Changed field "materials":
-					Total materials: 2 (+1, -0)
-					Changed materials "default" from "pig" to "zombie_villager_v2".
-					Added materials "masked" of "zombie_villager_v2_masked".
-				Changed field "render_controllers":
-					Total render controller: 2 (+2, -1)
-					Removed render controller "controller.render.pig".
-					Added render controller "controller.render.zombie_villager_v2_base".
-					Added render controller "controller.render.zombie_villager_v2_masked".
-				Added field "scripts":
+Added entity "zombie_villager_v2.entity":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animation_controllers":
+					animation controller group: animation controller "humanoid_baby_big_head": "controller.animation.humanoid.baby_big_head"
+					animation controller group: animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose"
+					animation controller group: animation controller "look_at_target": "controller.animation.humanoid.look_at_target"
+					animation controller group: animation controller "move": "controller.animation.humanoid.move"
+					animation controller group: animation controller "riding": "controller.animation.humanoid.riding"
+					animation controller group: animation controller "holding": "controller.animation.humanoid.holding"
+					animation controller group: animation controller "brandish_spear": "controller.animation.humanoid.brandish_spear"
+					animation controller group: animation controller "charging": "controller.animation.humanoid.charging"
+					animation controller group: animation controller "attack": "controller.animation.humanoid.attack"
+					animation controller group: animation controller "sneaking": "controller.animation.humanoid.sneaking"
+					animation controller group: animation controller "bob": "controller.animation.humanoid.bob"
+					animation controller group: animation controller "damage_nearby_mobs": "controller.animation.humanoid.damage_nearby_mobs"
+					animation controller group: animation controller "bow_and_arrow": "controller.animation.humanoid.bow_and_arrow"
+					animation controller group: animation controller "swimming": "controller.animation.humanoid.swimming"
+					animation controller group: animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress"
+					animation controller group: animation controller "zombie_attack_bare_hand": "controller.animation.zombie.attack_bare_hand"
+				field "animations":
+					animation "attack.rotations": "animation.humanoid.attack.rotations"
+					animation "bob": "animation.humanoid.bob"
+					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow"
+					animation "brandish_spear": "animation.humanoid.brandish_spear"
+					animation "charging": "animation.humanoid.charging"
+					animation "damage_nearby_mobs": "animation.humanoid.damage_nearby_mobs"
+					animation "holding": "animation.humanoid.holding"
+					animation "humanoid_base_pose": "animation.humanoid.base_pose"
+					animation "humanoid_big_head": "animation.humanoid.big_head"
+					animation "look_at_target_default": "animation.humanoid.look_at_target.default"
+					animation "look_at_target_gliding": "animation.humanoid.look_at_target.gliding"
+					animation "look_at_target_swimming": "animation.humanoid.look_at_target.swimming"
+					animation "move": "animation.humanoid.move"
+					animation "riding.arms": "animation.humanoid.riding.arms"
+					animation "riding.legs": "animation.humanoid.riding.legs"
+					animation "sneaking": "animation.humanoid.sneaking"
+					animation "swimming": "animation.humanoid.swimming"
+					animation "use_item_progress": "animation.humanoid.use_item_progress"
+					animation "zombie_attack_bare_hand": "animation.zombie.attack_bare_hand"
+				field "enable_attachables": true
+				field "geometry": geometry "default": "geometry.zombie.villager_v2"
+				field "identifier": "minecraft:zombie_villager_v2"
+				field "materials":
+					materials "default": "zombie_villager_v2"
+					materials "masked": "zombie_villager_v2_masked"
+				field "render_controllers":
+					render controller: "controller.render.zombie_villager_v2_base"
+					render controller: "controller.render.zombie_villager_v2_masked"
+				field "scripts":
 					field "pre_animation":
 						script: "variable.num_professions = 14;"
 						script: "variable.profession_index = ((query.variant < variable.num_professions) ? query.variant : 0);"
@@ -1217,30 +1096,30 @@ Changed entity "zombie_villager_v2.entity":
 						script: "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
 						script: "variable.z_bob = Math.cos(query.life_time * 103.13244) * 2.865 + 2.865;"
 						script: "variable.x_bob = Math.sin(query.life_time * 76.776372) * 2.865;"
-				Changed field "spawn_egg":
-					Changed field "texture_index" from 2 to 42.
-				Changed field "textures":
-					Total texture: 22 (+21, -1)
-					Added texture "armorer" of "textures/entity/zombie_villager2/professions/armorer".
-					Added texture "butcher" of "textures/entity/zombie_villager2/professions/butcher".
-					Added texture "cartographer" of "textures/entity/zombie_villager2/professions/cartographer".
-					Added texture "cleric" of "textures/entity/zombie_villager2/professions/cleric".
-					Changed texture "default" from "textures/entity/pig/pig" to "textures/entity/zombie_villager2/zombie-villager".
-					Added texture "desert" of "textures/entity/zombie_villager2/biomes/biome-desert-zombie".
-					Added texture "farmer" of "textures/entity/zombie_villager2/professions/farmer".
-					Added texture "fisherman" of "textures/entity/zombie_villager2/professions/fisherman".
-					Added texture "fletcher" of "textures/entity/zombie_villager2/professions/fletcher".
-					Added texture "jungle" of "textures/entity/zombie_villager2/biomes/biome-jungle-zombie".
-					Added texture "leatherworker" of "textures/entity/zombie_villager2/professions/leatherworker".
-					Added texture "librarian" of "textures/entity/zombie_villager2/professions/librarian".
-					Added texture "nitwit" of "textures/entity/zombie_villager2/professions/nitwit".
-					Added texture "plains" of "textures/entity/zombie_villager2/biomes/biome-plains-zombie".
-					Removed texture "saddled" of "textures/entity/pig/pig_saddle".
-					Added texture "savanna" of "textures/entity/zombie_villager2/biomes/biome-savanna-zombie".
-					Added texture "shepherd" of "textures/entity/zombie_villager2/professions/shepherd".
-					Added texture "snow" of "textures/entity/zombie_villager2/biomes/biome-snow-zombie".
-					Added texture "stonemason" of "textures/entity/zombie_villager2/professions/stonemason".
-					Added texture "swamp" of "textures/entity/zombie_villager2/biomes/biome-swamp-zombie".
-					Added texture "taiga" of "textures/entity/zombie_villager2/biomes/biome-taiga-zombie".
-					Added texture "tool_smith" of "textures/entity/zombie_villager2/professions/toolsmith".
-					Added texture "weapon_smith" of "textures/entity/zombie_villager2/professions/weaponsmith".
+				field "spawn_egg":
+					field "texture": "spawn_egg"
+					field "texture_index": 42
+				field "textures":
+					texture "armorer": "textures/entity/zombie_villager2/professions/armorer"
+					texture "butcher": "textures/entity/zombie_villager2/professions/butcher"
+					texture "cartographer": "textures/entity/zombie_villager2/professions/cartographer"
+					texture "cleric": "textures/entity/zombie_villager2/professions/cleric"
+					texture "default": "textures/entity/zombie_villager2/zombie-villager"
+					texture "desert": "textures/entity/zombie_villager2/biomes/biome-desert-zombie"
+					texture "farmer": "textures/entity/zombie_villager2/professions/farmer"
+					texture "fisherman": "textures/entity/zombie_villager2/professions/fisherman"
+					texture "fletcher": "textures/entity/zombie_villager2/professions/fletcher"
+					texture "jungle": "textures/entity/zombie_villager2/biomes/biome-jungle-zombie"
+					texture "leatherworker": "textures/entity/zombie_villager2/professions/leatherworker"
+					texture "librarian": "textures/entity/zombie_villager2/professions/librarian"
+					texture "nitwit": "textures/entity/zombie_villager2/professions/nitwit"
+					texture "plains": "textures/entity/zombie_villager2/biomes/biome-plains-zombie"
+					texture "savanna": "textures/entity/zombie_villager2/biomes/biome-savanna-zombie"
+					texture "shepherd": "textures/entity/zombie_villager2/professions/shepherd"
+					texture "snow": "textures/entity/zombie_villager2/biomes/biome-snow-zombie"
+					texture "stonemason": "textures/entity/zombie_villager2/professions/stonemason"
+					texture "swamp": "textures/entity/zombie_villager2/biomes/biome-swamp-zombie"
+					texture "taiga": "textures/entity/zombie_villager2/biomes/biome-taiga-zombie"
+					texture "tool_smith": "textures/entity/zombie_villager2/professions/toolsmith"
+					texture "weapon_smith": "textures/entity/zombie_villager2/professions/weaponsmith"
+		field "defined_in": resource pack: "vanilla"
