@@ -2,6 +2,7 @@ from typing import Any, Iterable, TypeVar
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
+import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
@@ -15,8 +16,11 @@ class GroupStructure(Structure.Structure[a]):
 
     def __init__(self, name: str, children_has_normalizer: bool, children_tags: set[str]) -> None:
         super().__init__(name, name, children_has_normalizer, children_tags)
+
         self.substructures:dict[type,Structure.Structure|None]|None = None
         self.types:tuple[type,...]|None = None
+        self.normalizer:list[Normalizer.Normalizer]|None = None
+        self.pre_normalized_types:tuple[type,...]|None = None
 
     def get_substructures(self) -> dict[type,Structure.Structure|None]:
         if self.substructures is None:
@@ -32,9 +36,13 @@ class GroupStructure(Structure.Structure[a]):
         self,
         substructures:dict[type,Structure.Structure|None],
         types:tuple[type,...],
+        normalizer:list[Normalizer.Normalizer],
+        pre_normalized_types:tuple[type,...],
     ) -> None:
         self.substructures = substructures
         self.types = types
+        self.normalizer = normalizer
+        self.pre_normalized_types = pre_normalized_types
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         yield from (substructure for substructure in self.get_substructures().values() if substructure is not None)
@@ -53,14 +61,35 @@ class GroupStructure(Structure.Structure[a]):
             return output, []
 
     def normalize(self, data: a, environment: StructureEnvironment.StructureEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
+        if not self.children_has_normalizer: return None, []
+        if self.normalizer is None:
+            raise Exceptions.AttributeNoneError("normalizer", self)
+        if self.pre_normalized_types is None:
+            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         exceptions:list[Trace.ErrorTrace] = []
+        if not isinstance(data, self.pre_normalized_types):
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+        data_identity_changed = False
+        for normalizer in self.normalizer:
+            try:
+                normalizer_output = normalizer(data)
+                if normalizer_output is not None:
+                    data_identity_changed = True
+                    data = normalizer_output
+            except Exception as e:
+                return None, [Trace.ErrorTrace(e, self.name, None, data)]
         structure, new_exceptions = self.get_structure(data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         if structure is None:
-            return None, exceptions
+            if data_identity_changed:
+                return data, exceptions
+            else:
+                return None, exceptions
         else:
             output, new_exceptions = structure.normalize(data, environment)
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+            if output is None and data_identity_changed:
+                output = data
             return output, exceptions
 
     def get_tag_paths(self, data:a, tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:

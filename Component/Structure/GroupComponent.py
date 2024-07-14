@@ -2,10 +2,12 @@ import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.FieldListField as FieldListField
-import Component.Structure.StructureComponent as StructureComponent
 import Component.Structure.Field.GroupItemField as GroupItemField
-import Structure.Structure as Structure
+import Component.Structure.Field.NormalizerListField as NormalizerListField
+import Component.Structure.Field.TypeListField as TypeListField
+import Component.Structure.StructureComponent as StructureComponent
 import Structure.GroupStructure as GroupStructure
+import Structure.Structure as Structure
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
@@ -16,6 +18,8 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
     my_capabilities = Capabilities.Capabilities(is_group=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, dict, type(None)), "a dict", "a str", "a str, StructureComponent, or None")),
     )
 
@@ -26,7 +30,9 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         self.subcomponents_field = FieldListField.FieldListField([
             GroupItemField.GroupItemField(type_str, subcomponent_str, ["subcomponents", index])
             for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())], ["subcomponents"])
-        self.fields.extend([self.subcomponents_field])
+        self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
+        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
+        self.fields.extend([self.subcomponents_field, self.normalizer_field, self.pre_normalized_types_field])
 
     def get_subcomponents(self) -> list[Component.Component]:
         return [group_item_component for group_item in self.subcomponents_field if (group_item_component := group_item.get_component()) is not None]
@@ -51,4 +57,6 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         self.get_final().link_substructures(
             substructures=substructures,
             types=tuple(self.my_type),
+            normalizer=self.normalizer_field.get_finals(),
+            pre_normalized_types=tuple(self.pre_normalized_types_field.get_types()) if len(self.pre_normalized_types_field.get_types()) != 0 else tuple(all_types),
         )
