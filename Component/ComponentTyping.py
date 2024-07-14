@@ -61,11 +61,10 @@ class DictTypedDict(TypedDict):
     detect_key_moves: NotRequired[bool]
     field: NotRequired[str]
     key_component: NotRequired[str]
+    key_weight: NotRequired[float]
     measure_length: NotRequired[bool]
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
-    key_weight: NotRequired[float]
-    value_weight: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
     print_all: NotRequired[bool]
@@ -75,6 +74,7 @@ class DictTypedDict(TypedDict):
     this_type: NotRequired[str|list[str]]
     type: NotRequired[Literal["Dict"]]
     types: Required[str|list[str]]
+    value_weight: NotRequired[float]
 
 class GroupTypedDict(TypedDict):
     normalizer: NotRequired[str|list[str]]
@@ -94,21 +94,21 @@ class KeymapTypedDict(TypedDict):
     field: NotRequired[str]
     imports: NotRequired[str|list[str]]
     key_component: NotRequired[str]
+    key_weight: NotRequired[float]
     keys: Required[dict[str,KeymapKeyTypedDict]]
     measure_length: NotRequired[bool]
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
-    key_weight: NotRequired[float]
-    value_weight: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
     print_all: NotRequired[bool]
     sort: NotRequired[Literal["none", "by_key", "by_value", "by_component_order"]]
     tags: NotRequired[str|list[str]]
     this_type: NotRequired[str|list[str]]
     type: NotRequired[Literal["Keymap"]]
+    value_weight: NotRequired[float]
 
 class LatestSlotTypedDict(TypedDict):
-    ...
+    type: NotRequired[Literal["LatestSlot"]]
 
 class ListTypedDict(TypedDict):
     field: NotRequired[str]
