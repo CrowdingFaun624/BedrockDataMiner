@@ -23,9 +23,9 @@ class AccessorComponent(Component.Component[WaitValue[Accessor.Accessor]]):
     class_name_article = "an Accessor"
     my_capabilities = Capabilities.Capabilities(is_accessor=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("accessor_type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", True, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
     def __init__(self, data: ComponentTyping.AccessorTypedDict, name: str, component_group: str, index: int | None) -> None:

@@ -17,10 +17,10 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
     class_name = "Group"
     my_capabilities = Capabilities.Capabilities(is_group=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponents", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, (str, dict, type(None)), "a dict", "a str", "a str, StructureComponent, or None")),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
     def __init__(self, data:ComponentTyping.GroupTypedDict, name:str, component_group:str, index:int|None) -> None:

@@ -27,13 +27,13 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
     class_name = "DataMinerSettings"
     my_capabilities = Capabilities.Capabilities(is_dataminer_settings=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("parameters", "a dict", False, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
     def __init__(self, data:ComponentTyping.DataMinerSettingsTypedDict, name: str, component_group: str, index:int|None) -> None:

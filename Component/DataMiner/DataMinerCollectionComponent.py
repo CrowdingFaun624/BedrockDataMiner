@@ -29,11 +29,11 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
     class_name = "DataMinerCollection"
     my_capabilities = Capabilities.Capabilities(is_dataminer_collection=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("structure", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list"))
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
     def __init__(self, data: ComponentTyping.DataMinerCollectionTypedDict, name: str, component_group: str, index:int|None) -> None:

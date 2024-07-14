@@ -13,16 +13,16 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
     class_name = "Cache"
     my_capabilities = Capabilities.Capabilities(is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("cache_check_all_types", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("cache_compare", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("cache_compare_text", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("cache_get_similarity", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("cache_get_tag_paths", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("cache_normalize", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("cache_print_text", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a list or str", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("cache_check_all_types", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("cache_normalize", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("cache_get_tag_paths", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("cache_compare_text", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("cache_print_text", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("cache_get_similarity", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("cache_compare", "a bool", False, bool),
     )
 
     def __init__(self, data:ComponentTyping.CacheTypedDict, name: str, component_group:str, index:int|None) -> None:

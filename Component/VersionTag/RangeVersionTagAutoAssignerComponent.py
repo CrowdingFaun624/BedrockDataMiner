@@ -13,9 +13,9 @@ class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent.Versi
     class_name = "RangeVersionTagAutoAssigner"
     class_name_article = "a RangeVersionTagAutoAssigner"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("newest", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("oldest", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
     def __init__(self, data: ComponentTyping.RangeVersionTagAutoAssignerTypedDict, name: str, component_group: str, index: int | None) -> None:

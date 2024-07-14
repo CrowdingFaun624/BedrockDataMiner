@@ -25,9 +25,9 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
     class_name_article = "a VersionFile"
     my_capabilities = Capabilities.Capabilities(is_version_file=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("accessors", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("version_file_type", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("accessors", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),
     )
 
     def __init__(self, data: ComponentTyping.VersionFileTypedDict, name: str, component_group: str, index: int | None) -> None:

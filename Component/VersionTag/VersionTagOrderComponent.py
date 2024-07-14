@@ -24,12 +24,12 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
     class_name_article = "a VersionTagOrder"
     my_capabilities = Capabilities.Capabilities(is_version_tag_order=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("order", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"), list, "a list", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("allowed_children", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"), "a dict", "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("top_level_tag", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("tags_before_top_level_tag", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("order", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"), list, "a list", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("tags_after_top_level_tag", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("tags_before_top_level_tag", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("top_level_tag", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
     def __init__(self, data: ComponentTyping.VersionTagOrderTypedDict, name: str, component_group: str, index: int | None) -> None:

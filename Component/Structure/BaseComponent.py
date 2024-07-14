@@ -13,16 +13,16 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
     class_name = "Base"
     my_capabilities = Capabilities.Capabilities(is_base=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or StructureComponent", True, (str, dict)),
         TypeVerifier.TypedDictKeyTypeVerifier("imports", "a list", False, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("from", "a str", True, str),
             TypeVerifier.TypedDictKeyTypeVerifier("components", "a dict", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-                TypeVerifier.TypedDictKeyTypeVerifier("component", "a str", True, str),
                 TypeVerifier.TypedDictKeyTypeVerifier("as", "a str", False, str),
+                TypeVerifier.TypedDictKeyTypeVerifier("component", "a str", True, str),
             ), list, "a dict", "a list")),
+            TypeVerifier.TypedDictKeyTypeVerifier("from", "a str", True, str),
         ), list, "a dict", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or StructureComponent", True, (str, dict)),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 

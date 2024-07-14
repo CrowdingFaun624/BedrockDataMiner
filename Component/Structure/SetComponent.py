@@ -15,7 +15,6 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
     class_name = "Set"
     my_capabilities = Capabilities.Capabilities(is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent, or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("min_similarity_threshold", "a float", False, float),
@@ -24,6 +23,7 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("sort", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent, or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("this_type", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
