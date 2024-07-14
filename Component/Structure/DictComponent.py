@@ -2,7 +2,6 @@ import enum
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
-import Component.Field.OptionalFunctionField as OptionalFunctionField
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TagListField as TagListField
