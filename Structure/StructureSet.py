@@ -49,7 +49,7 @@ class StructureSet(Generic[d]):
         :environment: The StructureEnvironment to use.
         '''
         if isinstance(key, D.DiffType) and key not in self:
-            return [], [Trace.ErrorTrace(Exceptions.StructureSetKeyError(key, self), None, None, data)]
+            return [], [] # to get to here there must be another exception anyways
         structure = self[key]
         if structure is None:
             return [SU.Line(SU.stringify(data))], []
