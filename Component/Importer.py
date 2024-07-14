@@ -1,8 +1,8 @@
-import json
 import traceback
 from collections import deque
 from typing import TYPE_CHECKING, Any, Callable, cast
 
+import pyjson5 as json
 from pathlib2 import Path
 
 import Component.Accessor.AccessorTypeImporterEnvironment as AccessorTypeImporterEnvironment
@@ -76,7 +76,7 @@ def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, imp
 
 def get_file(path:Path) -> ComponentTyping.ComponentGroupFileType:
     with open(path, "rt") as f:
-        return json.load(f)
+        return json.decode_io(f) # type: ignore[reportArgumentType] # stupid types are almost the same but not quite
 
 def propagate_variables(all_components:dict[str,dict[str,Component.Component]]) -> None:
     all_components_flat:list[Component.Component] = []
