@@ -45,9 +45,9 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         self,
         structure:Structure.Structure[d]|None,
         key_structure:Structure.Structure[str]|None,
-        types:list[type],
+        types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
-        pre_normalized_types:list[type],
+        pre_normalized_types:tuple[type,...],
         tags:list[str],
     ) -> None:
         super().link_substructures(key_structure, normalizer)

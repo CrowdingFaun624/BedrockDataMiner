@@ -78,7 +78,7 @@ class AbstractTypeField(Field.Field):
         '''
         self.contained_by_field = type_field
 
-    def get_types(self) -> list[type]:
+    def get_types(self) -> tuple[type,...]:
         '''
         Returns a list of types that this TypeField references.
         Can only be called after `set_field`.

@@ -116,7 +116,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             key_types={key.key: tuple(key.get_types()) for key in self.keys},
             key_structure=self.key_structure_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
-            pre_normalized_types=tuple(self.pre_normalized_types_field.get_types()) if len(self.pre_normalized_types_field.get_types()) != 0 else tuple(self.this_type_field.get_types()),
+            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys},
             keys_with_normalizers=[key.key for key in self.keys if (subcomponent := key.get_subcomponent()) is not None and subcomponent.children_has_normalizer] if self.children_has_normalizer else [],
         )

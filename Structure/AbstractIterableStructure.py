@@ -45,15 +45,15 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
     def link_substructures(
         self,
         structure:Structure.Structure[d]|None,
-        types:list[type],
+        types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
-        pre_normalized_types:list[type],
+        pre_normalized_types:tuple[type,...],
         tags:list[str],
     ) -> None:
         self.structure = structure
-        self.types = tuple(types)
+        self.types = types
         self.normalizer = normalizer
-        self.pre_normalized_types = tuple(pre_normalized_types)
+        self.pre_normalized_types = pre_normalized_types
         self.tags = tags
 
     def iter_structures(self) -> Iterable[Structure.Structure]:

@@ -24,7 +24,7 @@ class TypeField(AbstractTypeField.AbstractTypeField):
         super().__init__(path)
         self.subcomponent_data = subcomponent_data
         self.subcomponent:type|TypeAliasComponent.TypeAliasComponent|None = None
-        self.types:list[type]|None = None
+        self.types:tuple[type,...]|None = None
 
     def set_field(
         self,
@@ -48,11 +48,11 @@ class TypeField(AbstractTypeField.AbstractTypeField):
         if self.subcomponent is None:
             raise Exceptions.FieldSequenceBreakError(self.set_field, self.resolve_link_finals, self)
         if isinstance(self.subcomponent, type):
-            self.types = [self.subcomponent]
+            self.types = (self.subcomponent,)
         else:
             self.types = self.subcomponent.get_final()
 
-    def get_types(self) -> list[type]:
+    def get_types(self) -> tuple[type,...]:
         if self.types is None:
             raise Exceptions.FieldSequenceBreakError(self.resolve_link_finals, self.get_types, self)
         return self.types

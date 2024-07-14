@@ -25,7 +25,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         self.subcomponents_strs = [subcomponents_strs] if isinstance(subcomponents_strs, str) else subcomponents_strs
         self.primitive_types:list[type]|None = None
         self.type_aliases:list[TypeAliasComponent.TypeAliasComponent]|None = None
-        self.types:list[type]|None = None
+        self.types:tuple[type,...]|None = None
 
     def set_field(
         self,
@@ -57,12 +57,13 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
     def resolve_link_finals(self) -> None:
         if self.primitive_types is None or self.type_aliases is None:
             raise Exceptions.FieldSequenceBreakError(self.set_field, self.resolve_link_finals, self)
-        self.types = []
-        self.types.extend(self.primitive_types)
+        types:list[type] = []
+        types.extend(self.primitive_types)
         for type_alias_component in self.type_aliases:
-            self.types.extend(type_alias_component.get_final())
+            types.extend(type_alias_component.get_final())
+        self.types = tuple(types)
 
-    def get_types(self) -> list[type]:
+    def get_types(self) -> tuple[type,...]:
         if self.types is None:
             raise Exceptions.FieldSequenceBreakError(self.resolve_link_finals, self.get_types, self)
         return self.types

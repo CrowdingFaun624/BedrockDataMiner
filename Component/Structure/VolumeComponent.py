@@ -97,5 +97,5 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
             substructures={my_type: final_structure for my_type in self.my_type},
             types=tuple(self.my_type),
             normalizer=[],
-            pre_normalized_types=tuple(this_type)
+            pre_normalized_types=this_type,
         )

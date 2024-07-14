@@ -58,5 +58,5 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
             substructures=substructures,
             types=tuple(self.my_type),
             normalizer=self.normalizer_field.get_finals(),
-            pre_normalized_types=tuple(self.pre_normalized_types_field.get_types()) if len(self.pre_normalized_types_field.get_types()) != 0 else tuple(all_types),
+            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else tuple(all_types),
         )

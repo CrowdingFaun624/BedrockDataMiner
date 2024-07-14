@@ -6,7 +6,7 @@ import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class TypeAliasComponent(Component.Component[list[type]]):
+class TypeAliasComponent(Component.Component[tuple[type,...]]):
 
     class_name_article = "a TypeAlias"
     class_name = "TypeAlias"
@@ -26,13 +26,14 @@ class TypeAliasComponent(Component.Component[list[type]]):
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = []
+        final:list[type] = []
         already_types:set[str] = set()
         for type_str in self.types_strs:
             if type_str in already_types:
                 raise Exceptions.ComponentDuplicateTypeError(type_str, self)
             already_types.add(type_str)
             if type_str in StructureComponent.DEFAULT_TYPES:
-                self.final.append(StructureComponent.DEFAULT_TYPES[type_str])
+                final.append(StructureComponent.DEFAULT_TYPES[type_str])
             else:
                 raise Exceptions.ComponentUnrecognizedTypeError(type_str, self)
+        self.final = tuple(final)
