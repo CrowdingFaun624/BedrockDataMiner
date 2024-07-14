@@ -27,12 +27,12 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
     class_name = "DataMinerSettings"
     my_capabilities = Capabilities.Capabilities(is_dataminer_settings=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("parameters", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
@@ -41,7 +41,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         self.verify_arguments(data)
 
         self.files_field_exists = "files" in data
-        self.parameters = data.get("parameters", {})
+        self.arguments = data.get("arguments", {})
 
         self.new_field = OptionalVersionField.OptionalVersionField(data["new"], ["new"])
         self.old_field = OptionalVersionField.OptionalVersionField(data["old"], ["old"])
@@ -60,7 +60,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
     def create_final(self) -> None:
         super().create_final()
         self.final = DataMinerSettings.DataMinerSettings(
-            kwargs=self.parameters
+            kwargs=self.arguments
         )
 
     def link_finals(self) -> None:
@@ -89,5 +89,5 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         parameters = dataminer_class.parameters
         if parameters is not None:
             type_verifier_trace = TypeVerifier.make_trace([self, dataminer_class.__name__])
-            exceptions.extend(parameters.verify(self.parameters, type_verifier_trace))
+            exceptions.extend(parameters.verify(self.arguments, type_verifier_trace))
         return exceptions

@@ -49,12 +49,12 @@ class DataMinerCollectionTypedDict(TypedDict):
     type: NotRequired[Literal["DataMinerCollection"]]
 
 class DataMinerSettingsTypedDict(TypedDict):
+    arguments: NotRequired[dict[str,Any]]
     dependencies: NotRequired[list[str]]
     files: NotRequired[list[str]]
     name: Required[str|None]
     new: Required[str|None]
     old: Required[str|None]
-    parameters: NotRequired[dict[str,Any]]
     type: NotRequired[Literal["DataMinerSettings"]]
 
 class DictTypedDict(TypedDict):
