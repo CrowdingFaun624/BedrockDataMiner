@@ -42,6 +42,7 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         self.keys:dict[str,Structure.Structure[d]|None]|None = None
         self.tags:dict[str,list[str]]|None = None
         self.key_types:dict[str,tuple[type,...]]|None = None
+        self.pre_normalized_types:tuple[type,...]|None = None
         self.keys_with_normalizers:list[str]|None = None
 
     def link_substructures(
@@ -115,6 +116,8 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             raise Exceptions.AttributeNoneError("normalizer", self)
         if self.keys_with_normalizers is None:
             raise Exceptions.AttributeNoneError("keys_with_normalizers", self)
+        if self.pre_normalized_types is None:
+            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))

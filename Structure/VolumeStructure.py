@@ -35,6 +35,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
 
         self.structure:Structure.Structure[MutableMapping[str,Any]]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
+        self.pre_normalized_types:tuple[type,...]|None = None
         self.tags:list[str]|None = None
 
     def link_substructures(
@@ -121,6 +122,8 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         if not self.children_has_normalizer: return data_output, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
+        if self.pre_normalized_types is None:
+            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
         for normalizer in self.normalizer:

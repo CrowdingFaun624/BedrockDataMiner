@@ -21,6 +21,7 @@ class PrimitiveStructure(Structure.Structure[d]):
 
         self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
+        self.pre_normalized_types:tuple[type,...]|None = None
         self.tags:list[str]|None = None
 
     def link_substructures(
@@ -67,6 +68,8 @@ class PrimitiveStructure(Structure.Structure[d]):
     def normalize(self, data: d, environment: StructureEnvironment.StructureEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
+        if self.pre_normalized_types is None:
+            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
