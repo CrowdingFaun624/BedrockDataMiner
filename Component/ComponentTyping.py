@@ -97,6 +97,7 @@ class KeymapTypedDict(TypedDict):
     key_weight: NotRequired[float]
     value_weight: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
+    print_all: NotRequired[bool]
     sort: NotRequired[Literal["none", "by_key", "by_value", "by_component_order"]]
     tags: NotRequired[str|list[str]]
     this_type: NotRequired[str|list[str]]
