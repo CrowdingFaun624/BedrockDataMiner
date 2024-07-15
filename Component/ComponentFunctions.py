@@ -116,13 +116,6 @@ def features_fix_tree_feature_canopy_leaf_blocks(data:list[Any]) -> dict[str,Any
 def features_fix_weighted_random_features(data:list[Any]) -> dict[str,Any]:
     return {"feature": data[0], "weight": data[1]}
 
-def flipbook_textures_fix_flipbook_textures(data:dict[str,list[dict[str,str]]]) -> None:
-    for resource_pack_name, resource_pack_data in data.items():
-        start_length = len(resource_pack_data)
-        data[resource_pack_name] = {flipbook_texture["atlas_tile"]: flipbook_texture for flipbook_texture in resource_pack_data}
-        if len(resource_pack_data) != start_length:
-            raise RuntimeError("Duplicate `atlas_tile` keys detected!")
-
 def fonts_fix_font_aliases(data:list[dict[str,str]]) -> dict[str,dict[str,str]]:
     return {font["alias"]: font for font in data}
 
@@ -398,7 +391,6 @@ functions:dict[str,Callable] = {
     "features_fix_growing_plant_feature_height_distribution": features_fix_growing_plant_feature_height_distribution,
     "features_fix_tree_feature_canopy_leaf_blocks": features_fix_tree_feature_canopy_leaf_blocks,
     "features_fix_weighted_random_features": features_fix_weighted_random_features,
-    "flipbook_textures_fix_flipbook_textures": flipbook_textures_fix_flipbook_textures,
     "fonts_fix_font_aliases": fonts_fix_font_aliases,
     "fonts_fix_font_references": fonts_fix_font_references,
     "fonts_fix_fonts": fonts_fix_fonts,

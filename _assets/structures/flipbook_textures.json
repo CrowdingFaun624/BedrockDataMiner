@@ -7,28 +7,20 @@
     "resource_packs": {
         "type": "Dict",
         "field": "resource pack",
-        "types": ["dict"],
-        "normalizer": [
-            {
-                "function_name": "flipbook_textures_fix_flipbook_textures"
-                // Can't move this to `flipbook_textures` because collapse_resource_packs would become wonky
-            },
-            {
-                "function_name": "collapse_resource_packs_dict_without_defined_in"
-            }
-        ],
+        "types": ["list"],
+        "normalizer": {
+            "function_name": "collapse_resource_packs_list"
+        },
         "measure_length": true,
         "detect_key_moves": true,
         "sort": "by_key",
         "subcomponent": "flipbook_textures"
     },
     "flipbook_textures": {
-        "type": "Dict",
+        "type": "Set",
         "field": "flipbook texture",
         "types": ["dict"],
-        "detect_key_moves": true,
         "measure_length": true,
-        "sort": "by_key",
         "subcomponent": "flipbook_texture"
     },
     "flipbook_texture": {
@@ -36,10 +28,14 @@
         "sort": "by_key",
         "keys": {
             "atlas_index": {"type": "int"},
-            "atlas_tile": {"type": "str"},
+            "atlas_tile": {"type": "str", "weight": 8, "subcomponent": {
+                "type": "String"
+            }},
             "atlas_tile_variant": {"type": "int"},
             "blend_frames": {"type": "bool"},
-            "flipbook_texture": {"type": "str"},
+            "flipbook_texture": {"type": "str", "subcomponent": {
+                "type": "String"
+            }},
             "frames": {"type": "list", "subcomponent": "frames"},
             "replicate": {"type": "int"},
             "ticks_per_frame": {"type": "int"}
