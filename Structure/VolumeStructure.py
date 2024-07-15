@@ -35,6 +35,7 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
 
         self.structure:Structure.Structure[MutableMapping[str,Any]]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
+        self.post_normalizer:list[Normalizer.Normalizer]|None = None
         self.pre_normalized_types:tuple[type,...]|None = None
         self.tags:list[str]|None = None
 
@@ -43,12 +44,14 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
         types:tuple[type,...],
         structure:Structure.Structure[MutableMapping[str,Any]]|None,
         normalizer:list[Normalizer.Normalizer],
+        post_normalizer:list[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         tags:list[str]
     ) -> None:
         self.types = types
         self.structure = structure
         self.normalizer = normalizer
+        self.post_normalizer = post_normalizer
         self.pre_normalized_types = pre_normalized_types
         self.tags = tags
 
@@ -116,29 +119,44 @@ class VolumeStructure(Structure.Structure[MutableSequence[MutableMapping[str,Any
             data:MutableSequence[MutableMapping[str,Any]],
             environment:StructureEnvironment.StructureEnvironment,
         ) -> tuple[tuple[dict[tuple[int,int,int],int],dict[tuple[int,int,int],MutableMapping[str,Any]],tuple[int,int,int]],list[Trace.ErrorTrace]]:
+
         exceptions:list[Trace.ErrorTrace] = []
         data_output, new_exceptions = self.normalize_data(data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         if not self.children_has_normalizer: return data_output, []
+
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
+        if self.post_normalizer is None:
+            raise Exceptions.AttributeNoneError("post_normalizer", self)
         if self.pre_normalized_types is None:
             raise Exceptions.AttributeNoneError("pre_normalized_types", self)
-        if not isinstance(data, self.pre_normalized_types):
-            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+        if not isinstance(data_output, self.pre_normalized_types):
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data_output), "Data", "(pre-normalized)"), self.name, None, data_output))
+
         for normalizer in self.normalizer:
             try:
-                normalizer_output = normalizer(data)
+                normalizer_output = normalizer(data_output)
                 if normalizer_output is not None:
-                    data = normalizer_output
+                    data_output = normalizer_output
             except Exception as e:
                 return data_output, [Trace.ErrorTrace(e, self.name, None, data_output)]
+
         for index, (coordinate, item) in enumerate(data_output[1].items()):
             if self.structure is not None:
                 normalizer_output, new_exceptions = self.structure.normalize(item, environment)
                 exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
                 if normalizer_output is not None:
                     data_output[1][coordinate] = normalizer_output
+
+        for normalizer in self.post_normalizer:
+            try:
+                normalizer_output = normalizer(data_output)
+                if normalizer_output is not None:
+                    data_output = normalizer_output
+            except Exception as e:
+                return data_output, [Trace.ErrorTrace(e, self.name, None, data_output)]
+
         return data_output, exceptions
 
     def get_tag_paths(

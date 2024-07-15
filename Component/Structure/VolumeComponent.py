@@ -22,6 +22,7 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("position_key", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("print_additional_data", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("state_key", "a str", True, str),
@@ -45,6 +46,7 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("subcomponent"), ["subcomponent"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
+        self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "list"), ["this_type"])
@@ -52,7 +54,7 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)
         self.this_type_field.must_be(StructureComponent.ARBITRARY_ITERABLE_TYPES)
-        self.fields.extend([self.subcomponent_field, self.normalizer_field, self.types_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field])
+        self.fields.extend([self.subcomponent_field, self.normalizer_field, self.types_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field, self.post_normalizer_field])
 
     def get_subcomponents(self) -> list[Component.Component]:
         subcomponent = self.subcomponent_field.get_component()
@@ -90,6 +92,7 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
             types=self.types_field.get_types(),
             structure=self.subcomponent_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
+            post_normalizer=self.post_normalizer_field.get_finals(),
             pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
             tags=self.tags_field.get_finals(),
         )
@@ -97,5 +100,6 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
             substructures={my_type: final_structure for my_type in self.my_type},
             types=tuple(self.my_type),
             normalizer=[],
+            post_normalizer=[],
             pre_normalized_types=this_type,
         )

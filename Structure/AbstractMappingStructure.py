@@ -50,14 +50,17 @@ class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
 
         self.key_structure:Structure.Structure[str]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
+        self.post_normalizer:list[Normalizer.Normalizer]|None = None
 
     def link_substructures(
         self,
         key_structure:Structure.Structure[str]|None,
         normalizer:list[Normalizer.Normalizer],
+        post_normalizer:list[Normalizer.Normalizer],
     ) -> None:
         self.key_structure = key_structure
         self.normalizer = normalizer
+        self.post_normalizer = post_normalizer
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None: ...
 

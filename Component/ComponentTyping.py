@@ -26,6 +26,7 @@ class BaseTypedDict(TypedDict):
     imports: NotRequired[list[ImportTypedDict]]
     name: Required[str]
     normalizer: NotRequired[str|list[str]]
+    post_normalizer: NotRequired[str|list[str]]
     subcomponent: Required[str]
     type: NotRequired[Literal["Base"]]
 
@@ -66,6 +67,7 @@ class DictTypedDict(TypedDict):
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
+    post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
     print_all: NotRequired[bool]
     sort: NotRequired[Literal["none", "by_key", "by_value"]]
@@ -78,6 +80,7 @@ class DictTypedDict(TypedDict):
 
 class GroupTypedDict(TypedDict):
     normalizer: NotRequired[str|list[str]]
+    post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[list[str]]
     subcomponents: Required[dict[str,str|None]]
     type: NotRequired[Literal["Group"]]
@@ -100,6 +103,7 @@ class KeymapTypedDict(TypedDict):
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
+    post_normalizer: NotRequired[str|list[str]]
     print_all: NotRequired[bool]
     sort: NotRequired[Literal["none", "by_key", "by_value", "by_component_order"]]
     tags: NotRequired[str|list[str]]
@@ -114,6 +118,7 @@ class ListTypedDict(TypedDict):
     field: NotRequired[str]
     measure_length: NotRequired[bool]
     normalizer: NotRequired[str|list[str]]
+    post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
     print_all: NotRequired[bool]
     print_flat: NotRequired[bool]
@@ -126,6 +131,7 @@ class ListTypedDict(TypedDict):
 class NbtBaseTypedDict(TypedDict):
     endianness: Required[Literal["big", "little"]]
     normalizer: NotRequired[str|list[str]]
+    post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
     subcomponent: Required[str]
     type: NotRequired[Literal["NbtBase"]]
@@ -152,6 +158,7 @@ class SetTypedDict(TypedDict):
     measure_length: NotRequired[bool]
     min_similarity_threshold: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
+    post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
     print_all: NotRequired[bool]
     print_flat: NotRequired[bool]
@@ -217,6 +224,7 @@ class VolumeTypedDict(TypedDict):
     field: NotRequired[str]
     normalizer: NotRequired[str|list[str]]
     position_key: Required[str]
+    post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
     print_additional_data: NotRequired[bool]
     state_key: Required[str]

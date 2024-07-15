@@ -51,11 +51,12 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             key_types:dict[str,tuple[type,...]],
             key_structure:Structure.Structure[str]|None,
             normalizer:list[Normalizer.Normalizer],
+            post_normalizer:list[Normalizer.Normalizer],
             pre_normalized_types:tuple[type,...],
             tags:dict[str,list[str]],
             keys_with_normalizers:list[str],
         ) -> None:
-        super().link_substructures(key_structure, normalizer)
+        super().link_substructures(key_structure, normalizer, post_normalizer)
         self.keys = keys
         self.key_types = key_types
         self.pre_normalized_types = pre_normalized_types
@@ -114,6 +115,8 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
+        if self.post_normalizer is None:
+            raise Exceptions.AttributeNoneError("post_normalizer", self)
         if self.keys_with_normalizers is None:
             raise Exceptions.AttributeNoneError("keys_with_normalizers", self)
         if self.pre_normalized_types is None:
@@ -121,6 +124,7 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+
         data_identity_changed = False
         for normalizer in self.normalizer:
             try:
@@ -130,6 +134,7 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                     data = normalizer_output
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
+
         for key in self.keys_with_normalizers:
             if key not in data: continue
             value = data[key]
@@ -140,6 +145,16 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
                 if normalizer_output is not None:
                     data[key] = normalizer_output
+
+        for normalizer in self.post_normalizer:
+            try:
+                normalizer_output = normalizer(data)
+                if normalizer_output is not None:
+                    data_identity_changed = True
+                    data = normalizer_output
+            except Exception as e:
+                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+
         if data_identity_changed:
             return data, exceptions
         else:

@@ -36,14 +36,17 @@ class StructureBase():
 
         self.structure:Structure.Structure|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
+        self.post_normalizer:list[Normalizer.Normalizer]|None = None
 
     def link_substructures(
         self,
         structure:Structure.Structure,
         normalizer:list[Normalizer.Normalizer],
+        post_normalizer:list[Normalizer.Normalizer],
     ) -> None:
         self.structure = structure
         self.normalizer = normalizer
+        self.post_normalizer = post_normalizer
 
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.structure_name)
@@ -69,7 +72,6 @@ class StructureBase():
             else:
                 if output is None:
                     exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.component_name, normalizer_index, data))
-                    output = None
                     break
 
         # other normalizers
@@ -80,6 +82,21 @@ class StructureBase():
         exceptions.extend(new_exceptions)
         if normalizer_output is not None:
             output = normalizer_output
+
+        if self.post_normalizer is None:
+            raise Exceptions.AttributeNoneError("post_normalizer", self)
+        for normalizer_index, normalizer in enumerate(self.normalizer):
+            try:
+                output = normalizer(output)
+            except Exception as e:
+                output = None
+                exceptions.append(Trace.ErrorTrace(e, self.component_name, normalizer_index, data))
+                break
+            else:
+                if output is None:
+                    exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.component_name, normalizer_index, data))
+                    break
+
         self.print_exception_list(exceptions)
         return output
 

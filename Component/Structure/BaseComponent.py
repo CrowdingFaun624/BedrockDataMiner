@@ -22,6 +22,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         ), list, "a dict", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or StructureComponent", True, (str, dict)),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
@@ -35,7 +36,8 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
 
         self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
-        self.fields.extend([self.subcomponent_field, self.normalizer_field])
+        self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
+        self.fields.extend([self.subcomponent_field, self.normalizer_field, self.post_normalizer_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -50,4 +52,5 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
+            post_normalizer=self.post_normalizer_field.get_finals(),
         )

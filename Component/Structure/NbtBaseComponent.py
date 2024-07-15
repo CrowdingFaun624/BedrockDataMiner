@@ -24,6 +24,7 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("endianness", "a str", True, TypeVerifier.EnumTypeVerifier(("big", "little"))),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or StructureComponent", True, (str, dict)),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -39,10 +40,11 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
         self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
+        self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
         self.types_field.verify_with(self.subcomponent_field)
         self.types_field.must_be(StructureComponent.NBT_TYPES)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
-        self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.pre_normalized_types_field])
+        self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field])
 
     def get_subcomponents(self) -> list[Component.Component]:
         return [self.subcomponent_field.get_component()]
@@ -82,11 +84,13 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
             structure=self.subcomponent_field.get_final(),
             types=types,
             normalizer=self.normalizer_field.get_finals(),
+            post_normalizer=self.post_normalizer_field.get_finals(),
             pre_normalized_types=pre_normalized_types,
         )
         self.get_final().link_substructures(
             substructures={my_type: final_structure for my_type in self.my_type},
             types=tuple(self.my_type),
             normalizer=[],
+            post_normalizer=[],
             pre_normalized_types=(NbtReader.NbtBytes,),
         )

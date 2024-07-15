@@ -39,6 +39,7 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
         self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
+        self.post_normalizer:list[Normalizer.Normalizer]|None = None
         self.pre_normalized_types:tuple[type,...]|None = None
         self.tags:list[str]|None = None
 
@@ -47,12 +48,14 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
         structure:Structure.Structure[d]|None,
         types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
+        post_normalizer:list[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         tags:list[str],
     ) -> None:
         self.structure = structure
         self.types = types
         self.normalizer = normalizer
+        self.post_normalizer = post_normalizer
         self.pre_normalized_types = pre_normalized_types
         self.tags = tags
 
@@ -86,11 +89,14 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
+        if self.post_normalizer is None:
+            raise Exceptions.AttributeNoneError("post_normalizer", self)
         if self.pre_normalized_types is None:
             raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+
         data_identity_changed = False
         for normalizer in self.normalizer:
             try:
@@ -100,12 +106,23 @@ class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
                     data = normalizer_output
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
+
         for index, item in enumerate(data):
             if self.structure is not None:
                 normalizer_output, new_exceptions = self.structure.normalize(item, environment)
                 exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
                 if normalizer_output is not None:
                     data[index] = normalizer_output
+
+        for normalizer in self.post_normalizer:
+            try:
+                normalizer_output = normalizer(data)
+                if normalizer_output is not None:
+                    data_identity_changed = True
+                    data = normalizer_output
+            except Exception as e:
+                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+
         if data_identity_changed:
             return data, exceptions
         else:
