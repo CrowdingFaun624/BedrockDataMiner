@@ -14,6 +14,7 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
     my_capabilities = Capabilities.Capabilities(is_function=True, is_normalizer=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("function_name", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
@@ -22,15 +23,17 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data)
 
+        self.arguments = data.get("arguments", {})
+
         self.children_has_normalizer = True
 
         self.function_field = FunctionField.FunctionField(data["function_name"], ["function_name"])
+        self.function_field.check_arguments(self.arguments, ignore_parameters={"data"})
         self.fields.extend([self.function_field])
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = Normalizer.Normalizer(self.function_field.get_function())
-
-    def check(self) -> list[Exception]:
-        exceptions = super().check()
-        return exceptions
+        self.final = Normalizer.Normalizer(
+            function=self.function_field.get_function(),
+            arguments=self.arguments,
+        )

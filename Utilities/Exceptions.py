@@ -295,6 +295,73 @@ class ComponentDuplicateTypeError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class ComponentFunctionException(ComponentException):
+    "Abstract class for exceptions relating to Functions of Components"
+
+class ComponentFunctionMissingArgumentError(ComponentFunctionException):
+    "A required argument is missing."
+
+    def __init__(self, source:object, parameter:str, message:Optional[str]=None) -> None:
+        '''
+        :source: The object that has a missing argument.
+        :parameter: The parameter corresponding to the missing argument.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, parameter, message)
+        self.source = source
+        self.parameter = parameter
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Required parameter \"%s\" is missing from %r" % (self.parameter, self.source)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ComponentFunctionArgumentTypeError(ComponentException):
+    "An argument has the wrong type."
+
+    def __init__(self, source:object, parameter:str, argument:Any, argument_type:type, allowed_types:tuple[Any,...], message:Optional[str]=None) -> None:
+        '''
+        :source: The object that has an argument of the wrong type.
+        :parameter: The name of the argument with the wrong type.
+        :argument: The value of the argument with the wrong type.
+        :argument_type: The type of the value of the argument with the wrong type.
+        :allowed_types: The types and type-like objects that the
+        '''
+        super().__init__(source, parameter, argument, argument_type, allowed_types, message)
+        self.source = source
+        self.parameter = parameter
+        self.argument = argument
+        self.argument_type = argument_type
+        self.allowed_types = allowed_types
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Parameter \"%s\" with value %s of %r is of type \"%s\" instead of types [%s]" % (self.parameter, self.argument, self.source, self.argument_type, ", ".join("\"%s\"" % (item,) for item in self.allowed_types))
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ComponentFunctionUnrecognizedArgumentError(ComponentFunctionException):
+    "An argument exists that the function does not accept."
+
+    def __init__(self, source:object, parameter:str, argument:Any, message:Optional[str]=None) -> None:
+        '''
+        :source: The object that has an additional argument.
+        :parameter: The name of the additional argument.
+        :argument: The value of the additional argument.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, parameter, argument, message)
+        self.source = source
+        self.parameter = parameter
+        self.argument = argument
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r has an additional parameter \"%s\" with value %s" % (self.source, self.parameter, self.argument)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class ComponentImporterCircularImportError(ComponentException):
     "Components attempt to make a circular import."
 
@@ -1562,7 +1629,7 @@ class DiffKeyError(StructureException):
 
 class InvalidSimilarityError(StructureException):
     "A calulated similarity is not in [0.0, 1.0]"
-    
+
     def __init__(self, structure:"Structure.Structure", similarity:float, data1:Any, data2:Any, message:Optional[str]=None) -> None:
         '''
         :structure: The Structure that returned an invalid similarity.
@@ -1577,7 +1644,7 @@ class InvalidSimilarityError(StructureException):
         self.data1 = data1
         self.data2 = data2
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "%r has a similarity of %.4f" % (self.structure, self.similarity)
         output += ": " if self.message is None else " %s: " % (self.message,)
