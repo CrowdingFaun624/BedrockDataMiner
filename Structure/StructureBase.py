@@ -85,7 +85,7 @@ class StructureBase():
 
         if self.post_normalizer is None:
             raise Exceptions.AttributeNoneError("post_normalizer", self)
-        for normalizer_index, normalizer in enumerate(self.normalizer):
+        for normalizer_index, normalizer in enumerate(self.post_normalizer):
             try:
                 output = normalizer(output)
             except Exception as e:
