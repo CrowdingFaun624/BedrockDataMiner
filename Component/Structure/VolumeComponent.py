@@ -93,7 +93,7 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
             structure=self.subcomponent_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),
-            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
+            pre_normalized_types=(tuple,),
             tags=self.tags_field.get_finals(),
         )
         self.get_final().link_substructures(
@@ -101,5 +101,5 @@ class VolumeComponent(StructureComponent.StructureComponent[GroupStructure.Group
             types=tuple(self.my_type),
             normalizer=[],
             post_normalizer=[],
-            pre_normalized_types=this_type,
+            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else this_type,
         )
