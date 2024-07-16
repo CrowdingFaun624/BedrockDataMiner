@@ -50,7 +50,7 @@
         "types": ["dict"],
         "detect_key_moves": true,
         "normalizer": {
-            "function_name": "collapse_resource_packs_dict_with_defined_in"
+            "function_name": "collapse_resource_packs_dict"
         },
         "sort": "by_key",
         "subcomponent": "entity"
@@ -65,7 +65,10 @@
             "minecraft:entity": {"type": "dict", "subcomponent": {
                 "type": "Keymap",
                 "normalizer": {
-                    "function_name": "entities_fix_out_of_bounds_components"
+                    "function_name": "delete_optional_keys",
+                    "arguments": {
+                        "keys": ["minecraft:physics", "minecraft:pushable", "minecraft:conditional_bandwidth_optimization", "minecraft:raid_persistence"]
+                    }
                 },
                 "sort": "by_component_order",
                 "keys": {
@@ -164,7 +167,10 @@
     "events_event": {
         "type": "Keymap",
         "normalizer": {
-            "function_name": "entities_fix_event_bug"
+            "function_name": "delete_optional_key",
+            "arguments": {
+                "key": "minecraft:transformation"
+            }
         },
         "sort": "by_component_order",
         "keys": {
@@ -182,7 +188,11 @@
     "component_groups_add_remove": {
         "type": "Keymap",
         "normalizer": {
-            "function_name": "entities_fix_MCPE_178417"
+            // https://bugs.mojang.com/browse/MCPE-178417
+            "function_name": "delete_optional_keys",
+            "arguments": {
+                "keys": ["minecraft:silverfish_calm", "minecraft:silverfish_angry", "minecraft:enderman_calm", "minecraft:enderman_angry", "minecraft:sheep_sheared", "minecraft:sheep_dyeable"]
+            }
         },
         "keys": {
             "component_groups": {"type": "list", "subcomponent": "component_group_list"}
@@ -251,7 +261,10 @@
         "type": "Keymap",
         "field": "component",
         "normalizer": {
-            "function_name": "entities_fix_invalid_components"
+            "function_name": "delete_optional_key",
+            "arguments": {
+                "key": "minecart:on_hurt_by_player"
+            }
         },
         "measure_length": true,
         "tags": ["entity_component"],
@@ -4801,7 +4814,10 @@
     "behavior.pig_zombie_anger_target": {
         "type": "Keymap",
         "normalizer": {
-            "function_name": "entities_fix_priotiry"
+            "function_name": "delete_optional_key",
+            "arguments": {
+                "key": "priotiry"
+            }
         },
         "keys": {
             "priority": {"type": "int"}

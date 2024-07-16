@@ -24,7 +24,7 @@
         "detect_key_moves": true,
         "sort": "by_key",
         "normalizer": {
-            "function_name": "collapse_resource_packs_dict_with_defined_in"
+            "function_name": "collapse_resource_packs_dict"
         },
         "measure_length": true,
         "subcomponent": "sound_event_property"
@@ -32,14 +32,14 @@
     "sound_event_property": {
         "type": "Keymap",
         "field": "property",
-        "normalizer": [
-            {
-                "function_name": "sound_definitions_fix_MCPE_153558"
-            },
-            {
-                "function_name": "sound_definitions_fix_MCPE_178265"
+        "normalizer": {
+            // https://bugs.mojang.com/browse/MCPE-153558
+            // https://bugs.mojang.com/browse/MCPE-178265
+            "function_name": "delete_optional_keys",
+            "arguments": {
+                "keys": ["pitch", "volume"]
             }
-        ],
+        },
         "sort": "by_component_order",
         "keys": {
             "category": {"type": "str"},
@@ -68,7 +68,11 @@
                 "function_name": "sound_definitions_make_strings_to_dict"
             },
             {
-                "function_name": "sound_definitions_fix_MCPE_153561"
+                // https://bugs.mojang.com/browse/MCPE-153561
+                "function_name": "delete_optional_key",
+                "arguments": {
+                    "key": "pitch:"
+                }
             }
         ],
         "sort": "by_component_order",

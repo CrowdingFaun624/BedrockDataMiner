@@ -79,7 +79,7 @@ def collapse_resource_packs_list(data:dict[str,list[a]]) -> dict[str,list[a]]:
             output[tag_string].extend(data[resource_pack])
     return dict(output)
 
-def collapse_resource_packs_dict(data:dict[str,dict[str,a]], add_defined_in:bool) -> dict[str,dict[str,a]]:
+def collapse_resource_packs_dict(data:dict[str,dict[str,a]], add_defined_in:bool=True) -> dict[str,dict[str,a]]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
     Also adds a "defined_in" tag to each resource pack's properties unless `add_defined_in` is False.'''
     output:defaultdict[str,dict[str,a]] = defaultdict(empty_dict_lambda)

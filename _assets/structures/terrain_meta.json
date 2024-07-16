@@ -3,7 +3,11 @@
         "type": "Base",
         "name": "terrain_meta",
         "normalizer": {
-            "function_name": "terrain_meta_normalize"
+            "function_name": "wrap_in_dict",
+            "arguments": {
+                "key": "name",
+                "delete": true
+            }
         },
         "subcomponent": "images"
     },
@@ -17,9 +21,6 @@
     },
     "image": {
         "type": "Keymap",
-        "normalizer": {
-            "function_name": "terrain_meta_remove_name"
-        },
         "keys": {
             "additonal_textures": {"type": "list", "subcomponent": "uvs"},
             "uv": {"type": "dict", "subcomponent": "uv"},
@@ -38,7 +39,10 @@
         "sort": "by_component_order",
         "pre_normalized_types": "list",
         "normalizer": {
-            "function_name": "terrain_meta_normalize_uv"
+            "function_name": "wrap_tuple",
+            "arguments": {
+                "keys": ["x1", "y1", "x2", "y2", "1", "2"]
+            }
         },
         "keys": {
             "x1": {"type": ["float", "int"]},

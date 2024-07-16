@@ -37,7 +37,10 @@
         "types": ["dict"],
         "measure_length": true,
         "normalizer": {
-            "function_name": "collapse_resource_packs_dict_without_defined_in"
+            "function_name": "collapse_resource_packs_dict",
+            "arguments": {
+                "add_defined_in": false
+            }
         },
         "detect_key_moves": true,
         "sort": "by_key",
@@ -101,8 +104,10 @@
         "detect_key_moves": true,
         "pre_normalized_types": "list",
         "normalizer": {
-            "type": "Normalizer",
-            "function_name": "models_normalize_bones"
+            "function_name": "wrap_in_dict",
+            "arguments": {
+                "key": "name"
+            }
         },
         "sort": "by_key",
         "subcomponent": "bone"
@@ -110,7 +115,10 @@
     "bone": {
         "type": "Keymap",
         "normalizer": {
-            "function_name": "models_remove_bone_name"
+            "function_name": "delete_required_key",
+            "arguments": {
+                "key": "name"
+            }
         },
         "keys": {
             "bind_pose_rotation": {"type": "list", "subcomponent": "vector_decimal"},
