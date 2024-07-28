@@ -19,6 +19,7 @@ import Component.VersionTag.LatestSlotImporterEnvironment as LatestSlotImporterE
 import Component.VersionTag.VersionTagImporterEnvironment as VersionTagImporterEnvironment
 import Component.VersionTag.VersionTagOrderImporterEnvironment as VersionTagOrderImporterEnvironment
 import Utilities.Exceptions as Exceptions
+import Utilities.Scripts as Scripts
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
@@ -175,8 +176,14 @@ def check_importer_environments(output:dict[str,Any], importer_environments:dict
             traceback.print_exception(exception)
         raise Exceptions.ComponentParseError()
 
+def get_all_functions() -> dict[str,Callable]:
+    functions:dict[str,Callable] = {}
+    functions.update(ComponentFunctions.functions)
+    functions.update((name, script()) for name, script in Scripts.scripts.get_all_in_directory("normalizers/").items()) # call each script to get the function inside
+    return functions
+
 def parse_all_component_groups() -> dict[str,Any]:
-    functions = ComponentFunctions.functions
+    functions = get_all_functions()
     all_components, importer_environments = create_all_components()
     component_imports = get_imports(all_components, importer_environments)
     set_components(all_components, component_imports, functions)

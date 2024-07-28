@@ -53,6 +53,8 @@ class FunctionField(Field.Field):
 
     def check(self, source_component: Component.Component) -> list[Exception]:
         exceptions = super().check(source_component)
+        if self.function.__class__.__name__ == "_LuaFunction":
+            return exceptions # Lua functions cannot be inspected.
         arg_spec = inspect.getfullargspec(self.function)
         all_parameters:list[str] = []
         all_parameters.extend(parameter for parameter in arg_spec.args if parameter not in self.ignore_parameters)
