@@ -1755,7 +1755,7 @@ class StructureExceptionError(StructureException):
     def __str__(self) -> str:
         output = "%r has errors in function \"%s\" where it should not" % (self.structure, self.function.__name__)
         output += ": " if self.message is None else " %s: " % (self.message,)
-        output += "[%s]" % (", ".join(str(exception) for exception in self.exceptions))
+        output += "[%s]" % (", ".join(exception.finalize().stringify() for exception in self.exceptions))
         return output
 
 class StructureSetKeyError(StructureException):
