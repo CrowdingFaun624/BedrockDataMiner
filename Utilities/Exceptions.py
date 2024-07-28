@@ -712,7 +712,7 @@ class InvalidComponentTypeError(ComponentException):
         :component: The Component that has the wrong type.
         :required_types: The types that the Component is expected to have.
         :actual_type: The type that the Component actually has.
-        :message: Additional text to place after hte main message.
+        :message: Additional text to place after the main message.
         '''
         super().__init__(component, required_types, actual_type, message)
         self.component = component
