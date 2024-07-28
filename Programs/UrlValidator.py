@@ -91,8 +91,10 @@ KNOWN_URLS:dict[str,tuple[str,Callable[[Version.Version,str,dict[str,VersionTag.
 def validate(version:Version.Version, version_tags:dict[str,VersionTag.VersionTag]) -> list[str]:
     '''Returns a list of warning strings about the given version.'''
     try:
-        accessor = cast(DownloadManager.DownloadManager, version.get_version_files_dict()["client"].get_accessor())
+        accessor = cast(DownloadManager.DownloadManager, version.get_version_files_dict()["client"].get_accessor().manager)
     except Exceptions.VersionFileNoAccessorsError:
+        return []
+    if not hasattr(accessor, "url"):
         return []
     url = accessor.url
     for url_id, url_data in KNOWN_URLS.items():
