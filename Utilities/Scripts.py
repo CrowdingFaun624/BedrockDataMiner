@@ -165,6 +165,6 @@ class ScriptedObject():
         output = super().__new__(cls)
         for attribute in cls.__dict__:
             attr = getattr(output, attribute)
-            if not attribute.startswith("__") and hasattr(attr, "__call__") and not isinstance(attr, type):
+            if not attribute.startswith("__") and callable(attr) and not isinstance(attr, type):
                 setattr(output, attribute, make_the_function(output, attr))
         return output
