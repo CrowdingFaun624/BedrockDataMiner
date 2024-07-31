@@ -120,13 +120,13 @@ class Scripts():
             case _:
                 raise Exceptions.InvalidScriptFileSuffix(suffix, name)
 
-    def should_skip_script(self, suffix:str, name:str) -> bool:
-        return suffix == ".pyc"
+    def should_skip_script(self, suffix:str, relative_name:str, path:Path) -> bool:
+        return suffix == ".pyc" or path.name.startswith("__") or any(parent.name.startswith("__") for parent in path.relative_to(FileManager.SCRIPTS_DIRECTORY).parents)
 
     def __init__(self) -> None:
         self.lua_runtime = lupa.LuaRuntime()
         script_dependencies = _ScriptDependencies(self.lua_runtime)
-        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, script_dependencies) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY) if not self.should_skip_script(file.suffix, relative_name)}
+        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, script_dependencies) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY) if not self.should_skip_script(file.suffix, relative_name, file)}
 
     def __getitem__(self, name:str) -> Script:
         output = self.scripts.get(name, None)
