@@ -1,3 +1,6 @@
+import importlib
+import importlib.util
+import sys
 from typing import IO, Any, Callable, Iterable
 
 import jqpy  # library that doesn't let me compile but will work on Windows
@@ -7,6 +10,7 @@ from typing_extensions import Self
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 EmptyInput = jqpy.EmptyInput
 
@@ -59,10 +63,38 @@ class LuaScript(Script):
         super().__init__(path, name, script_dependencies)
         with self.open_file() as f:
             self.compiled_program = script_dependencies.lua_runtime.compile(f.read())
+            self.content = self.compiled_program() # get stored content
 
     def __call__(self, data:list[Any]|None=None) -> Any:
         if data is None: data = []
-        return self.compiled_program(data)
+        return self.content(data)
+
+class PythonScript(Script):
+
+    all_type_verifier = TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=lambda data: (len(data) == 1, "Can only export a single object"))
+
+    def __init__(self, path: Path, name: str, script_dependencies: _ScriptDependencies) -> None:
+        super().__init__(path, name, script_dependencies)
+        module_name = "scripts.%s" % (name,)
+        spec = importlib.util.spec_from_file_location(module_name, path)
+        if spec is None:
+            raise Exceptions.ScriptFailureError(self, "(spec is None)")
+        self.module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = self.module
+        if spec.loader is None:
+            raise Exceptions.ScriptFailureError(self, "(spec loader is None)")
+        spec.loader.exec_module(self.module)
+        if not hasattr(self.module, "__all__"):
+            raise Exceptions.ScriptFailureError(self, "(__all__ does not exist in the module)")
+        self.all_type_verifier.base_verify(self.module.__all__, [self])
+        exported_object_name = self.module.__all__[0]
+        obj = getattr(self.module, exported_object_name, ...)
+        if obj is ...:
+            raise Exceptions.ScriptFailureError(self, "(name in __all__ does not exist in the module)")
+        self.object = obj
+
+    def __call__(self, *args, **kwargs) -> Any:
+        return self.object(*args, **kwargs)
 
 class InlineScript(AbstractScript):
 
@@ -83,13 +115,18 @@ class Scripts():
                 return JQScript
             case ".lua":
                 return LuaScript
+            case ".py":
+                return PythonScript
             case _:
                 raise Exceptions.InvalidScriptFileSuffix(suffix, name)
+
+    def should_skip_script(self, suffix:str, name:str) -> bool:
+        return suffix == ".pyc"
 
     def __init__(self) -> None:
         self.lua_runtime = lupa.LuaRuntime()
         script_dependencies = _ScriptDependencies(self.lua_runtime)
-        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, script_dependencies) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY)}
+        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, script_dependencies) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY) if not self.should_skip_script(file.suffix, relative_name)}
 
     def __getitem__(self, name:str) -> Script:
         output = self.scripts.get(name, None)

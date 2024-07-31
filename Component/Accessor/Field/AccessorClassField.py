@@ -14,15 +14,18 @@ def import_accessor_classes() -> dict[str,type[Accessor.Accessor]]:
     accessor_classes:dict[str,type[Accessor.Accessor]] = {}
     accessor_classes.update(BUILT_IN_ACCESSOR_CLASSES)
     for file_name, script in accessor_scripts.items():
-        class_name = file_name.removeprefix("accessors/").removesuffix(".lua").replace("/", ".")
-        attributes = dict(script())
-        inherit_from:str|None = attributes.pop("inherit", None)
-        if inherit_from is None:
-            raise Exceptions.AccessorClassMissingInheritError(class_name)
-        superclass = BUILT_IN_ACCESSOR_CLASSES.get(inherit_from)
-        if superclass is None:
-            raise Exceptions.AccessorClassInheritUnrecognizedAccessorClassError(class_name, inherit_from)
-        accessor_classes[class_name] = type(class_name, (superclass, Scripts.ScriptedObject), attributes)
+        if isinstance(script, Scripts.LuaScript):
+            class_name = file_name.removeprefix("accessors/").removesuffix(".lua").replace("/", ".")
+            attributes = dict(script.content)
+            inherit_from:str|None = attributes.pop("inherit", None)
+            if inherit_from is None:
+                raise Exceptions.AccessorClassMissingInheritError(class_name)
+            superclass = BUILT_IN_ACCESSOR_CLASSES.get(inherit_from)
+            if superclass is None:
+                raise Exceptions.AccessorClassInheritUnrecognizedAccessorClassError(class_name, inherit_from)
+            accessor_classes[class_name] = type(class_name, (superclass, Scripts.ScriptedObject), attributes)
+        else:
+            raise NotImplementedError
     return accessor_classes
 
 ACCESSOR_CLASSES = import_accessor_classes()

@@ -6,6 +6,7 @@ import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Utilities.Exceptions as Exceptions
+import Utilities.Scripts as Scripts
 
 if TYPE_CHECKING:
     import Component.Component as Component
@@ -53,9 +54,13 @@ class FunctionField(Field.Field):
 
     def check(self, source_component: Component.Component) -> list[Exception]:
         exceptions = super().check(source_component)
-        if self.function.__class__.__name__ == "_LuaFunction":
+        if isinstance(self.function, Scripts.LuaScript):
             return exceptions # Lua functions cannot be inspected.
-        arg_spec = inspect.getfullargspec(self.function)
+        elif isinstance(self.function, Scripts.PythonScript):
+            function = self.function.object
+        else:
+            function = self.function
+        arg_spec = inspect.getfullargspec(function)
         all_parameters:list[str] = []
         all_parameters.extend(parameter for parameter in arg_spec.args if parameter not in self.ignore_parameters)
         all_parameters.extend(parameter for parameter in arg_spec.kwonlyargs if parameter not in self.ignore_parameters)

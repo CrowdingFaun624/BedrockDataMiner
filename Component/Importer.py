@@ -179,7 +179,7 @@ def check_importer_environments(output:dict[str,Any], importer_environments:dict
 def get_all_functions() -> dict[str,Callable]:
     functions:dict[str,Callable] = {}
     functions.update(ComponentFunctions.functions)
-    functions.update((name, script()) for name, script in Scripts.scripts.get_all_in_directory("normalizers/").items()) # call each script to get the function inside
+    functions.update((name, script) for name, script in Scripts.scripts.get_all_in_directory("normalizers/").items())
     return functions
 
 def parse_all_component_groups() -> dict[str,Any]:
