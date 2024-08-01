@@ -1,8 +1,6 @@
 import json
 from typing import Any, Callable
 
-import Utilities.CollapseResourcePacks as CollapseResourcePacks
-
 
 def delete_required_key(data:dict[str,Any], key:str) -> None:
     del data[key]
@@ -48,8 +46,4 @@ functions:dict[str,Callable] = {
     "move_key": move_key,
     "wrap_in_dict": wrap_in_dict,
     "wrap_tuple": wrap_tuple,
-    "collapse_resource_pack_names": CollapseResourcePacks.collapse_resource_pack_names,
-    "collapse_resource_packs_dict": CollapseResourcePacks.collapse_resource_packs_dict,
-    "collapse_resource_packs_list": CollapseResourcePacks.collapse_resource_packs_list,
-    "collapse_resource_packs_flat": CollapseResourcePacks.collapse_resource_packs_flat,
 }
