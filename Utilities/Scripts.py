@@ -1,6 +1,8 @@
 import importlib
+import importlib.machinery
 import importlib.util
 import sys
+from itertools import accumulate
 from typing import IO, Any, Callable, Iterable
 
 import jqpy  # library that doesn't let me compile but will work on Windows
@@ -40,6 +42,11 @@ class Script(AbstractScript):
         self.name = name
         self.path = path
 
+    def finalize(self) -> None:
+        '''
+        Runs after all scripts have been initialized.
+        '''
+
     def open_file(self) -> IO[str]:
         return open(self.path, "rt")
 
@@ -70,29 +77,65 @@ class LuaScript(Script):
         if data is None: data = []
         return self.content(data)
 
+class EvilModule():
+    '''
+    Use `setattr` to set attributes of this object to other EvilModules or actual modules.
+    Used to mimic a directory in the scripts folder.
+    '''
+    pass
+
 class PythonScript(Script):
 
     all_type_verifier = TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=lambda data: (len(data) == 1, "Can only export a single object"))
 
     def __init__(self, path: Path, name: str, script_dependencies: _ScriptDependencies) -> None:
         super().__init__(path, name, script_dependencies)
-        module_name = "scripts.%s" % (name,)
+        module_name = "scripts.%s" % (name.replace("/", ".").removesuffix(".py"),)
+        stem = name.split("/")[-1].removesuffix(".py")
+
         spec = importlib.util.spec_from_file_location(module_name, path)
         if spec is None:
             raise Exceptions.ScriptFailureError(self, "(spec is None)")
-        self.module = importlib.util.module_from_spec(spec)
+        self.spec = spec
+        self.module = importlib.util.module_from_spec(self.spec)
         sys.modules[module_name] = self.module
-        if spec.loader is None:
+
+        module_parents = list(accumulate(name.split("/")[:-1], func=lambda a, b: "%s.%s" % (a, b), initial="scripts"))
+        module_parents.reverse()
+        # for example: name = scripts/normalizers/bar/foo.py, module_parents = ["scripts.normalizers.bar", "scripts.normalizers""scripts"]
+        previous_module = self.module
+        previous_module_name = stem
+        for parent in module_parents:
+            if parent in sys.modules:
+                evil_module = sys.modules[parent]
+            else:
+                evil_module = EvilModule()
+                sys.modules[parent] = evil_module # type: ignore
+            evil_module = sys.modules.get(parent, EvilModule())
+            if not hasattr(evil_module, previous_module_name):
+                setattr(evil_module, previous_module_name, previous_module)
+            previous_module = evil_module
+            previous_module_name = parent.split(".")[-1]
+
+        self.object:Any = None
+
+    @property
+    def should_finalize(self) -> bool:
+        return not self.path.name.startswith("__") and not any(parent.name.startswith("__") for parent in self.path.relative_to(FileManager.SCRIPTS_DIRECTORY).parents)
+
+    def finalize(self) -> None:
+        if self.spec.loader is None:
             raise Exceptions.ScriptFailureError(self, "(spec loader is None)")
-        spec.loader.exec_module(self.module)
-        if not hasattr(self.module, "__all__"):
-            raise Exceptions.ScriptFailureError(self, "(__all__ does not exist in the module)")
-        self.all_type_verifier.base_verify(self.module.__all__, [self])
-        exported_object_name = self.module.__all__[0]
-        obj = getattr(self.module, exported_object_name, ...)
-        if obj is ...:
-            raise Exceptions.ScriptFailureError(self, "(name in __all__ does not exist in the module)")
-        self.object = obj
+        self.spec.loader.exec_module(self.module)
+        if self.should_finalize:
+            if not hasattr(self.module, "__all__"):
+                raise Exceptions.ScriptFailureError(self, "(__all__ does not exist in the module)")
+            self.all_type_verifier.base_verify(self.module.__all__, [self])
+            exported_object_name = self.module.__all__[0]
+            obj = getattr(self.module, exported_object_name, ...)
+            if obj is ...:
+                raise Exceptions.ScriptFailureError(self, "(name in __all__ does not exist in the module)")
+            self.object = obj
 
     def __call__(self, *args, **kwargs) -> Any:
         return self.object(*args, **kwargs)
@@ -122,7 +165,7 @@ class Scripts():
                 raise Exceptions.InvalidScriptFileSuffix(suffix, name)
 
     def should_skip_script(self, suffix:str, relative_name:str, path:Path) -> bool:
-        return suffix == ".pyc" or path.name.startswith("__") or any(parent.name.startswith("__") for parent in path.relative_to(FileManager.SCRIPTS_DIRECTORY).parents)
+        return suffix == ".pyc"
 
     def __init__(self) -> None:
         self.lua_runtime = lupa.LuaRuntime()
@@ -131,6 +174,8 @@ class Scripts():
         }
         script_dependencies = _ScriptDependencies(self.lua_runtime)
         self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, script_dependencies) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY) if not self.should_skip_script(file.suffix, relative_name, file)}
+        for script in self.scripts.values():
+            script.finalize()
 
     def __getitem__(self, name:str) -> Script:
         output = self.scripts.get(name, None)
