@@ -10,6 +10,7 @@ from Utilities.FunctionCaller import FunctionCaller
 
 PARENT_DIRECTORY          = Path("./").absolute()
 ASSETS_DIRECTORY          = PARENT_DIRECTORY.joinpath("_assets")
+DATA_DIRECTORY            = ASSETS_DIRECTORY.joinpath("data")
 FILE_STORAGE_DIRECTORY    = ASSETS_DIRECTORY.joinpath("file_storage")
 FILE_STORAGE_OBJECTS_DIRECTORY = FILE_STORAGE_DIRECTORY.joinpath("objects")
 FILE_STORAGE_INDEX_FILE   = FILE_STORAGE_DIRECTORY.joinpath("index.txt")
@@ -67,6 +68,12 @@ def get_version_path(version_name:str) -> Path:
     if VERSIONS_DIRECTORY not in version_path.parents:
         raise Exceptions.InvalidFileNameError(version_name, "Version")
     return version_path
+
+def get_data_file_path(file_name:str) -> Path:
+    data_file_path = DATA_DIRECTORY.joinpath(file_name)
+    if DATA_DIRECTORY not in data_file_path.parents:
+        raise Exceptions.InvalidFileNameError(file_name, "Structure")
+    return data_file_path
 
 def get_version_install_path(version_directory:Path) -> Path:
     return version_directory.joinpath("client")

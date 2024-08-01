@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     import Structure.StructureBase as StructureBase
     import Structure.StructureSet as StructureSet
     import Structure.Trace as Trace
+    import Utilities.DataFile as DataFile
     import Utilities.FileManager as FileManager
     import Utilities.Nbt.NbtReader as NbtReader
     import Utilities.Nbt.SnbtParser as SnbtParser
@@ -875,6 +876,26 @@ class InvalidSpecialTypeError(CustomJsonException):
 
     def __str__(self) -> str:
         output = "Invalid $special_type of \"%s\" received!" % (self.special_type)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class DataFileException(Exception):
+    "Exception relating to DataFiles"
+
+class DataFileNothingToWriteError(DataFileException):
+    "Called `write` on a DataFile without any content."
+
+    def __init__(self, source:"DataFile.DataFile", message:Optional[str]=None) -> None:
+        '''
+        :source: The DataFile that has nothing to write.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, message)
+        self.source = source
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r cannot be written if not yet read" % (self.source,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

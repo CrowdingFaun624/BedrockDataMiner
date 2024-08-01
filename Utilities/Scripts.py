@@ -8,6 +8,7 @@ import lupa  # looks like this has no type hinting whatsoever
 from pathlib2 import Path
 from typing_extensions import Self
 
+import Utilities.DataFile as DataFile
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -125,6 +126,9 @@ class Scripts():
 
     def __init__(self) -> None:
         self.lua_runtime = lupa.LuaRuntime()
+        self.lua_runtime.globals()["bdd"] = {
+            "data_files": DataFile.data_files,
+        }
         script_dependencies = _ScriptDependencies(self.lua_runtime)
         self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, script_dependencies) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY) if not self.should_skip_script(file.suffix, relative_name, file)}
 
