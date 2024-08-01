@@ -94,9 +94,15 @@ if __name__ == "__main__":
     main()
 
 pass
+# TODO: make get_similarity report errors properly
+# TODO: allow custom accessors to use Python
+# TODO: combine compare_text and print_text from ListStructure and DictStructure into a single thing.
+# TODO: make FunctionFields not require the suffix.
+# TODO: migrate dataminers to scripts
+# TODO: refactor ResourcePackDataMiner and BehaviorPackDataMiner to use import from scripts/normalizers/collapse_resource_packs/__util.py
+
 # TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions
 # TODO: dataminers for:
 #   renderer/vanilla_lights.json in 1.20.20.23
 # TODO: fix meta-dataminers relating to the usage of sound events (use all available sources)
-# TODO: merge dict and list structures
 # TODO: make more domains
