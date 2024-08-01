@@ -1,10 +1,9 @@
 import DataMiner.BehaviorPacks.BehaviorPacksDataMiner as BehaviorPacksDataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
-import Utilities.CollapseResourcePacks as CollapseResourcePacks
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
-
+from DataMiner.ResourcePacks.ResourcePacksDataMiner0 import resource_pack_order as behavior_pack_order
 
 class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
 
@@ -16,7 +15,6 @@ class BehaviorPacksDataMiner0(BehaviorPacksDataMiner.BehaviorPacksDataMiner):
         self.behavior_packs_directory:str = kwargs["behavior_packs_directory"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.BehaviorPackTypedDict]:
-        behavior_pack_order = CollapseResourcePacks.resource_pack_order
         file_list = self.get_accessor("client").get_file_list()
         behavior_packs:list[DataMinerTyping.BehaviorPackTypedDict] = []
         behavior_pack_names:set[str] = set()

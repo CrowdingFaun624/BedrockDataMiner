@@ -1,10 +1,36 @@
+import enum
+from typing import TypedDict
+
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.ResourcePacks.ResourcePacksDataMiner as ResourcePacksDataMiner
-import Utilities.CollapseResourcePacks as CollapseResourcePacks
+import Utilities.DataFile as DataFile
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
+
+class ResourcePackTypedDict(TypedDict):
+    name: str
+    tags: list[str]
+
+class ResourcePackTag(enum.Enum):
+    core = "core"
+    education = "education"
+    experimental = "experimental"
+    extra = "extra"
+    vanity = "vanity"
+
+type_verifier = TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
+    TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.EnumTypeVerifier(set(tag.name for tag in ResourcePackTag)), list, "a str", "a list"))
+), list, "a dict", "a list")
+
+def get_resource_pack_order() -> list[ResourcePackTypedDict]:
+    data = DataFile.data_files["resource_pack_data"].contents
+    type_verifier.base_verify(data)
+    return data
+
+resource_pack_order = {resource_pack["name"]: index for index, resource_pack in enumerate(get_resource_pack_order())}
 
 class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
 
@@ -16,7 +42,6 @@ class ResourcePacksDataMiner0(ResourcePacksDataMiner.ResourcePacksDataMiner):
         self.resource_packs_directory:str = kwargs["resource_packs_directory"]
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.ResourcePackTypedDict]:
-        resource_pack_order = CollapseResourcePacks.resource_pack_order
         file_list = self.get_accessor("client").get_file_list()
         resource_packs:list[DataMinerTyping.ResourcePackTypedDict] = []
         resource_pack_names:set[str] = set()
