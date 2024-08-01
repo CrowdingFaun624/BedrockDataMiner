@@ -163,12 +163,7 @@ def archive(path:Path, hashes:dict[str,bytes], version_name:str|None=None) -> di
         name = zip_info.filename
         if name.split(".")[-1].lower() in ILLEGAL_FORMATS:
             raise Exceptions.InvalidFileFormatError(name)
-        completed = False # evil debug code
-        try:
-            file_hash = hashes[name]
-            completed = True # evil debug code
-        finally:
-            if not completed: print("Failed to find hash in \"%s\"!" % version_name)
+        file_hash = hashes[name]
 
         hex_hash = FileManager.stringify_sha1_hash(file_hash)
         zip_info.filename = get_hash_file_path(hex_hash, True) # slightly evil code that makes it not spit thousands of directories everywhere
