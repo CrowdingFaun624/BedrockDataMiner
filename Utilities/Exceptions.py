@@ -30,6 +30,7 @@ if TYPE_CHECKING:
     import Utilities.FileManager as FileManager
     import Utilities.Nbt.NbtReader as NbtReader
     import Utilities.Nbt.SnbtParser as SnbtParser
+    import Utilities.Scripts as Scripts
     import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
     import Utilities.TypeVerifier.TypeVerifierImporter as TypeVerifierImporter
     import Version.Version as Version
@@ -1561,6 +1562,23 @@ class InvalidScriptFileSuffix(ScriptException):
 
     def __str__(self) -> str:
         output = "Invalid file suffix \"%s\" on file \"%s\"" % (self.suffix, self.name)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ScriptFailureError(ScriptException):
+    "A Script has failed to load."
+
+    def __init__(self, script:"Scripts.Script", message:Optional[str]=None) -> None:
+        '''
+        :script: The Script that failed to load.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(script, message)
+        self.script = script
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r failed to load" % (self.script,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
