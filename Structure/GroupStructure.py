@@ -131,15 +131,16 @@ class GroupStructure(Structure.Structure[a]):
             output[diff_type] = structure
         return StructureSet.StructureSet(output), exceptions
 
-    def get_similarity(self, data1: a, data2: a, environment:StructureEnvironment.StructureEnvironment) -> float:
+    def get_similarity(self, data1: a, data2: a, environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         structure1, exceptions1 = self.get_structure(data1)
         structure2, exceptions2 = self.get_structure(data2)
         if len(exceptions1) > 0 or len(exceptions2) > 0:
-            raise Exceptions.StructureExceptionError(self, self.get_similarity, exceptions1 + exceptions2)
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureExceptionError(self, self.get_similarity, exceptions1 + exceptions2), self.name, None, (data1, data2)))
         if structure1 is not structure2 or structure1 is None or structure2 is None:
             return 0.0
         else:
-            return structure1.get_similarity(data1, data2, environment)
+            output = structure1.get_similarity(data1, data2, environment, exceptions)
+            return output
 
     def compare(self, data1: a, data2: a, environment:StructureEnvironment.StructureEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []

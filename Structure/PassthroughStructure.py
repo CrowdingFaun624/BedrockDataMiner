@@ -107,11 +107,12 @@ class PassthroughStructure(Structure.Structure[a]):
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
-    def get_similarity(self, data1: a, data2: a, environment:StructureEnvironment.StructureEnvironment) -> float:
+    def get_similarity(self, data1: a, data2: a, environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         if self.structure is None:
             return float(data1 == data2)
         else:
-            return self.structure.get_similarity(data1, data2, environment)
+            output = self.structure.get_similarity(data1, data2, environment, exceptions)
+            return output
 
     def compare(self, data1:a, data2:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []

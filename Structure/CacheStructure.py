@@ -137,10 +137,10 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         cache_item.set_print_text(output)
         return output
 
-    def get_similarity(self, data1: d, data2: d, environment:StructureEnvironment.StructureEnvironment) -> float:
+    def get_similarity(self, data1: d, data2: d, environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         structure = self.get_structure()
         if environment.should_cache or not self.cache_get_similarity:
-            return structure.get_similarity(data1, data2, environment)
+            return structure.get_similarity(data1, data2, environment, exceptions)
         data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2)))
         cache_item = self.cache.get(data_hash)
         if cache_item is not None and cache_item.get_similarity:
@@ -150,7 +150,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.get_similarity(data1, data2, environment)
+        output = structure.get_similarity(data1, data2, environment, exceptions)
         cache_item.set_get_similarity(output)
         return output
 
