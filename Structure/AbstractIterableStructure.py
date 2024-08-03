@@ -15,7 +15,7 @@ d = TypeVar("d")
 class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
     """
     Abstract class of list-using Structures.
-    Must override `compare`, `get_similarity`, `get_item_key`, and `get_compare_text_key_str.
+    Must override `compare`, `get_similarity`, `get_item_key`, and `get_compare_text_key_str`.
     """
 
     valid_types = (list, NbtTypes.TAG_List, NbtTypes.TAG_Byte_Array, NbtTypes.TAG_Int_Array, NbtTypes.TAG_Long_Array)
