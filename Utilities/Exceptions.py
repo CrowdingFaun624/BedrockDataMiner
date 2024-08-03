@@ -212,11 +212,11 @@ class AccessorClassInheritUnrecognizedAccessorClassError(AccessorException):
         return output
 
 class AccessorClassMissingInheritError(AccessorException):
-    "A scripted AccessorType is missing the inherit key."
+    "A scripted AccessorType failed to correctly inherit."
 
     def __init__(self, accessor_class_name:str, message:Optional[str]=None) -> None:
         '''
-        :accessor_class_name: The name of the Accessor class missing the inherit key.
+        :accessor_class_name: The name of the Accessor class that failed to inherit.
         :message: Additional text to place after the main message.
         '''
         super().__init__(accessor_class_name, message)
@@ -1562,6 +1562,50 @@ class InvalidScriptFileSuffix(ScriptException):
 
     def __str__(self) -> str:
         output = "Invalid file suffix \"%s\" on file \"%s\"" % (self.suffix, self.name)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class InvalidScriptObjectTypeError(ScriptException):
+    "An object in a Script has the wrong type."
+
+    def __init__(self, object:Any, allowed_types:list[type], message:Optional[str]=None) -> None:
+        '''
+        :object: The object from the Script with the wrong type.
+        :allowed_types: The types this object should be.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(object, allowed_types, message)
+        self.object = object
+        self.allowed_types = allowed_types
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r should be one of types [%s] instead of type \"%s\"" % (self.object, ", ".join("\"%s\"" % (allowed_type.__name__) for allowed_type in self.allowed_types), type(self.object))
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class InvalidScriptTypeError(ScriptException):
+    "This Script type is invalid for this purpose."
+
+    def __init__(self, script_type:type["Scripts.AbstractScript"], allowed_types:list[type["Scripts.AbstractScript"]], source:Optional[Any]=None, message:Optional[str]=None) -> None:
+        '''
+        :script_type: The invalid Script type.
+        :allowed_types: The types that the Script can be.
+        :source: The object referencing the invalid Script type.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(script_type, allowed_types, source, message)
+        self.script_type = script_type
+        self.allowed_types = allowed_types
+        self.source = source
+        self.message = message
+
+    def __str__(self) -> str:
+        script_types_str =  ", ".join("\"%s\"" % (script_type.__name__,) for script_type in self.allowed_types)
+        if self.source is None:
+            output = "Script type is not allowed; only [%s] are allowed" % (self.script_type.__name__, script_types_str)
+        else:
+            output = "%r references Script type \"%s\", while only [%s] are allowed" % (self.source, self.script_type.__name__, script_types_str)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
