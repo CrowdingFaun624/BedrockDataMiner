@@ -94,12 +94,12 @@ if __name__ == "__main__":
     main()
 
 pass
-# TODO: make get_similarity report errors properly
 # TODO: allow custom accessors to use Python
 # TODO: combine compare_text and print_text from ListStructure and DictStructure into a single thing.
 # TODO: make FunctionFields not require the suffix.
 # TODO: migrate dataminers to scripts
 # TODO: refactor ResourcePackDataMiner and BehaviorPackDataMiner to use import from scripts/normalizers/collapse_resource_packs/__util.py
+# TODO: Create "delegates", which are customizable and control how comparison reports look.
 
 # TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions
 # TODO: dataminers for:
