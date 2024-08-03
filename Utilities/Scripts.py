@@ -18,9 +18,13 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 EmptyInput = jqpy.EmptyInput
 
 def iter_dir(path:Path, prepension:str="") -> Iterable[tuple[Path,str]]:
+    already_stems:dict[str,Path] = {}
     for subpath in path.iterdir():
         if subpath.is_file():
-            yield (subpath, prepension + subpath.name)
+            if subpath.stem in already_stems:
+                raise Exceptions.ScriptNameCollideError(already_stems[subpath.stem], subpath)
+            already_stems[subpath.stem] = subpath
+            yield (subpath, prepension + subpath.stem)
         else:
             yield from iter_dir(subpath, prepension + subpath.name + "/")
 

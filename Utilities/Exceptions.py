@@ -1626,6 +1626,25 @@ class ScriptFailureError(ScriptException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class ScriptNameCollideError(ScriptException):
+    "A Script has the same stem as another Script in the same folder."
+
+    def __init__(self, script_path1:Path, script_path2:Path, message:Optional[str]=None) -> None:
+        '''
+        :script_path1: The Path of the first Script.
+        :script_path2: The Path of the second Script.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(script_path1, script_path2, message)
+        self.script_path1 = script_path1
+        self.script_path2 = script_path2
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Scripts on paths \"%s\" and \"%s\" have the same stem" % (self.script_path1, self.script_path2)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class UnrecognizedScriptError(ScriptException):
     "An unrecognized Script was referenced."
 

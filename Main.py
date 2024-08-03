@@ -95,7 +95,6 @@ if __name__ == "__main__":
 
 pass
 # TODO: combine compare_text and print_text from ListStructure and DictStructure into a single thing.
-# TODO: make FunctionFields not require the suffix.
 # TODO: migrate dataminers to scripts
 # TODO: refactor ResourcePackDataMiner and BehaviorPackDataMiner to use import from scripts/normalizers/collapse_resource_packs/__util.py
 # TODO: Create "delegates", which are customizable and control how comparison reports look.
