@@ -94,7 +94,6 @@ if __name__ == "__main__":
     main()
 
 pass
-# TODO: allow custom accessors to use Python
 # TODO: combine compare_text and print_text from ListStructure and DictStructure into a single thing.
 # TODO: make FunctionFields not require the suffix.
 # TODO: migrate dataminers to scripts
