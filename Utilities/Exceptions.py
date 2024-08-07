@@ -1388,8 +1388,8 @@ class UnrecognizedPackError(DataMinerException):
                 pack_string = "Resource pack"
             case _:
                 pack_string = "Pack"
-        output = "%s " % (pack_string)
-        output = "\"%s\"" % (pack_string, self.pack,) if isinstance(self.pack, str) else "[%s]" % (", ".join("\"%s\"" % pack for pack in self.pack))
+        output = "%s " % (pack_string,)
+        output = "\"%s\"" % (self.pack,) if isinstance(self.pack, str) else "[%s]" % (", ".join("\"%s\"" % pack for pack in self.pack))
         if self.source is not None:
             output += ", found by %r," % (self.source,)
         output += " is not recognized"
