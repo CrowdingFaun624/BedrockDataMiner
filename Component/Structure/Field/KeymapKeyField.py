@@ -51,7 +51,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         '''
         self.tags_field.add_to_tag_set(tag_set)
 
-    def get_types(self) -> list[type]:
+    def get_types(self) -> tuple[type,...]:
         '''Return the list of types that this key can be.'''
         return self.types_field.get_types()
 

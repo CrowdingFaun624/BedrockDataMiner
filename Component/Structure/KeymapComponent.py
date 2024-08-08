@@ -115,7 +115,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         super().link_finals()
         self.get_final().link_substructures(
             keys={key.key: key.get_subcomponent() for key in self.keys},
-            key_types={key.key: tuple(key.get_types()) for key in self.keys},
+            key_types={key.key: key.get_types() for key in self.keys},
             key_structure=self.key_structure_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),
