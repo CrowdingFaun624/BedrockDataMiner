@@ -8,7 +8,6 @@ from pathlib2 import Path
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerSettings as DataMinerSettings
 import Downloader.Accessor as Accessor
-import Structure.Normalizer as Normalizer
 import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
