@@ -8,15 +8,13 @@ import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
-import Structure.GroupStructure as GroupStructure
 import Structure.NbtBaseStructure as NbtBaseStructure
-import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.GroupStructure]):
+class NbtBaseComponent(StructureComponent.StructureComponent[NbtBaseStructure.NbtBaseStructure]):
 
     class_name_article = "an NbtBase"
     class_name = "NbtBase"
@@ -60,49 +58,23 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = GroupStructure.GroupStructure(
-            name=self.name,
-            children_has_normalizer=self.children_has_normalizer,
-            children_tags=self.children_tags,
-        )
-        self.final_structure = NbtBaseStructure.NbtBaseStructure(
+        self.final = NbtBaseStructure.NbtBaseStructure(
             name = self.name,
             endianness=self.get_endianness(self.endianness),
             children_has_normalizer=self.children_has_normalizer,
             children_tags=self.children_tags,
         )
 
-    def get_final_structure(self) -> NbtBaseStructure.NbtBaseStructure:
-        if self.final_structure is None:
-            raise Exceptions.AttributeNoneError("final_structure", self)
-        return self.final_structure
-
     def link_finals(self) -> None:
         super().link_finals()
-        final_structure = self.get_final_structure()
         types = self.types_field.get_types()
         self.my_type = set(types)
         self.my_type.add(NbtReader.NbtBytes)
-        pre_normalized_types = self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else types
-        final_structure.link_substructures(
+        self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
-            delegate=self.delegate_field.create_delegate(final_structure),
+            delegate=self.delegate_field.create_delegate(self.get_final()),
             types=types,
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),
-            pre_normalized_types=pre_normalized_types,
+            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else types,
         )
-        self.get_final().link_substructures(
-            substructures={my_type: final_structure for my_type in self.my_type},
-            delegate=self.delegate_field.create_delegate(self.get_final()),
-            types=tuple(self.my_type),
-            normalizer=[],
-            post_normalizer=[],
-            pre_normalized_types=(NbtReader.NbtBytes,),
-        )
-
-    def finalize(self) -> None:
-        super().finalize()
-        delegate = self.get_final_structure().delegate
-        if delegate is not None:
-            delegate.finalize()

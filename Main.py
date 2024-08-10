@@ -94,7 +94,6 @@ if __name__ == "__main__":
     main()
 
 pass
-# TODO: remove GroupStructures around NbtBaseStructure and VolumeStructure--they are unnecessary
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
 # TODO: PrinterEnvironment that is used by print_text function; created inside of ComparisonEnvironment. Purpose is mainly to differentiate between old branch and new branch in print_text.
 # TODO: make Keymaps have requirable keys.
