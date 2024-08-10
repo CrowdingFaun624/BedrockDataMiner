@@ -4,17 +4,16 @@ from typing import Any, Generic, NoReturn, Sequence, TypeVar
 import Utilities.Exceptions as Exceptions
 
 
-class NoExist():
+class _NoExistType():
     "Class that is different from None."
 
     def __hash__(self) -> int:
         return hash(None)
 
     def __str__(self) -> NoReturn:
-        raise Exceptions.CannotStringifyError(NoExist)
-    
-    def __eq__(self, value: object) -> bool:
-        return isinstance(value, NoExist)
+        raise Exceptions.CannotStringifyError(type(self))
+
+NoExist = _NoExistType()
 
 class ChangeType(enum.Enum):
     removal = "removal"
@@ -40,14 +39,14 @@ Dt4 = TypeVar("Dt4")
 class Diff(Generic[Dt1,Dt2]):
     "A difference in data from an old version to a new version."
 
-    def __init__(self, old:Dt1=NoExist(), new:Dt2=NoExist()) -> None:
+    def __init__(self, old:Dt1=NoExist, new:Dt2=NoExist) -> None:
         '''
         :old: The older version of data.
         :new: The newer version of data.
         '''
         self.old:Dt1 = old
         self.new:Dt2 = new
-        self.change_type = exist_change_type[not isinstance(old, NoExist), not isinstance(new, NoExist)]
+        self.change_type = exist_change_type[old is not NoExist, new is not NoExist]
         self.is_addition = self.change_type == ChangeType.addition
         self.is_change = self.change_type == ChangeType.change
         self.is_removal = self.change_type == ChangeType.removal
@@ -72,11 +71,11 @@ class Diff(Generic[Dt1,Dt2]):
     def __getitem__(self, index:DiffType) -> Dt1|Dt2:
         match index:
             case DiffType.new:
-                if isinstance(self.new, NoExist):
+                if self.new is NoExist:
                     raise Exceptions.DiffKeyError(index, self)
                 else: return self.new
             case DiffType.old:
-                if isinstance(self.old, NoExist):
+                if self.old is NoExist:
                     raise Exceptions.DiffKeyError(index, self)
                 else: return self.old
             case DiffType.not_diff:

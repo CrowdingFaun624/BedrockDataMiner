@@ -28,13 +28,13 @@ class ListStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         data1:Sequence[d],
         data2:Sequence[d],
         environment:StructureEnvironment.StructureEnvironment,
-    ) -> tuple[Sequence[d|D.Diff[d|D.NoExist,d|D.NoExist]],bool,list[Trace.ErrorTrace]]:
+    ) -> tuple[Sequence[d|D.Diff[D._NoExistType,d]|D.Diff[d,D._NoExistType]],bool,list[Trace.ErrorTrace]]:
         if data1 is data2 or data1 == data2:
             return data1, False, []
         has_changes = False
         exceptions:list[Trace.ErrorTrace] = []
 
-        output:list[d|D.Diff[d|D.NoExist,d|D.NoExist]] = type(data1)() # type: ignore
+        output:list[d|D.Diff[D._NoExistType,d]|D.Diff[d,D._NoExistType]] = []
         exceptions:list[Trace.ErrorTrace] = []
         index = -1
         for index, (item1, item2) in enumerate(zip(data1, data2)):
@@ -67,9 +67,10 @@ class ListStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
                 # index is end of shortest; i is the offset from that.
                 if (check_type_exception := self.check_type(index + i + 1, item)) is not None:
                     exceptions.append(check_type_exception)
-                output.append((D.Diff(old=item) if data1_is_bigger else D.Diff(new=item)))
+                output.append(D.Diff(old=item) if data1_is_bigger else D.Diff(new=item))
                 has_changes = True
         else: pass
+        output = type(data1)(output) # type: ignore
         return output, has_changes, exceptions
 
     def get_item_key(self, index:int) -> str:

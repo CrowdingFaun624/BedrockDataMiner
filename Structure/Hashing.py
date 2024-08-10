@@ -27,7 +27,7 @@ hash_type_table:dict[type,Callable] = { # I will have type hinting no matter how
     bytes: hash_table_item(lambda data: hash(data), bytes),
     complex: hash_table_item(lambda data: hash(data), complex),
     D.Diff: hash_table_item(lambda data: hash((hash_data(data.old), hash_data(data.new))), D.Diff),
-    D.NoExist: hash_table_item(lambda data: hash(data), D.NoExist),
+    D._NoExistType: hash_table_item(lambda data: hash(data), D._NoExistType),
     dict: hash_table_item(lambda data: hash(tuple((hash(key), hash_data(value)) for key, value in data.items())), dict),
     float: hash_table_item(lambda data: hash(data), float),
     frozenset: hash_table_item(lambda data: hash(tuple(item for item in data)), frozenset),

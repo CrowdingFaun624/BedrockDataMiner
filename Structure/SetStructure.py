@@ -82,7 +82,7 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         data1:Sequence[d],
         data2:Sequence[d],
         environment:StructureEnvironment.StructureEnvironment,
-    ) -> tuple[Sequence[d|D.Diff[d|D.NoExist,d|D.NoExist]],bool,list[Trace.ErrorTrace]]:
+    ) -> tuple[Sequence[d|D.Diff[d|D._NoExistType,d|D._NoExistType]],bool,list[Trace.ErrorTrace]]:
         if data1 is data2 or data1 == data2:
             return data1, False, []
         exceptions:list[Trace.ErrorTrace] = []
