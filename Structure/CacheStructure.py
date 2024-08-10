@@ -120,7 +120,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         cache_item.set_compare_text(output, environment)
         return output
 
-    def print_text(self, data: d, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
+    def print_text(self, data: d, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
         structure = self.get_structure()
         if environment.structure_environment.should_cache or not self.cache_print_text:
             return structure.print_text(data, environment)
@@ -241,12 +241,12 @@ class CacheItem(Generic[d]):
         self.compare_text = True
         self.compare_text_data = (self.cache_store(data[0], environment), data[1], [trace.copy() for trace in data[2]])
 
-    def get_print_text_data(self, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
+    def get_print_text_data(self, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
         if self.print_text_data is None:
             raise Exceptions.AttributeNoneError("print_text_data", self)
         return self.cache_retrieve(self.print_text_data[0], environment), [trace.copy() for trace in self.print_text_data[1]]
 
-    def set_print_text(self, data:tuple[Any, list[Trace.ErrorTrace]], environment:StructureEnvironment.ComparisonEnvironment) -> None:
+    def set_print_text(self, data:tuple[Any, list[Trace.ErrorTrace]], environment:StructureEnvironment.PrinterEnvironment) -> None:
         self.print_text = True
         self.print_text_data = (self.cache_store(data, environment), [trace.copy() for trace in data[1]])
 

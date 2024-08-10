@@ -40,7 +40,7 @@ class StructureSet(Generic[d]):
         elif isinstance(key, int):
             return list(self.structures.values())[key]
 
-    def print_text(self, key:D.DiffType|int, data:d, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any,list[Trace.ErrorTrace]]:
+    def print_text(self, key:D.DiffType|int, data:d, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any,list[Trace.ErrorTrace]]:
         '''
         Generates lines from the data using the Structure given by the key.
         :key: The DiffType or list-index to choose a Structure with.

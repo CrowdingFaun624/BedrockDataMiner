@@ -237,7 +237,7 @@ class StructureBase():
         self.print_exception_list(traces)
         return output, has_changes
 
-    def print_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> str:
+    def print_text(self, data:Any, environment:StructureEnvironment.PrinterEnvironment) -> str:
         '''
         Generates Lines from an object containing no Diffs.
         :data: The object containing no Diffs.

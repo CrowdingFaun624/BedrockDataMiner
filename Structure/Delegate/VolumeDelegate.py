@@ -63,7 +63,7 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
                 output.extend(line.indent() for line in substructure_output)
                 return output
 
-    def print_layer(self, data:dict[tuple[int,int,int],int], additional_data:dict[tuple[int,int,int],MutableMapping[str,Any]], layer:int, size:tuple[int,int,int], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def print_layer(self, data:dict[tuple[int,int,int],int], additional_data:dict[tuple[int,int,int],MutableMapping[str,Any]], layer:int, size:tuple[int,int,int], environment:StructureEnvironment.PrinterEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         layer_2d = [[" " for j in range(size[0])] for i in range(size[2])]
         for x in range(size[0]):
@@ -101,7 +101,7 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
     def print_text(
             self,
             data:DataTypedDict,
-            environment:StructureEnvironment.ComparisonEnvironment,
+            environment:StructureEnvironment.PrinterEnvironment,
         ) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         states, additional_data, size = data["states"], data["data"], data["size"]
         output:list[SU.Line] = []
@@ -152,16 +152,16 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
                 new_layer[position] = state
 
         if layers_are_same:
-            new_lines, new_exceptions = self.print_layer(new_layer, {}, layer, size, environment)
+            new_lines, new_exceptions = self.print_layer(new_layer, {}, layer, size, environment[1])
             output.extend(new_lines)
             exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
         else:
             output.append(SU.Line("Old layer:"))
-            new_lines, new_exceptions = self.print_layer(old_layer, {}, layer, size, environment)
+            new_lines, new_exceptions = self.print_layer(old_layer, {}, layer, size, environment[0])
             output.extend(line.indent() for line in new_lines)
             exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
             output.append(SU.Line("New layer:"))
-            new_lines, new_exceptions = self.print_layer(new_layer, {}, layer, size, environment)
+            new_lines, new_exceptions = self.print_layer(new_layer, {}, layer, size, environment[1])
             output.extend(line.indent() for line in new_lines)
             exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
         for block_data_comparison in block_data_comparisons:
@@ -175,11 +175,11 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
         if isinstance(block_data, D.Diff):
             match block_data.change_type:
                 case D.ChangeType.addition:
-                    new_exceptions = self.print_single(None, cast(Any, block_data.new), "Added", output, cast(Any, self.substructure), environment, post_message=" at %i, %i, %i" % position)
+                    new_exceptions = self.print_single(None, cast(Any, block_data.new), "Added", output, cast(Any, self.substructure), environment[1], post_message=" at %i, %i, %i" % position)
                 case D.ChangeType.change:
                     new_exceptions = self.print_double(None, cast(Any, block_data.old), cast(Any, block_data.new), "Changed", output, cast(Any, self.substructure), environment, post_message=" at %i, %i, %i" % position)
                 case D.ChangeType.removal:
-                    new_exceptions = self.print_single(None, cast(Any, block_data.old), "Removed", output, cast(Any, self.substructure), environment, post_message=" at %i, %i, %i" % position)
+                    new_exceptions = self.print_single(None, cast(Any, block_data.old), "Removed", output, cast(Any, self.substructure), environment[0], post_message=" at %i, %i, %i" % position)
             any_changes = True
             exceptions.extend(exception.add(self.get_structure().name, position) for exception in new_exceptions)
         else:

@@ -135,7 +135,7 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions
 
-    def print_text(self, data: a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
+    def print_text(self, data: a, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.get_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)

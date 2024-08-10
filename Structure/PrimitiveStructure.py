@@ -60,7 +60,7 @@ class PrimitiveStructure(Structure.Structure[d]):
         else:
             return self.delegate.compare_text(data, environment)
 
-    def print_text(self, data: d, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
+    def print_text(self, data: d, environment: StructureEnvironment.PrinterEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
         if self.delegate is None:
             return (str(data), []) if environment.default_delegate is None else environment.default_delegate.print_text(data, environment)
         else:

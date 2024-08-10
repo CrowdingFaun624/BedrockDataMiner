@@ -95,7 +95,6 @@ if __name__ == "__main__":
 
 pass
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
-# TODO: PrinterEnvironment that is used by print_text function; created inside of ComparisonEnvironment. Purpose is mainly to differentiate between old branch and new branch in print_text.
 # TODO: make Keymaps have requirable keys.
 # TODO: migrate dataminers to scripts
 # TODO: refactor ResourcePackDataMiner and BehaviorPackDataMiner to use import from scripts/normalizers/collapse_resource_packs/__util.py

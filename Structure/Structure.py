@@ -72,7 +72,7 @@ class Structure(Generic[a]):
             raise Exceptions.AttributeNoneError("delegate", self)
         return self.delegate.compare_text(data, environment)
 
-    def print_text(self, data:a, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any,list[Trace.ErrorTrace]]:
+    def print_text(self, data:a, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any,list[Trace.ErrorTrace]]:
         '''
         Generates lines from an object containing no Diffs.
         Returns a list of Lines and a list of ErrorTraces.

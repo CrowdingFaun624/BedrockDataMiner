@@ -24,8 +24,25 @@ class StructureEnvironment():
             "caching" if self.should_cache else "uncaching",
         )
 
+class PrinterEnvironment():
+
+    def __init__(
+        self,
+        structure_environment:StructureEnvironment,
+        default_delegate:Union["Delegate.Delegate", None],
+        version:Union["Version.Version", None],
+        branch:int,
+    ) -> None:
+        self.structure_environment = structure_environment
+        self.default_delegate = default_delegate
+        self.version = version
+        self.branch = branch
+
+    def __repr__(self) -> str:
+        return "<%s %r %r branch %i>" % (self.__class__.__name__, self.version, self.structure_environment, self.branch)
+
 class ComparisonEnvironment():
-    
+
     def __init__(
         self,
         structure_environment:StructureEnvironment,
@@ -39,6 +56,10 @@ class ComparisonEnvironment():
         self.version1 = version1
         self.version2 = version2
         self.versions_between = versions_between
-    
+        self.printer_environments = [PrinterEnvironment(structure_environment, default_delegate, version, branch) for branch, version in enumerate((version1, version2))]
+
+    def __getitem__(self, branch:int) -> "PrinterEnvironment":
+        return self.printer_environments[branch]
+
     def __repr__(self) -> str:
-        return "<%s %r %r %r w/ %i between>" % (self.version1, self.version2, self.structure_environment, len(self.versions_between))
+        return "<%s %r %r %r w/ %i between>" % (self.__class__.__name__, self.version1, self.version2, self.structure_environment, len(self.versions_between))

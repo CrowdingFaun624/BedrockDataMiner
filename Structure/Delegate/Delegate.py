@@ -59,7 +59,7 @@ class Delegate(Generic[a, b, c]):
         else:
             return "<%s of %s %s>" % (self.__class__.__name__, self.structure.__class__.__name__, self.structure.name)
 
-    def cache_store(self, data:a, environment:StructureEnvironment.ComparisonEnvironment) -> c:
+    def cache_store(self, data:a, environment:StructureEnvironment.ComparisonEnvironment|StructureEnvironment.PrinterEnvironment) -> c:
         '''
         Returns data that is stored in a CacheStructure.
         When the data is retrieved, `cache_retrieve` is called.
@@ -68,7 +68,7 @@ class Delegate(Generic[a, b, c]):
         '''
         return cast(c, data)
 
-    def cache_retrieve(self, data:c, environment:StructureEnvironment.ComparisonEnvironment) -> a:
+    def cache_retrieve(self, data:c, environment:StructureEnvironment.ComparisonEnvironment|StructureEnvironment.PrinterEnvironment) -> a:
         '''
         Given the data that was stored by `cache_store`,
         returns the original data.
@@ -80,5 +80,5 @@ class Delegate(Generic[a, b, c]):
     def compare_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a, bool, list[Trace.ErrorTrace]]:
         ...
 
-    def print_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a, list[Trace.ErrorTrace]]:
+    def print_text(self, data:Any, environment:StructureEnvironment.PrinterEnvironment) -> tuple[a, list[Trace.ErrorTrace]]:
         ...

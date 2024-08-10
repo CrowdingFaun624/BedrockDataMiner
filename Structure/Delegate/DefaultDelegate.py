@@ -165,7 +165,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
             output.extend(line.indent() for line in substructure_output)
             return output
 
-    def print_text(self, data:list[Any]|dict[str,Any], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[Line],list[Trace.ErrorTrace]]:
+    def print_text(self, data:list[Any]|dict[str,Any], environment:StructureEnvironment.PrinterEnvironment) -> tuple[list[Line],list[Trace.ErrorTrace]]:
         if self.structure is None or isinstance(self.structure, (PassthroughStructure.PassthroughStructure, PrimitiveStructure.PrimitiveStructure)):
             return [Line(self.stringify(data))], []
         exceptions:list[Trace.ErrorTrace] = []
@@ -226,7 +226,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                     case D.ChangeType.addition:
                         item_key = self.get_compare_text_key_str(new_index)
                         current_length += 1; addition_length += 1
-                        new_exceptions = self.print_single(item_key, item.new, "Added", output, structure_set[D.DiffType.new], environment)
+                        new_exceptions = self.print_single(item_key, item.new, "Added", output, structure_set[D.DiffType.new], environment[1])
                     case D.ChangeType.change:
                         item_key = self.get_compare_text_key_str(new_index)
                         current_length += 1
@@ -234,7 +234,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                     case D.ChangeType.removal:
                         item_key = self.get_compare_text_key_str(old_index)
                         removal_length += 1
-                        new_exceptions = self.print_single(item_key, item.old, "Removed", output, structure_set[D.DiffType.old], environment)
+                        new_exceptions = self.print_single(item_key, item.old, "Removed", output, structure_set[D.DiffType.old], environment[0])
                 exceptions.extend(exception.add(self.get_structure().name, new_index) for exception in new_exceptions)
             else:
                 substructure_output:list[Line]
@@ -253,14 +253,14 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                         output.append(Line("Changed %s%s:") % (self.field, self.get_item_key(new_index)))
                         output.extend(line.indent() for line in substructure_output)
                     elif self.print_all and can_print_print_all:
-                        substructure_output, new_exceptions = structure.print_text(item, environment)
+                        substructure_output, new_exceptions = structure.print_text(item, environment[1])
                         exceptions.extend(exception.add(self.get_structure().name, new_index) for exception in new_exceptions)
                         output.extend(self.print_item(new_index, substructure_output, message="Unchanged "))
         if self.measure_length and size_changed:
             output = [Line("Total %s: %i (+%i, -%i)") % (self.field, current_length, addition_length, removal_length)] + output
         return output, any_changes, exceptions
 
-    def print_single(self, key_str:a|None, data:Any, message:str, output:list[Line], printer:Structure.Structure|None, environment:StructureEnvironment.ComparisonEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
+    def print_single(self, key_str:a|None, data:Any, message:str, output:list[Line], printer:Structure.Structure|None, environment:StructureEnvironment.PrinterEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
         '''
         Adds text from a single-type Diff (i.e. an addition or removal). Returns a list of ErrorTraces.
         :key_str: The key to describe the data with. If None, it will not be present.
@@ -327,12 +327,12 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
         if printer1 is None:
             substructure_output1 = [Line(self.stringify(data1))]
         else:
-            substructure_output1, new_exceptions = printer1.print_text(data1, environment)
+            substructure_output1, new_exceptions = printer1.print_text(data1, environment[0])
             exceptions.extend(exception.add(self.get_structure().name, key_str) for exception in new_exceptions)
         if printer2 is None:
             substructure_output2 = [Line(self.stringify(data2))]
         else:
-            substructure_output2, new_exceptions = printer2.print_text(data2, environment)
+            substructure_output2, new_exceptions = printer2.print_text(data2, environment[1])
             exceptions.extend(exception.add(self.get_structure().name, key_str) for exception in new_exceptions)
         if len(substructure_output1) == 0: substructure_output1 = [Line("empty")]
         if len(substructure_output2) == 0: substructure_output2 = [Line("empty")]
