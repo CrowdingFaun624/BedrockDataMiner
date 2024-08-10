@@ -3,6 +3,7 @@ from typing import Any, Callable, MutableMapping, TypeVar, cast
 import Structure.Difference as D
 import Structure.Hashing as Hashing
 import Structure.Normalizer as Normalizer
+import Structure.ObjectStructure as ObjectStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
@@ -13,7 +14,7 @@ import Utilities.Nbt.NbtTypes as NbtTypes
 
 d = TypeVar("d")
 
-class AbstractMappingStructure(Structure.Structure[MutableMapping[str, d]]):
+class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[str, d]]):
     """
     Abstract class of dict-using Structures.
     In subclasses, must provide methods `iter_structures`, `check_type`,

@@ -3,6 +3,7 @@ from typing import Any, Iterable, TypeVar
 import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
+import Structure.ObjectStructure as ObjectStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
@@ -12,7 +13,7 @@ import Utilities.Nbt.NbtTypes as NbtTypes
 
 d = TypeVar("d")
 
-class AbstractIterableStructure(Structure.Structure[Iterable[d]]):
+class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
     """
     Abstract class of list-using Structures.
     Must override `compare`, `get_similarity`, `get_item_key`, and `get_compare_text_key_str`.

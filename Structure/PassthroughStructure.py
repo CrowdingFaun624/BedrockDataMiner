@@ -3,6 +3,7 @@ from typing import Any, Iterable, TypeVar
 import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
+import Structure.ObjectStructure as ObjectStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
@@ -11,7 +12,7 @@ import Utilities.Exceptions as Exceptions
 
 a = TypeVar("a")
 
-class PassthroughStructure(Structure.Structure[a]):
+class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
     '''
     Simply passes data through itself. Can be subclassed.
     Not all Structures that have this behavior have to subclass this class.
