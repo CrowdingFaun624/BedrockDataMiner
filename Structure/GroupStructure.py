@@ -1,27 +1,26 @@
-from typing import Any, Iterable, TypeVar
+from typing import TYPE_CHECKING, Any, Iterable, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
+import Structure.PassthroughStructure as PassthroughStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
-import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
+if TYPE_CHECKING:
+    import Structure.Delegate.Delegate as Delegate
+
 a = TypeVar("a")
 
-class GroupStructure(Structure.Structure[a]):
+class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
 
     def __init__(self, name: str, children_has_normalizer: bool, children_tags: set[str]) -> None:
-        super().__init__(name, name, children_has_normalizer, children_tags)
+        super().__init__(name, children_has_normalizer, children_tags)
 
         self.substructures:dict[type,Structure.Structure|None]|None = None
-        self.types:tuple[type,...]|None = None
-        self.normalizer:list[Normalizer.Normalizer]|None = None
-        self.post_normalizer:list[Normalizer.Normalizer]|None = None
-        self.pre_normalized_types:tuple[type,...]|None = None
 
     def get_substructures(self) -> dict[type,Structure.Structure|None]:
         if self.substructures is None:
@@ -36,16 +35,14 @@ class GroupStructure(Structure.Structure[a]):
     def link_substructures(
         self,
         substructures:dict[type,Structure.Structure|None],
+        delegate:Union["Delegate.Delegate", None],
         types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
     ) -> None:
+        super().link_substructures(None, delegate, types, normalizer, post_normalizer, pre_normalized_types)
         self.substructures = substructures
-        self.types = types
-        self.normalizer = normalizer
-        self.post_normalizer = post_normalizer
-        self.pre_normalized_types = pre_normalized_types
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         yield from (substructure for substructure in self.get_substructures().values() if substructure is not None)
@@ -148,40 +145,4 @@ class GroupStructure(Structure.Structure[a]):
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         output, has_changes, new_exceptions = structure_set.compare(data1, data2, environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
-        return output, has_changes, exceptions
-
-    def print_text(self, data: a, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
-        exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.choose_structure(data)
-        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
-        output, new_exceptions = structure.print_text(D.DiffType.not_diff, data, environment)
-        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
-        return output, exceptions
-
-    def compare_text(self, data:a|D.Diff[a,a], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
-        exceptions:list[Trace.ErrorTrace] = []
-        structure_set, new_exceptions = self.choose_structure(data)
-        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
-        if isinstance(data, D.Diff):
-            output:list[SU.Line] = []
-            match data.change_type:
-                case D.ChangeType.addition:
-                    new_exceptions = self.print_single(None, data.new, "Added", output, structure_set[D.DiffType.new], environment)
-                case D.ChangeType.change:
-                    new_exceptions = self.print_double(None, data.old, data.new, "Changed", output, structure_set, environment)
-                case D.ChangeType.removal:
-                    new_exceptions = self.print_single(None, data.old, "Removed", output, structure_set[D.DiffType.old], environment)
-            exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
-            return output, True, exceptions
-        elif len(structure_set) == 0:
-            exceptions.append(Trace.ErrorTrace(Exceptions.StructureSetKeyError(D.DiffType.not_diff, structure_set), self.name, None, data))
-            output, has_changes = [], False
-        else:
-            if structure_set[D.DiffType.not_diff] is None:
-                output = []
-                has_changes = False
-                pass # guaranteed no changes in here.
-            else:
-                output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, data, environment)
-                exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions

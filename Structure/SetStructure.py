@@ -24,21 +24,17 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
     def __init__(
         self,
         name: str,
-        field: str,
-        print_flat: bool,
-        measure_length: bool,
-        print_all: bool,
         sort:bool,
         min_similarity_threshold:float,
         children_has_normalizer:bool,
         children_tags: set[str]
     ) -> None:
-        super().__init__(name, field, print_flat, measure_length, print_all, children_has_normalizer, children_tags)
+        super().__init__(name, children_has_normalizer, children_tags)
 
         self.min_similarity_threshold=min_similarity_threshold
         self.sort = sort
 
-    def get_similarity(self, data1:Sequence[d], data2:Sequence[d], environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1:Sequence[d], data2:Sequence[d], environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         data1_hashes:dict[int,tuple[int,d]] = {Hashing.hash_data(item): (index, item) for index, item in enumerate(data1)}
         data2_hashes:dict[int,tuple[int,d]] = {Hashing.hash_data(item): (index, item) for index, item in enumerate(data2)}
 

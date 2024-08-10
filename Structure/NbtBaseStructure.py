@@ -15,7 +15,7 @@ class NbtBaseStructure(PassthroughStructure.PassthroughStructure[NbtTypes.TAG]):
             children_has_normalizer:bool,
             children_tags:set[str]
         ) -> None:
-        super().__init__(name, name, children_has_normalizer, children_tags)
+        super().__init__(name, children_has_normalizer, children_tags)
 
         self.endianness=endianness
 

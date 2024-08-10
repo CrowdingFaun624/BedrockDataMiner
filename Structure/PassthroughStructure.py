@@ -1,4 +1,4 @@
-from typing import Any, Iterable, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Iterable, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -6,9 +6,11 @@ import Structure.Normalizer as Normalizer
 import Structure.ObjectStructure as ObjectStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
+
+if TYPE_CHECKING:
+    import Structure.Delegate.Delegate as Delegate
 
 a = TypeVar("a")
 
@@ -18,10 +20,11 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
     Not all Structures that have this behavior have to subclass this class.
     '''
 
-    def __init__(self, name: str, field: str, children_has_normalizer: bool, children_tags: set[str]) -> None:
-        super().__init__(name, field, children_has_normalizer, children_tags)
+    def __init__(self, name: str, children_has_normalizer: bool, children_tags: set[str]) -> None:
+        super().__init__(name, children_has_normalizer, children_tags)
 
         self.structure:Structure.Structure[a]|None = None
+        self.delegate:Union["Delegate.Delegate", None] = None
         self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.post_normalizer:list[Normalizer.Normalizer]|None = None
@@ -30,11 +33,13 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
     def link_substructures(
         self,
         structure:Structure.Structure[a]|None,
+        delegate:Union["Delegate.Delegate", None],
         types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
     ) -> None:
+        super().link_substructures(delegate)
         self.structure = structure
         self.types = types
         self.normalizer = normalizer
@@ -130,34 +135,35 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions
 
-    def print_text(self, data: a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def print_text(self, data: a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        if self.structure is None:
-            output = [SU.Line(SU.stringify(data))]
+        structure, new_exceptions = self.get_structure(None, data)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+        if self.delegate is not None:
+            printer = self.delegate
+        elif structure is not None:
+            printer = structure
+        elif environment.default_delegate is not None:
+            printer = environment.default_delegate
         else:
-            output, new_exceptions = self.structure.print_text(data, environment)
-            exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+            raise Exceptions.AttributeNoneError("delegate", self)
+        output, new_exceptions = printer.print_text(data, environment)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
-    def compare_text(self, data:a|D.Diff[a,a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:a|D.Diff[a,a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        if isinstance(data, D.Diff):
-            output:list[SU.Line] = []
-            match data.change_type:
-                case D.ChangeType.addition:
-                    new_exceptions = self.print_single(None, data.new, "Added", output, self.structure, environment)
-                case D.ChangeType.change:
-                    new_exceptions = self.print_double(None, data.old, data.new, "Changed", output, self.structure, environment)
-                case D.ChangeType.removal:
-                    new_exceptions = self.print_single(None, data.old, "Removed", output, self.structure, environment)
-            exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
-            return output, True, exceptions
+        structure, new_exceptions = self.choose_structure(None, data)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+        comparer:Callable[[Any, StructureEnvironment.ComparisonEnvironment],tuple[Any,bool,list[Trace.ErrorTrace]]]
+        if self.delegate is not None:
+            comparer = self.delegate.compare_text
+        elif structure is not None and structure[D.DiffType.not_diff] is not None:
+            comparer = lambda data, environment: structure.compare_text(D.DiffType.not_diff, data, environment)
+        elif environment.default_delegate is not None:
+            comparer = environment.default_delegate.compare_text
         else:
-            if self.structure is None:
-                output = []
-                has_changes = False
-                pass # guaranteed no changes in here.
-            else:
-                output, has_changes, new_exceptions = self.structure.compare_text(data, environment)
-                exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
-            return output, has_changes, exceptions
+            raise Exceptions.AttributeNoneError("delegate", self)
+        output, has_changes, new_exceptions = comparer(data, environment)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+        return output, has_changes, exceptions

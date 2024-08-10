@@ -1,13 +1,15 @@
-from typing import Any, Iterable, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Iterable, TypeVar, Union, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
+
+if TYPE_CHECKING:
+    import Structure.Delegate.Delegate as Delegate
 
 d = TypeVar("d")
 
@@ -17,7 +19,7 @@ class PrimitiveStructure(Structure.Structure[d]):
     """
 
     def __init__(self, name: str, children_has_normalizer: bool, children_tags: set[str]) -> None:
-        super().__init__(name, name, children_has_normalizer, children_tags)
+        super().__init__(name, children_has_normalizer, children_tags)
 
         self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
@@ -26,11 +28,13 @@ class PrimitiveStructure(Structure.Structure[d]):
 
     def link_substructures(
         self,
+        delegate:Union["Delegate.Delegate", None],
         types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         tags:list[str],
     ) -> None:
+        super().link_substructures(delegate)
         self.types = types
         self.normalizer = normalizer
         self.pre_normalized_types = pre_normalized_types
@@ -47,23 +51,20 @@ class PrimitiveStructure(Structure.Structure[d]):
         else:
             return []
 
-    def compare_text(self, data: d|D.Diff[d,d], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
-        if isinstance(data, D.Diff):
-            has_changes = True
-            match data.change_type:
-                case D.ChangeType.addition:
-                    output = [SU.Line("Added %s.") % (SU.stringify(data.new),)]
-                case D.ChangeType.change:
-                    output = [SU.Line("Changed from %s to %s." % (SU.stringify(data.old), SU.stringify(data.new)))]
-                case D.ChangeType.removal:
-                    output = [SU.Line("Removed %s." % (SU.stringify(data.old)))]
+    def compare_text(self, data: d|D.Diff[d,d], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
+        if self.delegate is None:
+            if environment.default_delegate is None:
+                raise Exceptions.AttributeNoneError("delegate", self)
+            else:
+                return environment.default_delegate.compare_text(data, environment)
         else:
-            has_changes = False
-            output = []
-        return output, has_changes, []
+            return self.delegate.compare_text(data, environment)
 
-    def print_text(self, data: d, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
-        return [SU.Line(SU.stringify(data))], []
+    def print_text(self, data: d, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
+        if self.delegate is None:
+            return (str(data), []) if environment.default_delegate is None else environment.default_delegate.print_text(data, environment)
+        else:
+            return self.delegate.print_text(data, environment)
 
     def normalize(self, data: d, environment: StructureEnvironment.StructureEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
         if self.normalizer is None:

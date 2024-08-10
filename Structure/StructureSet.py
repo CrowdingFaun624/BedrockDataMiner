@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING, Generic, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, Union
 
 import Structure.Difference as D
-import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
@@ -52,7 +51,8 @@ class StructureSet(Generic[d]):
             return [], [] # to get to here there must be another exception anyways
         structure = self[key]
         if structure is None:
-            return [SU.Line(SU.stringify(data))], []
+            output, exceptions = (str(data), []) if environment.default_delegate is None else environment.default_delegate.print_text(data, environment)
+            return output, exceptions
         else:
             return structure.print_text(data, environment)
 

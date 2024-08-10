@@ -1,4 +1,5 @@
-from typing import Any, Callable, MutableMapping, TypeVar, cast
+from typing import (TYPE_CHECKING, Any, Callable, MutableMapping, TypeVar,
+                    Union, cast)
 
 import Structure.Difference as D
 import Structure.Hashing as Hashing
@@ -7,10 +8,12 @@ import Structure.ObjectStructure as ObjectStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
-import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.NbtTypes as NbtTypes
+
+if TYPE_CHECKING:
+    import Structure.Delegate.Delegate as Delegate
 
 d = TypeVar("d")
 
@@ -26,10 +29,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
     def __init__(
             self,
             name:str,
-            field:str,
             detect_key_moves:bool,
-            measure_length:bool,
-            print_all:bool,
             sorting_function:Callable[[tuple[str|D.Diff,Any]],Any]|None,
             min_key_similarity_threshold:float,
             min_value_similarity_threshold:float,
@@ -38,11 +38,9 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
-        super().__init__(name, field, children_has_normalizer, children_tags)
+        super().__init__(name, children_has_normalizer, children_tags)
 
         self.detect_key_moves = detect_key_moves
-        self.measure_length = measure_length
-        self.print_all = print_all
         self.sorting_function = sorting_function
         self.min_key_similarity_threshold = min_key_similarity_threshold
         self.min_value_similarity_threshold = min_value_similarity_threshold
@@ -55,10 +53,13 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
 
     def link_substructures(
         self,
+        delegate:Union["Delegate.Delegate", None],
         key_structure:Structure.Structure[str]|None,
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
     ) -> None:
+        super().link_substructures(delegate)
+        self.delegate = delegate
         self.key_structure = key_structure
         self.normalizer = normalizer
         self.post_normalizer = post_normalizer
@@ -269,84 +270,3 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             output_copy.update((key, value) for key, value in sorted(output.items(), key=self.sorting_function))
             output = output_copy
         return output, has_changes, exceptions
-
-    def print_item(self, key:str, value:d, structure_set:StructureSet.StructureSet[d], environment:StructureEnvironment.StructureEnvironment, *,message:str="") -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
-        substructure_output, exceptions = structure_set.print_text(D.DiffType.not_diff, value, environment)
-        match len(substructure_output):
-            case 0:
-                return [SU.Line("%s%s %s: empty") % (message, self.field, SU.stringify(key))], exceptions
-            case 1:
-                return [SU.Line("%s%s %s: %s") % (message, self.field, SU.stringify(key), substructure_output[0])], exceptions
-            case _:
-                output:list[SU.Line] = []
-                output.append(SU.Line("%s%s %s:") % (message, self.field, SU.stringify(key)))
-                output.extend(line.indent() for line in substructure_output)
-                return output, exceptions
-
-    def print_text(self, data:MutableMapping[str, d], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
-        output:list[SU.Line] = []
-        if not isinstance(data, self.valid_types):
-            return output, [Trace.ErrorTrace(Exceptions.StructureTypeError(self.valid_types, type(data), "Data"), self.name, None, data)]
-        exceptions:list[Trace.ErrorTrace] = []
-        for key, value in data.items():
-            structure_set, new_exceptions = self.choose_structure(key, value)
-            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
-            new_lines, new_exceptions = self.print_item(key, value, structure_set, environment)
-            output.extend(new_lines)
-            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
-        return output, exceptions
-
-    def compare_text(self, data:MutableMapping[str, d], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
-        output:list[SU.Line] = []
-        any_changes = False
-        if not isinstance(data, self.valid_types):
-            return [], False, [Trace.ErrorTrace(Exceptions.StructureTypeError(self.valid_types, type(data), "Data"), self.name, None, data)]
-        current_length, addition_length, removal_length = 0, 0, 0
-        size_changed = False
-        exceptions:list[Trace.ErrorTrace] = []
-        for key, value in data.items():
-            can_print_print_all = True # if the print_all thing is overridden for whatever reason.
-            key_str = key.first_existing_property() if isinstance(key, D.Diff) else key
-            structure_set, new_exceptions = self.choose_structure(key, value)
-            exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
-
-            if isinstance(key, D.Diff) and key.is_change:
-                can_print_print_all = False
-                any_changes = True
-                output.append(SU.Line("Moved %s %s to %s.") % (self.field, SU.stringify(key.old), SU.stringify(key.new)))
-            if isinstance(value, D.Diff):
-                any_changes = True
-                size_changed = True
-                match value.change_type:
-                    case D.ChangeType.addition:
-                        current_length += 1; addition_length += 1
-                        new_exceptions = self.print_single(key_str, value.new, "Added", output, structure_set[D.DiffType.new], environment)
-                    case D.ChangeType.change:
-                        current_length += 1
-                        new_exceptions = self.print_double(key_str, value.old, value.new, "Changed", output, structure_set, environment)
-                    case D.ChangeType.removal:
-                        removal_length += 1
-                        new_exceptions = self.print_single(key_str, value.old, "Removed", output, structure_set[D.DiffType.old], environment)
-                exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
-            else:
-                current_length += 1
-                if structure_set[D.DiffType.not_diff] is None:
-                    if self.print_all and can_print_print_all:
-                        new_lines, new_exceptions = self.print_item(key_str, value, structure_set, environment, message="Unchanged ")
-                        output.extend(new_lines)
-                        exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
-                    pass # This means that it is not a difference and does not contain differences.
-                else:
-                    substructure_output, has_changes, new_exceptions = structure_set.compare_text(D.DiffType.not_diff, value, environment)
-                    exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
-                    if has_changes:
-                        any_changes = True
-                        output.append(SU.Line("Changed %s %s:") % (self.field, SU.stringify(key_str)))
-                        output.extend(line.indent() for line in substructure_output)
-                    elif self.print_all and can_print_print_all:
-                        new_lines, new_exceptions = self.print_item(key_str, value, structure_set, environment, message="Unchanged ")
-                        output.extend(new_lines)
-                        exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
-        if self.measure_length and size_changed:
-            output = [SU.Line("Total %s: %i (+%i, -%i)") % (self.field, current_length, addition_length, removal_length)] + output
-        return output, any_changes, exceptions

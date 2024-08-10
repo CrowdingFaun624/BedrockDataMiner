@@ -2,11 +2,11 @@ import enum
 from typing import TYPE_CHECKING, Any, Generic, Iterable, TypeVar, Union
 
 import Structure.DataPath as DataPath
-import Structure.StructureSet as StructureSet
-import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
+import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
+    import Structure.Delegate.Delegate as Delegate
     import Structure.StructureEnvironment as StructureEnvironment
 
 class StructureFailure(enum.Enum):
@@ -17,7 +17,7 @@ a = TypeVar("a")
 class Structure(Generic[a]):
     "Modular piece that generates comparison reports of data."
 
-    def __init__(self, name:str, field:str, children_has_normalizer:bool, children_tags:set[str]) -> None:
+    def __init__(self, name:str, children_has_normalizer:bool, children_tags:set[str]) -> None:
         '''
         :name: The name of the Structure.
         :field: The string used to describe data with.
@@ -25,9 +25,20 @@ class Structure(Generic[a]):
         :children_tags: The tags that this Structure or its descendants have.
         '''
         self.name = name
-        self.field = field
         self.children_has_normalizer = children_has_normalizer
         self.children_tags = children_tags
+        
+        self.delegate:Union["Delegate.Delegate", None] = None
+
+    def link_substructures(
+        self,
+        delegate:Union["Delegate.Delegate", None],
+    ) -> None:
+        self.delegate = delegate
+
+    def finalize_delegate(self) -> None:
+        if self.delegate is not None:
+            self.delegate.finalize()
 
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.name)
@@ -46,119 +57,7 @@ class Structure(Generic[a]):
             memo.add(self)
             substructure.clear_caches(memo)
 
-    def print_single(self, key_str:str|int|None, data:a, message:str, output:list[SU.Line], printer:Union["Structure",None], environment:StructureEnvironment.StructureEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
-        '''
-        Adds text from a single-type Diff (i.e. an addition or removal). Returns a list of ErrorTraces.
-        :key_str: The key to describe the data with. If None, it will not be present.
-        :data: The data to print (containing no Diffs).
-        :message: The capitalized string describing what happened to the data (i.e. "Added" or "Removed").
-        :output: The list of Lines to output to.
-        :printer: The Structure (or None) to print the data with.
-        :environment: The StructureEnvironment to use.
-        :post_message: A string to put after the field.
-        '''
-        exceptions:list[Trace.ErrorTrace] = []
-        if printer is None:
-            stringified_data = SU.stringify(data)
-            if key_str is None:
-                output.append(SU.Line("%s %s%s %s.") % (message, self.field, post_message, stringified_data))
-            else:
-                output.append(SU.Line("%s %s%s %s of %s.") % (message, self.field, post_message, SU.stringify(key_str), stringified_data))
-        else:
-            substructure_output, new_exceptions = printer.print_text(data, environment)
-            exceptions.extend(exception.add(self.name, key_str) for exception in new_exceptions)
-            match len(substructure_output), key_str is None:
-                case 0, True:
-                    output.append(SU.Line("%s empty %s%s.") % (message, self.field, post_message))
-                case 0, False:
-                    output.append(SU.Line("%s empty %s%s %s.") % (message, self.field, post_message, SU.stringify(key_str)))
-                case 1, True:
-                    output.append(SU.Line("%s %s%s %s.") % (message, self.field, post_message, substructure_output[0]))
-                case 1, False:
-                    output.append(SU.Line("%s %s%s %s of %s.") % (message, self.field, post_message, SU.stringify(key_str), substructure_output[0]))
-                case _, True:
-                    output.append(SU.Line("%s %s%s:") % (message, self.field, post_message))
-                    output.extend(line.indent() for line in substructure_output)
-                case _, False:
-                    output.append(SU.Line("%s %s%s %s:") % (message, self.field, post_message, SU.stringify(key_str)))
-                    output.extend(line.indent() for line in substructure_output)
-        return exceptions
-
-    def print_double(
-        self,
-        key_str:str|int|None,
-        data1:a,
-        data2:a,
-        message:str,
-        output:list[SU.Line],
-        printers:Union["StructureSet.StructureSet", "Structure", None],
-        environment:StructureEnvironment.StructureEnvironment,
-        *,
-        post_message:str=""
-    ) -> list[Trace.ErrorTrace]:
-        '''
-        Adds text from a double-type Diff (i.e. a change). Returns a list of ErrorTraces.
-        :key_str: The key to describe the data with. If None, it will not be present.
-        :data1: The data from the oldest Version to print (containing no Diffs).
-        :data2: The data from the newest Version to print (containing no Diffs).
-        :message: The capitalized string describing what happened to the data (i.e. "Added" or "Removed").
-        :output: The list of Lines to output to.
-        :printer: The Structure (or None) to print the data with.
-        :environment: The StructureEnvironment to use.
-        :post_message: A string to put after the field.
-        '''
-        if printers is None:
-            printer1 = None
-            printer2 = None
-        elif isinstance(printers, Structure):
-            printer1 = printers
-            printer2 = printers
-        else:
-            printer1 = printers[0]
-            printer2 = printers[-1] # [-1] because it must be the last item anyways.
-        exceptions:list[Trace.ErrorTrace] = []
-        if printer1 is None:
-            substructure_output1 = [SU.Line(SU.stringify(data1))]
-        else:
-            substructure_output1, new_exceptions = printer1.print_text(data1, environment)
-            exceptions.extend(exception.add(self.name, key_str) for exception in new_exceptions)
-        if printer2 is None:
-            substructure_output2 = [SU.Line(SU.stringify(data2))]
-        else:
-            substructure_output2, new_exceptions = printer2.print_text(data2, environment)
-            exceptions.extend(exception.add(self.name, key_str) for exception in new_exceptions)
-        if len(substructure_output1) == 0: substructure_output1 = [SU.Line("empty")]
-        if len(substructure_output2) == 0: substructure_output2 = [SU.Line("empty")]
-        match len(substructure_output1), len(substructure_output2), key_str is None:
-            case 1, 1, True:
-                output.append(SU.Line("%s %s%s from %s to %s.") % (message, self.field, post_message, substructure_output1[0], substructure_output2[0]))
-            case 1, 1, False:
-                output.append(SU.Line("%s %s%s %s from %s to %s.") % (message, self.field, post_message, SU.stringify(key_str), substructure_output1[0], substructure_output2[0]))
-            case 1, _, True:
-                output.append(SU.Line("%s %s%s from %s to:") % (message, self.field, post_message, substructure_output1[0]))
-                output.extend(line.indent() for line in substructure_output2)
-            case 1, _, False:
-                output.append(SU.Line("%s %s%s %s from %s to:") % (message, self.field, post_message, SU.stringify(key_str), substructure_output1[0]))
-                output.extend(line.indent() for line in substructure_output2)
-            case _, 1, True:
-                output.append(SU.Line("%s %s%s to %s from:") % (message, self.field, post_message, substructure_output2[0]))
-                output.extend(line.indent() for line in substructure_output1)
-            case _, 1, False:
-                output.append(SU.Line("%s %s%s %s to %s from:") % (message, self.field, post_message, SU.stringify(key_str), substructure_output2[0]))
-                output.extend(line.indent() for line in substructure_output1)
-            case _, _, True:
-                output.append(SU.Line("%s %s%s from:") % (message, self.field, post_message))
-                output.extend(line.indent() for line in substructure_output1)
-                output.append(SU.Line("to:"))
-                output.extend(line.indent() for line in substructure_output2)
-            case _, _, False:
-                output.append(SU.Line("%s %s%s %s from:") % (message, self.field, post_message, SU.stringify(key_str)))
-                output.extend(line.indent() for line in substructure_output1)
-                output.append(SU.Line("to:"))
-                output.extend(line.indent() for line in substructure_output2)
-        return exceptions
-
-    def check_all_types(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data:a, environment:"StructureEnvironment.StructureEnvironment") -> list[Trace.ErrorTrace]:
         '''
         Checks the types of the data using this Structure. Returns a list of ErrorTraces.
         :data: The data to check the types of.
@@ -173,7 +72,9 @@ class Structure(Generic[a]):
         :data: The object containing Diffs.
         :environment: The ComparisonEnvironment to use.
         '''
-        ...
+        if self.delegate is None:
+            raise Exceptions.AttributeNoneError("delegate", self)
+        return self.delegate.compare_text(data, environment)
 
     def print_text(self, data:a, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any,list[Trace.ErrorTrace]]:
         '''
@@ -182,7 +83,9 @@ class Structure(Generic[a]):
         :data: The object containing no Diffs.
         :environment: The ComparisonEnvironment to use.
         '''
-        ...
+        if self.delegate is None:
+            raise Exceptions.AttributeNoneError("delegate", self)
+        return self.delegate.print_text(data, environment)
 
     def normalize(self, data:a, environment:"StructureEnvironment.StructureEnvironment") -> tuple[Any|None,list[Trace.ErrorTrace]]:
         '''

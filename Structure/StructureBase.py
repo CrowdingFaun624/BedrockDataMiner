@@ -5,12 +5,12 @@ import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 
 if TYPE_CHECKING:
+    import Structure.Delegate.Delegate as Delegate
     import Version.Version as Version
 
 a = TypeVar("a")
@@ -26,30 +26,42 @@ class StructureBase():
     def __init__(
             self,
             component_name:str,
-            structure_name:str,
             children_tags:set[str],
         ) -> None:
 
-        self.component_name = component_name
-        self.structure_name = structure_name
+        self.name = component_name
         self.children_tags = children_tags
 
         self.structure:Structure.Structure|None = None
+        self.delegate:Union["Delegate.Delegate[str,StructureBase,str]", None] = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.post_normalizer:list[Normalizer.Normalizer]|None = None
 
     def link_substructures(
         self,
         structure:Structure.Structure,
+        delegate:Union["Delegate.Delegate", None],
+        default_delegate:Union["Delegate.Delegate", None],
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
     ) -> None:
         self.structure = structure
+        self.delegate = delegate
+        self.default_delegate = default_delegate
         self.normalizer = normalizer
         self.post_normalizer = post_normalizer
 
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, self.structure_name)
+        return "<%s %s>" % (self.__class__.__name__, self.name)
+
+    def get_structure(self) -> Structure.Structure:
+        if self.structure is None:
+            raise Exceptions.AttributeNoneError("structure", self)
+        return self.structure
+
+    def finalize_delegate(self) -> None:
+        if self.delegate is not None:
+            self.delegate.finalize()
 
     def normalize(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> Any:
         '''
@@ -67,11 +79,11 @@ class StructureBase():
                 output = normalizer(output)
             except Exception as e:
                 output = None
-                exceptions.append(Trace.ErrorTrace(e, self.component_name, normalizer_index, data))
+                exceptions.append(Trace.ErrorTrace(e, self.name, normalizer_index, data))
                 break
             else:
                 if output is None:
-                    exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.component_name, normalizer_index, data))
+                    exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.name, normalizer_index, data))
                     break
 
         # other normalizers
@@ -90,11 +102,11 @@ class StructureBase():
                 output = normalizer(output)
             except Exception as e:
                 output = None
-                exceptions.append(Trace.ErrorTrace(e, self.component_name, normalizer_index, data))
+                exceptions.append(Trace.ErrorTrace(e, self.name, normalizer_index, data))
                 break
             else:
                 if output is None:
-                    exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.component_name, normalizer_index, data))
+                    exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.name, normalizer_index, data))
                     break
 
         self.print_exception_list(exceptions)
@@ -125,7 +137,7 @@ class StructureBase():
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         normalized_data = self.normalize(data, environment)
-        output, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.component_name), environment)
+        output, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.name), environment)
         self.print_exception_list(new_exceptions)
         return output
 
@@ -164,24 +176,6 @@ class StructureBase():
         :versions_between: A list of any Versions between the first and second Versions.
         :environment: The StructureEnvironment to use.
         '''
-        header:list[str] = []
-        beta_texts:list[str] = ["", ""]
-        for index, version in enumerate((version1, version2)):
-            if version is not None and version.get_order_tag().is_development_tag and version.parent is not None:
-                beta_texts[index] = " (%s of \"%s\")" % (version.get_order_tag().development_name, version.parent.name)
-        if version1 is None:
-            header.append("Addition of \"%s\"%s at \"%s\"%s." % (self.structure_name, beta_texts[0], version2.name, beta_texts[1]))
-        else:
-            header.append("Difference of \"%s\" between \"%s\"%s and \"%s\"%s." % (self.structure_name, version1.name, beta_texts[0], version2.name, beta_texts[1]))
-        if len(versions_between) > 0:
-            files_word = "file" if len(versions_between) == 1 else "files"
-            between_word = "before" if version1 is None else "between"
-            if len(versions_between) > 10:
-                header.append("Unable to create data %s for %i files %s." % (files_word, len(versions_between), between_word))
-            elif len(versions_between) <= 10:
-                header.append("Unable to create data files for %i %s %s: %s" % (len(versions_between), files_word, between_word, ", ".join("\"%s\"" % version.name for version in versions_between)))
-        header.append("")
-
         if version1 is None:
             normalized_data2 = self.normalize(data2, environment)
             normalized_data1 = type(normalized_data2)() # create new empty.
@@ -190,16 +184,10 @@ class StructureBase():
             normalized_data2 = self.normalize(data2, environment)
 
         comparison_environment = StructureEnvironment.ComparisonEnvironment(environment, self.default_delegate, version1, version2, versions_between)
-        data_comparison, has_changes = self.compare(normalized_data1, normalized_data2, environment)
+        data_comparison, has_changes = self.compare(normalized_data1, normalized_data2, comparison_environment)
         if not has_changes: # skip compare_text part
             return "", False
-
-        lines, any_changes = self.compare_text(data_comparison, environment)
-
-        final = header
-        final.extend(str(line) for line in lines)
-
-        return "\n".join(final), any_changes
+        return self.compare_text(data_comparison, comparison_environment)
 
     def check_types(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> None:
         '''
@@ -218,7 +206,7 @@ class StructureBase():
         :traces: The ErrorTraces to print.
         '''
         for trace in traces:
-            print(trace.add(self.structure_name, None, force=True).finalize().stringify(), end="\n\n")
+            print(trace.add(self.name, None, force=True).finalize().stringify(), end="\n\n")
         if len(traces) > 0:
             raise Exceptions.StructureError(self)
 
@@ -242,9 +230,10 @@ class StructureBase():
         :data: The object containing Diffs.
         :environment: The StructureEnvironment to use.
         '''
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
-        output, has_changes, traces = self.structure.compare_text(data, environment)
+        if self.delegate is None:
+            output, has_changes, traces = self.get_structure().compare_text(data, environment)
+        else:
+            output, has_changes, traces = self.delegate.compare_text(data, environment)
         self.print_exception_list(traces)
         return output, has_changes
 
@@ -254,8 +243,9 @@ class StructureBase():
         :data: The object containing no Diffs.
         :environment: The StructureEnvironment to use.
         '''
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
-        output, traces = self.structure.print_text(data, environment)
+        if self.delegate is None:
+            output, traces = self.get_structure().print_text(data, environment)
+        else:
+            output, traces = self.delegate.print_text(data, environment)
         self.print_exception_list(traces)
         return output

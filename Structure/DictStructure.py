@@ -1,4 +1,5 @@
-from typing import Any, Callable, Iterable, MutableMapping, TypeVar
+from typing import (TYPE_CHECKING, Any, Callable, Iterable, MutableMapping,
+                    TypeVar, Union)
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
@@ -9,6 +10,9 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
+
+if TYPE_CHECKING:
+    import Structure.Delegate.Delegate as Delegate
 
 d = TypeVar("d")
 
@@ -22,10 +26,7 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
     def __init__(
             self,
             name:str,
-            field:str,
             detect_key_moves:bool,
-            measure_length:bool,
-            print_all:bool,
             sorting_function:Callable[[tuple[str|D.Diff,Any]],Any]|None,
             min_key_similarity_threshold:float,
             min_value_similarity_threshold:float,
@@ -34,7 +35,7 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             children_has_normalizer:bool,
             children_tags:set[str],
         ) -> None:
-        super().__init__(name, field, detect_key_moves, measure_length, print_all, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer, children_tags)
+        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer, children_tags)
 
         self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None
@@ -44,6 +45,7 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
     def link_substructures(
         self,
         structure:Structure.Structure[d]|None,
+        delegate:Union["Delegate.Delegate", None],
         key_structure:Structure.Structure[str]|None,
         types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
@@ -51,7 +53,7 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         pre_normalized_types:tuple[type,...],
         tags:list[str],
     ) -> None:
-        super().link_substructures(key_structure, normalizer, post_normalizer)
+        super().link_substructures(delegate, key_structure, normalizer, post_normalizer)
         self.structure = structure
         self.types = tuple(types)
         self.pre_normalized_types = tuple(pre_normalized_types)
