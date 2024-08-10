@@ -433,7 +433,7 @@ class EnumTypeVerifier(TypeVerifier[item_typevar]):
 
 class UnionTypeVerifier(TypeVerifier[item_typevar]):
 
-    def __init__(self, type_str:str, *types:type[item_typevar]|TypeVerifier[item_typevar], type_check:bool=True) -> None:
+    def __init__(self, type_str:str, *types:type[item_typevar]|TypeVerifier[item_typevar]|Any, type_check:bool=True) -> None:
         if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__union_type_verifier.base_verify({
                 "type_str": type_str,
@@ -462,7 +462,7 @@ class UnionTypeVerifier(TypeVerifier[item_typevar]):
         return "<%s \"%s\">" % (self.__class__.__name__, self.type_str)
 
 NoneType = type(None)
-special_type = type(Callable).mro()[2]|NoneType # type: ignore # you can't stop me, Python!
+special_type:type = type(Callable).mro()[2]|NoneType # type: ignore # you can't stop me, Python!
 cannot_be_none_function = lambda data: (data is not None, "data cannot be None!")
 cannot_be_none_key_function = lambda key, value: (value is not None, "value cannot be None!")
 
