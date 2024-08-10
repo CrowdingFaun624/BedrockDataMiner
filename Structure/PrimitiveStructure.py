@@ -47,7 +47,7 @@ class PrimitiveStructure(Structure.Structure[d]):
         else:
             return []
 
-    def compare_text(self, data: d|D.Diff[d,d], environment: StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data: d|D.Diff[d,d], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
         if isinstance(data, D.Diff):
             has_changes = True
             match data.change_type:
@@ -62,7 +62,7 @@ class PrimitiveStructure(Structure.Structure[d]):
             output = []
         return output, has_changes, []
 
-    def print_text(self, data: d, environment: StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def print_text(self, data: d, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         return [SU.Line(SU.stringify(data))], []
 
     def normalize(self, data: d, environment: StructureEnvironment.StructureEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
@@ -93,11 +93,11 @@ class PrimitiveStructure(Structure.Structure[d]):
         else:
             return [], []
 
-    def compare(self, data1: d, data2: d, environment: StructureEnvironment.StructureEnvironment) -> tuple[d, bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1: d, data2: d, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[d, bool, list[Trace.ErrorTrace]]:
         if data1 is data2 or data1 == data2:
             return data1, False, []
         else:
             return cast(d, D.Diff(old=data1, new=data2)), True, []
 
-    def get_similarity(self, data1: d, data2: d, environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: d, data2: d, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         return float(data1 == data2)

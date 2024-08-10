@@ -1,12 +1,13 @@
 import enum
-from typing import Any, Generic, Iterable, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, Iterable, TypeVar, Union
 
 import Structure.DataPath as DataPath
-import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 
+if TYPE_CHECKING:
+    import Structure.StructureEnvironment as StructureEnvironment
 
 class StructureFailure(enum.Enum):
     choose_structure_failure = 0
@@ -165,25 +166,25 @@ class Structure(Generic[a]):
         '''
         ...
 
-    def compare_text(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]:
+    def compare_text(self, data:a, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any,bool,list[Trace.ErrorTrace]]:
         '''
         Generates lines from an object containing Diffs.
         Returns a list of Lines, if there were any changes, and a list of ErrorTraces.
         :data: The object containing Diffs.
-        :environment: The StructureEnvironment to use.
+        :environment: The ComparisonEnvironment to use.
         '''
         ...
 
-    def print_text(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
+    def print_text(self, data:a, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any,list[Trace.ErrorTrace]]:
         '''
         Generates lines from an object containing no Diffs.
         Returns a list of Lines and a list of ErrorTraces.
         :data: The object containing no Diffs.
-        :environment: The StructureEnvironment to use.
+        :environment: The ComparisonEnvironment to use.
         '''
         ...
 
-    def normalize(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:a, environment:"StructureEnvironment.StructureEnvironment") -> tuple[Any|None,list[Trace.ErrorTrace]]:
         '''
         Manipulates the data before comparison.
         Returns the normalized data and a list of list of ErrorTraces.
@@ -192,7 +193,7 @@ class Structure(Generic[a]):
         '''
         ...
 
-    def get_tag_paths(self, data:a, tag:str, data_path:DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data:a, tag:str, data_path:DataPath.DataPath, environment:"StructureEnvironment.StructureEnvironment") -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         '''
         Returns the DataPaths on which the given tag exists in the Structure for the given data and a list of ErrorTraces.
         :data: The data to get the tag paths from.
@@ -202,21 +203,21 @@ class Structure(Generic[a]):
         '''
         ...
 
-    def compare(self, data1:a, data2:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[a,bool,list[Trace.ErrorTrace]]:
+    def compare(self, data1:a, data2:a, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[a,bool,list[Trace.ErrorTrace]]:
         '''
         Combines the data into a single object with Diffs in it. Returns the combined object and if there are any differences.
         :data1: The data from the oldest Version.
         :data2: The data from the newest Version.
-        :environment: The StructureEnvironment to use.
+        :environment: The ComparisonEnvironment to use.
         '''
         ...
 
-    def get_similarity(self, data1:a, data2:a, environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1:a, data2:a, environment:"StructureEnvironment.ComparisonEnvironment", exceptions:list[Trace.ErrorTrace]) -> float:
         '''
         Returns the similarity of data1 to data2. Is at most the greater of the complexities of the data.
         :data1: The data from the oldest Version.
         :data2: The data from the newest Version.
-        :environment: The StructureEnvironment to use.
+        :environment: The ComparisonEnvironment to use.
         '''
         ...
 

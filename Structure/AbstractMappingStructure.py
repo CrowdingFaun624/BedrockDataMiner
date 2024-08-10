@@ -92,7 +92,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
                 output.extend(exception.add(self.name, key) for exception in structure.check_all_types(value, environment))
         return output
 
-    def get_similarity(self, data1: MutableMapping[str, d], data2: MutableMapping[str, d], environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: MutableMapping[str, d], data2: MutableMapping[str, d], environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         data1_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data1.items()}
         data2_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data2.items()}
 
@@ -117,7 +117,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             exceptions.append(Trace.ErrorTrace(Exceptions.InvalidSimilarityError(self, similarity, data1, data2), self.name, None, (data1, data2)))
         return similarity
 
-    def get_key_similarity(self, key1:str, key2:str, environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_key_similarity(self, key1:str, key2:str, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         '''
         Gets the similarity between two keys of this Structure's data.
         :key1: The key of the older key-value pair.
@@ -131,7 +131,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         else:
             return 0.0
 
-    def get_value_similarity(self, key1:str, value1:d, key2:str, value2:d, environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_value_similarity(self, key1:str, value1:d, key2:str, value2:d, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         '''
         Gets the similarity between two values of this Structure's data.
         :key1: The key of the older key-value pair.
@@ -173,7 +173,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         data1_exclusive_items:dict[int,tuple[str,d]],
         data2_exclusive_items:dict[int,tuple[str,d]],
         same_keys:set[str],
-        environment:StructureEnvironment.StructureEnvironment,
+        environment:StructureEnvironment.ComparisonEnvironment,
         exceptions:list[Trace.ErrorTrace],
     ) -> list[tuple[int,int,float,float,str,str]]:
         keys1_hashes = {key1: (hash1, value1) for hash1, (key1, value1) in data1_exclusive_items.items()}
@@ -205,7 +205,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             self,
             data1:MutableMapping[str,d],
             data2:MutableMapping[str,d],
-            environment:StructureEnvironment.StructureEnvironment,
+            environment:StructureEnvironment.ComparisonEnvironment,
         ) -> tuple[MutableMapping[str|D.Diff[str,str],d|D.Diff[d,d]],bool,list[Trace.ErrorTrace]]:
 
         if data1 is data2 or data1 == data2:

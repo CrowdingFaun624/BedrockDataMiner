@@ -189,6 +189,7 @@ class StructureBase():
             normalized_data1 = self.normalize(data1, environment)
             normalized_data2 = self.normalize(data2, environment)
 
+        comparison_environment = StructureEnvironment.ComparisonEnvironment(environment, self.default_delegate, version1, version2, versions_between)
         data_comparison, has_changes = self.compare(normalized_data1, normalized_data2, environment)
         if not has_changes: # skip compare_text part
             return "", False
@@ -221,7 +222,7 @@ class StructureBase():
         if len(traces) > 0:
             raise Exceptions.StructureError(self)
 
-    def compare(self, data1:Any, data2:Any, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any,bool]:
+    def compare(self, data1:Any, data2:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any,bool]:
         '''
         Combines the data into a single object with Diffs in it. Returns the combined object and if there are any differences.
         :data1: The data from the oldest Version.
@@ -234,7 +235,7 @@ class StructureBase():
         self.print_exception_list(traces)
         return output, has_changes
 
-    def compare_text(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool]:
+    def compare_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[str,bool]:
         '''
         Generates Lines from an object containing Diffs.
         Returns a list of Lines and if there were any changes.
@@ -247,7 +248,7 @@ class StructureBase():
         self.print_exception_list(traces)
         return output, has_changes
 
-    def print_text(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> list[SU.Line]:
+    def print_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> str:
         '''
         Generates Lines from an object containing no Diffs.
         :data: The object containing no Diffs.

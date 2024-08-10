@@ -111,14 +111,14 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
-    def get_similarity(self, data1: a, data2: a, environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: a, data2: a, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         if self.structure is None:
             return float(data1 == data2)
         else:
             output = self.structure.get_similarity(data1, data2, environment, exceptions)
             return output
 
-    def compare(self, data1:a, data2:a, environment:StructureEnvironment.StructureEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1:a, data2:a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         if self.structure is None:
             if data1 is data2 or data1 == data2:
@@ -130,7 +130,7 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions
 
-    def print_text(self, data: a, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def print_text(self, data: a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         if self.structure is None:
             output = [SU.Line(SU.stringify(data))]
@@ -139,7 +139,7 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
-    def compare_text(self, data:a|D.Diff[a,a], environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:a|D.Diff[a,a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         if isinstance(data, D.Diff):
             output:list[SU.Line] = []

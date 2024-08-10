@@ -103,9 +103,9 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         cache_item.set_get_tag_paths(output)
         return output
 
-    def compare_text(self, data: d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data: d, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
         structure = self.get_structure()
-        if not environment.should_cache or not self.cache_compare_text:
+        if not environment.structure_environment.should_cache or not self.cache_compare_text:
             return structure.compare_text(data, environment)
         data_hash = Hashing.hash_data(data)
         cache_item = self.cache.get(data_hash)
@@ -120,9 +120,9 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         cache_item.set_compare_text(output)
         return output
 
-    def print_text(self, data: d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def print_text(self, data: d, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
         structure = self.get_structure()
-        if environment.should_cache or not self.cache_print_text:
+        if environment.structure_environment.should_cache or not self.cache_print_text:
             return structure.print_text(data, environment)
         data_hash = Hashing.hash_data(data)
         cache_item = self.cache.get(data_hash)
@@ -137,9 +137,9 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         cache_item.set_print_text(output)
         return output
 
-    def get_similarity(self, data1: d, data2: d, environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: d, data2: d, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         structure = self.get_structure()
-        if environment.should_cache or not self.cache_get_similarity:
+        if environment.structure_environment.should_cache or not self.cache_get_similarity:
             return structure.get_similarity(data1, data2, environment, exceptions)
         data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2)))
         cache_item = self.cache.get(data_hash)
@@ -154,9 +154,9 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         cache_item.set_get_similarity(output)
         return output
 
-    def compare(self, data1: d, data2: d, environment:StructureEnvironment.StructureEnvironment) -> tuple[d, bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1: d, data2: d, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[d, bool, list[Trace.ErrorTrace]]:
         structure = self.get_structure()
-        if environment.should_cache or not self.cache_compare:
+        if environment.structure_environment.should_cache or not self.cache_compare:
             return structure.compare(data1, data2, environment)
         data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2)))
         cache_item = self.cache.get(data_hash)

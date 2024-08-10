@@ -65,7 +65,7 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         data1_exclusive_items:dict[int,tuple[int,d]],
         data2_exclusive_items:dict[int,tuple[int,d]],
         structure:Structure.Structure[d],
-        environment:StructureEnvironment.StructureEnvironment,
+        environment:StructureEnvironment.ComparisonEnvironment,
         exceptions:list[Trace.ErrorTrace],
     ) -> list[tuple[int,int,float,int,int]]:
         similarities_list = [ # maps similarity of older items to newer items
@@ -81,7 +81,7 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         self,
         data1:Sequence[d],
         data2:Sequence[d],
-        environment:StructureEnvironment.StructureEnvironment,
+        environment:StructureEnvironment.ComparisonEnvironment,
     ) -> tuple[Sequence[d|D.Diff[d|D._NoExistType,d|D._NoExistType]],bool,list[Trace.ErrorTrace]]:
         if data1 is data2 or data1 == data2:
             return data1, False, []

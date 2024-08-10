@@ -13,7 +13,7 @@ class ListStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
     Ordered data structure.
     """
 
-    def get_similarity(self, data1: Sequence[d], data2: Sequence[d], environment:StructureEnvironment.StructureEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: Sequence[d], data2: Sequence[d], environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         maximum_length = max(len(data1), len(data2))
         if self.structure is None:
             similarity = sum(item1 == item2 for item1, item2 in zip(data1, data2)) / maximum_length
@@ -27,7 +27,7 @@ class ListStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         self,
         data1:Sequence[d],
         data2:Sequence[d],
-        environment:StructureEnvironment.StructureEnvironment,
+        environment:StructureEnvironment.ComparisonEnvironment,
     ) -> tuple[Sequence[d|D.Diff[D._NoExistType,d]|D.Diff[d,D._NoExistType]],bool,list[Trace.ErrorTrace]]:
         if data1 is data2 or data1 == data2:
             return data1, False, []

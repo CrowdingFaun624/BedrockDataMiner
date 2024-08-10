@@ -1,13 +1,13 @@
 from typing import TYPE_CHECKING, Generic, TypeVar, Union
 
 import Structure.Difference as D
-import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureUtilities as SU
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Structure.Structure as Structure
+    import Structure.StructureEnvironment as StructureEnvironment
 
 d = TypeVar("d")
 
@@ -41,12 +41,12 @@ class StructureSet(Generic[d]):
         elif isinstance(key, int):
             return list(self.structures.values())[key]
 
-    def print_text(self, key:D.DiffType|int, data:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],list[Trace.ErrorTrace]]:
+    def print_text(self, key:D.DiffType|int, data:d, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any,list[Trace.ErrorTrace]]:
         '''
         Generates lines from the data using the Structure given by the key.
         :key: The DiffType or list-index to choose a Structure with.
         :data: The data containing no Diffs to print.
-        :environment: The StructureEnvironment to use.
+        :environment: The ComparisonEnvironment to use.
         '''
         if isinstance(key, D.DiffType) and key not in self:
             return [], [] # to get to here there must be another exception anyways
@@ -56,12 +56,12 @@ class StructureSet(Generic[d]):
         else:
             return structure.print_text(data, environment)
 
-    def compare_text(self, key:D.DiffType|int, data:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[SU.Line],bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, key:D.DiffType|int, data:d, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any, bool, list[Trace.ErrorTrace]]:
         '''
         Generates comparison lines from the data using the Structure given by the key.
         :key: The DiffType or list-index to choose a Structure with.
         :data: The data containing Diffs to compare.
-        :environment: The StructureEnvironment to use.
+        :environment: The ComparisonEnvironment to use.
         '''
         structure = self[key]
         if structure is None:
@@ -69,12 +69,12 @@ class StructureSet(Generic[d]):
         else:
             return structure.compare_text(data, environment)
 
-    def compare(self, data1:d, data2:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[d|D.Diff[d,d],bool,list[Trace.ErrorTrace]]:
+    def compare(self, data1:d, data2:d, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[d|D.Diff[d,d],bool,list[Trace.ErrorTrace]]:
         '''
         Compares data using the Structure given by internal conditions.
         :data1: The data from the oldest Version.
         :data2: The data from the newest Version.
-        :environment: The StructureEnvironment to use.
+        :environment: The ComparisonEnvironment to use.
         '''
         if (len(self) == 1) or (len(self) == 2 and self[0] == self[1]):
             # both items have the same Structure.
