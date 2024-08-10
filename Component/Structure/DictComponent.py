@@ -3,6 +3,7 @@ import enum
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
 import Component.Structure.Field.NormalizerListField as NormalizerListField
+import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
@@ -23,17 +24,16 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
     class_name = "Dict"
     my_capabilities = Capabilities.Capabilities(has_keys=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("key_component", "a str, StructureComponent or None", False, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("key_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
-        TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("min_key_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("min_value_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("sort", "a str", False, TypeVerifier.EnumTypeVerifier([item.value for item in DictSorting])),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -48,16 +48,14 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.verify_arguments(data)
 
         self.detect_key_moves = data.get("detect_key_moves", True)
-        self.field = data.get("field", "field")
-        self.measure_length = data.get("measure_length", False)
         self.min_key_similarity_threshold = data.get("min_key_similarity_threshold", DictStructure.MIN_KEY_SIMILARITY_THRESHOLD)
         self.min_value_similarity_threshold = data.get("min_value_similarity_threshold", DictStructure.MIN_VALUE_SIMILARITY_THRESHOLD)
         self.key_weight = data.get("key_weight", DictStructure.KEY_WEIGHT)
         self.value_weight = data.get("value_weight", DictStructure.VALUE_WEIGHT)
-        self.print_all = data.get("print_all", False)
         self.sort = DictSorting[data.get("sort", "none")]
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
         self.key_structure_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("key_component", None), ["key_component"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
@@ -70,7 +68,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)
         self.this_type_field.must_be(StructureComponent.MAPPING_TYPES)
-        self.fields.extend([self.subcomponent_field, self.key_structure_field, self.normalizer_field, self.pre_normalized_types_field, self.this_type_field, self.types_field, self.tags_field, self.post_normalizer_field])
+        self.fields.extend([self.subcomponent_field, self.delegate_field, self.key_structure_field, self.normalizer_field, self.pre_normalized_types_field, self.this_type_field, self.types_field, self.tags_field, self.post_normalizer_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -83,10 +81,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
                 sorting_function = lambda item: item[1]
         self.final = DictStructure.DictStructure(
             name=self.name,
-            field=self.field,
             detect_key_moves=self.detect_key_moves,
-            measure_length=self.measure_length,
-            print_all=self.print_all,
             sorting_function=sorting_function,
             min_key_similarity_threshold=self.min_key_similarity_threshold,
             min_value_similarity_threshold=self.min_value_similarity_threshold,
@@ -100,6 +95,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         super().link_finals()
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
+            delegate=self.delegate_field.create_delegate(self.get_final()),
             key_structure=self.key_structure_field.get_final(),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),

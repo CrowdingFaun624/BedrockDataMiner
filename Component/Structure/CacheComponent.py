@@ -1,5 +1,6 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
@@ -20,6 +21,8 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         TypeVerifier.TypedDictKeyTypeVerifier("cache_get_tag_paths", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("cache_normalize", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("cache_print_text", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a list or str", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -38,9 +41,10 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.cache_compare = data.get("cache_compare", True)
 
         self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.types_field.verify_with(self.subcomponent_field)
-        self.fields.extend([self.subcomponent_field, self.types_field])
+        self.fields.extend([self.subcomponent_field, self.delegate_field, self.types_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -63,5 +67,6 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.my_type = set(types)
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
+            delegate=self.delegate_field.create_delegate(self.get_final()),
             types=types,
         )

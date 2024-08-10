@@ -23,8 +23,11 @@ ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotR
 ImportTypedDict = TypedDict("ImportTypedDict", {"components": Required[list[ImportedComponentTypedDict]], "from": Required[str]})
 
 class BaseTypedDict(TypedDict):
+    default_delegate: NotRequired[str]
+    default_delegate_arguments: NotRequired[dict[str,Any]]
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
     imports: NotRequired[list[ImportTypedDict]]
-    name: Required[str]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     subcomponent: Required[str]
@@ -38,6 +41,8 @@ class CacheTypedDict(TypedDict):
     cache_get_tag_paths: NotRequired[bool]
     cache_normalize: NotRequired[bool]
     cache_print_text: NotRequired[bool]
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
     subcomponent: Required[str]
     type: NotRequired[Literal["Cache"]]
     types: Required[str|list[str]]
@@ -59,17 +64,16 @@ class DataMinerSettingsTypedDict(TypedDict):
     type: NotRequired[Literal["DataMinerSettings"]]
 
 class DictTypedDict(TypedDict):
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
     detect_key_moves: NotRequired[bool]
-    field: NotRequired[str]
     key_component: NotRequired[str]
     key_weight: NotRequired[float]
-    measure_length: NotRequired[bool]
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
-    print_all: NotRequired[bool]
     sort: NotRequired[Literal["none", "by_key", "by_value"]]
     subcomponent: Required[str|None]
     tags: NotRequired[str|list[str]]
@@ -79,6 +83,8 @@ class DictTypedDict(TypedDict):
     value_weight: NotRequired[float]
 
 class GroupTypedDict(TypedDict):
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[list[str]]
@@ -86,6 +92,7 @@ class GroupTypedDict(TypedDict):
     type: NotRequired[Literal["Group"]]
 
 class KeymapKeyTypedDict(TypedDict):
+    delegate_arguments: NotRequired[dict[str,Any]]
     pre_normalized_type: NotRequired[str|list[str]]
     subcomponent: NotRequired[Union[str,None,"StructureTypedDicts"]]
     tags: NotRequired[str|list[str]]
@@ -93,18 +100,17 @@ class KeymapKeyTypedDict(TypedDict):
     weight: NotRequired[int]
 
 class KeymapTypedDict(TypedDict):
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
     detect_key_moves: NotRequired[bool]
-    field: NotRequired[str]
     imports: NotRequired[str|list[str]]
     key_component: NotRequired[str]
     key_weight: NotRequired[float]
     keys: Required[dict[str,KeymapKeyTypedDict]]
-    measure_length: NotRequired[bool]
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
-    print_all: NotRequired[bool]
     sort: NotRequired[Literal["none", "by_key", "by_value", "by_component_order"]]
     tags: NotRequired[str|list[str]]
     this_type: NotRequired[str|list[str]]
@@ -115,13 +121,11 @@ class LatestSlotTypedDict(TypedDict):
     type: NotRequired[Literal["LatestSlot"]]
 
 class ListTypedDict(TypedDict):
-    field: NotRequired[str]
-    measure_length: NotRequired[bool]
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
-    print_all: NotRequired[bool]
-    print_flat: NotRequired[bool]
     subcomponent: Required[str|None]
     tags: NotRequired[str|list[str]]
     this_type: NotRequired[str|list[str]]
@@ -129,6 +133,8 @@ class ListTypedDict(TypedDict):
     types: Required[str|list[str]]
 
 class NbtBaseTypedDict(TypedDict):
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
     endianness: Required[Literal["big", "little"]]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
@@ -142,6 +148,8 @@ class NormalizerTypedDict(TypedDict):
     type: NotRequired[Literal["Normalizer"]]
 
 class PrimitiveComponentTypedDict(TypedDict):
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
     normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
     tags: NotRequired[str|list[str]]
@@ -154,14 +162,12 @@ class RangeVersionTagAutoAssignerTypedDict(TypedDict):
     type: NotRequired[Literal["RangeVersionTagAutoAssign"]]
 
 class SetTypedDict(TypedDict):
-    field: NotRequired[str]
-    measure_length: NotRequired[bool]
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
     min_similarity_threshold: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
-    print_all: NotRequired[bool]
-    print_flat: NotRequired[bool]
     sort: NotRequired[bool]
     subcomponent: Required[str|None]
     tags: NotRequired[str|list[str]]
@@ -170,6 +176,8 @@ class SetTypedDict(TypedDict):
     types: Required[str|list[str]]
 
 class StringComponentTypedDict(TypedDict):
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
     normalizer: NotRequired[str|list[str]]
     tags: NotRequired[str|list[str]]
     type: NotRequired[Literal["Primitive"]]

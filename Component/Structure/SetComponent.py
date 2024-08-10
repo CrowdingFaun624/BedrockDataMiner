@@ -1,6 +1,7 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
 import Component.Structure.Field.NormalizerListField as NormalizerListField
+import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
@@ -15,14 +16,12 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
     class_name = "Set"
     my_capabilities = Capabilities.Capabilities(is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("min_similarity_threshold", "a float", False, float),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("sort", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent, or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -35,14 +34,11 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data)
 
-        self.field = data.get("field", "item")
-        self.measure_length = data.get("measure_length", False)
-        self.print_all = data.get("print_all", False)
-        self.print_flat = data.get("print_flat", False)
         self.sort = data.get("sort", False)
         self.min_similarity_threshold = data.get("min_similarity_threshold", SetStructure.MIN_SIMILARITY_THRESHOLD)
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
@@ -55,16 +51,12 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         self.tags_field.add_to_tag_set(self.children_tags)
         self.this_type_field.must_be(StructureComponent.ITERABLE_TYPES)
         self.this_type_field.contained_by(self.types_field)
-        self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field, self.post_normalizer_field])
+        self.fields.extend([self.subcomponent_field, self.delegate_field, self.types_field, self.normalizer_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field, self.post_normalizer_field])
 
     def create_final(self) -> None:
         super().create_final()
         self.final = SetStructure.SetStructure(
             name=self.name,
-            field=self.field,
-            print_flat=self.print_flat,
-            print_all=self.print_all,
-            measure_length=self.measure_length,
             sort=self.sort,
             min_similarity_threshold=self.min_similarity_threshold,
             children_has_normalizer=self.children_has_normalizer,
@@ -75,6 +67,7 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         super().link_finals()
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
+            delegate=self.delegate_field.create_delegate(self.get_final()),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),

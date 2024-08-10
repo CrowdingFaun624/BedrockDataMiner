@@ -4,6 +4,7 @@ import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Structure.Field.NormalizerListField as NormalizerListField
+import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
@@ -22,6 +23,8 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
     children_has_normalizer_default = True
     my_capabilities = Capabilities.Capabilities(is_group=True, is_nbt_base=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("endianness", "a str", True, TypeVerifier.EnumTypeVerifier(("big", "little"))),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
@@ -38,13 +41,14 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
         self.final_structure:NbtBaseStructure.NbtBaseStructure|None=None
 
         self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), ["delegate"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
         self.types_field.verify_with(self.subcomponent_field)
         self.types_field.must_be(StructureComponent.NBT_TYPES)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
-        self.fields.extend([self.subcomponent_field, self.types_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field])
+        self.fields.extend([self.subcomponent_field, self.delegate_field, self.types_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field])
 
     def get_subcomponents(self) -> list[Component.Component]:
         return [self.subcomponent_field.get_component()]
@@ -82,6 +86,7 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
         pre_normalized_types = self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else types
         final_structure.link_substructures(
             structure=self.subcomponent_field.get_final(),
+            delegate=self.delegate_field.create_delegate(final_structure),
             types=types,
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),
@@ -89,8 +94,15 @@ class NbtBaseComponent(StructureComponent.StructureComponent[GroupStructure.Grou
         )
         self.get_final().link_substructures(
             substructures={my_type: final_structure for my_type in self.my_type},
+            delegate=self.delegate_field.create_delegate(self.get_final()),
             types=tuple(self.my_type),
             normalizer=[],
             post_normalizer=[],
             pre_normalized_types=(NbtReader.NbtBytes,),
         )
+
+    def finalize(self) -> None:
+        super().finalize()
+        delegate = self.get_final_structure().delegate
+        if delegate is not None:
+            delegate.finalize()
