@@ -82,7 +82,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
             except Exception as e:
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
 
-        structure, new_exceptions = self.get_structure(data)
+        structure, new_exceptions = self.get_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         if structure is not None:
             normalizer_output, new_exceptions = structure.normalize(data, environment)
@@ -109,7 +109,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
-        structure, new_exceptions = self.get_structure(data)
+        structure, new_exceptions = self.get_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         if structure is not None:
             new_tags, new_exceptions = structure.get_tag_paths(data, tag, data_path.copy(type(data)), environment)
@@ -129,8 +129,8 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
         return StructureSet.StructureSet(output), exceptions
 
     def get_similarity(self, data1: a, data2: a, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
-        structure1, exceptions1 = self.get_structure(data1)
-        structure2, exceptions2 = self.get_structure(data2)
+        structure1, exceptions1 = self.get_structure(None, data1)
+        structure2, exceptions2 = self.get_structure(None, data2)
         if len(exceptions1) > 0 or len(exceptions2) > 0:
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureExceptionError(self, self.get_similarity, exceptions1 + exceptions2), self.name, None, (data1, data2)))
         if structure1 is not structure2 or structure1 is None or structure2 is None:
@@ -141,7 +141,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
 
     def compare(self, data1: a, data2: a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        structure_set, new_exceptions = self.choose_structure(D.Diff(data1, data2))
+        structure_set, new_exceptions = self.choose_structure(None, D.Diff(data1, data2))
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         output, has_changes, new_exceptions = structure_set.compare(data1, data2, environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
