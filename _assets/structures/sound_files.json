@@ -1,31 +1,39 @@
 {
     "base": {
         "type": "Base",
-        "name": "sound_files",
+        "delegate_arguments": {
+            "name": "sound_files"
+        },
         "subcomponent": "sound_file"
     },
     "sound_file": {
         "type": "Dict",
-        "field": "sound file",
+        "delegate_arguments": {
+            "field": "sound file",
+            "measure_length": true
+        },
         "types": ["dict"],
         "detect_key_moves": true,
         "sort": "by_key",
-        "measure_length": true,
         "min_value_similarity_threshold": 0.9,
         "subcomponent": "internal_sound_file"
     },
     "internal_sound_file": {
         "type": "Dict",
-        "field": "internal sound file",
+        "delegate_arguments": {
+            "field": "internal sound file",
+            "measure_length": true
+        },
         "types": ["dict"],
         "detect_key_moves": true,
-        "measure_length": true,
         "sort": "by_key",
         "subcomponent": "sound_property"
     },
     "sound_property": {
         "type": "Keymap",
-        "field": "property",
+        "delegate_arguments": {
+            "field": "property"
+        },
         "normalizer": {
             "function_name": "delete_required_key",
             "arguments": {
@@ -44,14 +52,18 @@
     },
     "pictures": {
         "type": "Set",
-        "field": "picture",
+        "delegate_arguments": {
+            "field": "picture",
+            "measure_length": true
+        },
         "types": ["null"],
-        "subcomponent": null,
-        "measure_length": true
+        "subcomponent": null
     },
     "tags": {
         "type": "Keymap",
-        "field": "tag type",
+        "delegate_arguments": {
+            "field": "tag type"
+        },
         "sort": "by_key",
         "keys": {
             "comment": {"type": "list", "subcomponent": "tag"},
@@ -62,7 +74,9 @@
     },
     "tag": {
         "type": "Set",
-        "field": "tag",
+        "delegate_arguments": {
+            "field": "tag"
+        },
         "types": ["str"],
         "sort": true,
         "subcomponent": null
@@ -71,11 +85,15 @@
         "type": "Set",
         "types": ["null"],
         "subcomponent": null,
-        "measure_length": true
+        "delegate_arguments": {
+            "measure_length": true
+        }
     },
     "streaminfo": {
         "type": "Keymap",
-        "field": "property",
+        "delegate_arguments": {
+            "field": "property"
+        },
         "sort": "by_key",
         "keys": {
             "_start": {"type": "int"},
@@ -95,9 +113,11 @@
     },
     "version": {
         "type": "List",
-        "field": "version number",
+        "delegate_arguments": {
+            "field": "version number",
+            "print_flat": true
+        },
         "types": ["int"],
-        "subcomponent": null,
-        "print_flat": true
+        "subcomponent": null
     }
 }

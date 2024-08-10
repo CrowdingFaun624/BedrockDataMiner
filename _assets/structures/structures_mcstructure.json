@@ -1,7 +1,9 @@
 {
     "base": {
         "type": "Base",
-        "name": "structures_mcstructure",
+        "delegate_arguments": {
+            "name": "structures_mcstructure"
+        },
         "subcomponent": "structures"
     },
     "empty_compound": {
@@ -17,20 +19,24 @@
     },
     "structures": {
         "type": "Dict",
-        "field": "structure",
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "structure"
+        },
         "types": ["dict"],
-        "measure_length": true,
         "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "field": "behavior pack",
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "behavior pack"
+        },
         "types": ["TAG_Compound", "nbt_base"],
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/flat"
         },
-        "measure_length": true,
         "sort": "by_key",
         "subcomponent": "cache"
     },
@@ -47,22 +53,26 @@
     },
     "vector_tag_int": {
         "type": "List",
-        "field": "coordinate",
+        "delegate_arguments": {
+            "field": "coordinate",
+            "measure_length": false,
+            "print_all": true,
+            "print_flat": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Int"],
-        "measure_length": false,
-        "print_all": true,
-        "print_flat": true,
         "subcomponent": null
     },
     "vector_tag_float": {
         "type": "List",
-        "field": "coordinate",
+        "delegate_arguments": {
+            "field": "coordinate",
+            "measure_length": false,
+            "print_all": true,
+            "print_flat": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Float"],
-        "measure_length": false,
-        "print_all": true,
-        "print_flat": true,
         "subcomponent": null
     },
     "structure": {
@@ -110,10 +120,12 @@
     },
     "item.tag.ench": {
         "type": "Set",
-        "field": "enchantment",
+        "delegate_arguments": {
+            "field": "enchantment",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": {
             "type": "Keymap",
             "this_type": "TAG_Compound",
@@ -125,26 +137,32 @@
     },
     "item_list": {
         "type": "Set",
-        "field": "item",
+        "delegate_arguments": {
+            "field": "item",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "item"
     },
     "block_indices": {
         "type": "Set",
-        "field": "block",
+        "delegate_arguments": {
+            "field": "block",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_List"],
-        "measure_length": true,
         "subcomponent": "vector_tag_int"
     },
     "entities": {
         "type": "Set",
-        "field": "entity",
+        "delegate_arguments": {
+            "field": "entity",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "entity"
     },
     "entity": {
@@ -263,10 +281,12 @@
     },
     "entity.attributes": {
         "type": "Set",
-        "field": "attribute",
+        "delegate_arguments": {
+            "field": "attribute",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "entity.attributes.item"
     },
     "entity.attributes.item": {
@@ -285,10 +305,12 @@
     },
     "entity.attributes.item.modifiers": {
         "type": "Set",
-        "field": "modifier",
+        "delegate_arguments": {
+            "field": "modifier",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": {
             "type": "Keymap",
             "this_type": "TAG_Compound",
@@ -304,10 +326,12 @@
     },
     "entity.definitions": {
         "type": "Set",
-        "field": "definition",
+        "delegate_arguments": {
+            "field": "definition",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_String"],
-        "measure_length": true,
         "sort": true,
         "subcomponent": null
     },
@@ -346,20 +370,24 @@
     },
     "entity.rotation": {
         "type": "List",
-        "field": "axis",
+        "delegate_arguments": {
+            "field": "axis",
+            "print_all": true,
+            "print_flat": true,
+            "measure_length": false
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Float"],
-        "measure_length": false,
-        "print_all": true,
-        "print_flat": true,
         "subcomponent": null
     },
     "entity.tags": {
         "type": "Set",
-        "field": "tag",
+        "delegate_arguments": {
+            "field": "tag",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_String"],
-        "measure_length": true,
         "sort": true,
         "subcomponent": null
     },
@@ -380,10 +408,12 @@
     },
     "palette.default.block_palette": {
         "type": "Set",
-        "field": "palette",
+        "delegate_arguments": {
+            "field": "palette",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "palette.default.block_palette.item"
     },
     "palette.default.block_palette.item": {
@@ -492,10 +522,12 @@
     },
     "palette.default.block_position_data": {
         "type": "Dict",
-        "field": "block",
+        "delegate_arguments": {
+            "field": "block",
+            "measure_length": true
+        },
         "this_type": "TAG_Compound",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "sort": "by_key",
         "subcomponent": "palette.default.block_position_data.item"
     },
@@ -512,7 +544,9 @@
         "type": "Set",
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
+        "delegate_arguments": {
+            "measure_length": true
+        },
         "subcomponent": "palette.default.block_position_data.item.tick_delay.item"
     },
     "palette.default.block_position_data.item.tick_delay.item": {
@@ -526,7 +560,9 @@
         "type": "Set",
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
+        "delegate_arguments": {
+            "measure_length": true
+        },
         "subcomponent": "palette.default.block_position_data.item.tick_queue_data.item"
     },
     "palette.default.block_position_data.item.tick_queue_data.item": {
@@ -628,10 +664,12 @@
     },
     "block_entity_data.last_output_params": {
         "type": "List",
-        "field": "parameter",
+        "delegate_arguments": {
+            "field": "parameter",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_String"],
-        "measure_length": true,
         "subcomponent": null
     },
     "block_entity_data.offers": {
@@ -644,10 +682,12 @@
     },
     "block_entity_data.offers:recipes": {
         "type": "Set",
-        "field": "offer",
+        "delegate_arguments": {
+            "field": "offer",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "block_entity_data.offers:recipes.item"
     },
     "block_entity_data.offers:recipes.item": {
@@ -672,18 +712,22 @@
     "block_entity_data.offers:tier_exp_requirements": {
         "type": "List",
         "this_type": "TAG_List",
-        "field": "requirement",
+        "delegate_arguments": {
+            "field": "requirement",
+            "measure_length": true
+        },
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "block_entity_data.offers:tier_exp_requirements.item"
     },
     "block_entity_data.offers:tier_exp_requirements.item": {
         "type": "Dict",
         "this_type": "TAG_Compound",
-        "field": "key",
+        "delegate_arguments": {
+            "field": "key",
+            "measure_length": true
+        },
         "types": ["TAG_Int"],
         "sort": "by_key",
-        "measure_length": true,
         "subcomponent": null
     },
     "block_entity_data.vibration_listener": {

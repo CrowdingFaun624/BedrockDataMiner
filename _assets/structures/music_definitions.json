@@ -1,23 +1,29 @@
 {
     "base": {
         "type": "Base",
-        "name": "music_definitions",
+        "delegate_arguments": {
+            "name": "music_definitions"
+        },
         "subcomponent": "environment"
     },
     "environment": {
         "type": "Dict",
-        "field": "environment",
+        "delegate_arguments": {
+            "field": "environment",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "detect_key_moves": true,
         "sort": "by_key",
         "subcomponent": "resource_pack"
     },
     "resource_pack": {
         "type": "Dict",
-        "field": "resource pack",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "detect_key_moves": true,
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
@@ -27,7 +33,9 @@
     },
     "music_property": {
         "type": "Keymap",
-        "field": "property",
+        "delegate_arguments": {
+            "field": "property"
+        },
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "event_name": {"type": "str"},
@@ -37,9 +45,11 @@
     },
     "defined_in": {
         "type": "Set",
-        "field": "resource pack",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "print_flat": true
+        },
         "types": ["str"],
-        "print_flat": true,
         "sort": true,
         "subcomponent": null
     }

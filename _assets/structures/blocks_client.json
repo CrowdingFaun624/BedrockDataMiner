@@ -1,7 +1,9 @@
 {
     "base": {
         "type": "Base",
-        "name": "blocks_client",
+        "delegate_arguments": {
+            "name": "blocks_client"
+        },
         "normalizer": {
             "function_name": "normalizers/blocks_client_normalize"
         },
@@ -9,10 +11,12 @@
     },
     "block": {
         "type": "Dict",
-        "field": "block",
+        "delegate_arguments": {
+            "field": "block",
+            "measure_length": true
+        },
         "types": ["dict"],
         "detect_key_moves": true,
-        "measure_length": true,
         "min_key_similarity_threshold": 0.2,
         "min_value_similarity_threshold": 0.4,
         "key_weight": 0.5,
@@ -25,12 +29,14 @@
     },
     "resource_pack": {
         "type": "Dict",
-        "field": "resource pack",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
         "types": ["dict"],
         "detect_key_moves": true,
         "sort": "by_key",
         "min_value_similarity_threshold": 0.25,
-        "measure_length": true,
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
@@ -38,7 +44,9 @@
     },
     "block_properties": {
         "type": "Keymap",
-        "field": "property",
+        "delegate_arguments": {
+            "field": "property"
+        },
         "normalizer": {
             // https://bugs.mojang.com/browse/MCPE-76182
             "function_name": "delete_optional_key",
@@ -73,14 +81,18 @@
     },
     "defined_in": {
         "type": "Set",
-        "field": "resource pack",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "print_flat": true
+        },
         "subcomponent": null,
-        "types": ["str"],
-        "print_flat": true
+        "types": ["str"]
     },
     "textures": {
         "type": "Keymap",
-        "field": "direction",
+        "delegate_arguments": {
+            "field": "direction"
+        },
         "sort": "by_component_order",
         "keys": {
             "down": {"type": "str", "subcomponent": "texture"},
@@ -97,7 +109,9 @@
     },
     "isotropic": {
         "type": "Keymap",
-        "field": "direction",
+        "delegate_arguments": {
+            "field": "direction"
+        },
         "sort": "by_component_order",
         "keys": {
             "down": {"type": "bool"},

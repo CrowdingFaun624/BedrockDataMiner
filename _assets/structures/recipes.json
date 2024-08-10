@@ -1,23 +1,29 @@
 {
     "base": {
         "type": "Base",
-        "name": "recipes",
+        "delegate_arguments": {
+            "name": "recipes"
+        },
         "subcomponent": "recipes"
     },
     "recipes": {
         "type": "Dict",
-        "field": "recipe",
+        "delegate_arguments": {
+            "field": "recipe",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "detect_key_moves": true,
         "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "field": "behavior pack",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "detect_key_moves": true,
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
@@ -27,9 +33,11 @@
     },
     "defined_in": {
         "type": "Set",
-        "field": "behavior pack",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
         "types": ["str"],
-        "measure_length": true,
         "sort": true,
         "subcomponent": null
     },
@@ -57,9 +65,11 @@
     },
     "item_list": {
         "type": "Set",
-        "field": "item",
+        "delegate_arguments": {
+            "field": "item",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "subcomponent": "item"
     },
     "item_list_or_item": {
@@ -71,11 +81,13 @@
     },
     "tag_list": {
         "type": "Set",
-        "field": "tag",
+        "delegate_arguments": {
+            "field": "tag",
+            "measure_length": true
+        },
         "types": ["str"],
         "subcomponent": null,
-        "sort": true,
-        "measure_length": true
+        "sort": true
     },
     "tag_list_or_tag": {
         "type": "Group",
@@ -158,19 +170,23 @@
     },
     "recipe.shaped:keys": {
         "type": "Dict",
-        "field": "key",
+        "delegate_arguments": {
+            "field": "key",
+            "measure_length": true,
+            "print_all": true
+        },
         "types": ["dict"],
-        "measure_length": true,
-        "print_all": true,
         "detect_key_moves": true,
         "subcomponent": "item"
     },
     "recipe.shaped:pattern": {
         "type": "List",
-        "field": "line",
-        "measure_length": false,
-        "print_all": true,
-        "print_flat": false,
+        "delegate_arguments": {
+            "field": "line",
+            "measure_length": false,
+            "print_all": true,
+            "print_flat": false
+        },
         "types": ["str"],
         "subcomponent": null
     },
@@ -189,10 +205,12 @@
     "recipe.shapeless:ingredients": {
         "type": "Set",
         "types": ["dict"],
-        "measure_length": true,
-        "print_all": true,
-        "subcomponent": "item",
-        "field": "ingredient"
+        "delegate_arguments": {
+            "measure_length": true,
+            "print_all": true,
+            "field": "ingredient"
+        },
+        "subcomponent": "item"
     },
     "recipe.smithing_transform": {
         "type": "Keymap",
@@ -226,9 +244,11 @@
             },
             "list": {
                 "type": "Set",
-                "field": "condition",
+                "delegate_arguments": {
+                    "field": "condition",
+                    "measure_length": true
+                },
                 "types": ["dict"],
-                "measure_length": true,
                 "subcomponent": "item"
             }
         }

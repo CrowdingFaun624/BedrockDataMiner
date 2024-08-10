@@ -1,15 +1,19 @@
 {
     "base": {
         "type": "Base",
-        "name": "sound_definitions",
+        "delegate_arguments": {
+            "name": "sound_definitions"
+        },
         "subcomponent": "sound_event"
     },
     "sound_event": {
         "type": "Dict",
-        "field": "sound event",
+        "delegate_arguments": {
+            "field": "sound event",
+            "measure_length": true
+        },
         "types": ["dict"],
         "sort": "by_key",
-        "measure_length": true,
         "detect_key_moves": true,
         "key_component": {
             "type": "String"
@@ -19,19 +23,23 @@
     },
     "resource_pack": {
         "type": "Dict",
-        "field": "resource pack",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
         "types": ["dict"],
         "detect_key_moves": true,
         "sort": "by_key",
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
-        "measure_length": true,
         "subcomponent": "sound_event_property"
     },
     "sound_event_property": {
         "type": "Keymap",
-        "field": "property",
+        "delegate_arguments": {
+            "field": "property"
+        },
         "normalizer": {
             // https://bugs.mojang.com/browse/MCPE-153558
             // https://bugs.mojang.com/browse/MCPE-178265
@@ -52,16 +60,20 @@
     },
     "sounds": {
         "type": "Set",
-        "field": "sound",
+        "delegate_arguments": {
+            "field": "sound",
+            "print_all": true,
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
-        "print_all": true,
         "min_similarity_threshold": 0.3,
         "subcomponent": "sound_properties"
     },
     "sound_properties": {
         "type": "Keymap",
-        "field": "property",
+        "delegate_arguments": {
+            "field": "property"
+        },
         "pre_normalized_types": ["str", "dict"],
         "normalizer": [
             {
@@ -92,10 +104,12 @@
     },
     "defined_in": {
         "type": "Set",
-        "field": "resource pack",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "print_flat": true
+        },
         "types": ["str"],
         "subcomponent": null,
-        "sort": true,
-        "print_flat": true
+        "sort": true
     }
 }

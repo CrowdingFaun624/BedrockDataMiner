@@ -1,7 +1,9 @@
 {
     "base": {
         "type": "Base",
-        "name": "trade_tables",
+        "delegate_arguments": {
+            "name": "trade_tables"
+        },
         "subcomponent": "trade_tables",
         "imports": [
             {
@@ -28,16 +30,20 @@
     },
     "trade_tables": {
         "type": "Dict",
-        "field": "trade table",
+        "delegate_arguments": {
+            "field": "trade table",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
         "types": ["dict"],
-        "field": "behavior pack",
+        "delegate_arguments": {
+            "field": "behavior pack"
+        },
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
@@ -55,15 +61,19 @@
     },
     "defined_in": {
         "type": "Set",
-        "field": "behavior pack",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
         "types": ["str"],
-        "measure_length": true,
         "sort": true,
         "subcomponent": null
     },
     "tiers": {
         "type": "List",
-        "field": "tier",
+        "delegate_arguments": {
+            "field": "tier"
+        },
         "types": ["dict"],
         "subcomponent": "tier"
     },
@@ -78,25 +88,31 @@
     },
     "groups": {
         "type": "Set",
-        "field": "group",
+        "delegate_arguments": {
+            "field": "group",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "min_similarity_threshold": 0.3,
         "subcomponent": "tier"
     },
     "trades": {
         "type": "Set",
-        "field": "trade",
+        "delegate_arguments": {
+            "field": "trade",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "min_similarity_threshold": 0.3,
         "subcomponent": "trade"
     },
     "biome_list": {
         "type": "Set",
-        "field": "biome",
+        "delegate_arguments": {
+            "field": "biome",
+            "measure_length": true
+        },
         "types": ["str"],
-        "measure_length": true,
         "sort": true,
         "subcomponent": null
     },
@@ -115,17 +131,21 @@
     },
     "trade:gives": {
         "type": "Set",
-        "field": "given item",
+        "delegate_arguments": {
+            "field": "given item",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "min_similarity_threshold": 0.75,
         "subcomponent": "trade:gives.item"
     },
     "trade:wants": {
         "type": "Set",
-        "field": "wanted item",
+        "delegate_arguments": {
+            "field": "wanted item",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "min_similarity_threshold": 0.75,
         "subcomponent": "trade:wants.item"
     },
@@ -145,9 +165,11 @@
     },
     "trade:gives.item.choice": {
         "type": "Set",
-        "field": "choice",
+        "delegate_arguments": {
+            "field": "choice",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "subcomponent": "trade:gives.item"
     },
     "trade:wants.item": {
@@ -167,9 +189,11 @@
     },
     "trade:wants.item.choice": {
         "type": "Set",
-        "field": "choice",
+        "delegate_arguments": {
+            "field": "choice",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "subcomponent": "trade:wants.item"
     }
 }

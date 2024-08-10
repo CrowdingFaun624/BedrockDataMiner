@@ -1,7 +1,9 @@
 {
     "base": {
         "type": "Base",
-        "name": "languages",
+        "delegate_arguments": {
+            "name": "languages"
+        },
         "normalizer": {
             "function_name": "normalizers/languages_normalize"
         },
@@ -9,16 +11,20 @@
     },
     "language": {
         "type": "Dict",
-        "field": "language",
+        "delegate_arguments": {
+            "field": "language",
+            "measure_length": true
+        },
         "types": ["dict"],
         "detect_key_moves": true,
-        "measure_length": true,
         "sort": "by_key",
         "subcomponent": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "field": "resource pack",
+        "delegate_arguments": {
+            "field": "resource pack"
+        },
         "types": ["dict"],
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
@@ -28,7 +34,9 @@
     },
     "language_property": {
         "type": "Keymap",
-        "field": "property",
+        "delegate_arguments": {
+            "field": "property"
+        },
         "sort": "by_component_order",
         "keys": {
             "name": {"type": "str"},
@@ -37,9 +45,11 @@
     },
     "defined_in": {
         "type": "Set",
-        "field": "resource pack",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "print_flat": true
+        },
         "types": ["str"],
-        "print_flat": true,
         "sort": true,
         "subcomponent": null
     }

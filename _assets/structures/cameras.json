@@ -1,7 +1,9 @@
 {
     "base": {
         "type": "Base",
-        "name": "cameras",
+        "delegate_arguments": {
+            "name": "cameras"
+        },
         "subcomponent": "cameras"
     },
     "outdated": {
@@ -17,35 +19,43 @@
     },
     "rotation_decimal": {
         "type": "List",
-        "field": "axis",
+        "delegate_arguments": {
+            "field": "axis",
+            "print_all": true,
+            "print_flat": true,
+            "measure_length": false
+        },
         "types": ["decimal"],
-        "print_all": true,
-        "print_flat": true,
-        "measure_length": false,
         "subcomponent": null
     },
     "vector_decimal": {
         "type": "List",
-        "field": "vector item",
+        "delegate_arguments": {
+            "field": "vector item",
+            "print_all": true,
+            "print_flat": true,
+            "measure_length": false
+        },
         "types": ["decimal"],
-        "print_all": true,
-        "print_flat": true,
-        "measure_length": false,
         "subcomponent": null
     },
     "cameras": {
         "type": "Dict",
-        "field": "camera",
+        "delegate_arguments": {
+            "field": "camera",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "sort": "by_key",
         "subcomponent": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "field": "resource pack",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
@@ -54,9 +64,11 @@
     },
     "defined_in": {
         "type": "Set",
-        "field": "resource pack",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
         "types": ["str"],
-        "measure_length": true,
         "subcomponent": null
     },
     "camera": {
@@ -83,7 +95,10 @@
     },
     "components": {
         "type": "Keymap",
-        "measure_length": true,
+        "delegate_arguments": {
+            // "field": "component",
+            "measure_length": true
+        },
         "sort": "by_key",
         "keys": {
             "minecraft:allow_inside_block": {"type": "dict", "subcomponent": "empty_dict"},

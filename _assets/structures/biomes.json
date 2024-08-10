@@ -1,7 +1,9 @@
 {
     "base": {
         "type": "Base",
-        "name": "biomes",
+        "delegate_arguments": {
+            "name": "biomes"
+        },
         "subcomponent": "biomes"
     },
     "biome_tag": {
@@ -22,9 +24,11 @@
     },
     "biomes": {
         "type": "Dict",
-        "field": "biome",
+        "delegate_arguments": {
+            "field": "biome",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "sort": "by_key",
         "detect_key_moves": true,
         "min_key_similarity_threshold": 0.25,
@@ -83,9 +87,11 @@
     },
     "block_list": {
         "type": "Set",
-        "field": "block",
+        "delegate_arguments": {
+            "field": "block",
+            "measure_length": true
+        },
         "types": ["str"],
-        "measure_length": true,
         "sort": true,
         "subcomponent": null
     },
@@ -95,27 +101,33 @@
     },
     "range_decimal": {
         "type": "List",
-        "field": "range item",
+        "delegate_arguments": {
+            "field": "range item",
+            "print_all": true,
+            "print_flat": true,
+            "measure_length": false
+        },
         "types": ["decimal", "str"],
-        "print_all": true,
-        "print_flat": true,
-        "measure_length": false,
         "subcomponent": null
     },
     "range_decimal_molang": {
         "type": "List",
-        "field": "range item",
+        "delegate_arguments": {
+            "field": "range item",
+            "print_all": true,
+            "print_flat": true,
+            "measure_length": false
+        },
         "types": ["decimal", "str"],
-        "print_all": true,
-        "print_flat": true,
-        "measure_length": false,
         "subcomponent": null
     },
     "components": {
         "type": "Keymap",
-        "field": "component",
+        "delegate_arguments": {
+            "field": "component",
+            "measure_length": true
+        },
         "imports": "old_components",
-        "measure_length": true,
         "tags": ["biome_component"],
         "sort": "by_key",
         "keys": {
@@ -319,9 +331,11 @@
     },
     "component.overworld_generation_rules:biome_references": {
         "type": "Set",
-        "field": "biome reference",
+        "delegate_arguments": {
+            "field": "biome reference",
+            "measure_length": true
+        },
         "types": ["list", "str"],
-        "measure_length": true,
         "subcomponent": "component.overworld_generation_rules:biome_reference_group"
     },
     "component.overworld_generation_rules:biome_reference_group": {
@@ -334,9 +348,11 @@
     "component.overworld_generation_rules:biome_reference": {
         "type": "List",
         "types": ["int", "str"],
-        "measure_length": true,
-        "print_all": true,
-        "print_flat": true,
+        "delegate_arguments": {
+            "measure_length": true,
+            "print_all": true,
+            "print_flat": true
+        },
         "subcomponent": null
     },
     "component.overworld_height": {
@@ -353,10 +369,12 @@
         }
     },
     "component.surface_material_adjustments:adjustments": {
-        "type": "List",
-        "field": "adjustment",
+        "type": "List", // TODO: change this to a Set
+        "delegate_arguments": {
+            "field": "adjustment",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "subcomponent": "component.surface_material_adjustments:adjustments.item"
     },
     "component.surface_material_adjustments:adjustments.item": {
@@ -399,11 +417,13 @@
     },
     "component.tags:tags": {
         "type": "Set",
-        "field": "tag",
+        "delegate_arguments": {
+            "field": "tag",
+            "measure_length": true,
+            "print_all": true,
+            "print_flat": true
+        },
         "types": ["str"],
-        "measure_length": true,
-        "print_all": true,
-        "print_flat": true,
         "tags": "biome_tag",
         "subcomponent": null
     },
@@ -420,9 +440,11 @@
         "subcomponents": {
             "list": {
                 "type": "List",
-                "field": "climate",
+                "delegate_arguments": {
+                    "field": "climate",
+                    "measure_length": true
+                },
                 "types": ["list", "str"],
-                "measure_length": true,
                 "subcomponent": "component.world_generation_rules:item.item.group"
             },
             "str": null
@@ -434,7 +456,9 @@
             "list": {
                 "type": "List",
                 "types": ["str", "int"],
-                "measure_length": true,
+                "delegate_arguments": {
+                    "measure_length": true
+                },
                 "subcomponent": null
             },
             "str": null

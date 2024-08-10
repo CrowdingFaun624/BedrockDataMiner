@@ -1,7 +1,9 @@
 {
     "base": {
         "type": "Base",
-        "name": "behavior_trees",
+        "delegate_arguments":{
+            "name": "behavior_trees"
+        },
         "subcomponent": "behavior_trees"
     },
     "decimal": {
@@ -14,26 +16,32 @@
     },
     "vector_int": {
         "type": "List",
-        "field": "vector item",
+        "delegate_arguments": {
+            "field": "vector item",
+            "print_all": true,
+            "print_flat": true
+        },
         "types": ["int"],
-        "print_all": true,
-        "print_flat": true,
         "subcomponent": null
     },
     "behavior_trees": {
         "type": "Dict",
-        "field": "behavior tree",
+        "delegate_arguments": {
+            "field": "behavior tree",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "detect_key_moves": true,
         "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "field": "behavior pack",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
@@ -57,9 +65,11 @@
     },
     "defined_in": {
         "type": "Set",
-        "field": "behavior pack",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
         "types": ["str"],
-        "measure_length": true,
         "subcomponent": null
     },
     "root": {
@@ -76,15 +86,19 @@
     },
     "root.sequence.children": {
         "type": "Set",
-        "field": "child",
+        "delegate_arguments": {
+            "field": "child",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "min_similarity_threshold": 0.28,
         "subcomponent": "root.sequence.children.item"
     },
     "root.sequence.children.item": {
         "type": "Keymap",
-        "field": "behavior",
+        "delegate_arguments": {
+            "field": "behavior"
+        },
         "sort": "by_key",
         "keys": {
             "minecraft:activate_tool": {"type": "dict", "subcomponent": "behavior.activate_tool"},

@@ -1,7 +1,9 @@
 {
     "base": {
         "type": "Base",
-        "name": "structures_nbt",
+        "delegate_arguments": {
+            "name": "structures_nbt"
+        },
         "subcomponent": "structures"
     },
     "outdated": {
@@ -9,20 +11,24 @@
     },
     "structures": {
         "type": "Dict",
-        "field": "structure",
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "structure"
+        },
         "types": ["dict"],
-        "measure_length": true,
         "sort": "by_key",
         "subcomponent": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "field": "behavior pack",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
         "types": ["TAG_Compound", "nbt_base"],
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/flat"
         },
-        "measure_length": true,
         "sort": "by_key",
         "subcomponent": "cache"
     },
@@ -39,22 +45,26 @@
     },
     "vector_tag_int": {
         "type": "List",
-        "field": "coordinate",
+        "delegate_arguments": {
+            "field": "coordinate",
+            "measure_length": false,
+            "print_all": true,
+            "print_flat": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Int"],
-        "measure_length": false,
-        "print_all": true,
-        "print_flat": true,
         "subcomponent": null
     },
     "vector_tag_double": {
         "type": "List",
-        "field": "coordinate",
+        "delegate_arguments": {
+            "field": "coordinate",
+            "measure_length": false,
+            "print_all": true,
+            "print_flat": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Double"],
-        "measure_length": false,
-        "print_all": true,
-        "print_flat": true,
         "subcomponent": null
     },
     "structure": {
@@ -63,7 +73,7 @@
         "sort": "by_component_order",
         "keys": {
             "author": {"type": "TAG_String"},
-            "blocks": {"type": ["volume_base", "TAG_List"], "subcomponent": "blocks"},
+            "blocks": {"type": ["dict"], "subcomponent": "blocks"},
             "DataVersion": {"type": "TAG_Int"},
             "entities": {"type": "TAG_List", "subcomponent": "entities"},
             "palette": {"type": "TAG_List", "subcomponent": "palettes"},
@@ -72,12 +82,43 @@
         }
     },
     "blocks": {
-        "type": "Volume",
-        "field": "block",
-        "types": ["TAG_Compound"],
-        "this_type": "TAG_List",
-        "position_key": "pos",
-        "state_key": "state",
+        "type": "Keymap",
+        "normalizer": {
+            "function_name": "normalizers/volume_normalize_nbt",
+            "arguments": {
+                "position_key": "pos",
+                "state_key": "state"
+            }
+        },
+        "delegate": "VolumeDelegate",
+        "delegate_arguments": {
+            "field": "block"
+        },
+        "pre_normalized_types": "TAG_List",
+        "keys": {
+            "states": {"type": "dict", "subcomponent": "volume_states"},
+            "data": {"type": "dict", "subcomponent": "volume_additional_data"},
+            "size": {"type": "tuple", "subcomponent": {
+                "type": "List",
+                "delegate": null,
+                "this_type": "tuple",
+                "types": "int",
+                "subcomponent": null
+            }}
+        }
+    },
+    "volume_states": {
+        "type": "Dict",
+        "detect_key_moves": false,
+        "types": "int",
+        "delegate": null,
+        "subcomponent": null
+    },
+    "volume_additional_data": {
+        "type": "Dict",
+        "detect_key_moves": false,
+        "types": "TAG_Compound",
+        "delegate": null,
         "subcomponent": "block"
     },
     "block": {
@@ -89,10 +130,12 @@
     },
     "entities": {
         "type": "Set",
-        "field": "entity",
+        "delegate_arguments": {
+            "field": "entity",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "entity"
     },
     "entity": {
@@ -106,10 +149,12 @@
     },
     "palettes": {
         "type": "List",
-        "field": "palette",
+        "delegate_arguments": {
+            "field": "palette",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "palette"
     },
     "palette": {
@@ -122,20 +167,24 @@
     },
     "palette_properties": {
         "type": "Dict",
-        "field": "property",
+        "delegate_arguments": {
+            "field": "property",
+            "measure_length": true
+        },
         "this_type": "TAG_Compound",
         "types": ["TAG_String"],
-        "measure_length": true,
         "sort": "by_key",
         "detect_key_moves": false,
         "subcomponent": null
     },
     "block_nbt": {
         "type": "Keymap",
-        "field": "tag",
+        "delegate_arguments": {
+            "field": "tag",
+            "measure_length": true
+        },
         "this_type": "TAG_Compound",
         "sort": "by_key",
-        "measure_length": true,
         "keys": {
             "attachement_type": {"type": "TAG_String"},
             "author": {"type": "TAG_String"},
@@ -237,12 +286,14 @@
     },
     "nbt:components:lore": {
         "type": "List",
-        "field": "line",
+        "delegate_arguments": {
+            "field": "line",
+            "measure_length": true,
+            "print_all": true,
+            "print_flat": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_String"],
-        "measure_length": true,
-        "print_all": true,
-        "print_flat": true,
         "subcomponent": null
     },
     "nbt:config": {
@@ -256,25 +307,31 @@
     "nbt:cooking_times": {
         "type": "Set",
         "this_type": "TAG_Int_Array",
-        "field": "time",
+        "delegate_arguments": {
+            "field": "time",
+            "measure_length": true
+        },
         "types": ["TAG_Int"],
-        "measure_length": true,
         "subcomponent": null
     },
     "nbt:current_mobs": {
         "type": "Set",
-        "field": "mob",
+        "delegate_arguments": {
+            "field": "mob",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["null"],
-        "measure_length": true,
         "subcomponent": null
     },
     "nbt:items": {
         "type": "Set",
-        "field": "item",
+        "delegate_arguments": {
+            "field": "item",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "nbt:item"
     },
     "nbt:item": {
@@ -305,10 +362,12 @@
     },
     "nbt:item.tag.ench": {
         "type": "Set",
-        "field": "enchantment",
+        "delegate_arguments": {
+            "field": "enchantment",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "nbt:item.tag.ench.item"
     },
     "nbt:item.tag.ench.item": {
@@ -333,10 +392,12 @@
     },
     "nbt:normal_config.spawn_potentials": {
         "type": "Set",
-        "field": "entity",
+        "delegate_arguments": {
+            "field": "entity",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "nbt:normal_config.spawn_potentials.item"
     },
     "nbt:normal_config.spawn_potentials.item": {
@@ -376,10 +437,12 @@
     },
     "nbt:ominous_config.loot_tables_to_eject": {
         "type": "Set",
-        "field": "loot table",
+        "delegate_arguments": {
+            "field": "loot table",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "nbt:ominous_config.loot_tables_to_eject.item"
     },
     "nbt:ominous_config.loot_tables_to_eject.item": {
@@ -392,10 +455,12 @@
     },
     "nbt:patterns": {
         "type": "List",
-        "field": "pattern",
+        "delegate_arguments": {
+            "field": "pattern",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "nbt:patterns.item"
     },
     "nbt:patterns.item": {
@@ -408,34 +473,42 @@
     },
     "nbt:recipes_used": {
         "type": "Dict",
-        "field": "recipe",
+        "delegate_arguments": {
+            "field": "recipe",
+            "measure_length": true
+        },
         "this_type": "TAG_Compound",
         "types": ["TAG_Int"],
-        "measure_length": true,
         "subcomponent": null
     },
     "nbt:registered_players": {
         "type": "Set",
-        "field": "player",
+        "delegate_arguments": {
+            "field": "player",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["null"],
-        "measure_length": true,
         "subcomponent": null
     },
     "nbt:sherds": {
         "type": "Set",
-        "field": "sherd",
+        "delegate_arguments": {
+            "field": "sherd",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_String"],
-        "measure_length": true,
         "subcomponent": null
     },
     "nbt:spawn_potentials": {
         "type": "List",
-        "field": "entity",
+        "delegate_arguments": {
+            "field": "entity",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "nbt:spawn_potentials.item"
     },
     "nbt:spawn_potentials.item": {
@@ -508,26 +581,32 @@
     },
     "nbt:armor_drop_chances": {
         "type": "List",
-        "field": "chance",
+        "delegate_arguments": {
+            "field": "chance",
+            "measure_length": false
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Float"],
-        "measure_length": false,
         "subcomponent": null
     },
     "nbt:armor_items": {
         "type": "List",
-        "field": "armor item",
+        "delegate_arguments": {
+            "field": "armor item",
+            "measure_length": false
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": false,
         "subcomponent": "nbt:item"
     },
     "nbt:attributes": {
         "type": "Set",
-        "field": "attribute",
+        "delegate_arguments": {
+            "field": "attribute",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "nbt:attributes.item"
     },
     "nbt:attributes.item": {
@@ -541,10 +620,12 @@
     },
     "nbt:attributes.item.modifiers": {
         "type": "Set",
-        "field": "modifier",
+        "delegate_arguments": {
+            "field": "modifier",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "nbt:attributes.item.modifiers.modifier"
     },
     "nbt:attributes.item.modifiers.modifier": {
@@ -560,26 +641,32 @@
     },
     "nbt:hand_drop_chances": {
         "type": "List",
-        "field": "chance",
+        "delegate_arguments": {
+            "field": "chance",
+            "measure_length": false
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Float"],
-        "measure_length": false,
         "subcomponent": null
     },
     "nbt:hand_items": {
         "type": "List",
-        "field": "hand item",
+        "delegate_arguments": {
+            "field": "hand item",
+            "measure_length": false
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": false,
         "subcomponent": "nbt:item"
     },
     "nbt:inventory": {
         "type": "Set",
-        "field": "item",
+        "delegate_arguments": {
+            "field": "item",
+            "measure_length": true
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "measure_length": true,
         "subcomponent": "nbt:item"
     },
     "nbt:offers": {
@@ -591,12 +678,14 @@
     },
     "nbt:rotation": {
         "type": "List",
-        "field": "axis",
+        "delegate_arguments": {
+            "field": "axis",
+            "print_all": true,
+            "print_flat": true,
+            "measure_length": false
+        },
         "this_type": "TAG_List",
         "types": ["TAG_Float"],
-        "print_all": true,
-        "print_flat": true,
-        "measure_length": false,
         "subcomponent": null
     }
 }

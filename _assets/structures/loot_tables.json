@@ -1,7 +1,9 @@
 {
     "base": {
         "type": "Base",
-        "name": "loot_tables",
+        "delegate_arguments": {
+            "name": "loot_tables"
+        },
         "subcomponent": "loot_tables"
     },
     "not_in_documentation": {
@@ -16,9 +18,11 @@
     },
     "loot_tables": {
         "type": "Dict",
-        "field": "loot table",
+        "delegate_arguments": {
+            "field": "loot table",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "detect_key_moves": true,
         "sort": "by_key",
         "subcomponent": "behavior_packs"
@@ -26,7 +30,9 @@
     "behavior_packs": {
         "type": "Dict",
         "types": ["dict"],
-        "field": "behavior pack",
+        "delegate_arguments": {
+            "field": "behavior pack"
+        },
         "detect_key_moves": true,
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
@@ -40,7 +46,9 @@
     },
     "range_decimal": {
         "type": "Keymap",
-        "print_all": true,
+        "delegate_arguments": {
+            "print_all": true
+        },
         "keys": {
             "max": {"type": "decimal"},
             "min": {"type": "decimal"}
@@ -55,7 +63,9 @@
     },
     "range_int": {
         "type": "Keymap",
-        "print_all": true,
+        "delegate_arguments": {
+            "print_all": true
+        },
         "keys": {
             "max": {"type": "int"},
             "min": {"type": "int"}
@@ -71,9 +81,11 @@
     "range_list_int": {
         "type": "List",
         "types": ["int"],
-        "field": "range item",
-        "print_all": true,
-        "print_flat": true,
+        "delegate_arguments": {
+            "field": "range item",
+            "print_all": true,
+            "print_flat": true
+        },
         "subcomponent": null
     },
     "range_list_int_or_int": {
@@ -95,17 +107,21 @@
     },
     "defined_in": {
         "type": "Set",
-        "field": "behavior pack",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
         "types": ["str"],
-        "measure_length": true,
         "sort": true,
         "subcomponent": null
     },
     "pools": {
         "type": "Set",
-        "field": "pool",
+        "delegate_arguments": {
+            "field": "pool",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "subcomponent": "pool"
     },
     "pool": {
@@ -129,9 +145,11 @@
     },
     "entries": {
         "type": "Set",
-        "field": "entry",
+        "delegate_arguments": {
+            "field": "entry",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "subcomponent": "entry"
     },
     "entry": {
@@ -151,8 +169,10 @@
     },
     "functions": {
         "type": "Keymap",
-        "field": "function",
-        "measure_length": true,
+        "delegate_arguments": {
+            "field": "function",
+            "measure_length": true
+        },
         "pre_normalized_types": "list",
         "normalizer": {
             "function_name": "wrap_in_dict",
@@ -209,7 +229,9 @@
     },
     "function.enchant_book_for_trading:enchantments": {
         "type": "Set",
-        "field": "enchantment",
+        "delegate_arguments": {
+            "field": "enchantment"
+        },
         "types": ["dict"],
         "subcomponent": "function.enchant_book_for_trading:enchantments.item"
     },
@@ -308,8 +330,10 @@
     },
     "function.set_book_contents:pages": {
         "type": "List",
-        "field": "page",
-        "measure_length": true,
+        "delegate_arguments": {
+            "field": "page",
+            "measure_length": true
+        },
         "types": ["str"],
         "subcomponent": null
     },
@@ -341,8 +365,10 @@
     },
     "function.set_lore:lore": {
         "type": "List",
-        "field": "lore line",
-        "measure_length": true,
+        "delegate_arguments": {
+            "field": "lore line",
+            "measure_length": true
+        },
         "types": ["str"],
         "subcomponent": null
     },
@@ -372,9 +398,11 @@
     },
     "function.set_stew_effect:effects": {
         "type": "Set",
-        "field": "effect",
+        "delegate_arguments": {
+            "field": "effect",
+            "measure_length": true
+        },
         "types": ["dict"],
-        "measure_length": true,
         "subcomponent": "function.set_stew_effect:effects.item"
     },
     "function.set_stew_effect:effects.item": {
@@ -399,8 +427,10 @@
     },
     "function.specific_enchants:enchants": {
         "type": "Set",
-        "field": "enchantment",
-        "measure_length": true,
+        "delegate_arguments": {
+            "field": "enchantment",
+            "measure_length": true
+        },
         "types": ["dict", "str"],
         "subcomponent": "function.specific_enchants:enchants.item_group"
     },
@@ -420,7 +450,9 @@
     },
     "conditions": {
         "type": "Keymap",
-        "field": "condition",
+        "delegate_arguments": {
+            "field": "condition"
+        },
         "pre_normalized_types": "list",
         "normalizer": {
             "function_name": "wrap_in_dict",
@@ -461,7 +493,9 @@
     },
     "condition.entity_properties:properties": {
         "type": "Keymap",
-        "field": "property",
+        "delegate_arguments": {
+            "field": "property"
+        },
         "keys": {
             "on_fire": {"type": "bool"}
         }
@@ -495,7 +529,9 @@
     },
     "condition.match_tool:count": {
         "type": "Keymap",
-        "print_all": true,
+        "delegate_arguments": {
+            "print_all": true
+        },
         "keys": {
             "range_max": {"type": "int"},
             "range_min": {"type": "int"}
@@ -503,7 +539,9 @@
     },
     "condition.match_tool:durability": {
         "type": "Keymap",
-        "print_all": true,
+        "delegate_arguments": {
+            "print_all": true
+        },
         "keys": {
             "range_max": {"type": "int"},
             "range_min": {"type": "int"}
@@ -511,8 +549,10 @@
     },
     "condition.match_tool:enchantments": {
         "type": "Set",
-        "field": "enchantment",
-        "measure_length": true,
+        "delegate_arguments": {
+            "field": "enchantment",
+            "measure_length": true
+        },
         "types": ["dict"],
         "subcomponent": "condition.match_tool:enchantments.item"
     },
@@ -527,7 +567,9 @@
     },
     "condition.match_tool:enchantments.item.levels": {
         "type": "Keymap",
-        "print_all": true,
+        "delegate_arguments": {
+            "print_all": true
+        },
         "keys": {
             "range_max": {"type": "int"},
             "range_min": {"type": "int"}
