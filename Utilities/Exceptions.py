@@ -1396,6 +1396,28 @@ class UnrecognizedPackError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class DelegateException(Exception):
+    "Abstract Exception class for errors relating to Delegates."
+
+class UnrecognizedDelegateError(DelegateException):
+    "A Delegate type is unrecognized."
+
+    def __init__(self, delegate_type_str:str, source_str:str, message:Optional[str]=None) -> None:
+        '''
+        :delegate_type_str: The name of the unrecognized Delegate type.
+        :source_str: The object that refers to this Delegate type.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(delegate_type_str, source_str, message)
+        self.delegate_type_str = delegate_type_str
+        self.source_str = source_str
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Delegate type \"%s\" is not recognized by %s" % (self.delegate_type_str, self.source_str)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class ManagerException(Exception):
     "Abstract Exception class for errors relating to Managers."
 
