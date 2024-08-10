@@ -60,6 +60,9 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
         self.pre_normalized_types = pre_normalized_types
         self.tags = tags
 
+    def get_structure(self, key:int, value:d) -> tuple[Structure.Structure[d]|None, list[Trace.ErrorTrace]]:
+        return self.structure, []
+
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.structure is None: return []
         else: return [self.structure]

@@ -41,6 +41,9 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
         self.post_normalizer = post_normalizer
         self.pre_normalized_types = pre_normalized_types
 
+    def get_structure(self, key:None, value:a) -> tuple[Structure.Structure[a]|None, list[Trace.ErrorTrace]]:
+        return self.structure, []
+
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.structure is None: return []
         else: return [self.structure]

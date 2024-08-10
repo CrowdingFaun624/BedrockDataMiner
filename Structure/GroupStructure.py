@@ -56,10 +56,10 @@ class GroupStructure(Structure.Structure[a]):
         else:
             return []
 
-    def get_structure(self, data: a) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        output = self.get_substructures().get(type(data), Structure.StructureFailure.choose_structure_failure)
+    def get_structure(self, key:None, value: a) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+        output = self.get_substructures().get(type(value), Structure.StructureFailure.choose_structure_failure)
         if output is Structure.StructureFailure.choose_structure_failure:
-            return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.get_types()), type(data), "Data"), self.name, None, data)]
+            return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.get_types()), type(value), "Data"), self.name, None, value)]
         else:
             return output, []
 
@@ -120,13 +120,13 @@ class GroupStructure(Structure.Structure[a]):
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
-    def choose_structure(self, data:a|D.Diff[a,a]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
+    def choose_structure(self, key:None, value:a|D.Diff[a,a]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
         output:dict[D.DiffType,Structure.Structure|None] = {}
         exceptions:list[Trace.ErrorTrace] = []
-        for item_iter, diff_type in D.iter_diff(data):
+        for item_iter, diff_type in D.iter_diff(value):
             structure = self.get_substructures().get(type(item_iter), Structure.StructureFailure.choose_structure_failure)
             if structure is Structure.StructureFailure.choose_structure_failure:
-                exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.get_types(), type(data), "Data"), self.name, None, data))
+                exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.get_types(), type(value), "Data"), self.name, None, value))
                 continue
             output[diff_type] = structure
         return StructureSet.StructureSet(output), exceptions
