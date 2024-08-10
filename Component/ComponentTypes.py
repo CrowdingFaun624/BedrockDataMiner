@@ -16,7 +16,6 @@ import Component.Structure.SetComponent as SetComponent
 import Component.Structure.StringComponent as StringComponent
 import Component.Structure.TagComponent as TagComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
-import Component.Structure.VolumeComponent as VolumeComponent
 import Component.Version.VersionComponent as VersionComponent
 import Component.Version.VersionFileComponent as VersionFileComponent
 import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
@@ -50,5 +49,4 @@ component_types:list[type[Component.Component]] = [
     VersionFileTypeComponent.VersionFileTypeComponent,
     VersionTagComponent.VersionTagComponent,
     VersionTagOrderComponent.VersionTagOrderComponent,
-    VolumeComponent.VolumeComponent,
 ]

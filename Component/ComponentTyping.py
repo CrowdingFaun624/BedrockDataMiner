@@ -220,20 +220,6 @@ class VersionTypedDict(TypedDict):
     time: Required[str|None]
     type: NotRequired[Literal["Version"]]
 
-class VolumeTypedDict(TypedDict):
-    field: NotRequired[str]
-    normalizer: NotRequired[str|list[str]]
-    position_key: Required[str]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    print_additional_data: NotRequired[bool]
-    state_key: Required[str]
-    subcomponent: Required[str|None]
-    tags: NotRequired[str|list[str]]
-    this_type: NotRequired[str|list[str]]
-    type: NotRequired[Literal["Volume"]]
-    types: Required[str|list[str]]
-
 AutoAssignerTypedDicts:TypeAlias = RangeVersionTagAutoAssignerTypedDict
 ComponentTypedDicts:TypeAlias = Union[
     AccessorTypedDict,
@@ -257,9 +243,8 @@ ComponentTypedDicts:TypeAlias = Union[
     VersionTagOrderTypedDict,
     VersionTagTypedDict,
     VersionTypedDict,
-    VolumeTypedDict,
 ]
-StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|NbtBaseTypedDict|ListTypedDict|VolumeTypedDict
+StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|NbtBaseTypedDict|ListTypedDict
 
 ComponentGroupFileType:TypeAlias = dict[str,ComponentTypedDicts]
 CreateComponentFunction:TypeAlias = Callable[[ComponentTypedDicts,"Component.Component",str|None],"Component.Component"]
