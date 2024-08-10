@@ -1,4 +1,3 @@
-import enum
 from typing import TYPE_CHECKING, Any, Generic, Iterable, TypeVar, Union
 
 import Structure.DataPath as DataPath
@@ -8,9 +7,6 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
     import Structure.StructureEnvironment as StructureEnvironment
-
-class StructureFailure(enum.Enum):
-    choose_structure_failure = 0
 
 a = TypeVar("a")
 

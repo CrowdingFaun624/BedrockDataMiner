@@ -54,8 +54,8 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
             return []
 
     def get_structure(self, key:None, value: a) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        output = self.get_substructures().get(type(value), Structure.StructureFailure.choose_structure_failure)
-        if output is Structure.StructureFailure.choose_structure_failure:
+        output = self.get_substructures().get(type(value), ...)
+        if output is ...:
             return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.get_types()), type(value), "Data"), self.name, None, value)]
         else:
             return output, []
@@ -121,8 +121,8 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
         output:dict[D.DiffType,Structure.Structure|None] = {}
         exceptions:list[Trace.ErrorTrace] = []
         for item_iter, diff_type in D.iter_diff(value):
-            structure = self.get_substructures().get(type(item_iter), Structure.StructureFailure.choose_structure_failure)
-            if structure is Structure.StructureFailure.choose_structure_failure:
+            structure = self.get_substructures().get(type(item_iter), ...)
+            if structure is ...:
                 exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.get_types(), type(value), "Data"), self.name, None, value))
                 continue
             output[diff_type] = structure

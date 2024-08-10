@@ -95,8 +95,8 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
     def get_structure(self, key: str, value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         if self.keys is None:
             raise Exceptions.AttributeNoneError("keys", self)
-        output = self.keys.get(key, Structure.StructureFailure.choose_structure_failure)
-        if output is Structure.StructureFailure.choose_structure_failure:
+        output = self.keys.get(key, ...)
+        if output is ...:
             return None, [Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value)]
         return output, []
 
@@ -181,8 +181,8 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             key_iter = key.first_existing_property() if isinstance(key, D.Diff) else key
             iterator = ((key_iter, iter_diff_item[0], None, iter_diff_item[1]) for iter_diff_item in D.iter_diff(value))
         for key_iter, value_iter, key_diff_type, value_diff_type in iterator:
-            structure = self.keys.get((key_iter), Structure.StructureFailure.choose_structure_failure)
-            if structure is Structure.StructureFailure.choose_structure_failure:
+            structure = self.keys.get((key_iter), ...)
+            if structure is ...:
                 exceptions.append(Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value))
                 continue
             output[value_diff_type] = structure
