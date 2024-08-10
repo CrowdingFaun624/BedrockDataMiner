@@ -80,6 +80,8 @@ class Diff(Generic[Dt1,Dt2]):
                 else: return self.old
             case DiffType.not_diff:
                 raise Exceptions.DiffKeyError(index, self)
+            case _:
+                raise TypeError("Called Diff.__getitem__ with a %r object!" % (type(index),))
 
     def __repr__(self) -> str:
         match self.change_type:
@@ -93,11 +95,11 @@ class Diff(Generic[Dt1,Dt2]):
     def __str__(self) -> str:
         match self.change_type:
             case ChangeType.addition:
-                return "Addition of %s" % (self.new)
+                return "Addition of %s" % (self.new,)
             case ChangeType.change:
                 return "%s -> %s" % (self.old, self.new)
             case ChangeType.removal:
-                return "Removal of %s" % (self.old)
+                return "Removal of %s" % (self.old,)
 
     def __hash__(self) -> int:
         return hash((self.old, self.new))
