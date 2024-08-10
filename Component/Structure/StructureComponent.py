@@ -15,7 +15,7 @@ DEFAULT_TYPES:dict[str,type] = {
     "list": list,
     "null": type(None),
     "str": str,
-    "volume_base": tuple, # Volume becomes a tuple with various contents upon being normalized
+    "tuple": tuple,
     "nbt_base": NbtReader.NbtBytes,
     "TAG_Byte": NbtTypes.TAG_Byte,
     "TAG_Short": NbtTypes.TAG_Short,
