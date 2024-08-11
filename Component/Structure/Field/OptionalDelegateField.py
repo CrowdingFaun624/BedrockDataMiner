@@ -37,7 +37,14 @@ class OptionalDelegateField(Field.Field):
             return None
         if keys is None:
             keys = {}
-        return delegate_type(structure, keys, **self.arguments)
+        exception:Exception|None = None
+        try:
+            return delegate_type(structure, keys, **self.arguments)
+        except Exception as e:
+            print("Failed to create Delegate of %r!" % (structure,))
+            exception = e
+        if exception is not None:
+            raise exception
 
     def set_field(
         self,
