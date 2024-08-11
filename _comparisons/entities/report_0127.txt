@@ -18,18 +18,16 @@ Changed entity "drowned":
 						Added field "swing" of true.
 Changed entity "fox":
 	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:fox"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:defending_fox":
-					component "minecraft:behavior.melee_attack":
-						field "priority": 1
-						field "reach_multiplier": 1.5
-						field "require_complete_path": true
-						field "track_target": true
-					component "minecraft:behavior.panic":
-						field "priority": 2
-						field "speed_multiplier": 1.25
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -54,6 +52,14 @@ Changed entity "fox":
 											filter property "operator": "=="
 											filter property "test": "has_target"
 											filter property "value": false
+					component "minecraft:behavior.melee_attack":
+						field "priority": 1
+						field "reach_multiplier": 1.5
+						field "require_complete_path": true
+						field "track_target": true
+					component "minecraft:behavior.panic":
+						field "priority": 2
+						field "speed_multiplier": 1.25
 				component group "minecraft:docile_fox":
 					component "minecraft:behavior.melee_attack":
 						field "priority": 10
@@ -64,9 +70,6 @@ Changed entity "fox":
 						field "priority": 1
 						field "speed_multiplier": 1.25
 				component group "minecraft:fox_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 3
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breed_items":
 							item: "sweet_berries"
@@ -82,6 +85,9 @@ Changed entity "fox":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
 					component "minecraft:loot": field "table": "loot_tables/entities/fox.json"
+					component "minecraft:behavior.breed":
+						field "priority": 3
+						field "speed_multiplier": 1.0
 				component group "minecraft:fox_ambient_night":
 					component "minecraft:ambient_sound_interval":
 						field "event_name": "screech"
@@ -90,6 +96,7 @@ Changed entity "fox":
 				component group "minecraft:fox_ambient_normal": component "minecraft:ambient_sound_interval": field "event_name": "ambient"
 				component group "minecraft:fox_ambient_sleep": component "minecraft:ambient_sound_interval": field "event_name": "sleep"
 				component group "minecraft:fox_arctic":
+					component "minecraft:variant": field "value": 1
 					component "minecraft:behavior.nearest_prioritized_attackable_target":
 						field "attack_interval": 2
 						field "entity_types":
@@ -145,7 +152,6 @@ Changed entity "fox":
 						field "priority": 6
 						field "reselect_targets": true
 						field "target_search_height": 5
-					component "minecraft:variant": field "value": 1
 				component group "minecraft:fox_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -155,12 +161,24 @@ Changed entity "fox":
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
 					component "minecraft:behavior.follow_parent":
 						field "priority": 9
 						field "speed_multiplier": 1.1
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.5
 				component group "minecraft:fox_day":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "minecraft:fox_configure_thunderstorm"
+								field "filters":
+									filter property "test": "weather_at_position"
+									filter property "value": "thunderstorm"
+							trigger:
+								field "event": "minecraft:fox_configure_night"
+								field "filters":
+									filter property "test": "is_daytime"
+									filter property "value": false
 					component "minecraft:behavior.find_cover":
 						field "cooldown_time": 5.0
 						field "priority": 9
@@ -210,26 +228,7 @@ Changed entity "fox":
 									filter property "subject": "other"
 									filter property "test": "is_sneaking"
 									filter property "value": true
-					component "minecraft:environment_sensor":
-						field "triggers":
-							trigger:
-								field "event": "minecraft:fox_configure_thunderstorm"
-								field "filters":
-									filter property "test": "weather_at_position"
-									filter property "value": "thunderstorm"
-							trigger:
-								field "event": "minecraft:fox_configure_night"
-								field "filters":
-									filter property "test": "is_daytime"
-									filter property "value": false
 				component group "minecraft:fox_night":
-					component "minecraft:behavior.stroll_towards_village":
-						field "cooldown_time": 10.0
-						field "goal_radius": 3.0
-						field "priority": 11
-						field "search_range": 32
-						field "speed_multiplier": 1.0
-						field "start_chance": 0.005
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -242,7 +241,15 @@ Changed entity "fox":
 								field "filters":
 									filter property "test": "is_daytime"
 									filter property "value": true
+					component "minecraft:behavior.stroll_towards_village":
+						field "cooldown_time": 10.0
+						field "goal_radius": 3.0
+						field "priority": 11
+						field "search_range": 32
+						field "speed_multiplier": 1.0
+						field "start_chance": 0.005
 				component group "minecraft:fox_red":
+					component "minecraft:variant": field "value": 0
 					component "minecraft:behavior.nearest_prioritized_attackable_target":
 						field "attack_interval": 2
 						field "entity_types":
@@ -298,12 +305,7 @@ Changed entity "fox":
 						field "priority": 6
 						field "reselect_targets": true
 						field "target_search_height": 5
-					component "minecraft:variant": field "value": 0
 				component group "minecraft:fox_thunderstorm":
-					component "minecraft:behavior.find_cover":
-						field "cooldown_time": 0.0
-						field "priority": 0
-						field "speed_multiplier": 1
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -328,6 +330,10 @@ Changed entity "fox":
 										filter:
 											filter property "test": "is_daytime"
 											filter property "value": false
+					component "minecraft:behavior.find_cover":
+						field "cooldown_time": 0.0
+						field "priority": 0
+						field "speed_multiplier": 1
 				component group "minecraft:fox_with_item":
 					component "minecraft:equipment":
 						field "slot_drop_chance":
@@ -336,6 +342,7 @@ Changed entity "fox":
 								field "slot": "slot.weapon.mainhand"
 						field "table": "loot_tables/entities/fox_equipment.json"
 				component group "minecraft:trusting_fox":
+					component "minecraft:trust": empty
 					component "minecraft:behavior.defend_trusted_target":
 						field "aggro_sound": "mad"
 						field "must_see": false
@@ -345,100 +352,9 @@ Changed entity "fox":
 						field "priority": 0
 						field "sound_chance": 0.05
 						field "within_radius": 25
-					component "minecraft:trust": empty
 			field "components":
 				component "minecraft:attack": field "damage": 2
 				component "minecraft:balloonable": field "mass": 0.6
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "all_of":
-											filter:
-												filter property "subject": "other"
-												filter property "test": "is_family"
-												filter property "value": "player"
-											filter:
-												filter property "operator": "!="
-												filter property "subject": "other"
-												filter property "test": "trusts"
-												filter property "value": true
-											filter:
-												filter property "operator": "!="
-												filter property "subject": "other"
-												filter property "test": "is_sneaking"
-												filter property "value": true
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "polarbear"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "wolf"
-							field "max_dist": 10
-							field "sprint_speed_multiplier": 1.5
-							field "walk_speed_multiplier": 1.0
-					field "priority": 5
-				component "minecraft:behavior.eat_carried_item":
-					field "delay_before_eating": 28
-					field "priority": 12
-				component "minecraft:behavior.equip_item": field "priority": 2
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6.0
-					field "priority": 14
-					field "probability": 0.02
-				component "minecraft:behavior.pickup_items":
-					field "goal_radius": 2
-					field "max_dist": 3
-					field "priority": 11
-					field "speed_multiplier": 0.5
-				component "minecraft:behavior.raid_garden":
-					field "blocks": block: "minecraft:sweet_berry_bush"
-					field "goal_radius": 0.8
-					field "initial_eat_delay": 2
-					field "max_to_eat": 0
-					field "priority": 12
-					field "search_height": 2
-					field "search_range": 12
-					field "speed_multiplier": 1.2
-				component "minecraft:behavior.random_look_around": field "priority": 15
-				component "minecraft:behavior.random_look_around_and_sit":
-					field "max_look_count": 5
-					field "max_look_time": 100
-					field "min_look_count": 2
-					field "min_look_time": 80
-					field "priority": 12
-					field "probability": 0.001
-				component "minecraft:behavior.random_stroll":
-					field "priority": 13
-					field "speed_multiplier": 0.8
-				component "minecraft:behavior.stalk_and_pounce_on_target":
-					field "interest_time": 2.0
-					field "leap_dist": 0.8
-					field "leap_height": 0.9
-					field "max_stalk_dist": 12.0
-					field "pounce_max_dist": 5.0
-					field "priority": 7
-					field "stalk_speed": 1.2
-					field "strike_dist": 2.0
-					field "stuck_blocks":
-						filter property "operator": "=="
-						filter property "subject": "block"
-						filter property "test": "is_block"
-						filter property "value": "snow_layer"
-					field "stuck_time": 2.0
-				component "minecraft:behavior.tempt":
-					field "can_get_scared": true
-					field "items":
-						item: "sweet_berries"
-						item: "glow_berries"
-					field "priority": 3
-					field "speed_multiplier": 0.5
-					field "within_radius": 16
 				component "minecraft:breathable":
 					field "suffocateTime": 0
 					field "totalSupply": 15
@@ -690,11 +606,96 @@ Changed entity "fox":
 					field "family":
 						family: "fox"
 						family: "mob"
-			field "description":
-				description "identifier": "minecraft:fox"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "subject": "other"
+												filter property "test": "is_family"
+												filter property "value": "player"
+											filter:
+												filter property "operator": "!="
+												filter property "subject": "other"
+												filter property "test": "trusts"
+												filter property "value": true
+											filter:
+												filter property "operator": "!="
+												filter property "subject": "other"
+												filter property "test": "is_sneaking"
+												filter property "value": true
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "polarbear"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "wolf"
+							field "max_dist": 10
+							field "sprint_speed_multiplier": 1.5
+							field "walk_speed_multiplier": 1.0
+					field "priority": 5
+				component "minecraft:behavior.eat_carried_item":
+					field "delay_before_eating": 28
+					field "priority": 12
+				component "minecraft:behavior.equip_item": field "priority": 2
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 6.0
+					field "priority": 14
+					field "probability": 0.02
+				component "minecraft:behavior.pickup_items":
+					field "goal_radius": 2
+					field "max_dist": 3
+					field "priority": 11
+					field "speed_multiplier": 0.5
+				component "minecraft:behavior.raid_garden":
+					field "blocks": block: "minecraft:sweet_berry_bush"
+					field "goal_radius": 0.8
+					field "initial_eat_delay": 2
+					field "max_to_eat": 0
+					field "priority": 12
+					field "search_height": 2
+					field "search_range": 12
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.random_look_around_and_sit":
+					field "max_look_count": 5
+					field "max_look_time": 100
+					field "min_look_count": 2
+					field "min_look_time": 80
+					field "priority": 12
+					field "probability": 0.001
+				component "minecraft:behavior.random_look_around": field "priority": 15
+				component "minecraft:behavior.random_stroll":
+					field "priority": 13
+					field "speed_multiplier": 0.8
+				component "minecraft:behavior.stalk_and_pounce_on_target":
+					field "interest_time": 2.0
+					field "leap_dist": 0.8
+					field "leap_height": 0.9
+					field "max_stalk_dist": 12.0
+					field "pounce_max_dist": 5.0
+					field "priority": 7
+					field "stalk_speed": 1.2
+					field "strike_dist": 2.0
+					field "stuck_blocks":
+						filter property "operator": "=="
+						filter property "subject": "block"
+						filter property "test": "is_block"
+						filter property "value": "snow_layer"
+					field "stuck_time": 2.0
+				component "minecraft:behavior.tempt":
+					field "can_get_scared": true
+					field "items":
+						item: "sweet_berries"
+						item: "glow_berries"
+					field "priority": 3
+					field "speed_multiplier": 0.5
+					field "within_radius": 16
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add": field "component_groups": component group: "minecraft:fox_adult"
@@ -713,18 +714,18 @@ Changed entity "fox":
 						sequence item 0:
 							field "randomize":
 								randomize item:
+									field "weight": 95
 									field "add":
 										field "component_groups":
 											component group: "minecraft:fox_adult"
 											component group: "minecraft:fox_with_item"
 											component group: "minecraft:docile_fox"
-									field "weight": 95
 								randomize item:
+									field "weight": 5
 									field "add":
 										field "component_groups":
 											component group: "minecraft:fox_baby"
 											component group: "minecraft:docile_fox"
-									field "weight": 5
 						sequence item 1:
 							field "add": field "component_groups": component group: "minecraft:fox_arctic"
 							field "filters":
@@ -778,4 +779,3 @@ Changed entity "fox":
 						field "component_groups":
 							component group: "minecraft:fox_night"
 							component group: "minecraft:fox_day"
-		field "defined_in": behavior pack: "experimental_caves_and_cliffs"

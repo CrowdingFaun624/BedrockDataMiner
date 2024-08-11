@@ -58,46 +58,67 @@ Changed entity "piglin":
 					Changed field "items":
 						Total item: 54 (+0, -1)
 						Changed item:
+							Unchanged field "item": "minecraft:light_weighted_pressure_plate"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:speckled_melon"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:clock"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:bell"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:horsearmorgold"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:gilded_blackstone"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:nether_gold_ore"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:gold_ore"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:gold_block"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_carrot"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:appleEnchanted"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_apple"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_boots"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_leggings"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_chestplate"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_helmet"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_rail"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_shovel"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_hoe"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_axe"
 							Added field "pickup_limit" of 1.
 						Changed item:
+							Unchanged field "item": "minecraft:golden_sword"
 							Added field "pickup_limit" of 1.
 						Removed item:
 							field "admire": true
@@ -106,8 +127,14 @@ Changed entity "piglin":
 							field "stored_in_inventory": true
 Added entity "piglin_brute":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla_1.16"
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:piglin_brute"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "alert_for_attack_targets":
 					component "minecraft:behavior.nearest_prioritized_attackable_target":
@@ -168,12 +195,12 @@ Added entity "piglin_brute":
 						field "speed_multiplier": 0.6
 				component group "melee_unit":
 					component "minecraft:attack": field "damage": 7
+					component "minecraft:equipment": field "table": "loot_tables/entities/piglin_brute_gear.json"
+					component "minecraft:variant": field "value": 1
 					component "minecraft:behavior.melee_attack":
 						field "priority": 4
 						field "speed_multiplier": 1
 						field "track_target": true
-					component "minecraft:equipment": field "table": "loot_tables/entities/piglin_brute_gear.json"
-					component "minecraft:variant": field "value": 1
 				component group "start_zombification":
 					component "minecraft:environment_sensor":
 						field "triggers":
@@ -209,14 +236,6 @@ Added entity "piglin_brute":
 								filter property "value": false
 			field "components":
 				component "minecraft:annotation.open_door": empty
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 8
-					field "priority": 8
-				component "minecraft:behavior.random_look_around": field "priority": 9
-				component "minecraft:behavior.random_stroll":
-					field "priority": 7
-					field "speed_multiplier": 0.6
 				component "minecraft:block_sensor":
 					field "on_break":
 						event:
@@ -300,11 +319,14 @@ Added entity "piglin_brute":
 						family: "adult_piglin"
 						family: "piglin_brute"
 						family: "monster"
-			field "description":
-				description "identifier": "minecraft:piglin_brute"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8
+					field "priority": 8
+				component "minecraft:behavior.random_look_around": field "priority": 9
+				component "minecraft:behavior.random_stroll":
+					field "priority": 7
+					field "speed_multiplier": 0.6
 			field "events":
 				event "become_angry_event": field "add": field "component_groups": component group: "angry"
 				event "become_calm_event":
@@ -331,4 +353,3 @@ Added entity "piglin_brute":
 				event "stop_zombification_event":
 					field "add": field "component_groups": component group: "zombification_sensor"
 					field "remove": field "component_groups": component group: "start_zombification"
-		field "defined_in": behavior pack: "vanilla_1.16"

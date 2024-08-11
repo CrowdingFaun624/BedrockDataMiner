@@ -141,8 +141,14 @@ Changed entity "llama":
 				Removed event "minecraft:remove_persistence" of field "remove": field "component_groups": component group: "minecraft:llama_persistence".
 Added entity "trader_llama":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla_1.19.10"
 		field "format_version": "1.13.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:trader_llama"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:in_caravan":
 					component "minecraft:damage_sensor":
@@ -150,9 +156,6 @@ Added entity "trader_llama":
 							field "cause": "all"
 							field "deals_damage": true
 				component group "minecraft:llama_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 4
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breed_items": item: "hay_block"
 						field "breeds_with":
@@ -174,6 +177,9 @@ Added entity "trader_llama":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
 					component "minecraft:loot": field "table": "loot_tables/entities/llama.json"
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_multiplier": 1.0
 				component group "minecraft:llama_angry":
 					component "minecraft:angry":
 						field "broadcast_anger": false
@@ -203,19 +209,19 @@ Added entity "trader_llama":
 						field "duration": 1200
 						field "feed_items":
 							item:
-								field "growth": 0.1
 								field "item": "wheat"
+								field "growth": 0.1
 							item:
-								field "growth": 0.9
 								field "item": "hay_block"
+								field "growth": 0.9
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
 					component "minecraft:behavior.follow_parent":
 						field "priority": 5
 						field "speed_multiplier": 1.0
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.5
 				component group "minecraft:llama_brown": component "minecraft:variant": field "value": 2
 				component group "minecraft:llama_chested": component "minecraft:is_chested": empty
 				component group "minecraft:llama_creamy": component "minecraft:variant": field "value": 0
@@ -353,57 +359,6 @@ Added entity "trader_llama":
 						field "value": 5
 			field "components":
 				component "minecraft:balloonable": empty
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.follow_caravan":
-					field "entity_count": 10
-					field "entity_types":
-						field "filters":
-							filter property "subject": "other"
-							filter property "test": "is_family"
-							filter property "value": "llama"
-					field "priority": 3
-					field "speed_multiplier": 2.1
-				component "minecraft:behavior.hurt_by_target":
-					field "hurt_owner": true
-					field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6.0
-					field "priority": 7
-					field "probability": 0.02
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 1
-					field "speed_multiplier": 1.25
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.nearest_attackable_target":
-					field "attack_interval": 16
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "wolf"
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "has_component"
-										filter property "value": "minecraft:is_tamed"
-							field "max_dist": 10
-					field "must_reach": true
-					field "must_see": false
-					field "priority": 2
-				component "minecraft:behavior.panic":
-					field "priority": 4
-					field "speed_multiplier": 1.2
-				component "minecraft:behavior.random_look_around": field "priority": 8
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.7
-				component "minecraft:behavior.run_around_like_crazy":
-					field "priority": 1
-					field "speed_multiplier": 1.2
 				component "minecraft:breathable":
 					field "suffocate_time": 0
 					field "total_supply": 15
@@ -497,45 +452,91 @@ Added entity "trader_llama":
 					field "family":
 						family: "llama"
 						family: "mob"
-			field "description":
-				description "identifier": "minecraft:trader_llama"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.follow_caravan":
+					field "entity_count": 10
+					field "entity_types":
+						field "filters":
+							filter property "subject": "other"
+							filter property "test": "is_family"
+							filter property "value": "llama"
+					field "priority": 3
+					field "speed_multiplier": 2.1
+				component "minecraft:behavior.hurt_by_target":
+					field "hurt_owner": true
+					field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 6.0
+					field "priority": 7
+					field "probability": 0.02
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.nearest_attackable_target":
+					field "attack_interval": 16
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "wolf"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "has_component"
+										filter property "value": "minecraft:is_tamed"
+							field "max_dist": 10
+					field "must_reach": true
+					field "must_see": false
+					field "priority": 2
+				component "minecraft:behavior.panic":
+					field "priority": 4
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.7
+				component "minecraft:behavior.run_around_like_crazy":
+					field "priority": 1
+					field "speed_multiplier": 1.2
 			field "events":
 				event "minecraft:add_attributes":
 					field "sequence":
 						sequence item 0:
 							field "randomize":
 								randomize item:
+									field "weight": 32
 									field "add": field "component_groups": component group: "minecraft:strength_1"
-									field "weight": 32
 								randomize item:
+									field "weight": 32
 									field "add": field "component_groups": component group: "minecraft:strength_2"
-									field "weight": 32
 								randomize item:
+									field "weight": 32
 									field "add": field "component_groups": component group: "minecraft:strength_3"
-									field "weight": 32
 								randomize item:
+									field "weight": 2
 									field "add": field "component_groups": component group: "minecraft:strength_4"
-									field "weight": 2
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:strength_5"
 									field "weight": 2
+									field "add": field "component_groups": component group: "minecraft:strength_5"
 						sequence item 1:
 							field "randomize":
 								randomize item:
+									field "weight": 25
 									field "add": field "component_groups": component group: "minecraft:llama_creamy"
-									field "weight": 25
 								randomize item:
+									field "weight": 25
 									field "add": field "component_groups": component group: "minecraft:llama_white"
-									field "weight": 25
 								randomize item:
+									field "weight": 25
 									field "add": field "component_groups": component group: "minecraft:llama_brown"
-									field "weight": 25
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:llama_gray"
 									field "weight": 25
+									field "add": field "component_groups": component group: "minecraft:llama_gray"
 				event "minecraft:ageable_grow_up":
 					field "add":
 						field "component_groups":
@@ -584,15 +585,14 @@ Added entity "trader_llama":
 					field "remove": field "component_groups": component group: "minecraft:llama_wild"
 				event "minecraft:remove_persistence": field "remove": field "component_groups": component group: "minecraft:llama_persistence"
 				event "minecraft:spawn_adult":
+					field "trigger": "minecraft:add_attributes"
 					field "add":
 						field "component_groups":
 							component group: "minecraft:llama_adult"
 							component group: "minecraft:llama_wild"
-					field "trigger": "minecraft:add_attributes"
 				event "minecraft:spawn_baby":
-					field "add": field "component_groups": component group: "minecraft:llama_baby"
 					field "trigger": "minecraft:add_attributes"
-		field "defined_in": behavior pack: "vanilla_1.19.10"
+					field "add": field "component_groups": component group: "minecraft:llama_baby"
 Changed entity "villager_v2":
 	Changed behavior pack "core":
 		Changed field "defined_in":
@@ -614,8 +614,10 @@ Changed entity "villager_v2":
 					Changed component "minecraft:shareables":
 						Changed field "items":
 							Changed item:
+								Unchanged field "item": "minecraft:beetroot_seeds"
 								Removed field "pickup_only" of true.
 							Changed item:
+								Unchanged field "item": "minecraft:wheat_seeds"
 								Removed field "pickup_only" of true.
 				Changed component group "job_specific_goals":
 					Total component: 6 (+0, -1)
@@ -626,8 +628,10 @@ Changed entity "villager_v2":
 						Changed field "items":
 							Total item: 7 (+0, -1)
 							Changed item:
+								Unchanged field "item": "minecraft:beetroot_seeds"
 								Removed field "pickup_only" of true.
 							Changed item:
+								Unchanged field "item": "minecraft:wheat_seeds"
 								Removed field "pickup_only" of true.
 							Removed item:
 								field "item": "minecraft:bone_meal"

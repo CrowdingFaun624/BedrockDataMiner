@@ -3,18 +3,19 @@ Difference of "entities" between "1.20.70.22" (beta of "1.20.71") and "1.20.70.2
 Total entity: 121 (+2, -0)
 Added entity "bogged":
 	behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
 		field "format_version": "1.20.60"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:bogged"
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:melee_attack":
 					component "minecraft:attack":
 						field "damage": 3
 						field "effect_duration": 10
 						field "effect_name": "slowness"
-					component "minecraft:behavior.melee_box_attack":
-						field "priority": 4
-						field "speed_multiplier": 1.25
-						field "track_target": true
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -31,12 +32,11 @@ Added entity "bogged":
 											filter property "subject": "self"
 											filter property "test": "has_ranged_weapon"
 											filter property "value": true
+					component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "speed_multiplier": 1.25
+						field "track_target": true
 				component group "minecraft:ranged_attack":
-					component "minecraft:behavior.ranged_attack":
-						field "attack_interval_max": 3.0
-						field "attack_interval_min": 1.0
-						field "attack_radius": 15.0
-						field "priority": 0
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -57,79 +57,12 @@ Added entity "bogged":
 						field "aux_val": 26
 						field "def": "minecraft:arrow"
 						field "sound": "bow"
+					component "minecraft:behavior.ranged_attack":
+						field "attack_interval_max": 3.0
+						field "attack_interval_min": 1.0
+						field "attack_radius": 15.0
+						field "priority": 0
 			field "components":
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "wolf"
-							field "max_dist": 6
-							field "sprint_speed_multiplier": 1.2
-							field "walk_speed_multiplier": 1.2
-					field "priority": 4
-				component "minecraft:behavior.equip_item": field "priority": 3
-				component "minecraft:behavior.flee_sun":
-					field "priority": 2
-					field "speed_multiplier": 1
-				component "minecraft:behavior.hurt_by_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "operator": "!="
-								filter property "subject": "damager"
-								filter property "test": "is_family"
-								filter property "value": "wind_charge_projectile"
-					field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 8
-					field "priority": 7
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "player"
-							field "max_dist": 16
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "irongolem"
-							field "max_dist": 16
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "baby_turtle"
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "in_water"
-										filter property "value": true
-							field "max_dist": 16
-					field "must_see": true
-					field "priority": 2
-					field "reselect_targets": true
-				component "minecraft:behavior.pickup_items":
-					field "can_pickup_any_item": true
-					field "goal_radius": 2
-					field "max_dist": 3
-					field "pickup_based_on_chance": true
-					field "priority": 5
-					field "speed_multiplier": 1.0
-				component "minecraft:behavior.random_look_around": field "priority": 8
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 1
-				component "minecraft:behavior.ranged_attack":
-					field "attack_interval": 3.5
-					field "attack_radius": 15.0
-					field "priority": 0
 				component "minecraft:breathable":
 					field "breathes_water": true
 					field "suffocate_time": 0
@@ -375,10 +308,78 @@ Added entity "bogged":
 						family: "monster"
 						family: "mob"
 						family: "undead"
-			field "description":
-				description "identifier": "minecraft:bogged"
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "wolf"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+							field "walk_speed_multiplier": 1.2
+					field "priority": 4
+				component "minecraft:behavior.equip_item": field "priority": 3
+				component "minecraft:behavior.flee_sun":
+					field "priority": 2
+					field "speed_multiplier": 1
+				component "minecraft:behavior.hurt_by_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "operator": "!="
+								filter property "subject": "damager"
+								filter property "test": "is_family"
+								filter property "value": "wind_charge_projectile"
+					field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8
+					field "priority": 7
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "player"
+							field "max_dist": 16
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "irongolem"
+							field "max_dist": 16
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "in_water"
+										filter property "value": true
+							field "max_dist": 16
+					field "must_see": true
+					field "priority": 2
+					field "reselect_targets": true
+				component "minecraft:behavior.pickup_items":
+					field "can_pickup_any_item": true
+					field "goal_radius": 2
+					field "max_dist": 3
+					field "pickup_based_on_chance": true
+					field "priority": 5
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 1
+				component "minecraft:behavior.ranged_attack":
+					field "attack_interval": 3.5
+					field "attack_radius": 15.0
+					field "priority": 0
 			field "events":
 				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
 				event "minecraft:melee_mode":
@@ -387,7 +388,6 @@ Added entity "bogged":
 				event "minecraft:ranged_mode":
 					field "add": field "component_groups": component group: "minecraft:ranged_attack"
 					field "remove": field "component_groups": component group: "minecraft:melee_attack"
-		field "defined_in": behavior pack: "experimental_update_announced_live2023"
 Changed entity "breeze":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
@@ -396,6 +396,7 @@ Changed entity "breeze":
 				Changed component "minecraft:damage_sensor":
 					Changed field "triggers":
 						Changed trigger:
+							Unchanged field "cause": "projectile"
 							Added field "on_damage":
 								field "filters":
 									filter property "operator": "!="
@@ -407,8 +408,13 @@ Changed entity "breeze":
 					Changed field "projectile_def" from "minecraft:wind_charge_projectile" to "minecraft:breeze_wind_charge_projectile".
 Added entity "breeze_wind_charge_projectile":
 	behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
 		field "format_version": "1.20.60"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:breeze_wind_charge_projectile"
+				description "is_spawnable": false
+				description "is_summonable": false
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.4
@@ -444,11 +450,6 @@ Added entity "breeze_wind_charge_projectile":
 					field "particle_effect": "breeze_wind_burst"
 					field "radius": 3.0
 					field "sound_effect": "breeze_wind_charge.burst"
-			field "description":
-				description "identifier": "minecraft:breeze_wind_charge_projectile"
-				description "is_spawnable": false
-				description "is_summonable": false
-		field "defined_in": behavior pack: "experimental_update_announced_live2023"
 Changed entity "husk":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
@@ -457,6 +458,8 @@ Changed entity "husk":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
+								Unchanged filter property "operator": "!="
+								Unchanged filter property "test": "is_family"
 								Changed filter property "value" from "wind_charge_projectile" to "breeze".
 								Changed filter property "subject" from "damager" to "other".
 Changed entity "skeleton":
@@ -467,6 +470,8 @@ Changed entity "skeleton":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
+								Unchanged filter property "operator": "!="
+								Unchanged filter property "test": "is_family"
 								Changed filter property "value" from "wind_charge_projectile" to "breeze".
 								Changed filter property "subject" from "damager" to "other".
 Changed entity "stray":
@@ -477,6 +482,8 @@ Changed entity "stray":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
+								Unchanged filter property "operator": "!="
+								Unchanged filter property "test": "is_family"
 								Changed filter property "value" from "wind_charge_projectile" to "breeze".
 								Changed filter property "subject" from "damager" to "other".
 Changed entity "wind_charge_projectile":
@@ -502,5 +509,7 @@ Changed entity "zombie":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
+								Unchanged filter property "operator": "!="
+								Unchanged filter property "test": "is_family"
 								Changed filter property "value" from "wind_charge_projectile" to "breeze".
 								Changed filter property "subject" from "damager" to "other".

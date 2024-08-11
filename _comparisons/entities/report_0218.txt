@@ -16,6 +16,7 @@ Changed entity "armadillo":
 				Changed component "minecraft:entity_sensor":
 					Changed field "subsensors":
 						Changed subsensor:
+							Unchanged field "event": "minecraft:no_threat_detected"
 							Changed field "event_filters":
 								Removed filter property "all_of":
 									filter:
@@ -82,6 +83,7 @@ Changed entity "armadillo":
 														filter property "subject": "other"
 														filter property "test": "is_riding"
 						Changed subsensor:
+							Unchanged field "event": "minecraft:threat_detected"
 							Changed field "event_filters":
 								Removed filter property "all_of":
 									filter:
@@ -261,8 +263,13 @@ Changed entity "cave_spider":
 			Added behavior pack "experimental_update_announced_live2023".
 Changed entity "husk":
 	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
 		field "format_version": "1.20.60"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:husk"
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:can_break_doors": component "minecraft:annotation.break_door": empty
 				component group "minecraft:convert_to_baby_zombie":
@@ -302,11 +309,6 @@ Changed entity "husk":
 						field "time": 30
 						field "time_down_event": field "event": "minecraft:convert_to_zombie"
 				component group "minecraft:zombie_husk_adult":
-					component "minecraft:behavior.mount_pathing":
-						field "priority": 2
-						field "speed_multiplier": 1.25
-						field "target_dist": 0.0
-						field "track_target": true
 					component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 + (query.equipment_count * Math.Random(1,3)) : 0"
 					component "minecraft:movement": field "value": 0.23
 					component "minecraft:rideable":
@@ -315,6 +317,11 @@ Changed entity "husk":
 						field "seats":
 							field "lock_rider_rotation": 0
 							field "position": [0.0, 1.1, -0.35]
+					component "minecraft:behavior.mount_pathing":
+						field "priority": 2
+						field "speed_multiplier": 1.25
+						field "target_dist": 0.0
+						field "track_target": true
 				component group "minecraft:zombie_husk_baby":
 					component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 12 + (query.equipment_count * Math.Random(1,3)) : 0"
 					component "minecraft:is_baby": empty
@@ -329,90 +336,6 @@ Changed entity "husk":
 					field "damage": 3
 					field "effect_duration": 30
 					field "effect_name": "hunger"
-				component "minecraft:behavior.equip_item": field "priority": 2
-				component "minecraft:behavior.hurt_by_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "operator": "!="
-								filter property "subject": "damager"
-								filter property "test": "is_family"
-								filter property "value": "wind_charge_projectile"
-					field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6
-					field "priority": 8
-					field "probability": 0.02
-				component "minecraft:behavior.melee_box_attack":
-					field "can_spread_on_fire": true
-					field "priority": 3
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "player"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "snowgolem"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "irongolem"
-							field "max_dist": 35
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "villager"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "wandering_trader"
-							field "max_dist": 35
-							field "must_see": false
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "baby_turtle"
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "in_water"
-										filter property "value": true
-							field "max_dist": 35
-					field "must_see": true
-					field "priority": 2
-					field "reselect_targets": true
-					field "within_radius": 25.0
-				component "minecraft:behavior.pickup_items":
-					field "can_pickup_any_item": true
-					field "excluded_items": item: "minecraft:glow_ink_sac"
-					field "goal_radius": 2
-					field "max_dist": 3
-					field "pickup_based_on_chance": true
-					field "priority": 6
-					field "speed_multiplier": 1.0
-				component "minecraft:behavior.random_look_around": field "priority": 9
-				component "minecraft:behavior.random_stroll":
-					field "priority": 7
-					field "speed_multiplier": 1
-				component "minecraft:behavior.stomp_turtle_egg":
-					field "goal_radius": 1.14
-					field "interval": 20
-					field "priority": 4
-					field "search_height": 2
-					field "search_range": 10
-					field "speed_multiplier": 1
 				component "minecraft:breathable":
 					field "breathes_water": true
 					field "suffocate_time": 0
@@ -642,10 +565,90 @@ Changed entity "husk":
 						family: "monster"
 						family: "mob"
 				component "minecraft:variant": field "value": 2
-			field "description":
-				description "identifier": "minecraft:husk"
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.equip_item": field "priority": 2
+				component "minecraft:behavior.hurt_by_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "operator": "!="
+								filter property "subject": "damager"
+								filter property "test": "is_family"
+								filter property "value": "wind_charge_projectile"
+					field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 6
+					field "priority": 8
+					field "probability": 0.02
+				component "minecraft:behavior.melee_box_attack":
+					field "can_spread_on_fire": true
+					field "priority": 3
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "snowgolem"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "irongolem"
+							field "max_dist": 35
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "villager"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "wandering_trader"
+							field "max_dist": 35
+							field "must_see": false
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "in_water"
+										filter property "value": true
+							field "max_dist": 35
+					field "must_see": true
+					field "priority": 2
+					field "reselect_targets": true
+					field "within_radius": 25.0
+				component "minecraft:behavior.pickup_items":
+					field "can_pickup_any_item": true
+					field "excluded_items": item: "minecraft:glow_ink_sac"
+					field "goal_radius": 2
+					field "max_dist": 3
+					field "pickup_based_on_chance": true
+					field "priority": 6
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.random_look_around": field "priority": 9
+				component "minecraft:behavior.random_stroll":
+					field "priority": 7
+					field "speed_multiplier": 1
+				component "minecraft:behavior.stomp_turtle_egg":
+					field "goal_radius": 1.14
+					field "interval": 20
+					field "priority": 4
+					field "search_height": 2
+					field "search_range": 10
+					field "speed_multiplier": 1
 			field "events":
 				event "minecraft:convert_to_zombie":
 					field "sequence":
@@ -667,25 +670,25 @@ Changed entity "husk":
 						sequence item 0:
 							field "randomize":
 								randomize item:
+									field "weight": 9500
 									field "add": field "component_groups": component group: "minecraft:zombie_husk_adult"
 									field "remove": empty
-									field "weight": 9500
 								randomize item:
+									field "weight": 425
 									field "add": field "component_groups": component group: "minecraft:zombie_husk_baby"
 									field "remove": empty
-									field "weight": 425
 								randomize item:
+									field "weight": 75
 									field "add":
 										field "component_groups":
 											component group: "minecraft:zombie_husk_baby"
 											component group: "minecraft:zombie_husk_jockey"
 									field "remove": empty
-									field "weight": 75
 						sequence item 1:
 							field "randomize":
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:can_break_doors"
 									field "weight": 10
+									field "add": field "component_groups": component group: "minecraft:can_break_doors"
 								randomize item: field "weight": 90
 				event "minecraft:start_transforming":
 					field "add": field "component_groups": component group: "minecraft:start_zombie_transformation"
@@ -693,11 +696,15 @@ Changed entity "husk":
 				event "minecraft:stop_transforming":
 					field "add": field "component_groups": component group: "minecraft:look_to_start_zombie_transformation"
 					field "remove": field "component_groups": component group: "minecraft:start_zombie_transformation"
-		field "defined_in": behavior pack: "experimental_update_announced_live2023"
 Changed entity "skeleton":
 	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
 		field "format_version": "1.20.60"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:skeleton"
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "become_stray":
 					component "minecraft:transformation":
@@ -759,10 +766,6 @@ Changed entity "skeleton":
 							field "on_damage": field "filters": filter property "other_with_families": "lightning"
 				component group "minecraft:melee_attack":
 					component "minecraft:attack": field "damage": 2
-					component "minecraft:behavior.melee_box_attack":
-						field "priority": 4
-						field "speed_multiplier": 1.25
-						field "track_target": true
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -786,12 +789,11 @@ Changed entity "skeleton":
 									filter property "subject": "self"
 									filter property "test": "in_block"
 									filter property "value": "minecraft:powder_snow"
+					component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "speed_multiplier": 1.25
+						field "track_target": true
 				component group "minecraft:ranged_attack":
-					component "minecraft:behavior.ranged_attack":
-						field "attack_interval_max": 3.0
-						field "attack_interval_min": 1.0
-						field "attack_radius": 15.0
-						field "priority": 0
 					component "minecraft:environment_sensor":
 						field "triggers":
 							trigger:
@@ -818,80 +820,12 @@ Changed entity "skeleton":
 					component "minecraft:shooter":
 						field "def": "minecraft:arrow"
 						field "sound": "bow"
+					component "minecraft:behavior.ranged_attack":
+						field "attack_interval_max": 3.0
+						field "attack_interval_min": 1.0
+						field "attack_radius": 15.0
+						field "priority": 0
 			field "components":
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "wolf"
-							field "max_dist": 6
-							field "sprint_speed_multiplier": 1.2
-							field "walk_speed_multiplier": 1.2
-					field "priority": 4
-				component "minecraft:behavior.equip_item": field "priority": 3
-				component "minecraft:behavior.flee_sun":
-					field "priority": 2
-					field "speed_multiplier": 1
-				component "minecraft:behavior.hurt_by_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "operator": "!="
-								filter property "subject": "damager"
-								filter property "test": "is_family"
-								filter property "value": "wind_charge_projectile"
-					field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 8
-					field "priority": 7
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "player"
-							field "max_dist": 16
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "irongolem"
-							field "max_dist": 16
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "baby_turtle"
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "in_water"
-										filter property "value": true
-							field "max_dist": 16
-					field "must_see": true
-					field "priority": 2
-					field "reselect_targets": true
-				component "minecraft:behavior.pickup_items":
-					field "can_pickup_any_item": true
-					field "goal_radius": 2
-					field "max_dist": 3
-					field "pickup_based_on_chance": true
-					field "priority": 5
-					field "speed_multiplier": 1.0
-				component "minecraft:behavior.random_look_around": field "priority": 8
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 1
-				component "minecraft:behavior.ranged_attack":
-					field "attack_interval_max": 3.0
-					field "attack_interval_min": 1.0
-					field "attack_radius": 15.0
-					field "priority": 0
 				component "minecraft:breathable":
 					field "breathes_water": true
 					field "suffocate_time": 0
@@ -1141,98 +1075,6 @@ Changed entity "skeleton":
 						family: "undead"
 						family: "monster"
 						family: "mob"
-			field "description":
-				description "identifier": "minecraft:skeleton"
-				description "is_spawnable": true
-				description "is_summonable": true
-			field "events":
-				event "become_stray_event": field "add": field "component_groups": component group: "become_stray"
-				event "got_in_powder_snow": field "add": field "component_groups": component group: "in_powder_snow"
-				event "got_out_of_powder_snow":
-					field "add": field "component_groups": component group: "got_out_of_powder_snow_environment_sensor"
-					field "remove": field "component_groups": component group: "in_powder_snow"
-				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
-				event "minecraft:melee_mode":
-					field "add": field "component_groups": component group: "minecraft:melee_attack"
-					field "remove":
-						field "component_groups":
-							component group: "minecraft:ranged_attack"
-							component group: "got_out_of_powder_snow_environment_sensor"
-				event "minecraft:ranged_mode":
-					field "add": field "component_groups": component group: "minecraft:ranged_attack"
-					field "remove":
-						field "component_groups":
-							component group: "minecraft:melee_attack"
-							component group: "got_out_of_powder_snow_environment_sensor"
-				event "minecraft:spring_trap": field "add": field "component_groups": component group: "minecraft:lightning_immune"
-		field "defined_in": behavior pack: "experimental_update_announced_live2023"
-Changed entity "spider":
-	Changed behavior pack "experimental":
-		Changed field "defined_in":
-			Total behavior pack: 2 (+1, -0)
-			Unchanged behavior pack: "experimental_armadillo"
-			Added behavior pack "experimental_update_announced_live2023".
-Changed entity "stray":
-	Added behavior pack "experimental":
-		field "format_version": "1.20.60"
-		field "minecraft:entity":
-			field "component_groups":
-				component group "minecraft:melee_attack":
-					component "minecraft:attack":
-						field "damage": 3
-						field "effect_duration": 10
-						field "effect_name": "slowness"
-					component "minecraft:behavior.melee_box_attack":
-						field "priority": 4
-						field "speed_multiplier": 1.25
-						field "track_target": true
-					component "minecraft:environment_sensor":
-						field "triggers":
-							trigger:
-								field "event": "minecraft:ranged_mode"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "operator": "=="
-											filter property "subject": "self"
-											filter property "test": "in_water"
-											filter property "value": false
-										filter:
-											filter property "operator": "=="
-											filter property "subject": "self"
-											filter property "test": "has_ranged_weapon"
-											filter property "value": true
-				component group "minecraft:ranged_attack":
-					component "minecraft:behavior.ranged_attack":
-						field "attack_interval_max": 3.0
-						field "attack_interval_min": 1.0
-						field "attack_radius": 15.0
-						field "priority": 0
-					component "minecraft:environment_sensor":
-						field "triggers":
-							trigger:
-								field "event": "minecraft:melee_mode"
-								field "filters":
-									filter property "operator": "=="
-									filter property "subject": "self"
-									filter property "test": "is_underwater"
-									filter property "value": true
-							trigger:
-								field "event": "minecraft:melee_mode"
-								field "filters":
-									filter property "operator": "=="
-									filter property "subject": "self"
-									filter property "test": "has_ranged_weapon"
-									filter property "value": false
-					component "minecraft:shooter":
-						field "aux_val": 19
-						field "def": "minecraft:arrow"
-						field "sound": "bow"
-				component group "minecraft:revert_to_skeleton":
-					component "minecraft:transformation":
-						field "delay": 0.5
-						field "into": "minecraft:skeleton"
-			field "components":
 				component "minecraft:behavior.avoid_mob_type":
 					field "entity_types":
 						entity type:
@@ -1306,6 +1148,98 @@ Changed entity "stray":
 					field "attack_interval_min": 1.0
 					field "attack_radius": 15.0
 					field "priority": 0
+			field "events":
+				event "become_stray_event": field "add": field "component_groups": component group: "become_stray"
+				event "got_in_powder_snow": field "add": field "component_groups": component group: "in_powder_snow"
+				event "got_out_of_powder_snow":
+					field "add": field "component_groups": component group: "got_out_of_powder_snow_environment_sensor"
+					field "remove": field "component_groups": component group: "in_powder_snow"
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
+				event "minecraft:melee_mode":
+					field "add": field "component_groups": component group: "minecraft:melee_attack"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:ranged_attack"
+							component group: "got_out_of_powder_snow_environment_sensor"
+				event "minecraft:ranged_mode":
+					field "add": field "component_groups": component group: "minecraft:ranged_attack"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:melee_attack"
+							component group: "got_out_of_powder_snow_environment_sensor"
+				event "minecraft:spring_trap": field "add": field "component_groups": component group: "minecraft:lightning_immune"
+Changed entity "spider":
+	Changed behavior pack "experimental":
+		Changed field "defined_in":
+			Total behavior pack: 2 (+1, -0)
+			Unchanged behavior pack: "experimental_armadillo"
+			Added behavior pack "experimental_update_announced_live2023".
+Changed entity "stray":
+	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
+		field "format_version": "1.20.60"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:stray"
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "component_groups":
+				component group "minecraft:melee_attack":
+					component "minecraft:attack":
+						field "damage": 3
+						field "effect_duration": 10
+						field "effect_name": "slowness"
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "minecraft:ranged_mode"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "operator": "=="
+											filter property "subject": "self"
+											filter property "test": "in_water"
+											filter property "value": false
+										filter:
+											filter property "operator": "=="
+											filter property "subject": "self"
+											filter property "test": "has_ranged_weapon"
+											filter property "value": true
+					component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "speed_multiplier": 1.25
+						field "track_target": true
+				component group "minecraft:ranged_attack":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "minecraft:melee_mode"
+								field "filters":
+									filter property "operator": "=="
+									filter property "subject": "self"
+									filter property "test": "is_underwater"
+									filter property "value": true
+							trigger:
+								field "event": "minecraft:melee_mode"
+								field "filters":
+									filter property "operator": "=="
+									filter property "subject": "self"
+									filter property "test": "has_ranged_weapon"
+									filter property "value": false
+					component "minecraft:shooter":
+						field "aux_val": 19
+						field "def": "minecraft:arrow"
+						field "sound": "bow"
+					component "minecraft:behavior.ranged_attack":
+						field "attack_interval_max": 3.0
+						field "attack_interval_min": 1.0
+						field "attack_radius": 15.0
+						field "priority": 0
+				component group "minecraft:revert_to_skeleton":
+					component "minecraft:transformation":
+						field "delay": 0.5
+						field "into": "minecraft:skeleton"
+			field "components":
 				component "minecraft:breathable":
 					field "breathes_water": true
 					field "suffocate_time": 0
@@ -1551,10 +1485,79 @@ Changed entity "stray":
 						family: "monster"
 						family: "mob"
 						family: "undead"
-			field "description":
-				description "identifier": "minecraft:stray"
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "wolf"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+							field "walk_speed_multiplier": 1.2
+					field "priority": 4
+				component "minecraft:behavior.equip_item": field "priority": 3
+				component "minecraft:behavior.flee_sun":
+					field "priority": 2
+					field "speed_multiplier": 1
+				component "minecraft:behavior.hurt_by_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "operator": "!="
+								filter property "subject": "damager"
+								filter property "test": "is_family"
+								filter property "value": "wind_charge_projectile"
+					field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8
+					field "priority": 7
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "player"
+							field "max_dist": 16
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "irongolem"
+							field "max_dist": 16
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "in_water"
+										filter property "value": true
+							field "max_dist": 16
+					field "must_see": true
+					field "priority": 2
+					field "reselect_targets": true
+				component "minecraft:behavior.pickup_items":
+					field "can_pickup_any_item": true
+					field "goal_radius": 2
+					field "max_dist": 3
+					field "pickup_based_on_chance": true
+					field "priority": 5
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 1
+				component "minecraft:behavior.ranged_attack":
+					field "attack_interval_max": 3.0
+					field "attack_interval_min": 1.0
+					field "attack_radius": 15.0
+					field "priority": 0
 			field "events":
 				event "change_to_skeleton":
 					field "sequence":
@@ -1567,13 +1570,13 @@ Changed entity "stray":
 						sequence item 1:
 							field "randomize":
 								randomize item:
+									field "weight": 20
 									field "add": field "component_groups": component group: "minecraft:revert_to_skeleton"
 									field "remove": empty
-									field "weight": 20
 								randomize item:
+									field "weight": 80
 									field "add": empty
 									field "remove": empty
-									field "weight": 80
 				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
 				event "minecraft:melee_mode":
 					field "add": field "component_groups": component group: "minecraft:melee_attack"
@@ -1581,7 +1584,6 @@ Changed entity "stray":
 				event "minecraft:ranged_mode":
 					field "add": field "component_groups": component group: "minecraft:ranged_attack"
 					field "remove": field "component_groups": component group: "minecraft:melee_attack"
-		field "defined_in": behavior pack: "experimental_update_announced_live2023"
 Changed entity "wind_charge_projectile":
 	Changed behavior pack "experimental":
 		Changed field "format_version" from "1.12.0" to "1.20.60".
@@ -1594,8 +1596,13 @@ Changed entity "wind_charge_projectile":
 						family: "wind_charge_projectile"
 Changed entity "zombie":
 	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_update_announced_live2023"
 		field "format_version": "1.20.60"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:zombie"
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:can_break_doors": component "minecraft:annotation.break_door": empty
 				component group "minecraft:can_have_equipment": component "minecraft:equipment": field "table": "loot_tables/entities/zombie_equipment.json"
@@ -1636,11 +1643,6 @@ Changed entity "zombie":
 						field "time": 30
 						field "time_down_event": field "event": "minecraft:convert_to_drowned"
 				component group "minecraft:zombie_adult":
-					component "minecraft:behavior.mount_pathing":
-						field "priority": 2
-						field "speed_multiplier": 1.25
-						field "target_dist": 0.0
-						field "track_target": true
 					component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 + (query.equipment_count * Math.Random(1,3)) : 0"
 					component "minecraft:movement": field "value": 0.23
 					component "minecraft:rideable":
@@ -1649,6 +1651,11 @@ Changed entity "zombie":
 						field "seats":
 							field "lock_rider_rotation": 0
 							field "position": [0.0, 1.1, -0.35]
+					component "minecraft:behavior.mount_pathing":
+						field "priority": 2
+						field "speed_multiplier": 1.25
+						field "target_dist": 0.0
+						field "track_target": true
 				component group "minecraft:zombie_baby":
 					component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 12 + (query.equipment_count * Math.Random(1,3)) : 0"
 					component "minecraft:is_baby": empty
@@ -1662,91 +1669,6 @@ Changed entity "zombie":
 						field "within_radius": 16
 			field "components":
 				component "minecraft:attack": field "damage": 3
-				component "minecraft:behavior.equip_item": field "priority": 2
-				component "minecraft:behavior.hurt_by_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "operator": "!="
-								filter property "subject": "damager"
-								filter property "test": "is_family"
-								filter property "value": "wind_charge_projectile"
-					field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6
-					field "priority": 8
-					field "probability": 0.02
-				component "minecraft:behavior.melee_box_attack":
-					field "can_spread_on_fire": true
-					field "priority": 3
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "player"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "snowgolem"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "irongolem"
-							field "max_dist": 35
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "villager"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "wandering_trader"
-							field "max_dist": 35
-							field "must_see": false
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "baby_turtle"
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "in_water"
-										filter property "value": true
-							field "max_dist": 35
-					field "must_see": true
-					field "must_see_forget_duration": 17.0
-					field "priority": 2
-					field "reselect_targets": true
-					field "within_radius": 25.0
-				component "minecraft:behavior.pickup_items":
-					field "can_pickup_any_item": true
-					field "excluded_items": item: "minecraft:glow_ink_sac"
-					field "goal_radius": 2
-					field "max_dist": 3
-					field "pickup_based_on_chance": true
-					field "priority": 6
-					field "speed_multiplier": 1.0
-				component "minecraft:behavior.random_look_around": field "priority": 9
-				component "minecraft:behavior.random_stroll":
-					field "priority": 7
-					field "speed_multiplier": 1
-				component "minecraft:behavior.stomp_turtle_egg":
-					field "goal_radius": 1.14
-					field "interval": 20
-					field "priority": 4
-					field "search_height": 2
-					field "search_range": 10
-					field "speed_multiplier": 1
 				component "minecraft:breathable":
 					field "breathes_air": true
 					field "breathes_water": true
@@ -1973,10 +1895,91 @@ Changed entity "zombie":
 						family: "undead"
 						family: "monster"
 						family: "mob"
-			field "description":
-				description "identifier": "minecraft:zombie"
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.equip_item": field "priority": 2
+				component "minecraft:behavior.hurt_by_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "operator": "!="
+								filter property "subject": "damager"
+								filter property "test": "is_family"
+								filter property "value": "wind_charge_projectile"
+					field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 6
+					field "priority": 8
+					field "probability": 0.02
+				component "minecraft:behavior.melee_box_attack":
+					field "can_spread_on_fire": true
+					field "priority": 3
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "player"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "snowgolem"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "irongolem"
+							field "max_dist": 35
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "villager"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "wandering_trader"
+							field "max_dist": 35
+							field "must_see": false
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "in_water"
+										filter property "value": true
+							field "max_dist": 35
+					field "must_see": true
+					field "must_see_forget_duration": 17.0
+					field "priority": 2
+					field "reselect_targets": true
+					field "within_radius": 25.0
+				component "minecraft:behavior.pickup_items":
+					field "can_pickup_any_item": true
+					field "excluded_items": item: "minecraft:glow_ink_sac"
+					field "goal_radius": 2
+					field "max_dist": 3
+					field "pickup_based_on_chance": true
+					field "priority": 6
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.random_look_around": field "priority": 9
+				component "minecraft:behavior.random_stroll":
+					field "priority": 7
+					field "speed_multiplier": 1
+				component "minecraft:behavior.stomp_turtle_egg":
+					field "goal_radius": 1.14
+					field "interval": 20
+					field "priority": 4
+					field "search_height": 2
+					field "search_range": 10
+					field "speed_multiplier": 1
 			field "events":
 				event "minecraft:as_adult": field "add": field "component_groups": component group: "minecraft:zombie_adult"
 				event "minecraft:as_baby": field "add": field "component_groups": component group: "minecraft:zombie_baby"
@@ -2000,32 +2003,32 @@ Changed entity "zombie":
 						sequence item 0:
 							field "randomize":
 								randomize item:
+									field "weight": 380
 									field "add":
 										field "component_groups":
 											component group: "minecraft:zombie_adult"
 											component group: "minecraft:can_have_equipment"
 									field "remove": empty
-									field "weight": 380
 								randomize item:
+									field "weight": 17
 									field "add":
 										field "component_groups":
 											component group: "minecraft:zombie_baby"
 											component group: "minecraft:can_have_equipment"
 									field "remove": empty
-									field "weight": 17
 								randomize item:
+									field "weight": 3
 									field "add":
 										field "component_groups":
 											component group: "minecraft:zombie_baby"
 											component group: "minecraft:zombie_jockey"
 											component group: "minecraft:can_have_equipment"
 									field "remove": empty
-									field "weight": 3
 						sequence item 1:
 							field "randomize":
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:can_break_doors"
 									field "weight": 10
+									field "add": field "component_groups": component group: "minecraft:can_break_doors"
 								randomize item: field "weight": 90
 				event "minecraft:start_transforming":
 					field "add": field "component_groups": component group: "minecraft:start_drowned_transformation"
@@ -2033,4 +2036,3 @@ Changed entity "zombie":
 				event "minecraft:stop_transforming":
 					field "add": field "component_groups": component group: "minecraft:look_to_start_drowned_transformation"
 					field "remove": field "component_groups": component group: "minecraft:start_drowned_transformation"
-		field "defined_in": behavior pack: "experimental_update_announced_live2023"

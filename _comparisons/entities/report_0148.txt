@@ -13,8 +13,14 @@ Changed entity "axolotl":
 				Total component: 29 (+1, -0)
 				Added component "minecraft:balloonable" of field "mass": 0.5.
 	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_wild_update"
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:axolotl"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "attack_cooldown":
 					component "minecraft:attack_cooldown":
@@ -23,9 +29,6 @@ Changed entity "axolotl":
 							field "target": "self"
 						field "attack_cooldown_time": 120.0
 				component group "axolotl_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 1
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breed_items": "tropical_fish_bucket"
 						field "breeds_with":
@@ -40,6 +43,9 @@ Changed entity "axolotl":
 					component "minecraft:experience_reward":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:behavior.breed":
+						field "priority": 1
+						field "speed_multiplier": 1.0
 				component group "axolotl_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -48,11 +54,11 @@ Changed entity "axolotl":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
 						field "transform_to_item": "water_bucket:0"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
 					component "minecraft:behavior.follow_parent":
 						field "priority": 5
 						field "speed_multiplier": 1.1
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.5
 				component group "axolotl_blue": component "minecraft:variant": field "value": 4
 				component group "axolotl_cyan": component "minecraft:variant": field "value": 1
 				component group "axolotl_dried":
@@ -95,6 +101,58 @@ Changed entity "axolotl":
 				component group "axolotl_wild": component "minecraft:variant": field "value": 3
 			field "components":
 				component "minecraft:attack": field "damage": 2
+				component "minecraft:breathable":
+					field "breathes_air": true
+					field "breathes_water": true
+					field "generates_bubbles": false
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:collision_box":
+					field "height": 0.42
+					field "width": 0.75
+				component "minecraft:combat_regeneration": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "lightning"
+						field "damage_multiplier": 2000.0
+						field "deals_damage": true
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health": field "value": 14
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "soft_distance": 4.0
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:movement.amphibious": field "max_turn": 15.0
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
+					field "avoid_damage_blocks": true
+					field "can_path_over_water": true
+					field "can_sink": false
+					field "can_swim": true
+					field "can_walk": true
+					field "is_amphibious": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "axolotl"
+						family: "mob"
+				component "minecraft:underwater_movement": field "value": 0.2
 				component "minecraft:behavior.look_at_player":
 					field "priority": 10
 					field "probability": 0.02
@@ -202,63 +260,6 @@ Changed entity "axolotl":
 					field "items": item: "tropical_fish_bucket"
 					field "priority": 2
 					field "speed_multiplier": 1.1
-				component "minecraft:breathable":
-					field "breathes_air": true
-					field "breathes_water": true
-					field "generates_bubbles": false
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:collision_box":
-					field "height": 0.42
-					field "width": 0.75
-				component "minecraft:combat_regeneration": empty
-				component "minecraft:damage_sensor":
-					field "triggers":
-						field "cause": "lightning"
-						field "damage_multiplier": 2000.0
-						field "deals_damage": true
-				component "minecraft:despawn": field "despawn_from_distance": empty
-				component "minecraft:health": field "value": 14
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:is_hidden_when_invisible": empty
-				component "minecraft:jump.static": empty
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "soft_distance": 4.0
-				component "minecraft:movement": field "value": 0.1
-				component "minecraft:movement.amphibious": field "max_turn": 15.0
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.generic":
-					field "avoid_damage_blocks": true
-					field "can_path_over_water": true
-					field "can_sink": false
-					field "can_swim": true
-					field "can_walk": true
-					field "is_amphibious": true
-				component "minecraft:physics": empty
-				component "minecraft:pushable":
-					field "is_pushable": true
-					field "is_pushable_by_piston": true
-				component "minecraft:type_family":
-					field "family":
-						family: "axolotl"
-						family: "mob"
-				component "minecraft:underwater_movement": field "value": 0.2
-			field "description":
-				description "identifier": "minecraft:axolotl"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
 			field "events":
 				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group: "attack_cooldown"
 				event "dried_out": field "add": field "component_groups": component group: "axolotl_dried"
@@ -297,17 +298,17 @@ Changed entity "axolotl":
 						sequence item 1:
 							field "randomize":
 								randomize item:
+									field "weight": 25
 									field "add": field "component_groups": component group: "axolotl_cyan"
-									field "weight": 25
 								randomize item:
+									field "weight": 25
 									field "add": field "component_groups": component group: "axolotl_gold"
-									field "weight": 25
 								randomize item:
+									field "weight": 25
 									field "add": field "component_groups": component group: "axolotl_lucy"
-									field "weight": 25
 								randomize item:
-									field "add": field "component_groups": component group: "axolotl_wild"
 									field "weight": 25
+									field "add": field "component_groups": component group: "axolotl_wild"
 				event "recover_after_dried_out": field "remove": field "component_groups": component group: "axolotl_dried"
 				event "start_drying_out":
 					field "add": field "component_groups": component group: "axolotl_on_land"
@@ -321,7 +322,6 @@ Changed entity "axolotl":
 						field "component_groups":
 							component group: "axolotl_on_land"
 							component group: "axolotl_dried"
-		field "defined_in": behavior pack: "experimental_wild_update"
 Changed entity "bee":
 	Changed behavior pack "core":
 		Changed field "defined_in":
@@ -382,8 +382,14 @@ Changed entity "dolphin":
 				Added empty component "minecraft:balloonable".
 Added entity "frog":
 	behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_wild_update"
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:frog"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "frog_snowy": component "minecraft:variant": field "value": 1
 				component group "frog_swamp": component "minecraft:variant": field "value": 0
@@ -411,6 +417,61 @@ Added entity "frog":
 						field "search_height": 5
 						field "search_range": 20
 			field "components":
+				component "minecraft:breathable":
+					field "breathes_air": true
+					field "breathes_water": true
+					field "generates_bubbles": false
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:breedable":
+					field "breed_items": item: "seagrass"
+					field "breeds_with":
+						field "baby_type": "minecraft:tadpole"
+						field "breed_event": field "event": "become_pregnant"
+						field "mate_type": "minecraft:frog"
+					field "causes_pregnancy": true
+					field "require_tame": false
+				component "minecraft:collision_box":
+					field "height": 0.55
+					field "width": 0.5
+				component "minecraft:damage_sensor":
+					field "triggers":
+						trigger:
+							field "cause": "fall"
+							field "damage_modifier": -10
+							field "deals_damage": true
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health": field "value": 10
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": field "jump_power": 0.6
+				component "minecraft:leashable": empty
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:movement.amphibious": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
+					field "avoid_damage_blocks": true
+					field "can_path_over_water": true
+					field "can_sink": false
+					field "can_swim": true
+					field "can_walk": true
+					field "is_amphibious": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "frog"
+						family: "mob"
+				component "minecraft:underwater_movement": field "value": 0.15
 				component "minecraft:behavior.breed": field "priority": 4
 				component "minecraft:behavior.croak":
 					field "duration": 4.5
@@ -481,66 +542,6 @@ Added entity "frog":
 					field "items": item: "seagrass"
 					field "priority": 5
 					field "speed_multiplier": 1.25
-				component "minecraft:breathable":
-					field "breathes_air": true
-					field "breathes_water": true
-					field "generates_bubbles": false
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:breedable":
-					field "breed_items": item: "seagrass"
-					field "breeds_with":
-						field "baby_type": "minecraft:tadpole"
-						field "breed_event": field "event": "become_pregnant"
-						field "mate_type": "minecraft:frog"
-					field "causes_pregnancy": true
-					field "require_tame": false
-				component "minecraft:collision_box":
-					field "height": 0.55
-					field "width": 0.5
-				component "minecraft:damage_sensor":
-					field "triggers":
-						trigger:
-							field "cause": "fall"
-							field "damage_modifier": -10
-							field "deals_damage": true
-				component "minecraft:despawn": field "despawn_from_distance": empty
-				component "minecraft:health": field "value": 10
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:is_hidden_when_invisible": empty
-				component "minecraft:jump.static": field "jump_power": 0.6
-				component "minecraft:leashable": empty
-				component "minecraft:movement": field "value": 0.1
-				component "minecraft:movement.amphibious": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.generic":
-					field "avoid_damage_blocks": true
-					field "can_path_over_water": true
-					field "can_sink": false
-					field "can_swim": true
-					field "can_walk": true
-					field "is_amphibious": true
-				component "minecraft:physics": empty
-				component "minecraft:pushable": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "frog"
-						family: "mob"
-				component "minecraft:underwater_movement": field "value": 0.15
-			field "description":
-				description "identifier": "minecraft:frog"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
 			field "events":
 				event "become_pregnant": field "add": field "component_groups": component group: "pregnant"
 				event "laid_egg": field "remove": field "component_groups": component group: "pregnant"
@@ -626,7 +627,6 @@ Added entity "frog":
 									filter:
 										filter property "test": "has_biome_tag"
 										filter property "value": "frozen"
-		field "defined_in": behavior pack: "experimental_wild_update"
 Changed entity "glow_squid":
 	Changed behavior pack "core":
 		Changed field "defined_in":
@@ -774,6 +774,7 @@ Changed entity "player":
 					Changed component "minecraft:spell_effects":
 						Changed field "add_effects":
 							Changed effect:
+								Unchanged field "effect": "bad_omen"
 								Added field "visible" of false.
 Changed entity "polar_bear":
 	Changed behavior pack "core":
@@ -818,8 +819,14 @@ Changed entity "strider":
 				Added empty component "minecraft:balloonable".
 Added entity "tadpole":
 	behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_wild_update"
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:tadpole"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups": component group "grow_up": component "minecraft:transformation": field "into": "minecraft:frog"
 			field "components":
 				component "minecraft:ageable":
@@ -828,13 +835,6 @@ Added entity "tadpole":
 					field "grow_up":
 						field "event": "ageable_grow_up"
 						field "target": "self"
-				component "minecraft:behavior.look_at_player":
-					field "priority": 2
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.random_swim":
-					field "interval": 100
-					field "priority": 1
 				component "minecraft:breathable":
 					field "breathes_air": false
 					field "breathes_water": true
@@ -874,13 +874,14 @@ Added entity "tadpole":
 						family: "tadpole"
 						family: "mob"
 				component "minecraft:underwater_movement": field "value": 0.1
-			field "description":
-				description "identifier": "minecraft:tadpole"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.look_at_player":
+					field "priority": 2
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.random_swim":
+					field "interval": 100
+					field "priority": 1
 			field "events": event "ageable_grow_up": field "sequence": sequence item 0: field "add": field "component_groups": component group: "grow_up"
-		field "defined_in": behavior pack: "experimental_wild_update"
 Changed entity "wolf":
 	Changed behavior pack "core":
 		Changed field "defined_in":

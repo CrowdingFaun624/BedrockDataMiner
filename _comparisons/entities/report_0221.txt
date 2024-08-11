@@ -2,8 +2,24 @@ Difference of "entities" between "1.20.73" and "1.20.80.20" (beta of "1.20.80").
 
 Changed entity "armadillo":
 	Added behavior pack "core":
+		field "defined_in": behavior pack: "vanilla_1.20.80"
 		field "format_version": "1.20.80"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:armadillo"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:armadillo_state":
+						field "type": "enum"
+						field "client_sync": true
+						field "default": "unrolled"
+						field "values":
+							possible property: "unrolled"
+							possible property: "rolled_up"
+							possible property: "rolled_up_peeking"
+							possible property: "rolled_up_relaxing"
+							possible property: "rolled_up_unrolling"
 			field "component_groups":
 				component group "minecraft:adult":
 					component "minecraft:breedable":
@@ -111,33 +127,18 @@ Changed entity "armadillo":
 						field "on_start": field "event": "minecraft:stop_peeking"
 						field "priority": 0
 				component group "minecraft:rolled_up_without_threats":
-					component "minecraft:behavior.timer_flag_1":
-						field "cooldown_range": 2.5
-						field "duration_range": 1.5
-						field "on_start": field "event": "minecraft:start_unrolling"
-						field "priority": 0
 					component "minecraft:timer":
 						field "looping": true
 						field "randomInterval": false
 						field "time": 4
 						field "time_down_event": field "event": "minecraft:unroll"
+					component "minecraft:behavior.timer_flag_1":
+						field "cooldown_range": 2.5
+						field "duration_range": 1.5
+						field "on_start": field "event": "minecraft:start_unrolling"
+						field "priority": 0
 				component group "minecraft:unrolled":
 					component "minecraft:ambient_sound_interval": empty
-					component "minecraft:behavior.look_at_player":
-						field "max_look_time": 80
-						field "min_look_time": 40
-						field "priority": 7
-						field "probability": 0.02
-						field "target_distance": 6.0
-					component "minecraft:behavior.random_look_around": field "priority": 8
-					component "minecraft:behavior.random_stroll":
-						field "priority": 6
-						field "speed_multiplier": 1.0
-					component "minecraft:behavior.tempt":
-						field "can_tempt_vertically": true
-						field "items": item: "spider_eye"
-						field "priority": 3
-						field "speed_multiplier": 1.25
 					component "minecraft:damage_sensor":
 						field "triggers":
 							field "on_damage":
@@ -153,13 +154,23 @@ Changed entity "armadillo":
 											filter property "test": "is_family"
 											filter property "value": "player"
 					component "minecraft:movement": field "value": 0.14
+					component "minecraft:behavior.look_at_player":
+						field "max_look_time": 80
+						field "min_look_time": 40
+						field "priority": 7
+						field "probability": 0.02
+						field "target_distance": 6.0
+					component "minecraft:behavior.random_look_around": field "priority": 8
+					component "minecraft:behavior.random_stroll":
+						field "priority": 6
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.tempt":
+						field "can_tempt_vertically": true
+						field "items": item: "spider_eye"
+						field "priority": 3
+						field "speed_multiplier": 1.25
 			field "components":
 				component "minecraft:balloonable": empty
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.panic":
-					field "ignore_mob_damage": true
-					field "priority": 1
-					field "speed_multiplier": 2.0
 				component "minecraft:breathable":
 					field "suffocate_time": 0
 					field "total_supply": 15
@@ -257,21 +268,11 @@ Changed entity "armadillo":
 					field "family":
 						family: "armadillo"
 						family: "mob"
-			field "description":
-				description "identifier": "minecraft:armadillo"
-				description "is_spawnable": true
-				description "is_summonable": true
-				description "properties":
-					property "minecraft:armadillo_state":
-						field "client_sync": true
-						field "default": "unrolled"
-						field "type": "enum"
-						field "values":
-							possible property: "unrolled"
-							possible property: "rolled_up"
-							possible property: "rolled_up_peeking"
-							possible property: "rolled_up_relaxing"
-							possible property: "rolled_up_unrolling"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.panic":
+					field "ignore_mob_damage": true
+					field "priority": 1
+					field "speed_multiplier": 2.0
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "sequence":
@@ -414,6 +415,7 @@ Changed entity "armadillo":
 				event "minecraft:threat_detected":
 					field "sequence":
 						sequence item 0:
+							field "trigger": "minecraft:roll_up"
 							field "filters":
 								filter property "all_of":
 									filter:
@@ -438,7 +440,6 @@ Changed entity "armadillo":
 									filter:
 										filter property "test": "is_riding"
 										filter property "value": false
-							field "trigger": "minecraft:roll_up"
 						sequence item 1:
 							field "add": field "component_groups": component group: "minecraft:rolled_up_with_threats"
 							field "filters":
@@ -511,10 +512,25 @@ Changed entity "armadillo":
 										filter property "operator": "not"
 										filter property "test": "has_component"
 										filter property "value": "minecraft:is_baby"
-		field "defined_in": behavior pack: "vanilla_1.20.80"
 	Removed behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_armadillo"
 		field "format_version": "1.20.70"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:armadillo"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:armadillo_state":
+						field "type": "enum"
+						field "client_sync": true
+						field "default": "unrolled"
+						field "values":
+							possible property: "unrolled"
+							possible property: "rolled_up"
+							possible property: "rolled_up_peeking"
+							possible property: "rolled_up_relaxing"
+							possible property: "rolled_up_unrolling"
 			field "component_groups":
 				component group "minecraft:adult":
 					component "minecraft:experience_reward":
@@ -547,9 +563,6 @@ Changed entity "armadillo":
 							field "spawn_item": "armadillo_scute"
 							field "spawn_sound": "mob.armadillo.scute_drop"
 				component group "minecraft:adult_unrolled":
-					component "minecraft:behavior.breed":
-						field "priority": 2
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breed_items": item: "spider_eye"
 						field "breeds_with":
@@ -560,6 +573,9 @@ Changed entity "armadillo":
 									field "target": "baby"
 								field "mate_type": "minecraft:armadillo"
 						field "require_tame": false
+					component "minecraft:behavior.breed":
+						field "priority": 2
+						field "speed_multiplier": 1.0
 				component group "minecraft:baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -618,33 +634,18 @@ Changed entity "armadillo":
 						field "on_start": field "event": "minecraft:stop_peeking"
 						field "priority": 0
 				component group "minecraft:rolled_up_without_threats":
-					component "minecraft:behavior.timer_flag_1":
-						field "cooldown_range": 2.5
-						field "duration_range": 1.5
-						field "on_start": field "event": "minecraft:start_unrolling"
-						field "priority": 0
 					component "minecraft:timer":
 						field "looping": true
 						field "randomInterval": false
 						field "time": 4
 						field "time_down_event": field "event": "minecraft:unroll"
+					component "minecraft:behavior.timer_flag_1":
+						field "cooldown_range": 2.5
+						field "duration_range": 1.5
+						field "on_start": field "event": "minecraft:start_unrolling"
+						field "priority": 0
 				component group "minecraft:unrolled":
 					component "minecraft:ambient_sound_interval": empty
-					component "minecraft:behavior.look_at_player":
-						field "max_look_time": 80
-						field "min_look_time": 40
-						field "priority": 7
-						field "probability": 0.02
-						field "target_distance": 6.0
-					component "minecraft:behavior.random_look_around": field "priority": 8
-					component "minecraft:behavior.random_stroll":
-						field "priority": 6
-						field "speed_multiplier": 1.0
-					component "minecraft:behavior.tempt":
-						field "can_tempt_vertically": true
-						field "items": item: "spider_eye"
-						field "priority": 3
-						field "speed_multiplier": 1.25
 					component "minecraft:damage_sensor":
 						field "triggers":
 							field "on_damage":
@@ -660,13 +661,23 @@ Changed entity "armadillo":
 											filter property "test": "is_family"
 											filter property "value": "player"
 					component "minecraft:movement": field "value": 0.14
+					component "minecraft:behavior.look_at_player":
+						field "max_look_time": 80
+						field "min_look_time": 40
+						field "priority": 7
+						field "probability": 0.02
+						field "target_distance": 6.0
+					component "minecraft:behavior.random_look_around": field "priority": 8
+					component "minecraft:behavior.random_stroll":
+						field "priority": 6
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.tempt":
+						field "can_tempt_vertically": true
+						field "items": item: "spider_eye"
+						field "priority": 3
+						field "speed_multiplier": 1.25
 			field "components":
 				component "minecraft:balloonable": empty
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.panic":
-					field "ignore_mob_damage": true
-					field "priority": 1
-					field "speed_multiplier": 2.0
 				component "minecraft:breathable":
 					field "suffocate_time": 0
 					field "total_supply": 15
@@ -764,21 +775,11 @@ Changed entity "armadillo":
 					field "family":
 						family: "armadillo"
 						family: "mob"
-			field "description":
-				description "identifier": "minecraft:armadillo"
-				description "is_spawnable": true
-				description "is_summonable": true
-				description "properties":
-					property "minecraft:armadillo_state":
-						field "client_sync": true
-						field "default": "unrolled"
-						field "type": "enum"
-						field "values":
-							possible property: "unrolled"
-							possible property: "rolled_up"
-							possible property: "rolled_up_peeking"
-							possible property: "rolled_up_relaxing"
-							possible property: "rolled_up_unrolling"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.panic":
+					field "ignore_mob_damage": true
+					field "priority": 1
+					field "speed_multiplier": 2.0
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "sequence":
@@ -921,6 +922,7 @@ Changed entity "armadillo":
 				event "minecraft:threat_detected":
 					field "sequence":
 						sequence item 0:
+							field "trigger": "minecraft:roll_up"
 							field "filters":
 								filter property "all_of":
 									filter:
@@ -945,7 +947,6 @@ Changed entity "armadillo":
 									filter:
 										filter property "test": "is_riding"
 										filter property "value": false
-							field "trigger": "minecraft:roll_up"
 						sequence item 1:
 							field "add": field "component_groups": component group: "minecraft:rolled_up_with_threats"
 							field "filters":
@@ -1018,7 +1019,6 @@ Changed entity "armadillo":
 										filter property "operator": "not"
 										filter property "test": "has_component"
 										filter property "value": "minecraft:is_baby"
-		field "defined_in": behavior pack: "experimental_armadillo"
 Changed entity "cave_spider":
 	Changed behavior pack "core":
 		Changed field "defined_in":
@@ -1033,6 +1033,7 @@ Changed entity "cave_spider":
 		Changed field "format_version" from "1.16.0" to "1.20.80".
 		Changed field "minecraft:entity":
 			Changed field "description":
+				Unchanged description "identifier": "minecraft:cave_spider"
 				Removed description "is_experimental" of false.
 			Changed field "components":
 				Total component: 26 (+1, -0)
@@ -1084,6 +1085,7 @@ Changed entity "spider":
 		Changed field "format_version" from "1.18.20" to "1.20.80".
 		Changed field "minecraft:entity":
 			Changed field "description":
+				Unchanged description "identifier": "minecraft:spider"
 				Removed description "is_experimental" of false.
 			Changed field "components":
 				Total component: 27 (+1, -0)
@@ -1139,12 +1141,13 @@ Changed entity "wolf":
 		Changed field "format_version" from "1.20.70" to "1.20.80".
 		Changed field "minecraft:entity":
 			Changed field "description":
+				Unchanged description "identifier": "minecraft:wolf"
 				Changed description "properties":
 					Total property: 2 (+1, -0)
 					Added property "minecraft:is_armorable":
+						field "type": "bool"
 						field "client_sync": false
 						field "default": false
-						field "type": "bool"
 			Changed field "component_groups":
 				Total component group: 7 (+1, -0)
 				Added component group "minecraft:wolf_armorable":
@@ -1274,8 +1277,26 @@ Changed entity "wolf":
 					field "add": field "component_groups": component group: "minecraft:wolf_armorable"
 					field "set_property": property "minecraft:is_armorable": true
 	Removed behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_armadillo"
 		field "format_version": "1.20.70"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:wolf"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:has_armor":
+						field "type": "bool"
+						field "client_sync": true
+						field "default": false
+					property "minecraft:has_increased_max_health":
+						field "type": "bool"
+						field "client_sync": false
+						field "default": false
+					property "minecraft:is_armorable":
+						field "type": "bool"
+						field "client_sync": false
+						field "default": false
 			field "component_groups":
 				component group "minecraft:wolf_adult":
 					component "minecraft:breedable":
@@ -1422,6 +1443,10 @@ Changed entity "wolf":
 						field "value": 40
 				component group "minecraft:wolf_tame":
 					component "minecraft:attack": field "damage": 4
+					component "minecraft:color": field "value": 14
+					component "minecraft:is_dyeable": field "interact_text": "action.interact.dye"
+					component "minecraft:is_tamed": empty
+					component "minecraft:sittable": empty
 					component "minecraft:behavior.breed":
 						field "priority": 2
 						field "speed_multiplier": 1.0
@@ -1442,11 +1467,20 @@ Changed entity "wolf":
 						field "priority": 5
 					component "minecraft:behavior.owner_hurt_by_target": field "priority": 1
 					component "minecraft:behavior.owner_hurt_target": field "priority": 2
-					component "minecraft:color": field "value": 14
-					component "minecraft:is_dyeable": field "interact_text": "action.interact.dye"
-					component "minecraft:is_tamed": empty
-					component "minecraft:sittable": empty
 				component group "minecraft:wolf_wild":
+					component "minecraft:on_target_acquired":
+						field "event": "minecraft:become_angry"
+						field "target": "self"
+					component "minecraft:rideable":
+						field "family_types": family: "zombie"
+						field "seat_count": 1
+						field "seats": field "position": [0.0, 0.675, -0.1]
+					component "minecraft:tameable":
+						field "probability": 0.33
+						field "tame_event":
+							field "event": "minecraft:on_tame"
+							field "target": "self"
+						field "tame_items": "bone"
 					component "minecraft:behavior.avoid_mob_type":
 						field "entity_types":
 							entity type:
@@ -1510,58 +1544,9 @@ Changed entity "wolf":
 						field "must_see": true
 						field "priority": 4
 						field "reselect_targets": true
-					component "minecraft:on_target_acquired":
-						field "event": "minecraft:become_angry"
-						field "target": "self"
-					component "minecraft:rideable":
-						field "family_types": family: "zombie"
-						field "seat_count": 1
-						field "seats": field "position": [0.0, 0.675, -0.1]
-					component "minecraft:tameable":
-						field "probability": 0.33
-						field "tame_event":
-							field "event": "minecraft:on_tame"
-							field "target": "self"
-						field "tame_items": "bone"
 			field "components":
 				component "minecraft:attack": field "damage": 3
 				component "minecraft:balloonable": field "mass": 0.8
-				component "minecraft:behavior.beg":
-					field "items":
-						item: "bone"
-						item: "porkchop"
-						item: "cooked_porkchop"
-						item: "chicken"
-						item: "cooked_chicken"
-						item: "beef"
-						item: "cooked_beef"
-						item: "rotten_flesh"
-						item: "muttonraw"
-						item: "muttoncooked"
-						item: "rabbit"
-						item: "cooked_rabbit"
-					field "look_distance": 8
-					field "look_time": [2, 4]
-					field "priority": 9
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.hurt_by_target": field "priority": 3
-				component "minecraft:behavior.leap_at_target":
-					field "priority": 4
-					field "target_dist": 0.4
-				component "minecraft:behavior.look_at_player":
-					field "priority": 6
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.melee_box_attack": field "priority": 5
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 1
-					field "speed_multiplier": 1.25
-					field "target_dist": 0
-					field "track_target": true
-				component "minecraft:behavior.random_stroll":
-					field "priority": 8
-					field "speed_multiplier": 1.0
-				component "minecraft:behavior.stay_while_sitting": field "priority": 3
 				component "minecraft:breathable":
 					field "suffocate_time": 0
 					field "total_supply": 15
@@ -1694,23 +1679,42 @@ Changed entity "wolf":
 					field "family":
 						family: "wolf"
 						family: "mob"
-			field "description":
-				description "identifier": "minecraft:wolf"
-				description "is_spawnable": true
-				description "is_summonable": true
-				description "properties":
-					property "minecraft:has_armor":
-						field "client_sync": true
-						field "default": false
-						field "type": "bool"
-					property "minecraft:has_increased_max_health":
-						field "client_sync": false
-						field "default": false
-						field "type": "bool"
-					property "minecraft:is_armorable":
-						field "client_sync": false
-						field "default": false
-						field "type": "bool"
+				component "minecraft:behavior.beg":
+					field "items":
+						item: "bone"
+						item: "porkchop"
+						item: "cooked_porkchop"
+						item: "chicken"
+						item: "cooked_chicken"
+						item: "beef"
+						item: "cooked_beef"
+						item: "rotten_flesh"
+						item: "muttonraw"
+						item: "muttoncooked"
+						item: "rabbit"
+						item: "cooked_rabbit"
+					field "look_distance": 8
+					field "look_time": [2, 4]
+					field "priority": 9
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target": field "priority": 3
+				component "minecraft:behavior.leap_at_target":
+					field "priority": 4
+					field "target_dist": 0.4
+				component "minecraft:behavior.look_at_player":
+					field "priority": 6
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.melee_box_attack": field "priority": 5
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+					field "target_dist": 0
+					field "track_target": true
+				component "minecraft:behavior.random_stroll":
+					field "priority": 8
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.stay_while_sitting": field "priority": 3
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add": field "component_groups": component group: "minecraft:wolf_adult"
@@ -1764,4 +1768,3 @@ Changed entity "wolf":
 						field "component_groups":
 							component group: "minecraft:wolf_baby"
 							component group: "minecraft:wolf_wild"
-		field "defined_in": behavior pack: "experimental_armadillo"

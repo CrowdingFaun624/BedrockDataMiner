@@ -29,8 +29,19 @@ Changed entity "bee":
 						Added item "minecraft:cherry_leaves".
 						Added item "minecraft:pink_petals".
 	Removed behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_next_major_update"
 		field "format_version": "1.18.20"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:bee"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:has_nectar":
+						field "type": "bool"
+						field "client_sync": true
+						field "default": "query.had_component_group('has_nectar')"
 			field "component_groups":
 				component group "abort_shelter_detection":
 					component "minecraft:environment_sensor":
@@ -66,9 +77,6 @@ Changed entity "bee":
 						field "priority": 2
 						field "speed_multiplier": 1.4
 				component group "bee_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 4
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breed_items":
 							item: "minecraft:red_flower"
@@ -93,6 +101,9 @@ Changed entity "bee":
 					component "minecraft:experience_reward":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_multiplier": 1.0
 				component group "bee_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -112,16 +123,12 @@ Changed entity "bee":
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
 					component "minecraft:behavior.follow_parent":
 						field "priority": 11
 						field "speed_multiplier": 1.1
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.5
 				component group "countdown_to_perish":
-					component "minecraft:behavior.panic":
-						field "force": true
-						field "priority": 1
-						field "speed_multiplier": 1.25
 					component "minecraft:mark_variant": field "value": 1
 					component "minecraft:timer":
 						field "looping": false
@@ -136,6 +143,10 @@ Changed entity "bee":
 							family: "mob"
 							family: "arthropod"
 							family: "pacified"
+					component "minecraft:behavior.panic":
+						field "force": true
+						field "priority": 1
+						field "speed_multiplier": 1.25
 				component group "default_sound":
 					component "minecraft:ambient_sound_interval":
 						field "event_name": "ambient"
@@ -143,10 +154,6 @@ Changed entity "bee":
 						field "value": 0.0
 				component group "easy_attack": component "minecraft:attack": field "damage": 2
 				component group "escape_fire":
-					component "minecraft:behavior.panic":
-						field "force": true
-						field "priority": 1
-						field "speed_multiplier": 1.25
 					component "minecraft:timer":
 						field "looping": false
 						field "randomInterval": true
@@ -154,7 +161,17 @@ Changed entity "bee":
 						field "time_down_event":
 							field "event": "stop_panicking_after_fire"
 							field "target": "self"
+					component "minecraft:behavior.panic":
+						field "force": true
+						field "priority": 1
+						field "speed_multiplier": 1.25
 				component group "find_hive":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 180
+						field "time_down_event":
+							field "event": "find_hive_timeout"
+							field "target": "self"
 					component "minecraft:behavior.move_to_block":
 						field "goal_radius": 0.633
 						field "on_reach":
@@ -168,12 +185,6 @@ Changed entity "bee":
 							block: "bee_nest"
 							block: "beehive"
 						field "tick_interval": 1
-					component "minecraft:timer":
-						field "looping": false
-						field "time": 180
-						field "time_down_event":
-							field "event": "find_hive_timeout"
-							field "target": "self"
 				component group "hard_attack":
 					component "minecraft:attack":
 						field "damage": 2
@@ -196,6 +207,10 @@ Changed entity "bee":
 						field "event_name": "ambient.pollinate"
 						field "range": 3.0
 						field "value": 2.0
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 180
+						field "time_down_event": field "event": "find_flower_timeout"
 					component "minecraft:behavior.move_to_block":
 						field "goal_radius": 1.0
 						field "on_stay_completed":
@@ -228,10 +243,6 @@ Changed entity "bee":
 						field "target_offset": [0, 0.25, 0]
 						field "target_selection_method": "random"
 						field "tick_interval": 1
-					component "minecraft:timer":
-						field "looping": true
-						field "time": 180
-						field "time_down_event": field "event": "find_flower_timeout"
 				component group "normal_attack":
 					component "minecraft:attack":
 						field "damage": 2
@@ -306,6 +317,12 @@ Changed entity "bee":
 											filter property "test": "has_biome_tag"
 											filter property "value": "overworld"
 				component group "take_nearest_target":
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 5
+						field "time_down_event":
+							field "event": "calmed_down"
+							field "target": "self"
 					component "minecraft:behavior.nearest_attackable_target":
 						field "entity_types":
 							entity type:
@@ -315,42 +332,9 @@ Changed entity "bee":
 									filter property "value": "player"
 								field "max_dist": 10
 						field "priority": 2
-					component "minecraft:timer":
-						field "looping": true
-						field "time": 5
-						field "time_down_event":
-							field "event": "calmed_down"
-							field "target": "self"
 				component group "track_attacker": component "minecraft:behavior.hurt_by_target": field "priority": 1
 			field "components":
 				component "minecraft:balloonable": field "mass": 0.5
-				component "minecraft:behavior.float": field "priority": 19
-				component "minecraft:behavior.move_towards_home_restriction": field "priority": 9
-				component "minecraft:behavior.random_hover":
-					field "hover_height": [1, 4]
-					field "interval": 1
-					field "priority": 12
-					field "xz_dist": 8
-					field "y_dist": 8
-					field "y_offset": -1
-				component "minecraft:behavior.tempt":
-					field "can_tempt_vertically": true
-					field "items":
-						item: "minecraft:red_flower"
-						item: "minecraft:yellow_flower"
-						item: "minecraft:wither_rose"
-						item: "minecraft:double_plant:0"
-						item: "minecraft:double_plant:1"
-						item: "minecraft:double_plant:4"
-						item: "minecraft:double_plant:5"
-						item: "minecraft:flowering_azalea"
-						item: "minecraft:azalea_leaves_flowered"
-						item: "minecraft:mangrove_propagule"
-						item: "minecraft:cherry_leaves"
-						item: "minecraft:pink_petals"
-					field "priority": 5
-					field "speed_multiplier": 1.25
-					field "within_radius": 8
 				component "minecraft:block_sensor":
 					field "on_break":
 						event:
@@ -426,16 +410,33 @@ Changed entity "bee":
 						family: "bee"
 						family: "mob"
 						family: "arthropod"
-			field "description":
-				description "identifier": "minecraft:bee"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
-				description "properties":
-					property "minecraft:has_nectar":
-						field "client_sync": true
-						field "default": "query.had_component_group('has_nectar')"
-						field "type": "bool"
+				component "minecraft:behavior.float": field "priority": 19
+				component "minecraft:behavior.move_towards_home_restriction": field "priority": 9
+				component "minecraft:behavior.random_hover":
+					field "hover_height": [1, 4]
+					field "interval": 1
+					field "priority": 12
+					field "xz_dist": 8
+					field "y_dist": 8
+					field "y_offset": -1
+				component "minecraft:behavior.tempt":
+					field "can_tempt_vertically": true
+					field "items":
+						item: "minecraft:red_flower"
+						item: "minecraft:yellow_flower"
+						item: "minecraft:wither_rose"
+						item: "minecraft:double_plant:0"
+						item: "minecraft:double_plant:1"
+						item: "minecraft:double_plant:4"
+						item: "minecraft:double_plant:5"
+						item: "minecraft:flowering_azalea"
+						item: "minecraft:azalea_leaves_flowered"
+						item: "minecraft:mangrove_propagule"
+						item: "minecraft:cherry_leaves"
+						item: "minecraft:pink_petals"
+					field "priority": 5
+					field "speed_multiplier": 1.25
+					field "within_radius": 8
 			field "events":
 				event "abort_sheltering":
 					field "add":
@@ -560,11 +561,11 @@ Changed entity "bee":
 						sequence item 0:
 							field "randomize":
 								randomize item:
-									field "add": field "component_groups": component group: "bee_adult"
 									field "weight": 95
+									field "add": field "component_groups": component group: "bee_adult"
 								randomize item:
-									field "add": field "component_groups": component group: "bee_baby"
 									field "weight": 5
+									field "add": field "component_groups": component group: "bee_baby"
 						sequence item 1:
 							field "add":
 								field "component_groups":
@@ -614,7 +615,6 @@ Changed entity "bee":
 							component group: "collect_nectar"
 							component group: "shelter_detection"
 				event "stop_panicking_after_fire": field "remove": field "component_groups": component group: "escape_fire"
-		field "defined_in": behavior pack: "experimental_next_major_update"
 Changed entity "boat":
 	Changed behavior pack "core":
 		Changed field "defined_in":
@@ -714,8 +714,14 @@ Changed entity "boat":
 							Added component group "minecraft:can_ride_bamboo".
 							Added component group "minecraft:can_ride_default".
 	Removed behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_next_major_update"
 		field "format_version": "1.18.10"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:boat"
+				description "is_experimental": false
+				description "is_spawnable": false
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:above_bubble_column_down":
 					component "minecraft:buoyant":
@@ -879,11 +885,6 @@ Changed entity "boat":
 					field "family":
 						family: "boat"
 						family: "inanimate"
-			field "description":
-				description "identifier": "minecraft:boat"
-				description "is_experimental": false
-				description "is_spawnable": false
-				description "is_summonable": true
 			field "events":
 				event "minecraft:add_can_ride":
 					field "sequence":
@@ -909,12 +910,12 @@ Changed entity "boat":
 					field "remove": field "component_groups": component group: "minecraft:floating"
 				event "minecraft:entity_spawned": field "trigger": "minecraft:add_can_ride"
 				event "minecraft:exited_bubble_column":
+					field "trigger": "minecraft:add_can_ride"
 					field "add": field "component_groups": component group: "minecraft:floating"
 					field "remove":
 						field "component_groups":
 							component group: "minecraft:above_bubble_column_down"
 							component group: "minecraft:above_bubble_column_up"
-					field "trigger": "minecraft:add_can_ride"
 				event "minecraft:sink":
 					field "remove":
 						field "component_groups":
@@ -923,7 +924,6 @@ Changed entity "boat":
 							component group: "minecraft:can_ride_bamboo"
 							component group: "minecraft:above_bubble_column_down"
 							component group: "minecraft:above_bubble_column_up"
-		field "defined_in": behavior pack: "experimental_next_major_update"
 Changed entity "camel":
 	Moved behavior pack "experimental" to "core".
 	Changed behavior pack "core":
@@ -1002,8 +1002,14 @@ Changed entity "chest_boat":
 							Added component group "minecraft:can_ride_bamboo".
 							Added component group "minecraft:can_ride_default".
 	Removed behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_next_major_update"
 		field "format_version": "1.18.10"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:chest_boat"
+				description "is_experimental": false
+				description "is_spawnable": false
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:above_bubble_column_down":
 					component "minecraft:buoyant":
@@ -1146,11 +1152,6 @@ Changed entity "chest_boat":
 					field "family":
 						family: "boat"
 						family: "inanimate"
-			field "description":
-				description "identifier": "minecraft:chest_boat"
-				description "is_experimental": false
-				description "is_spawnable": false
-				description "is_summonable": true
 			field "events":
 				event "minecraft:add_can_ride":
 					field "sequence":
@@ -1176,12 +1177,12 @@ Changed entity "chest_boat":
 					field "remove": field "component_groups": component group: "minecraft:floating"
 				event "minecraft:entity_spawned": field "trigger": "minecraft:add_can_ride"
 				event "minecraft:exited_bubble_column":
+					field "trigger": "minecraft:add_can_ride"
 					field "add": field "component_groups": component group: "minecraft:floating"
 					field "remove":
 						field "component_groups":
 							component group: "minecraft:above_bubble_column_down"
 							component group: "minecraft:above_bubble_column_up"
-					field "trigger": "minecraft:add_can_ride"
 				event "minecraft:sink":
 					field "remove":
 						field "component_groups":
@@ -1190,7 +1191,6 @@ Changed entity "chest_boat":
 							component group: "minecraft:can_ride_bamboo"
 							component group: "minecraft:above_bubble_column_down"
 							component group: "minecraft:above_bubble_column_up"
-		field "defined_in": behavior pack: "experimental_next_major_update"
 Changed entity "frog":
 	Changed behavior pack "core":
 		Changed field "defined_in":
@@ -1225,8 +1225,14 @@ Changed entity "frog":
 												filter property "test": "has_biome_tag"
 												filter property "value": "cherry_grove"
 	Removed behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_next_major_update"
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:frog"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "cold_frog": component "minecraft:variant": field "value": 1
 				component group "pregnant":
@@ -1254,6 +1260,63 @@ Changed entity "frog":
 				component group "temperate_frog": component "minecraft:variant": field "value": 0
 				component group "warm_frog": component "minecraft:variant": field "value": 2
 			field "components":
+				component "minecraft:breathable":
+					field "breathes_air": true
+					field "breathes_water": true
+					field "generates_bubbles": false
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:breedable":
+					field "breed_items": item: "slime_ball"
+					field "breeds_with":
+						field "baby_type": "minecraft:tadpole"
+						field "breed_event": field "event": "become_pregnant"
+						field "mate_type": "minecraft:frog"
+					field "causes_pregnancy": true
+					field "require_tame": false
+				component "minecraft:collision_box":
+					field "height": 0.55
+					field "width": 0.5
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "fall"
+						field "damage_modifier": -5
+						field "deals_damage": true
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+				component "minecraft:health": field "value": 10
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable": empty
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:movement.amphibious": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
+					field "avoid_damage_blocks": true
+					field "can_path_over_water": true
+					field "can_sink": false
+					field "can_swim": true
+					field "can_walk": true
+					field "is_amphibious": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "frog"
+						family: "mob"
+				component "minecraft:underwater_movement": field "value": 0.15
 				component "minecraft:behavior.breed": field "priority": 4
 				component "minecraft:behavior.croak":
 					field "duration": 4.5
@@ -1339,68 +1402,6 @@ Changed entity "frog":
 					field "items": item: "slime_ball"
 					field "priority": 5
 					field "speed_multiplier": 1.25
-				component "minecraft:breathable":
-					field "breathes_air": true
-					field "breathes_water": true
-					field "generates_bubbles": false
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:breedable":
-					field "breed_items": item: "slime_ball"
-					field "breeds_with":
-						field "baby_type": "minecraft:tadpole"
-						field "breed_event": field "event": "become_pregnant"
-						field "mate_type": "minecraft:frog"
-					field "causes_pregnancy": true
-					field "require_tame": false
-				component "minecraft:collision_box":
-					field "height": 0.55
-					field "width": 0.5
-				component "minecraft:damage_sensor":
-					field "triggers":
-						field "cause": "fall"
-						field "damage_modifier": -5
-						field "deals_damage": true
-				component "minecraft:despawn": field "despawn_from_distance": empty
-				component "minecraft:experience_reward":
-					field "on_bred": "Math.Random(1,7)"
-					field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
-				component "minecraft:health": field "value": 10
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:is_hidden_when_invisible": empty
-				component "minecraft:jump.static": empty
-				component "minecraft:leashable": empty
-				component "minecraft:movement": field "value": 0.1
-				component "minecraft:movement.amphibious": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.generic":
-					field "avoid_damage_blocks": true
-					field "can_path_over_water": true
-					field "can_sink": false
-					field "can_swim": true
-					field "can_walk": true
-					field "is_amphibious": true
-				component "minecraft:physics": empty
-				component "minecraft:pushable": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "frog"
-						family: "mob"
-				component "minecraft:underwater_movement": field "value": 0.15
-			field "description":
-				description "identifier": "minecraft:frog"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
 			field "events":
 				event "become_pregnant": field "add": field "component_groups": component group: "pregnant"
 				event "laid_egg": field "remove": field "component_groups": component group: "pregnant"
@@ -1567,7 +1568,6 @@ Changed entity "frog":
 				event "spawn_cold": field "add": field "component_groups": component group: "cold_frog"
 				event "spawn_temperate": field "add": field "component_groups": component group: "temperate_frog"
 				event "spawn_warm": field "add": field "component_groups": component group: "warm_frog"
-		field "defined_in": behavior pack: "experimental_next_major_update"
 Changed entity "pig":
 	Changed behavior pack "core":
 		Changed field "defined_in":

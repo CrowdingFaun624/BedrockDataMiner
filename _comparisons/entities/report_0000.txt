@@ -4,7 +4,9 @@ Unable to create data files for 155 files before.
 Total entity: 61 (+61, -0)
 Added entity "arrow":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.15
@@ -25,11 +27,11 @@ Added entity "arrow":
 					field "power": 1.6
 					field "uncertaintyBase": 16
 					field "uncertaintyMultiplier": 4
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "bat":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "component_groups": empty
 			field "components":
 				component "minecraft:collision_box":
@@ -46,13 +48,35 @@ Added entity "bat":
 				component "minecraft:nameable": empty
 				component "minecraft:type_family": field "family": family: "bat"
 			field "events": empty
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "blaze":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "components":
 				component "minecraft:attack": field "damage": 6
+				component "minecraft:collision_box":
+					field "height": 1.8
+					field "width": 0.5
+				component "minecraft:fall_damage": field "value": 0.0
+				component "minecraft:follow_range": field "value": 48
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:hurt_when_wet": field "value": true
+				component "minecraft:identifier": field "id": "minecraft:blaze"
+				component "minecraft:loot": field "table": "loot_tables/entities/blaze.json"
+				component "minecraft:movement":
+					field "max": 0.23
+					field "value": 0.23
+				component "minecraft:nameable": empty
+				component "minecraft:shooter":
+					field "def": "minecraft:fireball.small"
+					field "type": "smallfireball"
+				component "minecraft:type_family":
+					field "family":
+						family: "blaze"
+						family: "monster"
 				component "minecraft:behavior.melee_attack":
 					field "max_dist": 3
 					field "priority": 2
@@ -77,34 +101,12 @@ Added entity "blaze":
 					field "burst_shots": 3
 					field "charge_charged_trigger": 0.0
 					field "charge_shoot_trigger": 5.0
-				component "minecraft:collision_box":
-					field "height": 1.8
-					field "width": 0.5
-				component "minecraft:fall_damage": field "value": 0.0
-				component "minecraft:follow_range": field "value": 48
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:hurt_when_wet": field "value": true
-				component "minecraft:identifier": field "id": "minecraft:blaze"
-				component "minecraft:loot": field "table": "loot_tables/entities/blaze.json"
-				component "minecraft:movement":
-					field "max": 0.23
-					field "value": 0.23
-				component "minecraft:nameable": empty
-				component "minecraft:shooter":
-					field "def": "minecraft:fireball.small"
-					field "type": "smallfireball"
-				component "minecraft:type_family":
-					field "family":
-						family: "blaze"
-						family: "monster"
 			field "events": empty
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "boat":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups": empty
 			field "components":
 				component "minecraft:collision_box":
@@ -116,11 +118,11 @@ Added entity "boat":
 					field "interact_text": "action.interact.ride.boat"
 					field "seat_count": 2
 			field "events": empty
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "cavespider":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:spider_angry":
 					component "minecraft:angry":
@@ -155,6 +157,10 @@ Added entity "cavespider":
 								field "must_see": true
 						field "priority": 2
 				component group "minecraft:spider_hostile":
+					component "minecraft:environment_sensor":
+						field "on_environment":
+							field "event": "minecraft:become_neutral"
+							field "filters": filter property "with_environment_any": "brightness_greater:0.49"
 					component "minecraft:behavior.leap_at_target":
 						field "must_be_on_ground": false
 						field "priority": 4
@@ -179,10 +185,6 @@ Added entity "cavespider":
 								field "max_dist": 16
 								field "must_see": true
 						field "priority": 2
-					component "minecraft:environment_sensor":
-						field "on_environment":
-							field "event": "minecraft:become_neutral"
-							field "filters": filter property "with_environment_any": "brightness_greater:0.49"
 				component group "minecraft:spider_jockey":
 					component "minecraft:addrider": field "entity_type": "skeleton"
 					component "minecraft:environment_sensor":
@@ -201,21 +203,6 @@ Added entity "cavespider":
 					component "minecraft:on_target_acquired": field "event": "minecraft:become_angry"
 			field "components":
 				component "minecraft:attack": field "damage": 2
-				component "minecraft:behavior.float": field "priority": 1
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6.0
-					field "priority": 7
-					field "probability": 0.02
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 5
-					field "speed_multiplier": 1.25
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.random_look_around": field "priority": 7
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.8
 				component "minecraft:collision_box":
 					field "height": 0.5
 					field "width": 0.7
@@ -233,6 +220,21 @@ Added entity "cavespider":
 					field "family":
 						family: "cavespider"
 						family: "monster"
+				component "minecraft:behavior.float": field "priority": 1
+				component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 6.0
+					field "priority": 7
+					field "probability": 0.02
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 5
+					field "speed_multiplier": 1.25
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.random_look_around": field "priority": 7
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.8
 			field "events":
 				event "minecraft:become_angry":
 					field "add": field "component_groups": component group: "minecraft:spider_angry"
@@ -246,30 +248,27 @@ Added entity "cavespider":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 1
 							field "add": field "component_groups": component group: "minecraft:spider_jockey"
 							field "filters":
 								filter property "with_environment_any":
 									environment: "night"
 									environment: "underground"
 							field "remove": empty
-							field "weight": 1
 						randomize item:
+							field "weight": 99
 							field "add": field "component_groups": component group: "minecraft:spider_neutral"
 							field "remove": empty
-							field "weight": 99
 				event "minecraft:on_calm":
 					field "add": field "component_groups": component group: "minecraft:spider_neutral"
 					field "remove": field "component_groups": component group: "minecraft:spider_angry"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "chicken":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:chicken_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 3
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breedItems":
 							item: "wheat_seeds"
@@ -287,6 +286,9 @@ Added entity "chicken":
 						field "height": 0.8
 						field "width": 0.6
 					component "minecraft:loot": field "table": "loot_tables/entities/chicken.json"
+					component "minecraft:behavior.breed":
+						field "priority": 3
+						field "speed_multiplier": 1.0
 				component group "minecraft:chicken_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -298,19 +300,37 @@ Added entity "chicken":
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
-					component "minecraft:behavior.follow_parent":
-						field "priority": 5
-						field "speed_multiplier": 1.1
 					component "minecraft:collision_box":
 						field "height": 0.35
 						field "width": 0.15
 					component "minecraft:is_baby": empty
 					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 5
+						field "speed_multiplier": 1.1
 				component group "minecraft:chicken_leashed":
 					component "minecraft:behavior.move_towards_restriction":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 			field "components":
+				component "minecraft:fall_damage": field "value": 0.0
+				component "minecraft:health":
+					field "max": 4
+					field "value": 4
+				component "minecraft:identifier": field "id": "minecraft:chicken"
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "minecraft:on_leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "minecraft:on_unleash"
+						field "target": "self"
+					field "soft_distance": 4.0
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:nameable": empty
+				component "minecraft:type_family": field "family": family: "chicken"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.look_at_player":
 					field "look_distance": 6.0
@@ -336,24 +356,6 @@ Added entity "chicken":
 						item: "pumpkin_seeds"
 					field "priority": 4
 					field "speed_multiplier": 1.0
-				component "minecraft:fall_damage": field "value": 0.0
-				component "minecraft:health":
-					field "max": 4
-					field "value": 4
-				component "minecraft:identifier": field "id": "minecraft:chicken"
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "on_leash":
-						field "event": "minecraft:on_leash"
-						field "target": "self"
-					field "on_unleash":
-						field "event": "minecraft:on_unleash"
-						field "target": "self"
-					field "soft_distance": 4.0
-				component "minecraft:movement": field "value": 0.25
-				component "minecraft:nameable": empty
-				component "minecraft:type_family": field "family": family: "chicken"
 			field "events":
 				event "from_egg": field "add": field "component_groups": component group: "minecraft:chicken_baby"
 				event "minecraft:ageable_grow_up":
@@ -365,25 +367,22 @@ Added entity "chicken":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 95
 							field "add": field "component_groups": component group: "minecraft:chicken_adult"
 							field "remove": empty
-							field "weight": 95
 						randomize item:
+							field "weight": 5
 							field "add": field "component_groups": component group: "minecraft:chicken_baby"
 							field "remove": empty
-							field "weight": 5
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:chicken_leashed"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:chicken_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "cow":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:cow_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 3
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breedItems": "wheat"
 						field "breedsWith":
@@ -397,6 +396,9 @@ Added entity "cow":
 						field "height": 1.3
 						field "width": 0.9
 					component "minecraft:loot": field "table": "loot_tables/entities/cow.json"
+					component "minecraft:behavior.breed":
+						field "priority": 3
+						field "speed_multiplier": 1.0
 				component group "minecraft:cow_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -404,46 +406,19 @@ Added entity "cow":
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
-					component "minecraft:behavior.follow_parent":
-						field "priority": 6
-						field "speed_multiplier": 1.1
 					component "minecraft:collision_box":
 						field "height": 0.65
 						field "width": 0.45
 					component "minecraft:is_baby": empty
 					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 6
+						field "speed_multiplier": 1.1
 				component group "minecraft:cow_leashed":
 					component "minecraft:behavior.move_towards_restriction":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 			field "components":
-				component "minecraft:behavior.breed":
-					field "priority": 3
-					field "speed_multiplier": 1.0
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.follow_parent":
-					field "priority": 5
-					field "speed_multiplier": 1.1
-				component "minecraft:behavior.look_at_player":
-					field "priority": 7
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 2
-					field "speed_multiplier": 1.5
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.panic":
-					field "priority": 1
-					field "speed_multiplier": 1.25
-				component "minecraft:behavior.random_look_around": field "priority": 9
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.8
-				component "minecraft:behavior.tempt":
-					field "items": item: "wheat"
-					field "priority": 4
-					field "speed_multiplier": 1.25
 				component "minecraft:health":
 					field "max": 10
 					field "value": 10
@@ -475,6 +450,33 @@ Added entity "cow":
 					field "family_types": family: "zombie"
 					field "seat_count": 1
 				component "minecraft:type_family": field "family": family: "cow"
+				component "minecraft:behavior.breed":
+					field "priority": 3
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.follow_parent":
+					field "priority": 5
+					field "speed_multiplier": 1.1
+				component "minecraft:behavior.look_at_player":
+					field "priority": 7
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 2
+					field "speed_multiplier": 1.5
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+				component "minecraft:behavior.random_look_around": field "priority": 9
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.8
+				component "minecraft:behavior.tempt":
+					field "items": item: "wheat"
+					field "priority": 4
+					field "speed_multiplier": 1.25
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add": field "component_groups": component group: "minecraft:cow_adult"
@@ -483,21 +485,21 @@ Added entity "cow":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
-							field "add": field "component_groups": component group: "minecraft:cow_adult"
 							field "weight": 95
+							field "add": field "component_groups": component group: "minecraft:cow_adult"
 						randomize item:
-							field "add": field "component_groups": component group: "minecraft:cow_baby"
 							field "weight": 5
+							field "add": field "component_groups": component group: "minecraft:cow_baby"
 				event "minecraft:entity_transformed":
 					field "add": field "component_groups": component group: "minecraft:cow_adult"
 					field "remove": empty
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:cow_leashed"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:cow_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "creeper":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "component_groups":
 				component group "minecraft:charged_creeper":
 					component "minecraft:is_charged": empty
@@ -525,35 +527,6 @@ Added entity "creeper":
 				component group "minecraft:hunting": empty
 			field "components":
 				component "minecraft:attack": field "damage": 3
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "entity_filter": entity: "ocelot"
-							field "max_dist": 6
-							field "sprint_speed_multiplier": 1.2
-							field "walk_speed_multiplier": 1
-					field "priority": 3
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.hurt_by_target": field "priority": 2
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 8
-					field "priority": 6
-				component "minecraft:behavior.melee_attack":
-					field "priority": 4
-					field "speed_multiplier": 1.25
-					field "track_target": false
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "entity_filter": entity: "player"
-							field "max_dist": 16
-							field "must_see": true
-					field "priority": 1
-				component "minecraft:behavior.random_look_around": field "priority": 6
-				component "minecraft:behavior.random_stroll":
-					field "priority": 5
-					field "speed_multiplier": 1
-				component "minecraft:behavior.swell": field "priority": 2
 				component "minecraft:collision_box":
 					field "height": 1.8
 					field "width": 0.6
@@ -594,6 +567,35 @@ Added entity "creeper":
 					field "family":
 						family: "creeper"
 						family: "monster"
+				component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "entity_filter": entity: "ocelot"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+							field "walk_speed_multiplier": 1
+					field "priority": 3
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target": field "priority": 2
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8
+					field "priority": 6
+				component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "speed_multiplier": 1.25
+					field "track_target": false
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "entity_filter": entity: "player"
+							field "max_dist": 16
+							field "must_see": true
+					field "priority": 1
+				component "minecraft:behavior.random_look_around": field "priority": 6
+				component "minecraft:behavior.random_stroll":
+					field "priority": 5
+					field "speed_multiplier": 1
+				component "minecraft:behavior.swell": field "priority": 2
 			field "events":
 				event "minecraft:become_charged":
 					field "add": field "component_groups": component group: "minecraft:charged_creeper"
@@ -610,19 +612,13 @@ Added entity "creeper":
 				event "minecraft:stop_swell":
 					field "add": field "component_groups": component group: "minecraft:hunting"
 					field "remove": field "component_groups": component group: "minecraft:exploding"
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "donkey":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:donkey_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 2
-						field "speed_multiplier": 1.0
-					component "minecraft:behavior.run_around_like_crazy":
-						field "priority": 1
-						field "speed_multiplier": 1.2
 					component "minecraft:breedable":
 						field "breedItems":
 							item: "golden_carrot"
@@ -649,37 +645,40 @@ Added entity "donkey":
 						field "container_type": "horse"
 						field "inventory_size": 17
 					component "minecraft:loot": field "table": "loot.tables.entities.horse"
+					component "minecraft:behavior.breed":
+						field "priority": 2
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.run_around_like_crazy":
+						field "priority": 1
+						field "speed_multiplier": 1.2
 				component group "minecraft:donkey_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
 						field "feedItems":
 							item:
-								field "growth": 0.016667
 								field "item": "wheat"
+								field "growth": 0.016667
 							item:
-								field "growth": 0.025
 								field "item": "sugar"
+								field "growth": 0.025
 							item:
-								field "growth": 0.15
 								field "item": "tile.hay_block"
+								field "growth": 0.15
 							item:
-								field "growth": 0.05
 								field "item": "apple"
-							item:
 								field "growth": 0.05
+							item:
 								field "item": "golden_carrot"
+								field "growth": 0.05
 							item:
-								field "growth": 0.2
 								field "item": "golden_apple"
-							item:
 								field "growth": 0.2
+							item:
 								field "item": "appleEnchanted"
+								field "growth": 0.2
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
-					component "minecraft:behavior.follow_parent":
-						field "priority": 4
-						field "speed_multiplier": 1.0
 					component "minecraft:collision_box":
 						field "height": 0.8
 						field "width": 0.7
@@ -687,17 +686,20 @@ Added entity "donkey":
 					component "minecraft:scale_by_age":
 						field "end_scale": 1.0
 						field "start_scale": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 4
+						field "speed_multiplier": 1.0
 				component group "minecraft:donkey_chested": component "minecraft:is_chested": empty
 				component group "minecraft:donkey_leashed":
 					component "minecraft:behavior.move_towards_restriction":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 				component group "minecraft:donkey_tamed":
-					component "minecraft:behavior.player_ride_tamed": empty
 					component "minecraft:rideable":
 						field "interact_text": "action.interact.ride.horse"
 						field "priority": 0
 						field "seat_count": 1
+					component "minecraft:behavior.player_ride_tamed": empty
 				component group "minecraft:donkey_unchested":
 					component "minecraft:interact":
 						interaction:
@@ -710,11 +712,6 @@ Added entity "donkey":
 								field "target": "self"
 							field "use_item": "true"
 				component group "minecraft:donkey_wild":
-					component "minecraft:behavior.mount_pathing":
-						field "priority": 2
-						field "speed_multiplier": 1.5
-						field "target_dist": 0.0
-						field "track_target": true
 					component "minecraft:rideable":
 						field "family_types":
 							family: "player"
@@ -746,33 +743,12 @@ Added entity "donkey":
 						field "tame_event":
 							field "event": "minecraft:on_tame"
 							field "target": "self"
+					component "minecraft:behavior.mount_pathing":
+						field "priority": 2
+						field "speed_multiplier": 1.5
+						field "target_dist": 0.0
+						field "track_target": true
 			field "components":
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.look_at_player":
-					field "priority": 7
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.panic":
-					field "priority": 1
-					field "speed_multiplier": 1.2
-				component "minecraft:behavior.random_look_around": field "priority": 8
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.7
-				component "minecraft:behavior.tempt":
-					field "items":
-						item: "apple"
-						item: "carrot"
-						item: "golden_apple"
-						item: "appleEnchanted"
-						item: "golden_carrot"
-						item: "carrotOnAStick"
-						item: "tile.hay_block"
-						item: "sugar"
-						item: "bread"
-						item: "wheat"
-					field "priority": 5
-					field "speed_multiplier": 1.2
 				component "minecraft:healable":
 					field "items":
 						item:
@@ -815,6 +791,32 @@ Added entity "donkey":
 				component "minecraft:movement": field "value": 0.175
 				component "minecraft:nameable": empty
 				component "minecraft:type_family": field "family": family: "donkey"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player":
+					field "priority": 7
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.7
+				component "minecraft:behavior.tempt":
+					field "items":
+						item: "apple"
+						item: "carrot"
+						item: "golden_apple"
+						item: "appleEnchanted"
+						item: "golden_carrot"
+						item: "carrotOnAStick"
+						item: "tile.hay_block"
+						item: "sugar"
+						item: "bread"
+						item: "wheat"
+					field "priority": 5
+					field "speed_multiplier": 1.2
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add":
@@ -826,14 +828,14 @@ Added entity "donkey":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 80
 							field "add":
 								field "component_groups":
 									component group: "minecraft:donkey_adult"
 									component group: "minecraft:donkey_wild"
-							field "weight": 80
 						randomize item:
-							field "add": field "component_groups": component group: "minecraft:donkey_baby"
 							field "weight": 20
+							field "add": field "component_groups": component group: "minecraft:donkey_baby"
 				event "minecraft:on_chest":
 					field "add": field "component_groups": component group: "minecraft:donkey_chested"
 					field "remove": field "component_groups": component group: "minecraft:donkey_unchested"
@@ -845,11 +847,11 @@ Added entity "donkey":
 							component group: "minecraft:donkey_unchested"
 					field "remove": field "component_groups": component group: "minecraft:donkey_wild"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:donkey_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "enderman":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:enderman_angry":
 					component "minecraft:angry":
@@ -859,11 +861,11 @@ Added entity "enderman":
 							field "event": "minecraft:on_calm"
 							field "target": "self"
 						field "duration": 25
+					component "minecraft:movement": field "value": 0.45
 					component "minecraft:behavior.melee_attack":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 						field "track_target": false
-					component "minecraft:movement": field "value": 0.45
 				component group "minecraft:enderman_calm":
 					component "minecraft:lookat":
 						field "searchRadius": 16.0
@@ -874,18 +876,6 @@ Added entity "enderman":
 						field "target": "self"
 			field "components":
 				component "minecraft:attack": field "damage": 7
-				component "minecraft:behavior.enderman_leave_block": field "priority": 10
-				component "minecraft:behavior.enderman_take_block": field "priority": 11
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.hurt_by_target": field "priority": 3
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 8.0
-					field "priority": 8
-					field "probability": 8.0
-				component "minecraft:behavior.random_look_around": field "priority": 8
-				component "minecraft:behavior.random_stroll":
-					field "priority": 7
-					field "speed_multiplier": 1.0
 				component "minecraft:collision_box":
 					field "height": 2.9
 					field "width": 0.6
@@ -905,6 +895,18 @@ Added entity "enderman":
 					field "family":
 						family: "enderman"
 						family: "monster"
+				component "minecraft:behavior.enderman_leave_block": field "priority": 10
+				component "minecraft:behavior.enderman_take_block": field "priority": 11
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target": field "priority": 3
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8.0
+					field "priority": 8
+					field "probability": 8.0
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 7
+					field "speed_multiplier": 1.0
 			field "events":
 				event "minecraft:become_angry":
 					field "add": field "component_groups": component group: "minecraft:enderman_angry"
@@ -915,11 +917,11 @@ Added entity "enderman":
 				event "minecraft:on_calm":
 					field "add": field "component_groups": component group: "minecraft:enderman_calm"
 					field "remove": empty
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "fireballlarge":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:exploding":
 					component "minecraft:explode":
@@ -947,11 +949,11 @@ Added entity "fireballlarge":
 					field "uncertaintyBase": 16
 					field "uncertaintyMultiplier": 4
 			field "events": event "minecraft:explode": field "add": field "component_groups": component group: "minecraft:exploding"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "fireballsmall":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.31
@@ -973,24 +975,12 @@ Added entity "fireballsmall":
 					field "reflectOnHurt": true
 					field "semirandomdiffdamage": true
 					field "uncertaintyBase": 10.0
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "ghast":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "entity_filter": entity: "player"
-							field "max_dist": 64
-							field "must_see": true
-					field "priority": 2
-				component "minecraft:behavior.ranged_attack":
-					field "attack_radius": 64
-					field "charge_charged_trigger": 1
-					field "charge_shoot_trigger": 2
 				component "minecraft:collision_box":
 					field "height": 4
 					field "width": 4
@@ -1008,14 +998,44 @@ Added entity "ghast":
 					field "family":
 						family: "ghast"
 						family: "monster"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
+				component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "entity_filter": entity: "player"
+							field "max_dist": 64
+							field "must_see": true
+					field "priority": 2
+				component "minecraft:behavior.ranged_attack":
+					field "attack_radius": 64
+					field "charge_charged_trigger": 1
+					field "charge_shoot_trigger": 2
 Added entity "guardian":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
-				component "breathable": field "breathesWater": true
 				component "minecraft:attack": field "damage": 6
+				component "breathable": field "breathesWater": true
+				component "minecraft:collision_box":
+					field "height": 0.85
+					field "width": 0.85
+				component "minecraft:follow_range":
+					field "max": 16
+					field "value": 16
+				component "minecraft:health":
+					field "max": 30
+					field "value": 30
+				component "minecraft:identifier": field "id": "minecraft:guardian"
+				component "minecraft:loot": field "table": "loot_tables/entities/guardian.json"
+				component "minecraft:monster": empty
+				component "minecraft:movement": field "value": 0.5
+				component "minecraft:nameable": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "guardian"
+						family: "monster"
 				component "minecraft:behavior.guardian_attack": field "priority": 4
 				component "minecraft:behavior.look_at_player":
 					field "look_distance": 12.0
@@ -1039,32 +1059,32 @@ Added entity "guardian":
 				component "minecraft:behavior.random_stroll":
 					field "priority": 7
 					field "speed_multiplier": 1.0
+Added entity "guardian_elder":
+	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
+		field "minecraft:entity":
+			field "version": 1
+			field "components":
+				component "minecraft:attack": field "damage": 8
+				component "breathable": field "breathesWater": true
 				component "minecraft:collision_box":
-					field "height": 0.85
-					field "width": 0.85
+					field "height": 1.99
+					field "width": 1.99
 				component "minecraft:follow_range":
 					field "max": 16
 					field "value": 16
 				component "minecraft:health":
-					field "max": 30
-					field "value": 30
-				component "minecraft:identifier": field "id": "minecraft:guardian"
-				component "minecraft:loot": field "table": "loot_tables/entities/guardian.json"
+					field "max": 80
+					field "value": 80
+				component "minecraft:identifier": field "id": "minecraft:guardian.elder"
+				component "minecraft:loot": field "table": "loot_tables/entities/elder_guardian.json"
 				component "minecraft:monster": empty
-				component "minecraft:movement": field "value": 0.5
+				component "minecraft:movement": field "value": 0.3
 				component "minecraft:nameable": empty
 				component "minecraft:type_family":
 					field "family":
-						family: "guardian"
+						family: "guardian_elder"
 						family: "monster"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
-Added entity "guardian_elder":
-	behavior pack "core":
-		field "minecraft:entity":
-			field "components":
-				component "breathable": field "breathesWater": true
-				component "minecraft:attack": field "damage": 8
 				component "minecraft:behavior.guardian_attack": field "priority": 4
 				component "minecraft:behavior.look_at_player":
 					field "look_distance": 12.0
@@ -1088,37 +1108,13 @@ Added entity "guardian_elder":
 				component "minecraft:behavior.random_stroll":
 					field "priority": 7
 					field "speed_multiplier": 0.5
-				component "minecraft:collision_box":
-					field "height": 1.99
-					field "width": 1.99
-				component "minecraft:follow_range":
-					field "max": 16
-					field "value": 16
-				component "minecraft:health":
-					field "max": 80
-					field "value": 80
-				component "minecraft:identifier": field "id": "minecraft:guardian.elder"
-				component "minecraft:loot": field "table": "loot_tables/entities/elder_guardian.json"
-				component "minecraft:monster": empty
-				component "minecraft:movement": field "value": 0.3
-				component "minecraft:nameable": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "guardian_elder"
-						family: "monster"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "horse":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:horse_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 2
-						field "speed_multiplier": 1.0
-					component "minecraft:behavior.run_around_like_crazy":
-						field "priority": 1
-						field "speed_multiplier": 1.2
 					component "minecraft:breedable":
 						field "breedItems":
 							item: "golden_carrot"
@@ -1145,37 +1141,40 @@ Added entity "horse":
 						field "container_type": "horse"
 						field "inventory_size": 17
 					component "minecraft:loot": field "table": "loot.tables.entities.horse"
+					component "minecraft:behavior.breed":
+						field "priority": 2
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.run_around_like_crazy":
+						field "priority": 1
+						field "speed_multiplier": 1.2
 				component group "minecraft:horse_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
 						field "feedItems":
 							item:
-								field "growth": 0.016667
 								field "item": "wheat"
+								field "growth": 0.016667
 							item:
-								field "growth": 0.025
 								field "item": "sugar"
+								field "growth": 0.025
 							item:
-								field "growth": 0.15
 								field "item": "tile.hay_block"
+								field "growth": 0.15
 							item:
-								field "growth": 0.05
 								field "item": "apple"
-							item:
 								field "growth": 0.05
+							item:
 								field "item": "golden_carrot"
+								field "growth": 0.05
 							item:
-								field "growth": 0.2
 								field "item": "golden_apple"
-							item:
 								field "growth": 0.2
+							item:
 								field "item": "appleEnchanted"
+								field "growth": 0.2
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
-					component "minecraft:behavior.follow_parent":
-						field "priority": 4
-						field "speed_multiplier": 1.0
 					component "minecraft:collision_box":
 						field "height": 0.8
 						field "width": 0.7
@@ -1183,23 +1182,21 @@ Added entity "horse":
 					component "minecraft:scale_by_age":
 						field "end_scale": 1.0
 						field "start_scale": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 4
+						field "speed_multiplier": 1.0
 				component group "minecraft:horse_leashed":
 					component "minecraft:behavior.move_towards_restriction":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 				component group "minecraft:horse_tamed":
-					component "minecraft:behavior.player_ride_tamed": empty
 					component "minecraft:rideable":
 						field "interact_text": "action.interact.ride.horse"
 						field "priority": 0
 						field "seat_count": 1
+					component "minecraft:behavior.player_ride_tamed": empty
 				component group "minecraft:horse_transformed": component "minecraft:transformation": field "into": "minecraft:donkey"
 				component group "minecraft:horse_wild":
-					component "minecraft:behavior.mount_pathing":
-						field "priority": 2
-						field "speed_multiplier": 1.5
-						field "target_dist": 0.0
-						field "track_target": true
 					component "minecraft:rideable":
 						field "family_types":
 							family: "player"
@@ -1231,33 +1228,12 @@ Added entity "horse":
 						field "tame_event":
 							field "event": "minecraft:on_tame"
 							field "target": "self"
+					component "minecraft:behavior.mount_pathing":
+						field "priority": 2
+						field "speed_multiplier": 1.5
+						field "target_dist": 0.0
+						field "track_target": true
 			field "components":
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.look_at_player":
-					field "priority": 7
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.panic":
-					field "priority": 1
-					field "speed_multiplier": 1.2
-				component "minecraft:behavior.random_look_around": field "priority": 8
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.7
-				component "minecraft:behavior.tempt":
-					field "items":
-						item: "apple"
-						item: "carrot"
-						item: "golden_apple"
-						item: "appleEnchanted"
-						item: "golden_carrot"
-						item: "carrotOnAStick"
-						item: "tile.hay_block"
-						item: "sugar"
-						item: "bread"
-						item: "wheat"
-					field "priority": 5
-					field "speed_multiplier": 1.2
 				component "minecraft:healable":
 					field "items":
 						item:
@@ -1306,6 +1282,32 @@ Added entity "horse":
 						field "range_min": 0.1125
 				component "minecraft:nameable": empty
 				component "minecraft:type_family": field "family": family: "horse"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player":
+					field "priority": 7
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.7
+				component "minecraft:behavior.tempt":
+					field "items":
+						item: "apple"
+						item: "carrot"
+						item: "golden_apple"
+						item: "appleEnchanted"
+						item: "golden_carrot"
+						item: "carrotOnAStick"
+						item: "tile.hay_block"
+						item: "sugar"
+						item: "bread"
+						item: "wheat"
+					field "priority": 5
+					field "speed_multiplier": 1.2
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add":
@@ -1317,28 +1319,28 @@ Added entity "horse":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 36
 							field "add":
 								field "component_groups":
 									component group: "minecraft:horse_adult"
 									component group: "minecraft:horse_wild"
-							field "weight": 36
 						randomize item:
-							field "add": field "component_groups": component group: "minecraft:horse_baby"
 							field "weight": 9
+							field "add": field "component_groups": component group: "minecraft:horse_baby"
 						randomize item:
+							field "weight": 5
 							field "add": field "component_groups": component group: "minecraft:horse_transformed"
 							field "filters": filter property "sender_without_families": "player"
-							field "weight": 5
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:horse_leashed"
 				event "minecraft:on_tame":
 					field "add": field "component_groups": component group: "minecraft:horse_tamed"
 					field "remove": field "component_groups": component group: "minecraft:horse_wild"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:horse_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "irongolem":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:golem_leashed":
 					component "minecraft:behavior.move_towards_restriction":
@@ -1346,6 +1348,28 @@ Added entity "irongolem":
 						field "speed_multiplier": 1.0
 			field "components":
 				component "minecraft:attack": field "damage": 2
+				component "minecraft:collision_box":
+					field "height": 2.9
+					field "width": 1.4
+				component "minecraft:fall_damage": field "value": 0.0
+				component "minecraft:health":
+					field "max": 100
+					field "value": 100
+				component "minecraft:identifier": field "id": "minecraft:irongolem"
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "minecraft:on_leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "minecraft:on_unleash"
+						field "target": "self"
+					field "soft_distance": 4.0
+				component "minecraft:loot": field "table": "loot_tables/entities/iron_golem.json"
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:nameable": empty
+				component "minecraft:type_family": field "family": family: "irongolem"
 				component "minecraft:behavior.defend_village_target": field "priority": 1
 				component "minecraft:behavior.hurt_by_target":
 					field "not_entity_types": "creeper"
@@ -1382,46 +1406,24 @@ Added entity "irongolem":
 					field "priority": 6
 					field "speed_multiplier": 1
 					field "xz_dist": 0.6
-				component "minecraft:collision_box":
-					field "height": 2.9
-					field "width": 1.4
-				component "minecraft:fall_damage": field "value": 0.0
-				component "minecraft:health":
-					field "max": 100
-					field "value": 100
-				component "minecraft:identifier": field "id": "minecraft:irongolem"
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "on_leash":
-						field "event": "minecraft:on_leash"
-						field "target": "self"
-					field "on_unleash":
-						field "event": "minecraft:on_unleash"
-						field "target": "self"
-					field "soft_distance": 4.0
-				component "minecraft:loot": field "table": "loot_tables/entities/iron_golem.json"
-				component "minecraft:movement": field "value": 0.25
-				component "minecraft:nameable": empty
-				component "minecraft:type_family": field "family": family: "irongolem"
 			field "events":
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:golem_leashed"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:golem_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "lightningbolt":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "component_groups": empty
 			field "components":
 				component "minecraft:identifier": field "id": "minecraft:lightningbolt"
 				component "minecraft:type_family": field "family": family: "lightning"
 			field "events": empty
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "magmacube":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:slime_large":
 					component "minecraft:attack": field "damage": 6
@@ -1451,6 +1453,16 @@ Added entity "magmacube":
 						field "value": 1
 					component "minecraft:movement": field "value": 0.2
 			field "components":
+				component "minecraft:burns_in_daylight": false
+				component "minecraft:fall_damage": field "value": 0.0
+				component "minecraft:fire_immune": true
+				component "minecraft:identifier": field "id": "minecraft:magmacube"
+				component "minecraft:loot": field "table": "loot_tables/entities/magma_cube.json"
+				component "minecraft:nameable": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "magmacube"
+						family: "monster"
 				component "minecraft:behavior.nearest_attackable_target":
 					field "entity_types":
 						entity type:
@@ -1462,22 +1474,12 @@ Added entity "magmacube":
 				component "minecraft:behavior.slime_float": field "priority": 1
 				component "minecraft:behavior.slime_keep_on_jumping": field "priority": 5
 				component "minecraft:behavior.slime_random_direction": field "priority": 4
-				component "minecraft:burns_in_daylight": false
-				component "minecraft:fall_damage": field "value": 0.0
-				component "minecraft:fire_immune": true
-				component "minecraft:identifier": field "id": "minecraft:magmacube"
-				component "minecraft:loot": field "table": "loot_tables/entities/magma_cube.json"
-				component "minecraft:nameable": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "magmacube"
-						family: "monster"
 			field "events": empty
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "minecart":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "component_groups":
 				component group "minecraft:cart_active":
 					component "minecraft:rail_sensor": field "on_deactivate": field "event": "minecraft:cart_deactivate"
@@ -1500,11 +1502,11 @@ Added entity "minecart":
 					field "add": field "component_groups": component group: "minecraft:cart_inactive"
 					field "remove": field "component_groups": component group: "minecraft:cart_active"
 				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:cart_active"
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "minecartchest":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.9
@@ -1515,11 +1517,11 @@ Added entity "minecartchest":
 					field "inventory_size": 27
 				component "minecraft:rail_movement": empty
 				component "minecraft:type_family": field "family": family: "minecart"
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "minecarthopper":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "component_groups":
 				component group "minecraft:hopper_active":
 					component "minecraft:item_hopper": empty
@@ -1543,11 +1545,11 @@ Added entity "minecarthopper":
 				event "minecraft:hopper_deactivate":
 					field "add": field "component_groups": component group: "minecraft:hopper_inactive"
 					field "remove": field "component_groups": component group: "minecraft:hopper_active"
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "minecarttnt":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "component_groups":
 				component group "minecraft:inactive":
 					component "minecraft:interact":
@@ -1579,16 +1581,13 @@ Added entity "minecarttnt":
 				event "minecraft:on_prime":
 					field "add": field "component_groups": component group: "minecraft:primed_tnt"
 					field "remove": field "component_groups": component group: "minecraft:inactive"
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "mule":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:mule_adult":
-					component "minecraft:behavior.run_around_like_crazy":
-						field "priority": 1
-						field "speed_multiplier": 1.2
 					component "minecraft:collision_box":
 						field "height": 1.6
 						field "width": 1.4
@@ -1596,37 +1595,37 @@ Added entity "mule":
 						field "container_type": "horse"
 						field "inventory_size": 17
 					component "minecraft:loot": field "table": "loot.tables.entities.horse"
+					component "minecraft:behavior.run_around_like_crazy":
+						field "priority": 1
+						field "speed_multiplier": 1.2
 				component group "minecraft:mule_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
 						field "feedItems":
 							item:
-								field "growth": 0.016667
 								field "item": "wheat"
+								field "growth": 0.016667
 							item:
-								field "growth": 0.025
 								field "item": "sugar"
+								field "growth": 0.025
 							item:
-								field "growth": 0.15
 								field "item": "tile.hay_block"
+								field "growth": 0.15
 							item:
-								field "growth": 0.05
 								field "item": "apple"
-							item:
 								field "growth": 0.05
+							item:
 								field "item": "golden_carrot"
+								field "growth": 0.05
 							item:
-								field "growth": 0.2
 								field "item": "golden_apple"
-							item:
 								field "growth": 0.2
+							item:
 								field "item": "appleEnchanted"
+								field "growth": 0.2
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
-					component "minecraft:behavior.follow_parent":
-						field "priority": 4
-						field "speed_multiplier": 1.0
 					component "minecraft:collision_box":
 						field "height": 0.8
 						field "width": 0.7
@@ -1634,17 +1633,20 @@ Added entity "mule":
 					component "minecraft:scale_by_age":
 						field "end_scale": 1.0
 						field "start_scale": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 4
+						field "speed_multiplier": 1.0
 				component group "minecraft:mule_chested": component "minecraft:is_chested": empty
 				component group "minecraft:mule_leashed":
 					component "minecraft:behavior.move_towards_restriction":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 				component group "minecraft:mule_tamed":
-					component "minecraft:behavior.player_ride_tamed": empty
 					component "minecraft:rideable":
 						field "interact_text": "action.interact.ride.horse"
 						field "priority": 0
 						field "seat_count": 1
+					component "minecraft:behavior.player_ride_tamed": empty
 				component group "minecraft:mule_unchested":
 					component "minecraft:interact":
 						interaction:
@@ -1657,11 +1659,6 @@ Added entity "mule":
 								field "target": "self"
 							field "use_item": "true"
 				component group "minecraft:mule_wild":
-					component "minecraft:behavior.mount_pathing":
-						field "priority": 2
-						field "speed_multiplier": 1.5
-						field "target_dist": 0.0
-						field "track_target": true
 					component "minecraft:rideable":
 						field "family_types":
 							family: "player"
@@ -1693,33 +1690,12 @@ Added entity "mule":
 						field "tame_event":
 							field "event": "minecraft:on_tame"
 							field "target": "self"
+					component "minecraft:behavior.mount_pathing":
+						field "priority": 2
+						field "speed_multiplier": 1.5
+						field "target_dist": 0.0
+						field "track_target": true
 			field "components":
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.look_at_player":
-					field "priority": 7
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.panic":
-					field "priority": 1
-					field "speed_multiplier": 1.2
-				component "minecraft:behavior.random_look_around": field "priority": 8
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.7
-				component "minecraft:behavior.tempt":
-					field "items":
-						item: "apple"
-						item: "carrot"
-						item: "golden_apple"
-						item: "appleEnchanted"
-						item: "golden_carrot"
-						item: "carrotOnAStick"
-						item: "tile.hay_block"
-						item: "sugar"
-						item: "bread"
-						item: "wheat"
-					field "priority": 5
-					field "speed_multiplier": 1.2
 				component "minecraft:healable":
 					field "items":
 						item:
@@ -1762,6 +1738,32 @@ Added entity "mule":
 				component "minecraft:movement": field "value": 0.175
 				component "minecraft:nameable": empty
 				component "minecraft:type_family": field "family": family: "mule"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player":
+					field "priority": 7
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.7
+				component "minecraft:behavior.tempt":
+					field "items":
+						item: "apple"
+						item: "carrot"
+						item: "golden_apple"
+						item: "appleEnchanted"
+						item: "golden_carrot"
+						item: "carrotOnAStick"
+						item: "tile.hay_block"
+						item: "sugar"
+						item: "bread"
+						item: "wheat"
+					field "priority": 5
+					field "speed_multiplier": 1.2
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add":
@@ -1773,14 +1775,14 @@ Added entity "mule":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 80
 							field "add":
 								field "component_groups":
 									component group: "minecraft:mule_adult"
 									component group: "minecraft:mule_wild"
-							field "weight": 80
 						randomize item:
-							field "add": field "component_groups": component group: "minecraft:mule_baby"
 							field "weight": 20
+							field "add": field "component_groups": component group: "minecraft:mule_baby"
 				event "minecraft:on_chest":
 					field "add": field "component_groups": component group: "minecraft:mule_chested"
 					field "remove": field "component_groups": component group: "minecraft:mule_unchested"
@@ -1792,16 +1794,13 @@ Added entity "mule":
 							component group: "minecraft:mule_unchested"
 					field "remove": field "component_groups": component group: "minecraft:mule_wild"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:mule_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "mushroom_cow":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:cow_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 3
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breedItems": "wheat"
 						field "breedsWith":
@@ -1850,6 +1849,9 @@ Added entity "mushroom_cow":
 							field "transform_to_item": "bucket:1"
 							field "use_item": "true"
 					component "minecraft:loot": field "table": "loot_tables/entities/cow.json"
+					component "minecraft:behavior.breed":
+						field "priority": 3
+						field "speed_multiplier": 1.0
 				component group "minecraft:cow_baby":
 					component "minecraft:ageable":
 						field "feedItems": "wheat"
@@ -1857,20 +1859,42 @@ Added entity "mushroom_cow":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
 						field "threshold": 1200
-					component "minecraft:behavior.follow_parent":
-						field "priority": 6
-						field "speed_multiplier": 1.1
 					component "minecraft:collision_box":
 						field "height": 0.65
 						field "width": 0.45
 					component "minecraft:is_baby": empty
 					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 6
+						field "speed_multiplier": 1.1
 				component group "minecraft:cow_leashed":
 					component "minecraft:behavior.move_towards_restriction":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 				component group "minecraft:mooshroom_become_cow": component "minecraft:transformation": field "into": "minecraft:cow"
 			field "components":
+				component "minecraft:health":
+					field "max": 10
+					field "value": 10
+				component "minecraft:identifier": field "id": "minecraft:mushroomcow"
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "minecraft:on_leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "minecraft:on_unleash"
+						field "target": "self"
+					field "soft_distance": 4.0
+				component "minecraft:movement":
+					field "max": 0.5
+					field "value": 0.25
+				component "minecraft:nameable": empty
+				component "minecraft:rideable":
+					field "family_types": family: "zombie"
+					field "seat_count": 1
+				component "minecraft:type_family": field "family": family: "mushroomcow"
 				component "minecraft:behavior.breed":
 					field "priority": 3
 					field "speed_multiplier": 1.0
@@ -1898,28 +1922,6 @@ Added entity "mushroom_cow":
 					field "items": item: "wheat"
 					field "priority": 4
 					field "speed_multiplier": 1.25
-				component "minecraft:health":
-					field "max": 10
-					field "value": 10
-				component "minecraft:identifier": field "id": "minecraft:mushroomcow"
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "on_leash":
-						field "event": "minecraft:on_leash"
-						field "target": "self"
-					field "on_unleash":
-						field "event": "minecraft:on_unleash"
-						field "target": "self"
-					field "soft_distance": 4.0
-				component "minecraft:movement":
-					field "max": 0.5
-					field "value": 0.25
-				component "minecraft:nameable": empty
-				component "minecraft:rideable":
-					field "family_types": family: "zombie"
-					field "seat_count": 1
-				component "minecraft:type_family": field "family": family: "mushroomcow"
 			field "events":
 				event "become_cow":
 					field "add": field "component_groups": component group: "minecraft:mooshroom_become_cow"
@@ -1933,25 +1935,21 @@ Added entity "mushroom_cow":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 95
 							field "add": field "component_groups": component group: "minecraft:cow_adult"
 							field "remove": empty
-							field "weight": 95
 						randomize item:
+							field "weight": 5
 							field "add": field "component_groups": component group: "minecraft:cow_baby"
 							field "remove": empty
-							field "weight": 5
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:cow_leashed"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:cow_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "npc":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
-				component "minecraft:behavior.look_at_player":
-					field "priority": 0
-					field "probability": 0.02
-					field "target_distance": 6.0
 				component "minecraft:collision_box":
 					field "height": 2.1
 					field "width": 0.6
@@ -1963,16 +1961,17 @@ Added entity "npc":
 				component "minecraft:movement": field "value": 0.5
 				component "minecraft:npc": empty
 				component "minecraft:type_family": field "family": family: "npc"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
+				component "minecraft:behavior.look_at_player":
+					field "priority": 0
+					field "probability": 0.02
+					field "target_distance": 6.0
 Added entity "ocelot":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "component_groups":
 				component group "minecraft:ocelot_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 3
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breedItems":
 							item: "fish"
@@ -1986,6 +1985,9 @@ Added entity "ocelot":
 						field "requireTame": true
 					component "minecraft:loot": field "table": "loot_tables/entities/ocelot.json"
 					component "minecraft:scale": field "value": 1
+					component "minecraft:behavior.breed":
+						field "priority": 3
+						field "speed_multiplier": 1.0
 				component group "minecraft:ocelot_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -2004,15 +2006,6 @@ Added entity "ocelot":
 				component group "minecraft:ocelot_siamese": component "minecraft:variant": field "value": 3
 				component group "minecraft:ocelot_tabby": component "minecraft:variant": field "value": 2
 				component group "minecraft:ocelot_tame":
-					component "minecraft:behavior.follow_owner":
-						field "priority": 4
-						field "speed_multiplier": 1.0
-						field "start_distance": 10
-						field "stop_distance": 2
-					component "minecraft:behavior.ocelot_sit_on_block":
-						field "priority": 6
-						field "speed_multiplier": 1.0
-					component "minecraft:behavior.stay_while_sitting": field "priority": 3
 					component "minecraft:health":
 						field "max": 20
 						field "value": 20
@@ -2027,8 +2020,29 @@ Added entity "ocelot":
 							field "target": "self"
 						field "soft_distance": 4.0
 					component "minecraft:sittable": empty
+					component "minecraft:behavior.follow_owner":
+						field "priority": 4
+						field "speed_multiplier": 1.0
+						field "start_distance": 10
+						field "stop_distance": 2
+					component "minecraft:behavior.ocelot_sit_on_block":
+						field "priority": 6
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.stay_while_sitting": field "priority": 3
 				component group "minecraft:ocelot_tuxedo": component "minecraft:variant": field "value": 1
 				component group "minecraft:ocelot_wild":
+					component "minecraft:rideable":
+						field "family_types": family: "zombie"
+						field "seat_count": 1
+					component "minecraft:tameable":
+						field "probability": 0.33
+						field "tameItems":
+							item: "fish"
+							item: "salmon"
+						field "tame_event":
+							field "event": "minecraft:on_tame"
+							field "target": "self"
+					component "minecraft:variant": field "value": 0
 					component "minecraft:behavior.avoid_mob_type":
 						field "entity_types":
 							entity type:
@@ -2045,20 +2059,21 @@ Added entity "ocelot":
 								field "max_dist": 8
 								field "must_see": false
 						field "priority": 1
-					component "minecraft:rideable":
-						field "family_types": family: "zombie"
-						field "seat_count": 1
-					component "minecraft:tameable":
-						field "probability": 0.33
-						field "tameItems":
-							item: "fish"
-							item: "salmon"
-						field "tame_event":
-							field "event": "minecraft:on_tame"
-							field "target": "self"
-					component "minecraft:variant": field "value": 0
 			field "components":
 				component "minecraft:attack_damage": field "value": 4
+				component "minecraft:collision_box":
+					field "height": 0.7
+					field "width": 0.6
+				component "minecraft:fall_damage": field "value": 0.0
+				component "minecraft:health":
+					field "max": 10
+					field "value": 10
+				component "minecraft:identifier": field "id": "minecraft:ocelot"
+				component "minecraft:movement":
+					field "max": 0.3
+					field "value": 0.3
+				component "minecraft:nameable": empty
+				component "minecraft:type_family": field "family": family: "ocelot"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.leap_at_target":
 					field "priority": 3
@@ -2088,19 +2103,6 @@ Added entity "ocelot":
 					field "priority": 4
 					field "speed_multiplier": 0.5
 					field "within_radius": 16
-				component "minecraft:collision_box":
-					field "height": 0.7
-					field "width": 0.6
-				component "minecraft:fall_damage": field "value": 0.0
-				component "minecraft:health":
-					field "max": 10
-					field "value": 10
-				component "minecraft:identifier": field "id": "minecraft:ocelot"
-				component "minecraft:movement":
-					field "max": 0.3
-					field "value": 0.3
-				component "minecraft:nameable": empty
-				component "minecraft:type_family": field "family": family: "ocelot"
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add": field "component_groups": component group: "minecraft:ocelot_adult"
@@ -2116,19 +2118,19 @@ Added entity "ocelot":
 						sequence item 0:
 							field "randomize":
 								randomize item:
+									field "weight": 3
 									field "add":
 										field "component_groups":
 											component group: "minecraft:ocelot_adult"
 											component group: "minecraft:ocelot_wild"
 									field "remove": empty
-									field "weight": 3
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "minecraft:ocelot_baby"
 											component group: "minecraft:ocelot_wild"
 									field "remove": empty
-									field "weight": 1
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:ocelot_leashed"
 				event "minecraft:on_tame":
 					field "sequence":
@@ -2137,25 +2139,22 @@ Added entity "ocelot":
 						sequence item 2:
 							field "randomize":
 								randomize item:
+									field "weight": 30
 									field "add": field "component_groups": component group: "minecraft:ocelot_tabby"
-									field "weight": 30
 								randomize item:
+									field "weight": 30
 									field "add": field "component_groups": component group: "minecraft:ocelot_tuxedo"
-									field "weight": 30
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:ocelot_siamese"
 									field "weight": 30
+									field "add": field "component_groups": component group: "minecraft:ocelot_siamese"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:ocelot_leashed"
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "pig":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:pig_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 4
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breedItems": "carrot"
 						field "breedsWith":
@@ -2169,6 +2168,9 @@ Added entity "pig":
 						field "height": 0.9
 						field "width": 0.9
 					component "minecraft:loot": field "table": "loot_tables/entities/pig.json"
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_multiplier": 1.0
 				component group "minecraft:pig_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -2176,20 +2178,19 @@ Added entity "pig":
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
-					component "minecraft:behavior.follow_parent":
-						field "priority": 6
-						field "speed_multiplier": 1.1
 					component "minecraft:collision_box":
 						field "height": 0.45
 						field "width": 0.45
 					component "minecraft:is_baby": empty
 					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 6
+						field "speed_multiplier": 1.1
 				component group "minecraft:pig_leashed":
 					component "minecraft:behavior.move_towards_restriction":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 				component group "minecraft:pig_saddled":
-					component "minecraft:behavior.controlled_by_player": field "priority": 0
 					component "minecraft:boostable":
 						field "boost_items":
 							item:
@@ -2203,6 +2204,7 @@ Added entity "pig":
 					component "minecraft:rideable":
 						field "interact_text": "action.interact.mount"
 						field "seat_count": 1
+					component "minecraft:behavior.controlled_by_player": field "priority": 0
 				component group "minecraft:pig_transform":
 					component "minecraft:transformation":
 						field "delay": 0.5
@@ -2221,6 +2223,30 @@ Added entity "pig":
 						field "family_types": family: "zombie"
 						field "seat_count": 1
 			field "components":
+				component "minecraft:damage_sensor":
+					field "deals_damage": false
+					field "on_damage":
+						field "event": "become_zombie"
+						field "filters": filter property "sender_with_families": "lightning"
+				component "minecraft:health":
+					field "max": 10
+					field "value": 10
+				component "minecraft:identifier": field "id": "minecraft:pig"
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "minecraft:on_leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "minecraft:on_unleash"
+						field "target": "self"
+					field "soft_distance": 4.0
+				component "minecraft:movement":
+					field "max": 0.5
+					field "value": 0.25
+				component "minecraft:nameable": empty
+				component "minecraft:type_family": field "family": family: "pig"
 				component "minecraft:behavior.float": field "priority": 2
 				component "minecraft:behavior.look_at_player":
 					field "priority": 8
@@ -2246,30 +2272,6 @@ Added entity "pig":
 						item: "carrotOnAStick"
 					field "priority": 5
 					field "speed_multiplier": 1.2
-				component "minecraft:damage_sensor":
-					field "deals_damage": false
-					field "on_damage":
-						field "event": "become_zombie"
-						field "filters": filter property "sender_with_families": "lightning"
-				component "minecraft:health":
-					field "max": 10
-					field "value": 10
-				component "minecraft:identifier": field "id": "minecraft:pig"
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "on_leash":
-						field "event": "minecraft:on_leash"
-						field "target": "self"
-					field "on_unleash":
-						field "event": "minecraft:on_unleash"
-						field "target": "self"
-					field "soft_distance": 4.0
-				component "minecraft:movement":
-					field "max": 0.5
-					field "value": 0.25
-				component "minecraft:nameable": empty
-				component "minecraft:type_family": field "family": family: "pig"
 			field "events":
 				event "become_zombie":
 					field "add": field "component_groups": component group: "minecraft:pig_transform"
@@ -2286,26 +2288,26 @@ Added entity "pig":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 95
 							field "add":
 								field "component_groups":
 									component group: "minecraft:pig_adult"
 									component group: "minecraft:pig_unsaddled"
 							field "remove": empty
-							field "weight": 95
 						randomize item:
+							field "weight": 5
 							field "add": field "component_groups": component group: "minecraft:pig_baby"
 							field "remove": empty
-							field "weight": 5
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:pig_leashed"
 				event "minecraft:on_saddled":
 					field "add": field "component_groups": component group: "minecraft:pig_saddled"
 					field "remove": field "component_groups": component group: "minecraft:pig_unsaddled"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:pig_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "player":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
 				component "minecraft:attack": field "damage": 1
 				component "minecraft:breathable":
@@ -2328,16 +2330,13 @@ Added entity "player":
 					field "value": 0
 				component "minecraft:player.saturation": field "value": 20
 				component "minecraft:type_family": field "family": family: "player"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "rabbit":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.5
 			field "component_groups":
 				component group "adult":
-					component "minecraft:behavior.breed":
-						field "priority": 4
-						field "speed_modifier": 1.0
 					component "minecraft:breedable":
 						field "breedItems":
 							item: "golden_carrot"
@@ -2352,6 +2351,9 @@ Added entity "rabbit":
 						field "requireTame": false
 					component "minecraft:loot": field "table": "loot_tables/entities/rabbit.json"
 					component "minecraft:scale": field "value": 0.6
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_modifier": 1.0
 				component group "baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -2362,11 +2364,11 @@ Added entity "rabbit":
 						field "on_grow":
 							field "event": "grow_up"
 							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.4
 					component "minecraft:behavior.follow_parent":
 						field "priority": 6
 						field "speed_modifier": 1.1
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.4
 				component group "coat_black": component "minecraft:variant": field "value": 2
 				component group "coat_brown": component "minecraft:variant": field "value": 0
 				component group "coat_desert": component "minecraft:variant": field "value": 4
@@ -2378,6 +2380,28 @@ Added entity "rabbit":
 						field "priority": 2
 						field "speed_modifier": 1.0
 			field "components":
+				component "minecraft:collision_box":
+					field "height": 0.67
+					field "width": 0.67
+				component "minecraft:health":
+					field "max": 3
+					field "value": 3
+				component "minecraft:identifier": field "id": "minecraft:rabbit"
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "unleash"
+						field "target": "self"
+					field "soft_distance": 4.0
+				component "minecraft:movement":
+					field "max": 0.3
+					field "value": 0.3
+				component "minecraft:nameable": empty
+				component "minecraft:type_family": field "family": family: "rabbit"
 				component "minecraft:behavior.avoid_mob_type":
 					field "entity_types":
 						entity type:
@@ -2421,28 +2445,6 @@ Added entity "rabbit":
 						item: "yellow_flower"
 					field "priority": 3
 					field "speed_modifier": 1
-				component "minecraft:collision_box":
-					field "height": 0.67
-					field "width": 0.67
-				component "minecraft:health":
-					field "max": 3
-					field "value": 3
-				component "minecraft:identifier": field "id": "minecraft:rabbit"
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "on_leash":
-						field "event": "leash"
-						field "target": "self"
-					field "on_unleash":
-						field "event": "unleash"
-						field "target": "self"
-					field "soft_distance": 4.0
-				component "minecraft:movement":
-					field "max": 0.3
-					field "value": 0.3
-				component "minecraft:nameable": empty
-				component "minecraft:type_family": field "family": family: "rabbit"
 			field "events":
 				event "grow_up":
 					field "add": field "component_groups": component group: "adult"
@@ -2451,11 +2453,11 @@ Added entity "rabbit":
 				event "in_snow":
 					field "randomize":
 						randomize item:
-							field "add": field "component_groups": component group: "coat_white"
 							field "weight": 80
+							field "add": field "component_groups": component group: "coat_white"
 						randomize item:
-							field "add": field "component_groups": component group: "coat_splotched"
 							field "weight": 20
+							field "add": field "component_groups": component group: "coat_splotched"
 				event "leash": field "add": field "component_groups": component group: "leashed"
 				event "minecraft:entity_born":
 					field "sequence":
@@ -2464,47 +2466,44 @@ Added entity "rabbit":
 							field "filters": filter property "without_components": "minecraft:variant"
 							field "randomize":
 								randomize item:
-									field "add": field "component_groups": component group: "coat_brown"
 									field "weight": 50
+									field "add": field "component_groups": component group: "coat_brown"
 								randomize item:
-									field "add": field "component_groups": component group: "coat_black"
 									field "weight": 40
+									field "add": field "component_groups": component group: "coat_black"
 								randomize item:
-									field "add": field "component_groups": component group: "coat_salt"
 									field "weight": 10
+									field "add": field "component_groups": component group: "coat_salt"
 				event "minecraft:entity_spawned":
 					field "sequence":
 						sequence item 0:
 							field "randomize":
 								randomize item:
-									field "add": field "component_groups": component group: "adult"
 									field "weight": 3
+									field "add": field "component_groups": component group: "adult"
 								randomize item:
-									field "add": field "component_groups": component group: "baby"
 									field "weight": 1
+									field "add": field "component_groups": component group: "baby"
 						sequence item 1:
 							field "filters": filter property "without_components": "minecraft:variant"
 							field "randomize":
 								randomize item:
-									field "add": field "component_groups": component group: "coat_brown"
 									field "weight": 50
+									field "add": field "component_groups": component group: "coat_brown"
 								randomize item:
-									field "add": field "component_groups": component group: "coat_black"
 									field "weight": 40
+									field "add": field "component_groups": component group: "coat_black"
 								randomize item:
-									field "add": field "component_groups": component group: "coat_salt"
 									field "weight": 10
+									field "add": field "component_groups": component group: "coat_salt"
 				event "unleash": field "remove": field "component_groups": component group: "leashed"
-			field "version": 0.5
-		field "defined_in": behavior pack: "vanilla"
 Added entity "rabbit_desert":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.5
 			field "component_groups":
 				component group "minecraft:rabbit_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 4
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breedItems":
 							item: "golden_carrot"
@@ -2522,6 +2521,9 @@ Added entity "rabbit_desert":
 						field "family_types": family: "zombie"
 						field "seat_count": 1
 					component "minecraft:scale": field "value": 0.6
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_multiplier": 1.0
 				component group "minecraft:rabbit_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -2532,16 +2534,39 @@ Added entity "rabbit_desert":
 						field "on_grow":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.4
 					component "minecraft:behavior.follow_parent":
 						field "priority": 6
 						field "speed_multiplier": 1.1
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.4
 				component group "minecraft:rabbit_leashed":
 					component "minecraft:behavior.move_towards_restriction":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 			field "components":
+				component "minecraft:collision_box":
+					field "height": 0.67
+					field "width": 0.67
+				component "minecraft:health":
+					field "max": 3
+					field "value": 3
+				component "minecraft:identifier": field "id": "minecraft:rabbit_desert"
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "minecraft:on_leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "minecraft:on_unleash"
+						field "target": "self"
+					field "soft_distance": 4.0
+				component "minecraft:movement":
+					field "max": 0.3
+					field "value": 0.3
+				component "minecraft:nameable": empty
+				component "minecraft:type_family": field "family": family: "rabbit"
+				component "minecraft:variant": field "value": 4
 				component "minecraft:behavior.avoid_mob_type":
 					field "entity_types":
 						entity type:
@@ -2585,29 +2610,6 @@ Added entity "rabbit_desert":
 						item: "yellow_flower"
 					field "priority": 3
 					field "speed_multiplier": 1
-				component "minecraft:collision_box":
-					field "height": 0.67
-					field "width": 0.67
-				component "minecraft:health":
-					field "max": 3
-					field "value": 3
-				component "minecraft:identifier": field "id": "minecraft:rabbit_desert"
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "on_leash":
-						field "event": "minecraft:on_leash"
-						field "target": "self"
-					field "on_unleash":
-						field "event": "minecraft:on_unleash"
-						field "target": "self"
-					field "soft_distance": 4.0
-				component "minecraft:movement":
-					field "max": 0.3
-					field "value": 0.3
-				component "minecraft:nameable": empty
-				component "minecraft:type_family": field "family": family: "rabbit"
-				component "minecraft:variant": field "value": 4
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add": field "component_groups": component group: "minecraft:rabbit_adult"
@@ -2618,25 +2620,22 @@ Added entity "rabbit_desert":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 3
 							field "add": field "component_groups": component group: "minecraft:rabbit_adult"
 							field "remove": empty
-							field "weight": 3
 						randomize item:
+							field "weight": 1
 							field "add": field "component_groups": component group: "minecraft:rabbit_baby"
 							field "remove": empty
-							field "weight": 1
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:rabbit_leashed"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:rabbit_leashed"
-			field "version": 0.5
-		field "defined_in": behavior pack: "vanilla"
 Added entity "rabbit_normal":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.5
 			field "component_groups":
 				component group "minecraft:rabbit_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 2
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breedItems":
 							item: "golden_carrot"
@@ -2654,6 +2653,9 @@ Added entity "rabbit_normal":
 						field "family_types": family: "zombie"
 						field "seat_count": 1
 					component "minecraft:scale": field "value": 0.6
+					component "minecraft:behavior.breed":
+						field "priority": 2
+						field "speed_multiplier": 1.0
 				component group "minecraft:rabbit_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -2664,10 +2666,10 @@ Added entity "rabbit_normal":
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
+					component "minecraft:scale": field "value": 0.4
 					component "minecraft:behavior.follow_parent":
 						field "priority": 6
 						field "speed_multiplier": 1.1
-					component "minecraft:scale": field "value": 0.4
 				component group "minecraft:rabbit_black": component "minecraft:variant": field "value": 2
 				component group "minecraft:rabbit_brown": component "minecraft:variant": field "value": 0
 				component group "minecraft:rabbit_leashed":
@@ -2676,6 +2678,28 @@ Added entity "rabbit_normal":
 						field "speed_multiplier": 1.0
 				component group "minecraft:rabbit_salt": component "minecraft:variant": field "value": 5
 			field "components":
+				component "minecraft:collision_box":
+					field "height": 0.67
+					field "width": 0.67
+				component "minecraft:health":
+					field "max": 3
+					field "value": 3
+				component "minecraft:identifier": field "id": "minecraft:rabbit_normal"
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "minecraft:on_leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "minecraft:on_unleash"
+						field "target": "self"
+					field "soft_distance": 4.0
+				component "minecraft:movement":
+					field "max": 0.3
+					field "value": 0.3
+				component "minecraft:nameable": empty
+				component "minecraft:type_family": field "family": family: "rabbit"
 				component "minecraft:behavior.avoid_mob_type":
 					field "entity_types":
 						entity type:
@@ -2716,28 +2740,6 @@ Added entity "rabbit_normal":
 						item: "yellow_flower"
 					field "priority": 3
 					field "speed_multiplier": 1
-				component "minecraft:collision_box":
-					field "height": 0.67
-					field "width": 0.67
-				component "minecraft:health":
-					field "max": 3
-					field "value": 3
-				component "minecraft:identifier": field "id": "minecraft:rabbit_normal"
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "on_leash":
-						field "event": "minecraft:on_leash"
-						field "target": "self"
-					field "on_unleash":
-						field "event": "minecraft:on_unleash"
-						field "target": "self"
-					field "soft_distance": 4.0
-				component "minecraft:movement":
-					field "max": 0.3
-					field "value": 0.3
-				component "minecraft:nameable": empty
-				component "minecraft:type_family": field "family": family: "rabbit"
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add": field "component_groups": component group: "minecraft:rabbit_adult"
@@ -2750,36 +2752,33 @@ Added entity "rabbit_normal":
 						sequence item 0:
 							field "randomize":
 								randomize item:
+									field "weight": 3
 									field "add": field "component_groups": component group: "minecraft:rabbit_adult"
 									field "remove": empty
-									field "weight": 3
 								randomize item:
+									field "weight": 1
 									field "add": field "component_groups": component group: "minecraft:rabbit_baby"
 									field "remove": empty
-									field "weight": 1
 						sequence item 1:
 							field "randomize":
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:rabbit_brown"
 									field "weight": 50
+									field "add": field "component_groups": component group: "minecraft:rabbit_brown"
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:rabbit_salt"
 									field "weight": 40
+									field "add": field "component_groups": component group: "minecraft:rabbit_salt"
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:rabbit_black"
 									field "weight": 10
+									field "add": field "component_groups": component group: "minecraft:rabbit_black"
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:rabbit_leashed"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:rabbit_leashed"
-			field "version": 0.5
-		field "defined_in": behavior pack: "vanilla"
 Added entity "rabbit_snowy":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.5
 			field "component_groups":
 				component group "minecraft:rabbit_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 4
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breedItems":
 							item: "golden_carrot"
@@ -2797,6 +2796,9 @@ Added entity "rabbit_snowy":
 						field "family_types": family: "zombie"
 						field "seat_count": 1
 					component "minecraft:scale": field "value": 0.6
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_multiplier": 1.0
 				component group "minecraft:rabbit_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -2807,11 +2809,11 @@ Added entity "rabbit_snowy":
 						field "on_grow":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.4
 					component "minecraft:behavior.follow_parent":
 						field "priority": 6
 						field "speed_multiplier": 1.1
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.4
 				component group "minecraft:rabbit_leashed":
 					component "minecraft:behavior.move_towards_restriction":
 						field "priority": 2
@@ -2819,6 +2821,28 @@ Added entity "rabbit_snowy":
 				component group "minecraft:rabbit_white": component "minecraft:variant": field "value": 1
 				component group "minecraft:rabbit_white_splotched": component "minecraft:variant": field "value": 3
 			field "components":
+				component "minecraft:collision_box":
+					field "height": 0.67
+					field "width": 0.67
+				component "minecraft:health":
+					field "max": 3
+					field "value": 3
+				component "minecraft:identifier": field "id": "minecraft:rabbit_snowy"
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "minecraft:on_leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "minecraft:on_unleash"
+						field "target": "self"
+					field "soft_distance": 4.0
+				component "minecraft:movement":
+					field "max": 0.3
+					field "value": 0.3
+				component "minecraft:nameable": empty
+				component "minecraft:type_family": field "family": family: "rabbit"
 				component "minecraft:behavior.avoid_mob_type":
 					field "entity_types":
 						entity type:
@@ -2862,28 +2886,6 @@ Added entity "rabbit_snowy":
 						item: "yellow_flower"
 					field "priority": 3
 					field "speed_multiplier": 1
-				component "minecraft:collision_box":
-					field "height": 0.67
-					field "width": 0.67
-				component "minecraft:health":
-					field "max": 3
-					field "value": 3
-				component "minecraft:identifier": field "id": "minecraft:rabbit_snowy"
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "on_leash":
-						field "event": "minecraft:on_leash"
-						field "target": "self"
-					field "on_unleash":
-						field "event": "minecraft:on_unleash"
-						field "target": "self"
-					field "soft_distance": 4.0
-				component "minecraft:movement":
-					field "max": 0.3
-					field "value": 0.3
-				component "minecraft:nameable": empty
-				component "minecraft:type_family": field "family": family: "rabbit"
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add": field "component_groups": component group: "minecraft:rabbit_adult"
@@ -2896,33 +2898,30 @@ Added entity "rabbit_snowy":
 						sequence item 0:
 							field "randomize":
 								randomize item:
+									field "weight": 3
 									field "add": field "component_groups": component group: "minecraft:rabbit_adult"
 									field "remove": empty
-									field "weight": 3
 								randomize item:
+									field "weight": 1
 									field "add": field "component_groups": component group: "minecraft:rabbit_baby"
 									field "remove": empty
-									field "weight": 1
 						sequence item 1:
 							field "randomize":
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:rabbit_white"
 									field "weight": 80
+									field "add": field "component_groups": component group: "minecraft:rabbit_white"
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:rabbit_white_splotched"
 									field "weight": 20
+									field "add": field "component_groups": component group: "minecraft:rabbit_white_splotched"
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:rabbit_leashed"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:rabbit_leashed"
-			field "version": 0.5
-		field "defined_in": behavior pack: "vanilla"
 Added entity "sheep":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:sheep_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 3
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breedItems": "wheat"
 						field "breedsWith":
@@ -2939,6 +2938,9 @@ Added entity "sheep":
 					component "minecraft:rideable":
 						field "family_types": family: "zombie"
 						field "seat_count": 1
+					component "minecraft:behavior.breed":
+						field "priority": 3
+						field "speed_multiplier": 1.0
 				component group "minecraft:sheep_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -2946,14 +2948,14 @@ Added entity "sheep":
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
-					component "minecraft:behavior.follow_parent":
-						field "priority": 6
-						field "speed_multiplier": 1.1
 					component "minecraft:collision_box":
 						field "height": 0.65
 						field "width": 0.45
 					component "minecraft:is_baby": empty
 					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 6
+						field "speed_multiplier": 1.1
 				component group "minecraft:sheep_black": component "minecraft:color": field "value": 15
 				component group "minecraft:sheep_brown": component "minecraft:color": field "value": 12
 				component group "minecraft:sheep_dyeable":
@@ -2971,35 +2973,6 @@ Added entity "sheep":
 					component "minecraft:variant": field "value": 1
 				component group "minecraft:sheep_white": component "minecraft:color": field "value": 0
 			field "components":
-				component "minecraft:behavior.eat_block":
-					field "on_eat":
-						field "event": "minecraft:on_eat_block"
-						field "target": "self"
-					field "priority": 6
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.follow_parent":
-					field "priority": 5
-					field "speed_multiplier": 1.1
-				component "minecraft:behavior.look_at_player":
-					field "priority": 8
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 2
-					field "speed_multiplier": 1.5
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.panic":
-					field "priority": 1
-					field "speed_multiplier": 1.25
-				component "minecraft:behavior.random_look_around": field "priority": 9
-				component "minecraft:behavior.random_stroll":
-					field "priority": 7
-					field "speed_multiplier": 0.8
-				component "minecraft:behavior.tempt":
-					field "items": item: "wheat"
-					field "priority": 4
-					field "speed_multiplier": 1.25
 				component "minecraft:health":
 					field "max": 8
 					field "value": 8
@@ -3034,6 +3007,35 @@ Added entity "sheep":
 					field "value": 0.25
 				component "minecraft:nameable": empty
 				component "minecraft:type_family": field "family": family: "sheep"
+				component "minecraft:behavior.eat_block":
+					field "on_eat":
+						field "event": "minecraft:on_eat_block"
+						field "target": "self"
+					field "priority": 6
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.follow_parent":
+					field "priority": 5
+					field "speed_multiplier": 1.1
+				component "minecraft:behavior.look_at_player":
+					field "priority": 8
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 2
+					field "speed_multiplier": 1.5
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+				component "minecraft:behavior.random_look_around": field "priority": 9
+				component "minecraft:behavior.random_stroll":
+					field "priority": 7
+					field "speed_multiplier": 0.8
+				component "minecraft:behavior.tempt":
+					field "items": item: "wheat"
+					field "priority": 4
+					field "speed_multiplier": 1.25
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add": field "component_groups": component group: "minecraft:sheep_adult"
@@ -3049,39 +3051,39 @@ Added entity "sheep":
 						sequence item 0:
 							field "randomize":
 								randomize item:
+									field "weight": 95
 									field "add":
 										field "component_groups":
 											component group: "minecraft:sheep_adult"
 											component group: "minecraft:sheep_dyeable"
 									field "remove": empty
-									field "weight": 95
 								randomize item:
+									field "weight": 5
 									field "add":
 										field "component_groups":
 											component group: "minecraft:sheep_baby"
 											component group: "minecraft:sheep_dyeable"
 									field "remove": empty
-									field "weight": 5
 						sequence item 1:
 							field "randomize":
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:sheep_white"
 									field "weight": 81836
+									field "add": field "component_groups": component group: "minecraft:sheep_white"
 								randomize item:
+									field "weight": 5000
 									field "add": field "component_groups": component group: "minecraft:sheep_black"
-									field "weight": 5000
 								randomize item:
+									field "weight": 5000
 									field "add": field "component_groups": component group: "minecraft:sheep_light_gray"
-									field "weight": 5000
 								randomize item:
+									field "weight": 5000
 									field "add": field "component_groups": component group: "minecraft:sheep_gray"
-									field "weight": 5000
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:sheep_brown"
 									field "weight": 3000
+									field "add": field "component_groups": component group: "minecraft:sheep_brown"
 								randomize item:
-									field "add": field "component_groups": component group: "minecraft:sheep_pink"
 									field "weight": 164
+									field "add": field "component_groups": component group: "minecraft:sheep_pink"
 				event "minecraft:on_eat_block":
 					field "add": field "component_groups": component group: "minecraft:sheep_dyeable"
 					field "remove": empty
@@ -3090,11 +3092,11 @@ Added entity "sheep":
 					field "add": field "component_groups": component group: "minecraft:sheep_sheared"
 					field "remove": empty
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:sheep_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "silverfish":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:silverfish_angry":
 					component "minecraft:angry":
@@ -3115,6 +3117,17 @@ Added entity "silverfish":
 						field "target": "self"
 			field "components":
 				component "minecraft:attack": field "damage": 1
+				component "minecraft:collision_box":
+					field "height": 0.3
+					field "width": 0.4
+				component "minecraft:health":
+					field "max": 8
+					field "value": 8
+				component "minecraft:identifier": field "id": "minecraft:silverfish"
+				component "minecraft:loot": field "table": "loot_tables/entities/silverfish.json"
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:nameable": empty
+				component "minecraft:type_family": field "family": family: "silverfish"
 				component "minecraft:behavior.float": field "priority": 1
 				component "minecraft:behavior.hurt_by_target":
 					field "alert_same_type": true
@@ -3131,17 +3144,6 @@ Added entity "silverfish":
 							field "must_see": false
 					field "priority": 2
 				component "minecraft:behavior.silverfish_merge_with_stone": field "priority": 5
-				component "minecraft:collision_box":
-					field "height": 0.3
-					field "width": 0.4
-				component "minecraft:health":
-					field "max": 8
-					field "value": 8
-				component "minecraft:identifier": field "id": "minecraft:silverfish"
-				component "minecraft:loot": field "table": "loot_tables/entities/silverfish.json"
-				component "minecraft:movement": field "value": 0.25
-				component "minecraft:nameable": empty
-				component "minecraft:type_family": field "family": family: "silverfish"
 			field "events":
 				event "minecraft:become_angry":
 					field "add": field "component_groups": component group: "minecraft:silverfish_angry"
@@ -3152,12 +3154,34 @@ Added entity "silverfish":
 				event "minecraft:on_calm":
 					field "add": field "component_groups": component group: "minecraft:silverfish_calm"
 					field "remove": empty
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "skeleton":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
+				component "minecraft:burns_in_daylight": empty
+				component "minecraft:collision_box":
+					field "height": 1.95
+					field "width": 0.6
+				component "minecraft:equipment": field "table": "loot_tables/entities/skeleton_gear.json"
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:identifier": field "id": "minecraft:skeleton"
+				component "minecraft:loot": field "table": "loot_tables/entities/skeleton.json"
+				component "minecraft:movement":
+					field "max": 0.25
+					field "value": 0.25
+				component "minecraft:nameable": empty
+				component "minecraft:shooter":
+					field "def": "minecraft:arrow.skeleton"
+					field "type": "Arrow"
+				component "minecraft:type_family":
+					field "family":
+						family: "skeleton"
+						family: "undead"
+						family: "monster"
 				component "minecraft:behavior.flee_sun":
 					field "priority": 2
 					field "speed_multiplier": 1
@@ -3182,34 +3206,12 @@ Added entity "skeleton":
 					field "attack_interval_min": 1
 					field "attack_radius": 15
 				component "minecraft:behavior.restrict_sun": field "priority": 1
-				component "minecraft:burns_in_daylight": empty
-				component "minecraft:collision_box":
-					field "height": 1.95
-					field "width": 0.6
-				component "minecraft:equipment": field "table": "loot_tables/entities/skeleton_gear.json"
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:identifier": field "id": "minecraft:skeleton"
-				component "minecraft:loot": field "table": "loot_tables/entities/skeleton.json"
-				component "minecraft:movement":
-					field "max": 0.25
-					field "value": 0.25
-				component "minecraft:nameable": empty
-				component "minecraft:shooter":
-					field "def": "minecraft:arrow.skeleton"
-					field "type": "Arrow"
-				component "minecraft:type_family":
-					field "family":
-						family: "skeleton"
-						family: "undead"
-						family: "monster"
 			field "events": event "minecraft:entity_spawned": empty
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "skeleton_horse":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:skeleton_horse_adult":
 					component "minecraft:collision_box":
@@ -3224,24 +3226,6 @@ Added entity "skeleton_horse":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 			field "components":
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.look_at_player":
-					field "priority": 7
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 2
-					field "speed_multiplier": 1.5
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.panic":
-					field "priority": 1
-					field "speed_multiplier": 1.2
-				component "minecraft:behavior.player_ride_tamed": empty
-				component "minecraft:behavior.random_look_around": field "priority": 8
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.7
 				component "minecraft:damage_sensor":
 					field "deals_damage": false
 					field "on_damage":
@@ -3279,15 +3263,33 @@ Added entity "skeleton_horse":
 					field "family":
 						family: "skeletonhorse"
 						family: "undead"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player":
+					field "priority": 7
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 2
+					field "speed_multiplier": 1.5
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.player_ride_tamed": empty
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.7
 			field "events":
 				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:skeleton_horse_adult"
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:skeleton_horse_leashed"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:skeleton_horse_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "slime":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:slime_large":
 					component "minecraft:attack": field "damage": 4
@@ -3317,6 +3319,13 @@ Added entity "slime":
 						field "value": 1
 					component "minecraft:movement": field "value": 0.21
 			field "components":
+				component "minecraft:identifier": field "id": "minecraft:slime"
+				component "minecraft:loot": field "table": "loot_tables/entities/slime.json"
+				component "minecraft:nameable": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "slime"
+						family: "monster"
 				component "minecraft:behavior.nearest_attackable_target":
 					field "entity_types":
 						entity type:
@@ -3331,19 +3340,12 @@ Added entity "slime":
 				component "minecraft:behavior.slime_float": field "priority": 1
 				component "minecraft:behavior.slime_keep_on_jumping": field "priority": 5
 				component "minecraft:behavior.slime_random_direction": field "priority": 4
-				component "minecraft:identifier": field "id": "minecraft:slime"
-				component "minecraft:loot": field "table": "loot_tables/entities/slime.json"
-				component "minecraft:nameable": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "slime"
-						family: "monster"
 			field "events": empty
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "snowball":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.25
@@ -3360,11 +3362,11 @@ Added entity "snowball":
 						field "remove_on_hit": empty
 					field "particle": "snowballpoof"
 					field "power": 1.5
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "snowgolem":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:snowman_leashed":
 					component "minecraft:behavior.move_towards_restriction":
@@ -3373,24 +3375,6 @@ Added entity "snowgolem":
 				component group "minecraft:snowman_sheared": component "minecraft:is_sheared": empty
 			field "components":
 				component "minecraft:attack": field "damage": 2
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6.0
-					field "priority": 3
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types": "monster"
-					field "must_reach": true
-					field "must_see": false
-					field "priority": 1
-					field "within_default": 6
-				component "minecraft:behavior.random_look_around": field "priority": 4
-				component "minecraft:behavior.random_stroll":
-					field "priority": 2
-					field "speed_multiplier": 1
-				component "minecraft:behavior.ranged_attack":
-					field "attack_interval": 1
-					field "attack_radius": 10
-					field "priority": 1
-					field "speed_multiplier": 1.25
 				component "minecraft:collision_box":
 					field "height": 1.8
 					field "width": 0.4
@@ -3426,17 +3410,35 @@ Added entity "snowgolem":
 				component "minecraft:movement": field "value": 0.2
 				component "minecraft:nameable": empty
 				component "minecraft:type_family": field "family": family: "snowgolem"
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 6.0
+					field "priority": 3
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types": "monster"
+					field "must_reach": true
+					field "must_see": false
+					field "priority": 1
+					field "within_default": 6
+				component "minecraft:behavior.random_look_around": field "priority": 4
+				component "minecraft:behavior.random_stroll":
+					field "priority": 2
+					field "speed_multiplier": 1
+				component "minecraft:behavior.ranged_attack":
+					field "attack_interval": 1
+					field "attack_radius": 10
+					field "priority": 1
+					field "speed_multiplier": 1.25
 			field "events":
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:snowman_leashed"
 				event "minecraft:on_sheared":
 					field "add": field "component_groups": component group: "minecraft:snowman_sheared"
 					field "remove": empty
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:snowman_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "spider":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:spider_angry":
 					component "minecraft:angry":
@@ -3471,6 +3473,10 @@ Added entity "spider":
 								field "must_see": true
 						field "priority": 2
 				component group "minecraft:spider_hostile":
+					component "minecraft:environment_sensor":
+						field "on_environment":
+							field "event": "minecraft:become_neutral"
+							field "filters": filter property "with_environment_any": "brightness_greater:0.49"
 					component "minecraft:behavior.leap_at_target":
 						field "must_be_on_ground": false
 						field "priority": 4
@@ -3495,10 +3501,6 @@ Added entity "spider":
 								field "max_dist": 16
 								field "must_see": true
 						field "priority": 2
-					component "minecraft:environment_sensor":
-						field "on_environment":
-							field "event": "minecraft:become_neutral"
-							field "filters": filter property "with_environment_any": "brightness_greater:0.49"
 				component group "minecraft:spider_jockey":
 					component "minecraft:addrider": field "entity_type": "skeleton"
 					component "minecraft:environment_sensor":
@@ -3517,21 +3519,6 @@ Added entity "spider":
 					component "minecraft:on_target_acquired": field "event": "minecraft:become_angry"
 			field "components":
 				component "minecraft:attack": field "damage": 3
-				component "minecraft:behavior.float": field "priority": 1
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6.0
-					field "priority": 7
-					field "probability": 0.02
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 5
-					field "speed_multiplier": 1.25
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.random_look_around": field "priority": 7
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.8
 				component "minecraft:collision_box":
 					field "height": 0.9
 					field "width": 1.4
@@ -3549,6 +3536,21 @@ Added entity "spider":
 					field "family":
 						family: "spider"
 						family: "monster"
+				component "minecraft:behavior.float": field "priority": 1
+				component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 6.0
+					field "priority": 7
+					field "probability": 0.02
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 5
+					field "speed_multiplier": 1.25
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.random_look_around": field "priority": 7
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.8
 			field "events":
 				event "minecraft:become_angry":
 					field "add": field "component_groups": component group: "minecraft:spider_angry"
@@ -3562,25 +3564,25 @@ Added entity "spider":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 1
 							field "add": field "component_groups": component group: "minecraft:spider_jockey"
 							field "filters":
 								filter property "with_environment_any":
 									environment: "night"
 									environment: "underground"
 							field "remove": empty
-							field "weight": 1
 						randomize item:
+							field "weight": 99
 							field "add": field "component_groups": component group: "minecraft:spider_neutral"
 							field "remove": empty
-							field "weight": 99
 				event "minecraft:on_calm":
 					field "add": field "component_groups": component group: "minecraft:spider_neutral"
 					field "remove": field "component_groups": component group: "minecraft:spider_angry"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "squid":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:squid_baby":
 					component "minecraft:is_baby": empty
@@ -3590,11 +3592,6 @@ Added entity "squid":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 			field "components":
-				component "minecraft:behavior.squid_dive": field "priority": 2
-				component "minecraft:behavior.squid_flee": field "priority": 2
-				component "minecraft:behavior.squid_idle": field "priority": 2
-				component "minecraft:behavior.squid_move_away_from_ground": field "priority": 1
-				component "minecraft:behavior.squid_out_of_water": field "priority": 2
 				component "minecraft:breathable":
 					field "breathesAir": false
 					field "breathesWater": true
@@ -3623,25 +3620,51 @@ Added entity "squid":
 					field "value": 0.2
 				component "minecraft:nameable": empty
 				component "minecraft:type_family": field "family": family: "squid"
+				component "minecraft:behavior.squid_dive": field "priority": 2
+				component "minecraft:behavior.squid_flee": field "priority": 2
+				component "minecraft:behavior.squid_idle": field "priority": 2
+				component "minecraft:behavior.squid_move_away_from_ground": field "priority": 1
+				component "minecraft:behavior.squid_out_of_water": field "priority": 2
 			field "events":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 95
 							field "add": empty
 							field "remove": empty
-							field "weight": 95
 						randomize item:
+							field "weight": 5
 							field "add": field "component_groups": component group: "minecraft:squid_baby"
 							field "remove": empty
-							field "weight": 5
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:squid_leashed"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:squid_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "stray":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
+				component "minecraft:burns_in_daylight": empty
+				component "minecraft:collision_box":
+					field "height": 1.95
+					field "width": 0.6
+				component "minecraft:equipment": field "table": "loot_tables/entities/skeleton_gear.json"
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:identifier": field "id": "minecraft:skeleton.stray"
+				component "minecraft:loot": field "table": "loot_tables/entities/skeleton.json"
+				component "minecraft:movement":
+					field "max": 0.25
+					field "value": 0.25
+				component "minecraft:nameable": empty
+				component "minecraft:shooter":
+					field "def": "minecraft:arrow.skeleton"
+					field "type": "Arrow"
+				component "minecraft:type_family":
+					field "family":
+						family: "stray"
+						family: "monster"
 				component "minecraft:behavior.flee_sun":
 					field "priority": 2
 					field "speed_multiplier": 1
@@ -3666,33 +3689,12 @@ Added entity "stray":
 					field "attack_interval_min": 1
 					field "attack_radius": 15
 				component "minecraft:behavior.restrict_sun": field "priority": 1
-				component "minecraft:burns_in_daylight": empty
-				component "minecraft:collision_box":
-					field "height": 1.95
-					field "width": 0.6
-				component "minecraft:equipment": field "table": "loot_tables/entities/skeleton_gear.json"
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:identifier": field "id": "minecraft:skeleton.stray"
-				component "minecraft:loot": field "table": "loot_tables/entities/skeleton.json"
-				component "minecraft:movement":
-					field "max": 0.25
-					field "value": 0.25
-				component "minecraft:nameable": empty
-				component "minecraft:shooter":
-					field "def": "minecraft:arrow.skeleton"
-					field "type": "Arrow"
-				component "minecraft:type_family":
-					field "family":
-						family: "stray"
-						family: "monster"
 			field "events": event "minecraft:entity_spawned": empty
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "thrownegg":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.25
@@ -3712,11 +3714,11 @@ Added entity "thrownegg":
 							field "spawnDefinition": "minecraft:chicken"
 							field "spawnMob": "chicken"
 					field "power": 1.5
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "thrownenderpearl":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.25
@@ -3729,11 +3731,11 @@ Added entity "thrownenderpearl":
 						field "remove_on_hit": empty
 						field "teleport_owner": empty
 					field "power": 0.5
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "thrownpotion":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.25
@@ -3747,11 +3749,11 @@ Added entity "thrownpotion":
 						field "remove_on_hit": empty
 						field "thrown_potion_effect": empty
 					field "power": 0.5
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "tnt":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.98
@@ -3763,11 +3765,11 @@ Added entity "tnt":
 					field "power": 4
 				component "minecraft:identifier": field "id": "minecraft:tnt"
 				component "minecraft:type_family": field "family": family: "tnt"
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "tripodcamera":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 1.8
@@ -3778,11 +3780,11 @@ Added entity "tripodcamera":
 				component "minecraft:identifier": field "id": "minecraft:tripodcamera"
 				component "minecraft:loot": field "table": "loot_tables/empty.json"
 				component "minecraft:type_family": field "family": family: "tripodcamera"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "villager":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.5
 			field "component_groups":
 				component group "adult":
 					component "minecraft:behavior.make_love": field "priority": 6
@@ -3800,11 +3802,11 @@ Added entity "villager":
 							field "target": "self"
 							field "type": "minecraft:ageable_grow_up"
 						field "threshold": 1200
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
 					component "minecraft:behavior.play":
 						field "priority": 8
 						field "speed_multiplier": 0.32
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.5
 				component group "become_witch":
 					component "minecraft:transformation":
 						field "delay": 0.5
@@ -3947,44 +3949,6 @@ Added entity "villager":
 							family: "weaponsmith"
 					component "minecraft:variant": field "value": 3
 			field "components":
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 8
-					field "priority": 10
-					field "probability": 0.02
-				component "minecraft:behavior.move_indoors":
-					field "priority": 2
-					field "speed_multiplier": 0.8
-				component "minecraft:behavior.move_towards_restriction":
-					field "priority": 5
-					field "speed_multiplier": 0.6
-				component "minecraft:behavior.open_door":
-					field "close_door_after": true
-					field "priority": 4
-				component "minecraft:behavior.pickup_items":
-					field "items":
-						item: "minecraft:bread"
-						item: "minecraft:carrots"
-						item: "minecraft:potatoes"
-						item: "minecraft:wheat"
-						item: "minecraft:beetroot"
-						item: "minecraft:beetroot_seeds"
-					field "priority": 7
-				component "minecraft:behavior.random_stroll":
-					field "priority": 9
-					field "speed_multiplier": 0.6
-				component "minecraft:behavior.restrict_open_door": field "priority": 3
-				component "minecraft:behavior.take_flower": field "priority": 7
-				component "minecraft:behavior:avoid_mob_type":
-					field "avoid_types":
-						entity: "minecraft:zombie"
-						entity: "minecraft:zombie_villager"
-						entity: "minecraft:pig_zombie"
-					field "max_dist": 8
-					field "priority": 1
-					field "sprint_speed_multiplier": 0.6
-					field "walk_speed_multiplier": 0.6
-				component "minecraft:behavior:panic": field "priority": 1
 				component "minecraft:collision_box":
 					field "height": 1.8
 					field "width": 0.6
@@ -4010,6 +3974,44 @@ Added entity "villager":
 					field "value": 0.5
 				component "minecraft:nameable": empty
 				component "minecraft:type_family": field "family": "villager"
+				component "minecraft:behavior:avoid_mob_type":
+					field "avoid_types":
+						entity: "minecraft:zombie"
+						entity: "minecraft:zombie_villager"
+						entity: "minecraft:pig_zombie"
+					field "max_dist": 8
+					field "priority": 1
+					field "sprint_speed_multiplier": 0.6
+					field "walk_speed_multiplier": 0.6
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8
+					field "priority": 10
+					field "probability": 0.02
+				component "minecraft:behavior.move_indoors":
+					field "priority": 2
+					field "speed_multiplier": 0.8
+				component "minecraft:behavior.move_towards_restriction":
+					field "priority": 5
+					field "speed_multiplier": 0.6
+				component "minecraft:behavior.open_door":
+					field "close_door_after": true
+					field "priority": 4
+				component "minecraft:behavior:panic": field "priority": 1
+				component "minecraft:behavior.pickup_items":
+					field "items":
+						item: "minecraft:bread"
+						item: "minecraft:carrots"
+						item: "minecraft:potatoes"
+						item: "minecraft:wheat"
+						item: "minecraft:beetroot"
+						item: "minecraft:beetroot_seeds"
+					field "priority": 7
+				component "minecraft:behavior.random_stroll":
+					field "priority": 9
+					field "speed_multiplier": 0.6
+				component "minecraft:behavior.restrict_open_door": field "priority": 3
+				component "minecraft:behavior.take_flower": field "priority": 7
 			field "events":
 				event "become_witch": field "add": field "component_groups": component group: "become_witch"
 				event "become_zombie": field "add": field "component_groups": component group: "become_zombie"
@@ -4024,149 +4026,149 @@ Added entity "villager":
 						sequence item 1:
 							field "randomize":
 								randomize item:
+									field "weight": 5
 									field "add":
 										field "component_groups":
 											component group: "farmer"
 											component group: "behavior_peasant"
-									field "weight": 5
 								randomize item:
+									field "weight": 5
 									field "add":
 										field "component_groups":
 											component group: "fisherman"
 											component group: "behavior_peasant"
-									field "weight": 5
 								randomize item:
+									field "weight": 5
 									field "add":
 										field "component_groups":
 											component group: "shepherd"
 											component group: "behavior_peasant"
-									field "weight": 5
 								randomize item:
+									field "weight": 5
 									field "add":
 										field "component_groups":
 											component group: "fletcher"
 											component group: "behavior_peasant"
-									field "weight": 5
 								randomize item:
+									field "weight": 20
 									field "add":
 										field "component_groups":
 											component group: "librarian"
 											component group: "behavior_non_peasant"
-									field "weight": 20
 								randomize item:
+									field "weight": 20
 									field "add":
 										field "component_groups":
 											component group: "cleric"
 											component group: "behavior_non_peasant"
-									field "weight": 20
 								randomize item:
+									field "weight": 6
 									field "add":
 										field "component_groups":
 											component group: "armorer"
 											component group: "behavior_non_peasant"
-									field "weight": 6
 								randomize item:
+									field "weight": 6
 									field "add":
 										field "component_groups":
 											component group: "weaponsmith"
 											component group: "behavior_non_peasant"
-									field "weight": 6
 								randomize item:
+									field "weight": 6
 									field "add":
 										field "component_groups":
 											component group: "toolsmith"
 											component group: "behavior_non_peasant"
-									field "weight": 6
 								randomize item:
+									field "weight": 10
 									field "add":
 										field "component_groups":
 											component group: "butcher"
 											component group: "behavior_non_peasant"
-									field "weight": 10
 								randomize item:
+									field "weight": 10
 									field "add":
 										field "component_groups":
 											component group: "leatherworker"
 											component group: "behavior_non_peasant"
-									field "weight": 10
 				event "minecraft:entity_spawned":
 					field "sequence":
 						sequence item 0:
 							field "randomize":
 								randomize item:
-									field "add": field "component_groups": component group: "baby"
 									field "weight": 5
+									field "add": field "component_groups": component group: "baby"
 								randomize item:
-									field "add": field "component_groups": component group: "adult"
 									field "weight": 95
+									field "add": field "component_groups": component group: "adult"
 						sequence item 1:
 							field "randomize":
 								randomize item:
+									field "weight": 5
 									field "add":
 										field "component_groups":
 											component group: "farmer"
 											component group: "behavior_peasant"
-									field "weight": 5
 								randomize item:
+									field "weight": 5
 									field "add":
 										field "component_groups":
 											component group: "fisherman"
 											component group: "behavior_peasant"
-									field "weight": 5
 								randomize item:
+									field "weight": 5
 									field "add":
 										field "component_groups":
 											component group: "shepherd"
 											component group: "behavior_peasant"
-									field "weight": 5
 								randomize item:
+									field "weight": 5
 									field "add":
 										field "component_groups":
 											component group: "fletcher"
 											component group: "behavior_peasant"
-									field "weight": 5
 								randomize item:
+									field "weight": 20
 									field "add":
 										field "component_groups":
 											component group: "librarian"
 											component group: "behavior_non_peasant"
-									field "weight": 20
 								randomize item:
+									field "weight": 20
 									field "add":
 										field "component_groups":
 											component group: "cleric"
 											component group: "behavior_non_peasant"
-									field "weight": 20
 								randomize item:
+									field "weight": 6
 									field "add":
 										field "component_groups":
 											component group: "armorer"
 											component group: "behavior_non_peasant"
-									field "weight": 6
 								randomize item:
+									field "weight": 6
 									field "add":
 										field "component_groups":
 											component group: "weaponsmith"
 											component group: "behavior_non_peasant"
-									field "weight": 6
 								randomize item:
+									field "weight": 6
 									field "add":
 										field "component_groups":
 											component group: "toolsmith"
 											component group: "behavior_non_peasant"
-									field "weight": 6
 								randomize item:
+									field "weight": 10
 									field "add":
 										field "component_groups":
 											component group: "butcher"
 											component group: "behavior_non_peasant"
-									field "weight": 10
 								randomize item:
+									field "weight": 10
 									field "add":
 										field "component_groups":
 											component group: "leatherworker"
 											component group: "behavior_non_peasant"
-									field "weight": 10
 				event "minecraft:entity_transformed":
 					field "sequence":
 						sequence item 0:
@@ -4241,12 +4243,23 @@ Added entity "villager":
 									component group: "leatherworker"
 									component group: "behavior_non_peasant"
 							field "filters": filter property "sender_with_families": "leatherworker"
-			field "version": 0.5
-		field "defined_in": behavior pack: "vanilla"
 Added entity "witch":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "components":
+				component "minecraft:health":
+					field "max": 26
+					field "value": 26
+				component "minecraft:identifier": field "id": "minecraft:witch"
+				component "minecraft:loot": field "table": "loot_tables/entities/witch.json"
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:nameable": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "witch"
+						family: "monster"
 				component "minecraft:behavior.float": field "priority": 1
 				component "minecraft:behavior.hurt_by_target": field "priority": 1
 				component "minecraft:behavior.look_at_player":
@@ -4275,24 +4288,29 @@ Added entity "witch":
 					field "attack_radius": 10.0
 					field "priority": 2
 					field "speed_multiplier": 1.0
-				component "minecraft:health":
-					field "max": 26
-					field "value": 26
-				component "minecraft:identifier": field "id": "minecraft:witch"
-				component "minecraft:loot": field "table": "loot_tables/entities/witch.json"
-				component "minecraft:movement": field "value": 0.25
-				component "minecraft:nameable": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "witch"
-						family: "monster"
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "wither":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
 				component "minecraft:attack": field "damage": 4
+				component "minecraft:collision_box":
+					field "height": 2.535
+					field "width": 0.72
+				component "minecraft:equipment": field "table": "loot_tables/entities/wither_skeleton_gear.json"
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:identifier": field "id": "minecraft:skeleton.wither"
+				component "minecraft:loot": field "table": "loot_tables/entities/wither_skeleton.json"
+				component "minecraft:movement":
+					field "max": 0.25
+					field "value": 0.25
+				component "minecraft:type_family":
+					field "family":
+						family: "wither"
+						family: "monster"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.hurt_by_target": field "priority": 1
 				component "minecraft:behavior.look_at_player":
@@ -4314,29 +4332,30 @@ Added entity "wither":
 				component "minecraft:behavior.random_stroll":
 					field "priority": 5
 					field "speed_multiplier": 1
+			field "events": event "minecraft:entity_spawned": empty
+Added entity "wither_boss":
+	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
+		field "minecraft:entity":
+			field "version": 1
+			field "components":
 				component "minecraft:collision_box":
-					field "height": 2.535
-					field "width": 0.72
-				component "minecraft:equipment": field "table": "loot_tables/entities/wither_skeleton_gear.json"
+					field "height": 3
+					field "width": 1
 				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:identifier": field "id": "minecraft:skeleton.wither"
-				component "minecraft:loot": field "table": "loot_tables/entities/wither_skeleton.json"
+					field "max": 600
+					field "value": 600
+				component "minecraft:identifier": field "id": "minecraft:wither.boss"
+				component "minecraft:loot": field "table": "loot_tables/entities/wither_boss.json"
 				component "minecraft:movement":
 					field "max": 0.25
 					field "value": 0.25
 				component "minecraft:type_family":
 					field "family":
-						family: "wither"
+						family: "skeleton"
+						family: "undead"
 						family: "monster"
-			field "events": event "minecraft:entity_spawned": empty
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
-Added entity "wither_boss":
-	behavior pack "core":
-		field "minecraft:entity":
-			field "components":
+				component "minecraft:wither_target_highest_damage": field "priority": 1
 				component "minecraft:behavior.float": field "priority": 1
 				component "minecraft:behavior.hurt_by_target": field "priority": 2
 				component "minecraft:behavior.look_at_player":
@@ -4355,29 +4374,12 @@ Added entity "wither_boss":
 					field "priority": 5
 					field "speed_multiplier": 1
 				component "minecraft:behavior.wither_random_attack_pos_goal": field "priority": 3
-				component "minecraft:collision_box":
-					field "height": 3
-					field "width": 1
-				component "minecraft:health":
-					field "max": 600
-					field "value": 600
-				component "minecraft:identifier": field "id": "minecraft:wither.boss"
-				component "minecraft:loot": field "table": "loot_tables/entities/wither_boss.json"
-				component "minecraft:movement":
-					field "max": 0.25
-					field "value": 0.25
-				component "minecraft:type_family":
-					field "family":
-						family: "skeleton"
-						family: "undead"
-						family: "monster"
-				component "minecraft:wither_target_highest_damage": field "priority": 1
 			field "events": event "minecraft:entity_spawned": empty
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "wither_skull":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:exploding":
 					component "minecraft:explode":
@@ -4414,11 +4416,11 @@ Added entity "wither_skull":
 					field "uncertaintyBase": 0
 					field "uncertaintyMultiplier": 0
 			field "events": event "minecraft:explode": field "add": field "component_groups": component group: "minecraft:exploding"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "wither_skull_dangerous":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:exploding":
 					component "minecraft:explode":
@@ -4457,11 +4459,11 @@ Added entity "wither_skull_dangerous":
 					field "uncertaintyBase": 0
 					field "uncertaintyMultiplier": 0
 			field "events": event "minecraft:explode": field "add": field "component_groups": component group: "minecraft:exploding"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "wolf":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:wolf_adult":
 					component "minecraft:breedable":
@@ -4521,22 +4523,6 @@ Added entity "wolf":
 						field "speed_multiplier": 1.0
 				component group "minecraft:wolf_tame":
 					component "minecraft:attack": field "damage": 4
-					component "minecraft:behavior.breed": field "priority": 7
-					component "minecraft:behavior.follow_owner":
-						field "priority": 6
-						field "speed_multiplier": 1.0
-						field "start_distance": 10
-						field "stop_distance": 2
-					component "minecraft:behavior.nearest_attackable_target":
-						field "attack_interval": 200
-						field "entity_types":
-							entity type:
-								field "entity_filter": entity: "skeleton"
-								field "max_dist": 16
-								field "must_see": true
-						field "priority": 5
-					component "minecraft:behavior.owner_hurt_by_target": field "priority": 1
-					component "minecraft:behavior.owner_hurt_target": field "priority": 2
 					component "minecraft:color": field "value": 14
 					component "minecraft:health":
 						field "max": 20
@@ -4553,18 +4539,23 @@ Added entity "wolf":
 							field "target": "self"
 						field "soft_distance": 4.0
 					component "minecraft:sittable": empty
-				component group "minecraft:wolf_wild":
+					component "minecraft:behavior.breed": field "priority": 7
+					component "minecraft:behavior.follow_owner":
+						field "priority": 6
+						field "speed_multiplier": 1.0
+						field "start_distance": 10
+						field "stop_distance": 2
 					component "minecraft:behavior.nearest_attackable_target":
 						field "attack_interval": 200
 						field "entity_types":
 							entity type:
-								field "entity_filter":
-									entity: "skeleton"
-									entity: "sheep"
-									entity: "rabbit"
+								field "entity_filter": entity: "skeleton"
 								field "max_dist": 16
 								field "must_see": true
-						field "priority": 4
+						field "priority": 5
+					component "minecraft:behavior.owner_hurt_by_target": field "priority": 1
+					component "minecraft:behavior.owner_hurt_target": field "priority": 2
+				component group "minecraft:wolf_wild":
 					component "minecraft:on_hurt_by_player":
 						field "event": "minecraft:become_angry"
 						field "target": "self"
@@ -4580,32 +4571,19 @@ Added entity "wolf":
 						field "tame_event":
 							field "event": "minecraft:on_tame"
 							field "target": "self"
+					component "minecraft:behavior.nearest_attackable_target":
+						field "attack_interval": 200
+						field "entity_types":
+							entity type:
+								field "entity_filter":
+									entity: "skeleton"
+									entity: "sheep"
+									entity: "rabbit"
+								field "max_dist": 16
+								field "must_see": true
+						field "priority": 4
 			field "components":
 				component "minecraft:attack": field "damage": 3
-				component "minecraft:behavior.beg":
-					field "items": item: "bone"
-					field "look_distance": 8
-					field "look_time": [2, 4]
-					field "priority": 9
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.hurt_by_target": field "priority": 3
-				component "minecraft:behavior.leap_at_target":
-					field "priority": 4
-					field "target_dist": 0.4
-				component "minecraft:behavior.melee_attack":
-					field "priority": 5
-					field "reach_multiplier": 1.0
-					field "target_dist": 1.2
-					field "track_target": true
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 1
-					field "speed_multiplier": 1.25
-					field "target_dist": 0
-					field "track_target": true
-				component "minecraft:behavior.random_stroll":
-					field "priority": 8
-					field "speed_multiplier": 1.0
-				component "minecraft:behavior.stay_while_sitting": field "priority": 3
 				component "minecraft:collision_box":
 					field "height": 0.8
 					field "width": 0.6
@@ -4639,6 +4617,30 @@ Added entity "wolf":
 					field "event": "minecraft:on_calm"
 					field "target": "self"
 				component "minecraft:type_family": field "family": family: "wolf"
+				component "minecraft:behavior.beg":
+					field "items": item: "bone"
+					field "look_distance": 8
+					field "look_time": [2, 4]
+					field "priority": 9
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target": field "priority": 3
+				component "minecraft:behavior.leap_at_target":
+					field "priority": 4
+					field "target_dist": 0.4
+				component "minecraft:behavior.melee_attack":
+					field "priority": 5
+					field "reach_multiplier": 1.0
+					field "target_dist": 1.2
+					field "track_target": true
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+					field "target_dist": 0
+					field "track_target": true
+				component "minecraft:behavior.random_stroll":
+					field "priority": 8
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.stay_while_sitting": field "priority": 3
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add": field "component_groups": component group: "minecraft:wolf_adult"
@@ -4658,19 +4660,19 @@ Added entity "wolf":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 9
 							field "add":
 								field "component_groups":
 									component group: "minecraft:wolf_adult"
 									component group: "minecraft:wolf_wild"
 							field "remove": empty
-							field "weight": 9
 						randomize item:
+							field "weight": 1
 							field "add":
 								field "component_groups":
 									component group: "minecraft:wolf_baby"
 									component group: "minecraft:wolf_wild"
 							field "remove": empty
-							field "weight": 1
 				event "minecraft:on_calm":
 					field "add": field "component_groups": component group: "minecraft:wolf_wild"
 					field "remove": field "component_groups": component group: "minecraft:wolf_angry"
@@ -4679,11 +4681,11 @@ Added entity "wolf":
 					field "add": field "component_groups": component group: "minecraft:wolf_tame"
 					field "remove": field "component_groups": component group: "minecraft:wolf_wild"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:wolf_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "xppotion":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.25
@@ -4698,11 +4700,11 @@ Added entity "xppotion":
 							field "minXP": 3
 						field "remove_on_hit": empty
 					field "power": 0.5
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "zombie":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "component_groups":
 				component group "minecraft:zombie_adult":
 					component "minecraft:burns_in_daylight": empty
@@ -4722,6 +4724,23 @@ Added entity "zombie":
 						field "within_radius": 16
 			field "components":
 				component "minecraft:attack": field "damage": 3
+				component "minecraft:collision_box":
+					field "height": 1.8
+					field "width": 0.6
+				component "minecraft:equipment": field "table": "loot_tables/entities/zombie_equipment.json"
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:identifier": field "id": "minecraft:zombie"
+				component "minecraft:nameable": empty
+				component "minecraft:rideable":
+					field "family_types": family: "zombie"
+					field "seat_count": 1
+				component "minecraft:type_family":
+					field "family":
+						family: "zombie"
+						family: "undead"
+						family: "monster"
 				component "minecraft:behavior.break_door": field "priority": 1
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.hurt_by_target": field "priority": 3
@@ -4752,69 +4771,35 @@ Added entity "zombie":
 				component "minecraft:behavior.random_stroll":
 					field "priority": 6
 					field "speed_multiplier": 1
-				component "minecraft:collision_box":
-					field "height": 1.8
-					field "width": 0.6
-				component "minecraft:equipment": field "table": "loot_tables/entities/zombie_equipment.json"
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:identifier": field "id": "minecraft:zombie"
-				component "minecraft:nameable": empty
-				component "minecraft:rideable":
-					field "family_types": family: "zombie"
-					field "seat_count": 1
-				component "minecraft:type_family":
-					field "family":
-						family: "zombie"
-						family: "undead"
-						family: "monster"
 			field "events":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 9500
 							field "add": field "component_groups": component group: "minecraft:zombie_adult"
 							field "remove": empty
-							field "weight": 9500
 						randomize item:
+							field "weight": 425
 							field "add": field "component_groups": component group: "minecraft:zombie_baby"
 							field "remove": empty
-							field "weight": 425
 						randomize item:
+							field "weight": 75
 							field "add":
 								field "component_groups":
 									component group: "minecraft:zombie_baby"
 									component group: "minecraft:zombie_jockey"
 							field "remove": empty
-							field "weight": 75
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "zombie_horse":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:zombie_horse_leashed":
 					component "minecraft:behavior.move_towards_restriction":
 						field "priority": 2
 						field "speed_multiplier": 1.0
 			field "components":
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.look_at_player":
-					field "priority": 7
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 2
-					field "speed_multiplier": 1.5
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.panic":
-					field "priority": 1
-					field "speed_multiplier": 1.2
-				component "minecraft:behavior.random_look_around": field "priority": 8
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.7
 				component "minecraft:collision_box":
 					field "height": 1.6
 					field "width": 1.4
@@ -4855,14 +4840,31 @@ Added entity "zombie_horse":
 					field "family":
 						family: "zombiehorse"
 						family: "undead"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player":
+					field "priority": 7
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 2
+					field "speed_multiplier": 1.5
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.7
 			field "events":
 				event "minecraft:on_leash": field "add": field "component_groups": component group: "minecraft:zombie_horse_leashed"
 				event "minecraft:on_unleash": field "remove": field "component_groups": component group: "minecraft:zombie_horse_leashed"
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "zombie_husk":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "component_groups":
 				component group "minecraft:zombie_husk_adult":
 					component "minecraft:collision_box":
@@ -4889,6 +4891,22 @@ Added entity "zombie_husk":
 					field "damage": 3
 					field "effect_duration": 30
 					field "effect_name": "hunger"
+				component "minecraft:collision_box":
+					field "height": 1.8
+					field "width": 0.6
+				component "minecraft:equipment": field "table": "loot_tables/entities/zombie_equipment.json"
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:identifier": field "id": "minecraft:husk"
+				component "minecraft:loot": field "table": "loot_tables/entities/zombie.json"
+				component "minecraft:nameable": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "husk"
+						family: "undead"
+						family: "monster"
+				component "minecraft:variant": field "value": 2
 				component "minecraft:behavior.break_door": field "priority": 1
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.hurt_by_target": field "priority": 3
@@ -4918,45 +4936,29 @@ Added entity "zombie_husk":
 				component "minecraft:behavior.random_stroll":
 					field "priority": 6
 					field "speed_multiplier": 1
-				component "minecraft:collision_box":
-					field "height": 1.8
-					field "width": 0.6
-				component "minecraft:equipment": field "table": "loot_tables/entities/zombie_equipment.json"
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:identifier": field "id": "minecraft:husk"
-				component "minecraft:loot": field "table": "loot_tables/entities/zombie.json"
-				component "minecraft:nameable": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "husk"
-						family: "undead"
-						family: "monster"
-				component "minecraft:variant": field "value": 2
 			field "events":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 9500
 							field "add": field "component_groups": component group: "minecraft:zombie_husk_adult"
 							field "remove": empty
-							field "weight": 9500
 						randomize item:
+							field "weight": 425
 							field "add": field "component_groups": component group: "minecraft:zombie_husk_baby"
 							field "remove": empty
-							field "weight": 425
 						randomize item:
+							field "weight": 75
 							field "add":
 								field "component_groups":
 									component group: "minecraft:zombie_husk_baby"
 									component group: "minecraft:zombie_husk_jockey"
 							field "remove": empty
-							field "weight": 75
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "zombie_pigman":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 1
 			field "component_groups":
 				component group "minecraft:pig_zombie_adult":
 					component "minecraft:collision_box":
@@ -4971,6 +4973,25 @@ Added entity "zombie_pigman":
 					component "minecraft:scale": field "value": 0.5
 			field "components":
 				component "minecraft:attack": field "damage": 5
+				component "minecraft:burns_in_daylight": false
+				component "minecraft:equipment": field "table": "loot_tables/entities/zombie_pigman_gear.json"
+				component "minecraft:fire_immune": true
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:identifier": field "id": "minecraft:pig_zombie"
+				component "minecraft:loot": field "table": "loot_tables/entities/zombie_pigman.json "
+				component "minecraft:monster": empty
+				component "minecraft:movement":
+					field "max": 0.5
+					field "value": 0.23
+				component "minecraft:nameable": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "zombie_pigman"
+						family: "undead"
+						family: "monster"
+				component "minecraft:zombie.spawn_reinforcements": field "value": 0
 				component "minecraft:behavior.break_door": field "priority": 1
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.look_at_player":
@@ -4993,44 +5014,25 @@ Added entity "zombie_pigman":
 				component "minecraft:behavior.random_stroll":
 					field "priority": 7
 					field "speed_multiplier": 1.0
-				component "minecraft:burns_in_daylight": false
-				component "minecraft:equipment": field "table": "loot_tables/entities/zombie_pigman_gear.json"
-				component "minecraft:fire_immune": true
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:identifier": field "id": "minecraft:pig_zombie"
-				component "minecraft:loot": field "table": "loot_tables/entities/zombie_pigman.json "
-				component "minecraft:monster": empty
-				component "minecraft:movement":
-					field "max": 0.5
-					field "value": 0.23
-				component "minecraft:nameable": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "zombie_pigman"
-						family: "undead"
-						family: "monster"
-				component "minecraft:zombie.spawn_reinforcements": field "value": 0
 			field "events":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 95
 							field "add": field "component_groups": component group: "minecraft:pig_zombie_adult"
 							field "remove": empty
-							field "weight": 95
 						randomize item:
+							field "weight": 5
 							field "add": field "component_groups": component group: "minecraft:pig_zombie_baby"
 							field "remove": empty
-							field "weight": 5
 				event "minecraft:entity_transformed":
 					field "add": field "component_groups": component group: "minecraft:pig_zombie_adult"
 					field "remove": empty
-			field "version": 1
-		field "defined_in": behavior pack: "vanilla"
 Added entity "zombie_villager":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "version": 0.1
 			field "component_groups":
 				component group "adult":
 					component "minecraft:burns_in_daylight": empty
@@ -5165,6 +5167,26 @@ Added entity "zombie_villager":
 					component "minecraft:variant": field "value": 3
 			field "components":
 				component "minecraft:attack": field "damage": 3
+				component "minecraft:collision_box":
+					field "height": 1.8
+					field "width": 0.6
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:identifier": field "id": "minecraft:zombie_villager"
+				component "minecraft:interact":
+					field "on_interact":
+						field "event": "villager_converted"
+						field "filters":
+							filter property "sender_with_item": "golden_apple"
+							filter property "with_components": "minecraft:effect.weakness"
+						field "target": "self"
+					field "use_item": "true"
+				component "minecraft:loot": field "table": "loot_tables/entities/zombie.json"
+				component "minecraft:nameable": empty
+				component "minecraft:rideable":
+					field "family_types": family: "zombie"
+					field "seat_count": 1
 				component "minecraft:behavior.break_door": field "priority": 1
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.hurt_by_target": field "priority": 3
@@ -5194,44 +5216,24 @@ Added entity "zombie_villager":
 				component "minecraft:behavior.random_stroll":
 					field "priority": 6
 					field "speed_multiplier": 1
-				component "minecraft:collision_box":
-					field "height": 1.8
-					field "width": 0.6
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:identifier": field "id": "minecraft:zombie_villager"
-				component "minecraft:interact":
-					field "on_interact":
-						field "event": "villager_converted"
-						field "filters":
-							filter property "sender_with_item": "golden_apple"
-							filter property "with_components": "minecraft:effect.weakness"
-						field "target": "self"
-					field "use_item": "true"
-				component "minecraft:loot": field "table": "loot_tables/entities/zombie.json"
-				component "minecraft:nameable": empty
-				component "minecraft:rideable":
-					field "family_types": family: "zombie"
-					field "seat_count": 1
 			field "events":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 9500
 							field "add": field "component_groups": component group: "adult"
 							field "remove": empty
-							field "weight": 9500
 						randomize item:
+							field "weight": 425
 							field "add": field "component_groups": component group: "baby"
 							field "remove": empty
-							field "weight": 425
 						randomize item:
+							field "weight": 75
 							field "add":
 								field "component_groups":
 									component group: "baby"
 									component group: "jockey"
 							field "remove": empty
-							field "weight": 75
 				event "minecraft:entity_transformed":
 					field "sequence":
 						sequence item 0:
@@ -5276,5 +5278,3 @@ Added entity "zombie_villager":
 				event "villager_converted":
 					field "add": field "component_groups": component group: "to_villager"
 					field "remove": empty
-			field "version": 0.1
-		field "defined_in": behavior pack: "vanilla"

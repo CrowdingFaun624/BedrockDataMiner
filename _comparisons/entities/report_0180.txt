@@ -19,11 +19,12 @@ Changed entity "bee":
 			Added behavior pack "vanilla_1.19.50".
 		Changed field "minecraft:entity":
 			Changed field "description":
+				Unchanged description "identifier": "minecraft:bee"
 				Added description "properties":
 					property "minecraft:has_nectar":
+						field "type": "bool"
 						field "client_sync": true
 						field "default": "query.had_component_group('has_nectar')"
-						field "type": "bool"
 			Changed field "component_groups":
 				Changed component group "has_nectar":
 					Total component: 1 (+0, -1)
@@ -50,6 +51,7 @@ Changed entity "bee":
 					Changed field "sequence":
 						Changed sequence item 0:
 							Changed field "filters":
+								Unchanged filter property "operator": "!="
 								Changed filter property "test" from "has_component" to "bool_property".
 								Removed filter property "value" of "minecraft:is_charged".
 								Added filter property "domain" of "minecraft:has_nectar".
@@ -64,8 +66,14 @@ Changed entity "bee":
 					Added field "set_property" of property "minecraft:has_nectar": false.
 Changed entity "boat":
 	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_next_major_update"
 		field "format_version": "1.18.10"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:boat"
+				description "is_experimental": false
+				description "is_spawnable": false
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:above_bubble_column_down":
 					component "minecraft:buoyant":
@@ -227,11 +235,6 @@ Changed entity "boat":
 					field "family":
 						family: "boat"
 						family: "inanimate"
-			field "description":
-				description "identifier": "minecraft:boat"
-				description "is_experimental": false
-				description "is_spawnable": false
-				description "is_summonable": true
 			field "events":
 				event "minecraft:add_can_ride":
 					field "sequence":
@@ -257,12 +260,12 @@ Changed entity "boat":
 					field "remove": field "component_groups": component group: "minecraft:floating"
 				event "minecraft:entity_spawned": field "trigger": "minecraft:add_can_ride"
 				event "minecraft:exited_bubble_column":
+					field "trigger": "minecraft:add_can_ride"
 					field "add": field "component_groups": component group: "minecraft:floating"
 					field "remove":
 						field "component_groups":
 							component group: "minecraft:above_bubble_column_down"
 							component group: "minecraft:above_bubble_column_up"
-					field "trigger": "minecraft:add_can_ride"
 				event "minecraft:sink":
 					field "remove":
 						field "component_groups":
@@ -271,16 +274,18 @@ Changed entity "boat":
 							component group: "minecraft:can_ride_bamboo"
 							component group: "minecraft:above_bubble_column_down"
 							component group: "minecraft:above_bubble_column_up"
-		field "defined_in": behavior pack: "experimental_next_major_update"
 Added entity "camel":
 	behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_next_major_update"
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:camel"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:camel_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 2
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breed_items": item: "cactus"
 						field "breeds_with":
@@ -318,6 +323,9 @@ Added entity "camel":
 								field "max_rider_count": 2
 								field "min_rider_count": 1
 								field "position": [0.0, 1.825, -0.5]
+					component "minecraft:behavior.breed":
+						field "priority": 2
+						field "speed_multiplier": 1.0
 				component group "minecraft:camel_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -325,19 +333,19 @@ Added entity "camel":
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
 					component "minecraft:behavior.follow_parent":
 						field "priority": 5
 						field "speed_multiplier": 2.5
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.5
 				component group "minecraft:camel_saddled":
-					component "minecraft:behavior.player_ride_tamed": empty
 					component "minecraft:dash":
 						field "cooldown_time": 2.75
 						field "horizontal_momentum": 20.0
 						field "vertical_momentum": 0.6
 					component "minecraft:input_ground_controlled": empty
 					component "minecraft:is_saddled": empty
+					component "minecraft:behavior.player_ride_tamed": empty
 				component group "minecraft:camel_sitting":
 					component "minecraft:persist_sit": empty
 					component "minecraft:pushable":
@@ -348,36 +356,6 @@ Added entity "camel":
 						field "is_pushable": true
 						field "is_pushable_by_piston": true
 			field "components":
-				component "minecraft:behavior.float":
-					field "priority": 0
-					field "sink_with_passengers": true
-				component "minecraft:behavior.look_at_player":
-					field "priority": 7
-					field "probability": 0.02
-					field "target_distance": 6.0
-				component "minecraft:behavior.panic":
-					field "priority": 1
-					field "speed_multiplier": 4
-				component "minecraft:behavior.random_look_around": field "priority": 8
-				component "minecraft:behavior.random_look_around_and_sit":
-					field "continue_if_leashed": true
-					field "max_angle_of_view_horizontal": 30
-					field "max_look_count": 5
-					field "max_look_time": 100
-					field "min_angle_of_view_horizontal": -30
-					field "min_look_count": 2
-					field "min_look_time": 80
-					field "priority": 4
-					field "probability": 0.001
-					field "random_look_around_cooldown": 5
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 2
-				component "minecraft:behavior.tempt":
-					field "can_tempt_vertically": true
-					field "items": item: "cactus"
-					field "priority": 3
-					field "speed_multiplier": 2.5
 				component "minecraft:breathable":
 					field "suffocate_time": 0
 					field "total_supply": 15
@@ -424,11 +402,36 @@ Added entity "camel":
 				component "minecraft:variable_max_auto_step":
 					field "base_value": 1.5625
 					field "jump_prevented_value": 0.5625
-			field "description":
-				description "identifier": "minecraft:camel"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.float":
+					field "priority": 0
+					field "sink_with_passengers": true
+				component "minecraft:behavior.look_at_player":
+					field "priority": 7
+					field "probability": 0.02
+					field "target_distance": 6.0
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 4
+				component "minecraft:behavior.random_look_around_and_sit":
+					field "continue_if_leashed": true
+					field "max_angle_of_view_horizontal": 30
+					field "max_look_count": 5
+					field "max_look_time": 100
+					field "min_angle_of_view_horizontal": -30
+					field "min_look_count": 2
+					field "min_look_time": 80
+					field "priority": 4
+					field "probability": 0.001
+					field "random_look_around_cooldown": 5
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 2
+				component "minecraft:behavior.tempt":
+					field "can_tempt_vertically": true
+					field "items": item: "cactus"
+					field "priority": 3
+					field "speed_multiplier": 2.5
 			field "events":
 				event "minecraft:ageable_grow_up":
 					field "add": field "component_groups": component group: "minecraft:camel_adult"
@@ -462,11 +465,16 @@ Added entity "camel":
 				event "minecraft:stop_sitting":
 					field "add": field "component_groups": component group: "minecraft:camel_standing"
 					field "remove": field "component_groups": component group: "minecraft:camel_sitting"
-		field "defined_in": behavior pack: "experimental_next_major_update"
 Changed entity "chest_boat":
 	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_next_major_update"
 		field "format_version": "1.18.10"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:chest_boat"
+				description "is_experimental": false
+				description "is_spawnable": false
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:above_bubble_column_down":
 					component "minecraft:buoyant":
@@ -607,11 +615,6 @@ Changed entity "chest_boat":
 					field "family":
 						family: "boat"
 						family: "inanimate"
-			field "description":
-				description "identifier": "minecraft:chest_boat"
-				description "is_experimental": false
-				description "is_spawnable": false
-				description "is_summonable": true
 			field "events":
 				event "minecraft:add_can_ride":
 					field "sequence":
@@ -637,12 +640,12 @@ Changed entity "chest_boat":
 					field "remove": field "component_groups": component group: "minecraft:floating"
 				event "minecraft:entity_spawned": field "trigger": "minecraft:add_can_ride"
 				event "minecraft:exited_bubble_column":
+					field "trigger": "minecraft:add_can_ride"
 					field "add": field "component_groups": component group: "minecraft:floating"
 					field "remove":
 						field "component_groups":
 							component group: "minecraft:above_bubble_column_down"
 							component group: "minecraft:above_bubble_column_up"
-					field "trigger": "minecraft:add_can_ride"
 				event "minecraft:sink":
 					field "remove":
 						field "component_groups":
@@ -651,7 +654,6 @@ Changed entity "chest_boat":
 							component group: "minecraft:can_ride_bamboo"
 							component group: "minecraft:above_bubble_column_down"
 							component group: "minecraft:above_bubble_column_up"
-		field "defined_in": behavior pack: "experimental_next_major_update"
 Changed entity "enderman":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":

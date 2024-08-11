@@ -4,9 +4,12 @@ Unable to create data files for 3 files between: "1.19.50.21", "1.19.50.22", "1.
 Total file: 131 (+1, -0)
 Added file "camel.animation":
 	resource pack "experimental":
+		field "defined_in": resource pack: "experimental_next_major_update"
+		field "format_version": "1.8.0"
 		field "animations":
 			animation "animation.camel.dash":
 				field "animation_length": 0.5
+				field "loop": true
 				field "bones":
 					bone "body":
 						field "rotation":
@@ -122,10 +125,10 @@ Added file "camel.animation":
 							timestamp "0.5":
 								field "lerp_mode": "catmullrom"
 								field "post": [67.5, 0, 0]
-				field "loop": true
 				field "sound_effects": timestamp "0.0": field "effect": "dashing"
 			animation "animation.camel.idle":
 				field "animation_length": 4
+				field "loop": true
 				field "bones":
 					bone "head": field "rotation": ["variable.xDashHeadRot", "variable.yHeadRot", 0.0]
 					bone "left_ear":
@@ -188,11 +191,11 @@ Added file "camel.animation":
 							timestamp "4.0":
 								field "lerp_mode": "catmullrom"
 								field "post": [5, 0, 0]
-				field "loop": true
 			animation "animation.camel.look_at_player":
-				field "bones": bone "head": field "rotation": ["math.clamp(query.target_x_rotation, -25, 45 )", "math.clamp(query.target_y_rotation, -30, 30)", 0.0]
 				field "loop": true
+				field "bones": bone "head": field "rotation": ["math.clamp(query.target_x_rotation, -25, 45 )", "math.clamp(query.target_y_rotation, -30, 30)", 0.0]
 			animation "animation.camel.sit":
+				field "loop": true
 				field "bones":
 					bone "body":
 						field "position": [0, -19.9, 0]
@@ -211,9 +214,9 @@ Added file "camel.animation":
 						field "position": [-1, -20.5, 5]
 						field "rotation": [-90, 15, 0]
 					bone "tail": field "rotation": [50, 0, 0]
-				field "loop": true
 			animation "animation.camel.sit_down":
 				field "animation_length": 2
+				field "loop": "hold_on_last_frame"
 				field "bones":
 					bone "body":
 						field "position":
@@ -293,10 +296,10 @@ Added file "camel.animation":
 							timestamp "1.7": [5, 0, 0]
 							timestamp "1.9": [80, 0, 0]
 							timestamp "2.0": [50, 0, 0]
-				field "loop": "hold_on_last_frame"
 				field "sound_effects": timestamp "0.0": field "effect": "sit_down"
 			animation "animation.camel.stand_up":
 				field "animation_length": 2.6
+				field "loop": "hold_on_last_frame"
 				field "bones":
 					bone "body":
 						field "position":
@@ -304,8 +307,8 @@ Added file "camel.animation":
 							timestamp "0.7": [0, -19.9, -3]
 							timestamp "1.4":
 								field "lerp_mode": "catmullrom"
-								field "post": [0, -12.76, -4]
 								field "pre": [0, -12.76, -4]
+								field "post": [0, -12.76, -4]
 							timestamp "1.8":
 								field "lerp_mode": "catmullrom"
 								field "post": [0, -10.1, -4]
@@ -315,8 +318,8 @@ Added file "camel.animation":
 							timestamp "0.0": [0, 0, 0]
 							timestamp "0.7":
 								field "lerp_mode": "catmullrom"
-								field "post": [-17.5, 0, 0]
 								field "pre": [-17.5, 0, 0]
+								field "post": [-17.5, 0, 0]
 							timestamp "1.8":
 								field "lerp_mode": "catmullrom"
 								field "post": [-17.83, 0, 0]
@@ -410,11 +413,11 @@ Added file "camel.animation":
 							timestamp "0.9": [55, 0, 0]
 							timestamp "1.5": [17.5, 0, 0]
 							timestamp "2.6": [5, 0, 0]
-				field "loop": "hold_on_last_frame"
 				field "sound_effects": timestamp "0.0": field "effect": "stand_up"
 			animation "animation.camel.walk":
 				field "anim_time_update": "query.anim_time + math.pow(8, query.modified_move_speed) / 4 * query.delta_time"
 				field "animation_length": 1.5
+				field "loop": true
 				field "bones":
 					bone "head":
 						field "rotation":
@@ -583,9 +586,6 @@ Added file "camel.animation":
 							timestamp "1.5":
 								field "lerp_mode": "catmullrom"
 								field "post": [15.94102, -8.42106, 20.94102]
-				field "loop": true
-		field "format_version": "1.8.0"
-		field "defined_in": resource pack: "experimental_next_major_update"
 Changed file "vex.animation":
 	Changed resource pack "core":
 		Changed field "defined_in":
@@ -594,16 +594,17 @@ Changed file "vex.animation":
 		Changed field "animations":
 			Total animation: 2 (+2, -2)
 			Removed animation "animation.vex.attack.rotations.v1.0":
+				field "loop": true
 				field "bones":
 					bone "body": field "rotation": [0.0, "variable.attackbodyroty - this", 0.0]
 					bone "leftarm": field "rotation": ["variable.attackbodyroty", "variable.attackbodyroty", 0.0]
 					bone "rightarm": field "rotation": ["math.sin(1.0 - math.pow(1.0 - variable.attack_time, 3.0) * 180.0) * (variable.is_brandishing_spear ? -1.0 : 1.0 )", "(variable.is_brandishing_spear ? 0.0 : variable.attackbodyroty * 2.0) + variable.attackbodyroty", 0.0]
-				field "loop": true
 			Added animation "animation.vex.charge":
 				field "anim_time_update": "query.modified_distance_moved"
-				field "bones": bone "rightarm": field "rotation": ["210.0 - this", "15.0 - this", "-25.0 - 32.34 - this"]
 				field "loop": true
+				field "bones": bone "rightarm": field "rotation": ["210.0 - this", "15.0 - this", "-25.0 - 32.34 - this"]
 			Added animation "animation.vex.idle":
+				field "loop": true
 				field "bones":
 					bone "leftarm":
 						field "rotation":
@@ -618,9 +619,9 @@ Changed file "vex.animation":
 							timestamp "0.75": [0.0, 0.0, 45]
 							timestamp "2.0": [0.0, 0.0, 32.34]
 					bone "rightwing": field "rotation": ["27.0 - this", "15.0 + math.cos(query.life_time * 916.8) * 9.0 - this", "45.0 - this"]
-				field "loop": true
 			Removed animation "animation.vex.move":
 				field "anim_time_update": "query.modified_distance_moved"
+				field "loop": true
 				field "bones":
 					bone "leftwing":
 						field "position": [0.0, "-1.0 - this", "2.0 - this"]
@@ -630,4 +631,3 @@ Changed file "vex.animation":
 					bone "rightwing":
 						field "position": [0.0, "-1.0 - this", "2.0 - this"]
 						field "rotation": ["27.0 - this", "27.0 + math.cos(query.life_time * 916.8) * 9.0 - this", "27.0 - this"]
-				field "loop": true

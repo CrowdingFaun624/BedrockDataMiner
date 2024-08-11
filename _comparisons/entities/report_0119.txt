@@ -2,8 +2,14 @@ Difference of "entities" between "1.16.210.50" (beta of "1.16.210") and "1.16.21
 
 Changed entity "creeper":
 	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:creeper"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:charged_creeper": component "minecraft:is_charged": empty
 				component group "minecraft:charged_exploding":
@@ -40,58 +46,6 @@ Changed entity "creeper":
 					component "minecraft:target_nearby_sensor": empty
 			field "components":
 				component "minecraft:attack": field "damage": 3
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "ocelot"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "cat"
-							field "max_dist": 6
-							field "sprint_speed_multiplier": 1.2
-					field "priority": 3
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.hurt_by_target":
-					field "entity_types":
-						field "filters":
-							filter property "operator": "!="
-							filter property "subject": "other"
-							filter property "test": "is_family"
-							filter property "value": "goat"
-					field "priority": 2
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 8
-					field "priority": 6
-				component "minecraft:behavior.melee_attack":
-					field "priority": 4
-					field "reach_multiplier": 0.0
-					field "speed_multiplier": 1.25
-					field "track_target": false
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "player"
-							field "max_dist": 16
-					field "must_see": true
-					field "must_see_forget_duration": 3.0
-					field "priority": 1
-				component "minecraft:behavior.random_look_around": field "priority": 6
-				component "minecraft:behavior.random_stroll":
-					field "priority": 5
-					field "speed_multiplier": 1
-				component "minecraft:behavior.swell":
-					field "priority": 2
-					field "start_distance": 2.5
-					field "stop_distance": 6.0
 				component "minecraft:breathable":
 					field "suffocate_time": 0
 					field "total_supply": 15
@@ -179,11 +133,58 @@ Changed entity "creeper":
 						family: "creeper"
 						family: "monster"
 						family: "mob"
-			field "description":
-				description "identifier": "minecraft:creeper"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "ocelot"
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "cat"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+					field "priority": 3
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target":
+					field "entity_types":
+						field "filters":
+							filter property "operator": "!="
+							filter property "subject": "other"
+							filter property "test": "is_family"
+							filter property "value": "goat"
+					field "priority": 2
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 8
+					field "priority": 6
+				component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "reach_multiplier": 0.0
+					field "speed_multiplier": 1.25
+					field "track_target": false
+				component "minecraft:behavior.nearest_attackable_target":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "player"
+							field "max_dist": 16
+					field "must_see": true
+					field "must_see_forget_duration": 3.0
+					field "priority": 1
+				component "minecraft:behavior.random_look_around": field "priority": 6
+				component "minecraft:behavior.random_stroll":
+					field "priority": 5
+					field "speed_multiplier": 1
+				component "minecraft:behavior.swell":
+					field "priority": 2
+					field "start_distance": 2.5
+					field "stop_distance": 6.0
 			field "events":
 				event "minecraft:become_charged":
 					field "add": field "component_groups": component group: "minecraft:charged_creeper"
@@ -215,7 +216,6 @@ Changed entity "creeper":
 								filter property "test": "has_component"
 								filter property "value": "minecraft:is_charged"
 				event "minecraft:stop_exploding": field "remove": field "component_groups": component group: "minecraft:exploding"
-		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
 Changed entity "goat":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
@@ -294,6 +294,9 @@ Changed entity "goat":
 							Changed field "filters":
 								Changed filter property "all_of":
 									Changed filter:
+										Unchanged filter property "operator": "!="
+										Unchanged filter property "subject": "other"
+										Unchanged filter property "test": "is_family"
 										Changed filter property "value" from "shulker" to "armor_stand".
 				Changed component "minecraft:behavior.panic":
 					Changed field "speed_multiplier" from 1.25 to 1.0.

@@ -15,16 +15,17 @@ Changed entity "panda":
 					Added field "cooldown" of 3.0.
 Added entity "pillager":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "format_version": "1.8.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:pillager"
+				description "minecraft:is_experimental": field "value": true
+				description "minecraft:is_summonable": field "value": true
+				description "minecraft:spawn_egg": field "value": true
 			field "component_groups":
 				component group "minecraft:melee_attack":
 					component "minecraft:attack": field "damage": 3
-					component "minecraft:behavior.melee_attack":
-						field "priority": 4
-						field "speed_multiplier": 1
-						field "target_dist": 1.2
-						field "track_target": true
 					component "minecraft:environment_sensor":
 						field "on_environment":
 							field "event": "minecraft:ranged_mode"
@@ -33,13 +34,12 @@ Added entity "pillager":
 								filter property "subject": "self"
 								filter property "test": "in_water"
 								filter property "value": false
+					component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "speed_multiplier": 1
+						field "target_dist": 1.2
+						field "track_target": true
 				component group "minecraft:ranged_attack":
-					component "minecraft:behavior.ranged_attack":
-						field "attack_interval_max": 0
-						field "attack_interval_min": 0
-						field "attack_radius": 6
-						field "charge_charged_trigger": 1.25
-						field "charge_shoot_trigger": 1.5
 					component "minecraft:environment_sensor":
 						field "on_environment":
 							field "event": "minecraft:melee_mode"
@@ -51,7 +51,35 @@ Added entity "pillager":
 					component "minecraft:shooter":
 						field "def": "minecraft:arrow"
 						field "type": "Arrow"
+					component "minecraft:behavior.ranged_attack":
+						field "attack_interval_max": 0
+						field "attack_interval_min": 0
+						field "attack_radius": 6
+						field "charge_charged_trigger": 1.25
+						field "charge_shoot_trigger": 1.5
 			field "components":
+				component "minecraft:breathable":
+					field "suffocateTime": 0
+					field "totalSupply": 15
+				component "minecraft:collision_box":
+					field "height": 1.95
+					field "width": 0.6
+				component "minecraft:equipment": field "table": "loot_tables/entities/pillager_gear.json"
+				component "minecraft:health":
+					field "max": 24
+					field "value": 24
+				component "minecraft:jump.static": empty
+				component "minecraft:loot": field "table": "loot_tables/entities/pillager.json"
+				component "minecraft:movement": field "value": 0.35
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk": field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "pillager"
+						family: "monster"
+						family: "illager"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.hurt_by_target":
 					field "entity_types":
@@ -90,33 +118,6 @@ Added entity "pillager":
 				component "minecraft:behavior.random_stroll":
 					field "priority": 5
 					field "speed_multiplier": 1
-				component "minecraft:breathable":
-					field "suffocateTime": 0
-					field "totalSupply": 15
-				component "minecraft:collision_box":
-					field "height": 1.95
-					field "width": 0.6
-				component "minecraft:equipment": field "table": "loot_tables/entities/pillager_gear.json"
-				component "minecraft:health":
-					field "max": 24
-					field "value": 24
-				component "minecraft:jump.static": empty
-				component "minecraft:loot": field "table": "loot_tables/entities/pillager.json"
-				component "minecraft:movement": field "value": 0.35
-				component "minecraft:movement.basic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.walk": field "can_path_over_water": true
-				component "minecraft:physics": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "pillager"
-						family: "monster"
-						family: "illager"
-			field "description":
-				description "identifier": "minecraft:pillager"
-				description "minecraft:is_experimental": field "value": true
-				description "minecraft:is_summonable": field "value": true
-				description "minecraft:spawn_egg": field "value": true
 			field "events":
 				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
 				event "minecraft:melee_mode":
@@ -125,7 +126,6 @@ Added entity "pillager":
 				event "minecraft:ranged_mode":
 					field "add": field "component_groups": component group: "minecraft:ranged_attack"
 					field "remove": field "component_groups": component group: "minecraft:melee_attack"
-		field "defined_in": behavior pack: "vanilla"
 Changed entity "salmon":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":

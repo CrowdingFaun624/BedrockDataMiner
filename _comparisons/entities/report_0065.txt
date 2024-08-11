@@ -32,10 +32,45 @@ Changed entity "evocation_illager":
 							field "max_dist": 16
 Removed entity "illager_beast":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "format_version": "1.8.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:illager_beast"
+				description "is_experimental": true
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "components":
 				component "minecraft:attack": field "damage": 12.0
+				component "minecraft:breathable":
+					field "suffocateTime": 0
+					field "totalSupply": 15
+				component "minecraft:collision_box":
+					field "height": 2.2
+					field "width": 1.95
+				component "minecraft:health":
+					field "max": 100
+					field "value": 100
+				component "minecraft:jump.static": empty
+				component "minecraft:knockback_resistance": field "value": 0.5
+				component "minecraft:loot": field "table": "loot_tables/entities/illager_beast.json"
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "avoid_damage_blocks": true
+					field "avoid_water": true
+					field "can_path_over_water": true
+					field "can_sink": false
+				component "minecraft:physics": empty
+				component "minecraft:rideable":
+					field "family_types": family: "pillager"
+					field "seat_count": 1
+					field "seats": field "position": [0.0, 2.1, -0.3]
+				component "minecraft:type_family":
+					field "family":
+						family: "monster"
+						family: "illager"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.hurt_by_target":
 					field "entity_types":
@@ -85,41 +120,6 @@ Removed entity "illager_beast":
 				component "minecraft:behavior.random_stroll":
 					field "priority": 5
 					field "speed_multiplier": 0.4
-				component "minecraft:breathable":
-					field "suffocateTime": 0
-					field "totalSupply": 15
-				component "minecraft:collision_box":
-					field "height": 2.2
-					field "width": 1.95
-				component "minecraft:health":
-					field "max": 100
-					field "value": 100
-				component "minecraft:jump.static": empty
-				component "minecraft:knockback_resistance": field "value": 0.5
-				component "minecraft:loot": field "table": "loot_tables/entities/illager_beast.json"
-				component "minecraft:movement": field "value": 0.3
-				component "minecraft:movement.basic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.walk":
-					field "avoid_damage_blocks": true
-					field "avoid_water": true
-					field "can_path_over_water": true
-					field "can_sink": false
-				component "minecraft:physics": empty
-				component "minecraft:rideable":
-					field "family_types": family: "pillager"
-					field "seat_count": 1
-					field "seats": field "position": [0.0, 2.1, -0.3]
-				component "minecraft:type_family":
-					field "family":
-						family: "monster"
-						family: "illager"
-			field "description":
-				description "identifier": "minecraft:illager_beast"
-				description "is_experimental": true
-				description "is_spawnable": true
-				description "is_summonable": true
-		field "defined_in": behavior pack: "vanilla"
 Changed entity "iron_golem":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -195,10 +195,17 @@ Changed entity "pillager":
 							component group: "minecraft:raid_configuration"
 Added entity "ravager":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "format_version": "1.8.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:ravager"
+				description "is_experimental": true
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:hostile":
+					component "minecraft:movement": field "value": 0.3
 					component "minecraft:behavior.delayed_attack":
 						field "attack_duration": 0.75
 						field "hit_delay_pct": 0.5
@@ -265,7 +272,6 @@ Added entity "ravager":
 					component "minecraft:behavior.random_stroll":
 						field "priority": 5
 						field "speed_multiplier": 0.4
-					component "minecraft:movement": field "value": 0.3
 				component group "minecraft:pillager_captain_rider":
 					component "minecraft:addrider":
 						field "entity_type": "minecraft:pillager"
@@ -317,7 +323,6 @@ Added entity "ravager":
 						field "time_down_event": field "event": "minecraft:start_roar"
 			field "components":
 				component "minecraft:attack": field "damage": 12.0
-				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:break_blocks":
 					field "breakable_blocks":
 						block: "bamboo"
@@ -391,11 +396,7 @@ Added entity "ravager":
 						family: "monster"
 						family: "illager"
 						family: "ravager"
-			field "description":
-				description "identifier": "minecraft:ravager"
-				description "is_experimental": true
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.float": field "priority": 0
 			field "events":
 				event "minecraft:become_stunned":
 					field "add": field "component_groups": component group: "stunned"
@@ -438,7 +439,6 @@ Added entity "ravager":
 				event "minecraft:start_roar":
 					field "add": field "component_groups": component group: "roaring"
 					field "remove": field "component_groups": component group: "stunned"
-		field "defined_in": behavior pack: "vanilla"
 Changed entity "vex":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -1545,89 +1545,89 @@ Changed entity "villager_v2":
 										sequence item 0:
 											field "randomize":
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "farmer"
 															component group: "behavior_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "fisherman"
 															component group: "behavior_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "shepherd"
 															component group: "behavior_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "fletcher"
 															component group: "behavior_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "librarian"
 															component group: "behavior_non_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "cartographer"
 															component group: "behavior_non_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "cleric"
 															component group: "behavior_non_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "armorer"
 															component group: "behavior_non_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "weaponsmith"
 															component group: "behavior_non_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "toolsmith"
 															component group: "behavior_non_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "butcher"
 															component group: "behavior_non_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "leatherworker"
 															component group: "behavior_non_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "mason"
 															component group: "behavior_non_peasant"
-													field "weight": 1
 												randomize item:
+													field "weight": 1
 													field "add":
 														field "component_groups":
 															component group: "nitwit"
 															component group: "behavior_peasant"
-													field "weight": 1
 						Changed sequence item 1:
 							Added field "add" of field "component_groups": component group: "desert_villager".
 							Changed field "filters":
@@ -1643,89 +1643,89 @@ Changed entity "villager_v2":
 										filter property "value": "mesa"
 							Removed field "randomize":
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "farmer"
 											component group: "behavior_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "fisherman"
 											component group: "behavior_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "shepherd"
 											component group: "behavior_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "fletcher"
 											component group: "behavior_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "librarian"
 											component group: "behavior_non_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "cartographer"
 											component group: "behavior_non_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "cleric"
 											component group: "behavior_non_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "armorer"
 											component group: "behavior_non_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "weaponsmith"
 											component group: "behavior_non_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "toolsmith"
 											component group: "behavior_non_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "butcher"
 											component group: "behavior_non_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "leatherworker"
 											component group: "behavior_non_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "mason"
 											component group: "behavior_non_peasant"
-									field "weight": 1
 								randomize item:
+									field "weight": 1
 									field "add":
 										field "component_groups":
 											component group: "nitwit"
 											component group: "behavior_peasant"
-									field "weight": 1
 						Changed sequence item 2:
 							Changed field "add":
 								Changed field "component_groups":
@@ -1749,6 +1749,7 @@ Changed entity "villager_v2":
 									Removed component group "jungle_villager".
 									Added component group "savanna_villager".
 							Changed field "filters":
+								Unchanged filter property "test": "has_biome_tag"
 								Changed filter property "value" from "jungle" to "savanna".
 						Changed sequence item 4:
 							Changed field "add":
@@ -1841,6 +1842,9 @@ Changed entity "villager_v2":
 									Total component group: 2 (+1, -0)
 									Added component group "child_schedule".
 							Changed field "filters":
+								Unchanged filter property "subject": "other"
+								Unchanged filter property "test": "has_component"
+								Unchanged filter property "value": "minecraft:is_baby"
 								Added filter property "operator" of "==".
 						Changed sequence item 1:
 							Added field "sequence":
@@ -1970,6 +1974,8 @@ Changed entity "villager_v2":
 									component group: "farmer"
 									component group: "behavior_peasant"
 							Changed field "filters":
+								Unchanged filter property "subject": "other"
+								Unchanged filter property "test": "is_family"
 								Changed filter property "value" from "farmer" to "zombie_villager".
 								Added filter property "operator" of "==".
 							Added field "sequence":
@@ -2015,6 +2021,8 @@ Changed entity "villager_v2":
 									component group: "fisherman"
 									component group: "behavior_peasant"
 							Changed field "filters":
+								Unchanged filter property "subject": "other"
+								Unchanged filter property "test": "is_family"
 								Changed filter property "value" from "fisherman" to "villager".
 								Added filter property "operator" of "==".
 							Added field "sequence":

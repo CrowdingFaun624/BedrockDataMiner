@@ -36,6 +36,7 @@ Changed entity "armadillo":
 				Changed component "minecraft:entity_sensor":
 					Changed field "subsensors":
 						Changed subsensor:
+							Unchanged field "event": "minecraft:no_threat_detected"
 							Changed field "event_filters":
 								Changed filter property "all_of":
 									Changed filter:
@@ -50,6 +51,7 @@ Changed entity "armadillo":
 																filter property "test": "was_last_hurt_by"
 							Changed field "range" from 7.0 to [7.0, 2.0].
 						Changed subsensor:
+							Unchanged field "event": "minecraft:threat_detected"
 							Changed field "event_filters":
 								Changed filter property "all_of":
 									Changed filter:
@@ -93,8 +95,13 @@ Changed entity "armadillo":
 					Removed field "set_property" of property "minecraft:is_rolled_up": true.
 Changed entity "cave_spider":
 	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_armadillo"
 		field "format_version": "1.20.70"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:cave_spider"
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:spider_angry":
 					component "minecraft:angry":
@@ -132,6 +139,13 @@ Changed entity "cave_spider":
 						field "must_see": true
 						field "priority": 2
 				component group "minecraft:spider_hostile":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "event": "minecraft:become_neutral"
+							field "filters":
+								filter property "operator": ">"
+								filter property "test": "is_brightness"
+								filter property "value": 0.49
 					component "minecraft:behavior.leap_at_target":
 						field "must_be_on_ground": false
 						field "priority": 4
@@ -161,13 +175,6 @@ Changed entity "cave_spider":
 								field "max_dist": 16
 						field "must_see": true
 						field "priority": 2
-					component "minecraft:environment_sensor":
-						field "triggers":
-							field "event": "minecraft:become_neutral"
-							field "filters":
-								filter property "operator": ">"
-								filter property "test": "is_brightness"
-								filter property "value": 0.49
 				component group "minecraft:spider_jockey":
 					component "minecraft:addrider": field "entity_type": "minecraft:skeleton"
 					component "minecraft:rideable":
@@ -211,38 +218,6 @@ Changed entity "cave_spider":
 						field "seat_count": 1
 						field "seats": field "position": [0.0, 0.25, -0.1]
 			field "components":
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "armadillo"
-									filter:
-										filter property "domain": "minecraft:is_rolled_up"
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "bool_property"
-							field "max_dist": 6
-							field "sprint_speed_multiplier": 1.2
-					field "priority": 2
-				component "minecraft:behavior.float": field "priority": 1
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6.0
-					field "priority": 7
-					field "probability": 0.02
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 5
-					field "speed_multiplier": 1.25
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.random_look_around": field "priority": 7
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.8
 				component "minecraft:breathable":
 					field "suffocate_time": 0
 					field "total_supply": 15
@@ -287,10 +262,38 @@ Changed entity "cave_spider":
 						family: "monster"
 						family: "arthropod"
 						family: "mob"
-			field "description":
-				description "identifier": "minecraft:cave_spider"
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "armadillo"
+									filter:
+										filter property "domain": "minecraft:is_rolled_up"
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "bool_property"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+					field "priority": 2
+				component "minecraft:behavior.float": field "priority": 1
+				component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 6.0
+					field "priority": 7
+					field "probability": 0.02
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 5
+					field "speed_multiplier": 1.25
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.random_look_around": field "priority": 7
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.8
 			field "events":
 				event "minecraft:become_angry":
 					field "sequence":
@@ -362,8 +365,10 @@ Changed entity "cave_spider":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 1
 							field "randomize":
 								randomize item:
+									field "weight": 80
 									field "add":
 										field "component_groups":
 											component group: "minecraft:spider_stray_jockey"
@@ -380,8 +385,8 @@ Changed entity "cave_spider":
 												filter property "test": "is_underground"
 												filter property "value": false
 									field "remove": empty
-									field "weight": 80
 								randomize item:
+									field "weight": 80
 									field "add":
 										field "component_groups":
 											component group: "minecraft:spider_wither_jockey"
@@ -390,8 +395,8 @@ Changed entity "cave_spider":
 										filter property "test": "is_biome"
 										filter property "value": "the_nether"
 									field "remove": empty
-									field "weight": 80
 								randomize item:
+									field "weight": 20
 									field "add":
 										field "component_groups":
 											component group: "minecraft:spider_jockey"
@@ -405,20 +410,22 @@ Changed entity "cave_spider":
 												filter property "test": "is_underground"
 												filter property "value": true
 									field "remove": empty
-									field "weight": 20
-							field "weight": 1
 						randomize item:
+							field "weight": 99
 							field "add": field "component_groups": component group: "minecraft:spider_neutral"
 							field "remove": empty
-							field "weight": 99
 				event "minecraft:on_calm":
 					field "add": field "component_groups": component group: "minecraft:spider_neutral"
 					field "remove": field "component_groups": component group: "minecraft:spider_angry"
-		field "defined_in": behavior pack: "experimental_armadillo"
 Changed entity "spider":
 	Added behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_armadillo"
 		field "format_version": "1.20.70"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:spider"
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "minecraft:spider_angry":
 					component "minecraft:angry":
@@ -435,6 +442,14 @@ Changed entity "spider":
 						field "priority": 3
 						field "track_target": true
 				component group "minecraft:spider_hostile":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "event": "minecraft:become_neutral"
+							field "filters":
+								filter property "operator": ">"
+								filter property "test": "is_brightness"
+								filter property "value": 0.49
+					component "minecraft:on_target_acquired": field "event": "minecraft:become_angry"
 					component "minecraft:behavior.nearest_attackable_target":
 						field "attack_interval": 5
 						field "entity_types":
@@ -456,14 +471,6 @@ Changed entity "spider":
 								field "max_dist": 16
 						field "must_see": true
 						field "priority": 2
-					component "minecraft:environment_sensor":
-						field "triggers":
-							field "event": "minecraft:become_neutral"
-							field "filters":
-								filter property "operator": ">"
-								filter property "test": "is_brightness"
-								filter property "value": 0.49
-					component "minecraft:on_target_acquired": field "event": "minecraft:become_angry"
 				component group "minecraft:spider_jockey":
 					component "minecraft:addrider": field "entity_type": "minecraft:skeleton"
 					component "minecraft:rideable":
@@ -493,38 +500,6 @@ Changed entity "spider":
 						field "seats": field "position": [0.0, 0.54, 0.0]
 			field "components":
 				component "minecraft:attack": field "damage": 2
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "armadillo"
-									filter:
-										filter property "domain": "minecraft:is_rolled_up"
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "bool_property"
-							field "max_dist": 6
-							field "sprint_speed_multiplier": 1.2
-					field "priority": 2
-				component "minecraft:behavior.float": field "priority": 1
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6.0
-					field "priority": 7
-					field "probability": 0.02
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 5
-					field "speed_multiplier": 1.25
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.random_look_around": field "priority": 7
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.8
 				component "minecraft:breathable":
 					field "suffocate_time": 0
 					field "total_supply": 15
@@ -569,10 +544,38 @@ Changed entity "spider":
 						family: "monster"
 						family: "mob"
 						family: "arthropod"
-			field "description":
-				description "identifier": "minecraft:spider"
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.avoid_mob_type":
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "subject": "other"
+										filter property "test": "is_family"
+										filter property "value": "armadillo"
+									filter:
+										filter property "domain": "minecraft:is_rolled_up"
+										filter property "operator": "!="
+										filter property "subject": "other"
+										filter property "test": "bool_property"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+					field "priority": 2
+				component "minecraft:behavior.float": field "priority": 1
+				component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "look_distance": 6.0
+					field "priority": 7
+					field "probability": 0.02
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 5
+					field "speed_multiplier": 1.25
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.random_look_around": field "priority": 7
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 0.8
 			field "events":
 				event "minecraft:become_angry": field "add": field "component_groups": component group: "minecraft:spider_angry"
 				event "minecraft:become_calm": field "remove": field "component_groups": component group: "minecraft:spider_angry"
@@ -585,8 +588,10 @@ Changed entity "spider":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 1
 							field "randomize":
 								randomize item:
+									field "weight": 80
 									field "add":
 										field "component_groups":
 											component group: "minecraft:spider_stray_jockey"
@@ -603,8 +608,8 @@ Changed entity "spider":
 												filter property "test": "is_underground"
 												filter property "value": false
 									field "remove": empty
-									field "weight": 80
 								randomize item:
+									field "weight": 80
 									field "add":
 										field "component_groups":
 											component group: "minecraft:spider_wither_jockey"
@@ -613,8 +618,8 @@ Changed entity "spider":
 										filter property "test": "is_biome"
 										filter property "value": "the_nether"
 									field "remove": empty
-									field "weight": 80
 								randomize item:
+									field "weight": 20
 									field "add":
 										field "component_groups":
 											component group: "minecraft:spider_jockey"
@@ -628,13 +633,10 @@ Changed entity "spider":
 												filter property "test": "is_underground"
 												filter property "value": true
 									field "remove": empty
-									field "weight": 20
-							field "weight": 1
 						randomize item:
+							field "weight": 99
 							field "add": field "component_groups": component group: "minecraft:spider_neutral"
 							field "remove": empty
-							field "weight": 99
-		field "defined_in": behavior pack: "experimental_armadillo"
 Changed entity "wolf":
 	Changed behavior pack "core":
 		Changed field "defined_in":
@@ -653,12 +655,13 @@ Changed entity "wolf":
 		Changed field "format_version" from "1.18.10" to "1.20.70".
 		Changed field "minecraft:entity":
 			Changed field "description":
+				Unchanged description "identifier": "minecraft:wolf"
 				Removed description "is_experimental" of false.
 				Added description "properties":
 					property "minecraft:has_increased_max_health":
+						field "type": "bool"
 						field "client_sync": false
 						field "default": false
-						field "type": "bool"
 			Changed field "component_groups":
 				Total component group: 6 (+1, -0)
 				Added component group "minecraft:wolf_increased_max_health":
@@ -809,19 +812,19 @@ Changed entity "wolf":
 					Changed field "randomize":
 						Total randomize item: 2 (+2, -2)
 						Removed randomize item:
+							field "weight": 9
 							field "add":
 								field "component_groups":
 									component group: "minecraft:wolf_adult"
 									component group: "minecraft:wolf_wild"
 							field "remove": empty
-							field "weight": 9
 						Removed randomize item:
+							field "weight": 1
 							field "add":
 								field "component_groups":
 									component group: "minecraft:wolf_baby"
 									component group: "minecraft:wolf_wild"
 							field "remove": empty
-							field "weight": 1
 						Added randomize item:
 							field "trigger": "minecraft:spawn_wild_adult"
 							field "weight": 9
@@ -855,13 +858,14 @@ Changed entity "wolf":
 		Changed field "format_version" from "1.20.60" to "1.20.70".
 		Changed field "minecraft:entity":
 			Changed field "description":
+				Unchanged description "identifier": "minecraft:wolf"
 				Removed description "is_experimental" of false.
 				Changed description "properties":
 					Total property: 3 (+1, -0)
 					Added property "minecraft:has_increased_max_health":
+						field "type": "bool"
 						field "client_sync": false
 						field "default": false
-						field "type": "bool"
 			Changed field "component_groups":
 				Total component group: 7 (+1, -0)
 				Added component group "minecraft:wolf_increased_max_health":

@@ -7,6 +7,7 @@ Changed entity "chest_minecart":
 			Changed field "components":
 				Changed component "minecraft:collision_box":
 					Changed field "width" from 0.78 to 0.98.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:chest_minecart"
 Changed entity "command_block_minecart":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -14,9 +15,12 @@ Changed entity "command_block_minecart":
 				Changed component "minecraft:collision_box":
 					Changed field "width" from 0.5 to 0.98.
 					Changed field "height" from 0.9 to 0.7.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:command_block_minecart"
 Added entity "drowned":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "format_version": "1.2.0"
 			field "component_groups":
 				component group "minecraft:hunter_mode":
 					component "minecraft:navigation.generic":
@@ -26,11 +30,11 @@ Added entity "drowned":
 						field "is_amphibious": true
 				component group "minecraft:melee_mode":
 					component "minecraft:attack": field "damage": 3
+					component "minecraft:equipment": field "table": "loot_tables/entities/drowned_equipment.json"
 					component "minecraft:behavior.melee_attack":
 						field "priority": 3
 						field "speed_multiplier": 1
 						field "track_target": false
-					component "minecraft:equipment": field "table": "loot_tables/entities/drowned_equipment.json"
 				component group "minecraft:mode_switcher":
 					component "minecraft:equipment": field "table": "loot_tables/entities/drowned_ranged_equipment.json"
 					component "minecraft:target_nearby_sensor":
@@ -43,12 +47,12 @@ Added entity "drowned":
 							field "target": "self"
 						field "outside_range": 5.0
 				component group "minecraft:ranged_mode":
+					component "minecraft:shooter": field "def": "minecraft:thrown_trident"
 					component "minecraft:behavior.ranged_attack":
 						field "attack_interval_max": 3
 						field "attack_interval_min": 1
 						field "attack_radius": 10
 						field "priority": 3
-					component "minecraft:shooter": field "def": "minecraft:thrown_trident"
 				component group "minecraft:wander_mode":
 					component "minecraft:navigation.generic":
 						field "can_float": false
@@ -56,6 +60,44 @@ Added entity "drowned":
 						field "can_walk": true
 						field "is_amphibious": true
 			field "components":
+				component "minecraft:breathable":
+					field "breathesAir": true
+					field "breathesWater": true
+					field "suffocateTime": 0
+					field "totalSupply": 15
+				component "minecraft:burns_in_daylight": empty
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 1.8
+					field "width": 0.6
+				component "minecraft:health":
+					field "max": 20
+					field "value": 20
+				component "minecraft:identifier": field "id": "minecraft:drowned"
+				component "minecraft:jump.static": empty
+				component "minecraft:loot": field "table": "loot_tables/entities/drowned.json"
+				component "minecraft:movement": field "value": 0.23
+				component "minecraft:movement.generic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
+					field "can_float": false
+					field "can_swim": false
+					field "can_walk": true
+					field "is_amphibious": true
+				component "minecraft:on_target_acquired":
+					field "event": "minecraft:has_target"
+					field "target": "self"
+				component "minecraft:on_target_escape":
+					field "event": "minecraft:lost_target"
+					field "target": "self"
+				component "minecraft:physics": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "drowned"
+						family: "zombie"
+						family: "undead"
+						family: "monster"
+				component "minecraft:underwater_movement": field "value": 0.06
 				component "minecraft:behavior.break_door": field "priority": 1
 				component "minecraft:behavior.flee_sun":
 					field "priority": 2
@@ -98,58 +140,20 @@ Added entity "drowned":
 					field "priority": 6
 					field "speed_multiplier": 1
 				component "minecraft:behavior.restrict_sun": field "priority": 1
-				component "minecraft:breathable":
-					field "breathesAir": true
-					field "breathesWater": true
-					field "suffocateTime": 0
-					field "totalSupply": 15
-				component "minecraft:burns_in_daylight": empty
-				component "minecraft:can_climb": empty
-				component "minecraft:collision_box":
-					field "height": 1.8
-					field "width": 0.6
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:identifier": field "id": "minecraft:drowned"
-				component "minecraft:jump.static": empty
-				component "minecraft:loot": field "table": "loot_tables/entities/drowned.json"
-				component "minecraft:movement": field "value": 0.23
-				component "minecraft:movement.generic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.generic":
-					field "can_float": false
-					field "can_swim": false
-					field "can_walk": true
-					field "is_amphibious": true
-				component "minecraft:on_target_acquired":
-					field "event": "minecraft:has_target"
-					field "target": "self"
-				component "minecraft:on_target_escape":
-					field "event": "minecraft:lost_target"
-					field "target": "self"
-				component "minecraft:physics": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "drowned"
-						family: "zombie"
-						family: "undead"
-						family: "monster"
-				component "minecraft:underwater_movement": field "value": 0.06
 			field "events":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 15
 							field "add":
 								field "component_groups":
 									component group: "minecraft:mode_switcher"
 									component group: "minecraft:ranged_mode"
 							field "remove": empty
-							field "weight": 15
 						randomize item:
+							field "weight": 85
 							field "add": field "component_groups": component group: "minecraft:melee_mode"
 							field "remove": empty
-							field "weight": 85
 				event "minecraft:has_target":
 					field "add": field "component_groups": component group: "minecraft:hunter_mode"
 					field "remove": field "component_groups": component group: "minecraft:wander_mode"
@@ -162,23 +166,25 @@ Added entity "drowned":
 				event "minecraft:switch_to_ranged":
 					field "add": field "component_groups": component group: "minecraft:ranged_mode"
 					field "remove": field "component_groups": component group: "minecraft:melee_mode"
-			field "format_version": "1.2.0"
-		field "defined_in": behavior pack: "vanilla"
 Changed entity "hopper_minecart":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:collision_box":
 					Changed field "width" from 0.78 to 0.98.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:hopper_minecart"
 Changed entity "minecart":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:collision_box":
 					Changed field "width" from 0.78 to 0.98.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:minecart"
 Added entity "thrown_trident":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla"
 		field "minecraft:entity":
+			field "format_version": "1.2.0"
 			field "components":
 				component "minecraft:collision_box":
 					field "height": 0.35
@@ -205,11 +211,10 @@ Added entity "thrown_trident":
 					field "stopOnHurt": true
 					field "uncertaintyBase": 0
 					field "uncertaintyMultiplier": 0
-			field "format_version": "1.2.0"
-		field "defined_in": behavior pack: "vanilla"
 Changed entity "tnt_minecart":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:collision_box":
 					Changed field "width" from 0.78 to 0.98.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:tnt_minecart"

@@ -3,8 +3,14 @@ Difference of "entities" between "1.16.200.57" (beta of "1.16.200") and "1.16.20
 Total entity: 105 (+0, -1)
 Removed entity "goat":
 	behavior pack "experimental":
+		field "defined_in": behavior pack: "experimental_caves_and_cliffs"
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:goat"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "attack_cooldown":
 					component "minecraft:attack_cooldown":
@@ -13,9 +19,6 @@ Removed entity "goat":
 							field "target": "self"
 						field "attack_cooldown_time": [10.0, 15.0]
 				component group "minecraft:goat_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 3
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breed_items": "wheat"
 						field "breeds_with":
@@ -50,6 +53,9 @@ Removed entity "goat":
 								field "transform_to_item": "bucket:1"
 								field "use_item": true
 					component "minecraft:loot": field "table": "loot_tables/entities/goat.json"
+					component "minecraft:behavior.breed":
+						field "priority": 3
+						field "speed_multiplier": 1.0
 				component group "minecraft:goat_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -57,13 +63,60 @@ Removed entity "goat":
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
 					component "minecraft:behavior.follow_parent":
 						field "priority": 6
 						field "speed_multiplier": 1.1
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.5
 			field "components":
 				component "minecraft:attack": field "damage": 5
+				component "minecraft:breathable":
+					field "suffocate_time": 0
+					field "total_supply": 15
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "height": 1.3
+					field "width": 0.9
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "fall"
+						field "damage_modifier": -20.0
+						field "deals_damage": true
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health":
+					field "max": 10
+					field "value": 10
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "cause": "lava"
+							field "damage_per_tick": 4
+							field "filters":
+								filter property "operator": "=="
+								filter property "subject": "self"
+								filter property "test": "in_lava"
+								filter property "value": true
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "soft_distance": 4.0
+				component "minecraft:movement": field "value": 0.4
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "avoid_damage_blocks": true
+					field "avoid_powder_snow": true
+					field "avoid_water": true
+					field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "goat"
+						family: "animal"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.follow_parent":
 					field "priority": 7
@@ -123,58 +176,6 @@ Removed entity "goat":
 					field "items": item: "wheat"
 					field "priority": 4
 					field "speed_multiplier": 1.25
-				component "minecraft:breathable":
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:can_climb": empty
-				component "minecraft:collision_box":
-					field "height": 1.3
-					field "width": 0.9
-				component "minecraft:damage_sensor":
-					field "triggers":
-						field "cause": "fall"
-						field "damage_modifier": -20.0
-						field "deals_damage": true
-				component "minecraft:despawn": field "despawn_from_distance": empty
-				component "minecraft:health":
-					field "max": 10
-					field "value": 10
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:jump.static": empty
-				component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "soft_distance": 4.0
-				component "minecraft:movement": field "value": 0.4
-				component "minecraft:movement.basic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.walk":
-					field "avoid_damage_blocks": true
-					field "avoid_powder_snow": true
-					field "avoid_water": true
-					field "can_path_over_water": true
-				component "minecraft:physics": empty
-				component "minecraft:pushable":
-					field "is_pushable": true
-					field "is_pushable_by_piston": true
-				component "minecraft:type_family":
-					field "family":
-						family: "goat"
-						family: "animal"
-			field "description":
-				description "identifier": "minecraft:goat"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
 			field "events":
 				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group: "attack_cooldown"
 				event "minecraft:ageable_grow_up":
@@ -184,13 +185,12 @@ Removed entity "goat":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
-							field "add": field "component_groups": component group: "minecraft:goat_adult"
 							field "weight": 95
+							field "add": field "component_groups": component group: "minecraft:goat_adult"
 						randomize item:
-							field "add": field "component_groups": component group: "minecraft:goat_baby"
 							field "weight": 5
+							field "add": field "component_groups": component group: "minecraft:goat_baby"
 				event "minecraft:entity_transformed":
 					field "add": field "component_groups": component group: "minecraft:goat_adult"
 					field "remove": empty
 				event "start_event": field "add": field "component_groups": component group: "attack_cooldown"
-		field "defined_in": behavior pack: "experimental_caves_and_cliffs"

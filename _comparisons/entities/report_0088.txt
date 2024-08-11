@@ -3,8 +3,14 @@ Difference of "entities" between "1.13.3" and "1.14.0.1" (beta of "1.14.0").
 Total entity: 99 (+1, -0)
 Added entity "bee":
 	behavior pack "core":
+		field "defined_in": behavior pack: "vanilla_1.14"
 		field "format_version": "1.13.0"
 		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:bee"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
 			field "component_groups":
 				component group "abort_shelter_detection":
 					component "minecraft:environment_sensor":
@@ -50,9 +56,6 @@ Added entity "bee":
 						field "track_target": false
 						field "untrackable_cooldown_delay": 17
 				component group "bee_adult":
-					component "minecraft:behavior.breed":
-						field "priority": 4
-						field "speed_multiplier": 1.0
 					component "minecraft:breedable":
 						field "breed_items":
 							item: "minecraft:red_flower"
@@ -72,6 +75,9 @@ Added entity "bee":
 					component "minecraft:experience_reward":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_multiplier": 1.0
 				component group "bee_baby":
 					component "minecraft:ageable":
 						field "duration": 1200
@@ -86,11 +92,11 @@ Added entity "bee":
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
 					component "minecraft:behavior.follow_parent":
 						field "priority": 6
 						field "speed_multiplier": 1.1
-					component "minecraft:is_baby": empty
-					component "minecraft:scale": field "value": 0.5
 				component group "countdown_to_perish":
 					component "minecraft:mark_variant": field "value": 1
 					component "minecraft:timer":
@@ -107,6 +113,12 @@ Added entity "bee":
 						field "value": 0.0
 				component group "easy_attack": component "minecraft:attack": field "damage": 2
 				component group "find_hive":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 180
+						field "time_down_event":
+							field "event": "return_to_home_event"
+							field "target": "self"
 					component "minecraft:behavior.move_to_block":
 						field "goal_radius": 1.2
 						field "interval": 20
@@ -122,12 +134,6 @@ Added entity "bee":
 							block: "bee_nest"
 							block: "beehive"
 						field "target_offset": [0.5, 0.5, 0.5]
-					component "minecraft:timer":
-						field "looping": false
-						field "time": 180
-						field "time_down_event":
-							field "event": "return_to_home_event"
-							field "target": "self"
 				component group "hard_attack":
 					component "minecraft:attack":
 						field "damage": 2
@@ -151,6 +157,10 @@ Added entity "bee":
 						field "event_name": "ambient.pollinate"
 						field "range": 3.0
 						field "value": 2.0
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 180
+						field "time_down_event": field "event": "find_flower_timeout"
 					component "minecraft:behavior.move_to_block":
 						field "goal_radius": 1.2
 						field "interval": 0
@@ -174,10 +184,6 @@ Added entity "bee":
 							block: "minecraft:double_plant:12"
 							block: "minecraft:double_plant:13"
 						field "target_selection_method": "random"
-					component "minecraft:timer":
-						field "looping": true
-						field "time": 180
-						field "time_down_event": field "event": "find_flower_timeout"
 				component group "normal_attack":
 					component "minecraft:attack":
 						field "damage": 2
@@ -245,6 +251,12 @@ Added entity "bee":
 											filter property "test": "has_component"
 											filter property "value": "minecraft:is_charged"
 				component group "take_nearest_target":
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 5
+						field "time_down_event":
+							field "event": "calmed_down"
+							field "target": "self"
 					component "minecraft:behavior.nearest_attackable_target":
 						field "entity_types":
 							entity type:
@@ -253,35 +265,8 @@ Added entity "bee":
 									filter property "test": "is_family"
 									filter property "value": "player"
 								field "max_dist": 10
-					component "minecraft:timer":
-						field "looping": true
-						field "time": 5
-						field "time_down_event":
-							field "event": "calmed_down"
-							field "target": "self"
 				component group "track_attacker": component "minecraft:behavior.hurt_by_target": field "priority": 1
 			field "components":
-				component "minecraft:behavior.float": field "priority": 19
-				component "minecraft:behavior.random_hover":
-					field "hover_height": [1, 4]
-					field "interval": 1
-					field "priority": 11
-					field "xz_dist": 8
-					field "y_dist": 8
-					field "y_offset": -1
-				component "minecraft:behavior.tempt":
-					field "can_tempt_vertically": true
-					field "items":
-						item: "minecraft:red_flower"
-						item: "minecraft:yellow_flower"
-						item: "minecraft:wither_rose"
-						item: "minecraft:double_plant:8"
-						item: "minecraft:double_plant:9"
-						item: "minecraft:double_plant:12"
-						item: "minecraft:double_plant:13"
-					field "priority": 5
-					field "speed_multiplier": 1.25
-					field "within_radius": 8
 				component "minecraft:block_sensor":
 					field "on_break":
 						event:
@@ -345,11 +330,27 @@ Added entity "bee":
 						family: "bee"
 						family: "mob"
 						family: "arthropod"
-			field "description":
-				description "identifier": "minecraft:bee"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
+				component "minecraft:behavior.float": field "priority": 19
+				component "minecraft:behavior.random_hover":
+					field "hover_height": [1, 4]
+					field "interval": 1
+					field "priority": 11
+					field "xz_dist": 8
+					field "y_dist": 8
+					field "y_offset": -1
+				component "minecraft:behavior.tempt":
+					field "can_tempt_vertically": true
+					field "items":
+						item: "minecraft:red_flower"
+						item: "minecraft:yellow_flower"
+						item: "minecraft:wither_rose"
+						item: "minecraft:double_plant:8"
+						item: "minecraft:double_plant:9"
+						item: "minecraft:double_plant:12"
+						item: "minecraft:double_plant:13"
+					field "priority": 5
+					field "speed_multiplier": 1.25
+					field "within_radius": 8
 			field "events":
 				event "abort_sheltering":
 					field "add":
@@ -439,20 +440,20 @@ Added entity "bee":
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
+							field "weight": 95
 							field "add":
 								field "component_groups":
 									component group: "bee_adult"
 									component group: "track_attacker"
 									component group: "shelter_detection"
 									component group: "look_for_food"
-							field "weight": 95
 						randomize item:
+							field "weight": 5
 							field "add":
 								field "component_groups":
 									component group: "bee_baby"
 									component group: "shelter_detection"
 									component group: "look_for_food"
-							field "weight": 5
 				event "minecraft:exited_disturbed_hive":
 					field "add":
 						field "component_groups":
@@ -491,7 +492,6 @@ Added entity "bee":
 							component group: "look_for_food"
 							component group: "collect_nectar"
 							component group: "shelter_detection"
-		field "defined_in": behavior pack: "vanilla_1.14"
 Changed entity "dolphin":
 	Changed behavior pack "core":
 		Changed field "defined_in":
@@ -603,9 +603,11 @@ Changed entity "tnt":
 			Changed field "component_groups":
 				Changed component group "from_explosion":
 					Changed component "minecraft:explode":
+						Unchanged field "power": 4
 						Added field "allow_damage_underwater" of false.
 			Changed field "components":
 				Changed component "minecraft:explode":
+					Unchanged field "power": 4
 					Added field "allow_damage_underwater" of false.
 Changed entity "turtle":
 	Changed behavior pack "core":
