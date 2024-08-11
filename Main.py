@@ -94,8 +94,8 @@ if __name__ == "__main__":
     main()
 
 pass
+# TODO: make Delegates be able to have TypeVerifiers for their data and keys data.
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
-# TODO: make Keymaps have requirable keys.
 # TODO: migrate dataminers to scripts
 # TODO: refactor ResourcePackDataMiner and BehaviorPackDataMiner to use import from scripts/normalizers/collapse_resource_packs/__util.py
 
