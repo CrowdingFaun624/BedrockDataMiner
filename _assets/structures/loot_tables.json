@@ -100,7 +100,7 @@
         "sort": "by_component_order",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
-            "type": {"type": "str"},
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
             "random_sequence": {"type": "str", "tags": ["outdated"]},
             "pools": {"type": "list", "subcomponent": "pools"}
         }
@@ -158,12 +158,12 @@
             "aux_val": {"type": "int"},
             "auxVal": {"type": "int"},
             "conditions": {"type": "dict", "subcomponent": "conditions"},
-            "count": {"type": "int"},
+            "count": {"type": "int", "delegate_arguments": {"always_print": true}},
             "functions": {"type": "dict", "subcomponent": "functions"},
-            "name": {"type": "str"},
+            "name": {"type": "str", "delegate_arguments": {"always_print": true}},
             "pools": {"type": "list", "subcomponent": "pools"},
             "quality": {"type": "int"},
-            "type": {"type": "str"},
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
             "weight": {"type": "int"}
         }
     },
@@ -240,7 +240,7 @@
         "keys": {
             "max": {"type": "int"},
             "min": {"type": "int"},
-            "name": {"type": "str"}
+            "name": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}}
         }
     },
     "function.enchant_random_gear": {
@@ -258,7 +258,7 @@
     "function.enchant_with_levels": {
         "type": "Keymap",
         "keys": {
-            "levels": {"type": ["decimal", "dict"], "subcomponent": "range_decimal_or_decimal"},
+            "levels": {"type": ["decimal", "dict"], "subcomponent": "range_decimal_or_decimal", "delegate_arguments": {"always_print": true}},
             "treasure": {"type": "bool"}
         }
     },
@@ -325,7 +325,7 @@
         "keys": {
             "author": {"type": "str"},
             "pages": {"type": "list", "subcomponent": "function.set_book_contents:pages"},
-            "title": {"type": "str"}
+            "title": {"type": "str", "delegate_arguments": {"always_print": true}}
         }
     },
     "function.set_book_contents:pages": {
@@ -408,7 +408,7 @@
     "function.set_stew_effect:effects.item": {
         "type": "Keymap",
         "keys": {
-            "id": {"type": "int"}
+            "id": {"type": "int", "delegate_arguments": {"always_print": true}}
         }
     },
     "function.specific_enchants": {
@@ -444,7 +444,7 @@
     "function.specific_enchants:enchants.item": {
         "type": "Keymap",
         "keys": {
-            "id": {"type": "str"},
+            "id": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
             "level": {"type": ["int", "list"], "subcomponent": "range_list_int_or_int"}
         }
     },
@@ -481,13 +481,13 @@
     "condition.entity_killed": {
         "type": "Keymap",
         "keys": {
-            "entity_type": {"type": "str"}
+            "entity_type": {"type": "str", "delegate_arguments": {"always_print": true}}
         }
     },
     "condition.entity_properties": {
         "type": "Keymap",
         "keys": {
-            "entity": {"type": "str"},
+            "entity": {"type": "str", "delegate_arguments": {"always_print": true}},
             "properties": {"type": "dict", "subcomponent": "condition.entity_properties:properties"}
         }
     },
@@ -524,7 +524,7 @@
             "count": {"type": "dict", "subcomponent": "condition.match_tool:count"},
             "durability": {"type": "dict", "subcomponent": "condition.match_tool:durability"},
             "enchantments": {"type": "list", "subcomponent": "condition.match_tool:enchantments"},
-            "item": {"type": "str"}
+            "item": {"type": "str", "delegate_arguments": {"always_print": true}}
         }
     },
     "condition.match_tool:count": {
@@ -559,7 +559,7 @@
     "condition.match_tool:enchantments.item": {
         "type": "Keymap",
         "keys": {
-            "enchantment": {"type": "str"},
+            "enchantment": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
             "levels": {"type": "dict", "subcomponent": "condition.match_tool:enchantments.item.levels"},
             "range_max": {"type": "int"},
             "range_min": {"type": "int"}
@@ -597,7 +597,7 @@
     "condition.random_difficulty_chance": {
         "type": "Keymap",
         "keys": {
-            "default_chance": {"type": "decimal"},
+            "default_chance": {"type": "decimal", "delegate_arguments": {"always_print": true}},
             "easy": {"type": "decimal"},
             "hard": {"type": "decimal"},
             "peaceful": {"type": "decimal"}
