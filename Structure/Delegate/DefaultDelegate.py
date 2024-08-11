@@ -135,6 +135,8 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
         For lists, calls `enumerate(data)`.
         For dicts, calls `data.items`.
         '''
+        if isinstance(self.structure, AbstractMappingStructure.AbstractMappingStructure) and self.structure.sorting_function is not None and isinstance(data, dict):
+            data = {key: value for key, value in sorted(data.items(), key=self.structure.sorting_function)}
         if self.structure is None or isinstance(self.structure, (PassthroughStructure.PassthroughStructure, PrimitiveStructure.PrimitiveStructure)):
             return ((None, data),) # type: ignore
         match data:
