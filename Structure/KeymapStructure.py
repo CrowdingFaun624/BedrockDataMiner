@@ -57,8 +57,9 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             pre_normalized_types:tuple[type,...],
             tags:dict[str,list[str]],
             keys_with_normalizers:list[str],
+            required_keys:list[str],
         ) -> None:
-        super().link_substructures(delegate, key_structure, normalizer, post_normalizer)
+        super().link_substructures(delegate, key_structure, normalizer, post_normalizer, required_keys)
         self.keys = keys
         self.key_types = key_types
         self.pre_normalized_types = pre_normalized_types

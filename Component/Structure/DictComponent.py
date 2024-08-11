@@ -34,6 +34,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("required_keys", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("sort", "a str", False, TypeVerifier.EnumTypeVerifier([item.value for item in DictSorting])),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -53,6 +54,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.key_weight = data.get("key_weight", DictStructure.KEY_WEIGHT)
         self.value_weight = data.get("value_weight", DictStructure.VALUE_WEIGHT)
         self.sort = DictSorting[data.get("sort", "none")]
+        self.required_keys = data.get("required_keys", [])
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
@@ -101,7 +103,8 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),
             pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
-            tags=self.tags_field.get_finals()
+            tags=self.tags_field.get_finals(),
+            required_keys=self.required_keys,
         )
         self.my_type = set(self.this_type_field.get_types())
 

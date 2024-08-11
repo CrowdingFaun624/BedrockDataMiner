@@ -1,6 +1,6 @@
 from typing import Any, Generic, Hashable, Iterable, TypedDict, TypeVar, cast
 
-from typing_extensions import Self
+from typing_extensions import NotRequired, Self
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.Delegate.Delegate as Delegate
@@ -65,7 +65,7 @@ class Line():
         return "<%s indent %i; len %i>" % (self.__class__.__name__, self.indents, len(self.text))
 
 class DefaultDelegateKeysTypedDict(TypedDict):
-    ...
+    always_print: NotRequired[bool]
 
 class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tuple[Line, int]]], Generic[a]):
 
@@ -90,6 +90,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
             self.show_item_key = not isinstance(self.structure, SetStructure.SetStructure)
         else:
             self.show_item_key = show_item_key and not isinstance(self.structure, PassthroughStructure.PassthroughStructure)
+        self.always_print_keys = cast(set[a], {key for key, value in keys.items() if value.get("always_print", False)})
 
     def stringify(self, data:Any) -> str:
         '''
@@ -241,7 +242,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                 current_length += 1
                 structure = structure_set[D.DiffType.not_diff]
                 if structure is None:
-                    if self.print_all and can_print_print_all:
+                    if (self.print_all or new_index in self.always_print_keys) and can_print_print_all:
                         substructure_output = [Line(self.stringify(item))]
                         output.extend(self.print_item(new_index, substructure_output, message="Unchanged "))
                     pass # This means that it is not a Diff and does not contains Diffs, so there is no text to write.
@@ -252,7 +253,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                         any_changes = True
                         output.append(Line("Changed %s%s:") % (self.field, self.get_item_key(new_index)))
                         output.extend(line.indent() for line in substructure_output)
-                    elif self.print_all and can_print_print_all:
+                    elif (self.print_all or new_index in self.always_print_keys) and can_print_print_all:
                         substructure_output, new_exceptions = structure.print_text(item, environment[1])
                         exceptions.extend(exception.add(self.get_structure().name, new_index) for exception in new_exceptions)
                         output.extend(self.print_item(new_index, substructure_output, message="Unchanged "))

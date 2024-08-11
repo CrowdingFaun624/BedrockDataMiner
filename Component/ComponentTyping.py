@@ -74,6 +74,7 @@ class DictTypedDict(TypedDict):
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
+    required_keys: NotRequired[list[str]]
     sort: NotRequired[Literal["none", "by_key", "by_value"]]
     subcomponent: Required[str|None]
     tags: NotRequired[str|list[str]]
@@ -93,7 +94,7 @@ class GroupTypedDict(TypedDict):
 
 class KeymapKeyTypedDict(TypedDict):
     delegate_arguments: NotRequired[dict[str,Any]]
-    pre_normalized_type: NotRequired[str|list[str]]
+    required: NotRequired[bool]
     subcomponent: NotRequired[Union[str,None,"StructureTypedDicts"]]
     tags: NotRequired[str|list[str]]
     type: Required[str|list[str]]

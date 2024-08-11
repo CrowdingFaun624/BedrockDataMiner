@@ -37,6 +37,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         TypeVerifier.TypedDictKeyTypeVerifier("key_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
             TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
+            TypeVerifier.TypedDictKeyTypeVerifier("required", "a bool", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent, or None", False, (str, dict, type(None))),
             TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -120,6 +121,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys},
             keys_with_normalizers=[key.key for key in self.keys if (subcomponent := key.get_subcomponent()) is not None and subcomponent.children_has_normalizer] if self.children_has_normalizer else [],
+            required_keys=[key.key for key in self.keys if key.required],
         )
         self.my_type = set(self.this_type_field.get_types())
 

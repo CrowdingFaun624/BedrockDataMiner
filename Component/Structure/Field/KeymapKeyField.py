@@ -28,6 +28,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         self.allow_inline = allow_inline
         self.weight = data.get("weight", 1)
         self.delegate_arguments = data.get("delegate_arguments", {})
+        self.required = data.get("required", False)
 
         self.types_field = TypeListField.TypeListField(data["type"] if isinstance(data["type"], list) else [data["type"]], ["keys", key, "type"])
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("subcomponent", None), ["keys", key, "subcomponent"], allow_inline=allow_inline)

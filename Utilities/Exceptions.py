@@ -1882,6 +1882,25 @@ class StructureExceptionError(StructureException):
         output += "[%s]" % (", ".join(exception.finalize().stringify() for exception in self.exceptions))
         return output
 
+class StructureRequiredKeyMissingError(StructureException):
+    "A required key is missing."
+
+    def __init__(self, structure:"Structure.Structure", key:str, message:Optional[str]=None) -> None:
+        '''
+        :structure: The Structure that should have the key.
+        :key: The required key that is missing from the data.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(structure, key, message)
+        self.structure = structure
+        self.key = key
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Required key \"%s\" from %r is missing" % (self.key, self.structure)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class StructureSetKeyError(StructureException):
     "A StructureSet does not have the DiffType used to access it."
 

@@ -57,12 +57,14 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         key_structure:Structure.Structure[str]|None,
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
+        required_keys:list[str],
     ) -> None:
         super().link_substructures(delegate)
         self.delegate = delegate
         self.key_structure = key_structure
         self.normalizer = normalizer
         self.post_normalizer = post_normalizer
+        self.required_keys = required_keys
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None: ...
 
@@ -91,6 +93,9 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             output.extend(exception.add(self.name, key) for exception in new_exceptions)
             if structure is not None:
                 output.extend(exception.add(self.name, key) for exception in structure.check_all_types(value, environment))
+        for key in self.required_keys:
+            if key not in data:
+                output.append(Trace.ErrorTrace(Exceptions.StructureRequiredKeyMissingError(self, key), self.name, None, data))
         return output
 
     def get_similarity(self, data1: MutableMapping[str, d], data2: MutableMapping[str, d], environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
