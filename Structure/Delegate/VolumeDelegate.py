@@ -9,6 +9,7 @@ import Structure.KeymapStructure as KeymapStructure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 a = TypeVar("a")
 
@@ -25,6 +26,14 @@ class DataDiffTypedDict(TypedDict):
     size: tuple[int|D.Diff[int,int],int|D.Diff[int,int],int|D.Diff[int,int]]
 
 class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
+
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("layer_characters", "a str", False, str, lambda key, value: (len(value) == len(set(value)), "all characters must be unique")),
+        TypeVerifier.TypedDictKeyTypeVerifier("print_additional_data", "a bool", False, bool),
+    )
+    
+    applies_to = (KeymapStructure.KeymapStructure,)
 
     def __init__(
         self,

@@ -8,6 +8,7 @@ import Structure.Delegate.DefaultDelegate as SU
 import Structure.Delegate.Delegate as Delegate
 import Structure.Delegate.VolumeDelegate as VolumeDelegate
 import Utilities.Exceptions as Exceptions
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Component.Component as Component
@@ -36,11 +37,18 @@ class OptionalDelegateField(Field.Field):
         Returns a Delegate or None.
         :structure: The parent Structure of this Delegate.
         :keys: Arguments for the Delegate's keys.
-        :exceptions: Optional list to add Exceptions with creating the Delegate to, instead of raising them.
+        :exceptions: List to add Exceptions with creating the Delegate to, instead of raising them.
         '''
+        if (exceptions_missing := exceptions is None):
+            exceptions = []
         delegate_type = self.get_delegate_type()
         if delegate_type is None:
             return None
+        if delegate_type.type_verifier is not None:
+            exceptions.extend(delegate_type.type_verifier.verify(self.arguments, TypeVerifier.Trace([(structure, TypeVerifier.TraceItemType.OTHER)])))
+        if keys is not None and delegate_type.key_type_verifier is not None:
+            for key, key_arguments in keys.items():
+                exceptions.extend(delegate_type.key_type_verifier.verify(key_arguments, TypeVerifier.Trace([(structure, TypeVerifier.TraceItemType.OTHER), (key, TypeVerifier.TraceItemType.KEY)])))
         if keys is None:
             keys = {}
         exception:Exception|None = None
@@ -50,10 +58,9 @@ class OptionalDelegateField(Field.Field):
             print("Failed to create Delegate of %r!" % (structure,))
             exception = e
         if exception is not None:
-            if exceptions is None:
-                raise exception
-            else:
-                exceptions.append(exception)
+            exceptions.append(exception)
+        if exceptions_missing and len(exceptions) > 0:
+            raise exceptions[0]
 
     def set_field(
         self,

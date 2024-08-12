@@ -17,6 +17,7 @@ import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 a = TypeVar("a", bound=Hashable)
 '''
@@ -70,6 +71,18 @@ class DefaultDelegateKeysTypedDict(TypedDict):
 class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tuple[Line, int]]], Generic[a]):
 
     applies_to = (ObjectStructure.ObjectStructure,)
+
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str or null", False, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("show_item_key", "a bool or null", False, (bool, type(None))),
+    )
+
+    key_type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("always_print", "a bool", False, bool),
+    )
 
     def __init__(
         self,

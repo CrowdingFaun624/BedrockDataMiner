@@ -1,15 +1,20 @@
 from typing import Any
 
-import Structure.Delegate.Delegate as Delegate
 import Structure.Delegate.DefaultDelegate as SU
+import Structure.Delegate.Delegate as Delegate
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, str]):
 
     applies_to = (StructureBase.StructureBase,)
+
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+    )
 
     def __init__(self, structure: StructureBase.StructureBase|None, keys:dict[str,dict[str,Any]], name:str) -> None:
         super().__init__(structure, keys)

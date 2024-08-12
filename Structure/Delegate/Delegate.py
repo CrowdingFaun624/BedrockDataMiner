@@ -7,6 +7,7 @@ import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 a = TypeVar("a")
 '''
@@ -28,6 +29,18 @@ class Delegate(Generic[a, b, c]):
     The first TypeVar (`a`) is the output of this Delegate.
     The second TypeVar (`b`) is the Structure tyeps this Delegate works on. It can be a subclass of Structure or StructureBase.
     The third TypeVar (`c`) is the data that is stored in CacheStructures with this Delegate.
+    '''
+
+    type_verifier:TypeVerifier.TypeVerifier|None = None
+    '''
+    TypeVerifier used to verify the parameters of this Delegate.
+    If not present, will use the function signature of `__init__`.
+    '''
+
+    key_type_verifier:TypeVerifier.TypeVerifier|None = None
+    '''
+    TypeVerifier used to verify each value in `keys` of this Delegate.
+    If not present, no checking is done for `keys`.
     '''
 
     applies_to:tuple[type[StructureBase.StructureBase]|type[Structure.Structure],...] = (StructureBase.StructureBase, ObjectStructure.ObjectStructure, PrimitiveStructure.PrimitiveStructure)
