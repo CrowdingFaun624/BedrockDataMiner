@@ -55,8 +55,8 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         exceptions = super().link_finals()
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
-            delegate=self.delegate_field.create_delegate(self.get_final()),
-            default_delegate=self.default_delegate_field.create_delegate(None),
+            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
+            default_delegate=self.default_delegate_field.create_delegate(None, exceptions=exceptions),
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),
         )

@@ -44,7 +44,7 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
         self.get_final().link_substructures(
-            delegate=self.delegate_field.create_delegate(self.get_final()),
+            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
             pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.types_field.get_types(),

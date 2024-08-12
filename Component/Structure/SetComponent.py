@@ -67,7 +67,7 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         exceptions = super().link_finals()
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
-            delegate=self.delegate_field.create_delegate(self.get_final()),
+            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),

@@ -65,14 +65,14 @@ class NbtBaseComponent(StructureComponent.StructureComponent[NbtBaseStructure.Nb
             children_tags=self.children_tags,
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         types = self.types_field.get_types()
         self.my_type = set(types)
         self.my_type.add(NbtReader.NbtBytes)
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
-            delegate=self.delegate_field.create_delegate(self.get_final()),
+            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
             types=types,
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),

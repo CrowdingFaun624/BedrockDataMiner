@@ -113,7 +113,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         delegate_keys_arguments = {key.key: key.delegate_arguments for key in self.keys}
         self.get_final().link_substructures(
             keys={key.key: key.get_subcomponent() for key in self.keys},
-            delegate=self.delegate_field.create_delegate(self.get_final(), delegate_keys_arguments),
+            delegate=self.delegate_field.create_delegate(self.get_final(), delegate_keys_arguments, exceptions=exceptions),
             key_types={key.key: key.get_types() for key in self.keys},
             key_structure=self.key_structure_field.get_final(),
             normalizer=self.normalizer_field.get_finals(),

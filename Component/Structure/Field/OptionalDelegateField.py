@@ -31,7 +31,13 @@ class OptionalDelegateField(Field.Field):
             raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_delegate_type, self)
         return self.delegate_type
 
-    def create_delegate(self, structure:Union["Structure.Structure", "StructureBase.StructureBase", None], keys:dict[str,Any]|None=None) -> Delegate.Delegate|None:
+    def create_delegate(self, structure:Union["Structure.Structure", "StructureBase.StructureBase", None], keys:dict[str,Any]|None=None, exceptions:list[Exception]|None=None) -> Delegate.Delegate|None:
+        '''
+        Returns a Delegate or None.
+        :structure: The parent Structure of this Delegate.
+        :keys: Arguments for the Delegate's keys.
+        :exceptions: Optional list to add Exceptions with creating the Delegate to, instead of raising them.
+        '''
         delegate_type = self.get_delegate_type()
         if delegate_type is None:
             return None
@@ -44,7 +50,10 @@ class OptionalDelegateField(Field.Field):
             print("Failed to create Delegate of %r!" % (structure,))
             exception = e
         if exception is not None:
-            raise exception
+            if exceptions is None:
+                raise exception
+            else:
+                exceptions.append(exception)
 
     def set_field(
         self,

@@ -67,7 +67,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.my_type = set(types)
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
-            delegate=self.delegate_field.create_delegate(self.get_final()),
+            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
             types=types,
         )
         return exceptions

@@ -63,7 +63,7 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         self.my_type = all_types
         self.get_final().link_substructures(
             substructures=substructures,
-            delegate=self.delegate_field.create_delegate(self.get_final()),
+            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
             types=tuple(self.my_type),
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),

@@ -97,7 +97,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         exceptions = super().link_finals()
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
-            delegate=self.delegate_field.create_delegate(self.get_final()),
+            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
             key_structure=self.key_structure_field.get_final(),
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
