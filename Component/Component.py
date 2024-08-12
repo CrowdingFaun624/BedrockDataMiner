@@ -95,14 +95,16 @@ class Component(Generic[a]):
         for inline_component in self.inline_components:
             inline_component.create_final()
 
-    def link_finals(self) -> None:
+    def link_finals(self) -> list[Exception]:
         '''Links this Component's final object to other final objects.'''
+        exceptions:list[Exception] = []
         for field in self.fields:
             field.resolve_link_finals()
         if self.inline_components is None:
             raise Exceptions.AttributeNoneError("inline_components", self)
         for inline_component in self.inline_components:
-            inline_component.link_finals()
+            exceptions.extend(inline_component.link_finals())
+        return exceptions
 
     def check(self) -> list[Exception]:
         '''Make sure that this Component's types are all in order; no error could occur.'''

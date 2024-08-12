@@ -42,14 +42,15 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
         super().create_final()
         self.final = VersionFile.VersionFile()
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         version = cast("VersionComponent.VersionComponent", self.get_inline_parent()).get_final()
         self.get_final().link_finals(
             version=version,
             version_file_type=self.version_file_type_field.get_component().get_final(),
             accessors=list(self.accessors_field.map(lambda accessor_component: accessor_component.get_final())),
         )
+        return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()

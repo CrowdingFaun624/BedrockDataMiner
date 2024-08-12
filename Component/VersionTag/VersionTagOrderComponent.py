@@ -53,8 +53,8 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
         super().create_final()
         self.final = VersionTagOrder.VersionTagOrder()
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         self.get_final().link_finals(
             order=list(self.order_field.map(lambda component_list_field: set(component_list_field.map(lambda version_tag_component: version_tag_component.get_final())))),
             allowed_children={version_tag_order_allowed_children_field.get_key().get_final(): list(version_tag_component.get_final() for version_tag_component in version_tag_order_allowed_children_field.get_children()) for version_tag_order_allowed_children_field in self.allowed_children_field},
@@ -62,6 +62,7 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
             tags_before_top_level_tag=list(self.tags_before_top_level_tag.map(lambda version_tag_component: version_tag_component.get_final())),
             tags_after_top_level_tag=list(self.tags_after_top_level_tag.map(lambda version_tag_component: version_tag_component.get_final())),
         )
+        return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()

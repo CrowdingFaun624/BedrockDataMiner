@@ -61,12 +61,13 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
             is_unreleased_tag=self.is_unreleased_tag
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         latest_slot_component = self.latest_slot_field.get_component()
         self.get_final().link_finals(
             latest_slot=latest_slot_component.get_final() if latest_slot_component is not None else None,
         )
+        return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()

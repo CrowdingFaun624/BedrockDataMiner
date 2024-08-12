@@ -61,8 +61,8 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
             children_tags=self.children_tags,
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         types = self.types_field.get_types()
         self.my_type = set(types)
         self.get_final().link_substructures(
@@ -70,3 +70,4 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
             delegate=self.delegate_field.create_delegate(self.get_final()),
             types=types,
         )
+        return exceptions

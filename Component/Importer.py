@@ -134,10 +134,16 @@ def create_finals(all_components:dict[str,dict[str,Component.Component]]) -> Non
         for component in components.values():
             component.create_final()
 
-def link_finals(all_components:dict[str,dict[str,Component.Component]]) -> None:
+def link_finals(all_components:dict[str,dict[str,Component.Component]]) -> list[Exception]:
+    exceptions:list[Exception] = []
     for components in all_components.values():
         for component in components.values():
-            component.link_finals()
+            exceptions.extend(component.link_finals())
+    if len(exceptions) > 0:
+        for exception in exceptions:
+            traceback.print_exception(exception)
+        raise Exceptions.ComponentParseError()
+    return exceptions
 
 def check_components(all_components:dict[str,dict[str,Component.Component]]) -> None:
     exceptions:list[Exception] = []

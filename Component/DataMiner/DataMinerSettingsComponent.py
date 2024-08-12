@@ -63,8 +63,8 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
             kwargs=self.arguments
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         parent = cast("DataMinerCollectionComponent.DataMinerCollectionComponent", self.get_inline_parent())
         self.get_final().link_subcomponents(
             file_name=parent.file_name,
@@ -76,6 +76,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
             end_version=self.new_field.get_final(),
             version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.get_final()))
         )
+        return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()

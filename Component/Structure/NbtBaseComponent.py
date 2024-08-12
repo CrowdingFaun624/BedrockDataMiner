@@ -78,3 +78,4 @@ class NbtBaseComponent(StructureComponent.StructureComponent[NbtBaseStructure.Nb
             post_normalizer=self.post_normalizer_field.get_finals(),
             pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else types,
         )
+        return exceptions

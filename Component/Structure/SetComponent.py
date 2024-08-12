@@ -63,8 +63,8 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
             children_tags=self.children_tags,
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
             delegate=self.delegate_field.create_delegate(self.get_final()),
@@ -75,3 +75,4 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
             tags=self.tags_field.get_finals()
         )
         self.my_type = set(self.this_type_field.get_types())
+        return exceptions

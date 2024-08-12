@@ -34,10 +34,11 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
             name=self.name,
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         self.get_final().link_finals(
             manager_class=self.manager_class_field.get_final(),
             accessor_class=self.accessor_class_field.get_final(),
             parameters=self.parameters_field.get_final()
         )
+        return exceptions

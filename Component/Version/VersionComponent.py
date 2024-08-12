@@ -55,13 +55,14 @@ class VersionComponent(Component.Component[Version.Version]):
             index=self.get_index(),
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         self.get_final().link_finals(
             parent=self.parent_field.get_final(),
             tags=list(self.tags_field.map(lambda version_tag_component: version_tag_component.get_final())),
             version_files=list(self.files_field.map(lambda version_file_component: version_file_component.get_final())),
         )
+        return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()

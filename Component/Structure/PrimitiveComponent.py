@@ -41,8 +41,8 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
             children_tags=self.children_tags,
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         self.get_final().link_substructures(
             delegate=self.delegate_field.create_delegate(self.get_final()),
             types=self.types_field.get_types(),
@@ -51,3 +51,4 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
             tags=self.tags_field.get_tags(),
         )
         self.my_type = set(self.types_field.get_types())
+        return exceptions

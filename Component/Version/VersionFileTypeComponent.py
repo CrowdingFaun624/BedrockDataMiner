@@ -57,9 +57,10 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
             auto_assign_arguments=self.auto_assign_arguments
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         self.get_final().link_finals(
             allowed_accessor_types=list(self.allowed_accessor_types_field.map(lambda accessor_type_component: accessor_type_component.get_final())),
             auto_assign_accessor_type=accessor_type_component.get_final() if (accessor_type_component := self.auto_assign_accessor_type.get_component()) is not None else None,
         )
+        return exceptions

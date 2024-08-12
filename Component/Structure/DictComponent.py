@@ -93,8 +93,8 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             children_tags=self.children_tags,
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
             delegate=self.delegate_field.create_delegate(self.get_final()),
@@ -107,6 +107,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             required_keys=self.required_keys,
         )
         self.my_type = set(self.this_type_field.get_types())
+        return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()

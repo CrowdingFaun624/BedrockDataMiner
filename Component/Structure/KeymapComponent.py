@@ -108,8 +108,8 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             children_tags=self.children_tags,
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         delegate_keys_arguments = {key.key: key.delegate_arguments for key in self.keys}
         self.get_final().link_substructures(
             keys={key.key: key.get_subcomponent() for key in self.keys},
@@ -124,6 +124,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             required_keys=[key.key for key in self.keys if key.required],
         )
         self.my_type = set(self.this_type_field.get_types())
+        return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()

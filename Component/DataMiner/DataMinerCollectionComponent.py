@@ -62,12 +62,13 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
             name=self.name,
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         self.get_final().link_subcomponents(
             structure=self.structure_field.get_final(),
             dataminer_settings=list(self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.get_component().get_final()))
         )
+        return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()

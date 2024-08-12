@@ -54,8 +54,8 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
             children_tags=self.children_tags,
         )
 
-    def link_finals(self) -> None:
-        super().link_finals()
+    def link_finals(self) -> list[Exception]:
+        exceptions = super().link_finals()
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
             delegate=self.delegate_field.create_delegate(self.get_final()),
@@ -66,3 +66,4 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
             tags=self.tags_field.get_finals()
         )
         self.my_type = set(self.this_type_field.get_types())
+        return exceptions
