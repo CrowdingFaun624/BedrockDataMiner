@@ -70,7 +70,7 @@ class DefaultDelegateKeysTypedDict(TypedDict):
 
 class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tuple[Line, int]]], Generic[a]):
 
-    applies_to = (ObjectStructure.ObjectStructure,)
+    applies_to = (Structure.Structure, type(None))
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str or null", False, (str, type(None))),

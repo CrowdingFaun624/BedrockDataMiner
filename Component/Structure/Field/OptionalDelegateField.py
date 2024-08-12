@@ -7,6 +7,8 @@ import Structure.Delegate.DefaultBaseDelegate as DefaultBaseDelegate
 import Structure.Delegate.DefaultDelegate as SU
 import Structure.Delegate.Delegate as Delegate
 import Structure.Delegate.VolumeDelegate as VolumeDelegate
+import Structure.PassthroughStructure as Pas
+import Structure.PrimitiveStructure as Prim
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -51,16 +53,20 @@ class OptionalDelegateField(Field.Field):
                 exceptions.extend(delegate_type.key_type_verifier.verify(key_arguments, TypeVerifier.Trace([(structure, TypeVerifier.TraceItemType.OTHER), (key, TypeVerifier.TraceItemType.KEY)])))
         if keys is None:
             keys = {}
-        exception:Exception|None = None
-        try:
-            return delegate_type(structure, keys, **self.arguments)
-        except Exception as e:
-            print("Failed to create Delegate of %r!" % (structure,))
-            exception = e
-        if exception is not None:
-            exceptions.append(exception)
+        if not isinstance(structure, delegate_type.applies_to):
+            exceptions.append(Exceptions.InapplicableDelegateError(delegate_type, structure, delegate_type.applies_to))
+        if len(exceptions) == 0:
+            try:
+                delegate = delegate_type(structure, keys, **self.arguments)
+            except Exception as e:
+                print("Failed to create Delegate of %r!" % (structure,))
+                exceptions.append(e)
+                delegate = None
+        else:
+            delegate = None
         if exceptions_missing and len(exceptions) > 0:
             raise exceptions[0]
+        return delegate
 
     def set_field(
         self,

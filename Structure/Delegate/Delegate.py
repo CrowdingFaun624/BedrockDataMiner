@@ -43,7 +43,7 @@ class Delegate(Generic[a, b, c]):
     If not present, no checking is done for `keys`.
     '''
 
-    applies_to:tuple[type[StructureBase.StructureBase]|type[Structure.Structure],...] = (StructureBase.StructureBase, ObjectStructure.ObjectStructure, PrimitiveStructure.PrimitiveStructure)
+    applies_to:tuple[type[StructureBase.StructureBase]|type[Structure.Structure]|type[None],...] = (StructureBase.StructureBase, ObjectStructure.ObjectStructure, PrimitiveStructure.PrimitiveStructure, type(None))
 
     def __init__(self, structure:b|None, keys:dict[str,Any]) -> None:
         '''

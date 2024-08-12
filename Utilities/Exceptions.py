@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     import DataMiner.DataMinerSettings as DataMinerSettings
     import DataMiner.TagSearcher.TagSearcherDataMiner as TagSearcherDataMiner
     import Downloader.Manager as Manager
+    import Structure.Delegate.Delegate as Delegate
     import Structure.Difference as D
     import Structure.Normalizer as Normalizer
     import Structure.Structure as Structure
@@ -1398,6 +1399,33 @@ class UnrecognizedPackError(DataMinerException):
 
 class DelegateException(Exception):
     "Abstract Exception class for errors relating to Delegates."
+
+class InapplicableDelegateError(DelegateException):
+    "The Structure or StructureBase a Delegate is applied to does not suit the Delegate."
+
+    def __init__(
+        self,
+        delegate_type:type["Delegate.Delegate"],
+        structure:Union["Structure.Structure", "StructureBase.StructureBase"],
+        allowed_types:tuple[type[Union["Structure.Structure", "StructureBase.StructureBase", None]], ...],
+        message:Optional[str]=None,
+    ) -> None:
+        '''
+        :delegate_type: The type of Delegate that is applied to the wrong type of Structure or StructureBase.
+        :structure_type: The Structure or StructureBase that has the inapplicable Delegate applied to it.
+        :allowed_types: The types of Structure or StructureBase that the Delegate is allowed to be applied to.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(delegate_type, structure, allowed_types, message)
+        self.delegate_type = delegate_type
+        self.structure = structure
+        self.allowed_types = allowed_types
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Delegate type \"%s\" can only be applied to types [%s], not %r" % (self.delegate_type.__name__, ", ".join("\"%s\"" % allowed_type.__name__ for allowed_type in self.allowed_types), self.structure)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
 
 class UnrecognizedDelegateError(DelegateException):
     "A Delegate type is unrecognized."
