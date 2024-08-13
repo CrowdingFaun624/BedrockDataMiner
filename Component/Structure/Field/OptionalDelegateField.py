@@ -3,12 +3,11 @@ from typing import TYPE_CHECKING, Any, Callable, Union
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.FunctionChecker as FunctionChecker
+import Component.ScriptImporter as ScriptImporter
 import Structure.Delegate.DefaultBaseDelegate as DefaultBaseDelegate
-import Structure.Delegate.DefaultDelegate as SU
+import Structure.Delegate.DefaultDelegate as DefaultDelegate
 import Structure.Delegate.Delegate as Delegate
 import Structure.Delegate.VolumeDelegate as VolumeDelegate
-import Structure.PassthroughStructure as Pas
-import Structure.PrimitiveStructure as Prim
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -17,7 +16,14 @@ if TYPE_CHECKING:
     import Structure.Structure as Structure
     import Structure.StructureBase as StructureBase
 
-delegate_types:dict[str,type[Delegate.Delegate]] = {delegate_type.__name__: delegate_type for delegate_type in (SU.DefaultDelegate, DefaultBaseDelegate.DefaultBaseDelegate, VolumeDelegate.VolumeDelegate)}
+BUILT_IN_DELEGATE_CLASSES:dict[str,type[Delegate.Delegate]] = {delegate_type.__name__: delegate_type for delegate_type in [
+    Delegate.Delegate,
+    DefaultDelegate.DefaultDelegate,
+    DefaultBaseDelegate.DefaultBaseDelegate,
+    VolumeDelegate.VolumeDelegate,
+]}
+
+DELEGATE_CLASSES = ScriptImporter.import_scripted_types("delegates", BUILT_IN_DELEGATE_CLASSES, Delegate.Delegate)
 
 class OptionalDelegateField(Field.Field):
 
@@ -80,7 +86,7 @@ class OptionalDelegateField(Field.Field):
         if self.delegate_name is None:
             self.delegate_type = None
         else:
-            delegate_type = delegate_types.get(self.delegate_name)
+            delegate_type = DELEGATE_CLASSES.get(self.delegate_name)
             if delegate_type is None:
                 raise Exceptions.UnrecognizedDelegateError(self.delegate_name, repr(source_component))
             self.delegate_type = delegate_type
