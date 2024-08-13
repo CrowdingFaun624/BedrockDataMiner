@@ -1,42 +1,15 @@
 import Component.Field.Field as Field
+import Component.ScriptImporter as ScriptImporter
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
-import Utilities.Scripts as Scripts
 
 BUILT_IN_ACCESSOR_CLASSES:dict[str,type[Accessor.Accessor]] = {accessor_class.__name__: accessor_class for accessor_class in [
     Accessor.Accessor,
     Accessor.DummyAccessor,
-    Accessor.SubDirectoryAccessor
+    Accessor.SubDirectoryAccessor,
 ]}
 
-def import_accessor_classes() -> dict[str,type[Accessor.Accessor]]:
-    accessor_scripts = Scripts.scripts.get_all_in_directory("accessors/")
-    accessor_classes:dict[str,type[Accessor.Accessor]] = {}
-    accessor_classes.update(BUILT_IN_ACCESSOR_CLASSES)
-    for file_name, script in accessor_scripts.items():
-        match script:
-            case Scripts.LuaScript():
-                class_name = file_name.removeprefix("accessors/").removesuffix(".lua").replace("/", ".")
-                attributes = dict(script.content)
-                inherit_from:str|None = attributes.pop("inherit", None)
-                if inherit_from is None:
-                    raise Exceptions.AccessorClassMissingInheritError(class_name)
-                superclass = BUILT_IN_ACCESSOR_CLASSES.get(inherit_from)
-                if superclass is None:
-                    raise Exceptions.AccessorClassInheritUnrecognizedAccessorClassError(class_name, inherit_from)
-                accessor_classes[class_name] = type(class_name, (superclass, Scripts.ScriptedObject), attributes)
-            case Scripts.PythonScript():
-                accessor_class = script.object
-                if not isinstance(accessor_class, type):
-                    raise Exceptions.InvalidScriptObjectTypeError(script.object, [Accessor.Accessor])
-                if not issubclass(accessor_class, Accessor.Accessor):
-                    raise Exceptions.AccessorClassMissingInheritError(accessor_class.__name__)
-                accessor_classes[accessor_class.__name__] = accessor_class
-            case _:
-                raise Exceptions.InvalidScriptTypeError(type(script), [Scripts.LuaScript, Scripts.PythonScript], message="as an Accessor class")
-    return accessor_classes
-
-ACCESSOR_CLASSES = import_accessor_classes()
+ACCESSOR_CLASSES = ScriptImporter.import_scripted_types("accessors/", BUILT_IN_ACCESSOR_CLASSES, Accessor.Accessor)
 
 class AccessorClassField(Field.Field):
 

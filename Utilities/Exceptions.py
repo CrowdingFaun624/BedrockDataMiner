@@ -193,42 +193,6 @@ class OpenAllDoneFilePromiseError(Exception):
 class AccessorException(Exception):
     "Abstract Exception class for errors relating to Accessors."
 
-class AccessorClassInheritUnrecognizedAccessorClassError(AccessorException):
-    "A scripted AccessorType attempts to subclass an unknown built-in AccessorType"
-
-    def __init__(self, class_name:str, superclass_name:str, message:Optional[str]=None) -> None:
-        '''
-        :class_name: The name of the AccessorType that attempts to inherit from an unknown AccessorType.
-        :superclass_name: The name of the unrecognized AccessorType.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(class_name, superclass_name, message)
-        self.class_name = class_name
-        self.superclass_name = superclass_name
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "AccessorType \"%s\" attempts to subclass unrecognized built-in AccessorType \"%s\"" % (self.class_name, self.superclass_name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class AccessorClassMissingInheritError(AccessorException):
-    "A scripted AccessorType failed to correctly inherit."
-
-    def __init__(self, accessor_class_name:str, message:Optional[str]=None) -> None:
-        '''
-        :accessor_class_name: The name of the Accessor class that failed to inherit.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(accessor_class_name, message)
-        self.accessor_class_name = accessor_class_name
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Scripted Accessor class \"%s\" is missing the \"inherit\" key" % (self.accessor_class_name,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class UnrecognizedAccessorClassError(AccessorException):
     "An AccessorType is not recognized."
 
@@ -1656,6 +1620,42 @@ class InvalidScriptTypeError(ScriptException):
             output = "Script type is not allowed; only [%s] are allowed" % (self.script_type.__name__, script_types_str)
         else:
             output = "%r references Script type \"%s\", while only [%s] are allowed" % (self.source, self.script_type.__name__, script_types_str)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ScriptedClassInheritUnrecognizedClassError(ScriptException):
+    "A scripted type attempts to subclass an unknown built-in type"
+
+    def __init__(self, class_name:str, superclass_name:str, message:Optional[str]=None) -> None:
+        '''
+        :class_name: The name of the type that attempts to inherit from an unknown type.
+        :superclass_name: The name of the unrecognized type.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(class_name, superclass_name, message)
+        self.class_name = class_name
+        self.superclass_name = superclass_name
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Scripted type \"%s\" attempts to subclass unrecognized built-in type \"%s\"" % (self.class_name, self.superclass_name)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ScriptedClassMissingInheritError(ScriptException):
+    "A scripted type failed to correctly inherit."
+
+    def __init__(self, class_name:str, message:Optional[str]=None) -> None:
+        '''
+        :class_name: The name of the type class that failed to inherit.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(class_name, message)
+        self.class_name = class_name
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Scripted class \"%s\" is missing the \"inherit\" key" % (self.class_name,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
