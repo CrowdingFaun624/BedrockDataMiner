@@ -1,6 +1,6 @@
 from typing import Any
 
-import Structure.Delegate.DefaultDelegate as SU
+import Structure.Delegate.DefaultDelegate as DefaultDelegate
 import Structure.Delegate.Delegate as Delegate
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
@@ -41,7 +41,7 @@ class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, st
                 header.append("Unable to create data files for %i %s %s: %s" % (len(versions_between), files_word, between_word, ", ".join("\"%s\"" % version.name for version in versions_between)))
         header.append("")
 
-        lines:list[SU.Line]
+        lines:list[DefaultDelegate.Line]
         lines, any_changes, new_exceptions = self.get_structure().get_structure().compare_text(data, environment)
         exceptions.extend(new_exceptions)
 

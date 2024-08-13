@@ -2,7 +2,7 @@ import math
 from typing import Any, Iterator, MutableMapping, TypedDict, TypeVar, cast
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
-import Structure.Delegate.DefaultDelegate as SU
+import Structure.Delegate.DefaultDelegate as DefaultDelegate
 import Structure.DictStructure as DictStructure
 import Structure.Difference as D
 import Structure.KeymapStructure as KeymapStructure
@@ -25,7 +25,7 @@ class DataDiffTypedDict(TypedDict):
     data: dict[tuple[int,int,int]|D.Diff[tuple[int,int,int],tuple[int,int,int]],MutableMapping[str,Any]|D.Diff[MutableMapping[str,Any],MutableMapping[str,Any]]]
     size: tuple[int|D.Diff[int,int],int|D.Diff[int,int],int|D.Diff[int,int]]
 
-class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
+class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
@@ -60,19 +60,19 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
             raise TypeError("Substructure of %r is not an AbstractMappingStructure, but instead %r!" % (self, substructure))
         self.substructure = substructure
 
-    def print_item(self, substructure_output:list[SU.Line], position:tuple[int,int,int]) -> list[SU.Line]:
+    def print_item(self, substructure_output:list[DefaultDelegate.Line], position:tuple[int,int,int]) -> list[DefaultDelegate.Line]:
         match len(substructure_output):
             case 0:
-                return [SU.Line("%s at (%i, %i, %i): empty") % (self.field, *position)]
+                return [DefaultDelegate.Line("%s at (%i, %i, %i): empty") % (self.field, *position)]
             case 1:
-                return [SU.Line("%s at (%i, %i, %i): %s" % (self.field, *position, substructure_output[0]))]
+                return [DefaultDelegate.Line("%s at (%i, %i, %i): %s" % (self.field, *position, substructure_output[0]))]
             case _:
-                output:list[SU.Line] = []
-                output.append(SU.Line("%s at (%i, %i, %i):") % (self.field, *position))
+                output:list[DefaultDelegate.Line] = []
+                output.append(DefaultDelegate.Line("%s at (%i, %i, %i):") % (self.field, *position))
                 output.extend(line.indent() for line in substructure_output)
                 return output
 
-    def print_layer(self, data:dict[tuple[int,int,int],int], additional_data:dict[tuple[int,int,int],MutableMapping[str,Any]], layer:int, size:tuple[int,int,int], environment:StructureEnvironment.PrinterEnvironment) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+    def print_layer(self, data:dict[tuple[int,int,int],int], additional_data:dict[tuple[int,int,int],MutableMapping[str,Any]], layer:int, size:tuple[int,int,int], environment:StructureEnvironment.PrinterEnvironment) -> tuple[list[DefaultDelegate.Line], list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         layer_2d = [[" " for j in range(size[0])] for i in range(size[2])]
         for x in range(size[0]):
@@ -94,7 +94,7 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
         output_grid.append([])
         for i in range(size[2]):
             output_grid.append(list(z_labels[i] + " ") + layer_2d[i])
-        output:list[SU.Line] = [SU.Line("".join(line)) for line in output_grid]
+        output:list[DefaultDelegate.Line] = [DefaultDelegate.Line("".join(line)) for line in output_grid]
         if self.print_additional_data:
             if len(additional_data) > 0 and self.substructure is None:
                 exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureAdditionalDataError(self.get_structure()), self.get_structure().name, layer, additional_data))
@@ -111,35 +111,35 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
             self,
             data:DataTypedDict,
             environment:StructureEnvironment.PrinterEnvironment,
-        ) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
+        ) -> tuple[list[DefaultDelegate.Line], list[Trace.ErrorTrace]]:
         states, additional_data, size = data["states"], data["data"], data["size"]
-        output:list[SU.Line] = []
+        output:list[DefaultDelegate.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         for layer in range(size[1]):
-            output.append(SU.Line("Layer %i/%i:" % (layer, size[1])))
+            output.append(DefaultDelegate.Line("Layer %i/%i:" % (layer, size[1])))
             new_lines, new_exceptions = self.print_layer(states, additional_data, layer, size, environment)
             output.extend(line.indent() for line in new_lines)
             exceptions.extend(exception.add(self.get_structure().name, layer) for exception in new_exceptions)
         return output, exceptions
 
-    def compare_text_size(self, size:tuple[int|D.Diff[int,int],int|D.Diff[int,int],int|D.Diff[int,int]]) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
-        output:list[SU.Line] = []
+    def compare_text_size(self, size:tuple[int|D.Diff[int,int],int|D.Diff[int,int],int|D.Diff[int,int]]) -> tuple[list[DefaultDelegate.Line], bool, list[Trace.ErrorTrace]]:
+        output:list[DefaultDelegate.Line] = []
         any_changes = False
         if any(isinstance(axis, D.Diff) for axis in size):
             old_size = "×".join(str(axis.old if isinstance(axis, D.Diff) else axis) for axis in size)
             new_size = "×".join(str(axis.new if isinstance(axis, D.Diff) else axis) for axis in size)
-            output.append(SU.Line("Changed size from %s to %s" % (old_size, new_size)))
+            output.append(DefaultDelegate.Line("Changed size from %s to %s" % (old_size, new_size)))
             any_changes = True
         return output, any_changes, []
 
     def compare_text_layer(
             self,
             data:dict[tuple[int,int,int],int|D.Diff[int,int]],
-            block_data_comparisons:list[list[SU.Line]],
+            block_data_comparisons:list[list[DefaultDelegate.Line]],
             layer:int, size:tuple[int,int,int],
             environment:StructureEnvironment.ComparisonEnvironment
-        ) -> tuple[list[SU.Line], list[Trace.ErrorTrace]]:
-        output:list[SU.Line] = []
+        ) -> tuple[list[DefaultDelegate.Line], list[Trace.ErrorTrace]]:
+        output:list[DefaultDelegate.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         layer_2d = {position: state for position, state in data.items() if position[1] == layer}
         old_layer:dict[tuple[int,int,int],int] = {}
@@ -165,11 +165,11 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
             output.extend(new_lines)
             exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
         else:
-            output.append(SU.Line("Old layer:"))
+            output.append(DefaultDelegate.Line("Old layer:"))
             new_lines, new_exceptions = self.print_layer(old_layer, {}, layer, size, environment[0])
             output.extend(line.indent() for line in new_lines)
             exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
-            output.append(SU.Line("New layer:"))
+            output.append(DefaultDelegate.Line("New layer:"))
             new_lines, new_exceptions = self.print_layer(new_layer, {}, layer, size, environment[1])
             output.extend(line.indent() for line in new_lines)
             exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
@@ -177,8 +177,8 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
             output.extend(block_data_comparison)
         return output, exceptions
 
-    def compare_text_block(self, position:tuple[int,int,int], block_data:MutableMapping[str,Any]|D.Diff[MutableMapping[str,Any],MutableMapping[str,Any]], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[SU.Line],bool,list[Trace.ErrorTrace]]:
-        output:list[SU.Line] = []
+    def compare_text_block(self, position:tuple[int,int,int], block_data:MutableMapping[str,Any]|D.Diff[MutableMapping[str,Any],MutableMapping[str,Any]], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[DefaultDelegate.Line],bool,list[Trace.ErrorTrace]]:
+        output:list[DefaultDelegate.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         any_changes = False
         if isinstance(block_data, D.Diff):
@@ -194,12 +194,12 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
         else:
             if self.substructure is None:
                 raise Exceptions.AttributeNoneError("structure", self)
-            substructure_output:list[SU.Line]
+            substructure_output:list[DefaultDelegate.Line]
             substructure_output, has_changes, new_exceptions = self.substructure.compare_text(block_data, environment)
             exceptions.extend(exception.add(self.get_structure().name, position) for exception in new_exceptions)
             if has_changes:
                 any_changes = True
-                output.append(SU.Line("Changed %s at %i, %i, %i:") % (self.field, *position))
+                output.append(DefaultDelegate.Line("Changed %s at %i, %i, %i:") % (self.field, *position))
                 output.extend(line.indent() for line in substructure_output)
         return output, any_changes, exceptions
 
@@ -216,11 +216,11 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
             self,
             data:DataDiffTypedDict,
             environment:StructureEnvironment.ComparisonEnvironment,
-        ) -> tuple[list[SU.Line], bool, list[Trace.ErrorTrace]]:
+        ) -> tuple[list[DefaultDelegate.Line], bool, list[Trace.ErrorTrace]]:
         states, additional_data, size = data["states"], data["data"], data["size"]
         states = dict(self.process_pos_dict(states))
         additional_data = dict(self.process_pos_dict(additional_data))
-        output:list[SU.Line] = []
+        output:list[DefaultDelegate.Line] = []
         exceptions:list[Trace.ErrorTrace] = []
         any_changes = False
         layers_to_print:set[int] = set()
@@ -232,7 +232,7 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
             output.extend(size_comparison)
 
         max_size:tuple[int,int,int] = tuple((max(axis.old, axis.new) if isinstance(axis, D.Diff) else axis) for axis in size) # type: ignore
-        block_data_comparisons:list[list[list[SU.Line]]] = [[] for i in range(max_size[1])] # top is list for each layer. Second is list for each changed block. Last is Line for each line in comparison.
+        block_data_comparisons:list[list[list[DefaultDelegate.Line]]] = [[] for i in range(max_size[1])] # top is list for each layer. Second is list for each changed block. Last is Line for each line in comparison.
         for position, state in states.items():
 
             block_data = additional_data.get(position)
@@ -252,7 +252,7 @@ class VolumeDelegate(SU.DefaultDelegate[tuple[int,int,int]]):
                 layers_to_print.add(position[1])
 
         for layer in sorted(layers_to_print):
-            output.append(SU.Line("Changed layer %i/%i:" % (layer, max_size[1])))
+            output.append(DefaultDelegate.Line("Changed layer %i/%i:" % (layer, max_size[1])))
             new_lines, new_exceptions = self.compare_text_layer(states, block_data_comparisons[layer], layer, max_size, environment)
             exceptions.extend(exception.add(self.get_structure().name, layer) for exception in new_exceptions)
             output.extend(line.indent() for line in new_lines)
