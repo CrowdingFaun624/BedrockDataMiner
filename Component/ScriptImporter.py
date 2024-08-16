@@ -29,7 +29,7 @@ def import_scripted_types(folder:str, built_in_classes:dict[str,type[a]], requir
             case Scripts.PythonScript():
                 object_class = script.object
                 if not isinstance(object_class, type):
-                    raise Exceptions.InvalidScriptObjectTypeError(script.object, [required_superclass])
+                    raise Exceptions.InvalidScriptObjectTypeError(script, script.object, [required_superclass])
                 if not issubclass(object_class, required_superclass):
                     raise Exceptions.ScriptedClassMissingInheritError(object_class.__name__)
                 classes[object_class.__name__] = object_class

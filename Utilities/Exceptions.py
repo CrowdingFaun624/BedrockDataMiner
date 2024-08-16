@@ -1582,19 +1582,21 @@ class InvalidScriptFileSuffix(ScriptException):
 class InvalidScriptObjectTypeError(ScriptException):
     "An object in a Script has the wrong type."
 
-    def __init__(self, object:Any, allowed_types:list[type], message:Optional[str]=None) -> None:
+    def __init__(self, script:"Scripts.AbstractScript", object:Any, allowed_types:list[type], message:Optional[str]=None) -> None:
         '''
+        :script: The script with the error.
         :object: The object from the Script with the wrong type.
         :allowed_types: The types this object should be.
         :message: Additional text to place after the main message.
         '''
         super().__init__(object, allowed_types, message)
+        self.script = script
         self.object = object
         self.allowed_types = allowed_types
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r should be one of types [%s] instead of type \"%s\"" % (self.object, ", ".join("\"%s\"" % (allowed_type.__name__) for allowed_type in self.allowed_types), type(self.object))
+        output = "%r in %r should be one of types [%s] instead of type \"%s\"" % (self.object, self.script, ", ".join("\"%s\"" % (allowed_type.__name__) for allowed_type in self.allowed_types), type(self.object))
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
