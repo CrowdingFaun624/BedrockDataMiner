@@ -147,22 +147,27 @@ class TagSearcherDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("none_okay", "a bool", False, bool),
     )
 
-    def initialize(self, tags:str, sort_output:bool, none_okay:bool=False) -> None:
+    @classmethod
+    def manipulate_arguments(cls, arguments: dict[str, Any]) -> None:
+        arguments["tag_function"], arguments["tag_names"] = parse(arguments["tags"])
+
+    def initialize(self, tags:str, tag_function:Callable[[dict[str, set[DataPath.DataPath|Any]]], set[DataPath.DataPath|Any]], tag_names:set[str], sort_output:bool, none_okay:bool=False) -> None:
         self.tags = tags
+        self.tag_function = tag_function
+        self.tag_names = tag_names
         self.sort_output = sort_output
         self.none_okay = none_okay
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataPath.DataPath|Any]:
-        tag_function, tag_names = parse(self.tags)
         mentioned_tags:dict[str,set[DataPath.DataPath]] = {}
         dependencies = set(self.dependencies)
-        for tag in tag_names:
+        for tag in self.tag_names:
             mentioned_tags[tag] = set()
             for dataminer_collection in DataMiners.dataminers:
                 if dataminer_collection.has_tag(tag) and dataminer_collection not in dependencies:
                     raise Exceptions.TagSearcherDependencyError(self, tag, dataminer_collection)
                 mentioned_tags[tag].update(dataminer_collection.get_tag_paths(self.version, tag, environment.structure_environment))
-        output = tag_function(mentioned_tags)
+        output = self.tag_function(mentioned_tags)
 
         if not self.none_okay and len(output) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)

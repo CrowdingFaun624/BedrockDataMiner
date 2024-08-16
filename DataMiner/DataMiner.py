@@ -38,10 +38,15 @@ class DataMiner():
         if not isinstance(self, NullDataMiner) and self.version not in self.settings.get_version_range():
             raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, "in DataMiner %r" % (self,))
 
-        self.initialize(**settings.kwargs)
+        self.initialize(**settings.arguments)
 
     def __repr__(self) -> str:
         return "<%s %s on %s>" % (self.__class__.__name__, self.name, self.version.name)
+
+    @classmethod
+    def manipulate_arguments(cls, arguments:dict[str,Any]) -> None:
+        '''Manipulates the arguments of this DataMiner before they are passed into `initialize`.'''
+        return None
 
     def initialize(self, **kwargs) -> None:
         '''`DataMinerSettings.__init__(**kwargs)` -> `DataMiner.initialize(**kwargs)`.'''

@@ -66,7 +66,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
         parent = cast("DataMinerCollectionComponent.DataMinerCollectionComponent", self.get_inline_parent())
-        self.get_final().link_subcomponents(
+        exceptions.extend(self.get_final().link_subcomponents(
             file_name=parent.file_name,
             name=parent.name,
             structure=parent.structure_field.get_final(),
@@ -75,7 +75,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
             start_version=self.old_field.get_final(),
             end_version=self.new_field.get_final(),
             version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.get_final()))
-        )
+        ))
         return exceptions
 
     def check(self) -> list[Exception]:
@@ -86,9 +86,4 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         else:
             if self.files_field_exists:
                 exceptions.append(Exceptions.DataMinerCollectionFileError(True, self, "when \"name\" is null"))
-        dataminer_class = self.dataminer_field.get_final()
-        parameters = dataminer_class.parameters
-        if parameters is not None:
-            type_verifier_trace = TypeVerifier.make_trace([self, dataminer_class.__name__])
-            exceptions.extend(parameters.verify(self.arguments, type_verifier_trace))
         return exceptions

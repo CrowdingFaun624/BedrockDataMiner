@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Any
 
 import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
 import Version.VersionFileType as VersionFileType
 import Version.VersionRange as VersionRange
@@ -17,7 +18,7 @@ class DataMinerSettings():
         self.version_range:VersionRange.VersionRange|None = None
         self.version_file_types:list[VersionFileType.VersionFileType]|None = None
         self.version_file_types_str:list[str]|None = None
-        self.kwargs = kwargs
+        self.arguments = kwargs
 
         self.file_name:str|None = None
         self.name:str|None = None
@@ -35,7 +36,7 @@ class DataMinerSettings():
         start_version:Version.Version|None,
         end_version:Version.Version|None,
         version_file_types:list[VersionFileType.VersionFileType],
-    ) -> None:
+    ) -> list[Exception]:
         self.file_name = file_name
         self.name = name
         self.structure = structure
@@ -44,6 +45,13 @@ class DataMinerSettings():
         self.version_range = VersionRange.VersionRange(start_version, end_version)
         self.version_file_types = version_file_types
         self.version_file_types_str = [version_file_type.name for version_file_type in self.version_file_types]
+        exceptions:list[Exception] = []
+        if dataminer_class is not None and dataminer_class.parameters is not None:
+            trace = TypeVerifier.make_trace([self])
+            exceptions.extend(dataminer_class.parameters.verify(self.arguments, trace))
+        if dataminer_class is not None:
+            dataminer_class.manipulate_arguments(self.arguments)
+        return exceptions
 
     def get_version_range(self) -> VersionRange.VersionRange:
         if self.version_range is None:

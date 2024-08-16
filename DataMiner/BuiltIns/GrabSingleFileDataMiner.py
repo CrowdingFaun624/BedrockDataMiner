@@ -16,6 +16,11 @@ class GrabSingleFileDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", "a str", False, str),
     )
 
+    @classmethod
+    def manipulate_arguments(cls, arguments: dict[str, Any]) -> None:
+        if "data_type" in arguments:
+            arguments["data_type"] = DataTypes.DataTypes[arguments["data_type"]]
+
     def initialize(self, location:str, data_type:DataTypes.DataTypes=DataTypes.DataTypes.json, insert_pack:str|None=None) -> None:
         self.location = location
         self.data_type = data_type

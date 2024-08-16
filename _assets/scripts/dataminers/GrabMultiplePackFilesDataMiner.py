@@ -22,6 +22,11 @@ class GrabMultiplePackFilesDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
+    @classmethod
+    def manipulate_arguments(cls, arguments: dict[str, Any]) -> None:
+        if "data_type" in arguments:
+            arguments["data_type"] = DataTypes.DataTypes[arguments["data_type"]]
+
     def initialize(self, location:str, pack_type:Literal["resource_packs", "behavior_packs"], data_type:DataTypes.DataTypes=DataTypes.DataTypes.json, ignore_suffixes:list[str]|None=None, suffixes:list[str]|None=None) -> None:
         self.location = location
         self.pack_type = pack_type
