@@ -7,7 +7,6 @@ import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
-import Utilities.Nbt.NbtTypes as NbtTypes
 
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
@@ -19,8 +18,6 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
     Abstract class of list-using Structures.
     Must override `compare`, `get_similarity`, `get_item_key`, and `get_compare_text_key_str`.
     """
-
-    valid_types = (list, NbtTypes.TAG_List, NbtTypes.TAG_Byte_Array, NbtTypes.TAG_Int_Array, NbtTypes.TAG_Long_Array)
 
     def __init__(
             self,
@@ -71,9 +68,6 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
     def check_all_types(self, data:list[d], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[Trace.ErrorTrace] = []
-        if not isinstance(data, self.valid_types):
-            output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.valid_types, type(data), "Data"), self.name, None, data))
-            return output
         for index, item in enumerate(data):
             check_type_output = self.check_type(index, item)
             if check_type_output is not None:
