@@ -154,6 +154,7 @@
             "minecraft:allow_off_hand": {"type": "dict", "subcomponent": "component.allow_off_hand"},
             "minecraft:block": {"type": "str", "tags": ["not_in_documentation"]},
             "minecraft:block_placer": {"type": "dict", "subcomponent": "component.block_placer"},
+            "minecraft:bundle_interaction": {"type": "dict", "subcomponent": "component.bundle_interaction"},
             "minecraft:camera": {"type": "dict", "subcomponent": "component.camera", "tags": ["not_in_documentation"]},
             "minecraft:can_destroy_in_creative": {"type": "dict", "subcomponent": "component.can_destroy_in_creative"},
             "minecraft:cooldown": {"type": "dict", "subcomponent": "component.cooldown"},
@@ -185,6 +186,7 @@
             "minecraft:shooter": {"type": "dict", "subcomponent": "component.shooter"},
             "minecraft:should_despawn": {"type": "dict", "subcomponent": "component.should_despawn"},
             "minecraft:stacked_by_data": {"type": "bool"},
+            "minecraft:storage_item": {"type": "dict", "subcomponent": "component.storage_item"},
             "tag:minecraft:is_food": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
             "minecraft:tags": {"type": "dict", "subcomponent": "component.tags"},
             "minecraft:throwable": {"type": "dict", "subcomponent": "component.throwable"},
@@ -205,6 +207,12 @@
         "keys": {
             "block": {"type": "str"},
             "use_on": {"type": "list", "subcomponent": "block_list"}
+        }
+    },
+    "component.bundle_interaction": {
+        "type": "Keymap",
+        "keys": {
+            "num_viewable_slots": {"type": "int"}
         }
     },
     "component.camera": {
@@ -352,7 +360,13 @@
     "component.icon": {
         "type": "Keymap",
         "keys": {
-            "texture": {"type": "str"}
+            "texture": {"type": "str"},
+            "textures": {"type": "dict", "subcomponent": {
+                "type": "Keymap",
+                "keys": {
+                    "default": {"type": "str"}
+                }
+            }}
         }
     },
     "component.liquid_clipped": {
@@ -421,6 +435,16 @@
         "type": "Keymap",
         "keys": {
             "value": {"type": "bool"}
+        }
+    },
+    "component.storage_item": {
+        "type": "Keymap",
+        "keys": {
+            "allow_nested_storage_items": {"type": "bool"},
+            "banned_items": {"type": "list", "subcomponent": "item_list"},
+            "max_slots": {"type": "int"},
+            "max_weight_limit": {"type": "int"},
+            "weight_in_storage_item": {"type": "int"}
         }
     },
     "component.tags": {
