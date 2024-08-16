@@ -23,7 +23,8 @@ read_files_typevar = TypeVar("read_files_typevar")
 
 class DataMiner():
 
-    parameters:TypeVerifier.TypeVerifier|None = None
+    parameters:TypeVerifier.TypeVerifier|None = TypeVerifier.TypedDictTypeVerifier()
+    '''TypeVerifier for verifying the json arguments of this DataMiner'''
 
     def __init__(self, version:Version.Version, settings:DataMinerSettings.DataMinerSettings) -> None:
         self.version = version
@@ -44,8 +45,7 @@ class DataMiner():
 
     def initialize(self, **kwargs) -> None:
         '''`DataMinerSettings.__init__(**kwargs)` -> `DataMiner.initialize(**kwargs)`.'''
-        if len(kwargs) > 0:
-            raise Exceptions.DataMinerKeywordArgumentsExistError(kwargs, self)
+        pass
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         '''Makes the dataminer get the file. Returns the output.'''
