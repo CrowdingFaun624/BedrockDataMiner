@@ -107,8 +107,8 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         data1_exclusive_items = {exclusive_hash: data1_hashes[exclusive_hash] for exclusive_hash in data1_hashes.keys() - data2_hashes.keys()}
         data2_exclusive_items = {exclusive_hash: data2_hashes[exclusive_hash] for exclusive_hash in data2_hashes.keys() - data1_hashes.keys()}
 
-        similarity_count = sum(self.get_key_weight(data1_hashes[hash][0], exceptions) for hash in same_hashes)
-        total_weight = sum(self.get_key_weight(key, exceptions) for key in data1.keys() | data2.keys())
+        similarity_count = sum(self.get_key_weight(data1_hashes[hash][0], data1, exceptions) for hash in same_hashes)
+        total_weight = sum(self.get_key_weight(key, data2, exceptions) for key in data1.keys() | data2.keys())
         if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0 and total_weight != 0:
             already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
             already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
@@ -117,7 +117,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
                     continue
                 already_data1_hashes.add(hash1)
                 already_data2_hashes.add(hash2)
-                similarity_count += ((self.get_key_weight(key1, exceptions) + self.get_key_weight(key2, exceptions))) * ((key_similarity * self.key_weight + value_similarity * self.value_weight)) / (2 * (self.key_weight + self.value_weight))
+                similarity_count += ((self.get_key_weight(key1, data1, exceptions) + self.get_key_weight(key2, data2, exceptions))) * ((key_similarity * self.key_weight + value_similarity * self.value_weight)) / (2 * (self.key_weight + self.value_weight))
         similarity = similarity_count / total_weight if total_weight != 0 else 1.0
         if similarity < 0.0 or similarity > 1.0:
             exceptions.append(Trace.ErrorTrace(Exceptions.InvalidSimilarityError(self, similarity, data1, data2), self.name, None, (data1, data2)))
@@ -168,7 +168,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         '''
         return True
 
-    def get_key_weight(self, key:str, exceptions:list[Trace.ErrorTrace]) -> int:
+    def get_key_weight(self, key:str, data:MutableMapping[str, d], exceptions:list[Trace.ErrorTrace]) -> int:
         '''
         Returns the weight that the key has in similarity calculations.
         '''

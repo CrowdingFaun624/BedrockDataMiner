@@ -78,10 +78,10 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         exceptions.extend(exceptions2)
         return structure1 is structure2
 
-    def get_key_weight(self, key:str, exceptions:list[Trace.ErrorTrace]) -> int:
+    def get_key_weight(self, key:str, data:MutableMapping[str, d], exceptions:list[Trace.ErrorTrace]) -> int:
         output = self.key_weights.get(key)
         if output is None:
-            exceptions.append(Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, None))
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, data[key]))
             return 1
         return output
 
