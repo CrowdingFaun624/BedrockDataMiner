@@ -17,8 +17,8 @@ class SplashesDataMiner0(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("splashes_locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.splashes_locations = kwargs["splashes_locations"]
+    def initialize(self, splashes_locations:list[str]) -> None:
+        self.splashes_locations = splashes_locations
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Splashes:
         resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)

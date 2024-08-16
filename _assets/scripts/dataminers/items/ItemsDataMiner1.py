@@ -18,9 +18,9 @@ class ItemsDataMiner1(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs"))),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.locations:list[str] = kwargs["locations"]
-        self.pack_type:str = kwargs["pack_type"]
+    def initialize(self, locations:list[str], pack_type:str) -> None:
+        self.locations = locations
+        self.pack_type = pack_type
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Items:
         resource_packs:DataMinerTyping.ResourcePacks|DataMinerTyping.BehaviorPacks = environment.dependency_data.get(self.pack_type, self)

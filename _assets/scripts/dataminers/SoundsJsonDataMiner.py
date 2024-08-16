@@ -17,8 +17,8 @@ class SoundsJsonDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("sounds_json_locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.sounds_json_locations:list[str] = kwargs["sounds_json_locations"]
+    def initialize(self, sounds_json_locations:list[str]) -> None:
+        self.sounds_json_locations = sounds_json_locations
 
     def parse_flat_sound_collection(self, source:DataMinerTyping.SoundsJsonFlatCollectionTypedDict, destination:DataMinerTyping.ResourcePackSoundsJsonFlatCollectionTypedDict, resource_pack_name:str) -> None:
         if list(source.keys()) != ["events"]:

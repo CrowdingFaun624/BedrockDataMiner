@@ -16,10 +16,10 @@ class GrabSingleFileDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", "a str", False, str),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.data_type = DataTypes.DataTypes[kwargs.get("data_type", "json")]
-        self.location:str = kwargs["location"]
-        self.insert_pack:str|None = kwargs.get("insert_pack", None)
+    def initialize(self, location:str, data_type:DataTypes.DataTypes=DataTypes.DataTypes.json, insert_pack:str|None=None) -> None:
+        self.location = location
+        self.data_type = data_type
+        self.insert_pack = insert_pack
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         accessor = self.get_accessor("client")

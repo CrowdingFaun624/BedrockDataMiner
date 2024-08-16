@@ -17,8 +17,8 @@ class BlocksClientDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("blocks_locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.blocks_locations:list[str] = kwargs["blocks_locations"]
+    def initialize(self, blocks_locations:list[str]) -> None:
+        self.blocks_locations = blocks_locations
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.MyBlocksJsonClientBlockTypedDict]:
         resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)

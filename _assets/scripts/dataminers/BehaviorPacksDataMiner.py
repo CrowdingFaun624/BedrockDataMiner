@@ -14,8 +14,8 @@ class BehaviorPacksDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("behavior_packs_directory", "a str", True, str),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.behavior_packs_directory:str = kwargs["behavior_packs_directory"]
+    def initialize(self, behavior_packs_directory:str) -> None:
+        self.behavior_packs_directory = behavior_packs_directory
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.BehaviorPackTypedDict]:
         file_list = self.get_accessor("client").get_file_list()

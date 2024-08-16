@@ -21,8 +21,8 @@ class ModelsDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=location_function),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.location:str = kwargs["location"]
+    def initialize(self, location:str) -> None:
+        self.location = location
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)

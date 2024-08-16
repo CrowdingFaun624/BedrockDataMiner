@@ -13,8 +13,8 @@ class TextureListDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.locations:list[str] = kwargs["locations"]
+    def initialize(self, locations:list[str]) -> None:
+        self.locations = locations
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,list[str]]:
         packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)

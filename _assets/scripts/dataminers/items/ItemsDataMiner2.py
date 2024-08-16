@@ -17,8 +17,8 @@ class ItemsDataMiner2(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.location:str = kwargs["location"]
+    def initialize(self, location:str) -> None:
+        self.location = location
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
 

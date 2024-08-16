@@ -19,12 +19,12 @@ class GrabMultipleFilesDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", "a str", False, str),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.data_type = DataTypes.DataTypes[kwargs.get("data_type", "json")]
-        self.ignore_suffixes:list[str]|None = kwargs.get("ignore_suffixes", None)
-        self.location:str = kwargs["location"]
-        self.suffixes:list[str]|None = kwargs.get("suffixes", None)
-        self.insert_pack:str|None = kwargs.get("insert_pack", None)
+    def initialize(self, location:str, data_type:DataTypes.DataTypes=DataTypes.DataTypes.json, ignore_suffixes:list[str]|None=None, suffixes:list[str]|None=None, insert_pack:str|None=None) -> None:
+        self.data_type = data_type
+        self.location = location
+        self.ignore_suffixes = ignore_suffixes
+        self.suffixes = suffixes
+        self.insert_pack = insert_pack
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         files:dict[str,str] = {}

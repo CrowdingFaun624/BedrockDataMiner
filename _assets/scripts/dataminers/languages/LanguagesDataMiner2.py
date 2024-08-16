@@ -14,8 +14,8 @@ class LanguagesDataMiner2(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("languages_location", "a str", True, str),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.languages_location:str = kwargs["languages_location"]
+    def initialize(self, languages_location:str) -> None:
+        self.languages_location = languages_location
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.LanguagesTypedDict]:
         accessor = self.get_accessor("client")

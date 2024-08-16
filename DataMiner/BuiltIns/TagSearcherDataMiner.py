@@ -147,10 +147,10 @@ class TagSearcherDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("none_okay", "a bool", False, bool),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.tags:str = kwargs["tags"]
-        self.sort_output = kwargs["sort_output"]
-        self.none_okay = kwargs.get("none_okay", False)
+    def initialize(self, tags:str, sort_output:bool, none_okay:bool=False) -> None:
+        self.tags = tags
+        self.sort_output = sort_output
+        self.none_okay = none_okay
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataPath.DataPath|Any]:
         tag_function, tag_names = parse(self.tags)

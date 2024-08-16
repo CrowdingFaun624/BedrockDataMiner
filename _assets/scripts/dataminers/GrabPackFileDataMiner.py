@@ -18,10 +18,10 @@ class GrabPackFileDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs"))),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.data_type = DataTypes.DataTypes[kwargs.get("data_type", "json")]
-        self.locations:list[str] = kwargs["locations"]
-        self.pack_type:Literal["resource_packs", "behavior_packs"] = kwargs["pack_type"]
+    def initialize(self, locations:list[str], pack_type:Literal["resource_packs", "behavior_packs"], data_type:DataTypes.DataTypes=DataTypes.DataTypes.json) -> None:
+        self.locations = locations
+        self.pack_type = pack_type
+        self.data_type = data_type
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         packs:DataMinerTyping.ResourcePacks|DataMinerTyping.BehaviorPacks = environment.dependency_data.get(self.pack_type, self)

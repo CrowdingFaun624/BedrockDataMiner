@@ -39,8 +39,8 @@ class ResourcePacksDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("resource_packs_directory", "a str", True, str),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.resource_packs_directory:str = kwargs["resource_packs_directory"]
+    def initialize(self, resource_packs_directory:str) -> None:
+        self.resource_packs_directory = resource_packs_directory
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.ResourcePackTypedDict]:
         file_list = self.get_accessor("client").get_file_list()

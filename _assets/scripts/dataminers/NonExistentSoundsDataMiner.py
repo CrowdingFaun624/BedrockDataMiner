@@ -44,8 +44,8 @@ class NonExistentSoundsDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("resource_packs_location", "a str or None", True, (str, type(None))),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.resource_packs_location:str|None = kwargs["resource_packs_location"]
+    def initialize(self, resource_packs_location:str|None) -> None:
+        self.resource_packs_location = resource_packs_location
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.NonExistentSounds:
         sound_files_data:DataMinerTyping.SoundFiles = environment.dependency_data.get("sound_files", self)

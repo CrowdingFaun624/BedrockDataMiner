@@ -68,8 +68,8 @@ class UnusedSoundEventsDataMiner(DataMiner.DataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("use_music_definitions", "a bool", True, bool),
     )
 
-    def initialize(self, **kwargs) -> None:
-        self.use_music_definitions:bool = kwargs["use_music_definitions"]
+    def initialize(self, use_music_definitions:bool) -> None:
+        self.use_music_definitions = use_music_definitions
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.UnusedSoundEvents:
         sounds_json:DataMinerTyping.MySoundsJson = environment.dependency_data.get("sounds_json", self)
