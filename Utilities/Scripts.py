@@ -51,6 +51,13 @@ class Script(AbstractScript):
         Runs after all scripts have been initialized.
         '''
 
+    @property
+    def should_skip(self) -> bool:
+        '''
+        if True, will remove the Script from the Scripts list after `finalize` is called.
+        '''
+        return False
+
     def open_file(self) -> IO[str]:
         return open(self.path, "rt")
 
@@ -81,65 +88,36 @@ class LuaScript(Script):
         if data is None: data = []
         return self.content(data)
 
-class EvilModule():
-    '''
-    Use `setattr` to set attributes of this object to other EvilModules or actual modules.
-    Used to mimic a directory in the scripts folder.
-    '''
-    pass
-
 class PythonScript(Script):
 
     all_type_verifier = TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=lambda data: (len(data) == 1, "Can only export a single object"))
 
     def __init__(self, path: Path, name: str, script_dependencies: _ScriptDependencies) -> None:
         super().__init__(path, name, script_dependencies)
-        module_name = "scripts.%s" % (name.replace("/", ".").removesuffix(".py"),)
-        stem = name.split("/")[-1].removesuffix(".py")
-
-        spec = importlib.util.spec_from_file_location(module_name, path)
-        if spec is None:
-            raise Exceptions.ScriptFailureError(self, "(spec is None)")
-        self.spec = spec
-        self.module = importlib.util.module_from_spec(self.spec)
-        sys.modules[module_name] = self.module
-
-        module_parents = list(accumulate(name.split("/")[:-1], func=lambda a, b: "%s.%s" % (a, b), initial="scripts"))
-        module_parents.reverse()
-        # for example: name = scripts/normalizers/bar/foo.py, module_parents = ["scripts.normalizers.bar", "scripts.normalizers""scripts"]
-        previous_module = self.module
-        previous_module_name = stem
-        for parent in module_parents:
-            if parent in sys.modules:
-                evil_module = sys.modules[parent]
-            else:
-                evil_module = EvilModule()
-                sys.modules[parent] = evil_module # type: ignore
-            evil_module = sys.modules.get(parent, EvilModule())
-            if not hasattr(evil_module, previous_module_name):
-                setattr(evil_module, previous_module_name, previous_module)
-            previous_module = evil_module
-            previous_module_name = parent.split(".")[-1]
+        module_name = "_assets.scripts." + name.replace("/", ".").removesuffix(".py")
+        self.module = importlib.import_module(module_name)
 
         self.object:Any = None
 
     @property
-    def should_finalize(self) -> bool:
-        return not self.path.name.startswith("__") and not any(parent.name.startswith("__") for parent in self.path.relative_to(FileManager.SCRIPTS_DIRECTORY).parents)
+    def should_skip(self) -> bool:
+        return not self.has_all
 
     def finalize(self) -> None:
-        if self.spec.loader is None:
-            raise Exceptions.ScriptFailureError(self, "(spec loader is None)")
-        self.spec.loader.exec_module(self.module)
-        if self.should_finalize:
-            if not hasattr(self.module, "__all__"):
-                raise Exceptions.ScriptFailureError(self, "(__all__ does not exist in the module)")
-            self.all_type_verifier.base_verify(self.module.__all__, [self])
-            exported_object_name = self.module.__all__[0]
-            obj = getattr(self.module, exported_object_name, ...)
-            if obj is ...:
-                raise Exceptions.ScriptFailureError(self, "(name in __all__ does not exist in the module)")
-            self.object = obj
+        self.has_all = hasattr(self.module, "__all__")
+        if not self.has_all:
+            return
+        self.all_type_verifier.base_verify(self.module.__all__, [self])
+        exported_object_name = self.module.__all__[0]
+        obj = getattr(self.module, exported_object_name, ...)
+        if obj is ...:
+            raise Exceptions.ScriptFailureError(self, "(name in __all__ does not exist in the module)")
+        if hasattr(self.module, "__call_object__"):
+            # __call_object__ can be placed in a Python script. If true, it will call the object referenced in `__all__`
+            # and use the return value as the object instead of the function itself.
+            if self.module.__call_object__ is True:
+                obj = obj()
+        self.object = obj
 
     def __call__(self, *args, **kwargs) -> Any:
         return self.object(*args, **kwargs)
@@ -180,6 +158,7 @@ class Scripts():
         self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, script_dependencies) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY) if not self.should_skip_script(file.suffix, relative_name, file)}
         for script in self.scripts.values():
             script.finalize()
+        self.scripts = {script_name: script for script_name, script in self.scripts.items() if not script.should_skip}
 
     def __getitem__(self, name:str) -> Script:
         output = self.scripts.get(name, None)

@@ -1,5 +1,4 @@
-import scripts.normalizers.collapse_resource_packs.__util as util
-
+import _assets.scripts.normalizers.collapse_resource_packs.util as util
 import Utilities.Exceptions as Exceptions
 
 __all__ = ["collapse_resource_pack_names"]
