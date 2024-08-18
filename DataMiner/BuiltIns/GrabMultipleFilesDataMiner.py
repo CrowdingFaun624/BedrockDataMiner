@@ -3,6 +3,7 @@ from typing import Any, Callable
 import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataTypes as DataTypes
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -24,17 +25,15 @@ class GrabMultipleFilesDataMiner(DataMiner.DataMiner):
         if "data_type" in arguments:
             arguments["data_type"] = DataTypes.DataTypes[arguments["data_type"]]
 
-    def initialize(self, location:str, data_type:DataTypes.DataTypes=DataTypes.DataTypes.json, ignore_suffixes:list[str]|None=None, suffixes:list[str]|None=None, insert_pack:str|None=None) -> None:
+    def initialize(self, location:str, data_type:DataTypes.DataTypes=DataTypes.DataTypes.json, ignore_suffixes:list[str]|None=None, suffixes:list[str]|None=None) -> None:
         self.data_type = data_type
         self.location = location
         self.ignore_suffixes = ignore_suffixes
         self.suffixes = suffixes
-        self.insert_pack = insert_pack
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+    def get_files(self, path_base:str, accessor:Accessor.Accessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,str]:
         files:dict[str,str] = {}
-        path_base = self.location
-        accessor = self.get_accessor("client")
+        # path_base = self.location
         for path in accessor.get_files_in(path_base):
             if self.ignore_suffixes is not None and any(path.endswith("." + ignore_suffix) for ignore_suffix in self.ignore_suffixes):
                 continue
@@ -51,14 +50,15 @@ class GrabMultipleFilesDataMiner(DataMiner.DataMiner):
                 if file_name.endswith(suffix):
                     raise Exceptions.InvalidStateError(self, "file_name still ends in \"%s\"!" % (suffix))
                 files[file_name] = path
+        return files
+
+    def get_output(self, files:dict[str,str], accessor:Accessor.Accessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,Any]]:
+        return {file_name: DataTypes.get_data(self, path, self.data_type, accessor) for file_name, path in files.items()}
+
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+        accessor = self.get_accessor("client")
+        files = self.get_files(self.location, accessor, environment)
         if len(files) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
-
-        output:dict[str,dict[str,Any]] = {}
-        for file_name, path in files.items():
-            file_data = DataTypes.get_data(self, path, self.data_type, accessor)
-            if self.insert_pack is None:
-                output[file_name] = file_data
-            else:
-                output[file_name] = {self.insert_pack: file_data}
+        output = self.get_output(files, accessor, environment)
         return Sorting.sort_everything(output)
