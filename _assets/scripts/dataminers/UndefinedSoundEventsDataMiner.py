@@ -1,4 +1,3 @@
-# import _assets.scripts.dataminers.UnusedSoundEventsDataMiner as UnusedSoundEventsDataMiner
 import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
