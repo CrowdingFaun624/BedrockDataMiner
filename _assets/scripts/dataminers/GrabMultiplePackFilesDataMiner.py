@@ -1,9 +1,9 @@
 from typing import Any, Callable, Literal
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.DataTypes as DataTypes
+import DataMiner.FileDataMiner as FileDataMiner
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -12,7 +12,7 @@ __all__ = ["GrabMultiplePackFilesDataMiner"]
 
 location_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (value.endswith("/"), "location does not end in \"/\"")
 
-class GrabMultiplePackFilesDataMiner(DataMiner.DataMiner):
+class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a DataType", False, TypeVerifier.EnumTypeVerifier(DataTypes.DataTypes.data_types())),

@@ -1,8 +1,8 @@
 from typing import Any, Callable
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataTypes as DataTypes
+import DataMiner.FileDataMiner as FileDataMiner
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
@@ -10,7 +10,7 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 location_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (value.endswith("/"), "location does not end in \"/\"")
 
-class GrabMultipleFilesDataMiner(DataMiner.DataMiner):
+class GrabMultipleFilesDataMiner(FileDataMiner.FileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a DataType", False, TypeVerifier.EnumTypeVerifier(DataTypes.DataTypes.data_types())),

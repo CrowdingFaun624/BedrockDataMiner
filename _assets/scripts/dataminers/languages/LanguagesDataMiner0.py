@@ -1,9 +1,9 @@
 import json
 from typing import IO, Any
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.FileDataMiner as FileDataMiner
 import Utilities.Exceptions as Exceptions
 
 __all__ = ["LanguagesDataMiner0"]
@@ -12,7 +12,7 @@ def decode(io:IO[bytes]) -> Any:
     # for decoding json files with foreign characters
     return json.loads(io.read().decode())
 
-class LanguagesDataMiner0(DataMiner.DataMiner):
+class LanguagesDataMiner0(FileDataMiner.FileDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.LanguagesTypedDict]:
         resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)

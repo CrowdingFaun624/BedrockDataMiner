@@ -1,9 +1,9 @@
 import enum
 from typing import Literal, TypedDict
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.FileDataMiner as FileDataMiner
 import Utilities.DataFile as DataFile
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -33,7 +33,7 @@ def get_pack_order() -> list[PackTypedDict]:
 
 pack_order = {resource_pack["name"]: index for index, resource_pack in enumerate(get_pack_order())}
 
-class PacksDataMiner(DataMiner.DataMiner):
+class PacksDataMiner(FileDataMiner.FileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("directory", "a str", True, str),

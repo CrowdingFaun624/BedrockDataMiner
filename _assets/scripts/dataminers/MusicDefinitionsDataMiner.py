@@ -1,14 +1,14 @@
 import json
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.FileDataMiner as FileDataMiner
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 
 __all__ = ["MusicDefinitionsDataMiner"]
 
-class MusicDefinitionsDataMiner(DataMiner.DataMiner):
+class MusicDefinitionsDataMiner(FileDataMiner.FileDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.MyMusicDefinitions:
         resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)

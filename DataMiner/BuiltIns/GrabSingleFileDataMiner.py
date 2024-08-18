@@ -1,15 +1,15 @@
 from typing import Any
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataTypes as DataTypes
+import DataMiner.FileDataMiner as FileDataMiner
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class GrabSingleFileDataMiner(DataMiner.DataMiner):
+class GrabSingleFileDataMiner(FileDataMiner.FileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("data_type", "a DataType", False, TypeVerifier.EnumTypeVerifier(DataTypes.DataTypes.data_types())),

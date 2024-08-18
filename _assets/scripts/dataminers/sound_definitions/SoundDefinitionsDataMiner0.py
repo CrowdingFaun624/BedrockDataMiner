@@ -2,15 +2,15 @@ from typing import IO, Any, Callable, cast
 
 import pyjson5  # supports comments
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.FileDataMiner as FileDataMiner
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 
 __all__ = ["SoundDefinitionsDataMiner0"]
 
-class SoundDefinitionsDataMiner0(DataMiner.DataMiner):
+class SoundDefinitionsDataMiner0(FileDataMiner.FileDataMiner):
 
     def normalize(self, file:IO[str]) -> dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]:
         data = cast(Callable[[IO[str]],Any], pyjson5.load)(file)

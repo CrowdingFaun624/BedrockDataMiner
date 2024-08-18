@@ -1,11 +1,11 @@
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.FileDataMiner as FileDataMiner
 import Utilities.Exceptions as Exceptions
 
 __all__ = ["LanguagesDataMiner3"]
 
-class LanguagesDataMiner3(DataMiner.DataMiner):
+class LanguagesDataMiner3(FileDataMiner.FileDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.LanguagesTypedDict]:
         language_files = [file.split("/")[-1] for file in self.get_accessor("client").get_file_list() if file.startswith("lang")]

@@ -1,9 +1,9 @@
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.FileDataMiner as FileDataMiner
 
 
-class LanguageDataMiner(DataMiner.DataMiner):
+class LanguageDataMiner(FileDataMiner.FileDataMiner):
 
     def combine_lines(self, lines:list[str]) -> list[str]:
         output:list[str] = []

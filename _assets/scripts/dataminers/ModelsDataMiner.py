@@ -4,9 +4,9 @@ from typing import Any, Callable
 
 import pyjson5  # supports comments
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.FileDataMiner as FileDataMiner
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -15,7 +15,7 @@ __all__ = ["ModelsDataMiner"]
 
 location_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (value.endswith("/"), "location does not end in \"/\"")
 
-class ModelsDataMiner(DataMiner.DataMiner):
+class ModelsDataMiner(FileDataMiner.FileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=location_function),

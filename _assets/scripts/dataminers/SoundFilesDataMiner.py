@@ -1,9 +1,9 @@
 import enum
 from typing import IO, Any
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.FileDataMiner as FileDataMiner
 import Programs.EvilFSBExtractor as EvilFSBExtractor
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
@@ -64,7 +64,7 @@ def serialize(data:Any) -> Any:
         except Exception:
             return "Unencodable object \"%s\"" % data.__class__.__name__
 
-class SoundFilesDataMiner(DataMiner.DataMiner):
+class SoundFilesDataMiner(FileDataMiner.FileDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
         accessor = self.get_accessor("client")

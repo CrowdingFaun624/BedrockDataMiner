@@ -1,14 +1,14 @@
 import json
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.FileDataMiner as FileDataMiner
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 __all__ = ["LanguagesDataMiner2"]
 
-class LanguagesDataMiner2(DataMiner.DataMiner):
+class LanguagesDataMiner2(FileDataMiner.FileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("languages_location", "a str", True, str),

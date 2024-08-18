@@ -1,14 +1,14 @@
 import json
 
-import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import DataMiner.FileDataMiner as FileDataMiner
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 
 __all__ = ["SoundDefinitionsDataMiner1"]
 
-class SoundDefinitionsDataMiner1(DataMiner.DataMiner):
+class SoundDefinitionsDataMiner1(FileDataMiner.FileDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]]:
         path = "sounds/sounds.json"
