@@ -14,11 +14,11 @@ if TYPE_CHECKING:
     import Component.Pattern as Pattern
     import Component.Version.Field.VersionRangeField as VersionRangeField
     import Component.Version.VersionComponent as VersionComponent
+    import DataMiner.BuiltIns.TagSearcherDataMiner as TagSearcherDataMiner
     import DataMiner.DataMiner as DataMiner
     import DataMiner.DataMinerCollection as DataMinerCollection
     import DataMiner.DataMinerEnvironment as DataMinerEnvironment
     import DataMiner.DataMinerSettings as DataMinerSettings
-    import DataMiner.TagSearcher.TagSearcherDataMiner as TagSearcherDataMiner
     import Downloader.Manager as Manager
     import Structure.Delegate.Delegate as Delegate
     import Structure.Difference as D
