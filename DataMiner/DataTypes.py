@@ -20,8 +20,12 @@ class DataTypes(enum.Enum):
         return [item.value for item in cls]
 
     def get_data_format(self):
-        types_dict:dict[DataTypes,Literal["b","t"]] = {DataTypes.json: "t", DataTypes.nbt: "b"}
         return types_dict[self]
+
+types_dict:dict[DataTypes,Literal["b","t"]] = {
+    DataTypes.json: "t",
+    DataTypes.nbt:  "b",
+}
 
 def get_data(dataminer:DataMiner.DataMiner, path:str, data_type:DataTypes, accessor:Accessor.Accessor) -> Any:
     data_format = data_type.get_data_format()
