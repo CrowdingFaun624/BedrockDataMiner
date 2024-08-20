@@ -1,5 +1,5 @@
 import json
-from typing import TYPE_CHECKING, Any, NoReturn
+from typing import TYPE_CHECKING, Any, NoReturn, TypeVar, overload
 
 from pathlib2 import Path
 
@@ -14,6 +14,8 @@ import Version.Version as Version
 
 if TYPE_CHECKING:
     import DataMiner.DataMinerCollection as DataMinerCollection
+
+a = TypeVar("a", bound=Accessor.Accessor)
 
 class DataMiner():
 
@@ -74,11 +76,17 @@ class DataMiner():
         with open(self.get_data_file_path(), "rt") as f:
             return json.load(f, cls=CustomJson.decoder)
 
-    def get_accessor(self, file_type:str) -> Accessor.Accessor:
+    @overload
+    def get_accessor(self, file_type:str, accessor_type:None=None) -> Accessor.Accessor: ...
+    @overload
+    def get_accessor(self, file_type:str, accessor_type:type[a]) -> a: ...
+    def get_accessor(self, file_type:str, accessor_type:type[Accessor.Accessor]|None=None) -> Accessor.Accessor:
         if file_type not in self.files_str:
             raise Exceptions.DataMinerFileTypePermissionError(self, file_type, sorted(self.files_str))
-        return self.version.get_accessor(file_type)
-
+        accessor = self.version.get_accessor(file_type)
+        if accessor_type is not None and not isinstance(accessor, accessor_type):
+            raise Exceptions.DataMinerAccessorWrongTypeError(self, accessor, accessor_type)
+        return accessor
 
 class NullDataMiner(DataMiner):
     '''Returned when a dataminer collection has no dataminer for a data type.'''

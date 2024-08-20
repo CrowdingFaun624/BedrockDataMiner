@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     import DataMiner.DataMinerCollection as DataMinerCollection
     import DataMiner.DataMinerEnvironment as DataMinerEnvironment
     import DataMiner.DataMinerSettings as DataMinerSettings
+    import Downloader.Accessor as Accessor
     import Downloader.Manager as Manager
     import Structure.Delegate.Delegate as Delegate
     import Structure.Difference as D
@@ -867,6 +868,27 @@ class DataFileNothingToWriteError(DataFileException):
 
 class DataMinerException(Exception):
     "Abstract Exception class for errors relating to DataMiners."
+
+class DataMinerAccessorWrongTypeError(DataMinerException):
+    "The assumed type of an Accessor is not its actual type."
+    
+    def __init__(self, dataminer:"DataMiner.DataMiner", accessor:"Accessor.Accessor", accessor_type:type["Accessor.Accessor"], message:Optional[str]=None) -> None:
+        '''
+        :dataminer: The DataMiner that attempted to access its Accessor.
+        :accessor: The Accessor that is the wrong type.
+        :accessor_type: The type that the Accessor should be.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer, accessor, accessor_type, message)
+        self.dataminer = dataminer
+        self.accessor = accessor
+        self.accessor_type = accessor_type
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "%r from %r should be type \"%s\"" % (self.accessor, self.dataminer, self.accessor_type.__name__)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
 
 class DataMinerCollectionFileError(DataMinerException):
     "The \"files\" key in a DataMinerCollection is improperly specified."
