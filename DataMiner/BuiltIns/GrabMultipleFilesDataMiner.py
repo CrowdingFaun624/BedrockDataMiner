@@ -31,7 +31,7 @@ class GrabMultipleFilesDataMiner(FileDataMiner.FileDataMiner):
         self.ignore_suffixes = ignore_suffixes
         self.suffixes = suffixes
 
-    def get_files(self, path_base:str, accessor:Accessor.Accessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,str]:
+    def get_files(self, path_base:str, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,str]:
         files:dict[str,str] = {}
         # path_base = self.location
         for path in accessor.get_files_in(path_base):
@@ -56,7 +56,7 @@ class GrabMultipleFilesDataMiner(FileDataMiner.FileDataMiner):
         return {file_name: DataTypes.get_data(self, path, self.data_type, accessor) for file_name, path in files.items()}
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         files = self.get_files(self.location, accessor, environment)
         if len(files) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
