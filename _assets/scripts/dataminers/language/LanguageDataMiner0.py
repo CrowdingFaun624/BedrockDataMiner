@@ -1,6 +1,7 @@
 import _assets.scripts.dataminers.language.LanguageDataMiner as LanguageDataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -23,7 +24,7 @@ class LanguageDataMiner0(LanguageDataMiner.LanguageDataMiner):
         pack_names = [(pack["name"], pack["path"]) for pack in packs]
         pack_files:dict[str,str] = {pack_path + self.location % (self.language_code,): pack_name for pack_name, pack_path in pack_names}
         files_request = [(file, "t", None) for file in pack_files.keys()]
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         files:dict[str,str] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)

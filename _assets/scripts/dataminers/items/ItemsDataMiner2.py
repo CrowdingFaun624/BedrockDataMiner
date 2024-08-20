@@ -5,6 +5,7 @@ import pyjson5
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.FileDataMiner as FileDataMiner
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -22,10 +23,10 @@ class ItemsDataMiner2(FileDataMiner.FileDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
 
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         if not accessor.file_exists(self.location):
             raise Exceptions.DataMinerNothingFoundError(self)
-        file = self.get_accessor("client").read(self.location, "t")
+        file = accessor.read(self.location, "t")
 
         items:list[dict[str,Any]] = pyjson5.loads(file)
         output:DataMinerTyping.Items = {}

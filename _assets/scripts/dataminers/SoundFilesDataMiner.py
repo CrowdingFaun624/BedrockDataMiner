@@ -4,6 +4,7 @@ from typing import IO, Any
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.FileDataMiner as FileDataMiner
+import Downloader.Accessor as Accessor
 import Programs.EvilFSBExtractor as EvilFSBExtractor
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
@@ -67,7 +68,7 @@ def serialize(data:Any) -> Any:
 class SoundFilesDataMiner(FileDataMiner.FileDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,DataMinerTyping.SoundFilesTypedDict]]:
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         file_list = accessor.get_file_list()
         if len(file_list) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)

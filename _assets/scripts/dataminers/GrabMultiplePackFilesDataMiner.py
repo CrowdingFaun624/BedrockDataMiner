@@ -4,6 +4,7 @@ import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.DataTypes as DataTypes
 import DataMiner.FileDataMiner as FileDataMiner
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -37,7 +38,7 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         packs:DataMinerTyping.ResourcePacks|DataMinerTyping.BehaviorPacks = environment.dependency_data.get(self.pack_type, self)
         files:dict[tuple[str,str],str] = {}
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         for pack in packs:
             path_base = pack["path"] + self.location
             for path in accessor.get_files_in(path_base):

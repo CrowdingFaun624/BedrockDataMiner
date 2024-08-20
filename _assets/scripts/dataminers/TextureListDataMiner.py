@@ -1,6 +1,7 @@
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.FileDataMiner as FileDataMiner
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -23,7 +24,7 @@ class TextureListDataMiner(FileDataMiner.FileDataMiner):
         for blocks_location in self.locations:
             pack_files.update({pack_path + blocks_location: pack_name for pack_name, pack_path in pack_names})
         files_request = [(file, "t", None) for file in pack_files.keys()]
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         files:dict[str,str] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)

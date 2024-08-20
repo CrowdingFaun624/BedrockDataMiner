@@ -1,6 +1,7 @@
 import _assets.scripts.dataminers.language.LanguageDataMiner as LanguageDataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -19,10 +20,10 @@ class LanguageDataMiner1(LanguageDataMiner.LanguageDataMiner):
         self.location = location
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Language:
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         if not accessor.file_exists(self.location % self.language_code):
             raise Exceptions.DataMinerNothingFoundError(self)
-        file = self.get_accessor("client").read(self.location % self.language_code, "t")
+        file = accessor.read(self.location % self.language_code, "t")
 
         output:DataMinerTyping.Language = {}
         lines = self.combine_lines(file.splitlines())

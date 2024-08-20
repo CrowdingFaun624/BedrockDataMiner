@@ -4,6 +4,7 @@ from typing import IO, Any
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.FileDataMiner as FileDataMiner
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 
 __all__ = ["LanguagesDataMiner0"]
@@ -16,7 +17,7 @@ class LanguagesDataMiner0(FileDataMiner.FileDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.LanguagesTypedDict]:
         resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
         languages_files = {"resource_packs/%s/texts/languages.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
         languages_files_request = [(resource_pack_file, "t", json.load) for resource_pack_file in languages_files.keys()]

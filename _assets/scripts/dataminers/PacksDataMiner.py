@@ -4,6 +4,7 @@ from typing import Literal, TypedDict
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.FileDataMiner as FileDataMiner
+import Downloader.Accessor as Accessor
 import Utilities.DataFile as DataFile
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -45,7 +46,7 @@ class PacksDataMiner(FileDataMiner.FileDataMiner):
         self.pack_type:Literal["resource", "behavior"] = pack_type
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.ResourcePackTypedDict]:
-        file_list = self.get_accessor("client").get_file_list()
+        file_list = self.get_accessor("client", Accessor.DirectoryAccessor).get_file_list()
         packs:list[DataMinerTyping.ResourcePackTypedDict] = []
         pack_names:set[str] = set()
 

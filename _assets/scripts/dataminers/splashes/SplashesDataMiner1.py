@@ -3,6 +3,7 @@ import json
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.FileDataMiner as FileDataMiner
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -20,10 +21,10 @@ class SplashesDataMiner1(FileDataMiner.FileDataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Splashes:
 
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         if not accessor.file_exists(self.splashes_location):
             raise Exceptions.DataMinerNothingFoundError(self)
-        file = self.get_accessor("client").read(self.splashes_location, "t")
+        file = accessor.read(self.splashes_location, "t")
 
         splashes:DataMinerTyping.Splashes = json.loads(file)
         if not isinstance(splashes, dict):

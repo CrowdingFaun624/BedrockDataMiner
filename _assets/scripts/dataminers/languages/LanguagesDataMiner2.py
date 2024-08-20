@@ -3,6 +3,7 @@ import json
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.FileDataMiner as FileDataMiner
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -18,7 +19,7 @@ class LanguagesDataMiner2(FileDataMiner.FileDataMiner):
         self.languages_location = languages_location
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.LanguagesTypedDict]:
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         if not accessor.file_exists(self.languages_location):
             raise Exceptions.DataMinerNothingFoundError(self)
         language_file:list[str] = json.loads(accessor.read(self.languages_location, "t"))

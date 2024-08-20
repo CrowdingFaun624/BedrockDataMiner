@@ -5,6 +5,7 @@ import pyjson5  # supports comments
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.FileDataMiner as FileDataMiner
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -27,7 +28,7 @@ class BlocksClientDataMiner(FileDataMiner.FileDataMiner):
         for blocks_location in self.blocks_locations:
             resource_pack_files.update({resource_pack_path + blocks_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names})
         files_request:list[tuple[str, Literal["t"], Callable[[IO[str]],Any]]] = [(resource_pack_file, "t", cast(Callable[[IO[str]],Any], pyjson5.load)) for resource_pack_file in resource_pack_files.keys()]
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         files:dict[str,dict[str,DataMinerTyping.BlocksJsonClientBlockTypedDict]] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)

@@ -3,6 +3,7 @@ import json
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerTyping as DataMinerTyping
 import DataMiner.FileDataMiner as FileDataMiner
+import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -22,7 +23,7 @@ class LanguagesDataMiner1(FileDataMiner.FileDataMiner):
         resource_pack_names = [(resource_pack["name"], resource_pack["path"]) for resource_pack in resource_packs]
         languages_files = {resource_pack_path + self.languages_location: resource_pack_name for resource_pack_name, resource_pack_path in resource_pack_names}
         languages_files_request = [(resource_pack_file, "t", json.load) for resource_pack_file in languages_files.keys()]
-        accessor = self.get_accessor("client")
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         files:dict[str,list[str]] = {key: value for key, value in self.read_files(accessor, languages_files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
