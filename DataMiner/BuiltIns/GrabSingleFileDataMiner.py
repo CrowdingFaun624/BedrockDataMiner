@@ -27,16 +27,16 @@ class GrabSingleFileDataMiner(FileDataMiner.FileDataMiner):
         self.data_type = data_type
         self.insert_pack = insert_pack
 
-    def get_file(self, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> bytes|str:
+    def get_file(self, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         for location in self.locations:
             if not accessor.file_exists(location):
                 continue
-            return accessor.read(location, self.data_type.get_data_format())
+            return DataTypes.get_data(self, location, self.data_type, accessor)
         else:
             raise Exceptions.DataMinerNothingFoundError(self)
 
-    def get_output(self, file:bytes|str, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
-        return DataTypes.get_data_from_content(file, self.data_type)
+    def get_output(self, file:Any, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+        return file
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
