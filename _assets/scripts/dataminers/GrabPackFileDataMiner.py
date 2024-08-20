@@ -29,17 +29,28 @@ class GrabPackFileDataMiner(FileDataMiner.FileDataMiner):
         self.pack_type = pack_type
         self.data_type = data_type
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
-        packs:DataMinerTyping.ResourcePacks|DataMinerTyping.BehaviorPacks = environment.dependency_data.get(self.pack_type, self)
-        pack_names = [(pack["name"], pack["path"]) for pack in packs]
+    def get_packs(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.ResourcePacks:
+        return environment.dependency_data.get(self.pack_type, self)
+
+    def get_files(self, packs:DataMinerTyping.ResourcePacks, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> tuple[dict[str,Any], dict[str,str]]:
+        '''
+        Returns a dictionary of file names to file contents and a dictionary of file names to the pack they belong to.
+        '''
         pack_files:dict[str,str] = {}
-        for blocks_location in self.locations:
-            pack_files.update({pack_path + blocks_location: pack_name for pack_name, pack_path in pack_names})
+        for location in self.locations:
+            pack_files.update((pack["path"] + location, pack["name"]) for pack in packs)
         files_request = DataTypes.get_file_request(pack_files.keys(), self.data_type)
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         files:dict[str,Any] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
         if len(files) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
+        return files, pack_files
 
-        output = {pack_files[pack_file]: data for pack_file, data in files.items()}
+    def get_output(self, files:dict[str,Any], pack_files:dict[str,str], environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,Any]:
+        return {pack_files[pack_file]: data for pack_file, data in files.items()}
+
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
+        packs = self.get_packs(environment)
+        files, pack_files = self.get_files(packs, accessor, environment)
+        output = self.get_output(files, pack_files, environment)
         return Sorting.sort_everything(output)

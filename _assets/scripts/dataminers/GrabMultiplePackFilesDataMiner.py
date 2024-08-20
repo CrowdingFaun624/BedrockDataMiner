@@ -35,10 +35,14 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
         self.ignore_suffixes = ignore_suffixes
         self.suffixes = suffixes
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
-        packs:DataMinerTyping.ResourcePacks|DataMinerTyping.BehaviorPacks = environment.dependency_data.get(self.pack_type, self)
+    def get_packs(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.ResourcePacks:
+        return environment.dependency_data.get(self.pack_type, self)
+
+    def get_files(self, packs:DataMinerTyping.ResourcePacks, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[tuple[str,str],Any]:
+        '''
+        Returns a dict with keys as tuples of file name and pack name and values of their contents.
+        '''
         files:dict[tuple[str,str],str] = {}
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         for pack in packs:
             path_base = pack["path"] + self.location
             for path in accessor.get_files_in(path_base):
@@ -46,7 +50,7 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
                     continue
                 if self.suffixes is None:
                     file_name = path.replace(path_base, "", 1)
-                    files[file_name, pack["name"]] = path
+                    files[file_name, pack["name"]] = DataTypes.get_data(self, path, self.data_type, accessor)
                 else:
                     suffixes = [suffix for suffix in self.suffixes if path.endswith("." + suffix)]
                     if len(suffixes) == 0:
@@ -56,17 +60,23 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
                     file_name = path.replace(path_base, "", 1).replace(suffix, "", 1)
                     if file_name.endswith(suffix):
                         raise Exceptions.InvalidStateError(self, "file_name still ends in \"%s\"!" % (suffix))
-                    files[file_name, pack["name"]] = path
+                    files[file_name, pack["name"]] = DataTypes.get_data(self, path, self.data_type, accessor)
+        return files
 
+    def get_output(self, files:dict[tuple[str,str],Any], environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,Any]]:
         output:dict[str,dict[str,Any]] = {}
-        for (file_name, pack_name), path in files.items():
-            file_data = DataTypes.get_data(self, path, self.data_type, accessor)
+        for (file_name, pack_name), file_data in files.items():
             if file_name not in output:
                 output[file_name] = {pack_name: file_data}
             else:
                 output[file_name][pack_name] = file_data
-
         if len(output) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
+        return output
 
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+        packs = environment.dependency_data.get(self.pack_type, self)
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
+        files = self.get_files(packs, accessor, environment)
+        output = self.get_output(files, environment)
         return Sorting.sort_everything(output)
