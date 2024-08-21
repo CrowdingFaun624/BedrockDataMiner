@@ -3,7 +3,7 @@ import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
 import Component.Component as Component
 import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
 import Component.DataMiner.DataMinerSettingsComponent as DataMinerSettingsComponent
-import Component.DataMiner.SerializerComponent as SerializerComponent
+import Component.Serializer.SerializerComponent as SerializerComponent
 import Component.Structure.BaseComponent as BaseComponent
 import Component.Structure.CacheComponent as CacheComponent
 import Component.Structure.DictComponent as DictComponent

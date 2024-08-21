@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, cast
 
 import Component.Capabilities as Capabilities
 import Component.Component as Component
-import Component.DataMiner.Field.OptionalSerializerField as OptionalSerializerField
 import Component.ComponentTyping as ComponentTyping
 import Component.DataMiner.Field.OptionalDataMinerTypeField as OptionalDataMinerTypeField
 import Component.Field.ComponentField as ComponentField
@@ -10,6 +9,7 @@ import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
+import Component.Serializer.Field.OptionalSerializerField as OptionalSerializerField
 import Component.Version.Field.OptionalVersionField as OptionalVersionField
 import DataMiner.DataMinerSettings as DataMinerSettings
 import Utilities.Exceptions as Exceptions
