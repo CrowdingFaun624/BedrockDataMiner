@@ -41,9 +41,6 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         self.fields.extend([self.subcomponents_field, self.delegate_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field])
 
-    def get_subcomponents(self) -> list[Component.Component]:
-        return [group_item_component for group_item in self.subcomponents_field if (group_item_component := group_item.get_component()) is not None]
-
     def create_final(self) -> None:
         super().create_final()
         self.final = GroupStructure.GroupStructure(
