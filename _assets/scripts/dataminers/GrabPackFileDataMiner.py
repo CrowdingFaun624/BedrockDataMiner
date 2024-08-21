@@ -1,7 +1,7 @@
 from typing import Any, Literal
 
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerTyping as DataMinerTyping
+import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
 import DataMiner.DataTypes as DataTypes
 import DataMiner.FileDataMiner as FileDataMiner
 import Downloader.Accessor as Accessor

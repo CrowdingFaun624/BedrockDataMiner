@@ -1,6 +1,6 @@
 import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerTyping as DataMinerTyping
+import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 __all__ = ["UnusedSoundEventsDataMiner"]

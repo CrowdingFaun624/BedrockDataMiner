@@ -1,25 +1,16 @@
-import json
-
+import DataMiner.BuiltIns.GrabSingleFileDataMiner as GrabSingleFileDataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerTyping as DataMinerTyping
-import DataMiner.FileDataMiner as FileDataMiner
-import Downloader.Accessor as Accessor
-import Utilities.Exceptions as Exceptions
-import Utilities.Sorting as Sorting
+import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
 
 __all__ = ["SoundDefinitionsDataMiner1"]
 
-class SoundDefinitionsDataMiner1(FileDataMiner.FileDataMiner):
+class SoundDefinitionsDataMiner1(GrabSingleFileDataMiner.GrabSingleFileDataMiner):
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]]:
-        path = "sounds/sounds.json"
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
-        if not accessor.file_exists(path):
-            raise Exceptions.DataMinerNothingFoundError(self)
-        sound_definitions_file:dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict] = json.loads(accessor.read(path, "t"))
+    def initialize(self) -> None:
+        return super().initialize(["sounds/sounds.json"])
 
-        sound_definitions:dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]] = {}
-        for sound_name, sound_properties in sound_definitions_file.items():
-            sound_definitions[sound_name] = {"vanilla": sound_properties}
-
-        return Sorting.sort_everything(sound_definitions)
+    def get_output(self, file:dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict], environment: DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]]:
+        output:dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]] = {}
+        for sound_name, sound_properties in file.items():
+            output[sound_name] = {"vanilla": sound_properties}
+        return output

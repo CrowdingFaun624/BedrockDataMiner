@@ -1,6 +1,6 @@
+import _assets.scripts.dataminers.GrabPackFileDataMiner as GrabPackFileDataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerTyping as DataMinerTyping
-import DataMiner.FileDataMiner as FileDataMiner
+import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
@@ -8,7 +8,7 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 __all__ = ["TextureListDataMiner"]
 
-class TextureListDataMiner(FileDataMiner.FileDataMiner):
+class TextureListDataMiner(GrabPackFileDataMiner.GrabPackFileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),

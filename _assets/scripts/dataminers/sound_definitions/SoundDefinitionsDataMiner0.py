@@ -1,40 +1,28 @@
-from typing import IO, Any, Callable, cast
+from typing import Any
 
-import pyjson5  # supports comments
-
+import _assets.scripts.dataminers.GrabPackFileDataMiner as GrabPackFileDataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerTyping as DataMinerTyping
-import DataMiner.FileDataMiner as FileDataMiner
-import Downloader.Accessor as Accessor
-import Utilities.Exceptions as Exceptions
-import Utilities.Sorting as Sorting
+import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
 
 __all__ = ["SoundDefinitionsDataMiner0"]
 
-class SoundDefinitionsDataMiner0(FileDataMiner.FileDataMiner):
+class SoundDefinitionsDataMiner0(GrabPackFileDataMiner.GrabPackFileDataMiner):
 
-    def normalize(self, file:IO[str]) -> dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]:
-        data = cast(Callable[[IO[str]],Any], pyjson5.load)(file)
+    def normalize(self, data:dict[str,Any]) -> dict[str,Any]:
         if "sound_definitions" in data:
             return data["sound_definitions"]
         else: return data
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]]:
-        resource_packs:DataMinerTyping.ResourcePacks = environment.dependency_data.get("resource_packs", self)
-        resource_pack_names = [resource_pack["name"] for resource_pack in resource_packs]
-        resource_pack_files = {"resource_packs/%s/sounds/sound_definitions.json" % resource_pack_name: resource_pack_name for resource_pack_name in resource_pack_names}
-        files_request = [(resource_pack_file, "t", self.normalize) for resource_pack_file in resource_pack_files.keys()]
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
-        files:dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]] = {key: value for key, value in self.read_files(accessor, files_request, non_exist_ok=True).items() if value is not None}
-        if len(files) == 0:
-            raise Exceptions.DataMinerNothingFoundError(self)
+    def initialize(self) -> None:
+        return super().initialize(["sounds/sound_definitions.json"], "resource_packs")
 
-        sound_definitions:dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]] = {}
-        for resource_pack_file, resource_pack_sound_definitions in files.items():
-            resource_pack_name = resource_pack_files[resource_pack_file]
-            for sound_name, sound_properties in resource_pack_sound_definitions.items():
-                if sound_name not in sound_definitions:
-                    sound_definitions[sound_name] = {resource_pack_name: sound_properties}
+    def get_output(self, files: dict[str, dict[str,Any]], pack_files: dict[str, str], environment: DataMinerEnvironment.DataMinerEnvironment) -> dict[str, Any]:
+        output:dict[str,dict[str,DataMinerTyping.SoundDefinitionsJsonSoundEventTypedDict]] = {}
+        for file_name, sound_definitions in files.items():
+            pack_name = pack_files[file_name]
+            for sound_name, sound_properties in self.normalize(sound_definitions).items():
+                if sound_name not in output:
+                    output[sound_name] = {pack_name: sound_properties}
                 else:
-                    sound_definitions[sound_name][resource_pack_name] = sound_properties
-        return Sorting.sort_everything(sound_definitions)
+                    output[sound_name][pack_name] = sound_properties
+        return output

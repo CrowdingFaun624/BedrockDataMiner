@@ -4,19 +4,19 @@ from typing import Any, Callable
 
 import pyjson5  # supports comments
 
+import _assets.scripts.dataminers.GrabPackFileDataMiner as GrabPackFileDataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerTyping as DataMinerTyping
-import DataMiner.FileDataMiner as FileDataMiner
+import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
-__all__ = ["ModelsDataMiner"]
-
 location_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (value.endswith("/"), "location does not end in \"/\"")
 
-class ModelsDataMiner(FileDataMiner.FileDataMiner):
+# NOTE: this is unused for now until I implement custom serializers/deserializers.
+
+class ModelsDataMiner(GrabPackFileDataMiner.GrabPackFileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=location_function),

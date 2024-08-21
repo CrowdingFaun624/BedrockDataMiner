@@ -2,7 +2,7 @@ from typing import Generator
 
 import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerTyping as DataMinerTyping
+import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 

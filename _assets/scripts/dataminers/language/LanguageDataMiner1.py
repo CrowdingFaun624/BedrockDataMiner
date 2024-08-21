@@ -1,14 +1,13 @@
 import _assets.scripts.dataminers.language.LanguageDataMiner as LanguageDataMiner
+import _assets.scripts.dataminers.MyGrabSingleFileDataMiner as GrabSingleFileDataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerTyping as DataMinerTyping
-import Downloader.Accessor as Accessor
+import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
 import Utilities.Exceptions as Exceptions
-import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 __all__ = ["LanguageDataMiner1"]
 
-class LanguageDataMiner1(LanguageDataMiner.LanguageDataMiner):
+class LanguageDataMiner1(GrabSingleFileDataMiner.MyGrabSingleFileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("language_code", "a str", True, str),
@@ -16,25 +15,16 @@ class LanguageDataMiner1(LanguageDataMiner.LanguageDataMiner):
     )
 
     def initialize(self, language_code:str, location:str) -> None:
-        self.language_code = language_code
-        self.location = location
+        super().initialize(location % language_code, insert_pack="vanilla")
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Language:
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
-        if not accessor.file_exists(self.location % self.language_code):
-            raise Exceptions.DataMinerNothingFoundError(self)
-        file = accessor.read(self.location % self.language_code, "t")
-
-        output:DataMinerTyping.Language = {}
-        lines = self.combine_lines(file.splitlines())
-        resource_pack_output:dict[str,DataMinerTyping.LanguageTypedDict] = {}
+    def get_output(self, file: str, environment: DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Language:
+        lines = LanguageDataMiner.combine_lines(file.splitlines())
+        output:dict[str,DataMinerTyping.LanguageTypedDict] = {}
         for line in lines:
             try:
-                key, line_data = self.process_line(line)
+                key, line_data = LanguageDataMiner.process_line(line)
             except Exception:
                 raise Exceptions.DataMinerFailureError(self, "Failed to process line \"%s\"!" % (line,))
             if key is None or line_data is None: continue
-            resource_pack_output[key] = line_data
-        output["vanilla"] = resource_pack_output
-
-        return Sorting.sort_everything(output)
+            output[key] = line_data
+        return super().get_output(output, environment)

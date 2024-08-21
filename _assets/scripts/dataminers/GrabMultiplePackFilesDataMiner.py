@@ -1,7 +1,7 @@
 from typing import Any, Callable, Literal
 
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerTyping as DataMinerTyping
+import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
 import DataMiner.DataTypes as DataTypes
 import DataMiner.FileDataMiner as FileDataMiner
 import Downloader.Accessor as Accessor
@@ -21,6 +21,7 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=location_function),
         TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs"))),
         TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("invert", "a bool", False, bool),
     )
 
     @classmethod
@@ -28,12 +29,21 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
         if "data_type" in arguments:
             arguments["data_type"] = DataTypes.DataTypes[arguments["data_type"]]
 
-    def initialize(self, location:str, pack_type:Literal["resource_packs", "behavior_packs"], data_type:DataTypes.DataTypes=DataTypes.DataTypes.json, ignore_suffixes:list[str]|None=None, suffixes:list[str]|None=None) -> None:
+    def initialize(
+        self,
+        location:str,
+        pack_type:Literal["resource_packs", "behavior_packs"],
+        data_type:DataTypes.DataTypes=DataTypes.DataTypes.json,
+        ignore_suffixes:list[str]|None=None,
+        suffixes:list[str]|None=None,
+        invert:bool=False, # if True, will be {pack_name: {item_name: item}} instead of {item_name: {pack_name: item}}
+    ) -> None:
         self.location = location
         self.pack_type = pack_type
         self.data_type = data_type
         self.ignore_suffixes = ignore_suffixes
         self.suffixes = suffixes
+        self.invert = invert
 
     def get_packs(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.ResourcePacks:
         return environment.dependency_data.get(self.pack_type, self)
@@ -66,6 +76,8 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
     def get_output(self, files:dict[tuple[str,str],Any], environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,dict[str,Any]]:
         output:dict[str,dict[str,Any]] = {}
         for (file_name, pack_name), file_data in files.items():
+            if self.invert:
+                file_name, pack_name = pack_name, file_name
             if file_name not in output:
                 output[file_name] = {pack_name: file_data}
             else:

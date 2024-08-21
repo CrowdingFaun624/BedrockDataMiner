@@ -1,35 +1,25 @@
-import json
-
+import _assets.scripts.dataminers.MyGrabSingleFileDataMiner as MyGrabSingleFileDataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerTyping as DataMinerTyping
-import DataMiner.FileDataMiner as FileDataMiner
-import Downloader.Accessor as Accessor
+import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
 import Utilities.Exceptions as Exceptions
-import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 __all__ = ["SplashesDataMiner1"]
 
-class SplashesDataMiner1(FileDataMiner.FileDataMiner):
+class SplashesDataMiner1(MyGrabSingleFileDataMiner.MyGrabSingleFileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("splashes_location", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
-    def initialize(self, splashes_location:str) -> None:
-        self.splashes_location = splashes_location
+    def initialize(self, locations:str|list[str]) -> None:
+        super().initialize(locations, insert_pack="vanilla")
+        self.splashes_location = locations
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Splashes:
-
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
-        if not accessor.file_exists(self.splashes_location):
-            raise Exceptions.DataMinerNothingFoundError(self)
-        file = accessor.read(self.splashes_location, "t")
-
-        splashes:DataMinerTyping.Splashes = json.loads(file)
-        if not isinstance(splashes, dict):
+    def get_output(self, file:DataMinerTyping.Splashes, environment: DataMinerEnvironment.DataMinerEnvironment) -> DataMinerTyping.Splashes:
+        if not isinstance(file, dict):
             raise Exceptions.DataMinerFailureError(self, "Splashes is not a dict!")
-        if list(splashes.keys()) != ["splashes"]:
-            raise Exceptions.DataMinerFailureError(self, "Unrecognized key(s): %s" % (list(splashes.keys())))
-        output = {"vanilla": splashes["splashes"]}
-        return Sorting.sort_everything(output)
+        if list(file.keys()) != ["splashes"]:
+            raise Exceptions.DataMinerFailureError(self, "Unrecognized key(s): %s" % (list(file.keys())))
+        output = file["splashes"]
+        return super().get_output(output, environment)

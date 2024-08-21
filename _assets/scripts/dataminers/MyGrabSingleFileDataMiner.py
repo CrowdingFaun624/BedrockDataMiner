@@ -20,8 +20,7 @@ class MyGrabSingleFileDataMiner(GrabSingleFileDataMiner.GrabSingleFileDataMiner)
         self.data_type = data_type
         self.insert_pack = insert_pack
 
-    def get_output(self, file: bytes|str, environment: DataMinerEnvironment.DataMinerEnvironment) -> Any:
-        file_data = super().get_output(file, environment)
+    def get_output(self, file: Any, environment: DataMinerEnvironment.DataMinerEnvironment) -> Any:
         if self.insert_pack is not None:
-            file_data = {self.insert_pack: file_data}
+            file_data = {self.insert_pack: file}
         return file_data
