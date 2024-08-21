@@ -1254,19 +1254,19 @@ class DataMinerUnregisteredDependencyError(DataMinerException):
 class SerializerMethodNonexistentError(DataMinerException):
     "A Serializer's method does not exist and was called."
 
-    def __init__(self, data_type:"Serializer.Serializer", method:Callable, message:Optional[str]=None) -> None:
+    def __init__(self, serializer:"Serializer.Serializer", method:Callable, message:Optional[str]=None) -> None:
         '''
-        :data_type: The Serializer missing a method.
+        :serializer: The Serializer missing a method.
         :method: The method that was called and is missing.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(data_type, method, message)
-        self.data_type = data_type
+        super().__init__(serializer, method, message)
+        self.serializer = serializer
         self.method = method
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r is missing method %s" % (self.data_type, self.method.__name__)
+        output = "%r is missing method %s" % (self.serializer, self.method.__name__)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
