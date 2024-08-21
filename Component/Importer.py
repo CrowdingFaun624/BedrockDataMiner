@@ -12,6 +12,7 @@ import Component.ComponentTypes as ComponentTypes
 import Component.ComponentTyping as ComponentTyping
 import Component.DataMiner.DataMinerImporterEnvironment as DataMinerImporterEnvironment
 import Component.ImporterEnvironment as ImporterEnvironment
+import Component.Serializer.SerializerImporterEnvironment as SerializerImporterEnvironment
 import Component.Structure.StructureImporterEnvironment as StructureImporterEnvironment
 import Component.Version.VersionFileTypeImporterEnvironment as VersionFileTypeImporterEnvironment
 import Component.Version.VersionImporterEnvironment as VersionImporterEnvironment
@@ -35,6 +36,7 @@ importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] =
     AccessorTypeImporterEnvironment.AccessorTypeImporterEnvironment,
     DataMinerImporterEnvironment.DataMinerImporterEnvironment,
     LatestSlotImporterEnvironment.LatestSlotImporterEnvironment,
+    SerializerImporterEnvironment.SerializerImporterEnvironment,
     StructureImporterEnvironment.StructureImporterEnvironment,
     VersionFileTypeImporterEnvironment.VersionFileTypeImporterEnvironment,
     VersionImporterEnvironment.VersionImporterEnvironment,

@@ -30,6 +30,7 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
                 import_component_name = import_component_data["component"]
                 import_component_as = import_component_data.get("as", import_component_name)
                 output[import_from][import_component_as] = all_components[import_from][import_component_name]
+        output["serializers"] = all_components["serializers"]
         return output
 
     def get_output(self, components: dict[str,Component.Component], name: str) -> tuple[StructureBase.StructureBase,list[Component.Component]]:
