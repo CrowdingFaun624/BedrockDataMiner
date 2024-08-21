@@ -21,12 +21,15 @@ class DataMiner():
 
     parameters:TypeVerifier.TypeVerifier|None = TypeVerifier.TypedDictTypeVerifier()
     '''TypeVerifier for verifying the json arguments of this DataMiner'''
+    requires_serializer = False
+    '''If True, an exception will be raised if this DataMiner can be created without a Serializer'''
 
     def __init__(self, version:Version.Version, settings:DataMinerSettings.DataMinerSettings) -> None:
         self.version = version
         self.settings = settings
         self.file_name = self.settings.get_file_name()
         self.name = self.settings.get_name()
+        self.serializer = self.settings.serializer
         self.files = set(self.settings.get_version_file_types())
         self.files_str = {version_file_type.name for version_file_type in self.files}
         self.dependencies = self.settings.get_dependencies()

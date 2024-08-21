@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, cast
 
 import Component.Capabilities as Capabilities
 import Component.Component as Component
+import Component.DataMiner.Field.OptionalSerializerField as OptionalSerializerField
 import Component.ComponentTyping as ComponentTyping
 import Component.DataMiner.Field.OptionalDataMinerTypeField as OptionalDataMinerTypeField
 import Component.Field.ComponentField as ComponentField
@@ -33,6 +34,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("serializer", "a str or dict", True, (str, dict)),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
@@ -46,6 +48,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         self.new_field = OptionalVersionField.OptionalVersionField(data["new"], ["new"])
         self.old_field = OptionalVersionField.OptionalVersionField(data["old"], ["old"])
         self.files_field = ComponentListField.ComponentListField(data.get("files", []), VERSION_FILE_TYPE_PATTERN, ["files"], allow_inline=Field.InlinePermissions.reference)
+        self.serializer_field = OptionalSerializerField.OptionalSerializerField(data.get("serializer", None), ["serializer"])
         self.dataminer_field = OptionalDataMinerTypeField.OptionalDataMinerTypeField(data["name"], ["name"])
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
@@ -55,7 +58,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
                 allow_inline=Field.InlinePermissions.reference
             ) for index, dependency_name in enumerate(data.get("dependencies", []))
         ], ["dependencies"])
-        self.fields.extend([self.new_field, self.old_field, self.files_field, self.dataminer_field, self.dependencies_field])
+        self.fields.extend([self.new_field, self.old_field, self.files_field, self.serializer_field, self.dataminer_field, self.dependencies_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -71,6 +74,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
             name=parent.name,
             structure=parent.structure_field.get_final(),
             dataminer_class=self.dataminer_field.get_final(),
+            serializer=self.serializer_field.get_final(),
             dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.get_component().get_final())),
             start_version=self.old_field.get_final(),
             end_version=self.new_field.get_final(),

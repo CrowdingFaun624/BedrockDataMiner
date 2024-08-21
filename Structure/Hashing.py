@@ -2,8 +2,9 @@ from typing import Any, Callable, TypeVar
 
 import Structure.Difference as D
 import Utilities.Exceptions as Exceptions
-import Utilities.Nbt.NbtReader as NbtReader
+import Utilities.File as File
 import Utilities.Nbt.NbtTypes as NbtTypes
+
 
 def hash_data(data:Any) -> int:
     '''
@@ -34,7 +35,7 @@ hash_type_table:dict[type,Callable] = { # I will have type hinting no matter how
     int: hash_table_item(lambda data: hash(data), int),
     list: hash_table_item(lambda data: hash(tuple(hash_data(item) for item in data)), list),
     memoryview: hash_table_item(lambda data: hash(data), memoryview),
-    NbtReader.NbtBytes: hash_table_item(lambda data: hash(data), NbtReader.NbtBytes),
+    File.File: hash_table_item(lambda data: hash(data), File.File),
     NbtTypes.TAG_Byte: hash_table_item(lambda data: hash(data), NbtTypes.TAG_Byte),
     NbtTypes.TAG_End: hash_table_item(lambda data: hash(data), NbtTypes.TAG_End),
     NbtTypes.TAG_Short: hash_table_item(lambda data: hash(data), NbtTypes.TAG_Short),

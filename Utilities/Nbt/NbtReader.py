@@ -3,48 +3,13 @@ import traceback
 from typing import BinaryIO
 
 import Utilities.Exceptions as Exceptions
+import Utilities.File as File
 import Utilities.FileManager as FileManager
-import Utilities.FileStorageManager as FileStorageManager
 import Utilities.Nbt.DataReader as DataReader
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.Nbt.SnbtParser as SnbtParser
 
-
-class NbtBytes():
-
-    def __init__(self, *, data_hash:str|None=None, value:bytes|None=None) -> None:
-        if data_hash is not None and value is not None:
-            self.value = value
-            self.hash = data_hash
-        elif data_hash is not None and value is None:
-            self.hash = data_hash
-            self.value = None
-        elif data_hash is None and value is not None:
-            self.value = value
-            self.hash = FileManager.stringify_sha1_hash(FileManager.get_hash_from_bytes(value))
-        elif data_hash is None and value is None:
-            raise Exceptions.NbtBytesInvalidArgumentsError(self)
-
-    def read(self) -> bytes:
-        if self.value is None:
-            self.value = FileStorageManager.read_archived(self.hash, "b")
-        return self.value
-
-    def open(self) -> FileManager.FilePromise:
-        return FileStorageManager.open_archived(self.hash, "b")
-
-    def __eq__(self, other:"NbtBytes") -> bool:
-        return self is other or self.value == other.value
-
-    def __hash__(self) -> int:
-        return hash(self.hash)
-
-    def __repr__(self) -> str:
-        if self.value is None:
-            return "<%s hash %s>" % (self.__class__.__name__, self.hash)
-        else:
-            return "<%s len %i hash %s>" % (self.__class__.__name__, len(self.value), self.hash)
 
 def unpack_bytes(data:bytes, gzipped:bool=True, endianness:Endianness.End|None=None) -> tuple[str|None,NbtTypes.TAG]:
     if endianness is None: endianness = Endianness.End.BIG
@@ -77,12 +42,12 @@ def unpack_file_promise(file:FileManager.FilePromise, endianness:Endianness.End|
 def unpack_snbt(data:str) -> NbtTypes.TAG:
     return SnbtParser.parse(data)
 
-def get_nbt_bytes(data:bytes) -> NbtBytes:
-    '''Returns an NbtBytes of the data. The data inside will be un-gzipped'''
+def get_nbt_bytes(data:bytes) -> File.File[bytes]:
+    '''Returns a File of the data. The data inside will be un-gzipped'''
     try:
-        return NbtBytes(value=gzip.decompress(data))
+        return File.File("b", value=gzip.decompress(data))
     except gzip.BadGzipFile:
-        return NbtBytes(value=data)
+        return File.File("b", value=data)
 
 def main_read_file() -> None:
     from pathlib2 import Path

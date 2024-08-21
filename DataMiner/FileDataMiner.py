@@ -10,7 +10,9 @@ import Utilities.FileManager as FileManager
 read_files_typevar = TypeVar("read_files_typevar")
 
 class FileDataMiner(DataMiner.DataMiner):
-    
+
+    requires_serializer = True
+
     def get_files_in(self, accessor:Accessor.DirectoryAccessor, parent:str) -> list[str]:
         return accessor.get_files_in(parent)
 

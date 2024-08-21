@@ -19,6 +19,8 @@ if TYPE_CHECKING:
     import DataMiner.DataMinerCollection as DataMinerCollection
     import DataMiner.DataMinerEnvironment as DataMinerEnvironment
     import DataMiner.DataMinerSettings as DataMinerSettings
+    import Serializer.Serializer as Serializer
+    import Utilities.File as File
     import Downloader.Accessor as Accessor
     import Downloader.Manager as Manager
     import Structure.Delegate.Delegate as Delegate
@@ -30,7 +32,6 @@ if TYPE_CHECKING:
     import Structure.Trace as Trace
     import Utilities.DataFile as DataFile
     import Utilities.FileManager as FileManager
-    import Utilities.Nbt.NbtReader as NbtReader
     import Utilities.Nbt.SnbtParser as SnbtParser
     import Utilities.Scripts as Scripts
     import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -79,7 +80,7 @@ class CannotStringifyError(Exception):
 class EmptyFileError(Exception):
     "The file IO has no bytes."
 
-    def __init__(self, file:"FileManager.FilePromise", message:Optional[str]=None) -> None:
+    def __init__(self, file:Optional["FileManager.FilePromise"]=None, message:Optional[str]=None) -> None:
         '''
         :file: The FilePromise that was opened to reveal no bytes.
         :message: Additional text to place after the main message.
@@ -89,7 +90,7 @@ class EmptyFileError(Exception):
         self.message = message
 
     def __str__(self) -> str:
-        output = "File %r has no bytes"
+        output = "File %r has no bytes" % (self.file,) if self.file is not None else "A file has no bytes"
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -871,7 +872,7 @@ class DataMinerException(Exception):
 
 class DataMinerAccessorWrongTypeError(DataMinerException):
     "The assumed type of an Accessor is not its actual type."
-    
+
     def __init__(self, dataminer:"DataMiner.DataMiner", accessor:"Accessor.Accessor", accessor_type:type["Accessor.Accessor"], message:Optional[str]=None) -> None:
         '''
         :dataminer: The DataMiner that attempted to access its Accessor.
@@ -884,7 +885,7 @@ class DataMinerAccessorWrongTypeError(DataMinerException):
         self.accessor = accessor
         self.accessor_type = accessor_type
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "%r from %r should be type \"%s\"" % (self.accessor, self.dataminer, self.accessor_type.__name__)
         output += "!" if self.message is None else " %s!" % (self.message,)
@@ -1064,6 +1065,25 @@ class DataMinerReadFilesError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class DataMinerSerializerMissingError(DataMinerException):
+    "A DataMiner class requires a Serializer and does not have one."
+
+    def __init__(self, dataminer_settings:"DataMinerSettings.DataMinerSettings", dataminer_type:type["DataMiner.DataMiner"], message:Optional[str]=None) -> None:
+        '''
+        :dataminer_settings: The DataMinerSettings whose DataMiner type requires a Serializer.
+        :dataminer_type: The DataMinerSettings' DataMiner type.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer_settings, dataminer_type, message)
+        self.dataminer_settings = dataminer_settings
+        self.dataminer_type = dataminer_type
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "DataMiner type \"%s\" from %r requires a Serializer but has none" % (self.dataminer_type.__name__, self.dataminer_settings)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class DataMinerSettingsImporterLoopError(DataMinerException):
     "A DataMinerSettings has an import loop."
 
@@ -1231,6 +1251,42 @@ class DataMinerUnregisteredDependencyError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class SerializerMethodNonexistentError(DataMinerException):
+    "A Serializer's method does not exist and was called."
+
+    def __init__(self, data_type:"Serializer.Serializer", method:Callable, message:Optional[str]=None) -> None:
+        '''
+        :data_type: The Serializer missing a method.
+        :method: The method that was called and is missing.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(data_type, method, message)
+        self.data_type = data_type
+        self.method = method
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r is missing method %s" % (self.data_type, self.method.__name__)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class FileInvalidArgumentsError(DataMinerException):
+    "Attempted to create a File object with neither data nor hash."
+
+    def __init__(self, file:"File.File", message:Optional[str]=None) -> None:
+        '''
+        :nbt_bytes: The File object with invalid arguments.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(file, message)
+        self.file = file
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r must be specified with data_hash and/or value arguments" % (self.file,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class MissingDataFileError(DataMinerException):
     "The data file for this DataMinerCollection is missing."
 
@@ -1279,7 +1335,7 @@ class NullDataMinerMethodError(DataMinerException):
 class SoundFilesExtractionError(DataMinerException):
     "Failure to extract from an FSB file."
 
-    def __init__(self, file:"FileManager.FilePromise", exit_code:int, message:Optional[str]=None) -> None:
+    def __init__(self, file:Union["FileManager.FilePromise", bytes], exit_code:int, message:Optional[str]=None) -> None:
         '''
         :file: The FilePromise of an FSB file that failed to extract.
         :exit_code: The exit code that the extraction executable returned.
@@ -1291,14 +1347,17 @@ class SoundFilesExtractionError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Failed to extract file %r; returned exit code %i" % (self.file, self.exit_code)
+        if isinstance(self.file, bytes):
+            output = "Failed to extract FSB file; returned exit code %i" % (self.exit_code,)
+        else:
+            output = "Failed to extract file %r; returned exit code %i" % (self.file, self.exit_code)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
 class SoundFilesMetadataError(DataMinerException):
     "audio_metadata failed to extract the sound file."
 
-    def __init__(self, file:"FileManager.FilePromise", message:Optional[str]=None) -> None:
+    def __init__(self, file:Optional["FileManager.FilePromise"]=None, message:Optional[str]=None) -> None:
         '''
         :file: The FilePromise that audio_metadata failed to extract.
         :message: Additional text to place after the main message.'''
@@ -1307,7 +1366,7 @@ class SoundFilesMetadataError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "audio_metadata failed to extract %r" % (self.file,)
+        output = "audio_metadata failed to extract %r" % ((self.file if self.file is not None else "a file"),)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -1517,23 +1576,6 @@ class UnrecognizedManagerError(DataMinerException):
 
 class NbtException(Exception):
     "Abstract Exception class for errors relating to NBT."
-
-class NbtBytesInvalidArgumentsError(NbtException):
-    "Attempted to create an NbtBytes object with neither data nor hash."
-
-    def __init__(self, nbt_bytes:"NbtReader.NbtBytes", message:Optional[str]=None) -> None:
-        '''
-        :nbt_bytes: The NbtBytes object with invalid arguments.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(nbt_bytes, message)
-        self.nbt_bytes = nbt_bytes
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r must be specified with data_hash and/or value arguments" % (self.nbt_bytes,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
 
 class NbtParseException(NbtException):
     "Abstract Exception class for errors relating to the parsing of NBT from bytes."

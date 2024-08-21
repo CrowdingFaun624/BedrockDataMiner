@@ -129,6 +129,12 @@ def get_hash(file:IO) -> bytes:
         sha1_hash.update(data)
     return sha1_hash.digest()
 
+def get_hash_bytes(file:bytes) -> bytes:
+    '''
+    Returns the sha1 hash of bytes.
+    '''
+    return hashlib.sha1(file).digest()
+
 def clear_temp() -> None:
     '''
     Removes every file and recursively removes every directory from the temp directory.

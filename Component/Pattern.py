@@ -1,9 +1,12 @@
-from typing import Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 import Component.Capabilities as Capabilties
 import Utilities.Exceptions as Exceptions
 
-a = TypeVar("a")
+if TYPE_CHECKING:
+    import Component.Component as Component
+
+a = TypeVar("a", bound="Component.Component")
 
 class Pattern(Generic[a]):
 
