@@ -22,10 +22,9 @@ class GrabSingleFileDataMiner(FileDataMiner.FileDataMiner):
         if "data_type" in arguments:
             arguments["data_type"] = DataTypes.DataTypes[arguments["data_type"]]
 
-    def initialize(self, locations:str|list[str], data_type:DataTypes.DataTypes=DataTypes.DataTypes.json, insert_pack:str|None=None) -> None:
+    def initialize(self, locations:str|list[str], data_type:DataTypes.DataTypes=DataTypes.DataTypes.json) -> None:
         self.locations = [locations] if isinstance(locations, str) else locations
         self.data_type = data_type
-        self.insert_pack = insert_pack
 
     def get_file(self, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         for location in self.locations:
