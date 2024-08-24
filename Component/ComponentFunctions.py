@@ -43,6 +43,18 @@ def move_key(data:dict[str,Any], from_key:str, to_key:str) -> None:
 def open_file(data:File.File[a]) -> a:
     return data.read()
 
+def parse_int(data:str) -> int:
+    return int(data)
+
+def parse_float(data:str) -> float:
+    return float(data)
+
+def parse_number(data:str) -> int|float:
+    try:
+        return int(data)
+    except Exception:
+        return float(data)
+
 functions:dict[str,Callable] = {
     "delete_optional_key": delete_optional_key,
     "delete_optional_keys": delete_optional_keys,
@@ -51,6 +63,9 @@ functions:dict[str,Callable] = {
     "load_json": load_json,
     "move_key": move_key,
     "open_file": open_file,
+    "parse_float": parse_float,
+    "parse_int": parse_int,
+    "parse_number": parse_number,
     "wrap_in_dict": wrap_in_dict,
     "wrap_tuple": wrap_tuple,
 }
