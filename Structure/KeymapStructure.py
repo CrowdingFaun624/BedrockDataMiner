@@ -144,7 +144,8 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                     data_identity_changed = True
                     data = normalizer_output
             except Exception as e:
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+                return None, exceptions
 
         for key in self.keys_with_normalizers:
             if key not in data: continue
@@ -163,7 +164,8 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 if normalizer_output is not None:
                     data_identity_changed = True
                     data = normalizer_output
-            except Exception as e:
+                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+                return None, exceptions
                 return None, [Trace.ErrorTrace(e, self.name, None, data)]
 
         if data_identity_changed:

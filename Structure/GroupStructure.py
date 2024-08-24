@@ -80,7 +80,8 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
                     data_identity_changed = True
                     data = normalizer_output
             except Exception as e:
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+                return None, exceptions
 
         structure, new_exceptions = self.get_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
@@ -98,7 +99,8 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
                     data_identity_changed = True
                     data = normalizer_output
             except Exception as e:
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+                return None, exceptions
 
         if data_identity_changed:
             return data, exceptions

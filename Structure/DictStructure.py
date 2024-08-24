@@ -107,7 +107,8 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                     data_identity_changed = True
                     data = normalizer_output
             except Exception as e:
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+                return None, exceptions
 
         for key, value in data.items():
             structure, new_exceptions = self.get_structure(key, value)
@@ -125,7 +126,8 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                     data_identity_changed = True
                     data = normalizer_output
             except Exception as e:
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+                return None, exceptions
 
         if data_identity_changed:
             return data, exceptions

@@ -98,7 +98,8 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
                     data_identity_changed = True
                     data = normalizer_output
             except Exception as e:
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+                return None, exceptions
 
         for index, item in enumerate(data):
             if self.structure is not None:
@@ -114,7 +115,8 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
                     data_identity_changed = True
                     data = normalizer_output
             except Exception as e:
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+                return None, exceptions
 
         if data_identity_changed:
             return data, exceptions
