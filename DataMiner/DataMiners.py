@@ -140,4 +140,4 @@ def user_interface() -> None:
         if len(failure_dataminers) > 0:
             cannot_datamine.append(version)
     if len(versions) > 1:
-        print("Failed to datamine %i versions:\n%s")
+        print("Failed to datamine %i versions:\n%s" % (len(cannot_datamine), ", ".join(version.name for version in cannot_datamine)))
