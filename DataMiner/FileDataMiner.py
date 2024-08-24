@@ -9,6 +9,10 @@ import Utilities.FileManager as FileManager
 
 read_files_typevar = TypeVar("read_files_typevar")
 
+location_value_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (len(value) == 0 or value.endswith("/"), "location does not end in \"/\"")
+location_item_function:Callable[[str],tuple[bool,str]] = lambda item: (len(item) == 0 or item.endswith("/"), "location does not end in \"/\"")
+suffix_function:Callable[[str],tuple[bool,str]] = lambda item: (item.startswith("."), "suffix does not start with \".\"")
+
 class FileDataMiner(DataMiner.DataMiner):
 
     requires_serializer = True
