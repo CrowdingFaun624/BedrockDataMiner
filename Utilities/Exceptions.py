@@ -19,10 +19,9 @@ if TYPE_CHECKING:
     import DataMiner.DataMinerCollection as DataMinerCollection
     import DataMiner.DataMinerEnvironment as DataMinerEnvironment
     import DataMiner.DataMinerSettings as DataMinerSettings
-    import Serializer.Serializer as Serializer
-    import Utilities.File as File
     import Downloader.Accessor as Accessor
     import Downloader.Manager as Manager
+    import Serializer.Serializer as Serializer
     import Structure.Delegate.Delegate as Delegate
     import Structure.Difference as D
     import Structure.Normalizer as Normalizer
@@ -30,6 +29,7 @@ if TYPE_CHECKING:
     import Structure.StructureBase as StructureBase
     import Structure.StructureSet as StructureSet
     import Structure.Trace as Trace
+    import Utilities.CustomJson as CustomJson
     import Utilities.DataFile as DataFile
     import Utilities.FileManager as FileManager
     import Utilities.Nbt.SnbtParser as SnbtParser
@@ -1189,6 +1189,23 @@ class DataMinersFailureError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class DataMinerNoSerializerProvidedError(DataMinerException):
+    "Called `export_file` on a DataMiner with no Serializer"
+
+    def __init__(self, dataminer:"DataMiner.DataMiner", message:Optional[str]=None) -> None:
+        '''
+        :dataminer: The DataMiner missing a Serializer.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer, message)
+        self.dataminer = dataminer
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Attempted to call `export_file` on %r, which has no Serializer" % (self.dataminer,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class DataMinerUnrecognizedDependencyError(DataMinerException):
     "A dependency does not exist."
 
@@ -1248,42 +1265,6 @@ class DataMinerUnregisteredDependencyError(DataMinerException):
 
     def __str__(self) -> str:
         output = "%r references unlisted dependency \"%s\"" % (self.dataminer, self.dependency_name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class SerializerMethodNonexistentError(DataMinerException):
-    "A Serializer's method does not exist and was called."
-
-    def __init__(self, serializer:"Serializer.Serializer", method:Callable, message:Optional[str]=None) -> None:
-        '''
-        :serializer: The Serializer missing a method.
-        :method: The method that was called and is missing.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(serializer, method, message)
-        self.serializer = serializer
-        self.method = method
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r is missing method %s" % (self.serializer, self.method.__name__)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class FileInvalidArgumentsError(DataMinerException):
-    "Attempted to create a File object with neither data nor hash."
-
-    def __init__(self, file:"File.File", message:Optional[str]=None) -> None:
-        '''
-        :nbt_bytes: The File object with invalid arguments.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(file, message)
-        self.file = file
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r must be specified with data_hash and/or value arguments" % (self.file,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -1775,6 +1756,66 @@ class UnrecognizedScriptError(ScriptException):
 
     def __str__(self) -> str:
         output = "Unrecognized Script \"%s\"" % (self.script_name,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class SerializerException(Exception):
+    "Abstract Exception class for errors relating to Serializers"
+
+class SerializationFailureError(SerializerException):
+    "A Serializer failed to serialize."
+
+    def __init__(self, serializer:"Serializer.Serializer", file_name:str, message:Optional[str]=None) -> None:
+        '''
+        :serializer: The Serializer that failed to serialize.
+        :file_name: The name of the File that failed to be serialized.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(serializer, file_name, message)
+        self.serializer = serializer
+        self.file_name = file_name
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r failed to serialize file \"%s\"" % (self.serializer, self.file_name)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class SerializerMethodNonexistentError(SerializerException):
+    "A Serializer's method does not exist and was called."
+
+    def __init__(self, serializer:"Serializer.Serializer", method:Callable, message:Optional[str]=None) -> None:
+        '''
+        :serializer: The Serializer missing a method.
+        :method: The method that was called and is missing.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(serializer, method, message)
+        self.serializer = serializer
+        self.method = method
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r is missing method %s" % (self.serializer, self.method.__name__)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class UnrecognizedSerializerInFileError(SerializerException):
+    "A Serializer's name in a stored File does not exist."
+
+    def __init__(self, file_data:"CustomJson.FileTypedDict", message:Optional[str]=None) -> None:
+        '''
+        :file_data: The data used to create the File.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(file_data, message)
+        self.serializer = file_data["serializer"]
+        self.name = file_data["name"]
+        self.hash = file_data["hash"]
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Attempted to create File with name \"%s\" and hash \"%s\" using non-existent Serializer \"%s\"" % (self.name, self.hash, self.serializer)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

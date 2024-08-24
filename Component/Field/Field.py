@@ -14,7 +14,7 @@ def get_keys_strs(is_capital:bool, keys:list[str|int]) -> str:
         for index, key in enumerate(reversed(keys))
     )
 
-a = TypeVar("a")
+a = TypeVar("a", bound=Component.Component)
 
 class InlinePermissions(enum.Enum):
     "Use when creating a Field to specify if it's allowed to have inline Components."
