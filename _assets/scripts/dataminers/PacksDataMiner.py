@@ -1,11 +1,8 @@
-import enum
 from typing import Literal, TypedDict
 
+import _assets.scripts.normalizers.collapse_resource_packs.util as collapse_resource_packs
+import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import _assets.scripts.dataminers.DataMinerTyping as DataMinerTyping
-import DataMiner.FileDataMiner as FileDataMiner
-import Downloader.Accessor as Accessor
-import Utilities.DataFile as DataFile
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -13,26 +10,9 @@ __all__ = ["PacksDataMiner"]
 
 class PackTypedDict(TypedDict):
     name: str
-    tags: list[str]
+    path: str
 
-class PackTag(enum.Enum):
-    core = "core"
-    education = "education"
-    experimental = "experimental"
-    extra = "extra"
-    vanity = "vanity"
-
-type_verifier = TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-    TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-    TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.EnumTypeVerifier(set(tag.name for tag in PackTag)), list, "a str", "a list"))
-), list, "a dict", "a list")
-
-def get_pack_order() -> list[PackTypedDict]:
-    data = DataFile.data_files["resource_pack_data"].contents
-    type_verifier.base_verify(data)
-    return data
-
-pack_order = {resource_pack["name"]: index for index, resource_pack in enumerate(get_pack_order())}
+pack_order = collapse_resource_packs.resource_pack_order
 
 class PacksDataMiner(FileDataMiner.FileDataMiner):
 
