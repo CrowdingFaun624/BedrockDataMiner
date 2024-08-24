@@ -81,25 +81,25 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
             old_version = dataminer_settings_component.old_field.get_final()
             if index == 0:
                 if new_version is not None:
-                    exceptions.append(Exceptions.DataMinerSettingsVersionRangeExists(self, new_version, True))
+                    exceptions.append(Exceptions.ComponentVersionRangeExists(self, new_version, True))
                     continue
             else:
                 if new_version is None:
-                    exceptions.append(Exceptions.DataMinerSettingsVersionRangeMissing(self, index, "new"))
+                    exceptions.append(Exceptions.ComponentVersionRangeMissing(self, index, "new"))
                     continue
                 used_versions.append(new_version)
             if index == len(self.dataminer_settings_field) - 1:
                 if old_version is not None:
-                    exceptions.append(Exceptions.DataMinerSettingsVersionRangeExists(self, old_version, False))
+                    exceptions.append(Exceptions.ComponentVersionRangeExists(self, old_version, False))
                     continue
             else:
                 if old_version is None:
-                    exceptions.append(Exceptions.DataMinerSettingsVersionRangeMissing(self, index, "old"))
+                    exceptions.append(Exceptions.ComponentVersionRangeMissing(self, index, "old"))
                     continue
                 used_versions.append(old_version)
 
         for new_version, old_version in batched(used_versions):
             if new_version != old_version:
-                exceptions.append(Exceptions.DataMinerSettingsVersionRangeGap(self, new_version, old_version))
+                exceptions.append(Exceptions.ComponentVersionRangeGap(self, new_version, old_version))
 
         return exceptions

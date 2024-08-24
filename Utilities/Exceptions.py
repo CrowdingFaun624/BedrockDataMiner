@@ -367,6 +367,73 @@ class ComponentInvalidNameError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class ComponentInvalidVersionRangeException(ComponentException):
+    "Abstract exception class for errors relating to the Version ranges in a DataMinerSettings being invalid."
+
+class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
+    "The new/old Version of the first/last sub-Component is not None."
+
+    def __init__(self, source:"Component.Component", actual_value:"Version.Version", is_first:bool, message:Optional[str]=None) -> None:
+        '''
+        :source: The Component with an invalid VersionRange.
+        :actual_value: The value that is present in the new Version instead of None.
+        :is_first: Whether this DataMinerSettings is the newest one or not.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, actual_value, is_first, message)
+        self.source = source
+        self.actual_value = actual_value
+        self.is_first = is_first
+        self.message = message
+
+    def __str__(self) -> str:
+        first_last_text = ("new", "first") if self.is_first else ("old", "last")
+        output = "The %s Version of the %s sub-Component of %r is not None, but instead %r" % (first_last_text[0], first_last_text[1], self.source, self.actual_value)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ComponentVersionRangeGap(ComponentInvalidVersionRangeException):
+    "There is a gap in a Components's sub-Components' Versions."
+
+    def __init__(self, source:"Component.Component", new_version:Union["Version.Version",str], old_version:Union["Version.Version",str], message:Optional[str]=None) -> None:
+        '''
+        :source: The Component with invalid VersionRange.
+        :new_version: The Version or the Version's name on the newer side of the gap.
+        :old_version: The Version or the Version's name on the older side of the gap.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, new_version, old_version, message)
+        self.source = source
+        self.new_version = new_version
+        self.old_version = old_version
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r has a gap between Versions %s and %s" % (self.source, self.new_version, self.old_version)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ComponentVersionRangeMissing(ComponentInvalidVersionRangeException):
+    "The new or old Version of a non-first DataMinerSettings is None."
+
+    def __init__(self, source:"Component.Component", index:int, slot:Literal["old", "new"], message:Optional[str]=None) -> None:
+        '''
+        :source: The Comopnent with an invalid VersionRange.
+        :index: The index of the DataMinerSettings
+        :slot: The key ("old" or "new") of the sub-Component.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, index, slot, message)
+        self.dataminer_collection_component = source
+        self.index = index
+        self.slot = slot
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "The %s Version of sub-Component %i of %r is None" % (self.slot, self.index, self.dataminer_collection_component)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class ComponentMismatchedTypesError(ComponentException):
     "The types of one Component and the types of another do not match."
 
@@ -1100,73 +1167,6 @@ class DataMinerSettingsImporterLoopError(DataMinerException):
 
     def __str__(self) -> str:
         output = "%r has an import loop involving %s" % (self.dataminer_settings, self.loop_items)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class DataMinerSettingsInvalidVersionRangeException(DataMinerException):
-    "Abstract exception class for errors relating to the Version ranges in a DataMinerSettings being invalid."
-
-class DataMinerSettingsVersionRangeExists(DataMinerSettingsInvalidVersionRangeException):
-    "The new/old Version of the first/last DataMinerSettings is not None."
-
-    def __init__(self, dataminer_collection_component:"DataMinerCollectionComponent.DataMinerCollectionComponent", actual_value:"Version.Version", is_first:bool, message:Optional[str]=None) -> None:
-        '''
-        :dataminer_collection_component: The DataMinerCollectionComponent with an invalid DataMinerSettings.
-        :actual_value: The value that is present in the new Version instead of None.
-        :is_first: Whether this DataMinerSettings is the newest one or not.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer_collection_component, actual_value, is_first, message)
-        self.dataminer_collection_component = dataminer_collection_component
-        self.actual_value = actual_value
-        self.is_first = is_first
-        self.message = message
-
-    def __str__(self) -> str:
-        first_last_text = ("new", "first") if self.is_first else ("old", "last")
-        output = "The %s Version of the %s DataMinerSettings of %r is not None, but instead %r" % (first_last_text[0], first_last_text[1], self.dataminer_collection_component, self.actual_value)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class DataMinerSettingsVersionRangeGap(DataMinerSettingsInvalidVersionRangeException):
-    "There is a gap in a DataMinerCollection's DataMinerSettings' Versions."
-
-    def __init__(self, dataminer_collection_component:"DataMinerCollectionComponent.DataMinerCollectionComponent", new_version:Union["Version.Version",str], old_version:Union["Version.Version",str], message:Optional[str]=None) -> None:
-        '''
-        :dataminer_collection_component: The DataMinerCollectionComponent with invalid DataMinerSettings.
-        :new_version: The Version or the Version's name on the newer side of the gap.
-        :old_version: The Version or the Version's name on the older side of the gap.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer_collection_component, new_version, old_version, message)
-        self.dataminer_collection_component = dataminer_collection_component
-        self.new_version = new_version
-        self.old_version = old_version
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r has a gap between Versions %s and %s" % (self.dataminer_collection_component, self.new_version, self.old_version)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class DataMinerSettingsVersionRangeMissing(DataMinerSettingsInvalidVersionRangeException):
-    "The new or old Version of a non-first DataMinerSettings is None."
-
-    def __init__(self, dataminer_collection_component:"DataMinerCollectionComponent.DataMinerCollectionComponent", index:int, slot:Literal["old", "new"], message:Optional[str]=None) -> None:
-        '''
-        :dataminer_collection_component: The DataMinerCollectionComponent with an invalid DataMinerSettings.
-        :index: The index of the DataMinerSettings
-        :slot: The key ("old" or "new") of the DataMinerSettings.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer_collection_component, index, slot, message)
-        self.dataminer_collection_component = dataminer_collection_component
-        self.index = index
-        self.slot = slot
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "The %s Version of DataMinerSettings %i of %r is None" % (self.slot, self.index, self.dataminer_collection_component)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
