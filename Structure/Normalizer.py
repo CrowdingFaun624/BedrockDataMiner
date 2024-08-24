@@ -12,6 +12,13 @@ class Normalizer(Generic[IN, OUT]):
         '''
         self.function = function
         self.arguments = arguments
+        self.version_range:VersionRange.VersionRange|None = None
+
+    def link_subcomponents(self, version_range:VersionRange.VersionRange) -> None:
+        '''
+        :version_range: Running this Normalizer is only allowed when the Version is within this range.
+        '''
+        self.version_range = version_range if not version_range.is_all_versions() else None
 
     def __call__(self, data:IN) -> OUT|None:
         '''

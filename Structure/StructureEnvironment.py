@@ -38,6 +38,12 @@ class PrinterEnvironment():
         self.version = version
         self.branch = branch
 
+    def get_version(self) -> "Version.Version":
+        '''Returns this PrinterEnvironment's Version. Raises an error if it is None.'''
+        if self.version is None:
+            raise Exceptions.AttributeNoneError("version", self)
+        return self.version
+
     def __repr__(self) -> str:
         return "<%s %r %r branch %i>" % (self.__class__.__name__, self.version, self.structure_environment, self.branch)
 

@@ -60,7 +60,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
         else:
             return output, []
 
-    def normalize(self, data: a, environment: StructureEnvironment.StructureEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
+    def normalize(self, data: a, environment: StructureEnvironment.PrinterEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
@@ -74,6 +74,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
 
         data_identity_changed = False
         for normalizer in self.normalizer:
+            if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
                 normalizer_output = normalizer(data)
                 if normalizer_output is not None:
@@ -93,6 +94,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
                 data = normalizer_output
 
         for normalizer in self.post_normalizer:
+            if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
                 normalizer_output = normalizer(data)
                 if normalizer_output is not None:

@@ -122,7 +122,7 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
         return output, exceptions
 
-    def normalize(self, data:dict[str,d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:dict[str,d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
@@ -138,6 +138,7 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
 
         data_identity_changed = False
         for normalizer in self.normalizer:
+            if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
                 normalizer_output = normalizer(data)
                 if normalizer_output is not None:
@@ -159,14 +160,15 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                     data[key] = normalizer_output
 
         for normalizer in self.post_normalizer:
+            if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
                 normalizer_output = normalizer(data)
                 if normalizer_output is not None:
                     data_identity_changed = True
                     data = normalizer_output
+            except Exception as e:
                 exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
                 return None, exceptions
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
 
         if data_identity_changed:
             return data, exceptions

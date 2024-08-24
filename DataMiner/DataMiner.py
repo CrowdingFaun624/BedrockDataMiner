@@ -70,7 +70,7 @@ class DataMiner():
             json.dump(data, f, separators=(",", ":"), cls=CustomJson.encoder)
 
         if self.settings.structure is not None:
-            normalized_data = self.settings.structure.normalize(data, environment.structure_environment)
+            normalized_data = self.settings.structure.normalize(data, environment.get_printer_environment(self.version))
             self.settings.structure.check_types(normalized_data, environment.structure_environment)
 
         return self.get_data_file() # since the normalizing immediately before may modify it.

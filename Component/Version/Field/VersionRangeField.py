@@ -12,6 +12,11 @@ if TYPE_CHECKING:
 class VersionRangeField(FieldContainer.FieldContainer[OptionalVersionField.OptionalVersionField]):
 
     def __init__(self, start_version_str:str|None, stop_version_str:str|None, path: list[str | int]) -> None:
+        '''
+        :start_version_str: The name of the oldest Version (inclusive).
+        :stop_version_str: The name of the newest Version (exclusive).
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        '''
         self.start_version_field = OptionalVersionField.OptionalVersionField(start_version_str, path)
         self.stop_version_field = OptionalVersionField.OptionalVersionField(stop_version_str, path)
         self.equals = start_version_str == stop_version_str

@@ -59,3 +59,6 @@ class DataMinerEnvironment():
 
     def __repr__(self) -> str:
         return "<%s %r %r>" % (self.__class__.__name__, self.dependency_data, self.structure_environment)
+
+    def get_printer_environment(self, version:"Version.Version") -> StructureEnvironment.PrinterEnvironment:
+        return StructureEnvironment.PrinterEnvironment(self.structure_environment, None, version, 0)

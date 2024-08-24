@@ -83,12 +83,12 @@ class Structure(Generic[a]):
             raise Exceptions.AttributeNoneError("delegate", self)
         return self.delegate.print_text(data, environment)
 
-    def normalize(self, data:a, environment:"StructureEnvironment.StructureEnvironment") -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:a, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any|None,list[Trace.ErrorTrace]]:
         '''
         Manipulates the data before comparison.
         Returns the normalized data and a list of list of ErrorTraces.
         :data: The data to manipulate.
-        :environment: The StructureEnvironment to use.
+        :environment: The PrinterEnvironment to use.
         '''
         ...
 
