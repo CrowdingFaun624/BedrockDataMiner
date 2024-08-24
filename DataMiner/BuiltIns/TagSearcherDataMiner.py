@@ -161,12 +161,13 @@ class TagSearcherDataMiner(DataMiner.DataMiner):
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataPath.DataPath|Any]:
         mentioned_tags:dict[str,set[DataPath.DataPath]] = {}
         dependencies = set(self.dependencies)
+        printer_environment = environment.get_printer_environment(self.version)
         for tag in self.tag_names:
             mentioned_tags[tag] = set()
             for dataminer_collection in DataMiners.dataminers:
                 if dataminer_collection.has_tag(tag) and dataminer_collection not in dependencies:
                     raise Exceptions.TagSearcherDependencyError(self, tag, dataminer_collection)
-                mentioned_tags[tag].update(dataminer_collection.get_tag_paths(self.version, tag, environment.structure_environment))
+                mentioned_tags[tag].update(dataminer_collection.get_tag_paths(self.version, tag, printer_environment))
         output = self.tag_function(mentioned_tags)
 
         if not self.none_okay and len(output) == 0:
