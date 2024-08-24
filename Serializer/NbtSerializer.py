@@ -16,8 +16,6 @@ class NbtSerializer(Serializer.Serializer[NbtTypes.TAG, None]):
 
     store_as_file_default = True
 
-    mode = Serializer.Mode.binary
-
     def __init__(self, name:str, endianness:Literal["big", "little"], gzipped:bool) -> None:
         '''
         :name: The Component name of this Serializer.

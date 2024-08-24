@@ -11,13 +11,11 @@ class LanguageObject(TypedDict):
 
 class LanguageSerializer(Serializer.Serializer[dict[str,LanguageObject],dict[str,LanguageObject]]):
 
-    mode = Serializer.Mode.text
-
     def serialize_json(self, data: dict[str, LanguageObject]) -> dict[str, LanguageObject]:
         return data # object is already in JSON-able form.
 
-    def serialize(self, data:dict[str,LanguageObject]) -> str:
-        return "\n".join("%s=%s\t##%s" % (key, item["value"], item["comment"]) if "comment" in item else "%s=%s" % (key, item["value"]) for key, item in data.items())
+    def serialize(self, data:dict[str,LanguageObject]) -> bytes:
+        return "\n".join("%s=%s\t##%s" % (key, item["value"], item["comment"]) if "comment" in item else "%s=%s" % (key, item["value"]) for key, item in data.items()).encode()
 
     def deserialize_json(self, data: dict[str, LanguageObject]) -> dict[str, LanguageObject]:
         return data
@@ -57,9 +55,9 @@ class LanguageSerializer(Serializer.Serializer[dict[str,LanguageObject],dict[str
         else:
             return key, {"comment": comment, "value": value}
 
-    def deserialize(self, data: str) -> dict[str, LanguageObject]:
+    def deserialize(self, data: bytes) -> dict[str, LanguageObject]:
         output:dict[str,LanguageObject] = {}
-        lines = self.combine_lines(data.splitlines())
+        lines = self.combine_lines(data.decode().splitlines())
         for line in lines:
             key, line_data = self.process_line(line)
             if key is None or line_data is None: continue

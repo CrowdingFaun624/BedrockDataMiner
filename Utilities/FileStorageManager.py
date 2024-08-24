@@ -42,10 +42,9 @@ def get_file_path(hex_string:str) -> Path:
     archived_path = archived_directory.joinpath(hex_string)
     return archived_path
 
-def archive_data(data:bytes|str, file_name:str) -> str:
+def archive_data(data:bytes, file_name:str) -> str:
     temp_file = FileManager.get_temp_file_path()
-    file_mode = "b" if isinstance(data, bytes) else "t"
-    with open(temp_file, "w" + file_mode) as f:
+    with open(temp_file, "wb") as f:
         f.write(data) # copying it so I can read it multiple times.
     return_value = archive(FileManager.FilePromise(FunctionCaller(open, [temp_file, "rb"]), file_name, "b"))
     temp_file.unlink()

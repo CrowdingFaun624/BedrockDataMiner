@@ -1,46 +1,35 @@
-from typing import AnyStr, Generic, Literal, cast, overload
+from typing import Generic, TypeVar
 
+import Serializer.Serializer as Serializer
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 import Utilities.FileStorageManager as FileStorageManager
 
 
-def new_file(data:bytes, mode:Literal["b", "t"], file_name:str) -> "File":
+def new_file(data:bytes, file_name:str, serializer:Serializer.Serializer) -> "File":
     if len(data) == 0:
         raise Exceptions.EmptyFileError(message="(file \"%s\")" % (file_name,))
     file_hash = FileStorageManager.archive_data(data, file_name)
-    return File(mode, data_hash=file_hash) # not create with value argument to not clog the memory.
+    return File(file_name, serializer, file_hash) # not create with value argument to not clog the memory.
 
-class File(Generic[AnyStr]):
+a = TypeVar("a")
 
-    @overload
-    def __init__(self:"File[bytes]", mode:Literal["b"], *, data_hash:str|None=None, value:bytes|None=None) -> None: ...
-    @overload
-    def __init__(self:"File[str]", mode:Literal["t"], *, data_hash:str|None=None, value:str|None=None) -> None: ...
-    def __init__(self, mode:Literal["b", "t"], *, data_hash:str|None=None, value:str|bytes|None=None) -> None:
-        self.mode:Literal["b", "t"] = mode
-        if data_hash is not None and value is not None:
-            self.value = value
-            self.hash = data_hash
-        elif data_hash is not None and value is None:
-            self.hash = data_hash
-            self.value = None
-        elif data_hash is None and value is not None:
-            self.value = value
-            if isinstance(value, str):
-                self.hash = FileManager.stringify_sha1_hash(FileManager.get_hash_from_bytes(value.encode()))
-            else:
-                self.hash = FileManager.stringify_sha1_hash(FileManager.get_hash_from_bytes(value))
-        elif data_hash is None and value is None:
-            raise Exceptions.FileInvalidArgumentsError(self)
+class File(Generic[a]):
 
-    def read(self) -> AnyStr:
+    def __init__(self, display_name:str, serializer:Serializer.Serializer, data_hash:str) -> None:
+        self.display_name = display_name
+        self.serializer = serializer
+        self.hash = data_hash
+        self.value:a|None = None
+
+    def read(self) -> a:
         if self.value is None:
-            self.value = FileStorageManager.read_archived(self.hash, self.mode)
-        return cast(AnyStr, self.value)
-
-    def open(self) -> FileManager.FilePromise:
-        return FileStorageManager.open_archived(self.hash, self.mode)
+            file_bytes = FileStorageManager.read_archived(self.hash, "b")
+            try:
+                data:a = self.serializer.deserialize(file_bytes)
+                self.value = data
+            except Exception:
+                raise Exceptions.SerializationFailureError(self.serializer, self.display_name, "(in File.read)")
+        return self.value
 
     def __eq__(self, other:"File") -> bool:
         return self is other or self.value == other.value
@@ -49,7 +38,4 @@ class File(Generic[AnyStr]):
         return hash(self.hash)
 
     def __repr__(self) -> str:
-        if self.value is None:
-            return "<%s hash %s>" % (self.__class__.__name__, self.hash)
-        else:
-            return "<%s len %i hash %s>" % (self.__class__.__name__, len(self.value), self.hash)
+        return "<%s \"%s\" hash %s>" % (self.__class__.__name__, self.display_name, self.hash)

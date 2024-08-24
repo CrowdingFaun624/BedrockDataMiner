@@ -73,8 +73,6 @@ class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDic
 
     store_as_file_default = False
 
-    mode = Serializer.Mode.binary
-
     def deserialize(self, data: bytes) -> dict[str,SoundFilesTypedDict]:
         if data[:3] == b"FSB": # it's an FSB file
             wav_files = EvilFSBExtractor.extract_fsb_file(data)

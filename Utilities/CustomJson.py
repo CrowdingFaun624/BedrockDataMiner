@@ -2,15 +2,15 @@ import json
 import traceback
 from typing import Any, Generic, Literal, TypedDict, TypeVar, cast
 
+import Component.Importer as Importer
 import Structure.DataPath as DataPath
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
-import Utilities.FileStorageManager as FileStorageManager
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
 
 DataPathTypedDict = TypedDict("DataPathTypedDict", {"$special_type": Literal["data_path"], "root": str, "path_items":list[Any], "embedded_data": Any|None})
-FileTypedDict = TypedDict("FileTypedDict", {"$special_type": Literal["file"], "hash": str, "mode": Literal["b", "t"]})
+FileTypedDict = TypedDict("FileTypedDict", {"$special_type": Literal["file"], "hash": str, "name": str, "serializer": str})
 NbtTypedDict = TypedDict("NbtTypedDict", {"$special_type": Literal["nbt"], "data": str})
 
 custom_types = DataPathTypedDict|FileTypedDict|NbtTypedDict
@@ -49,12 +49,15 @@ class FileCoder(Coder[FileTypedDict, File.File]):
 
     @classmethod
     def decode(cls, data: FileTypedDict) -> File.File:
-        return File.File(data["mode"], data_hash=data["hash"])
+        serializer = Importer.serializers.get(data["serializer"])
+        if serializer is None:
+            raise Exceptions.UnrecognizedSerializerInFileError(data)
+        return File.File(data["name"], serializer, data_hash=data["hash"])
 
     @classmethod
     def encode(cls, data: File.File) -> FileTypedDict:
-        file_hash = FileStorageManager.archive_data(data.read(), "")
-        return {"$special_type": "file", "hash": file_hash, "mode": data.mode}
+        # files contained by data are archived when the File object is created.
+        return {"$special_type": "file", "hash": data.hash, "name": data.display_name, "serializer": data.serializer.name}
 
 class SpecialEncoder(json.JSONEncoder):
 
