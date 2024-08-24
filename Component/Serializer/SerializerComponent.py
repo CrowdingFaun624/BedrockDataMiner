@@ -1,7 +1,7 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
-import Component.DataMiner.Field.SerializerTypeField as SerializerTypeField
+import Component.Serializer.Field.SerializerTypeField as SerializerTypeField
 import Serializer.Serializer as Serializer
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
