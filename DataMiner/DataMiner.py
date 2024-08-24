@@ -8,6 +8,7 @@ import DataMiner.DataMinerSettings as DataMinerSettings
 import Downloader.Accessor as Accessor
 import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
+import Utilities.File as File
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
@@ -90,6 +91,17 @@ class DataMiner():
         if accessor_type is not None and not isinstance(accessor, accessor_type):
             raise Exceptions.DataMinerAccessorWrongTypeError(self, accessor, accessor_type)
         return accessor
+
+    def export_file(self, file_bytes:bytes, file_name:str) -> File.File|Any:
+        if self.serializer is None:
+            raise Exceptions.DataMinerNoSerializerProvidedError(self)
+        if self.serializer.store_as_file_default:
+            return File.new_file(file_bytes, file_name, self.serializer)
+        else:
+            try:
+                return self.serializer.deserialize(file_bytes)
+            except Exception:
+                raise Exceptions.SerializationFailureError(self.serializer, file_name, "(in DataMiner.export_file)")
 
 class NullDataMiner(DataMiner):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
