@@ -84,17 +84,6 @@ class DictTypedDict(TypedDict):
     types: Required[str|list[str]]
     value_weight: NotRequired[float]
 
-class FileTypedDict(TypedDict):
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    serializer: Required[Union[str, "SerializerTypedDict"]]
-    subcomponent: Required[str]
-    type: NotRequired[Literal["NbtBase"]]
-    types: Required[str|list[str]]
-
 class GroupTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
@@ -146,8 +135,10 @@ class ListTypedDict(TypedDict):
     types: Required[str|list[str]]
 
 class NormalizerTypedDict(TypedDict):
+    arguments: NotRequired[dict[str,Any]]
     function_name: Required[str]
     type: NotRequired[Literal["Normalizer"]]
+    version_range: NotRequired[list[str|None]]
 
 class PrimitiveComponentTypedDict(TypedDict):
     delegate: NotRequired[str]
@@ -242,7 +233,6 @@ ComponentTypedDicts:TypeAlias = Union[
     DataMinerCollectionTypedDict,
     DataMinerSettingsTypedDict,
     DictTypedDict,
-    FileTypedDict,
     GroupTypedDict,
     KeymapTypedDict,
     LatestSlotTypedDict,
@@ -261,7 +251,7 @@ ComponentTypedDicts:TypeAlias = Union[
     VersionTagTypedDict,
     VersionTypedDict,
 ]
-StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|FileTypedDict|ListTypedDict
+StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict
 
 ComponentGroupFileType:TypeAlias = dict[str,ComponentTypedDicts]
 CreateComponentFunction:TypeAlias = Callable[[ComponentTypedDicts,"Component.Component",str|None],"Component.Component"]
