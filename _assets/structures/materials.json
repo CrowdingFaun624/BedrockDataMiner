@@ -32,17 +32,28 @@
         },
         "types": ["dict"],
         "detect_key_moves": true,
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
         "sort": "by_key",
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "material"
     },
     "material": {
         "type": "Keymap",
-        "normalizer": {
-            "function_name": "normalizers/materials_normalize_material"
-        },
+        "pre_normalized_types": "file",
+        "normalizer": [
+            {
+                "function_name": "open_file"
+            },
+            {
+                "function_name": "normalizers/materials_normalize_material"
+            }
+        ],
         "sort": "by_component_order",
         "keys": {
             "version": {"type": "str"},

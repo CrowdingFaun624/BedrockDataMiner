@@ -2,17 +2,18 @@ import json
 import traceback
 from typing import Any, Generic, Literal, TypedDict, TypeVar, cast
 
+import Component.Importer as Importer
 import Structure.DataPath as DataPath
 import Utilities.Exceptions as Exceptions
-import Utilities.FileStorageManager as FileStorageManager
+import Utilities.File as File
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
 
 DataPathTypedDict = TypedDict("DataPathTypedDict", {"$special_type": Literal["data_path"], "root": str, "path_items":list[Any], "embedded_data": Any|None})
-NbtBytesTypedDict = TypedDict("NbtBytesTypedDict", {"$special_type": Literal["nbt_bytes"], "hash": str})
+FileTypedDict = TypedDict("FileTypedDict", {"$special_type": Literal["file"], "hash": str, "name": str, "serializer": str})
 NbtTypedDict = TypedDict("NbtTypedDict", {"$special_type": Literal["nbt"], "data": str})
 
-custom_types = DataPathTypedDict|NbtBytesTypedDict|NbtTypedDict
+custom_types = DataPathTypedDict|FileTypedDict|NbtTypedDict
 
 dict_type_var = TypeVar("dict_type_var")
 data_type_var = TypeVar("data_type_var")
@@ -44,16 +45,19 @@ class NbtCoder(Coder[NbtTypedDict, NbtTypes.TAG]):
     def encode(cls, data: NbtTypes.TAG) -> NbtTypedDict:
         return {"$special_type": "nbt", "data": str(data)}
 
-class NbtBytesCoder(Coder[NbtBytesTypedDict, NbtReader.NbtBytes]):
+class FileCoder(Coder[FileTypedDict, File.File]):
 
     @classmethod
-    def decode(cls, data: NbtBytesTypedDict) -> NbtReader.NbtBytes:
-        return NbtReader.NbtBytes(data_hash=data["hash"])
+    def decode(cls, data: FileTypedDict) -> File.File:
+        serializer = Importer.serializers.get(data["serializer"])
+        if serializer is None:
+            raise Exceptions.UnrecognizedSerializerInFileError(data)
+        return File.File(data["name"], serializer, data_hash=data["hash"])
 
     @classmethod
-    def encode(cls, data: NbtReader.NbtBytes) -> NbtBytesTypedDict:
-        file_hash = FileStorageManager.archive_data(data.read(), ".nbt")
-        return {"$special_type": "nbt_bytes", "hash": file_hash}
+    def encode(cls, data: File.File) -> FileTypedDict:
+        # files contained by data are archived when the File object is created.
+        return {"$special_type": "file", "hash": data.hash, "name": data.display_name, "serializer": data.serializer.name}
 
 class SpecialEncoder(json.JSONEncoder):
 
@@ -61,8 +65,8 @@ class SpecialEncoder(json.JSONEncoder):
         match data:
             case DataPath.DataPath():
                 return DataPathCoder.encode(data)
-            case NbtReader.NbtBytes(): # stored as raw bytes because data (like endianness) can be lost upon conversion to other format
-                return NbtBytesCoder.encode(data)
+            case File.File(): # stored as raw bytes because data (like endianness) can be lost upon conversion to other format
+                return FileCoder.encode(data)
             case NbtTypes.TAG():
                 return NbtCoder.encode(data)
             case _:
@@ -75,8 +79,8 @@ def decoder_function(data:dict[str,Any]|custom_types) -> Any:
     match data["$special_type"]:
         case "data_path":
             return DataPathCoder.decode(data)
-        case "nbt_bytes":
-            return NbtBytesCoder.decode(data)
+        case "file":
+            return FileCoder.decode(data)
         case "nbt":
             return NbtCoder.decode(data)
         case _:

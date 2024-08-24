@@ -42,16 +42,25 @@
             "measure_length": true
         },
         "types": ["dict"],
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
         "detect_key_moves": true,
         "sort": "by_key",
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "behavior_tree"
     },
     "behavior_tree": {
         "type": "Keymap",
         "sort": "by_component_order",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "minecraft:behavior_tree": {"type": "dict", "subcomponent": {

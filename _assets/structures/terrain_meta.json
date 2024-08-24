@@ -4,13 +4,11 @@
         "delegate_arguments": {
             "name": "terrain_meta"
         },
-        "normalizer": {
-            "function_name": "wrap_in_dict",
-            "arguments": {
-                "key": "name",
-                "delete": true
-            }
-        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "images"
     },
     "images": {
@@ -19,6 +17,19 @@
             "field": "image",
             "measure_length": true
         },
+        "pre_normalized_types": "file",
+        "normalizer": [
+            {
+                "function_name": "open_file"
+            },
+            {
+                "function_name": "wrap_in_dict",
+                "arguments": {
+                    "key": "name",
+                    "delete": true
+                }
+            }
+        ],
         "types": ["dict"],
         "sort": "by_key",
         "subcomponent": "image"

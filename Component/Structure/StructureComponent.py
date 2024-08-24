@@ -2,7 +2,7 @@ from typing import TypeVar
 
 import Component.Component as Component
 import Structure.Structure as Structure
-import Utilities.Nbt.NbtReader as NbtReader
+import Utilities.File as File
 import Utilities.Nbt.NbtTypes as NbtTypes
 
 a = TypeVar("a", bound=Structure.Structure)
@@ -16,7 +16,7 @@ DEFAULT_TYPES:dict[str,type] = {
     "null": type(None),
     "str": str,
     "tuple": tuple,
-    "nbt_base": NbtReader.NbtBytes,
+    "file": File.File,
     "TAG_Byte": NbtTypes.TAG_Byte,
     "TAG_Short": NbtTypes.TAG_Short,
     "TAG_Int": NbtTypes.TAG_Int,

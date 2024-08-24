@@ -12,19 +12,28 @@
             "field": "resource pack"
         },
         "types": ["dict"],
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict",
             "arguments": {
                 "add_defined_in": false
             }
         },
         "sort": "by_key",
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "categories"
     },
     "categories": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "category"
+        },
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
         },
         "types": ["list"],
         "detect_key_moves": true,

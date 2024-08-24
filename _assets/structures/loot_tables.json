@@ -34,11 +34,11 @@
             "field": "behavior pack"
         },
         "detect_key_moves": true,
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
         "sort": "by_key",
-        "subcomponent": "loot_table"
+        "subcomponent": "cache"
     },
     "empty": {
         "type": "Keymap",
@@ -95,9 +95,18 @@
             "int": null
         }
     },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "loot_table"
+    },
     "loot_table": {
         "type": "Keymap",
         "sort": "by_component_order",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "type": {"type": "str", "delegate_arguments": {"always_print": true}},

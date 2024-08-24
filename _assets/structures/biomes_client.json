@@ -18,14 +18,23 @@
         },
         "types": ["dict"],
         "sort": "by_key",
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
-        "subcomponent": "file"
+        "subcomponent": "cache"
     },
-    "file": {
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "biomes_client_file"
+    },
+    "biomes_client_file": {
         "type": "Keymap",
         "sort": "by_component_order",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "biomes": {"type": "dict", "subcomponent": "biomes"}

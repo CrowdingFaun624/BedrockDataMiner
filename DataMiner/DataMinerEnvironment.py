@@ -1,10 +1,11 @@
-from typing import TYPE_CHECKING, Any, Literal, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import DataMiner.DataMiner as DataMiner
+    import Version.Version as Version
 
 a = TypeVar("a")
 
@@ -19,14 +20,13 @@ class DataMinerDependencies():
 
     def get(self, dataminer_name:str, dataminer:"DataMiner.DataMiner") -> Any:
         '''
-        Returns the data associated with the given DataMinerCollection name for this Version, or `default` if the DataMinerCollection exists but has no data for this Version.
+        Returns the data associated with the given DataMinerCollection name for this Version.
         Raises a DataMinerUnregisteredDependencyError if the DataMinerCollection is not listed as a dependency for this DataMiner.
         :dataminer_name: The name of the DataMinerCollection to access.
         :dataminer: The DataMiner attempting to access the dependency.
         '''
-        NO_DEFAULT = "NO"
-        output:Any|Literal["NO"] = self.get_default(dataminer_name, dataminer, NO_DEFAULT)
-        if output is NO_DEFAULT:
+        output = self.get_default(dataminer_name, dataminer, ...)
+        if output is ...:
             raise Exceptions.DataMinerUnrecognizedDependencyError(dataminer, dataminer_name)
         return cast(Any, output)
 
@@ -59,3 +59,6 @@ class DataMinerEnvironment():
 
     def __repr__(self) -> str:
         return "<%s %r %r>" % (self.__class__.__name__, self.dependency_data, self.structure_environment)
+
+    def get_printer_environment(self, version:"Version.Version") -> StructureEnvironment.PrinterEnvironment:
+        return StructureEnvironment.PrinterEnvironment(self.structure_environment, None, version, 0)

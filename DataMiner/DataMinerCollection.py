@@ -61,7 +61,7 @@ class DataMinerCollection():
         '''
         return self.get_structure().has_tag(tag)
 
-    def get_tag_paths(self, version:Version.Version, tag:str, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
+    def get_tag_paths(self, version:Version.Version, tag:str, environment:StructureEnvironment.PrinterEnvironment) -> list[DataPath.DataPath]:
         if not self.get_structure().has_tag(tag):
             return []
         dataminer = self.get_version(version)

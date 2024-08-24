@@ -56,11 +56,11 @@
             "measure_length": true
         },
         "types": ["dict"],
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
         "sort": "by_key",
-        "subcomponent": "camera"
+        "subcomponent": "cache"
     },
     "defined_in": {
         "type": "Set",
@@ -71,9 +71,18 @@
         "types": ["str"],
         "subcomponent": null
     },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "camera"
+    },
     "camera": {
         "type": "Keymap",
         "sort": "by_component_order",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},

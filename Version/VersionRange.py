@@ -33,3 +33,9 @@ class VersionRange():
             return version < self.stop and version >= self.start
         else:
             raise Exceptions.InvalidStateError("logic has failed us")
+
+    def is_all_versions(self) -> bool:
+        '''
+        Returns True if both start and stop are None.
+        '''
+        return self.stop is None and self.start is None

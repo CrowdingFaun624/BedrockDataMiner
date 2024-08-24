@@ -22,6 +22,12 @@ class Accessor():
     def initialize(self) -> None:
         ...
 
+class DummyAccessor(Accessor):
+    "Accessor that does nothing."
+    ...
+
+class DirectoryAccessor(Accessor):
+
     def modify_file_name(self, file_name:str="") -> str:
         return file_name
 
@@ -59,11 +65,7 @@ class Accessor():
     def __repr__(self) -> str:
         return "<%s id %i>" % (self.__class__.__name__, id(self))
 
-class DummyAccessor(Accessor):
-    "Accessor that does nothing."
-    ...
-
-class SubDirectoryAccessor(Accessor):
+class SubDirectoryAccessor(DirectoryAccessor):
     '''
     Accessor for directory access that automatically adds a certain string to the beginning of all paths.
     '''
@@ -74,6 +76,7 @@ class SubDirectoryAccessor(Accessor):
     '''
 
     def initialize(self) -> None:
+        super().initialize()
         self.file_prepension = ""
 
     def modify_file_name(self, file_name:str="") -> str:

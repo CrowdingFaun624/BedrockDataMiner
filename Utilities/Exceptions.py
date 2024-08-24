@@ -14,12 +14,14 @@ if TYPE_CHECKING:
     import Component.Pattern as Pattern
     import Component.Version.Field.VersionRangeField as VersionRangeField
     import Component.Version.VersionComponent as VersionComponent
+    import DataMiner.BuiltIns.TagSearcherDataMiner as TagSearcherDataMiner
     import DataMiner.DataMiner as DataMiner
     import DataMiner.DataMinerCollection as DataMinerCollection
     import DataMiner.DataMinerEnvironment as DataMinerEnvironment
     import DataMiner.DataMinerSettings as DataMinerSettings
-    import DataMiner.TagSearcher.TagSearcherDataMiner as TagSearcherDataMiner
+    import Downloader.Accessor as Accessor
     import Downloader.Manager as Manager
+    import Serializer.Serializer as Serializer
     import Structure.Delegate.Delegate as Delegate
     import Structure.Difference as D
     import Structure.Normalizer as Normalizer
@@ -27,9 +29,9 @@ if TYPE_CHECKING:
     import Structure.StructureBase as StructureBase
     import Structure.StructureSet as StructureSet
     import Structure.Trace as Trace
+    import Utilities.CustomJson as CustomJson
     import Utilities.DataFile as DataFile
     import Utilities.FileManager as FileManager
-    import Utilities.Nbt.NbtReader as NbtReader
     import Utilities.Nbt.SnbtParser as SnbtParser
     import Utilities.Scripts as Scripts
     import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -78,7 +80,7 @@ class CannotStringifyError(Exception):
 class EmptyFileError(Exception):
     "The file IO has no bytes."
 
-    def __init__(self, file:"FileManager.FilePromise", message:Optional[str]=None) -> None:
+    def __init__(self, file:Optional["FileManager.FilePromise"]=None, message:Optional[str]=None) -> None:
         '''
         :file: The FilePromise that was opened to reveal no bytes.
         :message: Additional text to place after the main message.
@@ -88,7 +90,7 @@ class EmptyFileError(Exception):
         self.message = message
 
     def __str__(self) -> str:
-        output = "File %r has no bytes"
+        output = "File %r has no bytes" % (self.file,) if self.file is not None else "A file has no bytes"
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -362,6 +364,73 @@ class ComponentInvalidNameError(ComponentException):
 
     def __str__(self) -> str:
         output = "The name of %r cannot be one of %s" % (self.component, self.invalid_names)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ComponentInvalidVersionRangeException(ComponentException):
+    "Abstract exception class for errors relating to the Version ranges in a DataMinerSettings being invalid."
+
+class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
+    "The new/old Version of the first/last sub-Component is not None."
+
+    def __init__(self, source:"Component.Component", actual_value:"Version.Version", is_first:bool, message:Optional[str]=None) -> None:
+        '''
+        :source: The Component with an invalid VersionRange.
+        :actual_value: The value that is present in the new Version instead of None.
+        :is_first: Whether this DataMinerSettings is the newest one or not.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, actual_value, is_first, message)
+        self.source = source
+        self.actual_value = actual_value
+        self.is_first = is_first
+        self.message = message
+
+    def __str__(self) -> str:
+        first_last_text = ("new", "first") if self.is_first else ("old", "last")
+        output = "The %s Version of the %s sub-Component of %r is not None, but instead %r" % (first_last_text[0], first_last_text[1], self.source, self.actual_value)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ComponentVersionRangeGap(ComponentInvalidVersionRangeException):
+    "There is a gap in a Components's sub-Components' Versions."
+
+    def __init__(self, source:"Component.Component", new_version:Union["Version.Version",str], old_version:Union["Version.Version",str], message:Optional[str]=None) -> None:
+        '''
+        :source: The Component with invalid VersionRange.
+        :new_version: The Version or the Version's name on the newer side of the gap.
+        :old_version: The Version or the Version's name on the older side of the gap.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, new_version, old_version, message)
+        self.source = source
+        self.new_version = new_version
+        self.old_version = old_version
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r has a gap between Versions %s and %s" % (self.source, self.new_version, self.old_version)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class ComponentVersionRangeMissing(ComponentInvalidVersionRangeException):
+    "The new or old Version of a non-first DataMinerSettings is None."
+
+    def __init__(self, source:"Component.Component", index:int, slot:Literal["old", "new"], message:Optional[str]=None) -> None:
+        '''
+        :source: The Comopnent with an invalid VersionRange.
+        :index: The index of the DataMinerSettings
+        :slot: The key ("old" or "new") of the sub-Component.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, index, slot, message)
+        self.dataminer_collection_component = source
+        self.index = index
+        self.slot = slot
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "The %s Version of sub-Component %i of %r is None" % (self.slot, self.index, self.dataminer_collection_component)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -868,6 +937,27 @@ class DataFileNothingToWriteError(DataFileException):
 class DataMinerException(Exception):
     "Abstract Exception class for errors relating to DataMiners."
 
+class DataMinerAccessorWrongTypeError(DataMinerException):
+    "The assumed type of an Accessor is not its actual type."
+
+    def __init__(self, dataminer:"DataMiner.DataMiner", accessor:"Accessor.Accessor", accessor_type:type["Accessor.Accessor"], message:Optional[str]=None) -> None:
+        '''
+        :dataminer: The DataMiner that attempted to access its Accessor.
+        :accessor: The Accessor that is the wrong type.
+        :accessor_type: The type that the Accessor should be.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer, accessor, accessor_type, message)
+        self.dataminer = dataminer
+        self.accessor = accessor
+        self.accessor_type = accessor_type
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r from %r should be type \"%s\"" % (self.accessor, self.dataminer, self.accessor_type.__name__)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class DataMinerCollectionFileError(DataMinerException):
     "The \"files\" key in a DataMinerCollection is improperly specified."
 
@@ -1042,6 +1132,25 @@ class DataMinerReadFilesError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class DataMinerSerializerMissingError(DataMinerException):
+    "A DataMiner class requires a Serializer and does not have one."
+
+    def __init__(self, dataminer_settings:"DataMinerSettings.DataMinerSettings", dataminer_type:type["DataMiner.DataMiner"], message:Optional[str]=None) -> None:
+        '''
+        :dataminer_settings: The DataMinerSettings whose DataMiner type requires a Serializer.
+        :dataminer_type: The DataMinerSettings' DataMiner type.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer_settings, dataminer_type, message)
+        self.dataminer_settings = dataminer_settings
+        self.dataminer_type = dataminer_type
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "DataMiner type \"%s\" from %r requires a Serializer but has none" % (self.dataminer_type.__name__, self.dataminer_settings)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class DataMinerSettingsImporterLoopError(DataMinerException):
     "A DataMinerSettings has an import loop."
 
@@ -1061,73 +1170,6 @@ class DataMinerSettingsImporterLoopError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class DataMinerSettingsInvalidVersionRangeException(DataMinerException):
-    "Abstract exception class for errors relating to the Version ranges in a DataMinerSettings being invalid."
-
-class DataMinerSettingsVersionRangeExists(DataMinerSettingsInvalidVersionRangeException):
-    "The new/old Version of the first/last DataMinerSettings is not None."
-
-    def __init__(self, dataminer_collection_component:"DataMinerCollectionComponent.DataMinerCollectionComponent", actual_value:"Version.Version", is_first:bool, message:Optional[str]=None) -> None:
-        '''
-        :dataminer_collection_component: The DataMinerCollectionComponent with an invalid DataMinerSettings.
-        :actual_value: The value that is present in the new Version instead of None.
-        :is_first: Whether this DataMinerSettings is the newest one or not.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer_collection_component, actual_value, is_first, message)
-        self.dataminer_collection_component = dataminer_collection_component
-        self.actual_value = actual_value
-        self.is_first = is_first
-        self.message = message
-
-    def __str__(self) -> str:
-        first_last_text = ("new", "first") if self.is_first else ("old", "last")
-        output = "The %s Version of the %s DataMinerSettings of %r is not None, but instead %r" % (first_last_text[0], first_last_text[1], self.dataminer_collection_component, self.actual_value)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class DataMinerSettingsVersionRangeGap(DataMinerSettingsInvalidVersionRangeException):
-    "There is a gap in a DataMinerCollection's DataMinerSettings' Versions."
-
-    def __init__(self, dataminer_collection_component:"DataMinerCollectionComponent.DataMinerCollectionComponent", new_version:Union["Version.Version",str], old_version:Union["Version.Version",str], message:Optional[str]=None) -> None:
-        '''
-        :dataminer_collection_component: The DataMinerCollectionComponent with invalid DataMinerSettings.
-        :new_version: The Version or the Version's name on the newer side of the gap.
-        :old_version: The Version or the Version's name on the older side of the gap.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer_collection_component, new_version, old_version, message)
-        self.dataminer_collection_component = dataminer_collection_component
-        self.new_version = new_version
-        self.old_version = old_version
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r has a gap between Versions %s and %s" % (self.dataminer_collection_component, self.new_version, self.old_version)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class DataMinerSettingsVersionRangeMissing(DataMinerSettingsInvalidVersionRangeException):
-    "The new or old Version of a non-first DataMinerSettings is None."
-
-    def __init__(self, dataminer_collection_component:"DataMinerCollectionComponent.DataMinerCollectionComponent", index:int, slot:Literal["old", "new"], message:Optional[str]=None) -> None:
-        '''
-        :dataminer_collection_component: The DataMinerCollectionComponent with an invalid DataMinerSettings.
-        :index: The index of the DataMinerSettings
-        :slot: The key ("old" or "new") of the DataMinerSettings.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer_collection_component, index, slot, message)
-        self.dataminer_collection_component = dataminer_collection_component
-        self.index = index
-        self.slot = slot
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "The %s Version of DataMinerSettings %i of %r is None" % (self.slot, self.index, self.dataminer_collection_component)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class DataMinersFailureError(DataMinerException):
     "Multiple DataMiners failed to activate."
 
@@ -1144,6 +1186,23 @@ class DataMinersFailureError(DataMinerException):
 
     def __str__(self) -> str:
         output = "Failed to datamine %r on DataMiners [%s]" % (self.version, ", ".join(dataminer_collection.name for dataminer_collection in self.dataminer_collections))
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class DataMinerNoSerializerProvidedError(DataMinerException):
+    "Called `export_file` on a DataMiner with no Serializer"
+
+    def __init__(self, dataminer:"DataMiner.DataMiner", message:Optional[str]=None) -> None:
+        '''
+        :dataminer: The DataMiner missing a Serializer.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer, message)
+        self.dataminer = dataminer
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Attempted to call `export_file` on %r, which has no Serializer" % (self.dataminer,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -1257,7 +1316,7 @@ class NullDataMinerMethodError(DataMinerException):
 class SoundFilesExtractionError(DataMinerException):
     "Failure to extract from an FSB file."
 
-    def __init__(self, file:"FileManager.FilePromise", exit_code:int, message:Optional[str]=None) -> None:
+    def __init__(self, file:Union["FileManager.FilePromise", bytes], exit_code:int, message:Optional[str]=None) -> None:
         '''
         :file: The FilePromise of an FSB file that failed to extract.
         :exit_code: The exit code that the extraction executable returned.
@@ -1269,14 +1328,17 @@ class SoundFilesExtractionError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Failed to extract file %r; returned exit code %i" % (self.file, self.exit_code)
+        if isinstance(self.file, bytes):
+            output = "Failed to extract FSB file; returned exit code %i" % (self.exit_code,)
+        else:
+            output = "Failed to extract file %r; returned exit code %i" % (self.file, self.exit_code)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
 class SoundFilesMetadataError(DataMinerException):
     "audio_metadata failed to extract the sound file."
 
-    def __init__(self, file:"FileManager.FilePromise", message:Optional[str]=None) -> None:
+    def __init__(self, file:Optional["FileManager.FilePromise"]=None, message:Optional[str]=None) -> None:
         '''
         :file: The FilePromise that audio_metadata failed to extract.
         :message: Additional text to place after the main message.'''
@@ -1285,7 +1347,7 @@ class SoundFilesMetadataError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "audio_metadata failed to extract %r" % (self.file,)
+        output = "audio_metadata failed to extract %r" % ((self.file if self.file is not None else "a file"),)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -1496,23 +1558,6 @@ class UnrecognizedManagerError(DataMinerException):
 class NbtException(Exception):
     "Abstract Exception class for errors relating to NBT."
 
-class NbtBytesInvalidArgumentsError(NbtException):
-    "Attempted to create an NbtBytes object with neither data nor hash."
-
-    def __init__(self, nbt_bytes:"NbtReader.NbtBytes", message:Optional[str]=None) -> None:
-        '''
-        :nbt_bytes: The NbtBytes object with invalid arguments.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(nbt_bytes, message)
-        self.nbt_bytes = nbt_bytes
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r must be specified with data_hash and/or value arguments" % (self.nbt_bytes,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class NbtParseException(NbtException):
     "Abstract Exception class for errors relating to the parsing of NBT from bytes."
 
@@ -1582,19 +1627,21 @@ class InvalidScriptFileSuffix(ScriptException):
 class InvalidScriptObjectTypeError(ScriptException):
     "An object in a Script has the wrong type."
 
-    def __init__(self, object:Any, allowed_types:list[type], message:Optional[str]=None) -> None:
+    def __init__(self, script:"Scripts.AbstractScript", object:Any, allowed_types:list[type], message:Optional[str]=None) -> None:
         '''
+        :script: The script with the error.
         :object: The object from the Script with the wrong type.
         :allowed_types: The types this object should be.
         :message: Additional text to place after the main message.
         '''
         super().__init__(object, allowed_types, message)
+        self.script = script
         self.object = object
         self.allowed_types = allowed_types
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r should be one of types [%s] instead of type \"%s\"" % (self.object, ", ".join("\"%s\"" % (allowed_type.__name__) for allowed_type in self.allowed_types), type(self.object))
+        output = "%r in %r should be one of types [%s] instead of type \"%s\"" % (self.object, self.script, ", ".join("\"%s\"" % (allowed_type.__name__) for allowed_type in self.allowed_types), type(self.object))
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -1709,6 +1756,66 @@ class UnrecognizedScriptError(ScriptException):
 
     def __str__(self) -> str:
         output = "Unrecognized Script \"%s\"" % (self.script_name,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class SerializerException(Exception):
+    "Abstract Exception class for errors relating to Serializers"
+
+class SerializationFailureError(SerializerException):
+    "A Serializer failed to serialize."
+
+    def __init__(self, serializer:"Serializer.Serializer", file_name:str, message:Optional[str]=None) -> None:
+        '''
+        :serializer: The Serializer that failed to serialize.
+        :file_name: The name of the File that failed to be serialized.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(serializer, file_name, message)
+        self.serializer = serializer
+        self.file_name = file_name
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r failed to serialize file \"%s\"" % (self.serializer, self.file_name)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class SerializerMethodNonexistentError(SerializerException):
+    "A Serializer's method does not exist and was called."
+
+    def __init__(self, serializer:"Serializer.Serializer", method:Callable, message:Optional[str]=None) -> None:
+        '''
+        :serializer: The Serializer missing a method.
+        :method: The method that was called and is missing.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(serializer, method, message)
+        self.serializer = serializer
+        self.method = method
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r is missing method %s" % (self.serializer, self.method.__name__)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class UnrecognizedSerializerInFileError(SerializerException):
+    "A Serializer's name in a stored File does not exist."
+
+    def __init__(self, file_data:"CustomJson.FileTypedDict", message:Optional[str]=None) -> None:
+        '''
+        :file_data: The data used to create the File.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(file_data, message)
+        self.serializer = file_data["serializer"]
+        self.name = file_data["name"]
+        self.hash = file_data["hash"]
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Attempted to create File with name \"%s\" and hash \"%s\" using non-existent Serializer \"%s\"" % (self.name, self.hash, self.serializer)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

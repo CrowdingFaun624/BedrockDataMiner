@@ -4,6 +4,12 @@
         "delegate_arguments": {
             "name": "items"
         },
+        "normalizer": {
+            "function_name": "normalizers/items_normalize",
+            // switch from GrabMultiplePackFilesDataMiner to GrabPackFileDataMiner
+            // makes this normalizer no longer necessary.
+            "version_range": [null, "1.11.4"]
+        },
         "subcomponent": "items"
     },
     "not_in_documentation": {
@@ -35,16 +41,27 @@
         "delegate_arguments": {
             "field": "behavior pack"
         },
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
         "sort": "by_key",
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "item"
     },
     "item": {
         "type": "Keymap",
         "imports": ["minecraft:item.old"],
         "sort": "by_component_order",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file",
+            // from 1.11.4 and newer, the normalizer in base won't run.
+            "version_range": ["1.11.4", null]
+        },
         "keys": {
             "format_version": {"type": "str"},
             "defined_in": {"type": "list", "subcomponent": "defined_in"},

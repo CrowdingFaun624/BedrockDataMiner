@@ -78,7 +78,7 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
                 output.extend(exception.add(self.name, index) for exception in self.structure.check_all_types(item, environment))
         return output
 
-    def normalize(self, data:list[d], environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:list[d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
@@ -92,13 +92,15 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
 
         data_identity_changed = False
         for normalizer in self.normalizer:
+            if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
                 normalizer_output = normalizer(data)
                 if normalizer_output is not None:
                     data_identity_changed = True
                     data = normalizer_output
             except Exception as e:
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+                return None, exceptions
 
         for index, item in enumerate(data):
             if self.structure is not None:
@@ -108,13 +110,15 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
                     data[index] = normalizer_output
 
         for normalizer in self.post_normalizer:
+            if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
                 normalizer_output = normalizer(data)
                 if normalizer_output is not None:
                     data_identity_changed = True
                     data = normalizer_output
             except Exception as e:
-                return None, [Trace.ErrorTrace(e, self.name, None, data)]
+                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+                return None, exceptions
 
         if data_identity_changed:
             return data, exceptions

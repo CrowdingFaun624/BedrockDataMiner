@@ -66,7 +66,7 @@ class PrimitiveStructure(Structure.Structure[d]):
         else:
             return self.delegate.print_text(data, environment)
 
-    def normalize(self, data: d, environment: StructureEnvironment.StructureEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
+    def normalize(self, data: d, environment: StructureEnvironment.PrinterEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
         if self.pre_normalized_types is None:

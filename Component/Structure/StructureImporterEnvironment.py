@@ -15,12 +15,13 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
 
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str, Component.Component]]:
         output:dict[str,dict[str,Component.Component]] = {}
+        output["versions"] = all_components["versions"]
         imports:list[ComponentTyping.ImportTypedDict]|None = None
         for component in components.values():
             if isinstance(component, BaseComponent.BaseComponent):
                 imports = component.imports
                 break
-        if imports is None: return {}
+        if imports is None: return output
         for import_data in imports:
             import_from = import_data["from"]
             if import_from == name:

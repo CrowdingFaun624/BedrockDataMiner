@@ -61,6 +61,7 @@ class DataMinerSettingsTypedDict(TypedDict):
     name: Required[str|None]
     new: Required[str|None]
     old: Required[str|None]
+    serializer: NotRequired[Union[str, "SerializerTypedDict"]]
     type: NotRequired[Literal["DataMinerSettings"]]
 
 class DictTypedDict(TypedDict):
@@ -133,22 +134,13 @@ class ListTypedDict(TypedDict):
     type: NotRequired[Literal["List"]]
     types: Required[str|list[str]]
 
-class NbtBaseTypedDict(TypedDict):
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    endianness: Required[Literal["big", "little"]]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    subcomponent: Required[str]
-    type: NotRequired[Literal["NbtBase"]]
-    types: Required[str|list[str]]
-
 class NormalizerTypedDict(TypedDict):
+    arguments: NotRequired[dict[str,Any]]
     function_name: Required[str]
     type: NotRequired[Literal["Normalizer"]]
+    version_range: NotRequired[list[str|None]]
 
-class PrimitiveComponentTypedDict(TypedDict):
+class PrimitiveTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
     normalizer: NotRequired[str|list[str]]
@@ -161,6 +153,11 @@ class RangeVersionTagAutoAssignerTypedDict(TypedDict):
     newest: Required[str|None]
     oldest: Required[str|None]
     type: NotRequired[Literal["RangeVersionTagAutoAssign"]]
+
+class SerializerTypedDict(TypedDict):
+    arguments: NotRequired[dict[str,Any]]
+    serializer_class: Required[str]
+    type: NotRequired[Literal["Serializer"]]
 
 class SetTypedDict(TypedDict):
     delegate: NotRequired[str]
@@ -176,7 +173,7 @@ class SetTypedDict(TypedDict):
     type: NotRequired[Literal["List"]]
     types: Required[str|list[str]]
 
-class StringComponentTypedDict(TypedDict):
+class StringTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
     normalizer: NotRequired[str|list[str]]
@@ -231,8 +228,6 @@ class VersionTypedDict(TypedDict):
 
 AutoAssignerTypedDicts:TypeAlias = RangeVersionTagAutoAssignerTypedDict
 ComponentTypedDicts:TypeAlias = Union[
-    AccessorTypedDict,
-    AccessorTypeTypedDict,
     BaseTypedDict,
     CacheTypedDict,
     DataMinerCollectionTypedDict,
@@ -242,9 +237,12 @@ ComponentTypedDicts:TypeAlias = Union[
     KeymapTypedDict,
     LatestSlotTypedDict,
     ListTypedDict,
-    NbtBaseTypedDict,
     NormalizerTypedDict,
+    PrimitiveTypedDict,
     RangeVersionTagAutoAssignerTypedDict,
+    SerializerTypedDict,
+    SetTypedDict,
+    StringTypedDict,
     TagTypedDict,
     TypeAliasTypedDict,
     VersionFileTypedDict,
@@ -253,7 +251,7 @@ ComponentTypedDicts:TypeAlias = Union[
     VersionTagTypedDict,
     VersionTypedDict,
 ]
-StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|NbtBaseTypedDict|ListTypedDict
+StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict|PrimitiveTypedDict|SetTypedDict|StringTypedDict
 
 ComponentGroupFileType:TypeAlias = dict[str,ComponentTypedDicts]
 CreateComponentFunction:TypeAlias = Callable[[ComponentTypedDicts,"Component.Component",str|None],"Component.Component"]

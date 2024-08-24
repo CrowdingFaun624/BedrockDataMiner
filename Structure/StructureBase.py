@@ -63,11 +63,11 @@ class StructureBase():
         if self.delegate is not None:
             self.delegate.finalize()
 
-    def normalize(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> Any:
+    def normalize(self, data:Any, environment:StructureEnvironment.PrinterEnvironment) -> Any:
         '''
         Manipulates the data before comparison.
         :data: The data to manipulate.
-        :environment: The StructureEnvironment to use.
+        :environment: The PrinterEnvironment to use.
         '''
         # base normalizer
         exceptions:list[Trace.ErrorTrace] = []
@@ -75,6 +75,7 @@ class StructureBase():
             raise Exceptions.AttributeNoneError("normalizer", self)
         output = data
         for normalizer_index, normalizer in enumerate(self.normalizer):
+            if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
                 output = normalizer(output)
             except Exception as e:
@@ -98,6 +99,7 @@ class StructureBase():
         if self.post_normalizer is None:
             raise Exceptions.AttributeNoneError("post_normalizer", self)
         for normalizer_index, normalizer in enumerate(self.post_normalizer):
+            if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
                 output = normalizer(output)
             except Exception as e:
@@ -125,7 +127,7 @@ class StructureBase():
         '''
         return tag in self.children_tags
 
-    def get_tag_paths(self, data:Any, tag:str, environment:StructureEnvironment.StructureEnvironment) -> list[DataPath.DataPath]:
+    def get_tag_paths(self, data:Any, tag:str, environment:StructureEnvironment.PrinterEnvironment) -> list[DataPath.DataPath]:
         '''
         Returns the DataPaths on which the given tag exists in the Structure for the given data.
         :data: The data to get the tag paths from.
@@ -137,7 +139,7 @@ class StructureBase():
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         normalized_data = self.normalize(data, environment)
-        output, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.name), environment)
+        output, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.name), environment.structure_environment)
         self.print_exception_list(new_exceptions)
         return output
 
@@ -176,14 +178,14 @@ class StructureBase():
         :versions_between: A list of any Versions between the first and second Versions.
         :environment: The StructureEnvironment to use.
         '''
+        comparison_environment = StructureEnvironment.ComparisonEnvironment(environment, self.default_delegate, version1, version2, versions_between)
         if version1 is None:
-            normalized_data2 = self.normalize(data2, environment)
+            normalized_data2 = self.normalize(data2, comparison_environment[1])
             normalized_data1 = type(normalized_data2)() # create new empty.
         else:
-            normalized_data1 = self.normalize(data1, environment)
-            normalized_data2 = self.normalize(data2, environment)
+            normalized_data1 = self.normalize(data1, comparison_environment[0])
+            normalized_data2 = self.normalize(data2, comparison_environment[1])
 
-        comparison_environment = StructureEnvironment.ComparisonEnvironment(environment, self.default_delegate, version1, version2, versions_between)
         data_comparison, has_changes = self.compare(normalized_data1, normalized_data2, comparison_environment)
         if not has_changes: # skip compare_text part
             return "", False

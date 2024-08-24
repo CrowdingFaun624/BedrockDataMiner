@@ -121,14 +121,6 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                 return str(data)
             case NoneType():
                 return "null"
-            case NbtReader.NbtBytes():
-                try:
-                    return str(NbtReader.unpack_bytes(data.read(), gzipped=False, endianness=Endianness.End.BIG)[1])
-                except Exception:
-                    try:
-                        return str(NbtReader.unpack_bytes(data.read(), gzipped=False, endianness=Endianness.End.LITTLE)[1])
-                    except Exception:
-                        return "Unencodable Nbt Object"
             case _:
                 raise Exceptions.CannotStringifyError(type(data))
 

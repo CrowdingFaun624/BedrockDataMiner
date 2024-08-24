@@ -1,8 +1,15 @@
-from typing import Any, TypedDict
+from typing import Any
+
+import Utilities.File as File
 
 __all__ = ["blocks_client_normalize"]
 
-input_typed_dict = TypedDict("input_typed_dict", name=str, properties=dict[str,Any])
-
-def blocks_client_normalize(data:list[input_typed_dict]) -> dict[str,dict[str,Any]]:
-    return {block["name"]: block["properties"] for block in data}
+def blocks_client_normalize(data:dict[str,File.File[dict[str,Any]]]) -> dict[str,dict[str,Any]]:
+    output:dict[str,dict[str,Any]] = {}
+    for pack_name, blocks in data.items():
+        for block_name, block_data in blocks.read().items():
+            if block_name == "format_version": continue
+            if block_name not in output:
+                output[block_name] = {}
+            output[block_name][pack_name] = block_data
+    return output

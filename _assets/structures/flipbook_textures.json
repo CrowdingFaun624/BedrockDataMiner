@@ -13,11 +13,16 @@
             "measure_length": true
         },
         "types": ["list"],
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/list"
         },
         "detect_key_moves": true,
         "sort": "by_key",
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "list",
         "subcomponent": "flipbook_textures"
     },
     "flipbook_textures": {
@@ -25,6 +30,10 @@
         "delegate_arguments": {
             "field": "flipbook texture",
             "measure_length": true
+        },
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
         },
         "types": ["dict"],
         "subcomponent": "flipbook_texture"

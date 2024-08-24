@@ -1,59 +1,20 @@
-from typing import Sequence
-
 import Component.Field.Field as Field
-import DataMiner.AllFiles.AllFilesDataMiners as AllFilesDataMiners
-import DataMiner.BehaviorPacks.BehaviorPacksDataMiners as BehaviorPacksDataMiners
-import DataMiner.BlocksClient.BlocksClientDataMiners as BlocksClientDataMiners
+import Component.ScriptImporter as ScriptImporter
+import DataMiner.BuiltIns.AllFilesDataMiner as AllFilesDataMiner
+import DataMiner.BuiltIns.GrabMultipleFilesDataMiner as GrabMultipleFilesDataMiner
+import DataMiner.BuiltIns.GrabSingleFileDataMiner as GrabSingleFileDataMiner
+import DataMiner.BuiltIns.TagSearcherDataMiner as TagSearcherDataMiner
 import DataMiner.DataMiner as DataMiner
-import DataMiner.DuplicateSounds.DuplicateSoundsDataMiners as DuplicateSoundsDataMiners
-import DataMiner.GrabMultipleFiles.GrabMultipleFilesDataMiners as GrabMultipleFilesDataMiners
-import DataMiner.GrabMultiplePackFiles.GrabMultiplePackFilesDataMiners as GrabMultiplePackFilesDataMiners
-import DataMiner.GrabPackFile.GrabPackFileDataMiners as GrabPackFileDataMiners
-import DataMiner.GrabSingleFile.GrabSingleFileDataMiners as GrabSingleFileDataMiners
-import DataMiner.Items.ItemsDataMiners as ItemsDataMiners
-import DataMiner.Language.LanguageDataMiners as LanguageDataMiners
-import DataMiner.Languages.LanguagesDataMiners as LanguagesDataMiners
-import DataMiner.Models.ModelsDataMiners as ModelsDataMiners
-import DataMiner.MusicDefinitions.MusicDefinitionsDataMiners as MusicDefinitionsDataMiners
-import DataMiner.NonExistentSounds.NonExistentSoundsDataMiners as NonExistentSoundsDataMiners
-import DataMiner.ResourcePacks.ResourcePacksDataMiners as ResourcePacksDataMiners
-import DataMiner.SoundDefinitions.SoundDefinitionsDataMiners as SoundDefinitionsDataMiners
-import DataMiner.SoundFiles.SoundFilesDataMiners as SoundFilesDataMiners
-import DataMiner.SoundsJson.SoundsJsonDataMiners as SoundsJsonDataMiners
-import DataMiner.Splashes.SplashesDataMiners as SplashesDataMiners
-import DataMiner.TagSearcher.TagSearcherDataMiners as TagSearcherDataMiners
-import DataMiner.TextureList.TextureListDataMiners as TextureListDataMiners
-import DataMiner.UndefinedSoundEvents.UndefinedSoundEventsDataMiners as UndefinedSoundEventsDataMiners
-import DataMiner.UnusedSoundEvents.UnusedSoundEventsDataMiners as UnusedSoundEventsDataMiners
 
-all_dataminers:dict[str, type[DataMiner.DataMiner]] = {}
-dataminer_collections:list[Sequence[type[DataMiner.DataMiner]]] = [
-    AllFilesDataMiners.dataminers,
-    BehaviorPacksDataMiners.dataminers,
-    BlocksClientDataMiners.dataminers,
-    DuplicateSoundsDataMiners.dataminers,
-    GrabMultipleFilesDataMiners.dataminers,
-    GrabMultiplePackFilesDataMiners.dataminers,
-    GrabPackFileDataMiners.dataminers,
-    GrabSingleFileDataMiners.dataminers,
-    ItemsDataMiners.dataminers,
-    LanguageDataMiners.dataminers,
-    LanguagesDataMiners.dataminers,
-    ModelsDataMiners.dataminers,
-    MusicDefinitionsDataMiners.dataminers,
-    NonExistentSoundsDataMiners.dataminers,
-    ResourcePacksDataMiners.dataminers,
-    SoundDefinitionsDataMiners.dataminers,
-    SoundFilesDataMiners.dataminers,
-    SoundsJsonDataMiners.dataminers,
-    SplashesDataMiners.dataminers,
-    TagSearcherDataMiners.dataminers,
-    TextureListDataMiners.dataminers,
-    UndefinedSoundEventsDataMiners.dataminers,
-    UnusedSoundEventsDataMiners.dataminers,
-]
-for dataminer_collection in dataminer_collections:
-    all_dataminers.update({dataminer.__name__: dataminer for dataminer in dataminer_collection})
+BUILT_IN_DATAMINER_CLASSES = {dataminer_class.__name__: dataminer_class for dataminer_class in [
+    DataMiner.DataMiner,
+    AllFilesDataMiner.AllFilesDataMiner,
+    GrabMultipleFilesDataMiner.GrabMultipleFilesDataMiner,
+    GrabSingleFileDataMiner.GrabSingleFileDataMiner,
+    TagSearcherDataMiner.TagSearcherDataMiner,
+]}
+
+DATAMINER_CLASSES = ScriptImporter.import_scripted_types("dataminers/", BUILT_IN_DATAMINER_CLASSES, DataMiner.DataMiner)
 
 class OptionalDataMinerTypeField(Field.Field):
 
@@ -63,7 +24,7 @@ class OptionalDataMinerTypeField(Field.Field):
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         super().__init__(path)
-        self.dataminer = all_dataminers[dataminer_name] if dataminer_name is not None else DataMiner.NullDataMiner
+        self.dataminer = DATAMINER_CLASSES[dataminer_name] if dataminer_name is not None else DataMiner.NullDataMiner
 
     def get_final(self) -> type[DataMiner.DataMiner]|type[DataMiner.NullDataMiner]:
         return self.dataminer

@@ -14,13 +14,24 @@
         },
         "types": ["dict"],
         "sort": "by_key",
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "attachable"
     },
     "attachable": {
         "type": "Keymap",
-        "normalizer": {
-            "function_name": "normalizers/attachables_normalize_old"
-        },
+        "pre_normalized_types": "file",
+        "normalizer": [
+            {
+                "function_name": "open_file"
+            },
+            {
+                "function_name": "normalizers/attachables_normalize_old"
+            }
+        ],
         "sort": "by_component_order",
         "keys": {
             "format_version": {"type": "str"},

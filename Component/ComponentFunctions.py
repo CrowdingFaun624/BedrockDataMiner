@@ -1,6 +1,9 @@
 import json
-from typing import Any, Callable
+from typing import Any, Callable, TypeVar
 
+import Utilities.File as File
+
+a = TypeVar("a")
 
 def delete_required_key(data:dict[str,Any], key:str) -> None:
     del data[key]
@@ -37,6 +40,9 @@ def move_key(data:dict[str,Any], from_key:str, to_key:str) -> None:
         data[to_key] = data[from_key]
         del data[from_key]
 
+def open_file(data:File.File[a]) -> a:
+    return data.read()
+
 functions:dict[str,Callable] = {
     "delete_optional_key": delete_optional_key,
     "delete_optional_keys": delete_optional_keys,
@@ -44,6 +50,7 @@ functions:dict[str,Callable] = {
     "delete_required_keys": delete_required_keys,
     "load_json": load_json,
     "move_key": move_key,
+    "open_file": open_file,
     "wrap_in_dict": wrap_in_dict,
     "wrap_tuple": wrap_tuple,
 }

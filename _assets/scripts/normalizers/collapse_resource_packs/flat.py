@@ -1,6 +1,6 @@
 from typing import TypeVar
 
-import scripts.normalizers.collapse_resource_packs.__util as util
+import _assets.scripts.normalizers.collapse_resource_packs.util as util
 
 a = TypeVar("a")
 

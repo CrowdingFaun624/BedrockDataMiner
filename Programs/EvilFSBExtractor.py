@@ -38,10 +38,13 @@ def __output_file_all_done(input_file_releases:dict[str,bool], file_path:Path) -
     if all(input_file_releases.values()):
         Path(file_path.parent).rmdir()
 
-def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager.FilePromise]:
+def extract_fsb_file(input_file:FileManager.FilePromise|bytes) -> dict[str,FileManager.FilePromise]:
 
-    with input_file.open() as f:
-        fsb_file_hash = FileManager.stringify_sha1_hash(FileManager.get_hash(f))
+    if isinstance(input_file, FileManager.FilePromise):
+        with input_file.open() as f:
+            fsb_file_hash = FileManager.stringify_sha1_hash(FileManager.get_hash(f))
+    else:
+        fsb_file_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(input_file))
     cache_data = cache_read_item(fsb_file_hash)
 
     if cache_data is None:
@@ -49,9 +52,13 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
         temp_directory.mkdir()
         temp_file = temp_directory.joinpath("fsb.fsb")
         # copying file to temp directory
-        with open(temp_file, "wb") as dest, input_file.open() as fsb_file_io:
-            dest.write(fsb_file_io.read())
-        input_file.all_done()
+        if isinstance(input_file, FileManager.FilePromise):
+            with open(temp_file, "wb") as dest, input_file.open() as fsb_file_io:
+                dest.write(fsb_file_io.read())
+            input_file.all_done()
+        else:
+            with open(temp_file, "wb") as dest:
+                dest.write(input_file)
         # run fsb extractor on fsb file.
         exe_return = subprocess.run([FileManager.LIB_FSB_EXE_FILE, temp_file], shell=True, cwd=temp_directory, capture_output=True)
         if exe_return.returncode != 0:
@@ -71,15 +78,21 @@ def extract_fsb_file(input_file:FileManager.FilePromise) -> dict[str,FileManager
         temp_file.unlink()
         input_file_releases = {result_file_path.name: False for result_file_path in result_file_paths} # the all_done function will set its thing to True, and then delete the directory if all are True.
         return {
-            result_file_path.name: FileManager.FilePromise(FunctionCaller(open, [result_file_path, "rb"]), "%s %s" % (input_file.name, result_file_path.name), "b", FunctionCaller(__output_file_all_done, [input_file_releases, result_file_path]))
+            result_file_path.name: FileManager.FilePromise(
+                FunctionCaller(open, [result_file_path, "rb"]),
+                ("%s %s" % (input_file.name, result_file_path.name) if isinstance(input_file, FileManager.FilePromise) else result_file_path.name),
+                "b",
+                FunctionCaller(__output_file_all_done, [input_file_releases, result_file_path])
+            )
             for result_file_path in result_file_paths
         }
 
     else: # If the fsb has been seen before, then it returns its wav files from FileStorage
-        input_file.all_done()
+        if isinstance(input_file, FileManager.FilePromise):
+            input_file.all_done()
         return {cached_file_path: FileStorageManager.open_archived(cached_file_hash, "b") for cached_file_path, cached_file_hash in cache_data.items()}
 
-def extract_fsb_files(files:Iterator[tuple[str,FileManager.FilePromise]]) -> Iterator[tuple[str,dict[str,FileManager.FilePromise]]]:
+def extract_fsb_files(files:Iterator[tuple[str,FileManager.FilePromise|bytes]]) -> Iterator[tuple[str,dict[str,FileManager.FilePromise]]]:
     '''Adds all FilePromises to the queue. It yields the input FilePromise name and a dictionary of its result. Does not necessarily maintain the same order.'''
     for file_name, next_file in files:
         yield file_name, extract_fsb_file(next_file)

@@ -69,9 +69,9 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         cache_item.set_check_all_types(output)
         return output
 
-    def normalize(self, data:d, environment:StructureEnvironment.StructureEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:d, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         structure = self.get_structure()
-        if not environment.should_cache or not self.cache_normalize:
+        if not environment.structure_environment.should_cache or not self.cache_normalize:
             return structure.normalize(data, environment)
         data_hash = Hashing.hash_data(data)
         cache_item = self.cache.get(data_hash)

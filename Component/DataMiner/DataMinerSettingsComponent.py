@@ -9,6 +9,7 @@ import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
+import Component.Serializer.Field.OptionalSerializerField as OptionalSerializerField
 import Component.Version.Field.OptionalVersionField as OptionalVersionField
 import DataMiner.DataMinerSettings as DataMinerSettings
 import Utilities.Exceptions as Exceptions
@@ -33,6 +34,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("serializer", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
@@ -46,6 +48,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         self.new_field = OptionalVersionField.OptionalVersionField(data["new"], ["new"])
         self.old_field = OptionalVersionField.OptionalVersionField(data["old"], ["old"])
         self.files_field = ComponentListField.ComponentListField(data.get("files", []), VERSION_FILE_TYPE_PATTERN, ["files"], allow_inline=Field.InlinePermissions.reference)
+        self.serializer_field = OptionalSerializerField.OptionalSerializerField(data.get("serializer", None), ["serializer"])
         self.dataminer_field = OptionalDataMinerTypeField.OptionalDataMinerTypeField(data["name"], ["name"])
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
@@ -55,7 +58,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
                 allow_inline=Field.InlinePermissions.reference
             ) for index, dependency_name in enumerate(data.get("dependencies", []))
         ], ["dependencies"])
-        self.fields.extend([self.new_field, self.old_field, self.files_field, self.dataminer_field, self.dependencies_field])
+        self.fields.extend([self.new_field, self.old_field, self.files_field, self.serializer_field, self.dataminer_field, self.dependencies_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -66,16 +69,17 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
         parent = cast("DataMinerCollectionComponent.DataMinerCollectionComponent", self.get_inline_parent())
-        self.get_final().link_subcomponents(
+        exceptions.extend(self.get_final().link_subcomponents(
             file_name=parent.file_name,
             name=parent.name,
             structure=parent.structure_field.get_final(),
             dataminer_class=self.dataminer_field.get_final(),
+            serializer=self.serializer_field.get_final(),
             dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.get_component().get_final())),
             start_version=self.old_field.get_final(),
             end_version=self.new_field.get_final(),
             version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.get_final()))
-        )
+        ))
         return exceptions
 
     def check(self) -> list[Exception]:
@@ -86,9 +90,4 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         else:
             if self.files_field_exists:
                 exceptions.append(Exceptions.DataMinerCollectionFileError(True, self, "when \"name\" is null"))
-        dataminer_class = self.dataminer_field.get_final()
-        parameters = dataminer_class.parameters
-        if parameters is not None:
-            type_verifier_trace = TypeVerifier.make_trace([self, dataminer_class.__name__])
-            exceptions.extend(parameters.verify(self.arguments, type_verifier_trace))
         return exceptions

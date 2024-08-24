@@ -3,13 +3,13 @@ import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
 import Component.Component as Component
 import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
 import Component.DataMiner.DataMinerSettingsComponent as DataMinerSettingsComponent
+import Component.Serializer.SerializerComponent as SerializerComponent
 import Component.Structure.BaseComponent as BaseComponent
 import Component.Structure.CacheComponent as CacheComponent
 import Component.Structure.DictComponent as DictComponent
 import Component.Structure.GroupComponent as GroupComponent
 import Component.Structure.KeymapComponent as KeymapComponent
 import Component.Structure.ListComponent as ListComponent
-import Component.Structure.NbtBaseComponent as NbtBaseComponent
 import Component.Structure.NormalizerComponent as NormalizerComponent
 import Component.Structure.PrimitiveComponent as PrimitiveComponent
 import Component.Structure.SetComponent as SetComponent
@@ -36,9 +36,9 @@ component_types:list[type[Component.Component]] = [
     KeymapComponent.KeymapComponent,
     LatestSlotComponent.LatestSlotComponent,
     ListComponent.ListComponent,
-    NbtBaseComponent.NbtBaseComponent,
     NormalizerComponent.NormalizerComponent,
     PrimitiveComponent.PrimitiveComponent,
+    SerializerComponent.SerializerComponent,
     SetComponent.SetComponent,
     StringComponent.StringComponent,
     RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,

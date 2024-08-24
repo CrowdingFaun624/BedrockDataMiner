@@ -27,6 +27,7 @@ STRUCTURES_DIRECTORY      = ASSETS_DIRECTORY.joinpath("structures")
 ACCESSOR_TYPES_FILE       = ASSETS_DIRECTORY.joinpath("accessor_types.json")
 DATAMINER_COLLECTIONS_FILE = ASSETS_DIRECTORY.joinpath("dataminer_collections.json")
 FSB_CACHE_FILE            = ASSETS_DIRECTORY.joinpath("fsb_cache.json")
+SERIALIZERS_FILE          = ASSETS_DIRECTORY.joinpath("serializers.json")
 RESOUCE_PACK_DATA_FILE    = ASSETS_DIRECTORY.joinpath("resource_pack_data.json")
 VERSION_FILE_TYPES_FILE   = ASSETS_DIRECTORY.joinpath("version_file_types.json")
 VERSION_TAGS_DIRECTORY    = ASSETS_DIRECTORY.joinpath("version_tag")
@@ -128,6 +129,12 @@ def get_hash(file:IO) -> bytes:
         if not data: break
         sha1_hash.update(data)
     return sha1_hash.digest()
+
+def get_hash_bytes(file:bytes) -> bytes:
+    '''
+    Returns the sha1 hash of bytes.
+    '''
+    return hashlib.sha1(file).digest()
 
 def clear_temp() -> None:
     '''

@@ -4,7 +4,7 @@
         "delegate_arguments": {
             "name": "gui_sound_definitions"
         },
-        "subcomponent": "sound_event",
+        "subcomponent": "cache",
         "imports": [
             {
                 "from": "structures/sound_definitions",
@@ -16,11 +16,20 @@
             }
         ]
     },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "sound_event"
+    },
     "sound_event": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "sound event",
             "measure_length": true
+        },
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
         },
         "types": ["dict"],
         "sort": "by_key",

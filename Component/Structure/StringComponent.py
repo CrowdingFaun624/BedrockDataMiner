@@ -23,7 +23,7 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
-    def __init__(self, data:ComponentTyping.PrimitiveComponentTypedDict, name: str, component_group: str, index: int | None) -> None:
+    def __init__(self, data:ComponentTyping.PrimitiveTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate"), data.get("delegate_arguments", {}), ["delegate"])
