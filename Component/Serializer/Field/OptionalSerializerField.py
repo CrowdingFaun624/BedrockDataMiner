@@ -10,7 +10,7 @@ SERIALIZER_PATTERN:Pattern.Pattern[SerializerComponent.SerializerComponent] = Pa
 class OptionalSerializerField(OptionalComponentField.OptionalComponentField[SerializerComponent.SerializerComponent]):
     
     def __init__(self, subcomponent_data:str|ComponentTyping.SerializerTypedDict|None, path: list[str | int]) -> None:
-        super().__init__(subcomponent_data, SERIALIZER_PATTERN, path, allow_inline=Field.InlinePermissions.mixed, assume_type="Serializer")
+        super().__init__(subcomponent_data, SERIALIZER_PATTERN, path, allow_inline=Field.InlinePermissions.reference, assume_type="Serializer")
 
     def get_final(self) -> Serializer.Serializer|None:
         component = self.get_component()
