@@ -26,6 +26,7 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 if TYPE_CHECKING:
     import DataMiner.DataMinerCollection as DataMinerCollection
     import Downloader.AccessorType as AccessorType
+    import Serializer.Serializer as Serializer
     import Structure.StructureBase as StructureBase
     import Version.Version as Version
     import Version.VersionFileType as VersionFileType
@@ -210,6 +211,7 @@ all_component_groups = parse_all_component_groups()
 accessor_types:dict[str,"AccessorType.AccessorType"] = all_component_groups["accessor_types"]
 dataminer_collections:dict[str,"DataMinerCollection.DataMinerCollection"] = all_component_groups["dataminer_collections"]
 latest_slots:list[str] = all_component_groups["latest_slots"]
+serializers:dict[str,"Serializer.Serializer"] = all_component_groups["serializers"]
 structures:dict[str,"StructureBase.StructureBase"] = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}
 version_file_types:dict[str,"VersionFileType.VersionFileType"] = all_component_groups["version_file_types"]
 version_tags_order:"VersionTagOrder.VersionTagOrder" = all_component_groups["version_tags_order"]
