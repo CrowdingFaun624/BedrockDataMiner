@@ -13,9 +13,9 @@ class RepairableJsonSerializer(JsonSerializer.JsonSerializer):
 
     mode = Serializer.Mode.text
 
-    def __init__(self, name:str, append:str) -> None:
+    def __init__(self, name:str, remove_suffix:str) -> None:
         super().__init__(name)
-        self.repair_function = lambda data: data + append
+        self.repair_function:Callable[[str],str] = lambda data: data.removesuffix(remove_suffix)
 
     def deserialize(self, data: str) -> Any:
         return super().deserialize(self.repair_function(data))
