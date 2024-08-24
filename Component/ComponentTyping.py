@@ -140,7 +140,7 @@ class NormalizerTypedDict(TypedDict):
     type: NotRequired[Literal["Normalizer"]]
     version_range: NotRequired[list[str|None]]
 
-class PrimitiveComponentTypedDict(TypedDict):
+class PrimitiveTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
     normalizer: NotRequired[str|list[str]]
@@ -173,7 +173,7 @@ class SetTypedDict(TypedDict):
     type: NotRequired[Literal["List"]]
     types: Required[str|list[str]]
 
-class StringComponentTypedDict(TypedDict):
+class StringTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
     normalizer: NotRequired[str|list[str]]
@@ -238,11 +238,11 @@ ComponentTypedDicts:TypeAlias = Union[
     LatestSlotTypedDict,
     ListTypedDict,
     NormalizerTypedDict,
-    PrimitiveComponentTypedDict,
+    PrimitiveTypedDict,
     RangeVersionTagAutoAssignerTypedDict,
     SerializerTypedDict,
     SetTypedDict,
-    StringComponentTypedDict,
+    StringTypedDict,
     TagTypedDict,
     TypeAliasTypedDict,
     VersionFileTypedDict,
@@ -251,7 +251,7 @@ ComponentTypedDicts:TypeAlias = Union[
     VersionTagTypedDict,
     VersionTypedDict,
 ]
-StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict
+StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict|PrimitiveTypedDict|SetTypedDict|StringTypedDict
 
 ComponentGroupFileType:TypeAlias = dict[str,ComponentTypedDicts]
 CreateComponentFunction:TypeAlias = Callable[[ComponentTypedDicts,"Component.Component",str|None],"Component.Component"]
