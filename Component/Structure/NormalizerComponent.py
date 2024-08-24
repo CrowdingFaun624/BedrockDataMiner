@@ -37,6 +37,7 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
     def create_final(self) -> None:
         super().create_final()
         self.final = Normalizer.Normalizer(
+            name=self.name,
             function=self.function_field.get_function(),
             arguments=self.arguments,
         )
