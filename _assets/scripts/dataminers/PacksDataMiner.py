@@ -45,9 +45,9 @@ class PacksDataMiner(FileDataMiner.FileDataMiner):
         self.directory = directory
         self.pack_type:Literal["resource", "behavior"] = pack_type
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataMinerTyping.ResourcePackTypedDict]:
-        file_list = self.get_accessor("client", Accessor.DirectoryAccessor).get_file_list()
-        packs:list[DataMinerTyping.ResourcePackTypedDict] = []
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[PackTypedDict]:
+        file_list:list[str] = environment.dependency_data.get("all_files", self)
+        packs:list[PackTypedDict] = []
         pack_names:set[str] = set()
 
         unrecognized_packs:set[str] = set()
