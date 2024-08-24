@@ -34,6 +34,12 @@ class Serializer(Generic[a, b]):
     by subclasses of Serializer.
     '''
 
+    def __init__(self, name:str, **kwargs:Any) -> None:
+        self.name = name
+
+    def __repr__(self) -> str:
+        return "<%s %s>" % (self.__class__.__name__, self.name)
+
     def serialize_json(self, data:a) -> b:
         '''
         Converts an object into JSON. Will be called when storing data in a

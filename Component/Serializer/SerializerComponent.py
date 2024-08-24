@@ -30,7 +30,7 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = self.serializer_class_field.get_final()(**self.arguments)
+        self.final = self.serializer_class_field.get_final()(self.name, **self.arguments)
 
     def check(self) -> list[Exception]:
         exceptions = super().check()

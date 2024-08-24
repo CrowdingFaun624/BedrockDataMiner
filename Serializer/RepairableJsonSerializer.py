@@ -13,8 +13,8 @@ class RepairableJsonSerializer(JsonSerializer.JsonSerializer):
 
     mode = Serializer.Mode.text
 
-    def __init__(self, append:str) -> None:
-        super().__init__()
+    def __init__(self, name:str, append:str) -> None:
+        super().__init__(name)
         self.repair_function = lambda data: data + append
 
     def deserialize(self, data: str) -> Any:

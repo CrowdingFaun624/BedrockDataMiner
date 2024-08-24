@@ -18,8 +18,13 @@ class NbtSerializer(Serializer.Serializer[NbtTypes.TAG, None]):
 
     mode = Serializer.Mode.binary
 
-    def __init__(self, endianness:Literal["big", "little"], gzipped:bool) -> None:
-        super().__init__()
+    def __init__(self, name:str, endianness:Literal["big", "little"], gzipped:bool) -> None:
+        '''
+        :name: The Component name of this Serializer.
+        :endianness: If the content of the nbt file is big-endian or little-endian.
+        :gzipped: If True, decompresses the file using gzip.
+        '''
+        super().__init__(name)
         self.endianness = End[endianness.upper()]
         self.gzipped = gzipped
 
