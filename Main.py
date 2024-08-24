@@ -94,11 +94,6 @@ if __name__ == "__main__":
     main()
 
 pass
-# TODO: make sure all DataMiners' parameters match their actual parameters
-# TODO: make dataminers use AllFiles instead of using accessors when possible
-# TODO: export all data into a backup.
-# TODO: replace most dataminers with normalizers.
-# TODO: refactor ResourcePackDataMiner and BehaviorPackDataMiner to use import from scripts/normalizers/collapse_resource_packs/__util.py
 # TODO: add more dataminers; replace weird dataminers like languages with better ones.
 # TODO: construct thing that can see what files are being mined by each DataMiner; use it to find blind spots.
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
