@@ -19,7 +19,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("imports", "a list", False, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("components", "a dict", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
+            TypeVerifier.TypedDictKeyTypeVerifier("components", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
                 TypeVerifier.TypedDictKeyTypeVerifier("as", "a str", False, str),
                 TypeVerifier.TypedDictKeyTypeVerifier("component", "a str", True, str),
             ), list, "a dict", "a list")),
