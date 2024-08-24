@@ -19,6 +19,7 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataMiner.suffix_function)),
         TypeVerifier.TypedDictKeyTypeVerifier("unrecognized_suffix_okay", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataMiner.location_item_function)),
     )
 
     def initialize(
@@ -29,6 +30,7 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
         suffixes:list[str]|None=None,
         unrecognized_suffix_okay:bool=False,
         find_none_okay:bool=False,
+        ignore_subdirectories:list[str]|None=None
     ) -> None:
         self.location = location
         self.pack_type = pack_type
@@ -36,19 +38,36 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
         self.suffixes = suffixes
         self.unrecognized_suffix_okay = unrecognized_suffix_okay
         self.find_none_okay = find_none_okay
+        self.ignore_subdirectories = ignore_subdirectories
 
     def get_packs(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[PacksDataMiner.PackTypedDict]:
         return environment.dependency_data.get(self.pack_type, self)
+
+    def get_coverage(self, file_set: set[str], environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+        ignore_directories = [self.location + subdirectory for subdirectory in self.ignore_subdirectories] if self.ignore_subdirectories is not None else None
+        packs = [pack["path"] for pack in self.get_packs(environment)]
+        return {
+            file_name
+            for file_name in file_set
+            for pack in packs
+            if file_name.startswith(pack + self.location)
+            if ignore_directories is None or not any(file_name.startswith(ignore_directory) for ignore_directory in ignore_directories)
+            if self.ignore_suffixes is None or not any(file_name.endswith(ignore_suffix) for ignore_suffix in self.ignore_suffixes)
+            if self.suffixes is None or any(file_name.endswith(suffix) for suffix in self.suffixes)
+        }
 
     def get_files(self, packs:list[PacksDataMiner.PackTypedDict], accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[tuple[str,str,str],bytes]:
         '''
         Returns a dict with of pack name, path relative to base, file name to the file's contents.
         '''
         files:dict[tuple[str,str,str],bytes] = {}
+        ignore_directories = [self.location + subdirectory for subdirectory in self.ignore_subdirectories] if self.ignore_subdirectories is not None else None
         for pack in packs:
             path_base = pack["path"] + self.location
             for file_name in accessor.get_files_in(path_base):
                 should_store_file = True
+                if ignore_directories is not None and any(file_name.startswith(ignore_directory) for ignore_directory in ignore_directories):
+                    continue
                 if self.ignore_suffixes is not None and any(file_name.endswith(ignore_suffix) for ignore_suffix in self.ignore_suffixes):
                     continue
                 relative_name = file_name.replace(path_base, "", 1)

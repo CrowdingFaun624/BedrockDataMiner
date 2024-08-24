@@ -39,6 +39,7 @@ COMPARISONS_DIRECTORY     = PARENT_DIRECTORY.joinpath("_comparisons")
 LIB_DIRECTORY             = PARENT_DIRECTORY.joinpath("_lib")
 LIB_FSB_DIRECTORY         = LIB_DIRECTORY.joinpath("fsb")
 LIB_FSB_EXE_FILE          = LIB_FSB_DIRECTORY.joinpath("fsb_aud_extr.exe")
+OUTPUT_DIRECTORY          = PARENT_DIRECTORY.joinpath("_output")
 TEMP_DIRECTORY            = PARENT_DIRECTORY.joinpath("_temp")
 VERSIONS_DIRECTORY        = PARENT_DIRECTORY.joinpath("_versions")
 

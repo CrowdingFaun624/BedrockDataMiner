@@ -3,6 +3,7 @@ from typing import (IO, Any, Callable, Literal, Mapping, Sequence, TypeVar,
                     overload)
 
 import DataMiner.DataMiner as DataMiner
+import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
@@ -16,6 +17,16 @@ suffix_function:Callable[[str],tuple[bool,str]] = lambda item: (item.startswith(
 class FileDataMiner(DataMiner.DataMiner):
 
     requires_serializer = True
+
+    def get_coverage(self, file_set:set[str], environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+        '''
+        Must be overridden by subclasses of FileDataMiner.
+        Returns the set of file paths this DataMiner would return if it were
+        activated.\n
+        :file_set: The set of all file paths.
+        :environment: The DataMinerEnvironment to use (for dependencies).
+        '''
+        ...
 
     def get_files_in(self, accessor:Accessor.DirectoryAccessor, parent:str) -> list[str]:
         return accessor.get_files_in(parent)

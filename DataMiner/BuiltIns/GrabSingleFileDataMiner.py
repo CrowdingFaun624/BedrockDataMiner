@@ -18,6 +18,13 @@ class GrabSingleFileDataMiner(FileDataMiner.FileDataMiner):
     def initialize(self, locations:list[str]) -> None:
         self.locations = locations
 
+    def get_coverage(self, file_set: set[str], environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+        for file_name in self.locations:
+            if file_name in file_set:
+                return {file_name}
+        else:
+            return set()
+
     def get_file(self, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> tuple[bytes, str]:
         for location in self.locations:
             if not accessor.file_exists(location):

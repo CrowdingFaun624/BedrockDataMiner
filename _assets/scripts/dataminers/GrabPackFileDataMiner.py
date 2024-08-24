@@ -24,6 +24,15 @@ class GrabPackFileDataMiner(FileDataMiner.FileDataMiner):
         self.pack_type = pack_type
         self.find_none_okay = find_none_okay
 
+    def get_coverage(self, file_set: set[str], environment: DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+        packs = [pack["name"] for pack in self.get_packs(environment)]
+        return {
+            path
+            for pack in packs
+            for location in self.locations
+            if (path := pack + location) in file_set
+        }
+
     def get_packs(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[PacksDataMiner.PackTypedDict]:
         return environment.dependency_data.get(self.pack_type, self)
 

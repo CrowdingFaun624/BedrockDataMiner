@@ -9,6 +9,7 @@
 # import Programs.AllVersions as AllVersions
 # import Programs.Cleaner as Cleaner
 # import Programs.CompareAll as CompareAll
+# import Programs.Coverage as Coverage
 # import Programs.FileSummary as FileSummary
 # import Programs.GetFile as GetFile
 # import Programs.UrlValidator as UrlValidator
@@ -25,7 +26,7 @@
 import threading
 from typing import Any, Callable
 
-PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "CustomJson", "DataMiners", "FileSummary", "GetFile", "NbtReader", "Scripts", "StoredVersions", "TestStructures", "UrlValidator"]
+PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "CustomJson", "DataMiners", "FileSummary", "GetFile", "NbtReader", "Scripts", "StoredVersions", "TestStructures", "UrlValidator"]
 
 user_input_lock = threading.Lock()
 
@@ -45,6 +46,7 @@ import DataMiner.DataMiners as DataMiners
 import Programs.AllVersions as AllVersions
 import Programs.Cleaner as Cleaner
 import Programs.CompareAll as CompareAll
+import Programs.Coverage as Coverage
 import Programs.FileSummary as FileSummary
 import Programs.GetFile as GetFile
 import Programs.UrlValidator as UrlValidator
@@ -58,6 +60,7 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "AllVersions": AllVersions.main,
     "Cleaner": Cleaner.main,
     "CompareAll": CompareAll.main,
+    "Coverage": Coverage.main,
     "CustomJson": CustomJson.main,
     "DataMiners": DataMiners.user_interface,
     "FileSummary": FileSummary.main,
@@ -95,7 +98,6 @@ if __name__ == "__main__":
 
 pass
 # TODO: add more dataminers; replace weird dataminers like languages with better ones.
-# TODO: construct thing that can see what files are being mined by each DataMiner; use it to find blind spots.
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
 
 # TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions
