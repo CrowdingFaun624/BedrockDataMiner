@@ -13,13 +13,18 @@
             "measure_length": true
         },
         "types": ["dict"],
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict",
             "arguments": {
                 "add_defined_in": false
             }
         },
         "sort": "by_key",
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "keys"
     },
     "keys": {
@@ -27,6 +32,10 @@
         "delegate_arguments": {
             "field": "key",
             "measure_length": true
+        },
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
         },
         "types": ["dict"],
         "detect_key_moves": true,

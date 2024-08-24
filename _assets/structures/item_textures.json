@@ -4,9 +4,11 @@
         "delegate_arguments": {
             "name": "item_textures"
         },
-        "normalizer": {
-            "function_name": "normalizers/item_textures_normalize"
-        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "items"
     },
     "items": {
@@ -14,6 +16,9 @@
         "delegate_arguments": {
             "field": "item",
             "measure_length": true
+        },
+        "normalizer": {
+            "function_name": "normalizers/item_textures_normalize"
         },
         "types": ["dict"],
         "sort": "by_key",
@@ -26,7 +31,7 @@
             "measure_length": true
         },
         "types": ["dict"],
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
         "sort": "by_key",
@@ -35,6 +40,7 @@
     "item": {
         "type": "Keymap",
         "sort": "by_component_order",
+        "pre_normalized_types": "file",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "textures": {"type": ["list", "str"], "subcomponent": "textures_group"}

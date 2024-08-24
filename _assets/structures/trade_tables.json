@@ -44,15 +44,24 @@
         "delegate_arguments": {
             "field": "behavior pack"
         },
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
         "sort": "by_key",
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "trade_table"
     },
     "trade_table": {
         "type": "Keymap",
         "sort": "by_component_order",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
         "keys": {
             "format_version": {"type": "str"},
             "defined_in": {"type": "list", "subcomponent": "defined_in"},

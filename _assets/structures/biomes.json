@@ -36,13 +36,24 @@
         "key_component": {
             "type": "String"
         },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "biome"
     },
     "biome": {
         "type": "Keymap",
-        "normalizer": {
-            "function_name": "normalizers/biomes_normalize_old"
-        },
+        "pre_normalized_types": "file",
+        "normalizer": [
+            {
+                "function_name": "open_file"
+            },
+            {
+                "function_name": "normalizers/biomes_normalize_old"
+            }
+        ],
         "sort": "by_component_order",
         "keys": {
             "format_version": {"type": "str"},

@@ -33,7 +33,7 @@
             "measure_length": true,
             "field": "behavior pack"
         },
-        "types": ["TAG_Compound", "nbt_base"],
+        "types": ["TAG_Compound"],
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/flat"
         },
@@ -42,14 +42,8 @@
     },
     "cache": {
         "type": "Cache",
-        "subcomponent": "structure_base",
-        "types": ["TAG_Compound", "nbt_base"]
-    },
-    "structure_base": {
-        "type": "NbtBase",
-        "types": ["TAG_Compound"],
-        "endianness": "little",
-        "subcomponent": "structure"
+        "subcomponent": "structure",
+        "types": ["TAG_Compound"]
     },
     "vector_tag_int": {
         "type": "List",
@@ -78,6 +72,10 @@
     "structure": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
         "sort": "by_component_order",
         "keys": {
             "format_version": {"type": "TAG_Int"},

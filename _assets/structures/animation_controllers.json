@@ -37,16 +37,27 @@
         "types": ["dict"],
         "detect_key_moves": true,
         "sort": "by_key",
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
         "subcomponent": "animation_controllers_file"
     },
     "animation_controllers_file": {
         "type": "Keymap",
-        "normalizer": {
-            "function_name": "normalizers/animation_controllers_fix_old"
-        },
+        "pre_normalized_types": "file",
+        "normalizer": [
+            {
+                "function_name": "open_file"
+            },
+            {
+                "function_name": "normalizers/animation_controllers_fix_old"
+            }
+        ],
         "sort": "by_component_order",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},

@@ -25,11 +25,11 @@
         },
         "types": ["dict"],
         "detect_key_moves": true,
-        "normalizer": {
+        "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/dict"
         },
         "sort": "by_key",
-        "subcomponent": "recipe"
+        "subcomponent": "cache"
     },
     "defined_in": {
         "type": "Set",
@@ -96,11 +96,22 @@
             "str": null
         }
     },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "recipe"
+    },
     "recipe": {
         "type": "Keymap",
-        "normalizer": {
-            "function_name": "normalizers/recipes_fix_old"
-        },
+        "pre_normalized_types": "file",
+        "normalizer": [
+            {
+                "function_name": "open_file"
+            },
+            {
+                "function_name": "normalizers/recipes_fix_old"
+            }
+        ],
         "sort": "by_component_order",
         "keys": {
             "format_version": {"type": "str"},

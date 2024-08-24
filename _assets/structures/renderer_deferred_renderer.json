@@ -4,7 +4,7 @@
         "delegate_arguments": {
             "name": "renderer_deferred_renderer"
         },
-        "subcomponent": "deferred_renderer"
+        "subcomponent": "cache"
     },
     "outdated": {
         "type": "Tag"
@@ -13,9 +13,18 @@
         "type": "TypeAlias",
         "types": ["float", "int"]
     },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "deferred_renderer"
+    },
     "deferred_renderer": {
-        "sort": "by_key",
         "type": "Keymap",
+        "sort": "by_key",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
         "keys": {
             "deferred_shading_parameters": {"type": "dict", "subcomponent": "deferred_shading_parameters"},
             "light_generation_parameters": {"type": "dict", "subcomponent": "light_generation_parameters", "tags": ["outdated"]}
