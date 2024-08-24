@@ -1,0 +1,56 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "textures"
+        },
+        "subcomponent": "texture_files"
+    },
+    "texture_files": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "texture"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack"
+        },
+        "normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/dict"
+        },
+        "subcomponent": "texture"
+    },
+    "defined_in": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "print_flat": true
+        },
+        "subcomponent": null
+    },
+    "texture": {
+        "type": "Keymap",
+        "normalizer": {
+            "function_name": "normalizers/textures_sort_by_file_type"
+        },
+        "sort": "by_component_order",
+        "keys": {
+            "sha1_hash": {"type": "str", "weight": 256, "delegate_arguments": {"always_print": true}},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "GIF": {"type": "dict", "subcomponent": "metadata_dict"},
+            "JPEG": {"type": "dict", "subcomponent": "metadata_dict"},
+            "PNG": {"type": "dict", "subcomponent": "metadata_dict"}
+        }
+    },
+    "metadata_dict": {
+        "type": "Dict",
+        "types": "str",
+        "subcomponent": null
+    }
+}
