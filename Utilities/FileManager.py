@@ -26,6 +26,7 @@ STORED_VERSIONS_INDEXES_FILE = STORED_VERSIONS_DIRECTORY.joinpath("indexes.zip")
 STRUCTURES_DIRECTORY      = ASSETS_DIRECTORY.joinpath("structures")
 ACCESSOR_TYPES_FILE       = ASSETS_DIRECTORY.joinpath("accessor_types.json")
 DATAMINER_COLLECTIONS_FILE = ASSETS_DIRECTORY.joinpath("dataminer_collections.json")
+EXIFTOOL_CACHE            = ASSETS_DIRECTORY.joinpath("exiftool_cache.txt")
 FSB_CACHE_FILE            = ASSETS_DIRECTORY.joinpath("fsb_cache.json")
 SERIALIZERS_FILE          = ASSETS_DIRECTORY.joinpath("serializers.json")
 RESOUCE_PACK_DATA_FILE    = ASSETS_DIRECTORY.joinpath("resource_pack_data.json")
@@ -39,6 +40,8 @@ COMPARISONS_DIRECTORY     = PARENT_DIRECTORY.joinpath("_comparisons")
 LIB_DIRECTORY             = PARENT_DIRECTORY.joinpath("_lib")
 LIB_FSB_DIRECTORY         = LIB_DIRECTORY.joinpath("fsb")
 LIB_FSB_EXE_FILE          = LIB_FSB_DIRECTORY.joinpath("fsb_aud_extr.exe")
+LIB_EXIFTOOL_DIRECTORY    = LIB_DIRECTORY.joinpath("exiftool-12.93_64")
+LIB_EXIFTOOL_EXE_FILE     = LIB_EXIFTOOL_DIRECTORY.joinpath("exiftool.exe")
 OUTPUT_DIRECTORY          = PARENT_DIRECTORY.joinpath("_output")
 TEMP_DIRECTORY            = PARENT_DIRECTORY.joinpath("_temp")
 VERSIONS_DIRECTORY        = PARENT_DIRECTORY.joinpath("_versions")
@@ -104,20 +107,6 @@ def stringify_sha1_hash(sha1_hash:bytes) -> str:
     Returns a hexadecimal string with length 40.
     '''
     return hex(int.from_bytes(sha1_hash, "big"))[2:].zfill(40)
-
-def get_hash_from_bytes(data:bytes) -> bytes:
-    '''
-    Returns the sha1 hash of a bytes object.
-    '''
-    sha1_hash = hashlib.sha1()
-    data_length = len(data)
-    BUFFER_SIZE = 65536
-    for i in range(0, data_length, BUFFER_SIZE):
-        if i + BUFFER_SIZE >= data_length:
-            sha1_hash.update(data[i:])
-        else:
-            sha1_hash.update(data[i:i+BUFFER_SIZE])
-    return sha1_hash.digest()
 
 def get_hash(file:IO) -> bytes:
     '''

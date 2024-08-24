@@ -3,6 +3,7 @@ import Component.ScriptImporter as ScriptImporter
 import Serializer.JsonSerializer as JsonSerializer
 import Serializer.LanguageSerializer as LanguageSerializer
 import Serializer.LinesSerializer as LinesSerializer
+import Serializer.MediaSerializer as MediaSerializer
 import Serializer.NbtSerializer as NbtSerializer
 import Serializer.RepairableJsonSerializer as RepairableJsonSerializer
 import Serializer.Serializer as Serializer
@@ -12,6 +13,7 @@ BUILT_IN_SERIALIZER_CLASSES = {dataminer_class.__name__: dataminer_class for dat
     JsonSerializer.JsonSerializer,
     LanguageSerializer.LanguageSerializer,
     LinesSerializer.LinesSerializer,
+    MediaSerializer.MediaSerializer,
     NbtSerializer.NbtSerializer,
     RepairableJsonSerializer.RepairableJsonSerializer,
     Serializer.Serializer,
