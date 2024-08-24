@@ -42,13 +42,6 @@ def unpack_file_promise(file:FileManager.FilePromise, endianness:Endianness.End|
 def unpack_snbt(data:str) -> NbtTypes.TAG:
     return SnbtParser.parse(data)
 
-def get_nbt_bytes(data:bytes) -> File.File[bytes]:
-    '''Returns a File of the data. The data inside will be un-gzipped'''
-    try:
-        return File.File("b", value=gzip.decompress(data))
-    except gzip.BadGzipFile:
-        return File.File("b", value=data)
-
 def main_read_file() -> None:
     from pathlib2 import Path
     user_input = None
