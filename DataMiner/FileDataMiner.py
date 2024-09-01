@@ -16,7 +16,7 @@ suffix_function:Callable[[str],tuple[bool,str]] = lambda item: (item.startswith(
 
 class FileDataMiner(DataMiner.DataMiner):
 
-    requires_serializer = True
+    serializer_names = {"main"}
 
     def get_coverage(self, file_set:set[str], environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
         '''

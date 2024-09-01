@@ -9,7 +9,7 @@ import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
-import Component.Serializer.Field.OptionalSerializerField as OptionalSerializerField
+import Component.Serializer.Field.SerializerDictField as SerializerDictField
 import Component.Version.Field.OptionalVersionField as OptionalVersionField
 import DataMiner.DataMinerSettings as DataMinerSettings
 import Utilities.Exceptions as Exceptions
@@ -48,7 +48,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         self.new_field = OptionalVersionField.OptionalVersionField(data["new"], ["new"])
         self.old_field = OptionalVersionField.OptionalVersionField(data["old"], ["old"])
         self.files_field = ComponentListField.ComponentListField(data.get("files", []), VERSION_FILE_TYPE_PATTERN, ["files"], allow_inline=Field.InlinePermissions.reference)
-        self.serializer_field = OptionalSerializerField.OptionalSerializerField(data.get("serializer", None), ["serializer"])
+        self.serializer_field = SerializerDictField.SerializerDictField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, ["serializer"])
         self.dataminer_field = OptionalDataMinerTypeField.OptionalDataMinerTypeField(data["name"], ["name"])
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
@@ -74,7 +74,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
             name=parent.name,
             structure=parent.structure_field.get_final(),
             dataminer_class=self.dataminer_field.get_final(),
-            serializer=self.serializer_field.get_final(),
+            serializers=self.serializer_field.get_final(),
             dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.get_component().get_final())),
             start_version=self.old_field.get_final(),
             end_version=self.new_field.get_final(),

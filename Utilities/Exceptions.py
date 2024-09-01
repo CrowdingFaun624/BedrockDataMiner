@@ -958,6 +958,31 @@ class DataMinerAccessorWrongTypeError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class DataMinerAdditionalSerializerError(DataMinerException):
+    "This DataMiner has been provided with an additional, unnecessary Serializer."
+
+    def __init__(self, dataminer_settings:"DataMinerSettings.DataMinerSettings", dataminer_class:type["DataMiner.DataMiner"], key:str, serializer:"Serializer.Serializer", allowed_keys:set[str], message:Optional[str]=None) -> None:
+        '''
+        :dataminer_settings: The DataMinerSettings that provided the additional Serializer.
+        :dataminer_class: The class of DataMiner that the DataMinerSettings has that does not support the key.
+        :key: The key of the additional Serializer.
+        :serializer: The additional Serializer.
+        :allowed_keys: The set of Serializer keys that are allowed in this DataMiner.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer_settings, dataminer_class, key, serializer, allowed_keys, message)
+        self.dataminer_settings = dataminer_settings
+        self.dataminer_class = dataminer_class
+        self.key = key
+        self.serializer = serializer
+        self.allowed_keys = allowed_keys
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r provided additional Serializer key \"%s\": %r to DataMiner class \"%s\", which only supports keys [%s]" % (self.dataminer_settings, self.key, self.serializer, self.dataminer_class, ", ".join(sorted(self.allowed_keys)))
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class DataMinerCollectionFileError(DataMinerException):
     "The \"files\" key in a DataMinerCollection is improperly specified."
 
@@ -1135,19 +1160,21 @@ class DataMinerReadFilesError(DataMinerException):
 class DataMinerSerializerMissingError(DataMinerException):
     "A DataMiner class requires a Serializer and does not have one."
 
-    def __init__(self, dataminer_settings:"DataMinerSettings.DataMinerSettings", dataminer_type:type["DataMiner.DataMiner"], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer_settings:"DataMinerSettings.DataMinerSettings", dataminer_type:type["DataMiner.DataMiner"], serializer_key:str, message:Optional[str]=None) -> None:
         '''
         :dataminer_settings: The DataMinerSettings whose DataMiner type requires a Serializer.
         :dataminer_type: The DataMinerSettings' DataMiner type.
+        :serializer_key: The key of the missing Serializer.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(dataminer_settings, dataminer_type, message)
+        super().__init__(dataminer_settings, dataminer_type, serializer_key, message)
         self.dataminer_settings = dataminer_settings
         self.dataminer_type = dataminer_type
+        self.serializer_key = serializer_key
         self.message = message
 
     def __str__(self) -> str:
-        output = "DataMiner type \"%s\" from %r requires a Serializer but has none" % (self.dataminer_type.__name__, self.dataminer_settings)
+        output = "DataMiner type \"%s\" from %r requires is missing Serializer \"%s\"" % (self.dataminer_type.__name__, self.dataminer_settings, self.serializer_key)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -1189,20 +1216,22 @@ class DataMinersFailureError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class DataMinerNoSerializerProvidedError(DataMinerException):
+class DataMinerUnrecognizedSerializerError(DataMinerException):
     "Called `export_file` on a DataMiner with no Serializer"
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"DataMiner.DataMiner", key:str, message:Optional[str]=None) -> None:
         '''
         :dataminer: The DataMiner missing a Serializer.
+        :key: The key that attempted to access the Serializer.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(dataminer, message)
+        super().__init__(dataminer, key, message)
         self.dataminer = dataminer
+        self.key = key
         self.message = message
 
     def __str__(self) -> str:
-        output = "Attempted to call `export_file` on %r, which has no Serializer" % (self.dataminer,)
+        output = "Attempted to call `export_file` on %r using non-existent Serializer key \"%s\"" % (self.dataminer, self.key)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

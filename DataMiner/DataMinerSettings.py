@@ -25,7 +25,7 @@ class DataMinerSettings():
         self.name:str|None = None
         self.structure:StructureBase.StructureBase|None = None
         self.dataminer_class:type["DataMiner.DataMiner"]|None = None
-        self.serializer:Serializer.Serializer|None = None
+        self.serializers:dict[str,Serializer.Serializer]|None = None
         self.dependencies:list["DataMinerCollection.DataMinerCollection"]|None = None
 
     def link_subcomponents(
@@ -34,7 +34,7 @@ class DataMinerSettings():
         name:str,
         structure:StructureBase.StructureBase,
         dataminer_class:type["DataMiner.DataMiner"]|None,
-        serializer:Serializer.Serializer|None,
+        serializers:dict[str,Serializer.Serializer],
         dependencies:list["DataMinerCollection.DataMinerCollection"],
         start_version:Version.Version|None,
         end_version:Version.Version|None,
@@ -44,7 +44,7 @@ class DataMinerSettings():
         self.name = name
         self.structure = structure
         self.dataminer_class = dataminer_class
-        self.serializer = serializer
+        self.serializers = serializers
         self.dependencies = dependencies
         self.version_range = VersionRange.VersionRange(start_version, end_version)
         self.version_file_types = version_file_types
@@ -53,8 +53,13 @@ class DataMinerSettings():
         if dataminer_class is not None and dataminer_class.parameters is not None:
             trace = TypeVerifier.make_trace([self])
             exceptions.extend(dataminer_class.parameters.verify(self.arguments, trace))
-        if dataminer_class is not None and self.serializer is None and dataminer_class.requires_serializer:
-            exceptions.append(Exceptions.DataMinerSerializerMissingError(self, dataminer_class))
+        if dataminer_class is not None:
+            for key, serializer in serializers.items():
+                if key not in dataminer_class.serializer_names:
+                    exceptions.append(Exceptions.DataMinerAdditionalSerializerError(self, dataminer_class, key, serializer, dataminer_class.serializer_names))
+            for required_key in dataminer_class.serializer_names:
+                if required_key not in serializers:
+                    exceptions.append(Exceptions.DataMinerSerializerMissingError(self, dataminer_class, required_key))
         if dataminer_class is not None:
             dataminer_class.manipulate_arguments(self.arguments)
         return exceptions

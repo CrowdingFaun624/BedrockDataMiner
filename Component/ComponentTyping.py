@@ -61,7 +61,7 @@ class DataMinerSettingsTypedDict(TypedDict):
     name: Required[str|None]
     new: Required[str|None]
     old: Required[str|None]
-    serializer: NotRequired[Union[str, "SerializerTypedDict"]]
+    serializer: NotRequired[str|dict[str,str]]
     type: NotRequired[Literal["DataMinerSettings"]]
 
 class DictTypedDict(TypedDict):
