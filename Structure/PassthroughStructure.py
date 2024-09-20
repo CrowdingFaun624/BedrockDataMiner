@@ -75,6 +75,7 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+            return None, exceptions
 
         data_identity_changed = False
         for normalizer in self.normalizer:
@@ -86,7 +87,6 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
                     data = normalizer_output
             except Exception as e:
                 exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
-                return None, exceptions
 
         if self.structure is not None:
             normalizer_output, new_exceptions = self.structure.normalize(data, environment)

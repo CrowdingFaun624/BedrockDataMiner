@@ -98,6 +98,7 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+            return None, exceptions
 
         data_identity_changed = False
         for normalizer in self.normalizer:
@@ -109,7 +110,6 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                     data = normalizer_output
             except Exception as e:
                 exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
-                return None, exceptions
 
         for key, value in data.items():
             structure, new_exceptions = self.get_structure(key, value)
@@ -119,7 +119,7 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
                 if normalizer_output is not None:
                     data[key] = normalizer_output
-        
+
         for normalizer in self.post_normalizer:
             if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:

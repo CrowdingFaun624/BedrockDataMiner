@@ -86,15 +86,16 @@ class StructureBase():
                 if output is None:
                     exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.name, normalizer_index, data))
                     break
+        self.print_exception_list(exceptions)
 
         # other normalizers
-        self.print_exception_list(exceptions)
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         normalizer_output, new_exceptions = self.structure.normalize(output, environment)
         exceptions.extend(new_exceptions)
         if normalizer_output is not None:
             output = normalizer_output
+        self.print_exception_list(exceptions)
 
         if self.post_normalizer is None:
             raise Exceptions.AttributeNoneError("post_normalizer", self)
@@ -110,8 +111,8 @@ class StructureBase():
                 if output is None:
                     exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.name, normalizer_index, data))
                     break
-
         self.print_exception_list(exceptions)
+
         return output
 
     def clear_caches(self) -> None:

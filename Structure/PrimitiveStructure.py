@@ -82,6 +82,7 @@ class PrimitiveStructure(Structure.Structure[d]):
                 return None, exceptions
             if normalizer_output is None:
                 exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self), self.name, None, data))
+                return None, exceptions
             data = cast(d, normalizer_output)
         return data, exceptions
 

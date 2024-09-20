@@ -83,7 +83,11 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
             cache_item = new_cache_item
 
         output = structure.normalize(data, environment)
-        cache_item.set_normalize(output)
+        cache_item.set_normalize((data, output[1]))
+        # the data must be stored in the cache item because when the data is
+        # being retrieved later, the substructure may have just returned None,
+        # but none of the changes that the normalizer to that data were applied
+        # to this data.
         return output
 
     def get_tag_paths(self, data:d, tag:str, data_path:DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:

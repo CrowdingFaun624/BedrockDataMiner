@@ -71,6 +71,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+            return None, exceptions
 
         data_identity_changed = False
         for normalizer in self.normalizer:
@@ -82,7 +83,6 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
                     data = normalizer_output
             except Exception as e:
                 exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
-                return None, exceptions
 
         structure, new_exceptions = self.get_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
