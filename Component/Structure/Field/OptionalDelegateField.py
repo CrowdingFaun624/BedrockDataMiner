@@ -7,6 +7,7 @@ import Component.ScriptImporter as ScriptImporter
 import Structure.Delegate.DefaultBaseDelegate as DefaultBaseDelegate
 import Structure.Delegate.DefaultDelegate as DefaultDelegate
 import Structure.Delegate.Delegate as Delegate
+import Structure.Delegate.LongStringDelegate as LongStringDelegate
 import Structure.Delegate.VolumeDelegate as VolumeDelegate
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -20,6 +21,7 @@ BUILT_IN_DELEGATE_CLASSES:dict[str,type[Delegate.Delegate]] = {delegate_type.__n
     Delegate.Delegate,
     DefaultDelegate.DefaultDelegate,
     DefaultBaseDelegate.DefaultBaseDelegate,
+    LongStringDelegate.LongStringDelegate,
     VolumeDelegate.VolumeDelegate,
 ]}
 
