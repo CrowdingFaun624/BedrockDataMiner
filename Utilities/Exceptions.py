@@ -1442,10 +1442,10 @@ class TagSearcherParseError(DataMinerException):
 class UnrecognizedPackError(DataMinerException):
     "The behavior pack/resource pack is not recognized."
 
-    def __init__(self, pack:str|list[str], pack_type:Literal["behavior", "resource", "pack"], source:Optional[object]=None, message:Optional[str]=None) -> None:
+    def __init__(self, pack:str|list[str], pack_type:Literal["behavior", "resource", "skin", "emote", "piece", "pack"], source:Optional[object]=None, message:Optional[str]=None) -> None:
         '''
         :pack: The name(s) of the behavior pack/resource pack(s).
-        :pack_type: The type of pack ("behavior" or "resource").
+        :pack_type: The type of pack ("behavior", "resource", "skin", "emote", "piece", or "pack").
         :source: The object that found the behavior pack/resource pack.
         :message: Additional text to place after the main message.
         '''
@@ -1461,6 +1461,12 @@ class UnrecognizedPackError(DataMinerException):
                 pack_string = "Behavior pack"
             case "resource":
                 pack_string = "Resource pack"
+            case "skin":
+                pack_string = "Skin pack"
+            case "emote":
+                pack_string = "Emote directory"
+            case "piece":
+                pack_string = "Piece directory"
             case _:
                 pack_string = "Pack"
         output = "%s " % (pack_string,)
