@@ -12,26 +12,22 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 class GrabSingleFileDataMiner(FileDataMiner.FileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
     )
 
-    def initialize(self, locations:list[str]) -> None:
-        self.locations = locations
+    def initialize(self, location:str) -> None:
+        self.location = location
 
     def get_coverage(self, file_set: set[str], environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
-        for file_name in self.locations:
-            if file_name in file_set:
-                return {file_name}
-        else:
-            return set()
-
-    def get_file(self, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> tuple[bytes, str]:
-        for location in self.locations:
-            if not accessor.file_exists(location):
-                continue
-            return accessor.read(location, "b"), location
+        if self.location in file_set:
+            return {self.location}
         else:
             raise Exceptions.DataMinerNothingFoundError(self)
+
+    def get_file(self, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> tuple[bytes, str]:
+        if not accessor.file_exists(self.location):
+            raise Exceptions.DataMinerNothingFoundError(self)
+        return accessor.read(self.location, "b"), self.location
 
     def get_output(self, file:bytes, file_name:str, environment:DataMinerEnvironment.DataMinerEnvironment) -> File.File|Any:
         return self.export_file(file, file_name)

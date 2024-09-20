@@ -8,6 +8,7 @@ import Serializer.NbtSerializer as NbtSerializer
 import Serializer.RepairableJsonSerializer as RepairableJsonSerializer
 import Serializer.Serializer as Serializer
 import Serializer.SoundSerializer as SoundSerializer
+import Serializer.TextSerializer as TextSerializer
 
 BUILT_IN_SERIALIZER_CLASSES = {dataminer_class.__name__: dataminer_class for dataminer_class in [
     JsonSerializer.JsonSerializer,
@@ -18,6 +19,7 @@ BUILT_IN_SERIALIZER_CLASSES = {dataminer_class.__name__: dataminer_class for dat
     RepairableJsonSerializer.RepairableJsonSerializer,
     Serializer.Serializer,
     SoundSerializer.SoundSerializer,
+    TextSerializer.TextSerializer,
 ]}
 
 SERIALIZER_CLASSES = ScriptImporter.import_scripted_types("serializers/", BUILT_IN_SERIALIZER_CLASSES, Serializer.Serializer)

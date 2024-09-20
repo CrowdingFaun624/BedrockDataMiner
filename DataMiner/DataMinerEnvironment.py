@@ -43,6 +43,9 @@ class DataMinerDependencies():
         output = self.data.get(dataminer_name, default) # DataMiners cannot output None
         return output
 
+    def has_item(self, dataminer_name:str) -> bool:
+        return dataminer_name in self.data
+
     def set_item(self, name:str, value:Any) -> None:
         if name in self.data:
             raise Exceptions.DataMinerDependencyOverwriteError(self, name)

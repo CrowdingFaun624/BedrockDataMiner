@@ -55,6 +55,9 @@ def parse_number(data:str) -> int|float:
     except Exception:
         return float(data)
 
+def split_lines(data:str, keep_ends:bool=False) -> list[str]:
+    return data.splitlines(keep_ends)
+
 functions:dict[str,Callable] = {
     "delete_optional_key": delete_optional_key,
     "delete_optional_keys": delete_optional_keys,
@@ -66,6 +69,7 @@ functions:dict[str,Callable] = {
     "parse_float": parse_float,
     "parse_int": parse_int,
     "parse_number": parse_number,
+    "split_lines": split_lines,
     "wrap_in_dict": wrap_in_dict,
     "wrap_tuple": wrap_tuple,
 }
