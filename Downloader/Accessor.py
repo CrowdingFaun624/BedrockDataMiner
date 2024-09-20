@@ -41,10 +41,10 @@ class DirectoryAccessor(Accessor):
         return self.manager.file_exists(self.modify_file_name(file_name))
 
     def get_files_in(self, parent:str) -> list[str]:
-        return [self.trim_file_name(file) for file in self.manager.get_files_in(self.modify_file_name(parent))]
+        return [self.trim_file_name(file) for file in self.manager.get_files_in(self.modify_file_name(parent)) if file[-1] != "/"]
 
     def get_file_list(self) -> list[str]:
-        return [self.trim_file_name(file) for file in self.manager.get_files_in(self.modify_file_name())]
+        return [self.trim_file_name(file) for file in self.manager.get_files_in(self.modify_file_name()) if file[-1] != "/"]
 
     def get_full_file_list(self) -> list[str]:
         return self.manager.get_file_list()
