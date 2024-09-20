@@ -34,7 +34,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("serializer", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("serializer", "a str or dict", False, TypeVerifier.UnionTypeVerifier("a str or dict", str, TypeVerifier.DictTypeVerifier(dict, str, str, "a dict", "a str", "a str"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
