@@ -1,8 +1,8 @@
 import json
 import subprocess
-from typing import Any
 
 import Serializer.Serializer as Serializer
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 
 
@@ -37,7 +37,11 @@ class MediaSerializer(Serializer.Serializer):
             temp_file_path = FileManager.get_temp_file_path()
             with open(temp_file_path, "wb") as f:
                 f.write(data)
-            output = {(key_value := line.split(": ", 1))[0].rstrip(): key_value[1] for line in subprocess.check_output([FileManager.LIB_EXIFTOOL_EXE_FILE, temp_file_path]).decode().splitlines()}
+            process = subprocess.Popen([FileManager.LIB_EXIFTOOL_EXE_FILE, temp_file_path], stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+            process.wait()
+            if process.stdout is None:
+                raise Exceptions.AttributeNoneError("stdout", process)
+            output = {(key_value := line.split(": ", 1))[0].rstrip(): key_value[1] for line in process.stdout.read().decode().splitlines()}
             temp_file_path.unlink()
             output["sha1_hash"] = data_hash
             output.pop("ExifTool Version Number", None)
@@ -49,5 +53,10 @@ class MediaSerializer(Serializer.Serializer):
             output.pop("File Permissions", None)
             output.pop("Document Ancestors", None) # giant list of meaningless hashes
             output.pop("History Parameters", None)
+            if "Error" in output:
+                if output["Error"] == "Unknown file type":
+                    output = {"sha1_hash": output["sha1_hash"]}
+                else:
+                    raise Exceptions.MediaSerializerFailedError(self, output["Error"])
             self.write_cache(data_hash, output)
             return output

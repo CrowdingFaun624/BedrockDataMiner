@@ -21,3 +21,5 @@ class JsonSerializer(Serializer.Serializer[Any, Any]):
 
     def deserialize(self, data: bytes) -> Any:
         return pyjson5.loads(data.decode())
+
+DEFAULT_JSON_SERIALIZER = JsonSerializer("json_default")

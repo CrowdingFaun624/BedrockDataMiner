@@ -1791,6 +1791,25 @@ class UnrecognizedScriptError(ScriptException):
 class SerializerException(Exception):
     "Abstract Exception class for errors relating to Serializers"
 
+class MediaSerializerFailedError(SerializerException):
+    "MediaSerializer has \"Error\" in its output."
+
+    def __init__(self, serializer:"Serializer.Serializer", error_message:str, message:Optional[str]=None) -> None:
+        '''
+        :serializer: The MediaSerializer that failed.
+        :error_message: The content of the "Error" key.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(serializer, error_message, message)
+        self.serializer = serializer
+        self.error_message = error_message
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r gave error \"%s\"" % (self.serializer, self.error_message)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class SerializationFailureError(SerializerException):
     "A Serializer failed to serialize."
 
