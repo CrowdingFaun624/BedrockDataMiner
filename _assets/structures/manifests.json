@@ -1,0 +1,85 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "manifests"
+        },
+        "subcomponent": "packs"
+    },
+    "version": {
+        "type": "List",
+        "subcomponent": null,
+        "types": "int",
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        }
+    },
+    "packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "pack"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "manifest"
+    },
+    "manifest": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "sort": "by_component_order",
+        "keys": {
+            "format_version": {"type": "int"},
+            "header": {"type": "dict", "subcomponent": "header", "delegate_arguments": {"always_print": true}, "weight": 12},
+            "modules": {"type": "list", "subcomponent": "modules"},
+            "dependencies": {"type": "list", "subcomponent": "dependencies"},
+            "capabilities": {"type": "list", "subcomponent": "capabilities"}
+        }
+    },
+    "header": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "description": {"type": "str", "subcomponent": {"type": "String"}},
+            "name": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "type": {"type": "str"},
+            "uuid": {"type": "str", "delegate_arguments": {"always_print": true}, "weight": 12},
+            "version": {"type": "list", "subcomponent": "version"},
+            "min_engine_version": {"type": "list", "subcomponent": "version"},
+            "pack_scope": {"type": "str"}
+        }
+    },
+    "modules": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "module"
+        },
+        "subcomponent": "header"
+    },
+    "dependencies": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "dependency"
+        },
+        "subcomponent": "header"
+    },
+    "capabilities": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "capability"
+        },
+        "subcomponent": {
+            "type": "String"
+        }
+    }
+}

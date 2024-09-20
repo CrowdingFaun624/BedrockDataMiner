@@ -1,0 +1,122 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "categories"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Dict",
+        "pre_normalized_types": "file",
+        "normalizer": [
+            {
+                "function_name": "open_file"
+            },
+            {
+                "function_name": "normalizers/categories_normalize"
+            }
+        ],
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "element",
+            "measure_length": true
+        },
+        "subcomponent": "element"
+    },
+    "element": {
+        "type": "Keymap",
+        "delegate": null,
+        "keys": {
+            "category": {"type": "dict", "subcomponent": "element.category"},
+            "worlds": {"type": "dict", "subcomponent": "element.worlds"}
+        }
+    },
+    "element.category": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "child_icon": {"type": "str"},
+            "child_title": {"type": "str"},
+            "default_color": {"type": "list", "subcomponent": "color"},
+            "description": {"type": "str"},
+            "icon": {"type": "str"},
+            "interact_color": {"type": "list", "subcomponent": "color"},
+            "is_first_page": {"type": "bool"},
+            "items_per_row": {"type": "int"},
+            "label": {"type": "str"},
+            "screenshot": {"type": "str"},
+            "screenshot_height_ratio": {"type": "str"},
+            "sub_categories": {"type": "list", "subcomponent": "sub_categories"}
+        }
+    },
+    "element.worlds": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "child_icon": {"type": "str"},
+            "child_title": {"type": ["str", "list"], "subcomponent": "label"},
+            "default_color": {"type": "list", "subcomponent": "color"},
+            "description": {"type": "str"},
+            "icon": {"type": "str"},
+            "interact_color": {"type": "list", "subcomponent": "color"},
+            "label": {"type": ["str", "list"], "subcomponent": "label"},
+            "screenshot": {"type": "str"},
+            "tags": {"type": "list", "subcomponent": "tags"}
+        }
+    },
+    "color": {
+        "type": "List",
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        },
+        "types": "float",
+        "subcomponent": null
+    },
+    "label": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": {
+                "type": "Set",
+                "types": "str",
+                "delegate_arguments": {
+                    "field": "parameter"
+                },
+                "subcomponent": {
+                    "type": "String"
+                }
+            }
+        }
+    },
+    "sub_categories": {
+        "type": "Set",
+        "delegate_arguments": {
+            "field": "subcategory",
+            "measure_length": true
+        },
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        }
+    },
+    "tags": {
+        "type": "Set",
+        "delegate_arguments": {
+            "field": "tags",
+            "measure_length": true
+        },
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        }
+    }
+}

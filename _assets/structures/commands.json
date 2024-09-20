@@ -1,0 +1,177 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "commands"
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "file"
+        },
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Dict",
+        "types": "dict",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "delegate_arguments": {
+            "field": "command"
+        },
+        "subcomponent": "command"
+    },
+    "command": {
+        "type": "Keymap",
+        "keys": {
+            "versions": {"type": "list", "subcomponent": "versions"}
+        }
+    },
+    "versions": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "version"
+        },
+        "subcomponent": "version"
+    },
+    "version": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "requires_edu": {"type": "bool"},
+            "description": {"type": "str", "subcomponent": {"type": "String"}},
+            "permission": {"type": "str"},
+            "version": {"type": "int"},
+            "is_hidden": {"type": "bool"},
+            "outputToSpeech": {"type": "bool"},
+            "requiresChatPerms": {"type": "bool"},
+            "requiresTellPerms": {"type": "bool"},
+            "aliases": {"type": "list", "subcomponent": "aliases"},
+            "overloads": {"type": "dict", "subcomponent": "overloads", "weight": 4}
+        }
+    },
+    "aliases": {
+        "type": "Set",
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        },
+        "delegate_arguments": {
+            "field": "alias"
+        }
+    },
+    "overloads": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "overload"
+        },
+        "subcomponent": "overload"
+    },
+    "overload": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "parser": {"type": "dict", "subcomponent": "parser"},
+            "input": {"type": "dict", "subcomponent": "input", "weight": 3},
+            "output": {"type": "dict", "subcomponent": "output", "weight": 3}
+        }
+    },
+    "parser": {
+        "type": "Keymap",
+        "keys": {
+            "tokens": {"type": "str", "subcomponent": {"type": "String"}}
+        }
+    },
+    "input": {
+        "type": "Keymap",
+        "keys": {
+            "parameters": {"type": "list", "subcomponent": "parameters"}
+        }
+    },
+    "parameters": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "parameter"
+        },
+        "subcomponent": "parameter"
+    },
+    "parameter": {
+        "type": "Keymap",
+        "keys": {
+            "name": {"type": "str", "subcomponent": {"type": "String"}, "weight": 4},
+            "type": {"type": "str"},
+            "enum_type": {"type": "str"},
+            "enum_values": {"type": "list", "subcomponent": "enum_values"},
+            "optional": {"type": "bool"},
+            "target_data": {"type": "dict", "subcomponent": "target_data"}
+        }
+    },
+    "enum_values": {
+        "type": "Set",
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        },
+        "delegate_arguments": {
+            "field": "enum value"
+        }
+    },
+    "target_data": {
+        "type": "Keymap",
+        "sort": "by_key",
+        "keys": {
+            "allow_dead_players": {"type": "bool"},
+            "main_target": {"type": "bool"},
+            "players_only": {"type": "bool"}
+        }
+    },
+    "output": {
+        "type": "Keymap",
+        "keys": {
+            "format_strings": {"type": "list", "subcomponent": "format_strings"},
+            "parameters": {"type": "list", "subcomponent": "parameters"}
+        }
+    },
+    "format_strings": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "format string"
+        },
+        "subcomponent": "format_string"
+    },
+    "format_string": {
+        "type": "Keymap",
+        "keys": {
+            "format": {"type": "str", "subcomponent": {"type": "String"}, "weight": 3},
+            "color": {"type": "str"},
+            "should_show": {"type": "dict", "subcomponent": "should_show"},
+            "params_to_use": {"type": "list", "subcomponent": "parameter_list"}
+        }
+    },
+    "should_show": {
+        "type": "Keymap",
+        "keys": {
+            "is_true": {"type": "list", "subcomponent": "parameter_list"},
+            "not_empty": {"type": "list", "subcomponent": "parameter_list"}
+        }
+    },
+    "parameter_list": {
+        "type": "Set",
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        },
+        "delegate_arguments": {
+            "field": "parameter"
+        }
+    }
+}

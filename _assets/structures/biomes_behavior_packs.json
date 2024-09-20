@@ -1,0 +1,43 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "biomes_behavior_packs"
+        },
+        "subcomponent": "biomes",
+        "imports": [
+            {
+                "from": "structures/biomes",
+                "components": [
+                    {
+                        "component": "cache"
+                    }
+                ]
+            }
+        ]
+    },
+    "biomes": {
+        "type": "Dict",
+        "delegate_arguments": {
+            "field": "biome",
+            "measure_length": true
+        },
+        "types": ["dict"],
+        "sort": "by_key",
+        "detect_key_moves": true,
+        "min_key_similarity_threshold": 0.25,
+        "min_value_similarity_threshold": 0.5,
+        "key_component": {
+            "type": "String"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "subcomponent": "cache",
+        "types": "dict",
+        "post_normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/dict"
+        }
+    }
+}

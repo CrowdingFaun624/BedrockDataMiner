@@ -67,6 +67,30 @@
             }
         ]
     },
+    "asset_manifest": {
+        "file_name": "asset_manifest.json",
+        "structure": "structures/asset_manifest",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.21.10.22",
+                "name": null
+            },
+            {
+                "new": "1.21.10.22",
+                "old": "1.16.0.57",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "asset_manifest.json"}
+            },
+            {
+                "new": "1.16.0.57",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
     "attachables": {
         "file_name": "attachables.json",
         "structure": "structures/attachables",
@@ -86,6 +110,26 @@
             }
         ]
     },
+    "attachables_resource_packs": {
+        "file_name": "attachables_resource_packs.json",
+        "structure": "structures/attachables_resource_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.17.0.50",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "attachables/", "suffixes": [".json"], "pack_type": "resource_packs"}
+            },
+            {
+                "new": "1.17.0.50",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
     "behavior_packs": {
         "file_name": "behavior_packs.json",
         "structure": "structures/behavior_packs",
@@ -96,7 +140,7 @@
                 "name": "PacksDataMiner",
                 "files": [],
                 "dependencies": ["all_files"],
-                "arguments": {"directory": "behavior_packs", "pack_type": "behavior"}
+                "arguments": {"directory": "behavior_packs/", "pack_type": "behavior"}
             },
             {
                 "new": "a0.17.0.2",
@@ -104,7 +148,7 @@
                 "name": "PacksDataMiner",
                 "files": [],
                 "dependencies": ["all_files"],
-                "arguments": {"directory": "resourcepacks", "pack_type": "behavior", "subdirectory": "server"}
+                "arguments": {"directory": "resourcepacks/", "pack_type": "behavior", "subdirectory": "server/", "require_subdirectory": true}
             },
             {
                 "new": "a0.16.0_build5",
@@ -128,6 +172,20 @@
             },
             {
                 "new": "1.2.13.5",
+                "old": "1.2.10",
+                "name": null
+            },
+            {
+                "new": "1.2.10",
+                "old": "1.2.10.1",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "behavior_trees/", "pack_type": "behavior_packs", "suffixes": [".json"]}
+            },
+            {
+                "new": "1.2.10.1",
                 "old": null,
                 "name": null
             }
@@ -152,6 +210,40 @@
             }
         ]
     },
+    "biomes_behavior_packs": {
+        "file_name": "biomes_behavior_packs.json",
+        "structure": "structures/biomes_behavior_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.18.20.27",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "biomes/", "suffixes": [".json"], "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.18.20.27",
+                "old": "1.18.0.20",
+                "name": null
+            },
+            {
+                "new": "1.18.0.20",
+                "old": "1.17.10.20",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "biomes/", "suffixes": [".json"], "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.17.10.20",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
     "biomes_client": {
         "file_name": "biomes_client.json",
         "structure": "structures/biomes_client",
@@ -163,7 +255,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["biomes_client.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "biomes_client.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "1.2.20.1",
@@ -181,7 +273,7 @@
                 "old": "1.11.4",
                 "name": "TagSearcherDataMiner",
                 "files": [],
-                "dependencies": ["biomes"],
+                "dependencies": ["biomes", "biomes_behavior_packs"],
                 "arguments": {
                     "tags": "~biome_component",
                     "sort_output": true
@@ -203,7 +295,7 @@
                 "old": "1.11.4",
                 "name": "TagSearcherDataMiner",
                 "files": [],
-                "dependencies": ["biomes"],
+                "dependencies": ["biomes", "biomes_behavior_packs"],
                 "arguments": {
                     "tags": "(~biome_tag_component | /biome_tag)",
                     "sort_output": true
@@ -227,10 +319,117 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["blocks.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "blocks.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.15.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "bootstrap": {
+        "file_name": "bootstrap.json",
+        "structure": "structures/bootstrap",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.15.0.51",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "bootstrap.json"}
+            },
+            {
+                "new": "1.15.0.51",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "bootstrap_creator": {
+        "file_name": "bootstrap_creator.json",
+        "structure": "structures/bootstrap",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.17.20.21",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "bootstrap_creator.json"}
+            },
+            {
+                "new": "1.17.20.21",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "camera_blends": {
+        "file_name": "camera_blends.json",
+        "structure": "structures/camera_blends",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.18.10.20",
+                "name": null
+            },
+            {
+                "new": "1.18.10.20",
+                "old": "1.13.0.1",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "definitions/cameras/camera_blends.json"}
+            },
+            {
+                "new": "1.13.0.1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "camera_lists": {
+        "file_name": "camera_lists.json",
+        "structure": "structures/camera_lists",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.21.0.22",
+                "name": null
+            },
+            {
+                "new": "1.21.0.22",
+                "old": "1.20.0.22",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "cameras/lists/", "pack_type": "behavior_packs", "suffixes": [".json"]}
+            },
+            {
+                "new": "1.20.0.22",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "camera_presets": {
+        "file_name": "camera_presets.json",
+        "structure": "structures/camera_presets",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.20.0.22",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "cameras/presets/", "pack_type": "behavior_packs", "suffixes": [".json"]}
+            },
+            {
+                "new": "1.20.0.22",
                 "old": null,
                 "name": null
             }
@@ -251,6 +450,141 @@
             },
             {
                 "new": "1.18.10.20",
+                "old": "1.13.0.1",
+                "name": "MyGrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "definitions/cameras/cameras/", "insert_pack": "vanilla", "suffixes": [".json"]}
+            },
+            {
+                "new": "1.13.0.1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "categories": {
+        "file_name": "categories.json",
+        "structure": "structures/categories",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.16.100.56",
+                "name": null
+            },
+            {
+                "new": "1.16.100.56",
+                "old": "1.15.0.51",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "resource_packs/education/library/categories.json"}
+            },
+            {
+                "new": "1.15.0.51",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "commands": {
+        "file_name": "commands.json",
+        "structure": "structures/commands",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": null
+            },
+            {
+                "new": "1.2.0.2",
+                "old": "a0.16.0_build1",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "commands/"}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "contents_behavior_packs": {
+        "file_name": "contents_behavior_packs.json",
+        "structure": "structures/contents",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.5.0.10",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "contents.json", "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.5.0.10",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "contents_resource_packs": {
+        "file_name": "contents_resource_packs.json",
+        "structure": "structures/contents",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.20.1",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "contents.json", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "1.2.20.1",
+                "old": "1.2.13.60",
+                "name": null
+            },
+            {
+                "new": "1.2.13.60",
+                "old": "1.2.14",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "contents.json", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "1.2.14",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "contents_skin_packs": {
+        "file_name": "contents_skin_packs.json",
+        "structure": "structures/contents",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": null
+            },
+            {
+                "new": "1.2.0.2",
+                "old": "1.1.0",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["skin_packs"],
+                "serializer": "json",
+                "arguments": {"location": "contents.json", "pack_type": "skin_packs"}
+            },
+            {
+                "new": "1.1.0",
                 "old": null,
                 "name": null
             }
@@ -266,10 +600,123 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["credits/credits.json"]}
+                "arguments": {"location": "credits/credits.json"}
             },
             {
                 "new": "1.13.0.9",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "credits_end": {
+        "file_name": "credits_end.json",
+        "structure": "structures/credits_end",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.13.0.9",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "credits/end.txt"}
+            },
+            {
+                "new": "1.13.0.9",
+                "old": "a0.17.0.2",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "resource_packs/vanilla/credits/end.txt"}
+            },
+            {
+                "new": "a0.17.0.2",
+                "old": "a0.17.0.1",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "resourcepacks/vanilla/client/credits/end.txt"}
+            },
+            {
+                "new": "a0.17.0.1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "credits_quote": {
+        "file_name": "credits_quote.json",
+        "structure": "structures/credits_end",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.13.0.9",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "credits/quote.txt"}
+            },
+            {
+                "new": "1.13.0.9",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "emotes": {
+        "file_name": "emotes.json",
+        "structure": "structures/emotes",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.19.60.20",
+                "name": "PacksDataMiner",
+                "dependencies": ["all_files"],
+                "files": [],
+                "arguments": {"directory": "resource_packs/persona/", "name_starts_with": "emote_", "pack_type": "emote", "care_about_packs_existing": false}
+            },
+            {
+                "new": "1.19.60.20",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "emotes_texts": {
+        "file_name": "emotes_texts.json",
+        "structure": "structures/emotes_texts",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.19.60.20",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "dependencies": ["emotes"],
+                "files": ["client"],
+                "serializer": "language_serializer",
+                "arguments": {"location": "texts/", "pack_type": "emotes", "suffixes": [".lang"]}
+            },
+            {
+                "new": "1.19.60.20",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "emoticons": {
+        "file_name": "emoticons.json",
+        "structure": "structures/emoticons",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "font/emoticons.json", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "1.2.0.2",
                 "old": null,
                 "name": null
             }
@@ -373,6 +820,54 @@
             }
         ]
     },
+    "feature_rules_behavior_packs": {
+        "file_name": "feature_rules_behavior_packs.json",
+        "structure": "structures/feature_rules_behavior_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.16.230.50",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "feature_rules/", "suffixes": [".json"], "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.16.230.50",
+                "old": "1.16.221",
+                "name": null
+            },
+            {
+                "new": "1.16.221",
+                "old": "1.16.220.50",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "feature_rules/", "suffixes": [".json"], "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.16.220.50",
+                "old": "1.16.210",
+                "name": null
+            },
+            {
+                "new": "1.16.210",
+                "old": "1.16.210.57",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "feature_rules/", "suffixes": [".json"], "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.16.210.57",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
     "features": {
         "file_name": "features.json",
         "structure": "structures/features",
@@ -392,6 +887,54 @@
             }
         ]
     },
+    "features_behavior_packs": {
+        "file_name": "features_behavior_packs.json",
+        "structure": "structures/features_behavior_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.16.230.50",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "features/", "suffixes": [".json"], "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.16.230.50",
+                "old": "1.16.221",
+                "name": null
+            },
+            {
+                "new": "1.16.221",
+                "old": "1.16.220.50",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "features/", "suffixes": [".json"], "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.16.220.50",
+                "old": "1.16.210",
+                "name": null
+            },
+            {
+                "new": "1.16.210",
+                "old": "1.16.210.57",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "features/", "suffixes": [".json"], "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.16.210.57",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
     "flipbook_textures": {
         "file_name": "flipbook_textures.json",
         "structure": "structures/flipbook_textures",
@@ -403,7 +946,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["textures/flipbook_textures.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "textures/flipbook_textures.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.16.0_build4",
@@ -411,10 +954,30 @@
                 "name": "MyGrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["resourcepacks/flipbook_textures.json"], "insert_pack": "vanilla"}
+                "arguments": {"location": "resourcepacks/flipbook_textures.json", "insert_pack": "vanilla"}
             },
             {
                 "new": "a0.16.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "fogs": {
+        "file_name": "fogs.json",
+        "structure": "structures/fogs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.16.100.54",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "fogs/", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "1.16.100.54",
                 "old": null,
                 "name": null
             }
@@ -431,10 +994,56 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["font/font_metadata.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "font/font_metadata.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "1.13.0.3",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "glyph_sizes": {
+        "file_name": "glyph_sizes.json",
+        "structure": "structures/glyph_sizes",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.16.0_build4",
+                "name": null
+            },
+            {
+                "new": "a0.16.0_build4",
+                "old": "a0.16.0_build3",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "glyph_sizes_serializer",
+                "arguments": {"location": "resourcepacks/vanilla/images/font/glyph_sizes.bin"}
+            },
+            {
+                "new": "a0.16.0_build3",
+                "old": "a0.16.0_build2",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "glyph_sizes_serializer",
+                "arguments": {"location": "images/font/glyph_sizes.bin"}
+            },
+            {
+                "new": "a0.16.0_build2",
+                "old": "a0.16.0_build1",
+                "name": null
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": "a0.7.2",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "glyph_sizes_serializer",
+                "arguments": {"location": "images/font/glyph_sizes.bin"}
+                // during a0.8.0_build1 and a0.8.0_build1-alt, there's an identical file at "font/glyph_sizes.bin"
+            },
+            {
+                "new": "a0.7.2",
                 "old": null,
                 "name": null
             }
@@ -450,10 +1059,23 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["gui/dist/hbui/routes.json"]}
+                "arguments": {"location": "gui/dist/hbui/routes.json"}
             },
             {
                 "new": "1.16.42",
+                "old": "1.16.0.52",
+                "name": null
+            },
+            {
+                "new": "1.16.0.52",
+                "old": "1.15.0.53",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "gui/dist/hbui/routes.json"}
+            },
+            {
+                "new": "1.15.0.53",
                 "old": null,
                 "name": null
             }
@@ -469,10 +1091,175 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["gui/dist/hbui/sound_definitions.json"]}
+                "arguments": {"location": "gui/dist/hbui/sound_definitions.json"}
             },
             {
                 "new": "1.16.42",
+                "old": "1.16.0.52",
+                "name": null
+            },
+            {
+                "new": "1.16.0.52",
+                "old": "1.15.0.53",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "gui/dist/hbui/sound_definitions.json"}
+            },
+            {
+                "new": "1.15.0.53",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "hb_config": {
+        "file_name": "hb_config.json",
+        "structure": "structures/hb_config",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.16.42",
+                "name": null
+            },
+            {
+                "new": "1.16.42",
+                "old": "1.6.0.1",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "gui/hb_config.json"}
+            },
+            {
+                "new": "1.6.0.1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "hb_touch_gestures_config": {
+        "file_name": "hb_touch_gestures_config.json",
+        "structure": "structures/hb_touch_gestures_config",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.16.42",
+                "name": null
+            },
+            {
+                "new": "1.16.42",
+                "old": "1.13.0.1",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "gui/hb_touch_gestures_config.json"}
+            },
+            {
+                "new": "1.13.0.1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "hbui_chunks": {
+        "file_name": "hbui_chunks.json",
+        "structure": "structures/hbui_chunks",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.16.0.52",
+                "name": null
+            },
+            {
+                "new": "1.16.0.52",
+                "old": "1.15.0.53",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "gui/dist/hbui/chunks/", "suffixes": [".js"]}
+            },
+            {
+                "new": "1.15.0.53",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "hbui_lang": {
+        "file_name": "hbui_lang.json",
+        "structure": "structures/hbui_lang",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.19.10.23",
+                "name": null
+            },
+            {
+                "new": "1.19.10.23",
+                "old": "1.15.0.53",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "language_serializer",
+                "arguments": {"location": "gui/dist/hbui/", "suffixes": [".lang"], "unrecognized_suffix_okay": true}
+            },
+            {
+                "new": "1.15.0.53",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "hbui_notice": {
+        "file_name": "hbui_notice.json",
+        "structure": "structures/text_file",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.17.40.20",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "gui/dist/hbui/NOTICE.txt"}
+            },
+            {
+                "new": "1.17.40.20",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "holograms": {
+        "file_name": "holograms.json",
+        "structure": "structures/holograms",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.15.0_build1",
+                "name": null
+            },
+            {
+                "new": "a0.15.0_build1",
+                "old": "a0.15.0_realms1",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "media_serializer",
+                "arguments": {"location": "holograms/", "suffixes": [".obj"]}
+            },
+            {
+                "new": "a0.15.0_realms1",
+                "old": "a0.14.0_build1",
+                "name": null
+            },
+            {
+                "new": "a0.14.0_build1",
+                "old": "a0.13.0_build1",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "media_serializer",
+                "arguments": {"location": "holograms/", "suffixes": [".obj"]}
+            },
+            {
+                "new": "a0.13.0_build1",
                 "old": null,
                 "name": null
             }
@@ -489,19 +1276,19 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["textures/item_texture.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "textures/item_texture.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.16.0_build4",
-                "old": "a0.15.0_build1",
+                "old": "a0.16.0_build2",
                 "name": "GrabPackFileDataMiner",
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["images/item_texture.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "images/item_texture.json", "pack_type": "resource_packs"}
             },
             {
-                "new": "a0.15.0_build1",
+                "new": "a0.16.0_build2",
                 "old": null,
                 "name": null
             }
@@ -527,7 +1314,7 @@
                 "files": ["client"],
                 "dependencies": ["behavior_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["items.json"], "pack_type": "behavior_packs"}
+                "arguments": {"location": "items.json", "pack_type": "behavior_packs"}
             },
             {
                 "new": "a0.16.0_build5",
@@ -536,7 +1323,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["items.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "items.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.15.0_build1",
@@ -544,7 +1331,7 @@
                 "name": "MyGrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["items.json"], "insert_pack": "vanilla"}
+                "arguments": {"location": "items.json", "insert_pack": "vanilla"}
             },
             {
                 "new": "a0.13.0_build1",
@@ -573,61 +1360,93 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["items_client.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "items_client.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.16.0_build5",
-                "old": "a0.15.0_build1",
-                "name": "GrabPackFileDataMiner",
-                "files": ["client"],
-                "dependencies": ["resource_packs"],
-                "serializer": "json",
-                "arguments": {"locations": ["items.json"], "pack_type": "resource_packs"}
-            },
-            {
-                "new": "a0.15.0_build1",
                 "old": null,
                 "name": null
             }
         ]
     },
-    "language_en_us": {
-        "file_name": "language_en_us.json",
-        "structure": "structures/language",
+    "items_client_offset": {
+        "file_name": "items_client_offset.json",
+        "structure": "structures/items_client_offset",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.16.210.58",
+                "name": null
+            },
+            {
+                "new": "1.16.210.58",
+                "old": "a0.17.0.1",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "items_offsets_client.json", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "a0.17.0.1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "items_new": {
+        "file_name": "items_new.json",
+        "structure": "structures/items",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.16.100.59",
+                "name": null
+            },
+            {
+                "new": "1.16.100.59",
+                "old": "1.16.100.50",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "items_new/", "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.16.100.50",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "languages_contents": {
+        "file_name": "languages_contents.json",
+        "structure": "structures/languages_contents",
         "dataminers": [
             {
                 "new": null,
                 "old": "a0.16.0_build4",
-                "name": "GrabPackFileDataMiner",
+                "name": "GrabMultiplePackFilesDataMiner",
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "language_serializer",
-                "arguments": {"locations": ["texts/en_US.lang"], "pack_type": "resource_packs"}
+                "arguments": {"location": "texts/", "pack_type": "resource_packs", "suffixes": [".lang"], "ignore_suffixes": [".json", ".png"]}
             },
             {
                 "new": "a0.16.0_build4",
-                "old": "a0.16.0_build1",
-                "name": "MyGrabSingleFileDataMiner",
-                "files": ["client"],
-                "dependencies": ["resource_packs"],
-                "serializer": "language_serializer",
-                "arguments": {"locations": ["loc/en_US.lang"], "insert_pack": "vanilla"}
-            },
-            {
-                "new": "a0.16.0_build1",
                 "old": "a0.14.0_build1",
-                "name": "MyGrabSingleFileDataMiner",
+                "name": "MyGrabMultipleFilesDataMiner",
                 "files": ["client"],
                 "serializer": "language_serializer",
-                "arguments": {"locations": ["loc/en_US-pocket.lang"], "insert_pack": "vanilla"}
+                "arguments": {"location": "loc/", "insert_pack": "vanilla", "suffixes": [".lang"], "ignore_suffixes": [".json", ".png", ".py", ".md"]}
             },
             {
                 "new": "a0.14.0_build1",
                 "old": "a0.13.2-2",
-                "name": "MyGrabSingleFileDataMiner",
+                "name": "MyGrabMultipleFilesDataMiner",
                 "files": ["client"],
                 "serializer": "language_serializer",
-                "arguments": {"locations": ["lang/en_US-pocket.lang"], "insert_pack": "vanilla"}
+                "arguments": {"location": "lang/", "insert_pack": "vanilla", "suffixes": [".lang"], "ignore_suffixes": [".json", ".png", ".py", ".md"]}
             },
             {
                 "new": "a0.13.2-2",
@@ -637,21 +1456,297 @@
             {
                 "new": "a0.13.2-1",
                 "old": "a0.11.0_build1",
-                "name": "MyGrabSingleFileDataMiner",
+                "name": "MyGrabMultipleFilesDataMiner",
                 "files": ["client"],
                 "serializer": "language_serializer",
-                "arguments": {"locations": ["lang/en_US-pocket.lang"], "insert_pack": "vanilla"}
+                "arguments": {"location": "lang/", "insert_pack": "vanilla", "suffixes": [".lang"], "ignore_suffixes": [".json", ".png", ".py", ".md"]}
             },
             {
                 "new": "a0.11.0_build1",
                 "old": "a0.3.0-1",
-                "name": "MyGrabSingleFileDataMiner",
+                "name": "MyGrabMultipleFilesDataMiner",
                 "files": ["client"],
                 "serializer": "language_serializer",
-                "arguments": {"locations": ["lang/en_US.lang"], "insert_pack": "vanilla"}
+                "arguments": {"location": "lang/", "insert_pack": "vanilla", "suffixes": [".lang"], "ignore_suffixes": [".json", ".png", ".py", ".md"]}
             },
             {
                 "new": "a0.3.0-1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "languages_contents_behavior_packs": {
+        "file_name": "languages_contents_behavior_packs.json",
+        "structure": "structures/languages_contents",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.20.1",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "language_serializer",
+                "arguments": {"location": "texts/", "pack_type": "behavior_packs", "suffixes": [".lang"], "ignore_suffixes": [".json", ".png"]}
+            },
+            {
+                "new": "1.2.20.1",
+                "old": "1.2.13.60",
+                "name": null
+            },
+            {
+                "new": "1.2.13.60",
+                "old": "1.2.14.2",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "language_serializer",
+                "arguments": {"location": "texts/", "pack_type": "behavior_packs", "suffixes": [".lang"], "ignore_suffixes": [".json", ".png"]}
+            },
+            {
+                "new": "1.2.14.2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "languages_contents_resource_packs": {
+        // old versions where main language is not in resource packs, but files still exist in other packs.
+        "file_name": "languages_contents_resource_packs.json",
+        "structure": "structures/languages_contents",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.16.0_build4",
+                "name": null
+            },
+            {
+                "new": "a0.16.0_build4",
+                "old": "a0.16.0_build2",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "language_serializer",
+                "arguments": {"location": "loc/", "pack_type": "resource_packs", "suffixes": [".lang"], "ignore_suffixes": [".json", ".png"]}
+            },
+            {
+                "new": "a0.16.0_build2",
+                "old": "a0.16.0_build1",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "language_serializer",
+                "arguments": {"location": "texts/", "pack_type": "resource_packs", "suffixes": [".lang"], "ignore_suffixes": [".json", ".png"]}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "languages_contents_skin_packs": {
+        "file_name": "languages_contents_skin_packs.json",
+        "structure": "structures/languages_contents",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": null
+            },
+            {
+                "new": "1.2.0.2",
+                "old": "1.0.5.11",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["skin_packs"],
+                "serializer": "language_serializer",
+                "arguments": {"location": "texts/", "pack_type": "skin_packs", "suffixes": [".lang"], "ignore_suffixes": [".json"]}
+            },
+            {
+                "new": "1.0.5.11",
+                "old": "1.0.0",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["skin_packs"],
+                "serializer": "language_serializer",
+                "arguments": {"location": "loc/", "pack_type": "skin_packs", "suffixes": [".lang"], "ignore_suffixes": [".json"]}
+            },
+            {
+                "new": "1.0.0",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "languages": {
+        "file_name": "languages.json",
+        "structure": "structures/languages",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.13.2-1",
+                "name": null
+            },
+            {
+                "new": "a0.13.2-1",
+                "old": "a0.11.0_build1",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "lang/languages.json"}
+            },
+            {
+                "new": "a0.11.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "languages_behavior_packs": {
+        "file_name": "languages_behavior_packs.json",
+        "structure": "structures/languages_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.20.1",
+                "name": "GrabPackFileDataMiner",
+                "dependencies": ["behavior_packs"],
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "texts/languages.json", "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.2.20.1",
+                "old": "1.2.13.60",
+                "name": null
+            },
+            {
+                "new": "1.2.13.60",
+                "old": "1.2.14.2",
+                "name": "GrabPackFileDataMiner",
+                "dependencies": ["behavior_packs"],
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "texts/languages.json", "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.2.14.2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "languages_resource_packs": {
+        "file_name": "languages_resource_packs.json",
+        "structure": "structures/languages_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.16.0_build4",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "texts/languages.json", "pack_type": "resource_packs", "ignore_packs": ["skins", "skins_premium"]}
+            },
+            {
+                "new": "a0.16.0_build4",
+                "old": "a0.14.0_build1",
+                "name": "MyGrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "loc/languages.json", "insert_pack": "vanilla"}
+            },
+            {
+                "new": "a0.14.0_build1",
+                "old": "a0.13.2-2",
+                "name": "MyGrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "lang/languages.json", "insert_pack": "vanilla"}
+            },
+            {
+                "new": "a0.13.2-2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "languages_skin_packs": {
+        "file_name": "langauges_skin_packs.json",
+        "structure": "structures/languages_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": null
+            },
+            {
+                "new": "1.2.0.2",
+                "old": "1.1.0",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["skin_packs"],
+                "serializer": "json",
+                "arguments": {"location": "texts/languages.json", "pack_type": "skin_packs"}
+            },
+            {
+                "new": "1.1.0",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "languages_names_behavior_packs": {
+        "file_name": "languages_names_behavior_packs.json",
+        "structure": "structures/language_names",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.20.1",
+                "name": "GrabPackFileDataMiner",
+                "dependencies": ["behavior_packs"],
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "texts/language_names.json", "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.2.20.1",
+                "old": "1.2.13.60",
+                "name": null
+            },
+            {
+                "new": "1.2.13.60",
+                "old": "1.2.14.2",
+                "name": "GrabPackFileDataMiner",
+                "dependencies": ["behavior_packs"],
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "texts/language_names.json", "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.2.14.2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "languages_names_resource_packs": {
+        "file_name": "languages_names_resource_packs.json",
+        "structure": "structures/language_names",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.1.0",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "texts/language_names.json", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "1.1.0",
                 "old": null,
                 "name": null
             }
@@ -668,7 +1763,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["loading_messages.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "loading_messages.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "1.2.0.2",
@@ -701,6 +1796,182 @@
             },
             {
                 "new": "a0.16.0_build4",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "manifests_behavior_packs": {
+        "file_name": "manifests_behavior_packs.json",
+        "structure": "structures/manifests",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.0.4.0",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "manifest.json", "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.0.4.0",
+                "old": "a0.16.0_build5",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "pack_manifest.json", "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "a0.16.0_build5",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "manifests_resource_packs": {
+        "file_name": "manifests_resource_packs.json",
+        "structure": "structures/manifests",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.0.4.0",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "manifest.json", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "1.0.4.0",
+                "old": "a0.16.0_build1",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "pack_manifest.json", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "manifests_skin_packs": {
+        "file_name": "manifests_skin_packs.json",
+        "structure": "structures/manifests",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.0.5",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["skin_packs"],
+                "serializer": "json",
+                "arguments": {"location": "manifest.json", "pack_type": "skin_packs"}
+            },
+            {
+                "new": "1.0.5",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "manifests_publish_behavior_packs": {
+        "file_name": "manifests_publish_behavior_packs.json",
+        "structure": "structures/manifests",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.1.0.5",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "json",
+                "arguments": {"location": "manifest_publish.json", "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "1.1.0.5",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "manifests_publish_resource_packs": {
+        "file_name": "manifests_publish_resource_packs.json",
+        "structure": "structures/manifests",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.1.0.5",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "manifest_publish.json", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "1.1.0.5",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "material_bins": {
+        "file_name": "material_bins.json",
+        "structure": "structures/material_bins",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.18.30.20",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "material_bin_serializer",
+                "arguments": {"location": "renderer/materials/", "suffixes": [".material.bin"], "ignore_suffixes": [".index.json"]}
+            },
+            {
+                "new": "1.18.30.20",
+                "old": "1.18.20.25",
+                "name": null
+            },
+            {
+                "new": "1.18.20.25",
+                "old": "1.18.20.21",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "material_bin_serializer",
+                "arguments": {"location": "renderer/materials/", "suffixes": [".material.bin"], "ignore_suffixes": [".index.json"]}
+            },
+            {
+                "new": "1.18.20.21",
+                "old": "1.18.10.26",
+                "name": null
+            },
+            {
+                "new": "1.18.10.26",
+                "old": "1.18.10.22",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "material_bin_serializer",
+                "arguments": {"location": "renderer/materials/", "suffixes": [".material.bin"], "ignore_suffixes": [".index.json"]}
+            },
+            {
+                "new": "1.18.10.22",
+                "old": "1.17.40.21",
+                "name": null
+            },
+            {
+                "new": "1.17.40.21",
+                "old": "1.17.40.20",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "material_bin_serializer",
+                "arguments": {"location": "renderer/materials/", "suffixes": [".material.bin"], "ignore_suffixes": [".index.json", ".gitignore"]}
+            },
+            {
+                "new": "1.17.40.20",
                 "old": null,
                 "name": null
             }
@@ -773,15 +2044,29 @@
                 "name": "GrabMultipleFilesDataMiner",
                 "files": ["client"],
                 "serializer": "media_serializer",
-                "arguments": {"location": "", "suffixes": [".png", ".jpg", ".jpeg", ".gif"], "unrecognized_suffix_okay": true, "ignore_subdirectories": ["resource_packs/"]}
+                "arguments": {"location": "", "ignore_subdirectories": ["resource_packs/", "behavior_packs/", "skin_packs/"], "find_none_okay": true, "unrecognized_suffix_okay": true,
+                    "suffixes": [".png", ".jpg", ".jpeg", ".gif", ".tga", ".ttf", ".ttc", ".webm", ".svg", ".otf", ".pdn"]}
             },
             {
                 "new": "a0.17.0.2",
-                "old": null,
+                "old": "a0.15.0_build1", // resource packs stop existing; textures dataminer replaces media.
                 "name": "GrabMultipleFilesDataMiner",
                 "files": ["client"],
                 "serializer": "media_serializer",
-                "arguments": {"location": "", "suffixes": [".png", ".jpg", ".jpeg", ".gif"], "unrecognized_suffix_okay": true, "ignore_subdirectories": ["resourcepacks/"]}
+                "arguments": {"location": "", "ignore_subdirectories": ["resourcepacks/"], "find_none_okay": true, "unrecognized_suffix_okay": true, "suffixes": [".png", ".jpg", ".jpeg", ".gif", ".tga", ".ttf", ".ttc", ".webm", ".svg", ".otf", ".pdn"]}
+            },
+            {
+                "new": "a0.15.0_build1",
+                "old": "a0.8.0_build2", // textures occupies the images directory for this part.
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "media_serializer",
+                "arguments": {"location": "", "ignore_subdirectories": ["images/"], "find_none_okay": true, "unrecognized_suffix_okay": true, "suffixes": [".png", ".jpg", ".jpeg", ".gif", ".tga", ".ttf", ".ttc", ".webm", ".svg", ".otf", ".pdn"]}
+            },
+            {
+                "new": "a0.8.0_build2", // textures consumes all
+                "old": null,
+                "name": null
             }
         ]
     },
@@ -834,10 +2119,50 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["sounds/music_definitions.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "sounds/music_definitions.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "1.2.13.5",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "pack_icons_behavior_packs": {
+        "file_name": "pack_icons_behavior_packs.json",
+        "structure": "structures/pack_icons",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.16.0_build5",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "media_serializer",
+                "arguments": {"location": "pack_icon.png", "pack_type": "behavior_packs"}
+            },
+            {
+                "new": "a0.16.0_build5",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "pack_icons_resource_packs": {
+        "file_name": "pack_icons_resource_packs.json",
+        "structure": "structures/pack_icons",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.15.0_build1",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "media_serializer",
+                "arguments": {"location": "pack_icon.png", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "a0.15.0_build1",
                 "old": null,
                 "name": null
             }
@@ -871,6 +2196,25 @@
             }
         ]
     },
+    "persona_profile": {
+        "file_name": "persona_profile.json",
+        "structure": "structures/persona_profile",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.20.60.20",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "definitions/sdl_layouts/personaProfile.json"}
+            },
+            {
+                "new": "1.20.60.20",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
     "personas": {
         "file_name": "personas.json",
         "structure": "structures/personas",
@@ -885,6 +2229,197 @@
             },
             {
                 "new": "1.13.0.9",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "pieces": {
+        "file_name": "pieces.json",
+        "structure": "structures/pieces",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.19.50.24",
+                "name": "PacksDataMiner",
+                "files": [],
+                "dependencies": ["all_files"],
+                "arguments": {"directory": "resource_packs/persona/pieces/", "pack_type": "piece", "care_about_packs_existing": false}
+            },
+            {
+                "new": "1.19.50.24",
+                "old": "1.13.0.9",
+                "name": "PiecesDataMiner",
+                "files": [],
+                "dependencies": ["all_files"],
+                "arguments": {"base_directory": "resource_packs/persona/", "subdirectories": ["body/"], "ignore_directories": ["resource_packs/persona/textures/"]}
+            },
+            {
+                "new": "1.13.0.9",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "pieces_animations": {
+        "file_name": "pieces_animations.json",
+        "structure": "structures/pieces_animations",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.18.10.27",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["pieces"],
+                "serializer": "json",
+                "arguments": {"location": "", "suffixes": [".animation.json"], "ignore_suffixes": [".tga", ".store_info.json", ".meta.json", ".geometry.json", ".png", ".lang", ".lang.json"], "pack_type": "pieces", "reverse": true}
+            },
+            {
+                "new": "1.18.10.27",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "pieces_geometry": {
+        "file_name": "pieces_geometry.json",
+        "structure": "structures/pieces_geometry",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.13.0.9",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["pieces"],
+                "serializer": "json",
+                "arguments": {"location": "", "suffixes": [".geometry.json"], "ignore_suffixes": [".tga", ".store_info.json", ".meta.json", ".animation.json", ".png", ".lang", ".lang.json"], "pack_type": "pieces", "reverse": true}
+            },
+            {
+                "new": "1.13.0.9",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "pieces_lang": {
+        "file_name": "pieces_lang.json",
+        "structure": "structures/pieces_lang",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.19.60.20",
+                "name": null
+            },
+            {
+                "new": "1.19.60.20",
+                "old": "1.19.0.24",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["pieces"],
+                "serializer": "json",
+                "arguments": {"location": "", "suffixes": [".lang.json"], "ignore_suffixes": [".tga", ".store_info.json", ".meta.json", ".animation.json", ".png", ".lang", ".geometry.json"], "pack_type": "pieces", "reverse": true}
+            },
+            {
+                "new": "1.19.0.24",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "pieces_media": {
+        "file_name": "pieces_media.json",
+        "structure": "structures/pieces_media",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.13.0.9",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["pieces"],
+                "serializer": "media_serializer",
+                "arguments": {"location": "", "suffixes": [".tga", ".png"], "ignore_suffixes": [".json", ".lang"], "pack_type": "pieces", "reverse": true}
+            },
+            {
+                "new": "1.13.0.9",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "pieces_meta": {
+        "file_name": "pieces_meta.json",
+        "structure": "structures/pieces_meta",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.13.0.9",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["pieces"],
+                "serializer": "json",
+                "arguments": {"location": "", "suffixes": [".meta.json"], "ignore_suffixes": [".tga", ".store_info.json", ".geometry.json", ".animation.json", ".png", ".lang", ".lang.json"], "pack_type": "pieces", "reverse": true}
+            },
+            {
+                "new": "1.13.0.9",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "pieces_store_info": {
+        "file_name": "pieces_store_info.json",
+        "structure": "structures/pieces_store_info",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.13.0.9",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["pieces"],
+                "serializer": "json",
+                "arguments": {"location": "", "suffixes": [".store_info.json"], "ignore_suffixes": [".tga", ".meta.json", ".geometry.json", ".animation.json", ".png", ".lang", ".lang.json"], "pack_type": "pieces", "reverse": true}
+            },
+            {
+                "new": "1.13.0.9",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "pieces_texts": {
+        "file_name": "pieces_texts.json",
+        "structure": "structures/pieces_texts",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.19.60.23",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["pieces"],
+                "serializer": "language_serializer",
+                "arguments": {"location": "texts/", "suffixes": [".lang"], "pack_type": "pieces", "reverse": true}
+            },
+            {
+                "new": "1.19.60.23",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "profanity_filter": {
+        "file_name": "profanity_filter.json",
+        "structure": "structures/profanity_filter",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.1.7",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "lines_serializer",
+                "arguments": {"location": "profanity_filter.wlist"}
+            },
+            {
+                "new": "1.1.7",
                 "old": null,
                 "name": null
             }
@@ -956,7 +2491,7 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["renderer/average_luminance.json"]}
+                "arguments": {"location": "renderer/average_luminance.json"}
             },
             {
                 "new": "1.20.0.20",
@@ -984,6 +2519,30 @@
             }
         ]
     },
+    "renderer_color_grading": {
+        "file_name": "renderer_color_grading.json",
+        "structure": "structures/renderer_color_grading",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.21.0.22",
+                "name": null
+            },
+            {
+                "new": "1.21.0.22",
+                "old": "1.20.70.20",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "renderer/color_grading.json"}
+            },
+            {
+                "new": "1.20.70.20",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
     "renderer_deferred_renderer": {
         "file_name": "renderer_deferred_renderer.json",
         "structure": "structures/renderer_deferred_renderer",
@@ -994,7 +2553,7 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["renderer/deferred_renderer.json"]}
+                "arguments": {"location": "renderer/deferred_renderer.json"}
             },
             {
                 "new": "1.19.60.23",
@@ -1013,7 +2572,7 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["renderer/light_clustering.json"]}
+                "arguments": {"location": "renderer/light_clustering.json"}
             },
             {
                 "new": "1.19.60.23",
@@ -1032,10 +2591,23 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["renderer/materials/materials.index.json"]}
+                "arguments": {"location": "renderer/materials/materials.index.json"}
             },
             {
                 "new": "1.18.30.20",
+                "old": "1.18.10.26",
+                "name": null
+            },
+            {
+                "new": "1.18.10.26",
+                "old": "1.18.10.22",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "renderer/materials/materials.index.json"}
+            },
+            {
+                "new": "1.18.10.22",
                 "old": null,
                 "name": null
             }
@@ -1056,10 +2628,60 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["renderer/overworld/renderoptions.json"]}
+                "arguments": {"location": "renderer/overworld/renderoptions.json"}
             },
             {
                 "new": "1.2.13.5",
+                "old": "1.2.10",
+                "name": null
+            },
+            {
+                "new": "1.2.10",
+                "old": "1.2.10.1",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "renderer/overworld/renderoptions.json"}
+            },
+            {
+                "new": "1.2.10.1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "renderer_options_hummingbird": {
+        "file_name": "renderer_options_hummingbird.json",
+        "structure": "structures/renderer_options_hummingbird",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.16.42",
+                "name": null
+            },
+            {
+                "new": "1.16.42",
+                "old": "1.16.40",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "renderer/hummingbird/", "suffixes": [".json"]}
+            },
+            {
+                "new": "1.16.40",
+                "old": "1.16.21",
+                "name": null
+            },
+            {
+                "new": "1.16.21",
+                "old": "1.6.0.1",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "renderer/hummingbird/", "suffixes": [".json"]}
+            },
+            {
+                "new": "1.6.0.1",
                 "old": null,
                 "name": null
             }
@@ -1075,7 +2697,7 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["renderer/platform_configuration.json"]}
+                "arguments": {"location": "renderer/platform_configuration.json"}
             },
             {
                 "new": "1.19.80.20",
@@ -1170,10 +2792,34 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["renderer/tone_mapping.json"]}
+                "arguments": {"location": "renderer/tone_mapping.json"}
             },
             {
                 "new": "1.20.0.20",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "renderer_vanilla_lights": {
+        "file_name": "renderer_vanilla_lights.json",
+        "structure": "structures/renderer_vanilla_lights",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.20.40.20",
+                "name": null
+            },
+            {
+                "new": "1.20.40.20",
+                "old": "1.20.10.20",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "renderer/vanilla_lights.json"}
+            },
+            {
+                "new": "1.20.10.20",
                 "old": null,
                 "name": null
             }
@@ -1208,7 +2854,7 @@
                 "name": "PacksDataMiner",
                 "files": [],
                 "dependencies": ["all_files"],
-                "arguments": {"directory": "resource_packs", "pack_type": "resource"}
+                "arguments": {"directory": "resource_packs/", "pack_type": "resource"}
             },
             {
                 "new": "a0.17.0.2",
@@ -1216,7 +2862,7 @@
                 "name": "PacksDataMiner",
                 "files": [],
                 "dependencies": ["all_files"],
-                "arguments": {"directory": "resourcepacks", "pack_type": "resource", "subdirectory": "client"}
+                "arguments": {"directory": "resourcepacks/", "pack_type": "resource", "subdirectory": "client/"}
             },
             {
                 "new": "a0.16.0_build5",
@@ -1224,10 +2870,371 @@
                 "name": "PacksDataMiner",
                 "files": [],
                 "dependencies": ["all_files"],
-                "arguments": {"directory": "resourcepacks", "pack_type": "resource"}
+                "arguments": {"directory": "resourcepacks/", "pack_type": "resource"}
             },
             {
                 "new": "a0.15.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "scripts": {
+        "file_name": "scripts.json",
+        "structure": "structures/scripts",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.19.40.21",
+                "name": null
+            },
+            {
+                "new": "1.19.40.21",
+                "old": "1.16.220.50",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "scripts/", "suffixes": [".js"], "pack_type": "behavior_packs", "reverse": true}
+            },
+            {
+                "new": "1.16.220.50",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "shaders_glsl": {
+        "file_name": "shaders_glsl.json",
+        "structure": "structures/shaders_resource_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": "MyGrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "shaders/glsl/", "suffixes": [".fragment", ".vertex", ".h", ".glslh"], "insert_pack": "vanilla"}
+            },
+            {
+                "new": "1.2.0.2",
+                "old": "a0.16.0_build1",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "shaders/", "suffixes": [".fragment", ".vertex", ".h", ".glslh"], "pack_type": "resource_packs"}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": "a0.10.0_build1",
+                "name": "MyGrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "shaders/", "suffixes": [".fragment", ".vertex", ".h", ".glslh"], "ignore_suffixes": [".json"], "insert_pack": "vanilla", "ignore_subdirectories": ["dx11/"]}
+            },
+            {
+                "new": "a0.10.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "shaders_glsl_packs": {
+        "file_name": "shaders_glsl_packs.json",
+        "structure": "structures/shaders_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.7.1",
+                "name": null
+            },
+            {
+                "new": "1.7.1",
+                "old": "1.2.0.2",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "shaders/", "ignore_subdirectories": ["glsl/", "gnm/", "hlsl/"], "suffixes": [".fragment", ".vertex", ".h", ".glslh"], "ignore_suffixes": [".hlsl"]}
+            },
+            {
+                "new": "1.2.0.2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "shaders_gnm": {
+        "file_name": "shaders_gnm.json",
+        "structure": "structures/shaders",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.14.0.1",
+                "name": null
+            },
+            {
+                "new": "1.14.0.1",
+                "old": "1.2.0.2",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "shaders/gnm/", "suffixes": [".h", ".pssl"]}
+            },
+            {
+                "new": "1.2.0.2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "shaders_hlsl": {
+        "file_name": "shaders_hlsl.json",
+        "structure": "structures/shaders",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.17.0.54",
+                "name": null
+            },
+            {
+                "new": "1.17.0.54",
+                "old": "1.2.0.2",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "shaders/hlsl/", "suffixes": [".hlsl", ".fxh", ".ihlsl"]}
+            },
+            {
+                "new": "1.2.0.2",
+                "old": "a0.15.0_build1",
+                "name": null
+            },
+            {
+                "new": "a0.15.0_build1",
+                "old": "a0.15.0_realms1",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "shaders/dx11/", "suffixes": [".hlsl", ".fxh", ".ihlsl"]}
+            },
+            {
+                "new": "a0.15.0_realms1",
+                "old": "a0.14.0_build1",
+                "name": null
+            },
+            {
+                "new": "a0.14.0_build1",
+                "old": "a0.12.1_build1",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "shaders/dx11/", "suffixes": [".hlsl", ".fxh", ".ihlsl"]}
+            },
+            {
+                "new": "a0.12.1_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "shaders_hlsl_packs": {
+        "file_name": "shaders_hlsl_packs.json",
+        "structure": "structures/shaders_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.7.1",
+                "name": null
+            },
+            {
+                "new": "1.7.1",
+                "old": "1.2.0.2",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "shaders/", "ignore_subdirectories": ["glsl/", "gnm/", "hlsl/"], "suffixes": [".hlsl"], "ignore_suffixes": [".fragment", ".vertex", ".h", ".glslh"]}
+            },
+            {
+                "new": "1.2.0.2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "skin_geometries": {
+        "file_name": "skin_geometries.json",
+        "structure": "structures/skin_models",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.1.0",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["skin_packs"],
+                "serializer": "json",
+                "arguments": {"location": "geometry.json", "pack_type": "skin_packs"}
+            },
+            {
+                "new": "1.1.0",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "skin_models": {
+        "file_name": "skin_models.json",
+        "structure": "structures/skin_models",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": null
+            },
+            {
+                "new": "1.2.0.2",
+                "old": "a0.16.0_build1",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["skin_packs"],
+                "serializer": "json",
+                "arguments": {"location": "", "suffixes": [".json"], "pack_type": "skin_packs", "ignore_suffixes": [".png", ".lang", ".jpg", ".txt", ".zipe"],
+                    "ignore_files": ["manifest.json", "skins.json", "contents.json", "texts/languages.json", "geometry.json", "skindefs.json"]}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "skin_models_main": {
+        "file_name": "skin_models_main",
+        "structure": "structures/skin_models",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": null
+            },
+            {
+                "new": "1.2.0.2",
+                "old": "a0.17.0.2",
+                "name": "MyGrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "resource_packs/skins/skinpacks/skins.json", "insert_pack": "skins"}
+            },
+            {
+                "new": "a0.17.0.2",
+                "old": "a0.16.0_build1",
+                "name": "MyGrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "resourcepacks/skins/skinpacks/skins.json", "insert_pack": "skins"}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "skin_packs": {
+        "file_name": "skin_packs.json",
+        "structure": "structures/skin_packs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": "PacksDataMiner",
+                "files": [],
+                "dependencies": ["all_files"],
+                "arguments": {"directory": "skin_packs/", "pack_type": "skin", "care_about_packs_existing": false}
+            },
+            {
+                "new": "1.2.0.2",
+                "old": "a0.17.0.2",
+                "name": "PacksDataMiner",
+                "files": [],
+                "dependencies": ["all_files"],
+                "arguments": {"directory": ["resource_packs/skins/skinpacks/", "resource_packs/skins_premium/"], "pack_type": "skin", "care_about_packs_existing": false}
+            },
+            {
+                "new": "a0.17.0.2",
+                "old": "a0.16.0_build1",
+                "name": "PacksDataMiner",
+                "files": [],
+                "dependencies": ["all_files"],
+                "arguments": {"directory": "resourcepacks/skins/skinpacks/", "pack_type": "skin", "care_about_packs_existing": false}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "skin_textures": {
+        "file_name": "skin_textures.json",
+        "structure": "structures/textures",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.16.0_build1",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["skin_packs"],
+                "serializer": "media_serializer",
+                "arguments": {"location": "", "suffixes": [".png"], "unrecognized_suffix_okay": true, "pack_type": "skin_packs"}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "skindefs": {
+        "file_name": "skindefs.json",
+        "structure": "structures/skindefs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": null
+            },
+            {
+                "new": "1.2.0.2",
+                "old": "1.1.0",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["skin_packs"],
+                "serializer": "json",
+                "arguments": {"location": "skindefs.json", "pack_type": "skin_packs"}
+            },
+            {
+                "new": "1.1.0",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "skins": {
+        "file_name": "skins.json",
+        "structure": "structures/skins",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.0.5",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["skin_packs"],
+                "serializer": "json",
+                "arguments": {"location": "skins.json", "pack_type": "skin_packs"}
+            },
+            {
+                "new": "1.0.5",
                 "old": null,
                 "name": null
             }
@@ -1244,7 +3251,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["sounds/sound_definitions.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "sounds/sound_definitions.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "1.0.4",
@@ -1252,7 +3259,7 @@
                 "name": "MyGrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["sounds/sounds.json"], "insert_pack": "vanilla"}
+                "arguments": {"location": "sounds/sounds.json", "insert_pack": "vanilla"}
             },
             {
                 "new": "a0.11.2",
@@ -1286,7 +3293,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["sounds.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "sounds.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.16.0_build4",
@@ -1353,7 +3360,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["splashes.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "splashes.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.16.0_build1",
@@ -1362,10 +3369,29 @@
                 "files": ["client"],
                 "dependencies": [],
                 "serializer": "json",
-                "arguments": {"locations": ["splashes.json"], "insert_pack": "vanilla"}
+                "arguments": {"location": "splashes.json", "insert_pack": "vanilla"}
             },
             {
                 "new": "a0.12.1_build1",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "store_texts": {
+        "file_name": "store_texts.json",
+        "structure": "structures/store_texts",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.0.4.1",
+                "name": "GrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "text_serializer",
+                "arguments": {"location": "store/", "suffixes": [".txt"]}
+            },
+            {
+                "new": "1.0.4.1",
                 "old": null,
                 "name": null
             }
@@ -1395,6 +3421,32 @@
             },
             {
                 "new": "1.16.0.57",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "structures_mcstructure_behavior_packs": {
+        // structures in behavior packs before the primary structure files moved into behavior packs. Mostly just has testing stuff.
+        "file_name": "structures_mcstructure_behavior_packs.json",
+        "structure": "structures/structures_mcstructure",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.19.40.20",
+                "name": null
+            },
+            {
+                "new": "1.19.40.20",
+                "old": "1.16.210.60",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["behavior_packs"],
+                "serializer": "nbt_little",
+                "arguments": {"location": "structures/", "pack_type": "behavior_packs", "suffixes": [".mcstructure"]}
+            },
+            {
+                "new": "1.16.210.60",
                 "old": null,
                 "name": null
             }
@@ -1444,7 +3496,7 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["images/terrain.meta"]}
+                "arguments": {"location": "images/terrain.meta"}
             },
             {
                 "new": "a0.8.0_build2",
@@ -1452,7 +3504,7 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["terrain.meta"]}
+                "arguments": {"location": "terrain.meta"}
             },
             {
                 "new": "a0.8.0_build1",
@@ -1472,7 +3524,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["textures/terrain_texture.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "textures/terrain_texture.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.16.0_build4",
@@ -1481,7 +3533,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["images/terrain_texture.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "images/terrain_texture.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.16.0_build2",
@@ -1490,7 +3542,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["textures/terrain_texture.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "textures/terrain_texture.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.16.0_build1",
@@ -1499,7 +3551,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["images/terrain_texture.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "images/terrain_texture.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.15.0_build1",
@@ -1514,16 +3566,11 @@
         "dataminers": [
             {
                 "new": null,
-                "old": "1.2.13",
+                "old": "1.2.10.1",
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["texture_backwards_compatibility_mapping.json"]}
-            },
-            {
-                "new": "1.2.13",
-                "old": "1.2.10.1",
-                "name": null
+                "arguments": {"location": "texture_backwards_compatibility_mapping.json"}
             },
             {
                 "new": "1.2.10.1",
@@ -1531,7 +3578,7 @@
                 "name": "GrabSingleFileDataMiner",
                 "files": ["client"],
                 "serializer": "json",
-                "arguments": {"locations": ["texture_backwards_compatibility_mapping.json"]}
+                "arguments": {"location": "texture_backwards_compatibility_mapping.json"}
             },
             {
                 "new": "1.2.0.2",
@@ -1551,7 +3598,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "json",
-                "arguments": {"locations": ["textures/textures_list.json"], "pack_type": "resource_packs"}
+                "arguments": {"location": "textures/textures_list.json", "pack_type": "resource_packs"}
             },
             {
                 "new": "1.0.4.1",
@@ -1560,7 +3607,7 @@
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "lines_serializer",
-                "arguments": {"locations": ["textures.list"], "pack_type": "resource_packs"}
+                "arguments": {"location": "textures.list", "pack_type": "resource_packs"}
             },
             {
                 "new": "a0.16.0_build4",
@@ -1575,12 +3622,51 @@
         "dataminers": [
             {
                 "new": null,
-                "old": null,
+                "old": "a0.15.0_build1",
                 "name": "GrabMultiplePackFilesDataMiner",
                 "files": ["client"],
                 "dependencies": ["resource_packs"],
                 "serializer": "media_serializer",
-                "arguments": {"location": "", "pack_type": "resource_packs", "suffixes": [".png", ".jpg", ".jpeg"], "unrecognized_suffix_okay": true}
+                "arguments": {"location": "", "pack_type": "resource_packs", "unrecognized_suffix_okay": true, "suffixes": [".png", ".jpg", ".jpeg", ".gif", ".tga", ".ttf", ".ttc", ".webm", ".svg", ".otf", ".pdn"], "ignore_subdirectories": [
+                    "pieces/", "alex_hair/", "alex_pants/", "alex_shirt/", "alex_shoes/", "alex_skin/", "body/", "emote_followMe/", "emoteOverThere/", "emote_simpleClap/", "emote_wave/",
+                    "plain_eyes/", "plain_mouth/", "steve_hair/", "steve_pants/", "steve_shirt/", "steve_shoes/", "steve_skin/", "straight/", "skinpacks/"], "ignore_files": ["pack_icon.png"]}
+            },
+            {
+                "new": "a0.15.0_build1",
+                "old": "a0.8.0_build2",
+                "name": "MyGrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "media_serializer",
+                "arguments": {"location": "images/", "insert_pack": "vanilla", "unrecognized_suffix_okay": true,
+                    "suffixes": [".png", ".jpg", ".jpeg", ".gif", ".tga", ".ttf", ".webm", ".svg", ".otf", ".pdn"], "ignore_files": ["pack_icon.png"], "ignore_subdirectories": ["skinpacks/"]}
+            },
+            {
+                "new": "a0.8.0_build2",
+                "old": null,
+                "name": "MyGrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "media_serializer",
+                "arguments": {"location": "", "insert_pack": "vanilla", "unrecognized_suffix_okay": true, "suffixes": [".png", ".jpg", ".jpeg", ".gif", ".tga", ".ttf", ".ttc", ".webm", ".svg", ".otf", ".pdn"], "ignore_files": ["pack_icon.png"]}
+            }
+        ]
+    },
+    "textures_metadata": {
+        "file_name": "textures_metadata.json",
+        "structure": "structures/textures_metadata",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "textures/", "pack_type": "resource_packs", "suffixes": [".json"], "unrecognized_suffix_okay": true, "ignore_files": ["flipbook_textures.json", "item_texture.json", "terrain_texture.json", "textures_list.json"]}
+            },
+            {
+                "new": "1.2.0.2",
+                "old": null,
+                "name": null
             }
         ]
     },
@@ -1599,6 +3685,147 @@
             },
             {
                 "new": "1.0.4.0",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "ui": {
+        "file_name": "ui.json",
+        "structure": "structures/ui",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.16.0_build1",
+                "name": "GrabMultiplePackFilesDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                // .bak or "backup" files are ignored because they're basically the same and not being used anyway.
+                "arguments": {"location": "ui/", "pack_type": "resource_packs", "suffixes": [".json"], "ignore_files": ["_global_variables.json", "_ui_defs.json"], "ignore_suffixes": [".bak"], "reverse": true}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": "a0.11.2",
+                "name": "MyGrabMultipleFilesDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "ui/", "insert_pack": "vanilla", "suffixes": [".json"], "ignore_files": ["_ui_defs.json"]}
+            },
+            {
+                "new": "a0.11.2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "ui_defs": {
+        "file_name": "ui_defs.json",
+        "structure": "structures/ui_defs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.16.0_build1",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "ui/_ui_defs.json", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": "a0.11.2",
+                "name": "MyGrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "ui/_ui_defs.json", "insert_pack": "vanilla"}
+            },
+            {
+                "new": "a0.11.2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "ui_global_variables": {
+        "file_name": "ui_global_variables.json",
+        "structure": "structures/ui_global_variables",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.2.0.2",
+                "name": "GrabPackFileDataMiner",
+                "files": ["client"],
+                "dependencies": ["resource_packs"],
+                "serializer": "json",
+                "arguments": {"location": "ui/_global_variables.json", "pack_type": "resource_packs"}
+            },
+            {
+                "new": "1.2.0.2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "uniforms": {
+        "file_name": "uniforms.json",
+        "structure": "structures/uniforms",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "a0.16.0_build1",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "uniforms.json"}
+            },
+            {
+                "new": "a0.16.0_build1",
+                "old": "a0.11.2",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "shaders/uniforms.json"}
+            },
+            {
+                "new": "a0.11.2",
+                "old": null,
+                "name": null
+            }
+        ]
+    },
+    "watchdogs": {
+        "file_name": "watchdogs.json",
+        "structure": "structures/watchdogs",
+        "dataminers": [
+            {
+                "new": null,
+                "old": "1.14.0.1",
+                "name": null
+            },
+            {
+                "new": "1.14.0.1",
+                "old": "1.13.2",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "watchdogs.json"}
+            },
+            {
+                "new": "1.13.2",
+                "old": "1.11.4",
+                "name": null
+            },
+            {
+                "new": "1.11.4",
+                "old": "1.11.0.5",
+                "name": "GrabSingleFileDataMiner",
+                "files": ["client"],
+                "serializer": "json",
+                "arguments": {"location": "watchdogs.json"}
+            },
+            {
+                "new": "1.11.0.5",
                 "old": null,
                 "name": null
             }

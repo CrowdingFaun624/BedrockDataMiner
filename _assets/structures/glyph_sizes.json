@@ -1,0 +1,39 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "glyph_sizes"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Dict",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "character"
+        },
+        "types": "dict",
+        "detect_key_moves": false,
+        "subcomponent": "range"
+    },
+    "range": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "field": "end"
+        },
+        "sort": "by_component_order",
+        "keys": {
+            "left": {"type": "int"},
+            "right": {"type": "int"}
+        }
+    }
+}

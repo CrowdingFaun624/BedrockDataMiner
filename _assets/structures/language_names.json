@@ -1,0 +1,44 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "languages"
+        },
+        "subcomponent": "packs"
+    },
+    "packs": {
+        "type": "Dict",
+        "types": "dict",
+        "subcomponent": "cache",
+        "post_normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/no_extension"
+        }
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "language_names"
+    },
+    "language_names": {
+        "type": "Dict",
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        },
+        "delegate_arguments": {
+            "field": "language"
+        },
+        "pre_normalized_types": "file",
+        "normalizer": [
+            {
+                "function_name": "open_file"
+            },
+            {
+                "function_name": "normalizers/language_names_normalize"
+            }
+        ],
+        "key_component": {
+            "type": "String"
+        }
+    }
+}

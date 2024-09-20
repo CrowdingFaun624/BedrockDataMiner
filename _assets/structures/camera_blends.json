@@ -1,0 +1,42 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "camera_blends"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "list",
+        "subcomponent": "blends"
+    },
+    "blends": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "blend",
+            "measure_length": true
+        },
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "subcomponent": "blend"
+    },
+    "blend": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "camera_from": {"type": "str", "subcomponent": "string", "weight": 2, "delegate_arguments": {"always_print": true}},
+            "camera_to": {"type": "str", "subcomponent": "string", "weight": 2, "delegate_arguments": {"always_print": true}},
+            "ease": {"type": "str"},
+            "blend_time": {"type": "float"},
+            "camera_from_accepts_input": {"type": "bool"},
+            "camera_to_accepts_input": {"type": "bool"}
+        }
+    },
+    "string": {
+        "type": "String"
+    }
+}

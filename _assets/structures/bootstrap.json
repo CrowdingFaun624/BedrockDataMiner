@@ -1,0 +1,42 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "bootstrap"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "bootstrap"
+    },
+    "bootstrap": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "profile": {"type": "dict", "subcomponent": "profile"}
+        }
+    },
+    "profile": {
+        "type": "Keymap",
+        "keys": {
+            "enabled_groups": {"type": "list", "subcomponent": "group_list"},
+            "min_group_stack_depth": {"type": "int"},
+            "headers_enabled": {"type": "bool"}
+        }
+    },
+    "group_list": {
+        "type": "Set",
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        },
+        "delegate_arguments": {
+            "field": "group"
+        }
+    }
+}

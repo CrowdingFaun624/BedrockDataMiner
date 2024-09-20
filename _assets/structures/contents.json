@@ -1,0 +1,45 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "contents"
+        },
+        "subcomponent": "packs"
+    },
+    "packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "pack"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "content": {"type": "list", "subcomponent": "content"}
+        }
+    },
+    "content": {
+        "type": "Set",
+        "types": "dict",
+        "subcomponent": "content.item"
+    },
+    "content.item": {
+        "type": "Keymap",
+        "keys": {
+            "path": {"type": "str", "subcomponent": {
+                "type": "String"
+            }}
+        }
+    }
+}

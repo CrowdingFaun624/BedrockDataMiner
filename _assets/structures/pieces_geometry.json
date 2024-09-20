@@ -1,0 +1,61 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "pieces_geometry"
+        },
+        "imports": [
+            {
+                "from": "structures/models",
+                "components": [
+                    {
+                        "component": "geometry"
+                    }
+                ]
+            }
+        ],
+        "subcomponent": "pieces"
+    },
+    "pieces": {
+        "type": "Dict",
+        "types": "dict",
+        "subcomponent": "geometry_files",
+        "delegate_arguments": {
+            "field": "piece"
+        }
+    },
+    "geometry_files": {
+        "type": "Dict",
+        "types": "dict",
+        "subcomponent": "cache",
+        "delegate_arguments": {
+            "field": "geometry file"
+        }
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "geometries"
+    },
+    "geometries": {
+        "type": "Dict",
+        "pre_normalized_types": "file",
+        "normalizer": [
+            {
+                "function_name": "open_file"
+            },
+            {
+                "function_name": "delete_optional_key",
+                "arguments": {
+                    "key": "format_version"
+                }
+            }
+        ],
+        "types": "dict",
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "geometry"
+        },
+        "subcomponent": "geometry"
+    }
+}

@@ -6,6 +6,13 @@
         },
         "subcomponent": "feature_rules"
     },
+    "filter_list_or_filter": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "filter_list",
+            "dict": "filter"
+        }
+    },
     "filter_list": {
         "type": "List",
         "delegate_arguments": {
@@ -77,7 +84,8 @@
         },
         "keys": {
             "format_version": {"type": "str"},
-            "minecraft:feature_rules": {"type": "dict", "subcomponent": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"}, // used by feature_rules_behavior_packs
+            "minecraft:feature_rules": {"type": "dict", "weight": 20, "subcomponent": {
                 "type": "Keymap",
                 "keys": {
                     "conditions": {"type": "dict", "subcomponent": "conditions"},
@@ -86,6 +94,15 @@
                 }
             }}
         }
+    },
+    "defined_in": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "print_flat": true
+        },
+        "subcomponent": null
     },
     "description": {
         "type": "Keymap",
@@ -97,7 +114,7 @@
     "conditions": {
         "type": "Keymap",
         "keys": {
-            "minecraft:biome_filter": {"type": "list", "subcomponent": "filter_list"},
+            "minecraft:biome_filter": {"type": ["dict", "list"], "subcomponent": "filter_list_or_filter"},
             "placement_pass": {"type": "str"}
         }
     },

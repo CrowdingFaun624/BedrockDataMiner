@@ -1,0 +1,41 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "pieces_store_info"
+        },
+        "subcomponent": "pieces"
+    },
+    "pieces": {
+        "type": "Dict",
+        "types": "dict",
+        "subcomponent": "store_info_files",
+        "delegate_arguments": {
+            "field": "piece"
+        }
+    },
+    "store_info_files": {
+        "type": "Dict",
+        "types": "dict",
+        "subcomponent": "cache",
+        "delegate_arguments": {
+            "field": "store info file"
+        }
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "store_info"
+    },
+    "store_info": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "piece_store_name": {"type": "str", "subcomponent": {"type": "String"}, "weight": 2, "delegate_arguments": {"always_print": true}},
+            "piece_thumbnail": {"type": "str", "subcomponent": {"type": "String"}}
+        }
+    }
+}

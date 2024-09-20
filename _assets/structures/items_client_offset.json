@@ -1,0 +1,69 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "items_client_offset"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "normalizer": [
+            {
+                "function_name": "normalizers/items_client_offset_normalize"
+            },
+            {
+                "function_name": "normalizers/collapse_resource_packs/dict",
+                "arguments": {
+                    "add_defined_in": false
+                }
+            }
+        ],
+        "subcomponent": "items"
+    },
+    "items": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "item",
+            "measure_length": true
+        },
+        "subcomponent": "item"
+    },
+    "item": {
+        "type": "Keymap",
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "VR_hand_controller_position_adjust": {"type": "list", "subcomponent": "vector_decimal"},
+            "VR_hand_controller_rotation_adjust": {"type": "list", "subcomponent": "vector_decimal"},
+            "VR_hand_controller_scale": {"type": "decimal"}
+        }
+    },
+    "defined_in": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        },
+        "subcomponent": null
+    },
+    "vector_decimal": {
+        "type": "List",
+        "types": "decimal",
+        "delegate_arguments": {
+            "print_all": true,
+            "print_flat": true
+        },
+        "subcomponent": null
+    }
+}

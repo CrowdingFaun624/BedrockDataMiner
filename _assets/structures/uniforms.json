@@ -1,0 +1,46 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "uniforms"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "uniforms"
+    },
+    "uniforms": {
+        "type": "Dict",
+        "types": "list",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "subcomponent": "uniform",
+        "delegate_arguments": {
+            "field": "uniform"
+        }
+    },
+    "uniform": {
+        "type": "Set",
+        "types": "dict",
+        "subcomponent": "constant",
+        "delegate_arguments": {
+            "field": "constant"
+        }
+    },
+    "constant": {
+        "type": "Keymap",
+        "keys": {
+            "Name": {"type": "str", "subcomponent": {
+                "type": "String"
+            }, "delegate_arguments": {
+                "always_print": true
+            }, "weight": 5},
+            "Type": {"type": "str"},
+            "Elements": {"type": "int"}
+        }
+    }
+}

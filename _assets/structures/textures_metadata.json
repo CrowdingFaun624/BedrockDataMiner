@@ -1,0 +1,158 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "textures"
+        },
+        "subcomponent": "texture_files"
+    },
+    "texture_files": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "texture"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack"
+        },
+        "post_normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/dict"
+        },
+        "subcomponent": "cache"
+    },
+    "defined_in": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "print_flat": true
+        },
+        "subcomponent": null
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "metadata"
+    },
+    "vector_int": {
+        "type": "List",
+        "types": "int",
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        },
+        "subcomponent": null
+    },
+    "vector_int_or_int": {
+        "type": "Group",
+        "subcomponents": {
+            "int": null,
+            "list": "vector_int"
+        }
+    },
+    "size_and_position": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "x": {"type": "int"},
+            "y": {"type": "int"},
+            "w": {"type": "int"},
+            "h": {"type": "int"}
+        }
+    },
+    "size": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "w": {"type": "int"},
+            "h": {"type": "int"}
+        }
+    },
+    "metadata": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "base_size": {"type": "list", "subcomponent": "vector_int"},
+            "nineslice_size": {"type": ["int", "list"], "subcomponent": "vector_int_or_int"},
+            "tiled": {"type": "bool"},
+            "meta": {"type": "dict", "subcomponent": "meta"},
+            "frames": {"type": "list", "subcomponent": "frames"}
+        }
+    },
+    "meta": {
+        "type": "Keymap",
+        "keys": {
+            "app": {"type": "str"},
+            "version": {"type": "str"},
+            "image": {"type": "str"},
+            "format": {"type": "str"},
+            "size": {"type": "dict", "subcomponent": "size"},
+            "scale": {"type": ["int", "str"]},
+            "frameTags": {"type": "list", "subcomponent": "meta.frame_tags"},
+            "layers": {"type": "list", "subcomponent": "meta.layers"},
+            "slices": {"type": "list", "subcomponent": "meta.slices"}
+        }
+    },
+    "meta.frame_tags": {
+        "type": "Set",
+        "types": "null",
+        "delegate_arguments": {
+            "field": "frame tag"
+        },
+        "subcomponent": null
+    },
+    "meta.layers": {
+        "type": "Set",
+        "types": "dict",
+        "subcomponent": "meta.layers.layer",
+        "delegate_arguments": {
+            "field": "layer"
+        }
+    },
+    "meta.layers.layer": {
+        "type": "Keymap",
+        "keys": {
+            "name": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 12},
+            "opacity": {"type": "int"},
+            "blendMode": {"type": "str"},
+            "group": {"type": "str", "subcomponent": {"type": "String"}}
+        }
+    },
+    "meta.slices": {
+        "type": "Set",
+        "types": "null",
+        "delegate_arguments": {
+            "field": "slice"
+        },
+        "subcomponent": null
+    },
+    "frames": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "frame"
+        },
+        "subcomponent": "frames.frame"
+    },
+    "frames.frame": {
+        "type": "Keymap",
+        "keys": {
+            "filename": {"type": "str", "subcomponent": {"type": "String"}, "weight": 12, "delegate_arguments": {"always_print": true}},
+            "frame": {"type": "dict", "subcomponent": "size_and_position"},
+            "rotated": {"type": "bool"},
+            "trimmed": {"type": "bool"},
+            "spriteSourceSize": {"type": "dict", "subcomponent": "size_and_position"},
+            "sourceSize": {"type": "dict", "subcomponent": "size"},
+            "duration": {"type": "int"}
+        }
+    }
+}

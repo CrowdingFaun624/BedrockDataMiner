@@ -1,0 +1,43 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "emoticons"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "list",
+        "subcomponent": "emoticons",
+        "post_normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/no_extension"
+        },
+        "delegate_arguments": {
+            "field": "resource pack"
+        }
+    },
+    "emoticons": {
+        "type": "Set",
+        "types": "dict",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "delegate_arguments": {
+            "field": "emoticon"
+        },
+        "subcomponent": "emoticon"
+    },
+    "emoticon": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "print_all": true
+        },
+        "sort": "by_component_order",
+        "keys": {
+            "name": {"type": "str", "subcomponent": {"type": "String"}},
+            "code": {"type": "str", "weight": 10}
+        }
+    }
+}

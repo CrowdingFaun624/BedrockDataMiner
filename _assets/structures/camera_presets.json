@@ -1,0 +1,77 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "camera_presets"
+        },
+        "subcomponent": "camera_presets"
+    },
+    "camera_presets": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "camera preset"
+        },
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "post_normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/dict"
+        },
+        "subcomponent": "cache"
+    },
+    "defined_in": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "print_all": true,
+            "print_flat": true
+        },
+        "subcomponent": null
+    },
+    "vector_float": {
+        "type": "List",
+        "types": "float",
+        "delegate_arguments": {
+            "field": "axis",
+            "print_all": true,
+            "print_flat": true
+        },
+        "subcomponent": null
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "camera"
+    },
+    "camera": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "sort": "by_component_order",
+        "keys": {
+            "format_version": {"type": "str"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "minecraft:camera_preset": {"type": "dict", "weight": 20, "subcomponent": {
+                "type": "Keymap",
+                "sort": "by_component_order",
+                "keys": {
+                    "identifier": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+                    "view_offset": {"type": "list", "subcomponent": "vector_float"},
+                    "entity_offset": {"type": "list", "subcomponent": "vector_float"},
+                    "radius": {"type": "int"},
+                    "pos_x": {"type": "int"},
+                    "pos_y": {"type": "int"},
+                    "pos_z": {"type": "int"},
+                    "rot_x": {"type": "int"},
+                    "rot_y": {"type": "int"}
+                }
+            }}
+        }
+    }
+}

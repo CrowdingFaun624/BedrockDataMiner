@@ -1,0 +1,44 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "ui_defs"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "resource pack"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "ui_defs": {"type": "list", "subcomponent": "ui_defs"}
+        }
+    },
+    "ui_defs": {
+        "type": "Set",
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        },
+        "delegate_arguments": {
+            "field": "def",
+            "measure_length": true
+        }
+    }
+}

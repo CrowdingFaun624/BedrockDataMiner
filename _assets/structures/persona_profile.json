@@ -1,0 +1,78 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "persona_profile"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "persona_profile"
+    },
+    "persona_profile": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "result": {"type": "dict", "subcomponent": "result"}
+        }
+    },
+    "result": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "pageId": {"type": "str"},
+            "addToRecentlyViewed": {"type": "bool"},
+            "rows": {"type": "list", "subcomponent": "rows"},
+            "inventoryVersion": {"type": "str"},
+            "screenLayout": {"type": "str"},
+            "pageRefresh": {"type": "bool"}
+        }
+    },
+    "rows": {
+        "type": "Set",
+        "types": "dict",
+        "subcomponent": "row",
+        "delegate_arguments": {
+            "field": "row"
+        }
+    },
+    "row": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "controlId": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 7},
+            "components": {"type": "list", "subcomponent": "components"}
+        }
+    },
+    "components": {
+        "type": "Set",
+        "types": "dict",
+        "subcomponent": "component",
+        "delegate_arguments": {
+            "field": "component"
+        }
+    },
+    "component": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "skinsPage": {"type": "dict", "subcomponent": "page"},
+            "characterPage": {"type": "dict", "subcomponent": "page"},
+            "type": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 3}
+        }
+    },
+    "page": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "linksTo": {"type": "str"},
+            "linkType": {"type": "str"},
+            "displayType": {"type": "str"}
+        }
+    }
+}

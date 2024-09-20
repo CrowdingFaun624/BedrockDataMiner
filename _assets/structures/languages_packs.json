@@ -1,0 +1,33 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "languages"
+        },
+        "subcomponent": "packs"
+    },
+    "packs": {
+        "type": "Dict",
+        "types": "list",
+        "subcomponent": "cache",
+        "post_normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/no_extension"
+        }
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "list",
+        "subcomponent": "languages"
+    },
+    "languages": {
+        "type": "Set",
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        },
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        }
+    }
+}

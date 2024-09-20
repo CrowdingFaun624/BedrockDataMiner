@@ -1,0 +1,58 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "camera_lists"
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "camera list",
+            "measure_length": true
+        },
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
+        "post_normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/no_extension"
+        },
+        "subcomponent": "camera_list"
+    },
+    "camera_list": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "format_version": {"type": "str"},
+            "minecraft:camera_list": {"type": "dict", "weight": 16, "subcomponent": {
+                "type": "Keymap",
+                "keys": {
+                    "identifier": {"type": "str", "subcomponent": {"type": "String"}},
+                    "cameras": {"type": "list", "subcomponent": "cameras"}
+                }
+            }}
+        }
+    },
+    "cameras": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "camera",
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "String"
+        }
+    }
+}

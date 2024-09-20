@@ -1,0 +1,1182 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "ui"
+        },
+        "subcomponent": "namespaces"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["int", "float"]
+    },
+    "outdated": {
+        "type": "Tag"
+    },
+    "any": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "any.dict",
+            "list": "any.list",
+            "bool": null,
+            "float": null,
+            "int": null,
+            "null": null,
+            "str": null
+        }
+    },
+    "any.dict": {
+        "type": "Dict",
+        "types": ["dict", "list", "bool", "float", "int", "null", "str"],
+        "detect_key_moves": false,
+        "subcomponent": "any"
+    },
+    "any.list": {
+        "type": "List",
+        "types": ["dict", "list", "bool", "float", "int", "null", "str"],
+        "subcomponent": "any"
+    },
+    "vector_float": {
+        "type": "List",
+        "types": "float",
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        },
+        "subcomponent": null
+    },
+    "str_or_decimal_or_vector_decimal_or_str": {
+        "type": "Group",
+        "subcomponents": {
+            "decimal": null,
+            "list": "vector_decimal_or_str",
+            "str": null
+        }
+    },
+    "vector_decimal_or_str": {
+        "type": "List",
+        "types": ["decimal", "str"],
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        },
+        "subcomponent": null
+    },
+    "str_or_int_or_vector_int": {
+        "type": "Group",
+        "subcomponents": {
+            "int": null,
+            "list": "vector_int",
+            "str": null
+        }
+    },
+    "vector_int": {
+        "type": "List",
+        "types": "int",
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        },
+        "subcomponent": null
+    },
+    "str_or_vector_int": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": "vector_int"
+        }
+    },
+    "str_or_vector_int_or_str": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": "vector_int_or_str"
+        }
+    },
+    "str_or_vector_float": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": "vector_float"
+        }
+    },
+    "vector_int_or_str": {
+        "type": "List",
+        "types": ["int", "str"],
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        },
+        "subcomponent": null
+    },
+    "namespaces": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "normalizer": {
+            "function_name": "normalizers/ui_normalize"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "elements"
+    },
+    "elements": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "subcomponent": "element"
+    },
+    "element": {
+        "type": "Keymap",
+        "delegate": null, // ui_normalize wraps each element with a dict of the element's type.
+        // the type is only needed to choose which branch, so it is ignored.
+        "keys": {
+            "alpha": {"type": "dict", "subcomponent": "animation"},
+            "aseprite_flip_book": {"type": "dict", "subcomponent": "animation"},
+            "button": {"type": "dict", "subcomponent": "element.button"},
+            "carousel_label": {"type": "dict", "subcomponent": "element.carousel_label", "tags": ["outdated"]},
+            "clip": {"type": "dict", "subcomponent": "animation"},
+            "collection_panel": {"type": "dict", "subcomponent": "element.collection_panel"},
+            "color": {"type": "dict", "subcomponent": "animation"},
+            "custom": {"type": "dict", "subcomponent": "element.custom"},
+            "dropdown": {"type": "dict", "subcomponent": "element.dropdown"},
+            "edit_box": {"type": "dict", "subcomponent": "element.edit_box"},
+            "factory": {"type": "dict", "subcomponent": "element.factory"},
+            "flip_book": {"type": "dict", "subcomponent": "animation"},
+            "grid": {"type": "dict", "subcomponent": "element.grid"},
+            "grid_item": {"type": "dict", "subcomponent": "element.grid_item", "tags": ["outdated"]},
+            "image": {"type": "dict", "subcomponent": "element.image"},
+            "image_cycler": {"type": "dict", "subcomponent": "element.image_cycler"},
+            "input_panel": {"type": "dict", "subcomponent": "element.input_panel"},
+            "label": {"type": "dict", "subcomponent": "element.label"},
+            "label_cycler": {"type": "dict", "subcomponent": "element.label_cycler"}, // Note: not supported by wiki
+            "offset": {"type": "dict", "subcomponent": "animation"},
+            "panel": {"type": "dict", "subcomponent": "element.panel"},
+            "screen": {"type": "dict", "subcomponent": "element.screen"},
+            "scroll_track": {"type": "dict", "subcomponent": "element.scroll_track"},
+            "scroll_view": {"type": "dict", "subcomponent": "element.scroll_view"},
+            "scrollbar": {"type": "dict", "subcomponent": "element.scrollbar"},
+            "scrollbar_box": {"type": "dict", "subcomponent": "element.scrollbar_box"},
+            "scrollbar_track": {"type": "dict", "subcomponent": "element.scrollbar_track"},
+            "selection_wheel": {"type": "dict", "subcomponent": "element.selection_wheel"},
+            "size": {"type": "dict", "subcomponent": "animation"},
+            "slider": {"type": "dict", "subcomponent": "element.slider"},
+            "slider_box": {"type": "dict", "subcomponent": "element.slider_box"},
+            "stack_panel": {"type": "dict", "subcomponent": "element.stack_panel"},
+            "tab": {"type": "dict", "subcomponent": "element.tab", "tags": ["outdated"]},
+            "toggle": {"type": "dict", "subcomponent": "element.toggle"},
+            "unknown": {"type": "dict", "subcomponent": "element.unknown"},
+            "uv": {"type": "dict", "subcomponent": "animation"},
+            "wait": {"type": "dict", "subcomponent": "animation"}
+        }
+    },
+    "animation": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "keys": {
+            "$variables": {"type": "dict", "subcomponent": "my_variables"},
+            "anim_type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "activated": {"type": ["bool", "str"]},
+            "destroy_at_end": {"type": "str"},
+            "duration": {"type": ["decimal", "str"]},
+            "easing": {"type": "str"},
+            "end_event": {"type": "str"},
+            "fps": {"type": ["decimal", "str"]},
+            "frame_count": {"type": ["int", "str"]},
+            "frame_step": {"type": ["decimal", "str"]},
+            "from": {"type": ["decimal", "list", "str"], "subcomponent": "str_or_decimal_or_vector_decimal_or_str"},
+            "initial_uv": {"type": "list", "subcomponent": "vector_int"},
+            "looping": {"type": ["bool", "str"]},
+            "next": {"type": "str"},
+            "orientation": {"type": "str"},
+            "play_event": {"type": "str"},
+            "reset_event": {"type": "str"},
+            "resettable": {"type": ["bool", "str"]},
+            "reversible": {"type": ["bool", "str"]},
+            "scale_from_starting_alpha": {"type": ["bool", "str"]},
+            "start_event": {"type": "str"},
+            "to": {"type": ["decimal", "list", "str"], "subcomponent": "str_or_decimal_or_vector_decimal_or_str"},
+            "type": {"type": "str"},
+            "wait_until_rendered_to_play": {"type": "bool"}
+        }
+    },
+    "animation_list": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": {
+                "type": "Set",
+                "types": "str",
+                "delegate_arguments": {
+                    "measure_length": true,
+                    "field": "animation"
+                },
+                "subcomponent": {
+                    "type": "String"
+                }
+            }
+        }
+    },
+    "bindings": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": {
+                "type": "Set",
+                "types": "dict",
+                "delegate_arguments": {
+                    "field": "binding",
+                    "measure_length": true
+                },
+                "subcomponent": "bindings.item"
+            }
+        }
+    },
+    "bindings.item": {
+        "type": "Keymap",
+        "keys": {
+            "binding_collection_name": {"type": "str"},
+            "binding_collection_prefix": {"type": "str"},
+            "binding_condition": {"type": "str"},
+            "binding_name": {"type": "str"},
+            "binding_name_override": {"type": "str"},
+            "binding_type": {"type": "str"},
+            "ignored": {"type": "str"},
+            "resolve_sibling_scope": {"type": "bool"},
+            "source_control_name": {"type": "str"},
+            "source_property_name": {"type": "str"},
+            "target_property_name": {"type": "str"}
+        }
+    },
+    "button_mappings": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": {
+                "type": "Set",
+                "types": "dict",
+                "delegate_arguments": {
+                    "field": "button mapping",
+                    "measure_length": true
+                },
+                "subcomponent": "button_mappings.item"
+            }
+        }
+    },
+    "button_mappings.item": {
+        "type": "Keymap",
+        "keys": {
+            "button_up_right_of_first_refusal": {"type": "bool"},
+            "consume_event": {"type": "bool"},
+            "from_button_id": {"type": "str", "subcomponent": {"type": "String"}},
+            "handle_deselect": {"type": "bool"},
+            "handle_select": {"type": "bool"},
+            "ignore_input_scope": {"type": "str"},
+            "ignored": {"type": "str"},
+            "input_mode_condition": {"type": "str"},
+            "mapping_type": {"type": "str"},
+            "scope": {"type": "str"},
+            "to_button_id": {"type": "str", "subcomponent": {"type": "String"}}
+        }
+    },
+    "control_ids": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "dict": {
+                "type": "Keymap",
+                "keys": {
+                    "add_resource_dialog": {"type": "str"},
+                    "conflict_resolution_popup": {"type": "str"},
+                    "joincode_popup": {"type": "str"},
+                    "share_link_popup": {"type": "str"},
+                    "teams_share_link_popup": {"type": "str"},
+                    "teams_share_link_resource_popup": {"type": "str"},
+                    "teams_share_link_simple_popup": {"type": "str"}
+                }
+            }
+        }
+    },
+    "control_list": {
+        "type": "Set",
+        "types": ["str", "dict"],
+        "delegate_arguments": {
+            "field": "control",
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "str": {"type": "String"},
+                "dict": "control_list.item"
+            }
+        }
+    },
+    "control_list.item": {
+        "type": "Keymap",
+        "keys": {
+            "control_name": {"type": "str", "subcomponent": {"type": "String"}}
+        }
+    },
+    "controls": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": {
+                "type": "Set",
+                "types": "dict",
+                "delegate_arguments": {
+                    "field": "control",
+                    "measure_length": true
+                },
+                "subcomponent": "control.item"
+            }
+        }
+    },
+    "control.item": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "element"
+        },
+        "subcomponent": "element"
+    },
+    "factory": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "dict": {
+                "type": "Keymap",
+                "normalizer": "separate_variables",
+                "keys": {
+                    "$variables": {"type": "dict", "subcomponent": "my_variables"},
+                    "name": {"type": "str"},
+                    "control_ids": {"type": ["dict", "str"], "subcomponent": "control_ids"},
+                    "factory_variables": {"type": "str"}
+                }
+            }
+        }
+    },
+    "focus_container_custom": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": {
+                "type": "Set",
+                "types": "dict",
+                "delegate_arguments": {
+                    "field": "container",
+                    "measure_length": true
+                },
+                "subcomponent": "focus_container_custom.item"
+            }
+        }
+    },
+    "focus_container_custom.item": {
+        "type": "Keymap",
+        "keys": {
+            "other_focus_container_name": {"type": "str"},
+            "focus_id_inside": {"type": "str"}
+        }
+    },
+    "focus_mapping": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "mapping",
+            "measure_length": true
+        },
+        "subcomponent": "focus_mapping.item"
+    },
+    "focus_mapping.item": {
+        "type": "Keymap",
+        "keys": {
+            "focus_identifier": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
+            "focus_change_right": {"type": "str"}
+        }
+    },
+    "modifications": {
+        "type": "Set",
+        "types": "null",
+        "delegate_arguments": {
+            "field": "modification",
+            "measure_length": true
+        },
+        "subcomponent": null
+    },
+    "my_variables": {
+        "type": "Dict",
+        "types": ["null", "bool", "dict", "float", "int", "list", "str"],
+        "delegate_arguments": {
+            "field": "variable",
+            "measure_length": true
+        },
+        "subcomponent": "any"
+    },
+    "property_bag": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "dict": "property_bag.dict"
+        }
+    },
+    "property_bag.dict": {
+        "type": "Keymap",
+        "keys": {
+            "#anchored_offset_value_x": {"type": "decimal"},
+            "#anchored_offset_value_y": {"type": "decimal"},
+            "#banner_colors": {"type": "str"},
+            "#banner_patterns": {"type": "str"},
+            "#block_position": {"type": "list", "subcomponent": "vector_int"},
+            "#bottom_left_block": {"type": "list", "subcomponent": "vector_int"},
+            "#buttons_visible": {"type": "bool"},
+            "#collection_name": {"type": "str"},
+            "#collection_prefix": {"type": "str"},
+            "#common": {"type": "list", "subcomponent": "vector_float"},
+            "#custom_rot_y": {"type": "float"},
+            "#disabled_filter_visible": {"type": "bool"},
+            "#entity_id": {"type": ["str", "int"]},
+            "#epic": {"type": "list", "subcomponent": "vector_float"},
+            "#filtered_light_multiplier": {"type": "float"},
+            "#flying_item_renderer": {"type": "bool"}, // Note: not supported by wiki
+            "#force_skin_update": {"type": "str"},
+            "#gesture_delta_source": {"type": "str"},
+            "#gesture_mouse_delta_x": {"type": "str"},
+            "#has_focus": {"type": "bool"},
+            "#hover_slice": {"type": "int"},
+            "#hover_text": {"type": "str"},
+            "#hyperlink": {"type": "str"},
+            "#image_name": {"type": "str"},
+            "#include_entities": {"type": "bool"},
+            "#include_players": {"type": "bool"},
+            "#index": {"type": "int"},
+            "#is_dropdown": {"type": "bool"},
+            "#is_left": {"type": "bool"},
+            "#is_skins": {"type": "bool"},
+            "#is_featured": {"type": "bool"},
+            "#item_custom_color": {"type": "int"},
+            "#item_id_aux": {"type": "int"},
+            "#item_pickup_time": {"type": "float"},
+            "#legendary": {"type": "list", "subcomponent": "vector_float"},
+            "#look_at_cursor": {"type": "bool"},
+            "#modal_label_text": {"type": "str"},
+            "#modal_title_text": {"type": "str"},
+            "#no_buttons_visible": {"type": "bool"},
+            "#open": {"type": "bool"},
+            "#owned_incompatible_prompt_color": {"type": "bool"},
+            "#pack_id": {"type": "int"},
+            "#panel_title": {"type": "str"},
+            "#player_uuid": {"type": "str"},
+            "#playername": {"type": "str"},
+            "#progress_bar_tool_amount": {"type": "float"},
+            "#progress_bar_visible": {"type": "bool"},
+            "#property_field": {"type": "str"},
+            "#rare": {"type": "list", "subcomponent": "vector_float"},
+            "#remove_blocks": {"type": "bool"},
+            "#reset_group": {"type": "str"},
+            "#should_host": {"type": "bool"},
+            "#single_button_visible": {"type": "bool"},
+            "#size_binding_x": {"type": "decimal"},
+            "#size_binding_y": {"type": "decimal"},
+            "#skin_idx": {"type": "int"},
+            "#skin_rotation": {"type": "bool"},
+            "#slider_steps": {"type": "decimal"},
+            "#slider_value": {"type": "decimal"},
+            "#start_selected": {"type": "bool"},
+            "#sub_command": {"type": "str"},
+            "#text": {"type": "str"},
+            "#timer_duration": {"type": "decimal"},
+            "#timer_field_count_to_show": {"type": "decimal"},
+            "#toggle_state": {"type": "bool"},
+            "#top_right_block": {"type": "list", "subcomponent": "vector_int"},
+            "#tts_dialog_body": {"type": "str"},
+            "#tts_dialog_title": {"type": "str"},
+            "#two_buttons_visible": {"type": "bool"},
+            "#uncommon": {"type": "list", "subcomponent": "vector_float"},
+            "#use_heart_offset": {"type": "bool"},
+            "#visible": {"type": "bool"},
+            "#x_padding": {"type": "decimal"},
+            "classic_radio_button_state": {"type": "str"},
+            "drop_shadow": {"type": "bool"}, // Note: not supported by wiki
+            "entity_type": {"type": "str"},
+            "experimental_radio_button_state": {"type": "str"},
+            "flying_item_banner_patterns": {"type": "str"},
+            "flying_item_banner_colors": {"type": "str"},
+            "flying_item_count": {"type": "int"},
+            "flying_item_destination_scale": {"type": "float"},
+            "flying_item_destination_position_x": {"type": "float"},
+            "flying_item_destination_position_y": {"type": "float"},
+            "flying_item_custom_color": {"type": "int"},
+            "flying_item_origin_scale": {"type": "float"},
+            "flying_item_original_position_x": {"type": "float"},
+            "flying_item_original_position_y": {"type": "float"},
+            "force_update": {"type": "bool"},
+            "is_durability": {"type": "bool"},
+            "is_fixed_inventory": {"type": "bool"},
+            "is_local": {"type": "bool"},
+            "is_storage_bar": {"type": "bool"}, // Note: not supported by wiki
+            "opacity_override": {"type": "float"},
+            "round_value": {"type": "bool"}
+        }
+    },
+    "separate_variables": {
+        "type": "Normalizer",
+        "function_name": "normalizers/ui_separate_variables"
+    },
+    "sounds": {
+        "type": "Set",
+        "types": "dict",
+        "subcomponent": "sound",
+        "delegate_arguments": {
+            "field": "sound",
+            "measure_length": true
+        }
+    },
+    "sound": {
+        "type": "Keymap",
+        "keys": {
+            "min_seconds_between_plays": {"type": "float"},
+            "sound_name": {"type": "str"},
+            "sound_pitch": {"type": "float"},
+            "sound_volume": {"type": "float"}
+        }
+    },
+    "variables": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "dict": "variables.item",
+            "list": {
+                "type": "Set",
+                "types": "dict",
+                "delegate_arguments": {
+                    "field": "variable",
+                    "measure_length": true
+                },
+                "subcomponent": "variables.item"
+            }
+        }
+    },
+    "variables.item": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "keys": {
+            "requires": {"type": "str"},
+            "$variables": {"type": "dict", "subcomponent": "my_variables"}
+        }
+    },
+    "common.all": {
+        "type": "Keymap",
+        "keys": {
+            "$variables": {"type": "dict", "subcomponent": "my_variables"},
+            "type": {"type": "str"}
+        }
+    },
+    "common.button": {
+        "type": "Keymap",
+        "keys": {
+            "default_control": {"type": "str"},
+            "hover_control": {"type": "str"},
+            "locked_control": {"type": "str"},
+            "pressed_control": {"type": "str"}
+        }
+    },
+    "common.carousel_text": {
+        "type": "Keymap",
+        "keys": {
+            "always_rotate": {"type": "bool"},
+            "hover_alpha": {"type": "float"},
+            "hover_color": {"type": "list", "subcomponent": "vector_float"},
+            "pressed_alpha": {"type": "float"},
+            "pressed_color": {"type": "list", "subcomponent": "vector_float"},
+            "rotate_speed": {"type": "decimal"}
+        }
+    },
+    "common.collection": {
+        "type": "Keymap",
+        "keys": {
+            "collection_name": {"type": "str"}
+        }
+    },
+    "common.control": {
+        "type": "Keymap",
+        "keys": {
+            "alighment": {"type": "str", "tags": ["outdated"]},
+            "allow_clipping": {"type": ["bool", "str"]},
+            "alpha": {"type": ["decimal", "str"]},
+            "animation_reset_name": {"type": "str"},
+            "anims": {"type": ["list", "str"], "subcomponent": "animation_list"},
+            "clips_children": {"type": ["bool", "str"]},
+            "clip_offset": {"type": "list", "subcomponent": "vector_int"},
+            "clip_state_change_event": {"type": "str"},
+            "collection_index": {"type": ["int", "str"]},
+            "controls": {"type": ["list", "str"], "subcomponent": "controls"},
+            "disable_anim_fast_forward": {"type": ["bool", "str"]},
+            "enable_scissor_test": {"type": ["bool", "str"]},
+            "enabled": {"type": ["bool", "str"]},
+            "grid_position": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
+            "ignored": {"type": ["bool", "str"]},
+            "layer": {"type": ["int", "str"]},
+            "modifications": {"type": "list", "subcomponent": "modifications"},
+            "propagate_alpha": {"type": ["bool", "str"]},
+            "property_bag": {"type": ["dict", "str"], "subcomponent": "property_bag"},
+            "scroll_report": {"type": "list", "subcomponent": "control_list", "tags": ["outdated"]},
+            "selected": {"type": ["bool", "str"]},
+            "use_child_anchors": {"type": ["bool", "str"]},
+            "variables": {"type": ["list", "dict", "str"], "subcomponent": "variables"},
+            "visible": {"type": ["bool", "str"]},
+            "z_order": {"type": ["int", "str"], "tags": ["outdated"]}
+        }
+    },
+    "common.custom_render": {
+        "type": "Keymap",
+        // may need stuff from https://wiki.bedrock.dev/json-ui/json-ui-documentation.html#specific-properties
+        "keys": {
+            "camera_tilt_degrees": {"type": ["int", "str"]},
+            "color1": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
+            "color2": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
+            "end_event": {"type": "str"},
+            "full_storage_color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
+            "hover_text_max_width": {"type": "str"},
+            "primary_color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
+            "renderer": {"type": "str"},
+            "rotation": {"type": ["int", "str"]},
+            "starting_rotation": {"type": ["int", "str"]},
+            "use_selected_skin": {"type": ["bool", "str"]},
+            "use_skin_gui_scale": {"type": ["bool", "str"]}
+        }
+    },
+    "common.data_binding": {
+        "type": "Keymap",
+        "keys": {
+            "bindings": {"type": ["list", "str"], "subcomponent": "bindings"}
+        }
+    },
+    "common.dropdown": {
+        "type": "Keymap",
+        "keys": {
+            "dropdown_name": {"type": "str"},
+            "dropdown_content_control": {"type": "str"},
+            "dropdown_area": {"type": "str"}
+        }
+    },
+    "common.factory": {
+        "type": "Keymap",
+        "keys": {
+            "control_ids": {"type": ["dict", "str"], "subcomponent": "control_ids"},
+            "control_name": {"type": "str"}
+        }
+    },
+    "common.focus": {
+        "type": "Keymap",
+        "keys": {
+            "default_focus_precedence": {"type": ["int", "str"]},
+            "focus_change_down": {"type": "str"},
+            "focus_change_left": {"type": "str"},
+            "focus_change_right": {"type": "str"},
+            "focus_change_up": {"type": "str"},
+            "focus_container": {"type": ["bool", "str"]},
+            "focus_container_custom_down": {"type": ["list", "str"], "subcomponent": "focus_container_custom"},
+            "focus_container_custom_left": {"type": ["list", "str"], "subcomponent": "focus_container_custom"},
+            "focus_container_custom_right": {"type": ["list", "str"], "subcomponent": "focus_container_custom"},
+            "focus_container_custom_up": {"type": ["list", "str"], "subcomponent": "focus_container_custom"},
+            "focus_enabled": {"type": ["bool", "str"]},
+            "focus_identifier": {"type": "str"},
+            "focus_magnet_enabled": {"type": ["bool", "str"]},
+            "focus_mapping": {"type": "list", "subcomponent": "focus_mapping"},
+            "focus_navigation_mode_down": {"type": "str"},
+            "focus_navigation_mode_left": {"type": "str"},
+            "focus_navigation_mode_right": {"type": "str"},
+            "focus_navigation_mode_up": {"type": "str"},
+            "focus_wrap_enabled": {"type": ["bool", "str"]},
+            "use_last_focus": {"type": ["bool", "str"]}
+        }
+    },
+    "common.grid": {
+        "type": "Keymap",
+        "keys": {
+            "grid_dimension_binding": {"type": "str"},
+            "grid_dimensions": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
+            "grid_fill_direction": {"type": "str"},
+            "grid_item_template": {"type": "str"},
+            "grid_rescaling_type": {"type": "str"},
+            "maximum_grid_items": {"type": ["int", "str"]},
+            "precached_grid_item_count": {"type": ["int", "str"]}
+        }
+    },
+    "common.image_cycler": {
+        "type": "Keymap",
+        "keys": {
+            "images": {"type": "str"}
+        }
+    },
+    "common.input": {
+        "type": "Keymap",
+        "keys": {
+            "always_handle_controller_direction": {"type": "bool"},
+            "always_handle_pointer": {"type": "bool"},
+            "always_listen_to_input": {"type": "bool"},
+            "button_mappings": {"type": ["list", "str"], "subcomponent": "button_mappings"},
+            "consume_event": {"type": "bool"},
+            "consume_hover_events": {"type": ["bool", "str"]},
+            "gesture_tracking_button": {"type": "str"},
+            "hover_enabled": {"type": "bool"},
+            "inline_modal": {"type": "bool"},
+            "modal": {"type": "bool"},
+            "prevent_touch_input": {"type": "bool"}
+        }
+    },
+    "common.label_cycler": {
+        "type": "Keymap",
+        "keys": {
+            "text_labels": {"type": "str"}
+        }
+    },
+    "common.layout": {
+        "type": "Keymap",
+        "keys": {
+            "anchor_from": {"type": "str"},
+            "anchor_to": {"type": "str"},
+            "contained": {"type": "bool"},
+            "draggable": {"type": "str"},
+            "follows_cursor": {"type": "bool"},
+            "inherit_max_sibling_height": {"type": "bool"},
+            "inherit_max_sibling_width": {"type": "bool"},
+            "max_size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int_or_str"},
+            "min_size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int_or_str"},
+            "offset": {"type": ["list", "str"], "subcomponent": "str_or_vector_int_or_str"},
+            "size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int_or_str"},
+            "use_anchored_offset": {"type": "bool"}
+        }
+    },
+    "common.screen": {
+        "type": "Keymap",
+        "keys": {
+            "absorbs_input": {"type": ["bool", "str"]},
+            "always_accepts_input": {"type": ["bool", "str"]},
+            "cache_screen": {"type": ["bool", "str"]},
+            "close_on_player_hurt": {"type": ["bool", "str"]},
+            "force_render_below": {"type": ["bool", "str"]},
+            "gamepad_cursor": {"type": ["bool", "str"]},
+            "gamepad_cursor_deflection_mode": {"type": ["bool", "str"]},
+            "is_modal": {"type": ["bool", "str"]},
+            "is_showing_menu": {"type": ["bool", "str"]},
+            "load_screen_immediately": {"type": ["bool", "str"]},
+            "low_frequency_rendering": {"type": ["bool", "str"]},
+            "render_game_behind": {"type": ["bool", "str"]},
+            "render_only_when_topmost": {"type": ["bool", "str"]},
+            "screen_draws_last": {"type": ["bool", "str"]},
+            "screen_not_flushable": {"type": ["bool", "str"]},
+            "send_telemetry": {"type": ["bool", "str"]},
+            "should_be_skipped_during_automation": {"type": ["bool", "str"]},
+            "should_steal_mouse": {"type": ["bool", "str"]},
+            "use_custom_pocket_toast": {"type": "str"}, // Note: not supported by wiki
+            "vr_mode": {"type": ["bool", "str"]}
+        }
+    },
+    "common.scroll_view": {
+        "type": "Keymap",
+        "keys": {
+            "always_handle_scrolling": {"type": ["bool", "str"]},
+            "gesture_control_enabled": {"type": ["bool", "str"]},
+            "jump_to_bottom_on_update": {"type": ["bool", "str"]},
+            "scroll_box_and_track_panel": {"type": "str"},
+            "scroll_content": {"type": "str"},
+            "scroll_speed": {"type": ["decimal", "str"]},
+            "scroll_view_port": {"type": "str"},
+            "scrollbar_always_visible": {"type": ["bool", "str"]}, // Note: not supported by wiki
+            "scrollbar_box": {"type": "str"},
+            "scrollbar_track": {"type": "str"},
+            "scrollbar_touch_button": {"type": "str"},
+            "scrollbar_track_button": {"type": "str"},
+            "touch_mode": {"type": ["bool", "str"]}
+        }
+    },
+    "common.selection_wheel": {
+        "type": "Keymap",
+        "keys": {
+            "analog_button_name": {"type": "str"},
+            "button_name": {"type": "str"},
+            "hover_button_name": {"type": "str"},
+            "initial_button_slice": {"type": ["int", "str"]},
+            "inner_radius": {"type": ["decimal", "str"]},
+            "iterate_left_button_name": {"type": "str"},
+            "iterate_right_button_name": {"type": "str"},
+            "outer_radius": {"type": ["decimal", "str"]},
+            "select_button_name": {"type": "str"},
+            "slice_count": {"type": ["int", "str"]},
+            "state_controls": {"type": "list", "subcomponent": "control_list"}
+        }
+    },
+    "common.slider": {
+        "type": "Keymap",
+        "keys": {
+            "background_control": {"type": "str"},
+            "background_hover_control": {"type": "str"},
+            "progress_control": {"type": "str"},
+            "progress_hover_control": {"type": "str"},
+            "slider_box_control": {"type": "str"},
+            "slider_collection_name": {"type": "str"},
+            "slider_deselected_button": {"type": "str"},
+            "slider_direction": {"type": "str"},
+            "slider_name": {"type": "str"},
+            "slider_select_on_hover": {"type": ["bool", "str"]},
+            "slider_selected_button": {"type": "str"},
+            "slider_small_decrease_button": {"type": "str"},
+            "slider_small_increase_button": {"type": "str"},
+            "slider_steps": {"type": ["int", "str"]},
+            "slider_timeout": {"type": ["decimal", "str"]},
+            "slider_track_button": {"type": "str"}
+        }
+    },
+    "common.slider_box": {
+        "type": "Keymap",
+        "keys": {
+            "default_control": {"type": "str"},
+            "hover_control": {"type": "str"},
+            "indent_control": {"type": "str"},
+            "locked_control": {"type": "str"}
+        }
+    },
+    "common.sound": {
+        "type": "Keymap",
+        "keys": {
+            "sound_name": {"type": "str"},
+            "sound_pitch": {"type": "float"},
+            "sound_volume": {"type": "float"},
+            "sounds": {"type": "list", "subcomponent": "sounds"}
+        }
+    },
+    "common.sprite": {
+        "type": "Keymap",
+        "keys": {
+            "allow_debug_missing_texture": {"type": ["bool", "str"]},
+            "base_size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
+            "bilinear": {"type": ["bool", "str"]},
+            "clip_direction": {"type": "str"},
+            "clip_pixelperfect": {"type": ["bool", "str"]},
+            "clip_ratio": {"type": ["float", "str"]},
+            "color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"}, // Note: Not supported by wiki
+            "fill": {"type": ["bool", "str"]},
+            "force_texture_reload": {"type": ["bool", "str"]},
+            "grayscale": {"type": ["bool", "str"]},
+            "keep_ratio": {"type": ["bool", "str"]},
+            "nineslice_size": {"type": ["int", "list", "str"], "subcomponent": "str_or_int_or_vector_int"},
+            "texture": {"type": "str"},
+            "texture_file_system": {"type": "str"},
+            "tiled": {"type": ["bool", "str"]},
+            "tiled_scale": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
+            "uv": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
+            "uv_size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
+            "zip_folder": {"type": "str"}
+        }
+    },
+    "common.stack_panel": {
+        "type": "Keymap",
+        "keys": {
+            "orientation": {"type": "str"}
+        }
+    },
+    "common.tab": {
+        "type": "Keymap",
+        "keys": {
+            "tab_control": {"type": "str"},
+            "tab_group": {"type": ["int", "str"]},
+            "tab_index": {"type": ["int", "str"]}
+        }
+    },
+    "common.text": {
+        "type": "Keymap",
+        "keys": {
+            "backup_font_type": {"type": "str"},
+            "clip": {"type": ["bool", "str"], "tags": ["outdated"]},
+            "color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
+            "enable_profanity_filter": {"type": ["bool", "str"]},
+            "font_scale_factor": {"type": ["decimal", "str"]},
+            "font_size": {"type": "str"},
+            "font_type": {"type": "str"},
+            "hide_hyphen": {"type": ["bool", "str"]},
+            "line_padding": {"type": ["decimal", "str"]},
+            "localize": {"type": ["bool", "str"]},
+            "locked_alpha": {"type": ["float", "str"]},
+            "locked_color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
+            "notify_on_ellipses": {"type": "list", "subcomponent": "control_list"},
+            "shadow": {"type": ["bool", "str"]},
+            "text": {"type": "str"},
+            "text_alignment": {"type": "str"},
+            "wrap": {"type": ["bool", "str"], "tags": ["outdated"]}
+        }
+    },
+    "common.text_edit": {
+        "type": "Keymap",
+        "keys": {
+            "always_listening": {"type": ["bool", "str"]},
+            "can_be_deselected": {"type": ["bool", "str"]},
+            "constrain_to_rect": {"type": ["bool", "str"]},
+            "enabled_newline": {"type": ["bool", "str"]},
+            "max_length": {"type": ["int", "str"]},
+            "place_holder_control": {"type": "str"},
+            "place_holder_text_hover_color": {"type": "str"},
+            "text_box_name": {"type": "str"},
+            "text_control": {"type": "str"},
+            "text_edit_box_grid_collection_name": {"type": "str"},
+            "text_type": {"type": "str"},
+            "virtual_keyboard_buffer_control": {"type": ["bool", "str"]}
+        }
+    },
+    "common.toggle": {
+        "type": "Keymap",
+        "keys": {
+            "checked_control": {"type": "str"},
+            "checked_hover_control": {"type": "str"},
+            "checked_locked_control": {"type": "str"},
+            "checked_locked_hover_control": {"type": "str"},
+            "enable_directional_toggling": {"type": ["bool", "str"]},
+            "radio_toggle_group": {"type": ["bool", "str"]},
+            "reset_on_lost_focus": {"type": ["bool", "str"]},
+            "toggle_default_state": {"type": ["bool", "str"]},
+            "toggle_grid_collection_name": {"type": ["bool", "str"]},
+            "toggle_group_forced_index": {"type": ["bool", "str"]},
+            "toggle_group_default_selected": {"type": ["bool", "int", "str"]},
+            "toggle_name": {"type": "str"},
+            "toggle_off_button": {"type": "str"},
+            "toggle_on_button": {"type": "str"},
+            "toggle_on_hover": {"type": "str"},
+            "unchecked_control": {"type": "str"},
+            "unchecked_hover_control": {"type": "str"},
+            "unchecked_locked_control": {"type": "str"},
+            "unchecked_locked_hover_control": {"type": "str"}
+        }
+    },
+    "common.tts": {
+        "type": "Keymap",
+        "keys": {
+            "priority": {"type": ["int", "str"]},
+            "text_tts": {"type": "str"},
+            "tts_control_header": {"type": "str"},
+            "tts_control_type_order_priority": {"type": ["int", "str"]},
+            "tts_ignore_count": {"type": ["bool", "str"]},
+            "tts_ignore_subsections": {"type": ["bool", "str"]},
+            "tts_index_priority": {"type": ["int", "str"]},
+            "tts_inherit_siblings": {"type": ["bool", "str"]},
+            "tts_name": {"type": "str"},
+            "tts_override_control_value": {"type": "str"},
+            "tts_play_on_unchanged_focus_control": {"type": ["bool", "str"]},
+            "tts_section_header": {"type": "str"},
+            "tts_skip_message": {"type": ["bool", "str"]},
+            "tts_toggle_off": {"type": "str"},
+            "tts_toggle_on": {"type": "str"},
+            "tts_value_changed": {"type": "str"},
+            "tts_value_order_priority": {"type": ["int", "str"]},
+            "ttsSectionContainer": {"type": ["bool", "str"]},
+            "use_priority": {"type": ["bool", "str"]}
+        }
+    },
+    "common.unknown": {
+        "type": "Keymap",
+        "keys": {
+            "next_sub_page_button_name": {"type": "str"},
+            "prev_sub_page_button_name": {"type": "str"}
+        }
+    },
+    "element.button": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        // Note: [common.layout] is not supported by wiki
+        "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.tts"]
+    },
+    "element.carousel_label": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        // Note: [common.button] is not supported by wiki
+        "imports": ["common.all", "common.carousel_text", "common.control", "common.data_binding", "common.input", "common.layout", "common.text"]
+    },
+    "element.collection_panel": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.collection", "common.control", "common.data_binding", "common.layout"],
+        "keys": {
+            "factory": {"type": ["dict", "str"], "subcomponent": "factory"}
+        }
+    },
+    "element.custom": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.custom_render", "common.data_binding", "common.layout"]
+    },
+    "element.dropdown": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.data_binding", "common.dropdown", "common.focus", "common.input", "common.layout", "common.sound", "common.toggle"]
+    },
+    "element.edit_box": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.text_edit", "common.tts"]
+    },
+    "element.factory": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        // Note: [common.factory] is not supported by wiki
+        "imports": ["common.all", "common.control", "common.factory", "common.layout"]
+    },
+    "element.grid": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        // Note: [common.focus] is not supported by wiki
+        "imports": ["common.all", "common.collection", "common.control", "common.data_binding", "common.focus", "common.grid", "common.layout", "common.tts"]
+    },
+    "element.grid_item": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.data_binding", "common.layout"]
+    },
+    "element.image": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.layout", "common.sprite"]
+    },
+    "element.image_cycler": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.image_cycler"]
+    },
+    "element.input_panel": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.tts"],
+        "keys": {
+            "gamepad_deflection_mode": {"type": ["bool", "str"]}
+        }
+    },
+    "element.label": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.data_binding", "common.layout", "common.text", "common.tts"]
+    },
+    "element.label_cycler": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.label_cycler"]
+    },
+    "element.panel": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        // Note: [common.focus, common.tts] is not supported by wiki
+        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.layout", "common.tts"],
+        "keys": {
+            "factory": {"type": ["dict", "str"], "subcomponent": "factory"},
+            "ignoreCollectionItem": {"type": ["bool", "str"]}
+        }
+    },
+    "element.screen": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        // Note: [common.input] is not supported by wiki
+        "imports": ["common.all", "common.control", "common.data_binding", "common.input", "common.layout", "common.screen"]
+    },
+    "element.scroll_track": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.focus", "common.input", "common.tts"]
+    },
+    "element.scroll_view": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.data_binding", "common.input", "common.layout", "common.scroll_view"]
+    },
+    "element.scrollbar": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout"]
+    },
+    "element.scrollbar_box": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.input", "common.layout"]
+    },
+    "element.scrollbar_track": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.input", "common.layout"]
+    },
+    "element.selection_wheel": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.selection_wheel", "common.sound", "common.tts"]
+    },
+    "element.slider": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        // Note: [common.button] is not supported by wiki
+        "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.slider", "common.sound", "common.tts"],
+        "keys": {
+            "factory": {"type": ["dict", "str"], "subcomponent": "factory"}
+        }
+    },
+    "element.slider_box": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.data_binding", "common.input", "common.layout", "common.slider_box"]
+    },
+    "element.stack_panel": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        // Note: [common.focus] is not supported by wiki
+        "imports": ["common.all", "common.collection", "common.control", "common.data_binding", "common.focus", "common.layout", "common.stack_panel", "common.tts"],
+        "keys": {
+            "factory": {"type": ["dict", "str"], "subcomponent": "factory"}
+        }
+    },
+    "element.tab": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.layout", "common.sound", "common.tab"]
+    },
+    "element.toggle": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.toggle", "common.tts"]
+    },
+    "element.unknown": { // for some reason some elements extend non-existent elements so this has to exist.
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": [
+            "common.all",
+            "common.button",
+            "common.carousel_text",
+            "common.collection",
+            "common.control",
+            "common.custom_render",
+            "common.data_binding",
+            "common.dropdown",
+            "common.focus",
+            "common.grid",
+            "common.input",
+            "common.layout",
+            "common.screen",
+            "common.scroll_view",
+            "common.selection_wheel",
+            "common.slider",
+            "common.slider_box",
+            "common.sound",
+            "common.sprite",
+            "common.stack_panel",
+            "common.tab",
+            "common.text",
+            "common.text_edit",
+            "common.toggle",
+            "common.tts",
+            "common.unknown"
+        ]
+    }
+}

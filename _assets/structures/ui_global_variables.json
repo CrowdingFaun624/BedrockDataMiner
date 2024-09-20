@@ -1,0 +1,55 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "ui_global_variables"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "resource pack"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Dict",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "types": ["list", "int", "float"],
+        "key_component": {
+            "type": "String"
+        },
+        "delegate_arguments": {
+            "field": "variable",
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "list": "vector_decimal",
+                "int": null,
+                "float": null
+            }
+        }
+    },
+    "vector_decimal": {
+        "type": "List",
+        "types": ["float", "int"],
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        },
+        "subcomponent": null
+    }
+}

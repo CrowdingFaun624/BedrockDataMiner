@@ -1,0 +1,66 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "watchdogs"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Keymap",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "timers": {"type": "list", "subcomponent": "timers"}
+        }
+    },
+    "timers": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "timer",
+            "measure_length": true
+        },
+        "subcomponent": "timer"
+    },
+    "timer": {
+        "type": "Keymap",
+        "keys": {
+            "timer_name": {"type": "str", "subcomponent": {"type": "String"}, "weight": 4, "delegate_arguments": {"always_print": true}},
+            "watchdogs": {"type": "list", "subcomponent": "watchdogs"}
+        }
+    },
+    "watchdogs": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "watchdog",
+            "measure_length": true
+        },
+        "subcomponent": "watchdog"
+    },
+    "watchdog": {
+        "type": "Keymap",
+        "keys": {
+            "execution_budget": {"type": "str", "subcomponent": {"type": "String"}},
+            "overage_actions": {"type": "list", "subcomponent": "actions"}
+        }
+    },
+    "actions": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "action",
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "String"
+        }
+    }
+}

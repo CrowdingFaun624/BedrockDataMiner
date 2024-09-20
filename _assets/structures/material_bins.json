@@ -1,0 +1,263 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "material_bins"
+        },
+        "subcomponent": "files"
+    },
+    "vector_float": {
+        "type": "List",
+        "types": "float",
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        },
+        "subcomponent": null
+    },
+    "files": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "file"
+        },
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "sort": "by_component_order",
+        "keys": {
+            "data": {"type": "dict", "subcomponent": "main_data_file"},
+            "passes": {"type": "dict", "subcomponent": "passes"}
+        }
+    },
+    "main_data_file": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "version": {"type": "int"},
+            "encryptionVariant": {"type": "str"},
+            "name": {"type": "str", "subcomponent": {"type": "String"}, "weight": 20, "delegate_arguments": {"always_print": true}},
+            "hasParentName": {"type": "bool"},
+            "parentName": {"type": "str"},
+            "samplerDefinitionMap": {"type": "dict", "subcomponent": "sampler_definition_map"},
+            "propertyFieldMap": {"type": "dict", "subcomponent": "property_field_map"},
+            "formatVersion": {"type": "str"},
+            "passes": {"type": "list", "subcomponent": "passes_list"}
+        }
+    },
+    "sampler_definition_map": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "sampler definition"
+        },
+        "subcomponent": "sampler_definition"
+    },
+    "sampler_definition": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "reg": {"type": "int"},
+            "access": {"type": "str"},
+            "precision": {"type": "int"},
+            "allowUnorderedAccess": {"type": "bool"},
+            "type": {"type": "str"},
+            "textureFormat": {"type": "str"},
+            "unknownInt": {"type": "int"},
+            "unknownByte": {"type": "int"},
+            "hasUnknownByte2": {"type": "bool"},
+            "unknownByte2": {"type": "int"},
+            "hasDefaultTexture": {"type": "bool"},
+            "defaultTexture": {"type": "str"},
+            "hasUnknownString": {"type": "bool"},
+            "hasCustomTypeInfo": {"type": "bool"},
+            "customTypeInfo": {"type": "dict", "subcomponent": "custom_type_info"}
+        }
+    },
+    "custom_type_info": {
+        "type": "Keymap",
+        "keys": {
+            "name": {"type": "str"},
+            "size": {"type": "int"}
+        }
+    },
+    "property_field_map": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "property field"
+        },
+        "subcomponent": "property_field"
+    },
+    "property_field": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "num": {"type": "int"},
+            "type": {"type": "int"},
+            "hasData": {"type": "bool"},
+            "vectorData": {"type": "list", "subcomponent": "vector_float"}
+        }
+    },
+    "passes_list": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "pass"
+        },
+        "subcomponent": {
+            "type": "String"
+        }
+    },
+    "passes": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "pass"
+        },
+        "subcomponent": "pass"
+    },
+    "pass": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "pass_info": {"type": "dict", "subcomponent": "pass_info"},
+            "glsl_files": {"type": "dict", "subcomponent": "glsl_files"}
+        }
+    },
+    "glsl_files": {
+        "type": "Dict",
+        "types": "str",
+        "key_component": {
+            "type": "String"
+        },
+        "delegate_arguments": {
+            "field": "glsl file"
+        },
+        "subcomponent": null
+    },
+    "pass_info": {
+        "type": "Keymap",
+        "keys": {
+            "bitSet": {"type": "str"},
+            "fallback": {"type": "str"},
+            "hasDefaultBlendMode": {"type": "bool"},
+            "flagDefaultValues": {"type": "dict", "subcomponent": "flag_values"},
+            "variantList": {"type": "list", "subcomponent": "variant_list"}
+        }
+    },
+    "flag_values": {
+        "type": "Dict",
+        "types": ["bool", "str"],
+        "delegate_arguments": {
+            "field": "flag"
+        },
+        "subcomponent": null
+    },
+    "variant_list": {
+        "type": "Set",
+        "delegate_arguments": {
+            "field": "variant"
+        },
+        "types": "dict",
+        "subcomponent": "variant"
+    },
+    "variant": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "isSupported": {"type": "bool"},
+            "flags": {"type": "dict", "subcomponent": "flag_values"},
+            "shaderCodes": {"type": "list", "subcomponent": "shader_codes_list"}
+        }
+    },
+    "shader_codes_list": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "shader_codes"
+        },
+        "subcomponent": "shader_codes"
+    },
+    "shader_codes": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "platformShaderStage": {"type": "dict", "subcomponent": "platform_shader_stage", "weight": 20},
+            "shaderCode": {"type": "dict", "subcomponent": "shader_code"}
+        }
+    },
+    "platform_shader_stage": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "stageName": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "platformName": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "stage": {"type": "str", "subcomponent": {"type": "String"}},
+            "platform": {"type": "str", "subcomponent": {"type": "String"}}
+        }
+    },
+    "shader_code": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "shaderInputMap": {"type": "dict", "subcomponent": "shader_input_map"},
+            "sourceHash": {"type": "int"},
+            "bgfxShaderData": {"type": "dict", "subcomponent": "bgfx_shader_data"}
+        }
+    },
+    "shader_input_map": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "shader input"
+        },
+        "subcomponent": "shader_input"
+    },
+    "shader_input": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str"},
+            "attribute": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 12},
+            "isPerInstance": {"type": "bool"},
+            "hasPrecisionConstraint": {"type": "bool"},
+            "hasInterpolationConstraint": {"type": "bool"},
+            "interpolationConstraint": {"type": "str"}
+        }
+    },
+    "bgfx_shader_data": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "magic": {"type": "int"},
+            "hash": {"type": "int"},
+            "uniforms": {"type": "list", "subcomponent": "uniforms"},
+            "codeFile": {"type": "str"}
+        }
+    },
+    "uniforms": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "uniform"
+        },
+        "subcomponent": "uniform"
+    },
+    "uniform": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "name": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "type": {"type": "int"},
+            "num": {"type": "int"},
+            "regIndex": {"type": "int"},
+            "regCount": {"type": "int"}
+        }
+    }
+}

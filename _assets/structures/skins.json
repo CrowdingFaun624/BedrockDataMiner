@@ -1,0 +1,56 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "skins"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "skins_file"
+    },
+    "skins_file": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "normalizer": {
+            "function_name": "normalizers/skins_normalize",
+            "arguments": {
+                "other_keys": ["serialize_name", "localization_name"]
+            }
+        },
+        "keys": {
+            "serialize_name": {"type": "dict", "subcomponent": "names"},
+            "localization_name": {"type": "dict", "subcomponent": "names"},
+            "skins": {"type": "list", "subcomponent": "skins"}
+        }
+    },
+    "names": {
+        "type": "Dict",
+        "types": "str",
+        "subcomponent": null,
+        "delegate_arguments": {
+            "field": "skin pack"
+        }
+    },
+    "skins": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "skin"
+        },
+        "subcomponent": "skin"
+    },
+    "skin": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "localization_name": {"type": "str", "subcomponent": {"type": "String"}, "weight": 6},
+            "geometry": {"type": "str", "subcomponent": {"type": "String"}},
+            "texture": {"type": "str", "subcomponent": {"type": "String"}},
+            "type": {"type": "str"},
+            "defined_in": {"type": "str"}
+        }
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "text_file"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "list",
+        "subcomponent": "lines"
+    },
+    "lines": {
+        "type": "Sequence",
+        "pre_normalized_types": "file",
+        "normalizer": [
+            {
+                "function_name": "open_file"
+            },
+            {
+                "function_name": "split_lines"
+            }
+        ],
+        "types": "str",
+        "delegate": "LongStringDelegate",
+        "delegate_arguments": {
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "String"
+        }
+    }
+}

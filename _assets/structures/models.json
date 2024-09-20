@@ -23,6 +23,31 @@
         "types": ["decimal"],
         "subcomponent": null
     },
+    "vector_decimal_or_null": {
+        "type": "Group",
+        "subcomponents": {
+            "list": "vector_decimal",
+            "null": null
+        }
+    },
+    "vector_decimal_list": {
+        "type": "Set",
+        "types": "list",
+        "subcomponent": "vector_decimal",
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "position"
+        }
+    },
+    "vector_decimal_list_list": {
+        "type": "Set",
+        "types": "list",
+        "subcomponent": "vector_decimal_list",
+        "delegate_arguments": {
+            "measure_length": false, // always 4
+            "field": "poly"
+        }
+    },
     "files": {
         "type": "Dict",
         "delegate_arguments": {
@@ -65,14 +90,15 @@
         "keys": {
             "format_version": {"type": ["null", "str"]},
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
-            "minecraft:geometry": {"type": "dict", "subcomponent": {
-                "type": "Keymap",
-                "sort": "by_component_order",
-                "keys": {
-                    "description": {"type": "dict", "subcomponent": "description"},
-                    "bones": {"type": "dict", "subcomponent": "bones"}
-                }
-            }}
+            "minecraft:geometry": {"type": "dict", "subcomponent": "geometry"}
+        }
+    },
+    "geometry": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description", "weight": 5},
+            "bones": {"type": "dict", "subcomponent": "bones"}
         }
     },
     "defined_in": {
@@ -89,7 +115,7 @@
         "type": "Keymap",
         "sort": "by_component_order",
         "keys": {
-            "identifier": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "identifier": {"type": "str", "subcomponent": {"type": "String"}, "weight": 50, "delegate_arguments": {"always_print": true}},
             "animationArmsDown": {"type": "bool", "tags": ["outdated"]},
             "animationArmsOutFront": {"type": "bool", "tags": ["outdated"]},
             "animationDontShowArmor": {"type": "bool", "tags": ["outdated"]},
@@ -149,10 +175,11 @@
             "neverRender": {"type": "bool"},
             "parent": {"type": ["null", "str"], "delegate_arguments": {"always_print": true}},
             "pivot": {"type": "list", "subcomponent": "vector_decimal"},
+            "poly_mesh": {"type": "dict", "subcomponent": "poly_mesh"},
             "pos": {"type": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
             "pre_rotation": {"type": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
             "reset": {"type": ["bool", "str"]},
-            "rotation": {"type": "list", "subcomponent": "vector_decimal"},
+            "rotation": {"type": ["list", "null"], "subcomponent": "vector_decimal_or_null"},
             "texture_meshes": {"type": "list", "subcomponent": "texture_meshes"}
         }
     },
@@ -231,6 +258,17 @@
         "types": ["list"],
         "sort": "by_key",
         "subcomponent": "vector_decimal"
+    },
+    "poly_mesh": {
+        "type": "Keymap",
+        "keys": {
+            "normalized_uvs": {"type": "bool"},
+            "positions": {"type": "list", "subcomponent": "vector_decimal_list"},
+            "polys": {"type": "list", "subcomponent": "vector_decimal_list_list"},
+            "average_normals": {"type": "null"},
+            "uvs": {"type": "list", "subcomponent": "vector_decimal_list"},
+            "normals": {"type": "list", "subcomponent": "vector_decimal_list"}
+        }
     },
     "texture_meshes": {
         "type": "Set",

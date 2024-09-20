@@ -1,0 +1,51 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "skin_models"
+        },
+        "imports": [
+            {
+                "from": "structures/models",
+                "components": [
+                    {
+                        "component": "geometry"
+                    }
+                ]
+            }
+        ],
+        "subcomponent": "skin_packs"
+    },
+    "skin_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "skin pack"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "geometry_file"
+    },
+    "geometry_file": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "format_version": {"type": "str"},
+            "minecraft:geometry": {"type": "list", "subcomponent": "geometries"}
+        }
+    },
+    "geometries": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "model"
+        },
+        "subcomponent": "geometry"
+    }
+}

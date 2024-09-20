@@ -1,0 +1,94 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "renderer_options_dragon"
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "types": "dict",
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Keymap",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "sort": "by_component_order",
+        "keys": {
+            "global_settings": {"type": "dict", "subcomponent": "global_settings"},
+            "shaders": {"type": "list", "subcomponent": "shaders"},
+            "mappings": {"type": "dict", "subcomponent": "mappings"}
+        }
+    },
+    "global_settings": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "field": "setting",
+            "measure_length": true
+        },
+        "keys": {
+            "hb_gfx_supports_msaa_textures": {"type": "bool"},
+            "hb_gfx_requires_msaa_resolve": {"type": "bool"},
+            "hb_gfx_supports_a8_render_target": {"type": "bool"},
+            "hb_gfx_requires_rb_swap_for_images": {"type": "bool"},
+            "hb_gfx_requires_draw_fences": {"type": "bool"},
+            "hb_gfx_requires_shader_type_in_shader": {"type": "bool"},
+            "hb_gfx_supports_npot_texture_ops": {"type": "bool"},
+            "hb_gfx_shader_change_requires_resources_rebind": {"type": "bool"},
+            "hb_gfx_supports_only_16_bit_indices": {"type": "bool"},
+            "hb_gfx_constant_buffer_block_alignment": {"type": "int"},
+            "hb_gfx_requires_y_flip_for_layers": {"type": "bool"}
+        }
+    },
+    "shaders": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "shader",
+            "measure_length": true
+        },
+        "subcomponent": "shader"
+    },
+    "shader": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "name": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 4},
+            "vertexShader": {"type": "str"},
+            "fragment_shader": {"type": "str"}
+        }
+    },
+    "mappings": {
+        "type": "Dict",
+        "normalizer": {
+            "function_name": "normalizers/renderer_options_dragon_normalize"
+        },
+        "delegate_arguments": {
+            "field": "mapping",
+            "measure_length": true
+        },
+        "types": ["str", "null"],
+        "key_component": {
+            "type": "String"
+        },
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "str": {"type": "String"},
+                "null": null
+            }
+        }
+    }
+}

@@ -1,0 +1,43 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "feature_rules_behavior_packs"
+        },
+        "imports": [
+            {
+                "from": "structures/feature_rules",
+                "components": [
+                    {
+                        "component": "feature_rule"
+                    }
+                ]
+            }
+        ],
+        "subcomponent": "feature_rules"
+    },
+    "feature_rules": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "feature rule"
+        },
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "behavior pack"
+        },
+        "post_normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/dict"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "feature_rule"
+    }
+}
