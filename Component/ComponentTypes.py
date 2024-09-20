@@ -12,6 +12,7 @@ import Component.Structure.KeymapComponent as KeymapComponent
 import Component.Structure.ListComponent as ListComponent
 import Component.Structure.NormalizerComponent as NormalizerComponent
 import Component.Structure.PrimitiveComponent as PrimitiveComponent
+import Component.Structure.SequenceComponent as SequenceComponent
 import Component.Structure.SetComponent as SetComponent
 import Component.Structure.StringComponent as StringComponent
 import Component.Structure.TagComponent as TagComponent
@@ -39,6 +40,7 @@ component_types:list[type[Component.Component]] = [
     NormalizerComponent.NormalizerComponent,
     PrimitiveComponent.PrimitiveComponent,
     SerializerComponent.SerializerComponent,
+    SequenceComponent.SequenceComponent,
     SetComponent.SetComponent,
     StringComponent.StringComponent,
     RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,

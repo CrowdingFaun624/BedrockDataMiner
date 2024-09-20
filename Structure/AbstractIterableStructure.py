@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Iterable, Sequence, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 d = TypeVar("d")
 
-class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
+class AbstractIterableStructure(ObjectStructure.ObjectStructure[Sequence[d]]):
     """
     Abstract class of list-using Structures.
     Must override `compare`, `get_similarity`, `get_item_key`, and `get_compare_text_key_str`.
@@ -89,6 +89,7 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+            return None, exceptions
 
         data_identity_changed = False
         for normalizer in self.normalizer:
@@ -100,7 +101,6 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Iterable[d]]):
                     data = normalizer_output
             except Exception as e:
                 exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
-                return None, exceptions
 
         for index, item in enumerate(data):
             if self.structure is not None:
