@@ -359,6 +359,7 @@
             "minecraft:dash": {"type": "dict", "subcomponent": "component.dash"},
             "minecraft:default_look_angle": {"type": "dict", "subcomponent": "component.default_look_angle"},
             "minecraft:despawn": {"type": "dict", "subcomponent": "component.despawn"},
+            "minecraft:dimension_bound": {"type": "dict", "subcomponent": "empty"},
             "minecraft:drying_out_timer": {"type": "dict", "subcomponent": "component.drying_out_timer"},
             "minecraft:dweller": {"type": "dict", "subcomponent": "component.dweller"},
             "minecraft:economy_trade_table": {"type": "dict", "subcomponent": "component.economy_trade_table"},
@@ -422,6 +423,7 @@
             "minecraft:knockback_resistance": {"type": "dict", "subcomponent": "component.knockback_resistance"},
             "minecraft:lava_movement": {"type": "dict", "subcomponent": "component.lava_movement"},
             "minecraft:leashable": {"type": "dict", "subcomponent": "component.leashable"},
+            "minecraft:looked_at": {"type": "dict", "subcomponent": "component.looked_at"},
             "minecraft:lookat": {"type": "dict", "subcomponent": "component.lookat"},
             "minecraft:loot": {"type": "dict", "subcomponent": "component.loot"},
             "minecraft:managed_wandering_trader": {"type": "dict", "subcomponent": "empty"},
@@ -504,6 +506,7 @@
             "minecraft:trade_table": {"type": "dict", "subcomponent": "component.trade_table"},
             "minecraft:trail": {"type": "dict", "subcomponent": "component.trail"},
             "minecraft:transformation": {"type": "dict", "subcomponent": "component.transformation"},
+            "minecraft:transient": {"type": "dict", "subcomponent": "empty"},
             "minecraft:trust": {"type": "dict", "subcomponent": "empty"},
             "minecraft:trusting": {"type": "dict", "subcomponent": "component.trusting"},
             "minecraft:turtle_command": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
@@ -697,6 +700,7 @@
             "minecraft:behavior.swoop_attack": {"type": "dict", "subcomponent": "behavior.swoop_attack"},
             "minecraft:behavior.take_flower": {"type": "dict", "subcomponent": "behavior.take_flower"},
             "minecraft:behavior.target_when_pushed": {"type": "dict", "subcomponent": "behavior.target_when_pushed"},
+            "minecraft:behavior.teleport_to_owner": {"type": "dict", "subcomponent": "behavior.teleport_to_owner"},
             "minecraft:behavior.tempt": {"type": "dict", "subcomponent": "behavior.tempt"},
             "minecraft:behavior.timer_flag_1": {"type": "dict", "subcomponent": "behavior.timer_flag"},
             "minecraft:behavior.timer_flag_2": {"type": "dict", "subcomponent": "behavior.timer_flag"},
@@ -1894,9 +1898,11 @@
         "detect_key_moves": true,
         "keys": {
             "allow_damage_underwater": {"type": "bool", "tags": ["outdated"]},
+            "allow_underwater": {"type": "bool"},
             "breaks_blocks": {"type": "bool"},
             "causes_fire": {"type": "bool"},
             "causesFire": {"type": "bool", "tags": ["outdated"]},
+            "damage_scaling": {"type": "int"},
             "destroy_affected_by_griefing": {"type": "bool"},
             "destroyAffectedByGriefing": {"type": "bool", "tags": ["outdated"]},
             "fire_affected_by_griefing": {"type": "bool"},
@@ -1905,10 +1911,15 @@
             "fuseLength": {"type": ["decimal", "range"], "subcomponent": "range_decimal_or_decimal", "tags": ["outdated"]},
             "fuse_lit": {"type": "bool"},
             "fuseLit": {"type": "bool", "tags": ["outdated"]},
+            "knockback_scaling": {"type": "decimal"},
             "max_resistance": {"type": "decimal"},
             "maxResistance": {"type": "decimal", "tags": ["outdated"]},
+            "negates_fall_damage": {"type": "bool"},
             "on_activate": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
-            "power": {"type": "decimal", "delegate_arguments": {"always_print": true}}
+            "particle_effect": {"type": "str"},
+            "power": {"type": "decimal", "delegate_arguments": {"always_print": true}},
+            "sound_effect": {"type": "str"},
+            "toggles_blocks": {"type": "bool"}
         }
     },
     "component.fall_damage": {
@@ -2405,6 +2416,16 @@
             "soft_distance": {"type": "decimal"}
         }
     },
+    "component.looked_at": {
+        "type": "Keymap",
+        "keys": {
+            "filters": {"type": "dict", "subcomponent": "filter"},
+            "find_players_only": {"type": "bool"},
+            "looked_at_cooldown": {"type": "decimal"},
+            "search_radius": {"type": "decimal"},
+            "set_target": {"type": "str"}
+        }
+    },
     "component.lookat": {
         "type": "Keymap",
         "detect_key_moves": true,
@@ -2751,6 +2772,7 @@
             "onHit": {"type": "dict", "subcomponent": "component.projectile:on_hit", "tags": ["outdated"]},
             "particle": {"type": "str"},
             "power": {"type": "decimal"},
+            "reflect_immunity": {"type": "decimal"},
             "reflect_on_hurt": {"type": "bool"},
             "reflectOnHurt": {"type": "bool", "tags": ["outdated"]},
             "semi_random_diff_damage": {"type": "bool", "tags": ["not_in_documentation"]},
@@ -5811,6 +5833,13 @@
             "entity_types": {"type": "entity_types_type", "subcomponent": "entity_types"},
             "percent_chance": {"type": "decimal", "subcomponent": null},
             "priority": {"type": "int", "subcomponent": null}
+        }
+    },
+    "behavior.teleport_to_owner": {
+        "type": "Keymap",
+        "keys": {
+            "priority": {"type": "int"},
+            "filters": {"type": "dict", "subcomponent": "filter"}
         }
     },
     "behavior.tempt": {
