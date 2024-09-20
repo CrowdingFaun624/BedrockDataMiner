@@ -1024,6 +1024,25 @@ class DataMinerDependencyOverwriteError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class DataMinerDuplicateFileNameError(DataMinerException):
+    "Two DataMinerCollections have the same file name."
+    
+    def __init__(self, file_name:str, dataminers:list["DataMinerCollection.DataMinerCollection"], message:Optional[str]=None) -> None:
+        '''
+        :file_name: The file name shared by all of the DataMinerCollections.
+        :dataminers: The DataMinerCollections that share the same file name.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(file_name, dataminers, message)
+        self.file_name = file_name
+        self.dataminers = dataminers
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "DataMinerCollections [%s] all have the same file name \"%s\"" % (", ".join(dataminer.name for dataminer in self.dataminers), self.file_name)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class DataMinerFailureError(DataMinerException):
     "A DataMiner has failed for some reason."
 

@@ -53,6 +53,21 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
             )
         return exceptions
 
+    def check_for_duplicate_file_names(self, dataminers:dict[str,DataMinerCollection.DataMinerCollection]) -> list[Exception]:
+        names:dict[str,DataMinerCollection.DataMinerCollection] = {}
+        duplicate_name_groups:dict[str,list[DataMinerCollection.DataMinerCollection]] = {}
+        for dataminer in dataminers.values():
+            if dataminer.file_name in names:
+                if dataminer.file_name not in duplicate_name_groups:
+                    duplicate_name_groups[dataminer.file_name] = [names[dataminer.file_name]]
+                duplicate_name_groups[dataminer.file_name].append(dataminer)
+            else:
+                names[dataminer.file_name] = dataminer
+        return [
+            Exceptions.DataMinerDuplicateFileNameError(name, duplicate_dataminers)
+            for name, duplicate_dataminers in duplicate_name_groups.items()
+        ]
+
     def check(self, output: dict[str,DataMinerCollection.DataMinerCollection], other_outputs:dict[str,Any]) -> list[Exception]:
         exceptions = super().check(output, other_outputs)
         used_versions:set[Version.Version] = set()
@@ -65,4 +80,5 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
                 if stop_version is not None:
                     used_versions.add(stop_version)
         exceptions.extend(self.check_for_loops(used_versions, list(output.values())))
+        exceptions.extend(self.check_for_duplicate_file_names(output))
         return exceptions
