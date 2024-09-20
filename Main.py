@@ -34,7 +34,10 @@ def get_user_input() -> None:
     with user_input_lock:
         output = ""
         while output not in PROGRAM_NAMES:
-            output = input("Choose a program (%s):\n" % (PROGRAM_NAMES))
+            try:
+                output = input("Choose a program (%s):\n" % (PROGRAM_NAMES))
+            except EOFError:
+                exit()
         user_input[0] = output
 user_input:list[Any] = [None]
 if __name__ == "__main__":
@@ -97,11 +100,9 @@ if __name__ == "__main__":
     main()
 
 pass
+# TODO: because it removes suffixes, it could have a duplicate file. prevent this.
 # TODO: add more dataminers; replace weird dataminers like languages with better ones.
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
 
 # TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions
-# TODO: dataminers for:
-#   renderer/vanilla_lights.json in 1.20.20.23
-# TODO: fix meta-dataminers relating to the usage of sound events (use all available sources)
 # TODO: make more domains
