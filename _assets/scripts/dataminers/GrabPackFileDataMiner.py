@@ -14,24 +14,28 @@ __all__ = ["GrabPackFileDataMiner"]
 class GrabPackFileDataMiner(FileDataMiner.FileDataMiner):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("locations", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs", "skin_packs", "emotes", "pieces"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_packs", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", "a bool", False, bool),
     )
 
-    def initialize(self, locations:list[str], pack_type:Literal["resource_packs", "behavior_packs"], find_none_okay:bool=False) -> None:
-        self.locations = locations
+    def initialize(self, location:str, pack_type:Literal["resource_packs", "behavior_packs", "skin_packs", "emotes", "pieces"], find_none_okay:bool=False, ignore_packs:list[str]|None=None) -> None:
+        self.location = location
         self.pack_type = pack_type
         self.find_none_okay = find_none_okay
+        self.ignore_packs:set[str] = set(ignore_packs) if ignore_packs is not None else set()
 
     def get_coverage(self, file_set: set[str], environment: DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
-        packs = [pack["name"] for pack in self.get_packs(environment)]
-        return {
-            path
-            for pack in packs
-            for location in self.locations
-            if (path := pack + location) in file_set
-        }
+        packs = [pack["path"] for pack in self.get_packs(environment) if pack["name"] not in self.ignore_packs]
+        output:set[str] = set()
+        for pack in packs:
+            file_name = pack + self.location
+            if file_name in file_set:
+                output.add(file_name)
+        if len(output) == 0 and not self.find_none_okay:
+            raise Exceptions.DataMinerNothingFoundError(self)
+        return output
 
     def get_packs(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[PacksDataMiner.PackTypedDict]:
         return environment.dependency_data.get(self.pack_type, self)
@@ -42,13 +46,11 @@ class GrabPackFileDataMiner(FileDataMiner.FileDataMiner):
         '''
         files:dict[tuple[str,str], bytes] = {}
         for pack in packs:
-            for location in self.locations:
-                path = pack["path"] + location
-                if accessor.file_exists(path):
-                    files[pack["name"], path] = accessor.read(path, "b")
-                    break
-                else:
-                    continue
+            if pack["name"] in self.ignore_packs:
+                continue
+            path = pack["path"] + self.location
+            if accessor.file_exists(path):
+                files[pack["name"], path] = accessor.read(path, "b")
         if len(files) == 0 and not self.find_none_okay:
             raise Exceptions.DataMinerNothingFoundError(self)
         return files
