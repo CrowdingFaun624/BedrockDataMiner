@@ -14,8 +14,6 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
-import Utilities.Nbt.Endianness as Endianness
-import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
