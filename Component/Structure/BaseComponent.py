@@ -47,7 +47,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
     def create_final(self) -> None:
         super().create_final()
         self.final = StructureBase.StructureBase(
-            component_name=self.name,
+            name=self.component_group,
             children_tags=self.children_tags,
         )
 

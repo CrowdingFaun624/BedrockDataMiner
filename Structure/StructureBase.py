@@ -25,11 +25,11 @@ class StructureBase():
 
     def __init__(
             self,
-            component_name:str,
+            name:str,
             children_tags:set[str],
         ) -> None:
 
-        self.name = component_name
+        self.name = name
         self.children_tags = children_tags
 
         self.structure:Structure.Structure|None = None
