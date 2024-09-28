@@ -1,10 +1,12 @@
 import re
+from typing import Any
 
 import DataMiner.BuiltIns.GrabMultipleFilesDataMiner as GrabMultipleFilesDataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.FileDataMiner as FileDataMiner
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
+import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
@@ -39,3 +41,9 @@ class GrabReFilesDataMiner(GrabMultipleFilesDataMiner.GrabMultipleFilesDataMiner
         if len(output) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
         return output
+
+    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
+        files = self.get_files(accessor, environment)
+        output = self.get_output(files, accessor, environment)
+        return Sorting.sort_everything(output)

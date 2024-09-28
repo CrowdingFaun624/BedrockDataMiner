@@ -33,6 +33,7 @@
         },
         "sort": "by_key",
         "keys": {
+            "presets": {"type": "list", "subcomponent": "presets"},
             "bloom_config": {"type": "dict", "subcomponent": "file_link"},
             "point_light_loding_config": {"type": "dict", "subcomponent": "file_link"},
             "point_light_shadow_config": {"type": "dict", "subcomponent": "file_link"},
@@ -46,6 +47,35 @@
         "type": "Keymap",
         "keys": {
             "file": {"type": "str", "subcomponent": {"type": "String"}}
+        }
+    },
+    "presets": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "preset",
+            "measure_length": true
+        },
+        "subcomponent": "preset"
+    },
+    "preset": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "name": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 4},
+            "lods": {"type": "dict", "subcomponent": "lods"}
+        }
+    },
+    "lods": {
+        "type": "Keymap",
+        "sort": "by_key",
+        "keys": {
+            "shadows": {"type": "str"},
+            "point_light_shadows": {"type": "str"},
+            "volumetric_fog": {"type": "str"},
+            "bloom": {"type": "bool"},
+            "point_light_lodding": {"type": "str"},
+            "reflections": {"type": "str"}
         }
     }
 }
