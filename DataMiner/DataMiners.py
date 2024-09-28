@@ -36,7 +36,7 @@ def get_dataminer_order(version:Version.Version, unordered_dataminers:list[DataM
     return ordered_dataminers
 
 def resolve_dataminer_order(dataminers:list[DataMinerCollection.DataMinerCollection], already_added:set[DataMinerCollection.DataMinerCollection], current_dataminer:DataMinerCollection.DataMinerCollection, version:Version.Version) -> None:
-    for dependency in current_dataminer.get_version(version).dependencies:
+    for dependency in current_dataminer.get_dataminer_settings(version).get_dependencies():
         if dependency not in already_added:
             resolve_dataminer_order(dataminers, already_added, dependency, version)
     dataminers.append(current_dataminer)
@@ -80,8 +80,8 @@ def run(
     failure_dataminers_set:set[str] = set()
     for dataminer_collection in dataminer_order:
         try:
-            dataminer = dataminer_collection.get_version(version)
-            if any(dependency in failure_dataminers_set for dependency in dataminer.dependencies):
+            dataminer = dataminer_collection.get_dataminer(version)
+            if any(dependency.name in failure_dataminers_set for dependency in dataminer.dependencies):
                 continue # no use trying to datamine this if any of its dependencies excepted.
             dataminer_output = dataminer.store(dataminer_environment, dataminers_list)
             dataminer_environment.dependency_data.set_item(dataminer_collection.name, dataminer_output)

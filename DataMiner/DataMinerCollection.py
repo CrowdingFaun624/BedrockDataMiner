@@ -64,7 +64,7 @@ class DataMinerCollection():
     def get_tag_paths(self, version:Version.Version, tag:str, environment:StructureEnvironment.PrinterEnvironment) -> list[DataPath.DataPath]:
         if not self.get_structure().has_tag(tag):
             return []
-        dataminer = self.get_version(version)
+        dataminer = self.get_dataminer(version)
         if isinstance(dataminer, DataMiner.NullDataMiner):
             return []
         data = dataminer.get_data_file()
@@ -109,7 +109,7 @@ class DataMinerCollection():
                 return dataminer_setting
         else: raise Exceptions.InvalidStateError("Version matches no DataMinerSettings!")
 
-    def get_version(self, version:Version.Version) -> DataMiner.DataMiner:
+    def get_dataminer(self, version:Version.Version) -> DataMiner.DataMiner:
         '''Returns a DataMiner such that `version` is in the dataminer's VersionRange.'''
         dataminer_settings = self.get_dataminer_settings(version)
         return dataminer_settings.get_dataminer_class()(version, dataminer_settings)
