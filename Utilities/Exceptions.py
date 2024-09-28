@@ -633,25 +633,6 @@ class FieldSequenceBreakError(ComponentException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class GroupContainsNullSubcomponentsError(ComponentException):
-    "An AbstractGroup contains null subcomponents in a situation where it is not allowed."
-
-    def __init__(self, null_types:list[type], source:object, message:Optional[str]=None) -> None:
-        '''
-        :null_types: The types of the Group that have null subcomponents.
-        :source: The object that references the Group.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(null_types, source, message)
-        self.null_types = null_types
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r cannot except Groups with subcomponent(s) of null; offenders are [%s]" % (self.source, ", ".join(null_type.__name__ for null_type in self.null_types))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class ImporterEnvironmentNameCollisionError(ComponentException):
     "Two Component groups have the same name."
 
@@ -737,27 +718,6 @@ class InvalidComponentError(ComponentException):
     def __str__(self) -> str:
         source_str = self.source if isinstance(self.source, str) else repr(self.source)
         output = "%r, as referenced by %s, is expected to have %r, but only has %r" % (self.component, source_str, self.required_properties, self.actual_capabilities)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class InvalidComponentTypeError(ComponentException):
-    "The referenced Component has the wrong type."
-
-    def __init__(self, component:"Component.Component", required_types:tuple[type,...], actual_type:type, message:Optional[str]=None) -> None:
-        '''
-        :component: The Component that has the wrong type.
-        :required_types: The types that the Component is expected to have.
-        :actual_type: The type that the Component actually has.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(component, required_types, actual_type, message)
-        self.component = component
-        self.required_types = required_types
-        self.actual_type = actual_type
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r is expected to have types [%s], but only has \"%s\"" % (self.component, ", ".join("\"%s\"" % required_type.__name__ for required_type in self.required_types), self.actual_type.__name__)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -1043,19 +1003,6 @@ class DataMinerDuplicateFileNameError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class DataMinerFailureError(DataMinerException):
-    "A DataMiner has failed for some reason."
-
-    def __init__(self, dataminer:"DataMiner.DataMiner", *args: object) -> None:
-        '''
-        :dataminer: The DataMiner that failed.
-        '''
-        super().__init__(*args)
-        self.dataminer = dataminer
-
-    def __str__(self) -> str:
-        return "%r failed: %s" % (self.dataminer, self.args)
-
 class DataMinerFileTypePermissionError(DataMinerException):
     "A DataMiner attempted to access an VersionFileType it has no permissions to use."
 
@@ -1080,29 +1027,6 @@ class DataMinerFileTypePermissionError(DataMinerException):
             output += "!"
         else:
             output += ". It may only access %s!" % (self.allowed_file_types,)
-        return output
-
-class DataMinerKeywordArgumentsExistError(DataMinerException):
-    "A DataMiner was supplied with keyword arguments, but `initialize` was not overridden."
-
-    def __init__(self, kwargs:dict[str,Any], dataminer:"DataMiner.DataMiner", message:Optional[str]=None) -> None:
-        '''
-        :kwargs: The keyword arguments supplied to the DataMiner.
-        :dataminer: The DataMiner the keyword arguments were supplied to.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(kwargs, dataminer, message)
-        self.kwargs = kwargs
-        self.dataminer = dataminer
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "DataMiner %r was supplied with non-empty kwargs" % (self.dataminer,)
-        if self.message is None:
-            output += ": "
-        else:
-            output += " %s:" % (self.message,)
-        output += "\"%s\"" % self.kwargs
         return output
 
 class DataMinerLacksActivateError(DataMinerException):
@@ -1553,19 +1477,6 @@ class DownloadManagerFailError(ManagerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class ManagerFailureError(ManagerException):
-    "A Manager has failed for some reason."
-
-    def __init__(self, manager:"Manager.Manager", *args: object) -> None:
-        '''
-        :manager: The Manager that failed.
-        '''
-        super().__init__(*args)
-        self.manager = manager
-
-    def __str__(self) -> str:
-        return "%r failed: %s" % (self.manager, self.args)
-
 class ManagerUndefinedMethodError(ManagerException):
     "A Manager has a method that is not overridden by a subclass."
 
@@ -1983,28 +1894,6 @@ class InvalidSimilarityError(StructureException):
         output += "on data %s and %s" % (self.data1, self.data2)
         return output
 
-class NormalizerError(StructureException):
-    "A Normalizer's function has failed."
-
-    def __init__(self, normalizer:"Normalizer.Normalizer", data:Any, message:Optional[str]=None) -> None:
-        '''
-        :normalizer: The Normalizer whose function failed.
-        :data: The data the Normalizer failed on.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(normalizer, data, message)
-        self.normalizer = normalizer
-        self.data = data
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "The function of %r failed" % (self.normalizer,)
-        data_string = str(self.data)
-        if len(data_string) <= 500:
-            output += " on data \"%s\"" % (data_string)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class NormalizerNoneError(StructureException):
     "A Normalizer has returned None where it should return something."
 
@@ -2106,25 +1995,6 @@ class StructureRequiredKeyMissingError(StructureException):
 
     def __str__(self) -> str:
         output = "Required key \"%s\" from %r is missing" % (self.key, self.structure)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class StructureSetKeyError(StructureException):
-    "A StructureSet does not have the DiffType used to access it."
-
-    def __init__(self, key:"D.DiffType", source:"StructureSet.StructureSet", message:Optional[str]=None) -> None:
-        '''
-        :key: The key used to access the StructureSet.
-        :source: The StructureSet that could not be accessed.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(key, source, message)
-        self.key = key
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r cannot be accessed with key %s" % (self.source, self.key.name)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -2249,23 +2119,6 @@ class VolumeStructureInvalidKeyError(StructureException):
 
     def __str__(self) -> str:
         return "%s \"%s\" in block %i %s!" % (self.key_type, self.value, self.block, self.message)
-
-class VolumeStructureUnrecognizedKeysError(StructureException):
-    "The VolumeStructure has additional data but not Structure."
-
-    def __init__(self, additional_keys:list[str], message:Optional[str]=None) -> None:
-        '''
-        :additional_keys: The keys that are unrecognized.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(additional_keys, message)
-        self.additional_keys = additional_keys
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Cannot deal with keys %s due to having no substructure" % (self.additional_keys,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
 
 class TypeVerifierException(Exception):
     "Abstract Exception class for errors relating to TypeVerifiers."
