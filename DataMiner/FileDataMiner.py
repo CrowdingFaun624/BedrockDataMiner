@@ -1,6 +1,7 @@
+import bisect
 import traceback
-from typing import (IO, Any, Callable, Literal, Mapping, Sequence, TypeVar,
-                    overload)
+from typing import (IO, Any, Callable, Iterable, Literal, Mapping, Sequence,
+                    TypeVar, overload)
 
 import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
@@ -14,11 +15,30 @@ location_value_function:Callable[[str,str],tuple[bool,str]] = lambda key, value:
 location_item_function:Callable[[str],tuple[bool,str]] = lambda item: (len(item) == 0 or item.endswith("/"), "location does not end in \"/\"")
 suffix_function:Callable[[str],tuple[bool,str]] = lambda item: (item.startswith("."), "suffix does not start with \".\"")
 
+class FileSet():
+    
+    def __init__(self, files:Iterable[str]) -> None:
+        self.files = sorted(files) # must be sorted for bisection
+        self.file_set = set(files)
+    
+    def __iter__(self) -> Iterable[str]:
+        yield from self.files
+    
+    def get_files_in(self, directory:str) -> list[str]:
+        '''Returns all file names that start with the directory string.'''
+        directory_length = len(directory)
+        left = bisect.bisect_left(self.files, directory)
+        right = bisect.bisect_right(self.files, directory, lo=left, key=lambda item: item[:directory_length])
+        return self.files[left:right]
+
+    def file_exists(self, file:str) -> bool:
+        return file in self.file_set
+
 class FileDataMiner(DataMiner.DataMiner):
 
     serializer_names = {"main"}
 
-    def get_coverage(self, file_set:set[str], environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileSet, environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
         '''
         Must be overridden by subclasses of FileDataMiner.
         Returns the set of file paths this DataMiner would return if it were

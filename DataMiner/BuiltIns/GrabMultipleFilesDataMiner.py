@@ -40,13 +40,12 @@ class GrabMultipleFilesDataMiner(FileDataMiner.FileDataMiner):
         self.ignore_subdirectories = ignore_subdirectories
         self.ignore_files:set[str] = set(ignore_files) if ignore_files is not None else set()
 
-    def get_coverage(self, file_set: set[str], environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileDataMiner.FileSet, environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
         output:set[str] = set()
-        for file_name in file_set:
+        for file_name in file_set.get_files_in(self.location):
             relative_name = file_name.removeprefix(self.location)
             if not (
-                file_name.startswith(self.location)
-                and (self.ignore_files is None or relative_name not in self.ignore_files)
+                    (self.ignore_files is None or relative_name not in self.ignore_files)
                 and (self.ignore_subdirectories is None or not any(relative_name.startswith(ignore_directory) for ignore_directory in self.ignore_subdirectories))
                 and (self.ignore_suffixes is None or not any(relative_name.endswith(ignore_suffix) for ignore_suffix in self.ignore_suffixes))
             ): continue

@@ -27,12 +27,12 @@ class GrabPackFileDataMiner(FileDataMiner.FileDataMiner):
         self.find_none_okay = find_none_okay
         self.ignore_packs:set[str] = set(ignore_packs) if ignore_packs is not None else set()
 
-    def get_coverage(self, file_set: set[str], environment: DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileDataMiner.FileSet, environment: DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
         packs = [pack["path"] for pack in self.get_packs(environment) if pack["name"] not in self.ignore_packs]
         output:set[str] = set()
         for pack, location in product(packs, self.location):
             file_name = pack + location
-            if file_name in file_set:
+            if file_set.file_exists(file_name):
                 output.add(file_name)
         if len(output) == 0 and not self.find_none_okay:
             raise Exceptions.DataMinerNothingFoundError(self)

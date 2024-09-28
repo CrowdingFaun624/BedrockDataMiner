@@ -28,7 +28,7 @@ class MediaDataMiner(FileDataMiner.FileDataMiner):
         self.ignore_subdirectories = ignore_subdirectories
         self.insert_pack = insert_pack
 
-    def get_coverage(self, file_set: set[str], environment: DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileDataMiner.FileSet, environment: DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
         ignore_directories = [self.location + subdirectory for subdirectory in self.ignore_subdirectories] if self.ignore_subdirectories is not None else None
         output:set[str] = ImageDataMiner.coverage_in_directory(self.location, file_set, ignore_directories)
         if len(output) == 0 and not self.find_none_okay:

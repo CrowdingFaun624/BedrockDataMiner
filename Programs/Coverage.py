@@ -15,7 +15,7 @@ def do_dataminer_collection(
     dataminer_collection:DataMinerCollection.DataMinerCollection  ,
     version:Version.Version,
     dependencies:DataMinerEnvironment.DataMinerDependencies,
-    file_set:set[str],
+    file_set:FileDataMiner.FileSet,
     version_files_covered:set[str],
     version_files_covered_dict:dict[DataMiner.DataMiner,set[str]],
 ) -> None:
@@ -54,13 +54,15 @@ def do_version(version:Version.Version, all_files_dataminer:DataMinerCollection.
         print("Skipped coverage report of %r (%i/%i) due to not supporting %r." % (version, version_index, total_versions, all_files_dataminer))
         return
     print("Starting coverage report of %r (%i/%i)" % (version, version_index, total_versions))
-    file_set:set[str] = set(file for file in cast(list[str], all_files_dataminer.get_data_file(version)) if not file.endswith(".brarchive"))
+    file_set_list = all_files_dataminer.get_data_file(version)
+    file_set_set = set(file_set_list)
+    file_set = FileDataMiner.FileSet(file_set_list)
     version_files_covered:set[str] = set()
     version_files_covered_dict:dict[DataMiner.DataMiner,set[str]] = {}
     dependencies = DataMinerEnvironment.DataMinerDependencies({})
     for dataminer_collection in dataminer_collections.values():
         do_dataminer_collection(dataminer_collection, version, dependencies, file_set, version_files_covered, version_files_covered_dict)
-    leftover_files = file_set - version_files_covered
+    leftover_files = file_set_set - version_files_covered
     with open(FileManager.OUTPUT_DIRECTORY.joinpath(get_file_name(version, version_index)), "wt") as f:
         f.write("\n".join(sorted(leftover_files)))
 
@@ -203,6 +205,7 @@ REMOVE_PREFIXES = [
 ]
 
 REMOVE_SUFFIXES = [
+    ".brarchive", # binary files that exclusively restate what's in other files
     ".fontdata", # relating to "smooth" font files.
     ".zipe", # encrypted zip file of skin textures. Decryption method is not known.
     ".gitignore", # are not used by the game

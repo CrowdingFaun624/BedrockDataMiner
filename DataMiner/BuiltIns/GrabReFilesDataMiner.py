@@ -19,12 +19,12 @@ class GrabReFilesDataMiner(GrabMultipleFilesDataMiner.GrabMultipleFilesDataMiner
         self.directory = directory
         self.pattern = re.compile(pattern)
 
-    def get_coverage(self, file_set: set[str], environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileDataMiner.FileSet, environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
         start_index = len(self.directory)
         output = {
             file_name
-            for file_name in file_set
-            if file_name.startswith(self.directory) and self.pattern.fullmatch(file_name, start_index)
+            for file_name in file_set.get_files_in(self.directory)
+            if self.pattern.fullmatch(file_name, start_index)
         }
         if len(output) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)

@@ -2,7 +2,9 @@ from typing import TypedDict
 
 from typing_extensions import NotRequired
 
+import DataMiner.FileDataMiner as FileDataMiner
 import Downloader.Accessor as Accessor
+
 
 class ImageTypedDict(TypedDict):
     image: bytes
@@ -12,11 +14,9 @@ class ImageTypedDict(TypedDict):
 IMAGE_SUFFIXES = {"png", "jpg", "jpeg", "gif", "tga", "ttf", "webm", "svg", "otf"}
 # items should contain exactly no period characters
 
-def coverage_in_directory(directory:str, file_set:set[str], ignore_directories:list[str]|None=None) -> set[str]:
+def coverage_in_directory(directory:str, file_set:FileDataMiner.FileSet, ignore_directories:list[str]|None=None) -> set[str]:
     output:set[str] = set()
-    for file_name in file_set:
-        if not file_name.startswith(directory):
-            continue
+    for file_name in file_set.get_files_in(directory):
         if file_name.split("/")[-1].count(".") == 0:
             continue
         relative_name = file_name.removeprefix(directory)

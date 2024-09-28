@@ -53,25 +53,25 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
     def get_packs(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[PacksDataMiner.PackTypedDict]:
         return environment.dependency_data.get(self.pack_type, self)
 
-    def get_coverage(self, file_set: set[str], environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileDataMiner.FileSet, environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
         packs = [pack["path"] for pack in self.get_packs(environment) if pack["name"] not in self.ignore_packs]
         output:set[str] = set()
-        for file_name, pack, location in product(file_set, packs, self.location):
+        for pack, location in product(packs, self.location):
             pack_base = pack + location
-            relative_name = file_name.removeprefix(pack_base)
-            if not (
-                file_name.startswith(pack_base)
-                and (self.ignore_files is None or relative_name not in self.ignore_files)
-                and (self.ignore_subdirectories is None or not any(relative_name.startswith(ignore_directory) for ignore_directory in self.ignore_subdirectories))
-                and (self.ignore_suffixes is None or not any(relative_name.endswith(ignore_suffix) for ignore_suffix in self.ignore_suffixes))
-            ): continue
-            if self.suffixes is not None:
-                if not any(file_name.endswith(suffix) for suffix in self.suffixes):
-                    if self.unrecognized_suffix_okay: continue
-                    else:
-                        recognized_suffixes = self.suffixes if self.ignore_suffixes is None else (self.suffixes + self.ignore_suffixes)
-                        raise Exceptions.DataMinerUnrecognizedSuffixError(self, file_name, recognized_suffixes)
-            output.add(file_name)
+            for file_name in file_set.get_files_in(pack_base):
+                relative_name = file_name.removeprefix(pack_base)
+                if not (
+                        (self.ignore_files is None or relative_name not in self.ignore_files)
+                    and (self.ignore_subdirectories is None or not any(relative_name.startswith(ignore_directory) for ignore_directory in self.ignore_subdirectories))
+                    and (self.ignore_suffixes is None or not any(relative_name.endswith(ignore_suffix) for ignore_suffix in self.ignore_suffixes))
+                ): continue
+                if self.suffixes is not None:
+                    if not any(file_name.endswith(suffix) for suffix in self.suffixes):
+                        if self.unrecognized_suffix_okay: continue
+                        else:
+                            recognized_suffixes = self.suffixes if self.ignore_suffixes is None else (self.suffixes + self.ignore_suffixes)
+                            raise Exceptions.DataMinerUnrecognizedSuffixError(self, file_name, recognized_suffixes)
+                output.add(file_name)
         if len(output) == 0 and not self.find_none_okay:
             raise Exceptions.DataMinerNothingFoundError(self)
         return output
