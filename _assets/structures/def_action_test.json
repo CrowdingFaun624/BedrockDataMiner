@@ -1,0 +1,60 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "def_action_test"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "def_action_test"
+    },
+    "def_action_test": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "delegate_arguments": {
+            "field": "test"
+        },
+        "sort": "by_component_order",
+        "keys": {
+            "singletest": {"type": "str"},
+            "objecttest": {"type": "dict", "subcomponent": "action"},
+            "listtest": {"type": "dict", "subcomponent": "action"},
+            "arraytest": {"type": "list", "subcomponent": "action_list"},
+            "complex array action": {"type": "list", "subcomponent": "action_list"},
+            "complex array action2": {"type": "list", "subcomponent": "action_list"}
+        }
+    },
+    "action_list": {
+        "type": "Set",
+        "types": ["str", "dict"],
+        "delegate_arguments": {
+            "field": "action",
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "str": {
+                    "type": "String"
+                },
+                "dict": "action"
+            }
+        }
+    },
+    "action": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "prob": {"type": "float"},
+            "selector": {"type": "bool"},
+            "action": {"type": "str"},
+            "actions": {"type": "list", "subcomponent": "action_list"}
+        }
+    }
+}

@@ -1,0 +1,88 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "biomes_client_resource_packs"
+        },
+        "subcomponent": "biomes"
+    },
+    "biomes": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "biome",
+            "measure_length": true
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "post_normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/no_extension"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "biome"
+    },
+    "biome": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "format_version": {"type": "str"},
+            "minecraft:client_biome": {"type": "dict", "weight": 16, "subcomponent": {
+                "type": "Keymap",
+                "keys": {
+                    "description": {"type": "dict", "subcomponent": "description", "delegate_arguments": {"always_print": true}},
+                    "components": {"type": "dict", "subcomponent": "components"}
+                }
+            }}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "components": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "component"
+        },
+        "keys": {
+            "minecraft:fog_appearance": {"type": "dict", "subcomponent": "component.fog_appearance"},
+            "minecraft:sky_color": {"type": "dict", "subcomponent": "component.sky_color"},
+            "minecraft:water_appearance": {"type": "dict", "subcomponent": "component.water_appearance"}
+        }
+    },
+    "component.fog_appearance": {
+        "type": "Keymap",
+        "keys": {
+            "fog_identifier": {"type": "str"}
+        }
+    },
+    "component.sky_color": {
+        "type": "Keymap",
+        "keys": {
+            "sky_color": {"type": "str"}
+        }
+    },
+    "component.water_appearance": {
+        "type": "Keymap",
+        "keys": {
+            "surface_color": {"type": "str"}
+        }
+    }
+}

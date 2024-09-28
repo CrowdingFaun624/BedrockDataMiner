@@ -1,0 +1,46 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "images"
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "dict",
+        "subcomponent": "cache",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        }
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "images"
+    },
+    "images": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "bilinear": {"type": "bool"},
+            "textures": {"type": "list", "subcomponent": "textures"}
+        }
+    },
+    "textures": {
+        "type": "Set",
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        },
+        "delegate_arguments": {
+            "field": "texture",
+            "measure_length": true
+        }
+    }
+}

@@ -1,0 +1,45 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "resolution_configs"
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "file"
+    },
+    "file": {
+        "type": "Dict",
+        "types": "dict",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "delegate_arguments": {
+            "field": "resolution",
+            "measure_length": true
+        },
+        "key_component": {
+            "type": "String"
+        },
+        "subcomponent": "resolution"
+    },
+    "resolution": {
+        "type": "Keymap",
+        "keys": {
+            "upscaling_factor": {"type": "float"}
+        }
+    }
+}

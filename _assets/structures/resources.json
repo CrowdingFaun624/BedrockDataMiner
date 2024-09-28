@@ -1,0 +1,81 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "resources"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "post_normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/no_extension"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "dict",
+        "subcomponent": "file"
+    },
+    "string": {
+        "type": "String"
+    },
+    "file": {
+        "type": "Keymap",
+        "pre_normalized_types": "file",
+        "normalizer": {
+            "function_name": "open_file"
+        },
+        "keys": {
+            "pack_id": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "name": {"type": "str"},
+            "description": {"type": "str"},
+            "key_art_path": {"type": "str"},
+            "screenshots": {"type": "list", "subcomponent": "screenshots"},
+            "resources": {"type": "dict", "subcomponent": "categories"}
+        }
+    },
+    "screenshots": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "screenshot",
+            "measure_length": true
+        },
+        "subcomponent": "screenshot"
+    },
+    "screenshot": {
+        "type": "Keymap",
+        "keys": {
+            "path": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "categories": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "field": "category",
+            "measure_length": true
+        },
+        "keys": {
+            "models": {"type": "dict", "subcomponent": "resources"},
+            "textures": {"type": "dict", "subcomponent": "resources"},
+            "metas": {"type": "dict", "subcomponent": "resources"}
+        }
+    },
+    "resources": {
+        "type": "Dict",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "resource",
+            "measure_length": true
+        },
+        "subcomponent": "string",
+        "key_component": "string"
+    }
+}
