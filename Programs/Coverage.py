@@ -45,6 +45,9 @@ def do_dataminer_collection(
     version_files_covered.update(dataminer_files_covered)
     version_files_covered_dict[dataminer] = dataminer_files_covered
 
+def get_file_name(version:Version.Version, index:int) -> str:
+    return "%s %s.txt" % (str(index).zfill(4), version.name)
+
 def do_version(version:Version.Version, all_files_dataminer:DataMinerCollection.DataMinerCollection, version_index:int, total_versions:int, dataminer_collections:dict[str,DataMinerCollection.DataMinerCollection]) -> None:
     if not all_files_dataminer.supports_version(version):
         print("Skipped coverage report of %r (%i/%i) due to not supporting %r." % (version, version_index, total_versions, all_files_dataminer))
@@ -57,8 +60,7 @@ def do_version(version:Version.Version, all_files_dataminer:DataMinerCollection.
     for dataminer_collection in dataminer_collections.values():
         do_dataminer_collection(dataminer_collection, version, dependencies, file_set, version_files_covered, version_files_covered_dict)
     leftover_files = file_set - version_files_covered
-    file_path = "%s %s.txt" % (str(version_index).zfill(4), version.name)
-    with open(FileManager.OUTPUT_DIRECTORY.joinpath(file_path), "wt") as f:
+    with open(FileManager.OUTPUT_DIRECTORY.joinpath(get_file_name(version, version_index)), "wt") as f:
         f.write("\n".join(sorted(leftover_files)))
 
 def pick_version(versions:dict[str,Version.Version]) -> tuple[Version.Version, int]:
@@ -80,6 +82,21 @@ def do_all() -> None:
     versions = Importer.versions
     for version_index, version in enumerate(reversed(versions.values())):
         do_version(version, all_files_dataminer, version_index, len(versions), dataminer_collections)
+    print("Finished all coverage reports")
+
+def do_all_that_contain() -> None:
+    search_term = input("Search term: ")
+    dataminer_collections = Importer.dataminer_collections
+    all_files_dataminer = dataminer_collections["all_files"]
+    versions = Importer.versions
+    for version_index, version in enumerate(reversed(versions.values())):
+        file_path = FileManager.OUTPUT_DIRECTORY.joinpath(get_file_name(version, version_index))
+        if not file_path.exists():
+            continue
+        with open(file_path, "rt") as f:
+            contents = f.readlines()
+        if any(search_term in content for content in contents):
+            do_version(version, all_files_dataminer, version_index, len(versions), dataminer_collections)
     print("Finished all coverage reports")
 
 def do_one() -> None:
@@ -215,6 +232,7 @@ def do_compare() -> None:
 def main() -> None:
     functions = {
         "all": do_all,
+        "all_that_contain": do_all_that_contain,
         "before": do_before,
         "compare": do_compare,
         "one": do_one,
