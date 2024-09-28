@@ -243,6 +243,8 @@ class VersionTypedDict(TypedDict):
 
 AutoAssignerTypedDicts:TypeAlias = RangeVersionTagAutoAssignerTypedDict
 ComponentTypedDicts:TypeAlias = Union[
+    AccessorTypedDict,
+    AccessorTypeTypedDict,
     BaseTypedDict,
     CacheTypedDict,
     DataMinerCollectionTypedDict,

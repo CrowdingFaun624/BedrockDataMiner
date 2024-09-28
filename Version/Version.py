@@ -20,6 +20,7 @@ class Version():
 
         self.parent:Version|None = None
         self.tags:list[VersionTag.VersionTag]|None = None
+        self.tags_str:list[str]|None = None
         self.version_files:list[VersionFile.VersionFile]|None = None
         self.latest = False
         self.released = True

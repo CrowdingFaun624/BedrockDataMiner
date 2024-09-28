@@ -22,6 +22,9 @@ class Accessor():
     def initialize(self) -> None:
         ...
 
+    def all_done(self) -> None:
+        return self.manager.all_done()
+
 class DummyAccessor(Accessor):
     "Accessor that does nothing."
     ...
@@ -58,9 +61,6 @@ class DirectoryAccessor(Accessor):
 
     def get_file(self, file_name:str, mode:Literal["b", "t"]="b") -> FileManager.FilePromise:
         return self.manager.get_file(self.modify_file_name(file_name), mode)
-
-    def all_done(self) -> None:
-        return self.manager.all_done()
 
     def __repr__(self) -> str:
         return "<%s id %i>" % (self.__class__.__name__, id(self))
