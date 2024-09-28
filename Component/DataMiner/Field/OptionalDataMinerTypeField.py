@@ -2,6 +2,7 @@ import Component.Field.Field as Field
 import Component.ScriptImporter as ScriptImporter
 import DataMiner.BuiltIns.AllFilesDataMiner as AllFilesDataMiner
 import DataMiner.BuiltIns.GrabMultipleFilesDataMiner as GrabMultipleFilesDataMiner
+import DataMiner.BuiltIns.GrabReFilesDataMiner as GrabReFilesDataMiner
 import DataMiner.BuiltIns.GrabSingleFileDataMiner as GrabSingleFileDataMiner
 import DataMiner.BuiltIns.TagSearcherDataMiner as TagSearcherDataMiner
 import DataMiner.DataMiner as DataMiner
@@ -10,6 +11,7 @@ BUILT_IN_DATAMINER_CLASSES = {dataminer_class.__name__: dataminer_class for data
     DataMiner.DataMiner,
     AllFilesDataMiner.AllFilesDataMiner,
     GrabMultipleFilesDataMiner.GrabMultipleFilesDataMiner,
+    GrabReFilesDataMiner.GrabReFilesDataMiner,
     GrabSingleFileDataMiner.GrabSingleFileDataMiner,
     TagSearcherDataMiner.TagSearcherDataMiner,
 ]}
