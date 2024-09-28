@@ -1,3 +1,4 @@
+import bisect
 from typing import TYPE_CHECKING, Any, Literal, overload
 
 from pathlib2 import Path
@@ -36,10 +37,14 @@ class Manager():
 
     def get_files_in(self, parent:str) -> list[str]:
         '''Returns a list of all files that are within the given directory.'''
-        raise Exceptions.ManagerUndefinedMethodError(self, self.get_files_in)
+        directory_length = len(parent)
+        file_list = self.get_file_list()
+        left = bisect.bisect_left(file_list, parent)
+        right = bisect.bisect_right(file_list, parent, lo=left, key=lambda item: item[:directory_length])
+        return file_list[left:right]
 
     def get_file_list(self) -> list[str]:
-        '''Returns a list of all files in the archive.'''
+        '''Returns a sorted list of all files in the archive.'''
         raise Exceptions.ManagerUndefinedMethodError(self, self.get_file_list)
 
     @overload

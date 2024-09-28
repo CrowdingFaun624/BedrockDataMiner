@@ -37,9 +37,6 @@ class DownloadManager(Manager.Manager):
             self.members = {member.filename: member for member in self.zip_file.filelist}
             self.has_zip_file_opened = True
 
-    def get_files_in(self, parent: str) -> list[str]:
-        return [file for file in self.get_file_list() if file.startswith(parent)]
-
     def get_file_list(self) -> list[str]:
         if not self.installed.get():
             self.install_all()
@@ -49,7 +46,7 @@ class DownloadManager(Manager.Manager):
                 return self.file_list # If it started waiting and then it's complete when it's done waiting.
             if self.zip_file is None:
                 raise Exceptions.AttributeNoneError("zip_file", self)
-            self.file_list = [file.filename for file in self.zip_file.filelist]
+            self.file_list = sorted(file.filename for file in self.zip_file.filelist)
             self.file_set = set(self.file_list)
         return self.file_list
 

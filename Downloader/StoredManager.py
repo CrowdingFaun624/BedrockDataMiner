@@ -30,15 +30,12 @@ class StoredManager(Manager.Manager):
             self.read_index()
             StoredVersionsManager.extract(self.name, destination, self.index)
 
-    def get_files_in(self, parent: str) -> list[str]:
-        return [file for file in self.get_file_list() if file.startswith(parent)]
-
     def get_file_list(self) -> list[str]:
         if self.file_list is None:
             self.read_index()
             if self.index is None:
                 raise Exceptions.AttributeNoneError("index", self)
-            self.file_list = list(self.index.keys())
+            self.file_list = sorted(self.index.keys())
         return self.file_list
 
     def file_exists(self, file_name:str) -> bool:
