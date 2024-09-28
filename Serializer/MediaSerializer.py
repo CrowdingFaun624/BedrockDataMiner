@@ -38,10 +38,13 @@ class MediaSerializer(Serializer.Serializer):
             with open(temp_file_path, "wb") as f:
                 f.write(data)
             process = subprocess.Popen([FileManager.LIB_EXIFTOOL_EXE_FILE, temp_file_path], stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
-            process.wait()
+            stdout, stderr = process.communicate()
+            if stderr is not None:
+                print(stderr)
+                raise subprocess.CalledProcessError(process.returncode, process.args, stdout, stderr)
             if process.stdout is None:
                 raise Exceptions.AttributeNoneError("stdout", process)
-            output = {(key_value := line.split(": ", 1))[0].rstrip(): key_value[1] for line in process.stdout.read().decode().splitlines()}
+            output = {(key_value := line.split(": ", 1))[0].rstrip(): key_value[1] for line in stdout.decode().splitlines()}
             temp_file_path.unlink()
             output["sha1_hash"] = data_hash
             output.pop("ExifTool Version Number", None)
