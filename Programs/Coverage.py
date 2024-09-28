@@ -122,10 +122,16 @@ def search() -> None:
         with open(file, "rt") as f:
             contents = f.readlines()
         count = 0
+        usage = ""
         for content in contents:
             if search_term in content:
                 count += 1
-        if count > 0:
+                usage = content.rstrip()
+        if count == 0:
+            pass
+        elif count == 1:
+            print(file.stem, count, usage)
+        else:
             print(file.stem, count)
 
 REMOVE_FILES = {
