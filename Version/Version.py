@@ -1,5 +1,5 @@
 import datetime
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, TypeVar, Union
 
 from pathlib2 import Path
 
@@ -10,6 +10,8 @@ import Version.VersionTag.VersionTag as VersionTag
 
 if TYPE_CHECKING:
     import Downloader.Accessor as Accessor
+
+a = TypeVar("a", bound="Accessor.Accessor")
 
 class Version():
 
@@ -89,8 +91,8 @@ class Version():
             raise Exceptions.AttributeNoneError("version_files_dict", self)
         return self.version_files_dict
 
-    def get_accessor(self, file_type:str) -> "Accessor.Accessor":
-        return self.get_version_files_dict()[file_type].get_accessor()
+    def get_accessor(self, file_type:str, required_type:type[a]) -> a|None:
+        return self.get_version_files_dict()[file_type].get_accessor(True, required_type=required_type)
 
     # this will be needed when I actually finish redoing the wiki page thing
     # def assign_wiki_page(self, version_tags:VersionTags.VersionTags) -> None:

@@ -940,21 +940,21 @@ class DataMinerException(Exception):
 class DataMinerAccessorWrongTypeError(DataMinerException):
     "The assumed type of an Accessor is not its actual type."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", accessor:"Accessor.Accessor", accessor_type:type["Accessor.Accessor"], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"DataMiner.DataMiner", file_type:str, accessor_type:type["Accessor.Accessor"], message:Optional[str]=None) -> None:
         '''
         :dataminer: The DataMiner that attempted to access its Accessor.
-        :accessor: The Accessor that is the wrong type.
+        :file_type: The name of the VersionFile that has the wrong Accessor type.
         :accessor_type: The type that the Accessor should be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(dataminer, accessor, accessor_type, message)
+        super().__init__(dataminer, file_type, accessor_type, message)
         self.dataminer = dataminer
-        self.accessor = accessor
+        self.file_type = file_type
         self.accessor_type = accessor_type
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r from %r should be type \"%s\"" % (self.accessor, self.dataminer, self.accessor_type.__name__)
+        output = "VersionFile \"%s\" from %r should have accessor with type \"%s\"" % (self.file_type, self.dataminer, self.accessor_type.__name__)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -2794,7 +2794,7 @@ class VersionFileNoAccessorsError(VersionFileException):
 
     def __init__(self, version_file:"VersionFile.VersionFile", message:Optional[str]=None) -> None:
         '''
-        :version_file: The VersionFile with no Accessors.
+        :version_file: The VersionFile with no available Accessors.
         :message: Additional text to place after the main message.
         '''
         super().__init__(version_file, message)
@@ -2802,7 +2802,9 @@ class VersionFileNoAccessorsError(VersionFileException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has no Accessors" % (self.version_file,)
+        output = "%r has no available Accessors" % (self.version_file,)
+        if self.version_file.has_accessors():
+            output += " from [%s]" % (repr(accessor) for accessor in self.version_file.get_accessors())
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

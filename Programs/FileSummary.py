@@ -1,4 +1,5 @@
 import Component.Importer as Importer
+import Downloader.Accessor as Accessor
 
 
 def main():
@@ -7,7 +8,7 @@ def main():
     while selected_version_name not in version_names:
         selected_version_name = input("Select a version to analyze: ")
     selected_version = version_names[selected_version_name]
-    files = selected_version.get_version_files_dict()["client"].get_accessor().get_full_file_list()
+    files = selected_version.get_version_files_dict()["client"].get_accessor(required_type=Accessor.DirectoryAccessor).get_full_file_list()
     file_extensions:dict[str,int] = {}
     for file in files:
         file_name = file.split("/")[-1]

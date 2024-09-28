@@ -1,4 +1,5 @@
 import Component.Importer as Importer
+import Downloader.Accessor as Accessor
 
 
 def main() -> None:
@@ -8,7 +9,7 @@ def main() -> None:
         version = input("Version: ")
     version = versions[version]
     file = input("File: ")
-    install_manager = version.get_version_files_dict()["client"].get_accessor()
+    install_manager = version.get_version_files_dict()["client"].get_accessor(required_type=Accessor.DirectoryAccessor)
     if install_manager is not None:
         destination = version.get_version_directory().joinpath(file)
         file_promise = install_manager.get_file(file)

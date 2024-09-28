@@ -81,16 +81,12 @@ class DataMiner():
         with open(self.get_data_file_path(), "rt") as f:
             return json.load(f, cls=CustomJson.decoder)
 
-    @overload
-    def get_accessor(self, file_type:str, accessor_type:None=None) -> Accessor.Accessor: ...
-    @overload
-    def get_accessor(self, file_type:str, accessor_type:type[a]) -> a: ...
-    def get_accessor(self, file_type:str, accessor_type:type[Accessor.Accessor]|None=None) -> Accessor.Accessor:
+    def get_accessor(self, file_type:str, accessor_type:type[a]=Accessor.Accessor) -> a:
         if file_type not in self.files_str:
             raise Exceptions.DataMinerFileTypePermissionError(self, file_type, sorted(self.files_str))
-        accessor = self.version.get_accessor(file_type)
-        if accessor_type is not None and not isinstance(accessor, accessor_type):
-            raise Exceptions.DataMinerAccessorWrongTypeError(self, accessor, accessor_type)
+        accessor = self.version.get_accessor(file_type, accessor_type)
+        if accessor is None:
+            raise Exceptions.DataMinerAccessorWrongTypeError(self, file_type, accessor_type)
         return accessor
 
     def get_serializer(self, serializer_key:str) -> Serializer.Serializer:
