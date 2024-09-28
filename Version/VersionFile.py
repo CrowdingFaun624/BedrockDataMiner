@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING, Union
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Version.VersionFileType as VersionFileType
-from Utilities.FunctionCaller import WaitValue
 
 if TYPE_CHECKING:
+    import Component.Accessor.AccessorComponent as AccessorComponent
     import Version.Version as Version
 
 class VersionFile():
@@ -14,13 +14,13 @@ class VersionFile():
         self.name:str|None = None
         self.version:Union["Version.Version", None] = None
         self.version_file_type:VersionFileType.VersionFileType|None = None
-        self.accessors:list[WaitValue[Accessor.Accessor]]|None = None
+        self.accessors:list["AccessorComponent.AccessorCreator"]|None = None
 
     def link_finals(
         self,
         version:"Version.Version",
         version_file_type:VersionFileType.VersionFileType,
-        accessors:list[WaitValue[Accessor.Accessor]],
+        accessors:list["AccessorComponent.AccessorCreator"],
     ) -> None:
         self.name = version_file_type.name
         self.version = version
@@ -42,10 +42,10 @@ class VersionFile():
             raise Exceptions.AttributeNoneError("version_file_type", self)
         return self.version_file_type
 
-    def get_accessors(self) -> list[WaitValue[Accessor.Accessor]]:
+    def get_accessors(self) -> list[Accessor.Accessor]:
         if self.accessors is None:
             raise Exceptions.AttributeNoneError("accessors", self)
-        return self.accessors
+        return [accessor_creator.create_accessor() for accessor_creator in self.accessors]
 
     def __repr__(self) -> str:
         return "<VersionFile %s of %s>" % (self.get_version_file_type().name, self.get_version().name)
@@ -58,6 +58,6 @@ class VersionFile():
 
     def get_accessor(self) -> Accessor.Accessor:
         for accessor in self.get_accessors():
-            if True: return accessor.get()
+            if True: return accessor
         else:
             raise Exceptions.VersionFileNoAccessorsError(self)

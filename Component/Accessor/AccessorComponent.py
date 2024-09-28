@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import Component.Capabilities as Capabilities
 import Component.Component as Component
@@ -17,7 +17,38 @@ if TYPE_CHECKING:
 
 ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent.AccessorTypeComponent"] = Pattern.Pattern([{"is_accessor_type": True}])
 
-class AccessorComponent(Component.Component[WaitValue[Accessor.Accessor]]):
+class AccessorCreator():
+
+    def __init__(
+        self,
+        version_file_component:"VersionFileComponent.VersionFileComponent",
+        version_component:"VersionComponent.VersionComponent",
+        accessor_type_field:ComponentField.ComponentField["AccessorTypeComponent.AccessorTypeComponent"],
+        arguments:dict[str,Any],
+    ) -> None:
+        self.version_file_component = version_file_component
+        self.version_component = version_component
+        self.accessor_type_field = accessor_type_field
+        self.arguments = arguments
+        self.accessor:Accessor.Accessor|None = None
+
+    def create_accessor(self) -> Accessor.Accessor:
+        if self.accessor is None:
+            self.accessor = self.accessor_type_field.get_component().get_final().create_accessor(
+                version=self.version_component.get_final(),
+                file_type=self.version_file_component.version_file_type_field.get_component().get_final(),
+                accessor_arguments=self.arguments,
+            )
+            self.accessor.initialize()
+        return self.accessor
+    
+    def clear_variables(self) -> None:
+        '''Required step for being able to remove all Components after importing is finished.'''
+        del self.version_file_component
+        del self.version_component
+        del self.accessor_type_field
+
+class AccessorComponent(Component.Component[AccessorCreator]):
 
     class_name = "Accessor"
     class_name_article = "an Accessor"
@@ -37,23 +68,19 @@ class AccessorComponent(Component.Component[WaitValue[Accessor.Accessor]]):
         self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ["accessor_type"], allow_inline=Field.InlinePermissions.reference)
         self.fields.extend([self.accessor_type_field])
 
-    def create_accessor(self) -> Accessor.Accessor:
-        version_file = cast("VersionFileComponent.VersionFileComponent", self.get_inline_parent())
-        version = cast("VersionComponent.VersionComponent", version_file.get_inline_parent())
-        output = self.accessor_type_field.get_component().get_final().create_accessor(
-            version=version.get_final(),
-            file_type=version_file.version_file_type_field.get_component().get_final(),
-            accessor_arguments=self.arguments
-        )
-        output.initialize()
-        return output
-
     def create_final(self) -> None:
         super().create_final()
-        self.final = WaitValue(self.create_accessor)
-    
+        version_file = self.get_inline_parent()
+        self.final = AccessorCreator(cast("VersionFileComponent.VersionFileComponent", self.get_inline_parent()), cast("VersionComponent.VersionComponent", version_file.get_inline_parent()), self.accessor_type_field, self.arguments)
+
     def check(self) -> list[Exception]:
         exceptions = super().check()
         trace = TypeVerifier.make_trace([self.name, self.component_group])
         exceptions.extend(self.accessor_type_field.get_component().get_final().get_parameters().verify(self.arguments, trace))
         return exceptions
+
+    def finalize(self) -> None:
+        super().finalize()
+        final = self.get_final()
+        final.create_accessor()
+        final.clear_variables()
