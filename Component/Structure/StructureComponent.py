@@ -16,6 +16,8 @@ DEFAULT_TYPES:dict[str,type] = {
     "null": type(None),
     "str": str,
     "tuple": tuple,
+    "abstract_file": File.AbstractFile,
+    "fake_file": File.FakeFile,
     "file": File.File,
     "TAG_Byte": NbtTypes.TAG_Byte,
     "TAG_Short": NbtTypes.TAG_Short,
@@ -36,6 +38,8 @@ MUTUALLY_SORTABLE:list[set[type]] = [{bool, float, int, NbtTypes.TAG_Byte, NbtTy
 
 ARBITRARY_ITERABLE_TYPES = set((list, tuple, NbtTypes.TAG_List))
 """Iterable that allows for arbitrary/any data inside."""
+FILE_TYPES = set((File.AbstractFile, File.File, File.FakeFile))
+"""Any type subclassing AbstractFile."""
 ITERABLE_TYPES = set((list, tuple, NbtTypes.TAG_List, NbtTypes.TAG_Byte_Array, NbtTypes.TAG_Int_Array, NbtTypes.TAG_Long_Array))
 """Any iterable."""
 MAPPING_TYPES = set((dict, NbtTypes.TAG_Compound))

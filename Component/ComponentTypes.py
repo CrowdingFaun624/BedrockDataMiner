@@ -7,6 +7,7 @@ import Component.Serializer.SerializerComponent as SerializerComponent
 import Component.Structure.BaseComponent as BaseComponent
 import Component.Structure.CacheComponent as CacheComponent
 import Component.Structure.DictComponent as DictComponent
+import Component.Structure.FileComponent as FileComponent
 import Component.Structure.GroupComponent as GroupComponent
 import Component.Structure.KeymapComponent as KeymapComponent
 import Component.Structure.ListComponent as ListComponent
@@ -33,6 +34,7 @@ component_types:list[type[Component.Component]] = [
     DataMinerCollectionComponent.DataMinerCollectionComponent,
     DataMinerSettingsComponent.DataMinerSettingsComponent,
     DictComponent.DictComponent,
+    FileComponent.FileComponent,
     GroupComponent.GroupComponent,
     KeymapComponent.KeymapComponent,
     LatestSlotComponent.LatestSlotComponent,
