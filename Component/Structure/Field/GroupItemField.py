@@ -23,7 +23,7 @@ class GroupItemField(FieldContainer.FieldContainer):
         self.type_field.verify_with(self.subcomponent_field)
         super().__init__([self.type_field, self.subcomponent_field], path)
 
-    def get_types(self) -> list[type]:
+    def get_types(self) -> tuple[type,...]:
         return self.type_field.get_types()
 
     def get_component(self) -> Union["StructureComponent.StructureComponent",None]:
