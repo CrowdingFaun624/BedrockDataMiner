@@ -18,7 +18,7 @@ def collapse_resource_packs_dict(data:dict[str,dict[str,a]], add_defined_in:bool
             if add_defined_in:
                 defined_in_key = output[tag_string].get("defined_in")
                 if defined_in_key is None:
-                    output[tag_string]["defined_in"] = [resource_pack]
+                    output[tag_string]["defined_in"] = [resource_pack] # type: ignore
                 else:
-                    defined_in_key.append(resource_pack)
+                    defined_in_key.append(resource_pack) # type: ignore
     return type(data)(output)
