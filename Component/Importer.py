@@ -59,7 +59,7 @@ def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, 
         raise Exceptions.ComponentTypeMissingError(component_name, parent_component.component_group)
     component_type = component_types_dict.get(component_type_str)
     if component_type is None:
-        raise Exceptions.UnrecognizedComponentTypeError(component_type_str, component_name, "(Must be one of [%s])" % (", ".join(component.class_name for component in ComponentTypes.component_types),))
+        raise Exceptions.UnrecognizedComponentTypeError(component_type_str, "%s in %s" % (component_name, parent_component.component_group), "(Must be one of [%s])" % (", ".join(component.class_name for component in ComponentTypes.component_types),))
     component = component_type(component_data, component_name, parent_component.component_group, None)
     component.inline_parent = parent_component
     return component
