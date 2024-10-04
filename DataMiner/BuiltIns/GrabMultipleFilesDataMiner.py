@@ -74,7 +74,7 @@ class GrabMultipleFilesDataMiner(FileDataMiner.FileDataMiner):
             if self.suffixes is not None:
                 for suffix in self.suffixes:
                     if file_name.endswith(suffix):
-                        relative_name = relative_name.removesuffix(suffix)
+                        # relative_name = relative_name.removesuffix(suffix)
                         break
                 else:
                     # this file's name does not end in any recognized suffix
