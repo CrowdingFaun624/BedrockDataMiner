@@ -35,7 +35,7 @@ hash_type_table:dict[type,Callable] = { # I will have type hinting no matter how
     int: hash_table_item(lambda data: hash(data), int),
     list: hash_table_item(lambda data: hash(tuple(hash_data(item) for item in data)), list),
     memoryview: hash_table_item(lambda data: hash(data), memoryview),
-    File.File: hash_table_item(lambda data: hash(data), File.File),
+    File.AbstractFile: hash_table_item(lambda data: hash(data), File.AbstractFile),
     NbtTypes.TAG_Byte: hash_table_item(lambda data: hash(data), NbtTypes.TAG_Byte),
     NbtTypes.TAG_End: hash_table_item(lambda data: hash(data), NbtTypes.TAG_End),
     NbtTypes.TAG_Short: hash_table_item(lambda data: hash(data), NbtTypes.TAG_Short),

@@ -40,8 +40,8 @@ def move_key(data:dict[str,Any], from_key:str, to_key:str) -> None:
         data[to_key] = data[from_key]
         del data[from_key]
 
-def open_file(data:File.File[a]) -> a:
-    return data.read()
+def open_file(data:File.AbstractFile[a]) -> a:
+    return data.data
 
 def parse_int(data:str) -> int:
     return int(data)

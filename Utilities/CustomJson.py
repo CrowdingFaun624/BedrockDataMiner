@@ -52,12 +52,12 @@ class FileCoder(Coder[FileTypedDict, File.File]):
         serializer = Importer.serializers.get(data["serializer"])
         if serializer is None:
             raise Exceptions.UnrecognizedSerializerInFileError(data)
-        return File.File(data["name"], serializer, data_hash=data["hash"])
+        return File.File(data["name"], serializer, data_hash=File.hash_str_to_int(data["hash"]))
 
     @classmethod
     def encode(cls, data: File.File) -> FileTypedDict:
         # files contained by data are archived when the File object is created.
-        return {"$special_type": "file", "hash": data.hash, "name": data.display_name, "serializer": data.serializer.name}
+        return {"$special_type": "file", "hash": File.hash_int_to_str(data.hash), "name": data.display_name, "serializer": data.serializer.name}
 
 class SpecialEncoder(json.JSONEncoder):
 
