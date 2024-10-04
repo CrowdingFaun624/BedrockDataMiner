@@ -16,7 +16,7 @@
     },
     "meta_files": {
         "type": "Dict",
-        "types": "dict",
+        "types": "file",
         "subcomponent": "cache",
         "delegate_arguments": {
             "field": "meta file"
@@ -24,15 +24,16 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "meta"
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "meta"
+        }
     },
     "meta": {
         "type": "Keymap",
-        "pre_normalized_types": "file",
-        "normalizer": {
-            "function_name": "open_file"
-        },
         "keys": {
             "piece_id": {"type": "str"},
             "piece_name": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},

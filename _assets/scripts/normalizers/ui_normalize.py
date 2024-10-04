@@ -18,11 +18,13 @@ def parse_element_name(raw_element_name:str, namespace:str) -> tuple[str,str|Non
         superclass_namespace, superclass_element_name = None, None
     return element_name, superclass_namespace, superclass_element_name
 
-def get_namespaces_and_extensions(data:dict[str,File.File[dict[str,dict[str,Any]]]]) -> tuple[dict[str,dict[str,dict[str,Any]]], dict[str,dict[str,tuple[str|None,str|None]]]]:
+def get_namespaces_and_extensions(data:dict[str,File.File[dict[str,dict[str,Any]]]]) -> tuple[dict[str,dict[str,dict[str,Any]]], dict[str,dict[str,tuple[str|None,str|None]]], list[int]]:
     namespaces:dict[str,dict[str,dict[str,Any]]] = {} # {namespace: {element_name: element_data}}
     extensions:dict[str,dict[str,tuple[str|None,str|None]]] = {} # {namespace: {subelement: (superelements_namespace, superelement)}}
+    file_hashes:list[int] = []
     for file_name, file in data.items():
-        elements = file.read()
+        elements = file.data
+        file_hashes.append(hash(file))
         namespace = cast(str, elements.pop("namespace"))
         if namespace not in namespaces:
             namespaces[namespace] = {}
@@ -31,7 +33,7 @@ def get_namespaces_and_extensions(data:dict[str,File.File[dict[str,dict[str,Any]
             element_name, superclass_namespace, superclass_element_name = parse_element_name(raw_element_name, namespace)
             namespaces[namespace][element_name] = element_data
             extensions[namespace][element_name] = (superclass_namespace, superclass_element_name)
-    return namespaces, extensions
+    return namespaces, extensions, file_hashes
 
 def get_element_type(element_name:str, namespace:str, element_data:dict[str,Any], namespaces:dict[str,dict[str,dict[str,Any]]], extensions:dict[str,dict[str,tuple[str|None, str|None]]]) -> str|None:
     current_element_name = element_name
@@ -95,13 +97,13 @@ def parse_elements(namespaces:dict[str,dict[str,dict[str,Any]]], element_types:d
         for element_name, element_data in elements.items():
             parse_element(element_data, element_types, element_name, namespace)
 
-def ui_normalize(data:dict[str,dict[str,File.File[dict[str,dict[str,Any]]]]]) -> dict[str,dict[str,dict[str,Any]]]:
+def ui_normalize(data:dict[str,dict[str,File.File[dict[str,dict[str,Any]]]]]) -> File.FakeFile[dict[str,dict[str,dict[str,Any]]]]:
     files:dict[str,File.File[dict[str,dict[str,Any]]]] = {}
     for resource_pack, resource_pack_files in data.items():
         if len(common_files := (set(files) & set(resource_pack_files))) > 0:
             raise RuntimeError("Duplicate files [%s]" % ", ".join(common_files))
         files.update(resource_pack_files)
-    namespaces, extensions = get_namespaces_and_extensions(files)
+    namespaces, extensions, file_hashes = get_namespaces_and_extensions(files)
     element_types = get_element_types(namespaces, extensions)
     parse_elements(namespaces, element_types)
     
@@ -116,4 +118,4 @@ def ui_normalize(data:dict[str,dict[str,File.File[dict[str,dict[str,Any]]]]]) ->
                 raw_element_name = "%s@%s.%s" % (element_name, superclass_namespace, superclass_element_name)
             element_type = element_types[namespace][element_name]
             output[namespace][raw_element_name] = {element_type: element_data}
-    return output
+    return File.FakeFile("combined_ui_file", output, hash(tuple(file_hashes)))

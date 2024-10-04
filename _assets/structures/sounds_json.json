@@ -4,19 +4,30 @@
         "delegate_arguments": {
             "name": "sounds_json"
         },
-        "subcomponent": "categories"
+        "subcomponent": "cache"
     },
     "decimal": {
         "type": "TypeAlias",
         "types": ["int", "float"]
     },
+    "cache": {
+        "type": "Cache",
+        "types": "fake_file",
+        "subcomponent": {
+            "type": "File",
+            "pre_normalized_types": "dict",
+            "file_types": "fake_file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/sounds_json_normalize"
+            },
+            "subcomponent": "categories"
+        }
+    },
     "categories": {
         "type": "Keymap",
         "delegate_arguments": {
             "field": "category"
-        },
-        "normalizer": {
-            "function_name": "normalizers/sounds_json_normalize"
         },
         "sort": "by_component_order",
         "keys": {

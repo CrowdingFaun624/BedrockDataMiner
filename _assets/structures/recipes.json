@@ -23,7 +23,7 @@
             "field": "behavior pack",
             "measure_length": true
         },
-        "types": ["dict"],
+        "types": ["file"],
         "detect_key_moves": true,
         "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/flat"
@@ -98,20 +98,19 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "recipe"
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "recipe"
+        }
     },
     "recipe": {
         "type": "Keymap",
-        "pre_normalized_types": "file",
-        "normalizer": [
-            {
-                "function_name": "open_file"
-            },
-            {
-                "function_name": "normalizers/recipes_fix_old"
-            }
-        ],
+        "normalizer":  {
+            "function_name": "normalizers/recipes_fix_old"
+        },
         "sort": "by_component_order",
         "keys": {
             "format_version": {"type": "str"},

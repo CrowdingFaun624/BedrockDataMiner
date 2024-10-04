@@ -4,7 +4,21 @@
         "delegate_arguments": {
             "name": "flipbook_textures"
         },
-        "subcomponent": "resource_packs"
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "fake_file",
+        "subcomponent": {
+            "type": "File",
+            "pre_normalized_types": "dict",
+            "file_types": "fake_file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/collapse_resource_packs/list_file"
+            },
+            "subcomponent": "resource_packs"
+        }
     },
     "resource_packs": {
         "type": "Dict",
@@ -13,16 +27,8 @@
             "measure_length": true
         },
         "types": ["list"],
-        "post_normalizer": {
-            "function_name": "normalizers/collapse_resource_packs/list"
-        },
         "detect_key_moves": true,
         "sort": "by_key",
-        "subcomponent": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "types": "list",
         "subcomponent": "flipbook_textures"
     },
     "flipbook_textures": {
@@ -30,10 +36,6 @@
         "delegate_arguments": {
             "field": "flipbook texture",
             "measure_length": true
-        },
-        "pre_normalized_types": "file",
-        "normalizer": {
-            "function_name": "open_file"
         },
         "types": ["dict"],
         "subcomponent": "flipbook_texture"

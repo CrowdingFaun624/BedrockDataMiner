@@ -42,14 +42,14 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
             f.write("%s%s\n" % (source_hash, destination_hash))
 
     def deserialize_json(self, data: File.File[OutputTypedDict]) -> OutputTypedDict:
-        return data.read()
+        return data.data
 
     def deserialize(self, data: bytes) -> Any:
         data_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data))
         
         destination_hash = self.get_cache().get(data_hash)
         if destination_hash is not None:
-            return File.File("cached_%s" % (data_hash,), JsonSerializer.DEFAULT_JSON_SERIALIZER, destination_hash)
+            return File.File("cached_%s" % (data_hash,), JsonSerializer.DEFAULT_JSON_SERIALIZER, File.hash_str_to_int(destination_hash))
         
         temporary_directory = FileManager.get_temp_file_path()
         temporary_directory.mkdir()
@@ -97,4 +97,4 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         destination_hash = FileStorageManager.archive_data(json.dumps(output, separators=(",", ":")).encode(), "")
         self.write_cache(data_hash, destination_hash)
 
-        return File.File("cached_%s" % (data_hash,), JsonSerializer.DEFAULT_JSON_SERIALIZER, destination_hash)
+        return File.File("cached_%s" % (data_hash,), JsonSerializer.DEFAULT_JSON_SERIALIZER, File.hash_str_to_int(destination_hash))

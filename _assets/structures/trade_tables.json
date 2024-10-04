@@ -40,7 +40,7 @@
     },
     "behavior_packs": {
         "type": "Dict",
-        "types": ["dict"],
+        "types": ["file"],
         "delegate_arguments": {
             "field": "behavior pack"
         },
@@ -52,16 +52,17 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "trade_table"
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "trade_table"
+        }
     },
     "trade_table": {
         "type": "Keymap",
         "sort": "by_component_order",
-        "pre_normalized_types": "file",
-        "normalizer": {
-            "function_name": "open_file"
-        },
         "keys": {
             "format_version": {"type": "str"},
             "defined_in": {"type": "list", "subcomponent": "defined_in"},

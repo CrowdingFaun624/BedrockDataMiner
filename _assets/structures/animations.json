@@ -24,7 +24,7 @@
     },
     "resource_packs": {
         "type": "Dict",
-        "types": ["dict"],
+        "types": ["file"],
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
@@ -38,20 +38,19 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "animations_file"
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/animations_fix_old"
+            },
+            "subcomponent": "animations_file"
+        }
     },
     "animations_file": {
         "type": "Keymap",
-        "pre_normalized_types": "file",
-        "normalizer": [
-            {
-                "function_name": "open_file"
-            },
-            {
-                "function_name": "normalizers/animations_fix_old"
-            }
-        ],
         "sort": "by_component_order",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},

@@ -25,7 +25,7 @@
             "field": "behavior pack",
             "measure_length": true
         },
-        "types": ["TAG_Compound"],
+        "types": ["file"],
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/flat"
         },
@@ -34,8 +34,13 @@
     },
     "cache": {
         "type": "Cache",
-        "subcomponent": "structure",
-        "types": ["TAG_Compound"]
+        "types": ["file"],
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "TAG_Compound",
+            "subcomponent": "structure"
+        }
     },
     "vector_tag_int": {
         "type": "List",
@@ -64,10 +69,6 @@
     "structure": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
-        "pre_normalized_types": "file",
-        "normalizer": {
-            "function_name": "open_file"
-        },
         "sort": "by_component_order",
         "keys": {
             "author": {"type": "TAG_String"},

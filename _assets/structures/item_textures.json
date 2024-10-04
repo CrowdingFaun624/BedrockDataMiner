@@ -8,17 +8,23 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "items"
+        "types": "fake_file",
+        "subcomponent": {
+            "type": "File",
+            "pre_normalized_types": "dict",
+            "file_types": "fake_file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/item_textures_normalize"
+            },
+            "subcomponent": "items"
+        }
     },
     "items": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "item",
             "measure_length": true
-        },
-        "normalizer": {
-            "function_name": "normalizers/item_textures_normalize"
         },
         "types": ["dict"],
         "sort": "by_key",
@@ -40,7 +46,6 @@
     "item": {
         "type": "Keymap",
         "sort": "by_component_order",
-        "pre_normalized_types": "file",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "textures": {"type": ["list", "str"], "subcomponent": "textures_group"}

@@ -8,7 +8,7 @@
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "dict",
+        "types": "file",
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
@@ -20,18 +20,19 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "file"
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "file"
+        }
     },
     "string": {
         "type": "String"
     },
     "file": {
         "type": "Keymap",
-        "pre_normalized_types": "file",
-        "normalizer": {
-            "function_name": "open_file"
-        },
         "keys": {
             "pack_id": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
             "name": {"type": "str"},

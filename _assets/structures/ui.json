@@ -4,7 +4,7 @@
         "delegate_arguments": {
             "name": "ui"
         },
-        "subcomponent": "namespaces"
+        "subcomponent": "cache"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -109,6 +109,20 @@
         },
         "subcomponent": null
     },
+    "cache": {
+        "type": "Cache",
+        "types": "fake_file",
+        "subcomponent": {
+            "type": "File",
+            "pre_normalized_types": "dict",
+            "file_types": "fake_file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/ui_normalize"
+            },
+            "subcomponent": "namespaces"
+        }
+    },
     "namespaces": {
         "type": "Dict",
         "types": "dict",
@@ -116,14 +130,6 @@
             "field": "file",
             "measure_length": true
         },
-        "normalizer": {
-            "function_name": "normalizers/ui_normalize"
-        },
-        "subcomponent": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "types": "dict",
         "subcomponent": "elements"
     },
     "elements": {

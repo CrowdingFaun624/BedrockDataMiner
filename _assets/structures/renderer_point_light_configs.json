@@ -12,24 +12,25 @@
             "field": "file",
             "measure_length": true
         },
-        "types": ["dict"],
+        "types": ["file"],
         "detect_key_moves": true,
         "sort": "by_key",
         "subcomponent": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "file"
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "file"
+        }
     },
     "file": {
         "type": "Keymap",
         "delegate_arguments": {
             "field": "setting"
-        },
-        "pre_normalized_types": "file",
-        "normalizer": {
-            "function_name": "open_file"
         },
         "sort": "by_component_order",
         "imports": "point_light_configuration",

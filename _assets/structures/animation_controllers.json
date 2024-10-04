@@ -34,7 +34,7 @@
             "field": "resource pack",
             "measure_length": true
         },
-        "types": ["dict"],
+        "types": ["file"],
         "detect_key_moves": true,
         "sort": "by_key",
         "post_normalizer": {
@@ -44,20 +44,19 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "animation_controllers_file"
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/animation_controllers_fix_old"
+            },
+            "subcomponent": "animation_controllers_file"
+        }
     },
     "animation_controllers_file": {
         "type": "Keymap",
-        "pre_normalized_types": "file",
-        "normalizer": [
-            {
-                "function_name": "open_file"
-            },
-            {
-                "function_name": "normalizers/animation_controllers_fix_old"
-            }
-        ],
         "sort": "by_component_order",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},

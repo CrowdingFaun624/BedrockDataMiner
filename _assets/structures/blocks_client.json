@@ -4,16 +4,27 @@
         "delegate_arguments": {
             "name": "blocks_client"
         },
-        "subcomponent": "block"
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "fake_file",
+        "subcomponent": {
+            "type": "File",
+            "pre_normalized_types": "dict",
+            "file_types": "fake_file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/blocks_client_normalize"
+            },
+            "subcomponent": "block"
+        }
     },
     "block": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "block",
             "measure_length": true
-        },
-        "normalizer": {
-            "function_name": "normalizers/blocks_client_normalize"
         },
         "types": ["dict"],
         "detect_key_moves": true,

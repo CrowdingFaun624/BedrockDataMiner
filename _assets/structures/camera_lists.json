@@ -17,7 +17,7 @@
     },
     "behavior_packs": {
         "type": "Dict",
-        "types": "dict",
+        "types": "file",
         "delegate_arguments": {
             "field": "behavior pack",
             "measure_length": true
@@ -25,14 +25,20 @@
         "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/flat"
         },
-        "subcomponent": "camera_list"
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "camera_list"
+        }
     },
     "camera_list": {
         "type": "Keymap",
-        "pre_normalized_types": "file",
-        "normalizer": {
-            "function_name": "open_file"
-        },
         "keys": {
             "format_version": {"type": "str"},
             "minecraft:camera_list": {"type": "dict", "weight": 16, "subcomponent": {

@@ -4,11 +4,24 @@
         "delegate_arguments": {
             "name": "items_client_offset"
         },
-        "subcomponent": "resource_packs"
+        "subcomponent": "cache"
     },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "fake_file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "fake_file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/items_client_offset_normalize"
+            },
+            "subcomponent": "resource_packs"
+        }
     },
     "resource_packs": {
         "type": "Dict",
@@ -17,17 +30,9 @@
             "field": "resource pack",
             "measure_length": true
         },
-        "normalizer": [
-            {
-                "function_name": "normalizers/items_client_offset_normalize"
-            },
-            {
-                "function_name": "normalizers/collapse_resource_packs/flat",
-                "arguments": {
-                    "add_defined_in": false
-                }
-            }
-        ],
+        "normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/flat"
+        },
         "subcomponent": "items"
     },
     "items": {

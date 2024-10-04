@@ -4,7 +4,24 @@
         "delegate_arguments": {
             "name": "loading_tips"
         },
-        "subcomponent": "resource_packs"
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "fake_file",
+        "subcomponent": {
+            "type": "File",
+            "pre_normalized_types": "dict",
+            "file_types": "fake_file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/collapse_resource_packs/dict_file",
+                "arguments": {
+                    "add_defined_in": false
+                }
+            },
+            "subcomponent": "resource_packs"
+        }
     },
     "resource_packs": {
         "type": "Dict",
@@ -12,28 +29,13 @@
             "field": "resource pack"
         },
         "types": ["dict"],
-        "post_normalizer": {
-            "function_name": "normalizers/collapse_resource_packs/dict",
-            "arguments": {
-                "add_defined_in": false
-            }
-        },
         "sort": "by_key",
-        "subcomponent": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "types": "dict",
         "subcomponent": "categories"
     },
     "categories": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "category"
-        },
-        "pre_normalized_types": "file",
-        "normalizer": {
-            "function_name": "open_file"
         },
         "types": ["list"],
         "detect_key_moves": true,

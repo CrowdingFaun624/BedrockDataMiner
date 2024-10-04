@@ -53,7 +53,7 @@
         "delegate_arguments": {
             "field": "behavior pack"
         },
-        "types": ["dict"],
+        "types": ["file"],
         "detect_key_moves": true,
         "post_normalizer": {
             "function_name": "normalizers/collapse_resource_packs/flat"
@@ -63,16 +63,17 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "entity"
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "entity"
+        }
     },
     "entity": {
         "type": "Keymap",
         "sort": "by_component_order",
-        "pre_normalized_types": "file",
-        "normalizer": {
-            "function_name": "open_file"
-        },
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},

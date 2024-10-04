@@ -4,22 +4,27 @@
         "delegate_arguments": {
             "name": "credits"
         },
-        "subcomponent": "sections"
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "sections"
+        }
     },
     "sections": {
         "type": "Dict",
-        "pre_normalized_types": "file",
-        "normalizer": [
-            {
-                "function_name": "open_file"
-            },
-            {
-                "function_name": "wrap_in_dict",
-                "arguments": {
-                    "key": "section"
-                }
+        "pre_normalized_types": "list",
+        "normalizer": {
+            "function_name": "wrap_in_dict",
+            "arguments": {
+                "key": "section"
             }
-        ],
+        },
         "delegate_arguments": {
             "field": "section",
             "measure_length": true

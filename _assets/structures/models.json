@@ -4,7 +4,7 @@
         "delegate_arguments": {
             "name": "models"
         },
-        "subcomponent": "files"
+        "subcomponent": "cache"
     },
     "outdated": {
         "type": "Tag"
@@ -48,18 +48,29 @@
             "field": "poly"
         }
     },
+    "cache": {
+        "type": "Cache",
+        "types": "fake_file",
+        "subcomponent": {
+            "type": "File",
+            "pre_normalized_types": "dict",
+            "file_types": "fake_file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/models_model_normalize"
+            },
+            "subcomponent": "files"
+        }
+    },
     "files": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "file",
             "measure_length": true
         },
-        "types": ["dict"],
         "detect_key_moves": true,
         "sort": "by_key",
-        "normalizer": {
-            "function_name": "normalizers/models_model_normalize"
-        },
+        "types": "dict",
         "subcomponent": "resource_packs"
     },
     "resource_packs": {
@@ -74,11 +85,6 @@
         },
         "detect_key_moves": true,
         "sort": "by_key",
-        "subcomponent": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "types": "dict",
         "subcomponent": "model"
     },
     "model": {

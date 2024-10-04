@@ -1,4 +1,4 @@
-from typing import Any, TypedDict
+from typing import TypedDict
 
 from typing_extensions import Required
 
@@ -14,9 +14,11 @@ class ItemTypedDict(TypedDict):
 class FileTypedDict(TypedDict):
     render_offsets: Required[dict[str,ItemTypedDict]]
 
-def items_client_offset_normalize(data:dict[str,File.File[FileTypedDict]]) -> Any:
+def items_client_offset_normalize(data:dict[str,File.File[FileTypedDict]]) -> File.FakeFile[dict[str,dict[str,ItemTypedDict]]]:
     output:dict[str,dict[str,ItemTypedDict]] = {}
+    file_hashes:list[int] = []
     for resource_pack_name, file in data.items():
-        file_data = file.read()
+        file_data = file.data
+        file_hashes.append(hash(file))
         output[resource_pack_name] = file_data["render_offsets"]
-    return output
+    return File.FakeFile("combined_items_client_offset_file", output, hash(tuple(file_hashes)))

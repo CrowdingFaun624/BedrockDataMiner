@@ -17,18 +17,24 @@
     },
     "files": {
         "type": "Dict",
-        "types": "dict",
+        "types": "file",
         "delegate_arguments": {
             "field": "file"
         },
-        "subcomponent": "file"
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "file"
+        }
     },
     "file": {
         "type": "Keymap",
-        "pre_normalized_types": "file",
-        "normalizer": {
-            "function_name": "open_file"
-        },
         "sort": "by_component_order",
         "keys": {
             "data": {"type": "dict", "subcomponent": "main_data_file"},

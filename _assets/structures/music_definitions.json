@@ -8,8 +8,17 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "environment"
+        "types": "fake_file",
+        "subcomponent": {
+            "type": "File",
+            "pre_normalized_types": "dict",
+            "file_types": "fake_file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/music_definitions_normalize"
+            },
+            "subcomponent": "environment"
+        }
     },
     "environment": {
         "type": "Dict",
@@ -17,9 +26,7 @@
             "field": "environment",
             "measure_length": true
         },
-        "normalizer": {
-            "function_name": "normalizers/music_definitions_normalize"
-        },
+        "pre_normalized_types": "dict",
         "types": ["dict"],
         "detect_key_moves": true,
         "sort": "by_key",

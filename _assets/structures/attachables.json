@@ -12,26 +12,25 @@
             "field": "attachable",
             "measure_length": true
         },
-        "types": ["dict"],
+        "types": ["file"],
         "sort": "by_key",
         "subcomponent": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "attachable"
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/attachables_normalize_old"
+            },
+            "subcomponent": "attachable"
+        }
     },
     "attachable": {
         "type": "Keymap",
-        "pre_normalized_types": "file",
-        "normalizer": [
-            {
-                "function_name": "open_file"
-            },
-            {
-                "function_name": "normalizers/attachables_normalize_old"
-            }
-        ],
         "sort": "by_component_order",
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"}, // for attachables_resource_packs

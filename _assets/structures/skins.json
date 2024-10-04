@@ -8,18 +8,24 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "skins_file"
+        "types": "fake_file",
+        "subcomponent": {
+            "type": "File",
+            "pre_normalized_types": "dict",
+            "file_types": "fake_file",
+            "content_types": "dict",
+            "normalizer": {
+                "function_name": "normalizers/skins_normalize",
+                "arguments": {
+                    "other_keys": ["serialize_name", "localization_name"]
+                }
+            },
+            "subcomponent": "skins_file"
+        }
     },
     "skins_file": {
         "type": "Keymap",
         "sort": "by_component_order",
-        "normalizer": {
-            "function_name": "normalizers/skins_normalize",
-            "arguments": {
-                "other_keys": ["serialize_name", "localization_name"]
-            }
-        },
         "keys": {
             "serialize_name": {"type": "dict", "subcomponent": "names"},
             "localization_name": {"type": "dict", "subcomponent": "names"},

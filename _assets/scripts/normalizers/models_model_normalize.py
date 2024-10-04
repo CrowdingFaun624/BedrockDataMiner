@@ -42,11 +42,13 @@ model_file_type2 = dict[str,model2_model_typed_dict]
 
 output_typed_dict = TypedDict("output_typed_dict", {"minecraft:geometry": geometry_typed_dict, "format_version": str})
 
-def models_model_normalize(data:dict[str,dict[str,File.File[model_file_type1|model_file_type2]]]) -> Any:
+def models_model_normalize(data:dict[str,dict[str,File.File[model_file_type1|model_file_type2]]]) -> File.FakeFile[dict[str,dict[str,output_typed_dict]]]:
     output:dict[str,dict[str,output_typed_dict]] = defaultdict(lambda: {})
+    file_hashes:list[int] = []
     for model_file_name, resource_packs in data.items():
         for resource_pack_name, model_file in resource_packs.items():
-            model_file_data = model_file.read()
+            file_hashes.append(hash(model_file))
+            model_file_data = model_file.data
             if "minecraft:geometry" in model_file_data:
                 model_file_data = cast(model_file_type1, model_file_data)
                 format_version = model_file_data["format_version"]
@@ -74,4 +76,4 @@ def models_model_normalize(data:dict[str,dict[str,File.File[model_file_type1|mod
                         "format_version": format_version,
                         "minecraft:geometry": model_data,
                     }
-    return output
+    return File.FakeFile("combined_models_file", output, hash(tuple(file_hashes)))

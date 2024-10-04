@@ -96,7 +96,7 @@ def trace_exists(object:Mapping[str,Any], trace:tuple[str,...]) -> bool:
         else: return False
     return True
 
-def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> MySoundsJsonTypedDict:
+def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> File.FakeFile[MySoundsJsonTypedDict]:
     output:MySoundsJsonTypedDict = {
         "individual_event_sounds": {
             "volume": {}, # must exist to appease pylance
@@ -124,8 +124,10 @@ def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> MySo
             },
         },
     }
+    file_hashes:list[int] = []
     for pack_name, sounds_json_file in data.items():
-        sounds_json = sounds_json_file.read()
+        file_hashes.append(hash(sounds_json_file))
+        sounds_json = sounds_json_file.data
         if trace_exists(sounds_json, ("individual_event_sounds",)):
             merge_collection(pack_name, output["individual_event_sounds"], sounds_json["individual_event_sounds"])
         if trace_exists(sounds_json, ("block_sounds",)):
@@ -140,4 +142,4 @@ def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> MySo
             merge_collection(pack_name, output["interactive_sounds"]["entity_sounds"]["defaults"], sounds_json["interactive_sounds"]["entity_sounds"]["defaults"])
         if trace_exists(sounds_json, ("interactive_sounds", "entity_sounds", "entities")):
             merge_collections(pack_name, output["interactive_sounds"]["entity_sounds"]["entities"], sounds_json["interactive_sounds"]["entity_sounds"]["entities"])
-    return output
+    return File.FakeFile("combined_sounds_json_file", output, hash(tuple(file_hashes)))

@@ -8,8 +8,13 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "dict",
-        "subcomponent": "images"
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "images"
+        }
     },
     "images": {
         "type": "Dict",
@@ -17,19 +22,13 @@
             "field": "image",
             "measure_length": true
         },
-        "pre_normalized_types": "file",
-        "normalizer": [
-            {
-                "function_name": "open_file"
-            },
-            {
-                "function_name": "wrap_in_dict",
-                "arguments": {
-                    "key": "name",
-                    "delete": true
-                }
+        "normalizer": {
+            "function_name": "wrap_in_dict",
+            "arguments": {
+                "key": "name",
+                "delete": true
             }
-        ],
+        },
         "types": ["dict"],
         "sort": "by_key",
         "subcomponent": "image"
