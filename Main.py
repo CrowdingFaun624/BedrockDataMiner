@@ -100,8 +100,9 @@ if __name__ == "__main__":
     main()
 
 pass
-# TODO: because it removes suffixes, it could have a duplicate file. prevent this.
-# TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
+# TODO: make all_files get hashes of files
+# TODO: rescan all versions
 
+# TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
 # TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions
 # TODO: make more domains
