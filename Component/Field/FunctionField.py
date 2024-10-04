@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class FunctionField(Field.Field):
 
-    def __init__(self, function_name:str, path:list[str|int]) -> None:
+    def __init__(self, function_name:str, path:list[str|int], ignore_parameters:set[str]|None=None) -> None:
         '''
         :function_name: The name of the function this refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
@@ -20,7 +20,7 @@ class FunctionField(Field.Field):
         self.function_name = function_name
         self.function:Callable|None = None
         self.arguments_to_check:dict[str,Any] = {}
-        self.ignore_parameters:set[str] = set()
+        self.ignore_parameters:set[str] = set() if ignore_parameters is None else ignore_parameters
 
     def set_field(
         self,

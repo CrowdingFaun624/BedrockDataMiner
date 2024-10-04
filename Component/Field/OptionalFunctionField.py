@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 class OptionalFunctionField(Field.Field):
 
-    def __init__(self, function_name:str|None, path:list[str|int]) -> None:
+    def __init__(self, function_name:str|None, path:list[str|int], ignore_parameters:set[str]|None=None) -> None:
         '''
         :function_name: The name of the function this refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
@@ -20,7 +20,7 @@ class OptionalFunctionField(Field.Field):
         self.function:Callable|None = None
         self.has_set_function = False
         self.arguments_to_check:dict[str,Any] = {}
-        self.ignore_parameters:set[str] = set()
+        self.ignore_parameters:set[str] = set() if ignore_parameters is None else ignore_parameters
 
     def set_field(
         self,
@@ -54,7 +54,7 @@ class OptionalFunctionField(Field.Field):
             raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_function, self)
         return self.function
 
-    def check(self, source_component: Component.Component) -> list[Exception]:
+    def check(self, source_component: "Component.Component") -> list[Exception]:
         exceptions = super().check(source_component)
         function = self.get_function()
         if function is not None:
