@@ -33,7 +33,7 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
                 output[import_from][import_component_as] = all_components[import_from][import_component_name]
         return output
 
-    def get_output(self, components: dict[str,Component.Component], name: str) -> tuple[StructureBase.StructureBase,list[Component.Component]]:
+    def get_base_component(self, components:dict[str,Component.Component], name:str) -> BaseComponent.BaseComponent:
         base_components:dict[str,BaseComponent.BaseComponent] = {
             component_name: component
             for component_name, component in components.items()
@@ -41,9 +41,13 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
         }
         if len(base_components) != 1:
             raise Exceptions.BaseComponentCountError(name, len(base_components), "(names: [%s])" % (", ".join(base_components.keys()),))
-        base_component = next(iter(base_components.values()))
-        unused_components = self.get_unused_components([base_component], components)
-        return base_component.get_final(), unused_components
+        return next(iter(base_components.values()))
+
+    def get_output(self, components: dict[str,Component.Component], name: str) -> StructureBase.StructureBase:
+        return self.get_base_component(components, name).get_final()
+
+    def get_assumed_used_components(self, components: dict[str, Component.Component], name:str) -> Iterable[Component.Component]:
+        return [self.get_base_component(components, name)]
 
     def get_component_files(self) -> Iterable[Path]:
         return FileManager.STRUCTURES_DIRECTORY.iterdir()

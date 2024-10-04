@@ -27,8 +27,11 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
     def get_component_group_name(self, file_path:Path) -> str:
         return "dataminer_collections"
 
-    def get_output(self, components: dict[str, DataMinerCollectionComponent.DataMinerCollectionComponent], name: str) -> tuple[dict[str, DataMinerCollection.DataMinerCollection], list[Component.Component]]:
-        return {component_name: component.get_final() for component_name, component in components.items() if not component.disabled}, []
+    def get_output(self, components: dict[str, DataMinerCollectionComponent.DataMinerCollectionComponent], name: str) -> dict[str, DataMinerCollection.DataMinerCollection]:
+        return {component_name: component.get_final() for component_name, component in components.items() if not component.disabled}
+
+    def get_assumed_used_components(self, components: dict[str, Component.Component], name:str) -> Iterable[Component.Component]:
+        return components.values()
 
     def get_dependencies(self, dataminer_settings:DataMinerSettings.DataMinerSettings, dataminer_settings_dict:dict[DataMinerCollection.DataMinerCollection,DataMinerSettings.DataMinerSettings], already:set[str]) -> list[str]:
         if dataminer_settings.get_name() in already:

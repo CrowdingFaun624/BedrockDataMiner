@@ -164,13 +164,27 @@ def finalize_components(all_components:dict[str,dict[str,Component.Component]]) 
             component.finalize()
 
 def get_outputs(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> dict[str,Any]:
-    output:dict[str,Any] = {}
+    return {name: importer_environments[name].get_output(components, name) for name, components in all_components.items()}
+
+def check_for_unused_components(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
+    visited_nodes:set[Component.Component] = set()
+    unvisited_nodes:list[Component.Component] = []
     for name, components in all_components.items():
-        importer_environment_output, unused_components = importer_environments[name].get_output(components, name)
-        for unused_component in unused_components:
-            print("Warning: Unused %r in %s." % (unused_component, name))
-        output[name] = importer_environment_output
-    return output
+        unvisited_nodes.extend(importer_environments[name].get_assumed_used_components(components, name))
+    while len(unvisited_nodes) > 0:
+        unvisited_node = unvisited_nodes.pop()
+        if unvisited_node in visited_nodes: continue
+        unvisited_nodes.extend(
+            neighbor
+            for neighbor in unvisited_node.links_to_other_components
+            if neighbor not in visited_nodes
+        )
+        visited_nodes.add(unvisited_node)
+    unused_components:list[Component.Component] = []
+    for components in all_components.values():
+        unused_components.extend(component for component in components.values() if component not in visited_nodes)
+    for unused_component in unused_components:
+        print("Warning: Unused component: %r" % (unused_component,))
 
 def finalize_importer_environments(output:dict[str,Any], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
     for name, component_group_output in output.items():
@@ -202,6 +216,7 @@ def parse_all_component_groups() -> dict[str,Any]:
     check_components(all_components)
     finalize_components(all_components)
     output = get_outputs(all_components, importer_environments)
+    check_for_unused_components(all_components, importer_environments)
     finalize_importer_environments(output, importer_environments)
     check_importer_environments(output, importer_environments)
     return output

@@ -15,8 +15,8 @@ class LatestSlotImporterEnvironment(ImporterEnvironment.ImporterEnvironment[list
     def get_component_files(self) -> Iterable[Path]:
         return [FileManager.LATEST_SLOTS_FILE]
 
-    def get_output(self, components: dict[str, Component.Component], name: str) -> tuple[list[str], list[Component.Component]]:
-        return [component.get_final() for component in components.values()], []
+    def get_output(self, components: dict[str, Component.Component], name: str) -> list[str]:
+        return [component.get_final() for component in components.values()]
 
     def get_component_group_name(self, file_path: Path) -> str:
         return "latest_slots"

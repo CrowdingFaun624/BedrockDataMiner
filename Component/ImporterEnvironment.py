@@ -25,18 +25,18 @@ class ImporterEnvironment(Generic[a]):
         '''
         return {}
 
-    def get_output(self, components:dict[str,Component.Component], name:str) -> tuple[a,list[Component.Component]]:
+    def get_output(self, components:dict[str,Component.Component], name:str) -> a:
         '''
-        Given the Component group, return the intended output from the Component group and a list of unused Components.
+        Given the Component group, return the intended output from the Component group.
         By default, returns the finals of all Components.
         :components: The Components in the current Component group.
         :name: The name of the current Component group.
         '''
         output = {component_name: component.get_final() for component_name, component in components.items()}
         if self.single_component:
-            return output[""], []
+            return output[""]
         else:
-            return output, [] # type: ignore
+            return output # type: ignore
 
     def get_component_files(self) -> Iterable[Path]:
         '''
@@ -44,28 +44,15 @@ class ImporterEnvironment(Generic[a]):
         '''
         ...
 
-    def get_unused_components(self, start_components:list[Component.Component], components:dict[str,Component.Component]) -> list[Component.Component]:
+    def get_assumed_used_components(self, components:dict[str,Component.Component], name:str) -> Iterable[Component.Component]:
         '''
-        Returns a list of unused Components.
-        :start_components: Components that are used and are used to determine which are not used.
-        :components: All Components in this Component group.
+        Returns the Components that are marked as used.
+        :components: All Components in his Component group.
         '''
-        visited_nodes:set[Component.Component] = set()
-        unvisited_nodes = start_components
-        while len(unvisited_nodes) > 0:
-            unvisited_node = unvisited_nodes.pop()
-            if unvisited_node in visited_nodes: continue
-            unvisited_nodes.extend(
-                neighbor
-                for neighbor in unvisited_node.links_to_other_components
-                if neighbor not in visited_nodes
-            )
-            visited_nodes.add(unvisited_node)
-        return [
-            component
-            for component in components.values()
-            if component not in visited_nodes
-        ]
+        if self.single_component:
+            return components.values()
+        else:
+            return ()
 
     def finalize(self, output:a, other_outputs:dict[str,Any]) -> None:
         '''

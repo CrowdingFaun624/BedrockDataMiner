@@ -27,6 +27,9 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
     def get_component_group_name(self, file_path: Path) -> str:
         return "versions"
 
+    def get_assumed_used_components(self, components:dict[str,Component.Component], name:str) -> Iterable[Component.Component]:
+        return components.values()
+
     def finalize(self, output:dict[str, Version.Version], other_outputs:dict[str,Any]) -> None:
         version_tags:dict[str,VersionTag.VersionTag] = other_outputs["version_tags"]
         latest_tags:defaultdict[str,set[VersionTag.VersionTag]] = defaultdict(lambda: set())
