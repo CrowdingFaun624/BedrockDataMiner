@@ -1,12 +1,14 @@
 import json
+import re
 import subprocess
 from typing import Any, TypedDict
 
-import Serializer.Serializer as Serializer
-import Utilities.FileManager as FileManager
-import Utilities.File as File
-import Utilities.FileStorageManager as FileStorageManager
 import Serializer.JsonSerializer as JsonSerializer
+import Serializer.Serializer as Serializer
+import Utilities.File as File
+import Utilities.FileManager as FileManager
+import Utilities.FileStorageManager as FileStorageManager
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 __all__ = ["MaterialBinSerializer"]
 
@@ -18,14 +20,22 @@ class OutputTypedDict(TypedDict):
     data: Any
     passes: dict[str,PassTypedDict]
 
+version_pattern = re.compile(r"")
+
 class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[OutputTypedDict]]):
 
     store_as_file_default = False # The source and output of this thing are huge
     # which is why this thing returns a file.
 
-    def __init__(self, name: str) -> None:
+    type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("version", "a str", True, str),
+    )
+
+    def __init__(self, name: str, version:str) -> None:
         super().__init__(name)
         self.cached_data:dict[str,str]|None = None
+        self.version = version
+        assert not any(char in self.version for char in "\\/:*?\"<>|")
 
     def get_cache(self) -> dict[str,str]:
         if self.cached_data is None:
@@ -57,9 +67,10 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         with open(input_file, "wb") as f:
             f.write(data)
 
+        jar_directory = FileManager.LIB_MATERIAL_BIN_TOOL_DIRECTORY.joinpath("MaterialBinTool-%s-all.jar" % (self.version,))
         command = [
             "java",
-            "-jar", FileManager.LIB_MATERIAL_BIN_TOOL_JAR_FILE,
+            "-jar", jar_directory,
             "-u", input_file,
             "-o", temporary_directory,
         ]
