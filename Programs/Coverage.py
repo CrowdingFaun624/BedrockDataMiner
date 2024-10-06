@@ -54,7 +54,7 @@ def do_version(version:Version.Version, all_files_dataminer:DataMinerCollection.
         print("Skipped coverage report of %r (%i/%i) due to not supporting %r." % (version, version_index, total_versions, all_files_dataminer))
         return
     print("Starting coverage report of %r (%i/%i)" % (version, version_index, total_versions))
-    file_set_list = all_files_dataminer.get_data_file(version)
+    file_set_list:dict[str,str] = all_files_dataminer.get_data_file(version)
     file_set_set = set(file_set_list)
     file_set = FileDataMiner.FileSet(file_set_list)
     version_files_covered:set[str] = set()

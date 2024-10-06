@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict
+from typing import Iterable, Literal, TypedDict
 
 import _assets.scripts.normalizers.collapse_resource_packs.util as collapse_resource_packs
 import DataMiner.DataMiner as DataMiner
@@ -42,7 +42,7 @@ class PacksDataMiner(DataMiner.DataMiner):
         self.name_starts_with = name_starts_with
         self.care_about_packs_existing = care_about_packs_existing
 
-    def do_file_pass(self, file_list:list[str], unrecognized_packs:set[str], packs:list[PackTypedDict], pack_names:set[str], require_subdirectory:bool) -> None:
+    def do_file_pass(self, file_list:Iterable[str], unrecognized_packs:set[str], packs:list[PackTypedDict], pack_names:set[str], require_subdirectory:bool) -> None:
         for file in file_list:
             for directory in self.directory:
                 if not file.startswith(directory): continue
@@ -70,17 +70,17 @@ class PacksDataMiner(DataMiner.DataMiner):
                 packs.append({"name": name, "path": path})
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[PackTypedDict]:
-        file_list:list[str] = environment.dependency_data.get("all_files", self)
+        file_list:dict[str,str] = environment.dependency_data.get("all_files", self)
         packs:list[PackTypedDict] = []
         pack_names:set[str] = set()
         unrecognized_packs:set[str] = set()
 
-        self.do_file_pass(file_list, unrecognized_packs, packs, pack_names, True)
+        self.do_file_pass(file_list.keys(), unrecognized_packs, packs, pack_names, True)
         if self.subdirectory is not None and not self.require_subdirectory:
             # when subdirectory is not None, do a pass first requiring it
             # and then a pass not requiring it so the strictest path is
             # recorded.
-            self.do_file_pass(file_list, unrecognized_packs, packs, pack_names, False)
+            self.do_file_pass(file_list.keys(), unrecognized_packs, packs, pack_names, False)
 
         if len(unrecognized_packs) > 0 and self.care_about_packs_existing:
             raise Exceptions.UnrecognizedPackError(sorted(unrecognized_packs), self.pack_type, self)

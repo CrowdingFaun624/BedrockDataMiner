@@ -22,7 +22,7 @@ class PiecesDataMiner(DataMiner.DataMiner):
         self.ignore_directories = ignore_directories
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[PackTypedDict]:
-        file_list:list[str] = environment.dependency_data.get("all_files", self)
+        file_list:dict[str,str] = environment.dependency_data.get("all_files", self)
         pieces:list[PackTypedDict] = []
         pieces_names:set[str] = set()
 
