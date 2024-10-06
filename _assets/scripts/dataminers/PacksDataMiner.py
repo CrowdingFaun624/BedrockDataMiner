@@ -52,7 +52,7 @@ class PacksDataMiner(DataMiner.DataMiner):
                 name = split_file[0]
                 if self.name_starts_with is not None and not name.startswith(self.name_starts_with):
                     continue
-                has_subdirectory = self.subdirectory is not None and (len(split_file) >= 2 and split_file[1] == self.subdirectory)
+                has_subdirectory = self.subdirectory is not None and (len(split_file) >= 2 and split_file[1] + "/" == self.subdirectory)
                 if self.subdirectory is not None and not has_subdirectory and require_subdirectory:
                     continue
                 if name == "":

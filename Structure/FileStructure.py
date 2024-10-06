@@ -76,6 +76,8 @@ class FileStructure(ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
             raise Exceptions.AttributeNoneError("post_normalizer", self)
         if self.pre_normalized_types is None:
             raise Exceptions.AttributeNoneError("pre_normalized_types", self)
+        if self.file_types is None:
+            raise Exceptions.AttributeNoneError("file_types", self)
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -97,6 +99,10 @@ class FileStructure(ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
                         data = normalizer_output
             except Exception as e:
                 exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
+        
+        if not isinstance(data, self.file_types): # quite often are there bugs that cause data not to be a file.
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.file_types, type(data), "Data"), self.name, None, data))
+            return None, exceptions
 
         if self.structure is not None:
             normalizer_output, new_exceptions = self.structure.normalize(data.data, environment)

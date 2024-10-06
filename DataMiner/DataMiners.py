@@ -94,7 +94,7 @@ def run(
         else:
             if print_messages:
                 print("Successfully stored %s for %s." % (dataminer.name, version))
-    if len(failure_dataminers) > 0:
+    if len(failure_dataminers) > 0 and print_messages:
         print("Failed to store dataminers: [%s]" % (", ".join(dataminer[0].name for dataminer in failure_dataminers),))
     return failure_dataminers
 
