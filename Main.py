@@ -105,7 +105,6 @@ if __name__ == "__main__":
     main()
 
 pass
-# TODO: make all_files get hashes of files
 # TODO: rescan all versions
 
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
