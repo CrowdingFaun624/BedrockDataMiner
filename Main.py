@@ -18,6 +18,7 @@
 # import Utilities.Nbt.NbtReader as NbtReader
 # import Utilities.Scripts as Scripts
 # import Utilities.StoredVersionsManager as StoredVersionsManager
+# import Utilities.Test as Tests
 # ''')
 # with open(Path("./time_report.txt"), "wt") as stream:
 #     stats = pstats.Stats(profile, stream=stream)
@@ -26,7 +27,7 @@
 import threading
 from typing import Any, Callable
 
-PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "CustomJson", "DataMiners", "FileSummary", "GetFile", "NbtReader", "Scripts", "StoredVersions", "TestStructures", "UrlValidator"]
+PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "CustomJson", "DataMiners", "FileSummary", "GetFile", "NbtReader", "Scripts", "StoredVersions", "Tests", "UrlValidator"]
 
 user_input_lock = threading.Lock()
 
@@ -58,6 +59,7 @@ import Utilities.FileManager as FileManager
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Scripts as Scripts
 import Utilities.StoredVersionsManager as StoredVersionsManager
+import Utilities.Test.Tests as Tests
 
 PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "AllVersions": AllVersions.main,
@@ -71,7 +73,7 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "NbtReader": NbtReader.main,
     "Scripts": Scripts.main,
     "StoredVersions": StoredVersionsManager.main,
-    "TestStructures": DataMiners.test_structures,
+    "Tests": Tests.main,
     "UrlValidator": UrlValidator.main,
 }
 

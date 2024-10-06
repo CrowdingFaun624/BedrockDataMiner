@@ -98,12 +98,6 @@ def run(
         print("Failed to store dataminers: [%s]" % (", ".join(dataminer[0].name for dataminer in failure_dataminers),))
     return failure_dataminers
 
-def test_structures() -> None:
-    for dataminer in dataminers:
-        print("%s:" % (dataminer.name))
-        print(dataminer.structure)
-    print("All structures successfully parsed.")
-
 def user_interface() -> None:
     version_names = Importer.versions
     all_dataminers_dict = {dataminer.name: dataminer for dataminer in dataminers}

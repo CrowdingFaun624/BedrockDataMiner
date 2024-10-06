@@ -54,6 +54,9 @@ class StructureBase():
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.name)
 
+    def __hash__(self) -> int:
+        return hash(self.name)
+
     def get_structure(self) -> Structure.Structure:
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
