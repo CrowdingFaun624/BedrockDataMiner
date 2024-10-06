@@ -6,7 +6,7 @@ import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMiners as DataMiners
 import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Test.TestUtil as TestUtil
+import Programs.Test.TestUtil as TestUtil
 import Version.Version as Version
 
 if TYPE_CHECKING:

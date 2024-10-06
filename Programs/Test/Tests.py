@@ -1,8 +1,8 @@
-import Utilities.Test.DataMinerClassesTest as DataMinerClassesTest
-import Utilities.Test.DataMinerCollectionTest as DataMinerCollectionTest
-import Utilities.Test.DataMinerSettingsTest as DataMinerSettingsTest
-import Utilities.Test.StructureTest as StructureTest
-import Utilities.Test.TestUtil as TestUtil
+import Programs.Test.DataMinerClassesTest as DataMinerClassesTest
+import Programs.Test.DataMinerCollectionTest as DataMinerCollectionTest
+import Programs.Test.DataMinerSettingsTest as DataMinerSettingsTest
+import Programs.Test.StructureTest as StructureTest
+import Programs.Test.TestUtil as TestUtil
 
 
 def main() -> None:

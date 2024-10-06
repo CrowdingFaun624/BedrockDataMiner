@@ -12,13 +12,13 @@
 # import Programs.Coverage as Coverage
 # import Programs.FileSummary as FileSummary
 # import Programs.GetFile as GetFile
+# import Programs.Test.Tests as Tests
 # import Programs.UrlValidator as UrlValidator
 # import Utilities.CustomJson as CustomJson
 # import Utilities.FileManager as FileManager
 # import Utilities.Nbt.NbtReader as NbtReader
 # import Utilities.Scripts as Scripts
 # import Utilities.StoredVersionsManager as StoredVersionsManager
-# import Utilities.Test as Tests
 # ''')
 # with open(Path("./time_report.txt"), "wt") as stream:
 #     stats = pstats.Stats(profile, stream=stream)
@@ -53,13 +53,13 @@ import Programs.CompareAll as CompareAll
 import Programs.Coverage as Coverage
 import Programs.FileSummary as FileSummary
 import Programs.GetFile as GetFile
+import Programs.Test.Tests as Tests
 import Programs.UrlValidator as UrlValidator
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Scripts as Scripts
 import Utilities.StoredVersionsManager as StoredVersionsManager
-import Utilities.Test.Tests as Tests
 
 with open(FileManager.STRUCTURE_LOG_FILE, "wt") as f:
     f.write("")
