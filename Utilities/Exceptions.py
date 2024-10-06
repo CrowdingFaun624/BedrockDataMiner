@@ -107,7 +107,7 @@ class FileHashNotFound(Exception):
         self.message = message
 
     def __str__(self) -> str:
-        output = "File with hash \"%s\" does not exist!" % (self.unknown_hash,)
+        output = "File with hash \"%s\" does not exist" % (self.unknown_hash,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -260,7 +260,7 @@ class ComponentDuplicateTypeError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Type \"%s\", as referenced by %r, is duplicated!" % (self.type_str, self.source)
+        output = "Type \"%s\", as referenced by %r, is duplicate!" % (self.type_str, self.source)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -870,7 +870,7 @@ class InvalidSpecialTypeError(CustomJsonException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Invalid $special_type of \"%s\" received!" % (self.special_type)
+        output = "Invalid $special_type of \"%s\" received" % (self.special_type)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
