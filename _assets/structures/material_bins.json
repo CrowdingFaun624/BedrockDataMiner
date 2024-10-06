@@ -69,10 +69,10 @@
         "sort": "by_component_order",
         "keys": {
             "reg": {"type": "int"},
-            "access": {"type": "str"},
+            "access": {"type": ["str", "int"]},
             "precision": {"type": "int"},
             "allowUnorderedAccess": {"type": "bool"},
-            "type": {"type": "str"},
+            "type": {"type": ["str", "int"]},
             "textureFormat": {"type": "str"},
             "unknownInt": {"type": "int"},
             "unknownByte": {"type": "int"},
@@ -80,6 +80,7 @@
             "unknownByte2": {"type": "int"},
             "hasDefaultTexture": {"type": "bool"},
             "defaultTexture": {"type": "str"},
+            "hasUnknownInt": {"type": "bool"},
             "hasUnknownString": {"type": "bool"},
             "hasCustomTypeInfo": {"type": "bool"},
             "customTypeInfo": {"type": "dict", "subcomponent": "custom_type_info"}
@@ -151,10 +152,26 @@
         "type": "Keymap",
         "keys": {
             "bitSet": {"type": "str"},
+            "defaultFlagModes": {"type": "dict", "subcomponent": "default_flag_modes"},
             "fallback": {"type": "str"},
-            "hasDefaultBlendMode": {"type": "bool"},
             "flagDefaultValues": {"type": "dict", "subcomponent": "flag_values"},
+            "graphicsProfile": {"type": "int"},
+            "hasBitSet": {"type": "bool"},
+            "hasBlendMode": {"type": "bool"},
+            "hasDefaultBlendMode": {"type": "bool"},
             "variantList": {"type": "list", "subcomponent": "variant_list"}
+        }
+    },
+    "default_flag_modes": {
+        "type": "Dict",
+        "types": ["str"],
+        "delegate_arguments": {
+            "field": "flag mode",
+            "measure_length": true
+        },
+        "subcomponent": null,
+        "key_component": {
+            "type": "String"
         }
     },
     "flag_values": {
@@ -179,7 +196,24 @@
         "keys": {
             "isSupported": {"type": "bool"},
             "flags": {"type": "dict", "subcomponent": "flag_values"},
+            "flagModeList": {"type": "list", "subcomponent": "flag_mode_list"},
             "shaderCodes": {"type": "list", "subcomponent": "shader_codes_list"}
+        }
+    },
+    "flag_mode_list": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "flag mode",
+            "measure_length": true
+        },
+        "subcomponent": "flag_mode"
+    },
+    "flag_mode": {
+        "type": "Keymap",
+        "keys": {
+            "key": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "value": {"type": "str"}
         }
     },
     "shader_codes_list": {

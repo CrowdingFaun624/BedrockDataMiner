@@ -20,6 +20,7 @@ class MyGrabMultipleFilesDataMiner(GrabMultipleFilesDataMiner.GrabMultipleFilesD
         TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataMiner.location_item_function)),
         TypeVerifier.TypedDictKeyTypeVerifier("ignore_files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("reverse", "a bool", False, bool),
     )
 
     def initialize(
@@ -31,17 +32,23 @@ class MyGrabMultipleFilesDataMiner(GrabMultipleFilesDataMiner.GrabMultipleFilesD
         find_none_okay:bool=False,
         ignore_subdirectories:list[str]|None=None,
         ignore_files:list[str]|None=None,
-        insert_pack:str|None=None
+        insert_pack:str|None=None,
+        reverse:bool=False,
     ) -> None:
         super().initialize(location, ignore_suffixes, suffixes, unrecognized_suffix_okay, find_none_okay, ignore_subdirectories, ignore_files)
         self.insert_pack = insert_pack
+        self.reverse = reverse
 
     def get_output(self, files: dict[str, bytes], accessor: Accessor.DirectoryAccessor, environment: DataMinerEnvironment.DataMinerEnvironment) -> dict[str, File.File|Any]:
-        output:dict[str,File.File|Any] = {}
+        output:dict[str,Any] = {}
         for (relative_name, file_name), file_bytes in files.items():
             file_data = self.export_file(file_bytes, file_name)
             if self.insert_pack is None:
                 output[relative_name] = file_data
+            elif self.reverse:
+                if self.insert_pack not in output:
+                    output[self.insert_pack] = {}
+                output[self.insert_pack][relative_name] = file_data
             else:
                 output[relative_name] = {self.insert_pack: file_data}
         return output

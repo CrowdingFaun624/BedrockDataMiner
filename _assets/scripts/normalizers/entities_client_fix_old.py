@@ -49,7 +49,6 @@ output_client_entity_typed_dict = TypedDict("output_client_entity_typed_dict", {
 })
 
 output_type = TypedDict("output_type", {
-    "defined_in": list[str],
     "minecraft:client_entity": output_client_entity_typed_dict,
 })
 
@@ -58,7 +57,6 @@ def entities_client_fix_old(data:input_type|output_type) -> output_type|None:
         return None
     client_entity_identifier = list(data.keys())[0]
     output:output_type = {
-        "defined_in": cast(list[str], data["defined_in"]),
         "minecraft:client_entity": {
             "description": data[client_entity_identifier]
         }

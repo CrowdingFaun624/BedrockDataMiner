@@ -9,44 +9,48 @@
                 "from": "structures/models",
                 "components": [
                     {
-                        "component": "geometry"
+                        "component": "model"
                     }
                 ]
             }
         ],
-        "subcomponent": "skin_packs"
-    },
-    "skin_packs": {
-        "type": "Dict",
-        "types": "file",
-        "delegate_arguments": {
-            "field": "skin pack"
-        },
         "subcomponent": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
+        "types": "fake_file",
         "subcomponent": {
             "type": "File",
-            "file_types": "file",
+            "pre_normalized_types": "dict",
+            "file_types": "fake_file",
             "content_types": "dict",
-            "subcomponent": "geometry_file"
+            "normalizer": {
+                "function_name": "normalizers/models_model_normalize"
+            },
+            "subcomponent": "files"
         }
     },
-    "geometry_file": {
-        "type": "Keymap",
-        "keys": {
-            "format_version": {"type": "str"},
-            "minecraft:geometry": {"type": "list", "subcomponent": "geometries"}
-        }
-    },
-    "geometries": {
-        "type": "Set",
-        "types": "dict",
+    "files": {
+        "type": "Dict",
         "delegate_arguments": {
-            "field": "model"
+            "field": "file",
+            "measure_length": true
         },
-        "subcomponent": "geometry"
+        "detect_key_moves": true,
+        "sort": "by_key",
+        "types": "dict",
+        "subcomponent": "skin_packs"
+    },
+    "skin_packs": {
+        "type": "Dict",
+        "delegate_arguments": {
+            "field": "skin pack",
+            "measure_length": true
+        },
+        "types": ["dict"],
+        // cannot have collapse_resource_packs normalizer
+        "detect_key_moves": true,
+        "sort": "by_key",
+        "subcomponent": "model"
     }
 }

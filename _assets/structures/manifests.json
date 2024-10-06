@@ -6,13 +6,23 @@
         },
         "subcomponent": "packs"
     },
+    "outdated": {
+        "type": "Tag"
+    },
     "version": {
-        "type": "List",
-        "subcomponent": null,
-        "types": "int",
-        "delegate_arguments": {
-            "print_flat": true,
-            "print_all": true
+        "type": "Group",
+        "subcomponents": {
+            "float": null,
+            "str": null,
+            "list": {
+                "type": "List",
+                "subcomponent": null,
+                "types": "int",
+                "delegate_arguments": {
+                    "print_flat": true,
+                    "print_all": true
+                }
+            }
         }
     },
     "packs": {
@@ -37,11 +47,18 @@
         "type": "Keymap",
         "sort": "by_component_order",
         "keys": {
-            "format_version": {"type": "int"},
+            "format_version": {"type": ["int", "float"]},
             "header": {"type": "dict", "subcomponent": "header", "delegate_arguments": {"always_print": true}, "weight": 12},
             "modules": {"type": "list", "subcomponent": "modules"},
             "dependencies": {"type": "list", "subcomponent": "dependencies"},
-            "capabilities": {"type": "list", "subcomponent": "capabilities"}
+            "capabilities": {"type": "list", "subcomponent": "capabilities"},
+            "description": {"type": "str", "tags": ["outdated"]},
+            "key_art_path": {"type": "str", "tags": ["outdated"]},
+            "name": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "tags": ["outdated"]},
+            "pack_id": {"type": "str", "tags": ["outdated"]},
+            "packs_version": {"type": "str", "tags": ["outdated"]},
+            "screenshots": {"type": "list", "subcomponent": "screenshots", "tags": ["outdated"]},
+            "store_offer_name": {"type": "str"}
         }
     },
     "header": {
@@ -52,9 +69,16 @@
             "name": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
             "type": {"type": "str"},
             "uuid": {"type": "str", "delegate_arguments": {"always_print": true}, "weight": 12},
-            "version": {"type": "list", "subcomponent": "version"},
-            "min_engine_version": {"type": "list", "subcomponent": "version"},
-            "pack_scope": {"type": "str"}
+            "version": {"type": ["list", "float", "str"], "subcomponent": "version"},
+            "min_engine_version": {"type": ["list", "float", "str"], "subcomponent": "version"},
+            "pack_scope": {"type": "str"},
+            "pack_id": {"type": "str", "tags": ["outdated"]},
+            "packs_version": {"type": "str", "tags": ["outdated"]},
+            "store_offer_name": {"type": "str", "tags": ["outdated"]},
+            "key_art_path": {"type": "str", "tags": ["outdated"]},
+            "screenshots": {"type": "list", "subcomponent": "screenshots", "tags": ["outdated"]},
+            "modules": {"type": "list", "subcomponent": "modules"},
+            "dependencies": {"type": "list", "subcomponent": "dependencies"}
         }
     },
     "modules": {
@@ -81,6 +105,21 @@
         },
         "subcomponent": {
             "type": "String"
+        }
+    },
+    "screenshots": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "screenshot",
+            "measure_length": true
+        },
+        "subcomponent": "screenshot"
+    },
+    "screenshot": {
+        "type": "Keymap",
+        "keys": {
+            "path": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     }
 }

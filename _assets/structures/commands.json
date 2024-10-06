@@ -6,6 +6,9 @@
         },
         "subcomponent": "files"
     },
+    "outdated": {
+        "type": "Tag"
+    },
     "files": {
         "type": "Dict",
         "types": "file",
@@ -98,6 +101,7 @@
     "input": {
         "type": "Keymap",
         "keys": {
+            "required_arguments": {"type": "int", "tags": ["outdated"]},
             "parameters": {"type": "list", "subcomponent": "parameters"}
         }
     },
@@ -142,17 +146,23 @@
     "output": {
         "type": "Keymap",
         "keys": {
-            "format_strings": {"type": "list", "subcomponent": "format_strings"},
+            "format_strings": {"type": ["list", "str"], "subcomponent": "format_strings"},
             "parameters": {"type": "list", "subcomponent": "parameters"}
         }
     },
     "format_strings": {
-        "type": "Set",
-        "types": "dict",
-        "delegate_arguments": {
-            "field": "format string"
-        },
-        "subcomponent": "format_string"
+        "type": "Group",
+        "subcomponents": {
+            "list": {
+                "type": "Set",
+                "types": "dict",
+                "delegate_arguments": {
+                    "field": "format string"
+                },
+                "subcomponent": "format_string"
+            },
+            "str": null
+        }
     },
     "format_string": {
         "type": "Keymap",

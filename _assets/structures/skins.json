@@ -34,10 +34,26 @@
     },
     "names": {
         "type": "Dict",
-        "types": "str",
-        "subcomponent": null,
+        "types": ["str", "list"],
         "delegate_arguments": {
             "field": "skin pack"
+        },
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "str": null,
+                "list": {
+                    "type": "Set",
+                    "types": "str",
+                    "delegate_arguments": {
+                        "field": "name",
+                        "measure_length": true
+                    },
+                    "subcomponent": {
+                        "type": "String"
+                    }
+                }
+            }
         }
     },
     "skins": {
@@ -52,11 +68,15 @@
         "type": "Keymap",
         "sort": "by_component_order",
         "keys": {
-            "localization_name": {"type": "str", "subcomponent": {"type": "String"}, "weight": 6},
-            "geometry": {"type": "str", "subcomponent": {"type": "String"}},
-            "texture": {"type": "str", "subcomponent": {"type": "String"}},
+            "cape": {"type": "str", "subcomponent": "string"},
+            "localization_name": {"type": "str", "subcomponent": "string", "weight": 6},
+            "geometry": {"type": "str", "subcomponent": "string"},
+            "texture": {"type": "str", "subcomponent": "string"},
             "type": {"type": "str"},
             "defined_in": {"type": "str"}
         }
+    },
+    "string": {
+        "type": "String"
     }
 }

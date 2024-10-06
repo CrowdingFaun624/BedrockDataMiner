@@ -28,6 +28,10 @@
     "file": {
         "type": "Keymap",
         "sort": "by_component_order",
+        "pre_normalized_types": ["dict", "list"],
+        "normalizer": {
+            "function_name": "normalizers/renderer_options_normalize_mappings"
+        },
         "keys": {
             "global_settings": {"type": "dict", "subcomponent": "global_settings"},
             "shaders": {"type": "list", "subcomponent": "shaders"},
@@ -69,11 +73,26 @@
         "keys": {
             "name": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 4},
             "vertexShader": {"type": "str"},
-            "fragment_shader": {"type": "str"}
+            "fragment_shader": {"type": "str"},
+            "fragmentShader": {"type": "str"},
+            "defines": {"type": "list", "subcomponent": "defines"}
+        }
+    },
+    "defines": {
+        "type": "Set",
+        "sort": true,
+        "types": "str",
+        "subcomponent": {
+            "type": "String"
+        },
+        "delegate_arguments": {
+            "field": "definition",
+            "measure_length": true
         }
     },
     "mappings": {
         "type": "Dict",
+        "pre_normalized_types": "list",
         "normalizer": {
             "function_name": "normalizers/renderer_options_dragon_normalize"
         },

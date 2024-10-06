@@ -87,6 +87,17 @@
         "keys": {
             "defined_in": {"type": "list", "subcomponent": "defined_in"},
             "format_version": {"type": "str"},
+            "activation_rule": {"type": "dict", "subcomponent": "activation_rule", "tags": ["outdated"]},
+            "blend_in_default": {"type": "dict", "subcomponent": "component.camera_blend_in_default"},
+            "faces_player_front": {"type": "bool", "tags": ["outdated"]},
+            "far_clipping_plane": {"type": "decimal", "tags": ["outdated"]},
+            "field_of_view": {"type": "decimal", "tags": ["outdated"]},
+            "near_clipping_plane": {"type": "decimal", "tags": ["outdated"]},
+            "player_rotation_offset": {"type": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
+            "priority": {"type": "int", "tags": ["outdated"]},
+            "render_first_person_objects": {"type": "bool", "tags": ["outdated"]},
+            "render_player_model": {"type": "bool", "tags": ["outdated"]},
+            "behaviors": {"type": "dict", "subcomponent": "behaviors", "tags": ["outdated"]},
             "minecraft:camera_entity": {"type": "dict", "subcomponent": {
                 "type": "Keymap",
                 "sort": "by_component_order",
@@ -95,6 +106,13 @@
                     "components": {"type": "dict", "subcomponent": "components"}
                 }
             }}
+        }
+    },
+    "activation_rule": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"type": "str"},
+            "camera_option": {"type": "str"}
         }
     },
     "description": {
@@ -147,6 +165,25 @@
             "minecraft:vr_comfort_move": {"type": "dict", "subcomponent": "empty_dict"}
         }
     },
+    "behaviors": {
+        "type": "Keymap",
+        "tags": ["outdated"],
+        "keys": {
+            "attach": {"type": "dict", "subcomponent": "component.camera_attach_to_player"},
+            "avoidance": {"type": "dict", "subcomponent": "component.camera_avoidance"},
+            "bob": {"type": "dict", "subcomponent": "empty_dict"},
+            "comfort_move": {"type": "dict", "subcomponent": "empty_dict"},
+            "first_person_look": {"type": "dict", "subcomponent": "component.camera_direct_look"},
+            "fly": {"type": "dict", "subcomponent": "component.fly"},
+            "liquid_offset": {"type": "dict", "subcomponent": "empty_dict"},
+            "look_at": {"type": "dict", "subcomponent": "component.camera_look_at_player"},
+            "orbit": {"type": "dict", "subcomponent": "component.camera_orbit"},
+            "portal": {"type": "dict", "subcomponent": "empty_dict"},
+            "ride_rotation": {"type": "dict", "subcomponent": "empty_dict"},
+            "sleep": {"type": "dict", "subcomponent": "component.sleep"},
+            "sneak": {"type": "dict", "subcomponent": "component.camera_sneak_offset"}
+        }
+    },
     "component.camera": {
         "type": "Keymap",
         "sort": "by_key",
@@ -176,6 +213,7 @@
         "sort": "by_key",
         "keys": {
             "blend_time": {"type": "decimal"},
+            "ease": {"type": "str", "tags": ["outdated"]},
             "camera_from_accepts_input": {"type": "bool"},
             "camera_to_accepts_input": {"type": "bool"}
         }
@@ -245,8 +283,10 @@
         "type": "Keymap",
         "sort": "by_key",
         "keys": {
+            "camera_interpolation_rate": {"type": "decimal", "tags": ["outdated"]},
             "interpolation_rate": {"type": "decimal"},
-            "offset": {"type": "decimal"}
+            "offset": {"type": "decimal"},
+            "sneak_offset": {"type": "decimal", "tags": ["outdated"]}
         }
     },
     "component.camera_third_person_boom": {
@@ -256,6 +296,22 @@
             "rotation_space": {"type": "str"},
             "starting_radius": {"type": "decimal"},
             "starting_rot": {"type": "list", "subcomponent": "rotation_decimal"}
+        }
+    },
+    "component.fly": {
+        "type": "Keymap",
+        "keys": {
+            "speed": {"type": "decimal"},
+            "speed_alt": {"type": "decimal"}
+        }
+    },
+    "component.sleep": {
+        "type": "Keymap",
+        "keys": {
+            "offset": {"type": "list", "subcomponent": "vector_decimal"},
+            "pre_rotation_offset": {"type": "list", "subcomponent": "vector_decimal"},
+            "pre_rotation_offset_vr": {"type": "list", "subcomponent": "vector_decimal"},
+            "post_rotation_offset": {"type": "list", "subcomponent": "vector_decimal"}
         }
     },
     "component.stationary_camera": {

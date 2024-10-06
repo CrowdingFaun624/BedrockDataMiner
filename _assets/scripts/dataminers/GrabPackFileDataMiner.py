@@ -19,13 +19,15 @@ class GrabPackFileDataMiner(FileDataMiner.FileDataMiner):
         TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs", "skin_packs", "emotes", "pieces"))),
         TypeVerifier.TypedDictKeyTypeVerifier("ignore_packs", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("insert_file_name", "a str", False, str),
     )
 
-    def initialize(self, location:str|list[str], pack_type:Literal["resource_packs", "behavior_packs", "skin_packs", "emotes", "pieces"], find_none_okay:bool=False, ignore_packs:list[str]|None=None) -> None:
+    def initialize(self, location:str|list[str], pack_type:Literal["resource_packs", "behavior_packs", "skin_packs", "emotes", "pieces"], find_none_okay:bool=False, ignore_packs:list[str]|None=None, insert_file_name:str|None=None) -> None:
         self.location = [location] if isinstance(location, str) else location
         self.pack_type = pack_type
         self.find_none_okay = find_none_okay
         self.ignore_packs:set[str] = set(ignore_packs) if ignore_packs is not None else set()
+        self.insert_file_name = insert_file_name
 
     def get_coverage(self, file_set:FileDataMiner.FileSet, environment: DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
         packs = [pack["path"] for pack in self.get_packs(environment) if pack["name"] not in self.ignore_packs]
@@ -57,7 +59,10 @@ class GrabPackFileDataMiner(FileDataMiner.FileDataMiner):
         return files
 
     def get_output(self, files:dict[tuple[str,str],bytes], environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,File.File|Any]:
-        return {pack_name: self.export_file(file_content, file_name) for (pack_name, file_name), file_content in files.items()}
+        if self.insert_file_name is None:
+            return {pack_name: self.export_file(file_content, file_name) for (pack_name, file_name), file_content in files.items()}
+        else:
+            return {self.insert_file_name: {pack_name: self.export_file(file_content, file_name) for (pack_name, file_name), file_content in files.items()}}
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
         accessor = self.get_accessor("client", Accessor.DirectoryAccessor)

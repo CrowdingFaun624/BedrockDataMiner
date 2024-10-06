@@ -1,0 +1,36 @@
+{
+    "base": {
+        "type": "Base",
+        "delegate_arguments": {
+            "name": "languages_contents"
+        },
+        "imports": [
+            {
+                "from": "structures/languages_contents",
+                "components": [
+                    {"component": "cache_keys"}
+                ]
+            }
+        ],
+        "subcomponent": "languages"
+    },
+    "languages": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "language",
+            "measure_length": true
+        },
+        "subcomponent": "packs"
+    },
+    "packs": {
+        "type": "Dict",
+        "delegate_arguments": {
+            "field": "pack",
+            "measure_length": true
+        },
+        "types": ["file"],
+        "sort": "by_key",
+        "subcomponent": "cache_keys"
+    }
+}

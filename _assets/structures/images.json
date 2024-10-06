@@ -30,18 +30,35 @@
         "sort": "by_component_order",
         "keys": {
             "bilinear": {"type": "bool"},
-            "textures": {"type": "list", "subcomponent": "textures"}
+            "textures": {"type": ["list", "dict"], "subcomponent": "textures"}
         }
     },
     "textures": {
-        "type": "Set",
-        "types": "str",
-        "subcomponent": {
-            "type": "String"
-        },
-        "delegate_arguments": {
-            "field": "texture",
-            "measure_length": true
+        "type": "Group",
+        "subcomponents": {
+            "list": {
+                "type": "Set",
+                "types": "str",
+                "subcomponent": {
+                    "type": "String"
+                },
+                "delegate_arguments": {
+                    "field": "texture",
+                    "measure_length": true
+                }
+            },
+            "dict": {
+                "type": "Dict",
+                "types": "str",
+                "subcomponent": null,
+                "key_component": {
+                    "type": "String"
+                },
+                "delegate_arguments": {
+                    "field": "texture",
+                    "measure_length": true
+                }
+            }
         }
     }
 }

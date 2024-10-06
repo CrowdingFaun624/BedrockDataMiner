@@ -62,10 +62,10 @@
         },
         "subcomponent": null
     },
-    "str_or_int_or_vector_int": {
+    "str_or_decimal_or_vector_int": {
         "type": "Group",
         "subcomponents": {
-            "int": null,
+            "decimal": null,
             "list": "vector_int",
             "str": null
         }
@@ -616,7 +616,8 @@
     "common.control": {
         "type": "Keymap",
         "keys": {
-            "alighment": {"type": "str", "tags": ["outdated"]},
+            "+controls": {"type": ["list", "str"], "subcomponent": "controls"},
+            "alignment": {"type": "str", "tags": ["outdated"]},
             "allow_clipping": {"type": ["bool", "str"]},
             "alpha": {"type": ["decimal", "str"]},
             "animation_reset_name": {"type": "str"},
@@ -664,7 +665,8 @@
     "common.data_binding": {
         "type": "Keymap",
         "keys": {
-            "bindings": {"type": ["list", "str"], "subcomponent": "bindings"}
+            "bindings": {"type": ["list", "str"], "subcomponent": "bindings"},
+            "binding_collection_name": {"type": "str", "tags": ["outdated"]}
         }
     },
     "common.dropdown": {
@@ -793,6 +795,8 @@
         "type": "Keymap",
         "keys": {
             "always_handle_scrolling": {"type": ["bool", "str"]},
+            "content_panel": {"type": "str", "tags": ["outdated"]},
+            "dampening": {"type": "float", "tags": ["outdated"]},
             "gesture_control_enabled": {"type": ["bool", "str"]},
             "jump_to_bottom_on_update": {"type": ["bool", "str"]},
             "scroll_box_and_track_panel": {"type": "str"},
@@ -801,6 +805,7 @@
             "scroll_view_port": {"type": "str"},
             "scrollbar_always_visible": {"type": ["bool", "str"]}, // Note: not supported by wiki
             "scrollbar_box": {"type": "str"},
+            "scrollbar_box_track_button": {"type": "str", "tags": ["outdated"]},
             "scrollbar_track": {"type": "str"},
             "scrollbar_touch_button": {"type": "str"},
             "scrollbar_track_button": {"type": "str"},
@@ -835,6 +840,12 @@
             "slider_deselected_button": {"type": "str"},
             "slider_direction": {"type": "str"},
             "slider_name": {"type": "str"},
+            "slider_render_bar_background_color": {"type": "str", "tags": ["outdated"]},
+            "slider_render_bar_background_hover_color": {"type": "str", "tags": ["outdated"]},
+            "slider_render_bar_progress_color": {"type": "str", "tags": ["outdated"]},
+            "slider_render_bar_progress_hover_color": {"type": "str", "tags": ["outdated"]},
+            "slider_render_bar_outline_color": {"type": "str", "tags": ["outdated"]},
+            "slider_render_bar_outline_hover_color": {"type": "str", "tags": ["outdated"]},
             "slider_select_on_hover": {"type": ["bool", "str"]},
             "slider_selected_button": {"type": "str"},
             "slider_small_decrease_button": {"type": "str"},
@@ -876,9 +887,10 @@
             "force_texture_reload": {"type": ["bool", "str"]},
             "grayscale": {"type": ["bool", "str"]},
             "keep_ratio": {"type": ["bool", "str"]},
-            "nineslice_size": {"type": ["int", "list", "str"], "subcomponent": "str_or_int_or_vector_int"},
+            "nineslice_size": {"type": ["decimal", "list", "str"], "subcomponent": "str_or_decimal_or_vector_int"},
             "texture": {"type": "str"},
             "texture_file_system": {"type": "str"},
+            "texture_source": {"type": "str", "tags": ["outdated"]},
             "tiled": {"type": ["bool", "str"]},
             "tiled_scale": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
             "uv": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
@@ -916,9 +928,12 @@
             "locked_alpha": {"type": ["float", "str"]},
             "locked_color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
             "notify_on_ellipses": {"type": "list", "subcomponent": "control_list"},
+            "place_holder_text": {"type": "str", "tags": ["outdated"]},
+            "place_holder_text_color": {"type": "str", "tags": ["outdated"]},
             "shadow": {"type": ["bool", "str"]},
             "text": {"type": "str"},
             "text_alignment": {"type": "str"},
+            "use_place_holder": {"type": ["bool", "str"], "tags": ["outdated"]},
             "wrap": {"type": ["bool", "str"], "tags": ["outdated"]}
         }
     },
@@ -1000,6 +1015,7 @@
         // Note: [common.layout] is not supported by wiki
         "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.tts"],
         "keys": {
+            "debug": {"type": "str", "tags": ["outdated"]},
             "follows_cursor_inside_parent": {"type": "bool"}
         }
     },
@@ -1042,7 +1058,10 @@
         "type": "Keymap",
         "normalizer": "separate_variables",
         // Note: [common.focus] is not supported by wiki
-        "imports": ["common.all", "common.collection", "common.control", "common.data_binding", "common.focus", "common.grid", "common.layout", "common.tts"]
+        "imports": ["common.all", "common.collection", "common.control", "common.data_binding", "common.focus", "common.grid", "common.layout", "common.tts"],
+        "keys": {
+            "factory": {"type": ["dict", "str"], "subcomponent": "factory", "tags": ["outdated"]}
+        }
     },
     "element.grid_item": {
         "type": "Keymap",
@@ -1091,7 +1110,10 @@
         "type": "Keymap",
         "normalizer": "separate_variables",
         // Note: [common.input] is not supported by wiki
-        "imports": ["common.all", "common.control", "common.data_binding", "common.input", "common.layout", "common.screen"]
+        "imports": ["common.all", "common.control", "common.data_binding", "common.input", "common.layout", "common.screen"],
+        "keys": {
+            "factory": {"type": ["dict", "str"], "subcomponent": "factory", "tags": ["outdated"]}
+        }
     },
     "element.scroll_track": {
         "type": "Keymap",
@@ -1106,12 +1128,14 @@
     "element.scrollbar": {
         "type": "Keymap",
         "normalizer": "separate_variables",
-        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout"]
+        // Note: [common.scroll_view, common.sound] is not supported by wiki
+        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.scroll_view", "common.sound"]
     },
     "element.scrollbar_box": {
         "type": "Keymap",
         "normalizer": "separate_variables",
-        "imports": ["common.all", "common.control", "common.input", "common.layout"]
+        // Note: [common.focus, common.sound] is not supported by wiki
+        "imports": ["common.all", "common.control", "common.focus", "common.input", "common.layout", "common.sound"]
     },
     "element.scrollbar_track": {
         "type": "Keymap",
@@ -1149,7 +1173,8 @@
     "element.tab": {
         "type": "Keymap",
         "normalizer": "separate_variables",
-        "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.layout", "common.sound", "common.tab"]
+        // Note: [common.input] is not supported by wiki
+        "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.tab"]
     },
     "element.toggle": {
         "type": "Keymap",

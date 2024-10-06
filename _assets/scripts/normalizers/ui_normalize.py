@@ -4,6 +4,9 @@ import Utilities.File as File
 
 __all__ = ["ui_normalize"]
 
+CONTROLS_KEYS = ["controls", "+controls"]
+'''Keys of items that contain nested elements.'''
+
 def parse_element_name(raw_element_name:str, namespace:str) -> tuple[str,str|None,str|None]:
     '''Returns the element's name, its superclass's namespace, and the superclass's name.'''
     if "@" in raw_element_name:
@@ -72,25 +75,27 @@ def get_element_types(namespaces:dict[str,dict[str,dict[str,Any]]], extensions:d
     return element_types
 
 def parse_element(element_data:dict[str,list[dict[str,Any]]], element_types:dict[str,dict[str,str]], element_name:str, namespace:str) -> None:
-    if "controls" not in element_data: return
-    for control in element_data["controls"]:
-        if not isinstance(control, dict): continue
-        for raw_subelement_name, subelement_data in control.items():
-            subelement_name, subelement_superclass_namespace, subelement_superclass_name = parse_element_name(raw_subelement_name, namespace)
-            if "$" in raw_subelement_name:
-                subelement_type = "unknown"
-            elif "type" in subelement_data:
-                subelement_type = subelement_data["type"]
-            elif "anim_type" in subelement_data:
-                subelement_type = subelement_data["anim_type"]
-            else:
-                assert subelement_superclass_name is not None and subelement_superclass_namespace is not None
-                try:
-                    subelement_type = element_types[subelement_superclass_namespace][subelement_superclass_name]
-                except KeyError:
+    for control_key in CONTROLS_KEYS:
+        if control_key not in element_data:
+            continue
+        for control in element_data[control_key]:
+            if not isinstance(control, dict): continue
+            for raw_subelement_name, subelement_data in control.items():
+                subelement_name, subelement_superclass_namespace, subelement_superclass_name = parse_element_name(raw_subelement_name, namespace)
+                if "$" in raw_subelement_name:
                     subelement_type = "unknown"
-            control[raw_subelement_name] = {subelement_type: subelement_data}
-            parse_element(subelement_data, element_types, element_name, namespace)
+                elif "type" in subelement_data:
+                    subelement_type = subelement_data["type"]
+                elif "anim_type" in subelement_data:
+                    subelement_type = subelement_data["anim_type"]
+                else:
+                    assert subelement_superclass_name is not None and subelement_superclass_namespace is not None
+                    try:
+                        subelement_type = element_types[subelement_superclass_namespace][subelement_superclass_name]
+                    except KeyError:
+                        subelement_type = "unknown"
+                control[raw_subelement_name] = {subelement_type: subelement_data}
+                parse_element(subelement_data, element_types, element_name, namespace)
 
 def parse_elements(namespaces:dict[str,dict[str,dict[str,Any]]], element_types:dict[str,dict[str,str]]) -> None:
     for namespace, elements in namespaces.items():

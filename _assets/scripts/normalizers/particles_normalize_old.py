@@ -15,7 +15,6 @@ particle_effect_typed_dict = TypedDict("particle_effect_typed_dict", {
 
 output_type = TypedDict("output_type", {
     "format_version": str,
-    "defined_in": list[str],
     "particle_effect": particle_effect_typed_dict,
 })
 
@@ -27,7 +26,6 @@ def particles_normalize_old(data:input_type|output_type) -> output_type|None:
     particle_identifier = list(data["particles"].keys())[0]
     output:output_type = {
         "format_version": cast(str, data["format_version"]),
-        "defined_in": cast(list[str], data["defined_in"]),
         "particle_effect": data["particles"][particle_identifier],
     }
     output["particle_effect"]["description"] = {

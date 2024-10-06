@@ -8,14 +8,11 @@ recipe_types = {
     "furnace_recipe": "minecraft:recipe_furnace",
 }
 
-def recipes_fix_old(data:Any) -> Any|None:
+def recipes_fix_old(data:dict[str,Any]) -> dict[str,dict[str,Any]]|None:
     if "type" not in data:
         return None
     new_recipe_type = recipe_types[data["type"]]
-    output = {
-        new_recipe_type: data,
-        "defined_in": data["defined_in"],
-    }
-    del data["defined_in"]
+    output = {new_recipe_type: data}
+    data.pop("defined_in", None)
     del data["type"]
     return output
