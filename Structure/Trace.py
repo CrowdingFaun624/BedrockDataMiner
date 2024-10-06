@@ -62,10 +62,10 @@ class ErrorTrace():
         "Returns a string representing the ErrorTrace. Can only be called after `finalize`."
         if not self.is_final:
             raise Exceptions.TraceError(self, self.stringify, self.is_final)
-        trace_string = ".".join(str(trace_item) for trace_item in self.trace)
+        trace_string = "→".join(str(trace_item) for trace_item in self.trace)
         exception_lines = traceback.format_exception(self.exception)
         if self.data is None:
-            return "Exception at %s:\n%s" % (trace_string, "\n".join(exception_lines))
+            return "Exception at %s:\n%s" % (trace_string, "".join(exception_lines))
         else:
             data_string = str(self.data)
             return "Exception at %s from data %s:\n%s" % (trace_string, data_string, "".join(exception_lines))
