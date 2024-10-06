@@ -61,6 +61,9 @@ import Utilities.Scripts as Scripts
 import Utilities.StoredVersionsManager as StoredVersionsManager
 import Utilities.Test.Tests as Tests
 
+with open(FileManager.STRUCTURE_LOG_FILE, "wt") as f:
+    f.write("")
+
 PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "AllVersions": AllVersions.main,
     "Cleaner": Cleaner.main,

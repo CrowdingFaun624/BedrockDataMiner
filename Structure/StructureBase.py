@@ -72,6 +72,7 @@ class StructureBase():
         :data: The data to manipulate.
         :environment: The PrinterEnvironment to use.
         '''
+        version_tuple:tuple["Version.Version",...] = (environment.version,) if environment.version is not None else ()
         # base normalizer
         exceptions:list[Trace.ErrorTrace] = []
         if self.normalizer is None:
@@ -89,7 +90,7 @@ class StructureBase():
                 if output is None:
                     exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.name, normalizer_index, data))
                     break
-        self.print_exception_list(exceptions)
+        self.print_exception_list(exceptions, version_tuple)
 
         # other normalizers
         if self.structure is None:
@@ -98,7 +99,7 @@ class StructureBase():
         exceptions.extend(new_exceptions)
         if normalizer_output is not None:
             output = normalizer_output
-        self.print_exception_list(exceptions)
+        self.print_exception_list(exceptions, version_tuple)
 
         if self.post_normalizer is None:
             raise Exceptions.AttributeNoneError("post_normalizer", self)
@@ -114,7 +115,7 @@ class StructureBase():
                 if output is None:
                     exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.name, normalizer_index, data))
                     break
-        self.print_exception_list(exceptions)
+        self.print_exception_list(exceptions, version_tuple)
 
         return output
 
@@ -138,13 +139,14 @@ class StructureBase():
         :tag: The tag to search for.
         :environment: The StructureEnvironment to use.
         '''
+        version_tuple:tuple["Version.Version",...] = (environment.version,) if environment.version is not None else ()
         if not self.has_tag(tag):
             return []
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         normalized_data = self.normalize(data, environment)
         output, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.name), environment.structure_environment)
-        self.print_exception_list(new_exceptions)
+        self.print_exception_list(new_exceptions, version_tuple)
         return output
 
     def store(self, report:str, name:str) -> None:
@@ -195,7 +197,7 @@ class StructureBase():
             return "", False
         return self.compare_text(data_comparison, comparison_environment)
 
-    def check_types(self, data:Any, environment:StructureEnvironment.StructureEnvironment) -> None:
+    def check_types(self, data:Any, environment:StructureEnvironment.StructureEnvironment, versions:tuple["Version.Version",...]) -> None:
         '''
         Raises an exception with data about what went wrong if an error occurs.
         :data: The data to check.
@@ -204,16 +206,22 @@ class StructureBase():
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         traces = self.structure.check_all_types(data, environment)
-        self.print_exception_list(traces)
+        self.print_exception_list(traces, versions)
 
-    def print_exception_list(self, traces:list[Trace.ErrorTrace]) -> None:
+    def print_exception_list(self, traces:list[Trace.ErrorTrace], versions:tuple["Version.Version",...]) -> None:
         '''
         Prints all exceptions and traces in list and raises an exception at the end if the list has any items.
         :traces: The ErrorTraces to print.
         '''
+        texts:list[str] = []
         for trace in traces:
-            print(trace.add(self.name, None, force=True).finalize().stringify(), end="\n\n")
+            text = trace.add(self.name, None, force=True).finalize().stringify() + "\n\n"
+            print(text)
+            texts.append(text)
         if len(traces) > 0:
+            with open(FileManager.STRUCTURE_LOG_FILE, "at", encoding="utf-8") as f:
+                f.write("-------- EXCEPTIONS IN %s ON %s --------\n\n" % (self.name, ", ".join(version.name for version in versions)))
+                f.write("".join(texts))
             raise Exceptions.StructureError(self)
 
     def compare(self, data1:Any, data2:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any,bool]:
@@ -226,7 +234,8 @@ class StructureBase():
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         output, has_changes, traces = self.structure.compare(data1, data2, environment)
-        self.print_exception_list(traces)
+        version_tuple:tuple["Version.Version",...] = (environment.version1, environment.version2) if environment.version1 is not None else (environment.version2,)
+        self.print_exception_list(traces, version_tuple)
         return output, has_changes
 
     def compare_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[str,bool]:
@@ -240,7 +249,8 @@ class StructureBase():
             output, has_changes, traces = self.get_structure().compare_text(data, environment)
         else:
             output, has_changes, traces = self.delegate.compare_text(data, environment)
-        self.print_exception_list(traces)
+        version_tuple:tuple["Version.Version",...] = (environment.version1, environment.version2) if environment.version1 is not None else (environment.version2,)
+        self.print_exception_list(traces, version_tuple)
         return output, has_changes
 
     def print_text(self, data:Any, environment:StructureEnvironment.PrinterEnvironment) -> str:
@@ -249,9 +259,10 @@ class StructureBase():
         :data: The object containing no Diffs.
         :environment: The StructureEnvironment to use.
         '''
+        version_tuple:tuple["Version.Version",...] = (environment.version,) if environment.version is not None else ()
         if self.delegate is None:
             output, traces = self.get_structure().print_text(data, environment)
         else:
             output, traces = self.delegate.print_text(data, environment)
-        self.print_exception_list(traces)
+        self.print_exception_list(traces, version_tuple)
         return output
