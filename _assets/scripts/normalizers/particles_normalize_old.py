@@ -1,7 +1,5 @@
 from typing import Any, TypedDict, cast
 
-from typing_extensions import NotRequired
-
 __all__ = ["particles_normalize_old"]
 
 description_typed_dict = TypedDict("description_typed_dict", {

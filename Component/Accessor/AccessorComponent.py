@@ -8,7 +8,6 @@ import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Downloader.Accessor as Accessor
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
-from Utilities.FunctionCaller import WaitValue
 
 if TYPE_CHECKING:
     import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent

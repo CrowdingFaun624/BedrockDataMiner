@@ -1,4 +1,3 @@
-import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern

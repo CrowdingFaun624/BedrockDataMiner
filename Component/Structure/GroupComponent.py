@@ -1,5 +1,4 @@
 import Component.Capabilities as Capabilities
-import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.FieldListField as FieldListField
 import Component.Structure.Field.GroupItemField as GroupItemField

@@ -8,7 +8,6 @@ if TYPE_CHECKING:
     import Component.Capabilities as Capabilities
     import Component.Component as Component
     import Component.ComponentTyping as ComponentTyping
-    import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
     import Component.Field.Field as Field
     import Component.ImporterEnvironment as ImporterEnvironment
     import Component.Pattern as Pattern

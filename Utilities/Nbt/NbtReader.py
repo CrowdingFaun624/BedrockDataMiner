@@ -3,7 +3,6 @@ import traceback
 from typing import BinaryIO
 
 import Utilities.Exceptions as Exceptions
-import Utilities.File as File
 import Utilities.FileManager as FileManager
 import Utilities.Nbt.DataReader as DataReader
 import Utilities.Nbt.Endianness as Endianness

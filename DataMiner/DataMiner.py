@@ -1,5 +1,5 @@
 import json
-from typing import TYPE_CHECKING, Any, NoReturn, TypeVar, overload
+from typing import TYPE_CHECKING, Any, NoReturn, TypeVar
 
 from pathlib2 import Path
 
