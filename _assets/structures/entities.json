@@ -207,9 +207,12 @@
             "weight": {"type": "int"},
             "add": {"type": "dict", "subcomponent": "component_groups_add_remove"},
             "emit_vibration": {"type": "dict", "subcomponent": "event:emit_vibration"},
+            "execute_event_on_home_block": {"type": "dict", "subcomponent": "event"},
             "filters": {"type": "dict", "subcomponent": "filter"},
+            "play_sound": {"type": "dict", "subcomponent": "event:play_sound"},
             "randomize": {"type": "list", "subcomponent": "event:randomize"},
             "remove": {"type": "dict", "subcomponent": "component_groups_add_remove"},
+            "reset_target": {"type": "dict", "subcomponent": "empty"},
             "sequence": {"type": "list", "subcomponent": "event:sequence"},
             "set_property": {"type": "dict", "subcomponent": "event:set_property"}
         }
@@ -258,6 +261,12 @@
         "type": "Keymap",
         "keys": {
             "vibration": {"type": "str"}
+        }
+    },
+    "event:play_sound": {
+        "type": "Keymap",
+        "keys": {
+            "sound": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "event:randomize": {
@@ -2159,7 +2168,8 @@
         "type": "Keymap",
         "keys": {
             "home_block_list": {"type": "list", "subcomponent": "block_list"},
-            "restriction_radius": {"type": "int"}
+            "restriction_radius": {"type": "int"},
+            "restriction_type": {"type": "str"}
         }
     },
     "component.horse.jump_strength": {
@@ -2421,11 +2431,28 @@
     "component.looked_at": {
         "type": "Keymap",
         "keys": {
+            "field_of_view": {"type": "int"},
             "filters": {"type": "dict", "subcomponent": "filter"},
             "find_players_only": {"type": "bool"},
+            "line_of_sight_obstruction_type": {"type": "str"},
+            "look_at_locations": {"type": "list", "subcomponent": "component.looked_at:look_at_locations"},
             "looked_at_cooldown": {"type": "decimal"},
+            "looked_at_event": {"type": "trigger_type", "subcomponent": "trigger"},
+            "not_looked_at_event": {"type": "trigger_type", "subcomponent": "trigger"},
+            "scale_fov_by_distance": {"type": "bool"},
             "search_radius": {"type": "decimal"},
             "set_target": {"type": "str"}
+        }
+    },
+    "component.looked_at:look_at_locations": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "location",
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "String"
         }
     },
     "component.lookat": {
@@ -5753,6 +5780,7 @@
             "sound_event": {"type": "str"},
             "summon_cap": {"type": "int"},
             "summon_cap_radius": {"type": "decimal"},
+            "summon_event": {"type": "str"},
             "target": {"type": "str"}
         }
     },

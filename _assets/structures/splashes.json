@@ -4,21 +4,7 @@
         "delegate_arguments": {
             "name": "splashes"
         },
-        "subcomponent": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
-            "type": "File",
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizer": {
-                "function_name": "normalizers/splashes_normalize"
-            },
-            "subcomponent": "resource_packs"
-        }
+        "subcomponent": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
@@ -26,14 +12,55 @@
             "field": "resource pack",
             "measure_length": true
         },
-        "types": ["list"],
+        "types": ["file"],
         "normalizer": {
-            "function_name": "normalizers/collapse_resource_packs/list"
+            "function_name": "normalizers/collapse_resource_packs/flat"
         },
         "sort": "by_key",
-        "subcomponent": "splashes"
+        "subcomponent": "cache"
     },
-    "splashes": {
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "file"
+        }
+    },
+    "file": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "splashes": {"type": "list", "subcomponent": "splash_list"},
+            "conditional": {"type": "list", "subcomponent": "conditionals"}
+        }
+    },
+    "conditionals": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "conditional set",
+            "measure_length": true
+        },
+        "subcomponent": "conditional"
+    },
+    "conditional": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "requires": {"type": "dict", "subcomponent": "conditional.requires"},
+            "splashes": {"type": "list", "subcomponent": "splash_list"}
+        }
+    },
+    "conditional.requires": {
+        "type": "Keymap",
+        "keys": {
+            "trialMode": {"type": "bool"}
+        }
+    },
+    "splash_list": {
         "type": "Set",
         "delegate_arguments": {
             "field": "splash",
