@@ -2,6 +2,7 @@ import Structure.Difference as D
 import Structure.PrimitiveStructure as PrimitiveStructure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
+import Utilities.Exceptions as Exceptions
 
 
 class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
@@ -22,6 +23,10 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
         return distances[len(data2)][len(data1)]
 
     def get_similarity(self, data1: str, data2: str, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+        if len(data1) * len(data2) > 1_000_000:
+            raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
+        if len(data1) == 0 and len(data2) == 0:
+            return 1.0
         max_length = len(data1) if len(data1) > len(data2) else len(data2)
         levenshtein_distance = self.get_levenshtein_distance(data1, data2)
         return 1 - (levenshtein_distance / max_length)

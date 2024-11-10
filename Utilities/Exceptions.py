@@ -1927,6 +1927,27 @@ class NormalizerNoneError(StructureException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
+class SequenceTooLongError(StructureException):
+    "A StringStructure or SequenceStructure cannot compare or get similarity of data because it is too long."
+
+    def __init__(self, structure:"Structure.Structure", len1:int, len2:int, message:Optional[str]=None) -> None:
+        '''
+        :structure: The StringStructure or SequenceStructure with the too-long data.
+        :len1: The length of the first data.
+        :len2: The length of the second data.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(structure, len1, len2, message)
+        self.structure = structure
+        self.len1 = len1
+        self.len2 = len2
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r attempted to compare/get similarity of data too long: first is %i long; second is %i long" % (self.structure, self.len1, self.len2)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class StructuresCompareFailureError(StructureException):
     "Multiple Structures failed to compare."
 
