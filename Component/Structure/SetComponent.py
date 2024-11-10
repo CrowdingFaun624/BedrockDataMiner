@@ -60,6 +60,7 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
             sort=self.sort,
             min_similarity_threshold=self.min_similarity_threshold,
             children_has_normalizer=self.children_has_normalizer,
+            children_has_garbage_collection=self.children_has_garbage_collection,
         )
 
     def link_finals(self) -> list[Exception]:

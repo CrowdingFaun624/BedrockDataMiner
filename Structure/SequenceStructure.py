@@ -31,8 +31,8 @@ class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
     Sequential data structure. Uses levenshtein distance for comparing.
     '''
 
-    def __init__(self, name: str, addition_cost:float, deletion_cost:float, substitution_cost:float, children_has_normalizer: bool) -> None:
-        super().__init__(name, children_has_normalizer)
+    def __init__(self, name: str, addition_cost:float, deletion_cost:float, substitution_cost:float, children_has_normalizer: bool, children_has_garbage_collection:bool) -> None:
+        super().__init__(name, children_has_normalizer, children_has_garbage_collection)
 
         self.addition_cost = addition_cost
         self.deletion_cost = deletion_cost

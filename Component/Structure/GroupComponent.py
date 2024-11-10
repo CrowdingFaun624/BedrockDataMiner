@@ -45,6 +45,7 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         self.final = GroupStructure.GroupStructure(
             name=self.name,
             children_has_normalizer=self.children_has_normalizer,
+            children_has_garbage_collection=self.children_has_garbage_collection,
         )
 
     def link_finals(self) -> list[Exception]:

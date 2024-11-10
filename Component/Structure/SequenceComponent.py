@@ -60,6 +60,7 @@ class SequenceComponent(StructureComponent.StructureComponent[SequenceStructure.
             deletion_cost=self.deletion_cost,
             substitution_cost=self.substitution_cost,
             children_has_normalizer=self.children_has_normalizer,
+            children_has_garbage_collection=self.children_has_garbage_collection,
         )
 
     def link_finals(self) -> list[Exception]:

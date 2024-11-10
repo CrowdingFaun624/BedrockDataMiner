@@ -14,7 +14,7 @@ a = TypeVar("a")
 class Structure(Generic[a]):
     "Modular piece that generates comparison reports of data."
 
-    def __init__(self, name:str, children_has_normalizer:bool) -> None:
+    def __init__(self, name:str, children_has_normalizer:bool, children_has_garbage_collection:bool) -> None:
         '''
         :name: The name of the Structure.
         :field: The string used to describe data with.
@@ -23,6 +23,7 @@ class Structure(Generic[a]):
         '''
         self.name = name
         self.children_has_normalizer = children_has_normalizer
+        self.children_has_garbage_collection = children_has_garbage_collection
         
         self.delegate:Union["Delegate.Delegate", None] = None
         self.children_tags:set[StructureTag.StructureTag]|None = None

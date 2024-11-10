@@ -1,5 +1,5 @@
 import json
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, Iterator, TypeVar
 
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -29,6 +29,10 @@ class Serializer(Generic[a, b]):
     object with this Serializer with an empty bytes object.
     '''
 
+    can_contain_subfiles = False
+    '''
+    If True, will call get_referenced_files during garbage collection.
+    '''
 
     def __init__(self, name:str, **kwargs:Any) -> None:
         self.name = name
@@ -68,3 +72,10 @@ class Serializer(Generic[a, b]):
         call `deserialize_json` on that.
         '''
         raise Exceptions.SerializerMethodNonexistentError(self, self.deserialize)
+
+    def get_referenced_files(self, data:bytes) -> Iterator[int]:
+        '''
+        If this Serializer returns a File object, this function should return
+        the hashes of those files within the given file.
+        '''
+        return; yield

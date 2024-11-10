@@ -1,5 +1,5 @@
-from typing import (TYPE_CHECKING, Any, Callable, Iterable, MutableMapping,
-                    TypeVar, Union)
+from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator,
+                    MutableMapping, TypeVar, Union)
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
@@ -34,8 +34,9 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             key_weight:float,
             value_weight:float,
             children_has_normalizer:bool,
+            children_has_garbage_collection:bool,
         ) -> None:
-        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer)
+        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer, children_has_garbage_collection)
 
         self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None
@@ -89,6 +90,11 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 output.extend(new_tags)
                 exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
         return output, exceptions
+
+    def get_referenced_files(self, data: MutableMapping[str, d], environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+        if self.structure is not None and self.children_has_garbage_collection:
+            for value in data.values():
+                yield from self.structure.get_referenced_files(value, environment)
 
     def normalize(self, data:dict[str,d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []

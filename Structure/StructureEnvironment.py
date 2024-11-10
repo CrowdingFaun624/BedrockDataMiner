@@ -12,12 +12,13 @@ class EnvironmentType(enum.Enum):
     checking_types = "checking_types"
     comparing = "comparing"
     datamining = "datamining"
+    garbage_collection = "garbage_collection"
 
 class StructureEnvironment():
 
     def __init__(self, environment:EnvironmentType) -> None:
         self.environment = environment
-        self.should_cache = environment == EnvironmentType.comparing
+        self.should_cache = environment in (EnvironmentType.comparing, EnvironmentType.garbage_collection)
 
     def __repr__(self) -> str:
         return "<%s %s %s>" % (

@@ -22,7 +22,8 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
     """
     Abstract class of dict-using Structures.
     In subclasses, must provide methods `iter_structures`, `check_type`,
-    `get_structure`, `choose_structure`, `get_tag_paths`, and `normalize`.
+    `get_structure`, `choose_structure`, `get_tag_paths`,
+    `get_referenced_files`, and `normalize`.
     """
 
     valid_types = (dict, NbtTypes.TAG_Compound)
@@ -37,8 +38,9 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             key_weight:float,
             value_weight:float,
             children_has_normalizer:bool,
+            children_has_garbage_collection:bool,
         ) -> None:
-        super().__init__(name, children_has_normalizer)
+        super().__init__(name, children_has_normalizer, children_has_garbage_collection)
 
         self.detect_key_moves = detect_key_moves
         self.sorting_function = sorting_function

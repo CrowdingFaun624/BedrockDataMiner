@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -18,8 +18,8 @@ a = TypeVar("a")
 
 class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
 
-    def __init__(self, name: str, children_has_normalizer: bool) -> None:
-        super().__init__(name, children_has_normalizer)
+    def __init__(self, name: str, children_has_normalizer: bool, children_has_garbage_collection:bool) -> None:
+        super().__init__(name, children_has_normalizer, children_has_garbage_collection)
 
         self.substructures:dict[type,Structure.Structure|None]|None = None
 
@@ -124,6 +124,18 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
             output.extend(new_tags)
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
+
+    def get_referenced_files(self, data: a, environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+        if not self.children_has_garbage_collection:
+            return
+        structure, new_exceptions = self.get_structure(None, data)
+        # for exception in new_exceptions:
+        #     print(exception.finalize().stringify())
+        # if len(new_exceptions) > 0:
+        #     return
+        #     raise RuntimeError()
+        if structure is not None:
+            yield from structure.get_referenced_files(data, environment)
 
     def choose_structure(self, key:None, value:a|D.Diff[a,a]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
         output:dict[D.DiffType,Structure.Structure|None] = {}

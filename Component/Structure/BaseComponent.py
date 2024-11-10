@@ -48,6 +48,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         super().create_final()
         self.final = StructureBase.StructureBase(
             name=self.component_group,
+            children_has_garbage_collection=self.children_has_garbage_collection,
         )
 
     def link_finals(self) -> list[Exception]:

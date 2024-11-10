@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Iterator, TypeVar, Union
 
 import Structure.CacheStructure as CacheStructure
 import Structure.DataPath as DataPath
@@ -28,9 +28,11 @@ class StructureBase():
     def __init__(
             self,
             name:str,
+            children_has_garbage_collection:bool,
         ) -> None:
 
         self.name = name
+        self.children_has_garbage_collection = children_has_garbage_collection
 
         self.structure:Structure.Structure|None = None
         self.delegate:Union["Delegate.Delegate[str,StructureBase,str]", None] = None
@@ -158,7 +160,7 @@ class StructureBase():
                 return True
         return False
 
-    def get_tag_paths(self, data:Any, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment) -> dict[StructureTag.StructureTag,list[DataPath.DataPath]]:
+    def get_tag_paths(self, data:Any, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment, *, normalized_data:Any|None=None) -> dict[StructureTag.StructureTag,list[DataPath.DataPath]]:
         '''
         Returns the DataPaths on which the given tag exists in the Structure for the given data.
         :data: The data to get the tag paths from.
@@ -170,7 +172,8 @@ class StructureBase():
             return {tag: [] for tag in tags}
         version_tuple:tuple["Version.Version",...] = (environment.version,) if environment.version is not None else ()
         output:dict[StructureTag.StructureTag,list[DataPath.DataPath]] = {}
-        normalized_data = self.normalize(data, environment)
+        if normalized_data is None:
+            normalized_data = self.normalize(data, environment)
         for tag in tags:
             if not self.has_tag(tag):
                 output[tag] = []
@@ -180,6 +183,16 @@ class StructureBase():
             self.print_exception_list(new_exceptions, version_tuple)
             output[tag] = paths
         return output
+
+    def get_referenced_files(self, data:Any, environment:StructureEnvironment.PrinterEnvironment, *, normalized_data:Any|None=None) -> Iterator[int]:
+        '''
+        Returns any Files within the data.
+        :data: The data to search for Files.
+        :environment: The PrinterEnvironment to use.
+        '''
+        if self.children_has_garbage_collection:
+            normalized_data = self.normalize(data, environment)
+            yield from self.get_structure().get_referenced_files(normalized_data, environment)
 
     def store(self, report:str, name:str) -> None:
         '''

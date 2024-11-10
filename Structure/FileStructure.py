@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Callable, Iterable, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -18,8 +18,8 @@ a = TypeVar("a")
 
 class FileStructure(ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
 
-    def __init__(self, name: str, children_has_normalizer: bool) -> None:
-        super().__init__(name, children_has_normalizer)
+    def __init__(self, name: str, children_has_normalizer: bool, children_has_garbage_collection:bool) -> None:
+        super().__init__(name, children_has_normalizer, children_has_garbage_collection)
 
         self.structure:Structure.Structure[a]|None = None
         self.delegate:Union["Delegate.Delegate", None] = None
@@ -139,6 +139,15 @@ class FileStructure(ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         output, new_exceptions = self.structure.get_tag_paths(data.data, tag, data_path.copy(), environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
+
+    def get_referenced_files(self, data: File.AbstractFile[a], environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+        if self.children_has_garbage_collection:
+            yield data.hash
+        if self.structure is not None and self.structure.children_has_garbage_collection:
+            # getting if its child has a file because self.children_has_garbage_collection is
+            # always true for FileStructure objects, but if we do cancel this
+            # function it's a big deal because getting file data is expensive.
+            yield from self.structure.get_referenced_files(data.data, environment)
 
     def get_similarity(self, data1: File.AbstractFile[a], data2: File.AbstractFile[a], environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         if self.structure is None:

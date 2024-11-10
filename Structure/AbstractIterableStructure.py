@@ -1,10 +1,12 @@
-from typing import TYPE_CHECKING, Any, Iterable, Sequence, TypeVar, Union
+from typing import (TYPE_CHECKING, Any, Iterable, Iterator, Sequence, TypeVar,
+                    Union)
 
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
 import Structure.ObjectStructure as ObjectStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
@@ -23,8 +25,9 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Sequence[d]]):
             self,
             name:str,
             children_has_normalizer:bool,
+            children_has_garbage_collection:bool,
         ) -> None:
-        super().__init__(name, children_has_normalizer)
+        super().__init__(name, children_has_normalizer, children_has_garbage_collection)
 
         self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None
@@ -141,3 +144,8 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Sequence[d]]):
                 output.extend(new_tags)
                 exceptions.extend(exception.add(self.name, index) for exception in new_exceptions)
         return output, exceptions
+
+    def get_referenced_files(self, data: Sequence[d], environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+        if self.structure is not None and self.children_has_garbage_collection:
+            for value in data:
+                yield from self.structure.get_referenced_files(value, environment)

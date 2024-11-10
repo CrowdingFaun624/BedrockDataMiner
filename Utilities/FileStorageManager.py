@@ -86,3 +86,34 @@ def read_archived(hex_string:str, mode:Literal["t", "b"]) -> bytes|str:
         with open(archived_path, "r" + mode) as f:
             output = f.read()
     return output
+
+def delete_item(hex_string:str) -> None:
+    '''
+    Deletes the item from the index and objects.
+    Must save the index for changes to be saved.
+    '''
+    del index.get()[hex_string]
+    path = get_file_path(hex_string)
+    path.unlink()
+
+def remove_index_values_without_associated_file() -> None:
+    '''
+    Removes all index entries such that there is no file
+    stored at that hash. Saves automatically.
+    '''
+    loaded_index = index.get()
+    items_to_delete:list[str] = []
+    for key in loaded_index.keys():
+        if not get_file_path(key).exists():
+            items_to_delete.append(key)
+    for item in items_to_delete:
+        del loaded_index[item]
+    save_index()
+
+def save_index() -> None:
+    '''
+    Saves the index.
+    Is only necessary when an item is deleted from the index.
+    '''
+    with open(FileManager.FILE_STORAGE_INDEX_FILE, "wt") as index_file:
+        index_file.write("\n".join("%s %i" % (key, value) for key, value in index.get().items()) + "\n")

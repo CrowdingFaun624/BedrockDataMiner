@@ -19,6 +19,7 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("file_types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a list or str", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("garbage_collect", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -29,6 +30,8 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
     def __init__(self, data:ComponentTyping.FileTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data)
+
+        self.children_has_garbage_collection = data.get("garbage_collect", False)
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
         self.file_types_field = TypeListField.TypeListField(data.get("file_types", "abstract_file"), ["file_types"])
@@ -46,6 +49,7 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         self.final = FileStructure.FileStructure(
             name=self.name,
             children_has_normalizer=self.children_has_normalizer,
+            children_has_garbage_collection=self.children_has_garbage_collection,
         )
 
     def link_finals(self) -> list[Exception]:

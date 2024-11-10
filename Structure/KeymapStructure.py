@@ -1,5 +1,5 @@
-from typing import (TYPE_CHECKING, Any, Callable, Iterable, MutableMapping,
-                    TypeVar, Union)
+from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator,
+                    MutableMapping, TypeVar, Union)
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
@@ -35,8 +35,9 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             detect_key_moves:bool,
             key_weights:dict[str,int],
             children_has_normalizer:bool,
+            children_has_garbage_collection:bool,
         ) -> None:
-        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer)
+        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer, children_has_garbage_collection)
 
         self.key_weights:dict[str,int] = key_weights
 
@@ -124,6 +125,20 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 output.extend(new_tags)
                 exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
         return output, exceptions
+
+    def get_referenced_files(self, data: MutableMapping[str, d], environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+        if not self.children_has_garbage_collection:
+            return
+        for key, value in data.items():
+            structure, new_exceptions = self.get_structure(key, value)
+            # for exception in new_exceptions:
+            #     print(exception.finalize().stringify())
+            # if len(new_exceptions) > 0:
+            #     continue
+            #     raise RuntimeError()
+            if structure is None:
+                continue
+            yield from structure.get_referenced_files(value, environment)
 
     def normalize(self, data:dict[str,d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []

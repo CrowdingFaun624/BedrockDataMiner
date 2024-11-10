@@ -1,5 +1,5 @@
 import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Iterator
 
 from pathlib2 import Path
 
@@ -10,11 +10,14 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureTag as StructureTag
 import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
+import Utilities.File as File
 import Utilities.FileManager as FileManager
 import Version.Version as Version
 
 if TYPE_CHECKING:
     import DataMiner.DataMinerSettings as DataMinerSettings
+
+NoneType = type(None)
 
 class DataMinerCollection():
 
@@ -63,12 +66,13 @@ class DataMinerCollection():
         '''
         return self.get_structure().has_tag(tag)
 
-    def get_tag_paths(self, version:Version.Version, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment) -> dict[StructureTag.StructureTag,list[DataPath.DataPath]]:
+    def get_tag_paths(self, version:Version.Version, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment, *, data:Any|None=None, normalized_data:Any|None=None) -> dict[StructureTag.StructureTag,list[DataPath.DataPath]]:
         dataminer = self.get_dataminer(version)
         if isinstance(dataminer, DataMiner.NullDataMiner):
             return {tag: [] for tag in tags}
-        data = dataminer.get_data_file()
-        return self.get_structure().get_tag_paths(data, tags, environment)
+        if data is None:
+            data = dataminer.get_data_file()
+        return self.get_structure().get_tag_paths(data, tags, environment, normalized_data=normalized_data)
 
     def compare(
             self,
@@ -133,3 +137,24 @@ class DataMinerCollection():
 
     def get_data_file_path(self, version:Version.Version) -> Path:
         return FileManager.get_version_data_path(version.get_version_directory(), self.file_name)
+
+    def get_referenced_files(self, version:Version.Version, structure_tags:dict[str,StructureTag.StructureTag]) -> Iterator[int]:
+        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.garbage_collection)
+        data_file = self.get_data_file(version, non_exist_ok=True)
+        if data_file is None: return
+        yield from File.recursive_examine_data_for_files(data_file) # this is necessary just in case there's a file that's ignored by the structure.
+        structure = self.get_structure()
+        file_tags = [structure_tag for structure_tag in structure_tags.values() if structure_tag.is_file]
+        if structure.children_has_garbage_collection or structure.has_tags(file_tags):
+            environment = StructureEnvironment.PrinterEnvironment(structure_environment, None, version, 0)
+            normalized_data = structure.normalize(data_file, environment)
+            yield from structure.get_referenced_files(data_file, environment, normalized_data=normalized_data) # this is necessary just in case files appear only after normalization
+            for file_tag, paths in self.get_tag_paths(version, file_tags, environment, normalized_data=normalized_data).items(): # this is necessary just in case files are referenced only by a hash that isn't used.
+                for data_path in paths:
+                    match data_path.embedded_data:
+                        case str():
+                            yield File.hash_str_to_int(data_path.embedded_data)
+                        case int():
+                            yield data_path.embedded_data
+                        case _:
+                            raise Exceptions.InvalidFileHashType(version, file_tag, data_path)

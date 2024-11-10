@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, Iterator, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Hashing as Hashing
@@ -23,13 +23,15 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
             cache_check_all_types:bool,
             cache_normalize:bool,
             cache_get_tag_paths:bool,
+            cache_get_referenced_files:bool,
             cache_compare_text:bool,
             cache_print_text:bool,
             cache_get_similarity:bool,
             cache_compare:bool,
             children_has_normalizer:bool,
+            children_has_garbage_collection:bool,
         ) -> None:
-        super().__init__(name, children_has_normalizer)
+        super().__init__(name, children_has_normalizer, children_has_garbage_collection)
 
         self.searches:int = 0
         '''Increases each time `clear_old_items` is called.'''
@@ -39,6 +41,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         self.cache_check_all_types = cache_check_all_types
         self.cache_normalize = cache_normalize
         self.cache_get_tag_paths = cache_get_tag_paths
+        self.cache_get_referenced_files = cache_get_referenced_files
         self.cache_compare_text = cache_compare_text
         self.cache_print_text = cache_print_text
         self.cache_get_similarity = cache_get_similarity
@@ -121,6 +124,28 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         output = structure.get_tag_paths(data, tag, data_path, environment)
         cache_item.set_get_tag_paths(output)
         return output
+
+    def get_referenced_files(self, data: d, environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+        if not self.children_has_garbage_collection:
+            return; yield
+        structure = self.get_structure()
+        if not environment.structure_environment.should_cache or not self.cache_get_referenced_files:
+            yield from structure.get_referenced_files(data, environment)
+        data_hash = Hashing.hash_data(data)
+        cache_item = self.cache.pop(data_hash, None)
+        if cache_item is not None:
+            self.cache[data_hash] = cache_item
+            cache_item.retrieve_index = self.searches
+            if cache_item.get_referenced_files_data:
+                yield from cache_item.get_get_referenced_files_data()
+        else:
+            new_cache_item:CacheItem[d] = CacheItem(self.delegate, self.searches)
+            self.cache[data_hash] = new_cache_item
+            cache_item = new_cache_item
+
+        output = structure.get_referenced_files(data, environment)
+        cache_item.set_get_referenced_files(output)
+        yield from output
 
     def compare_text(self, data: d, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
         structure = self.get_structure()
@@ -237,6 +262,8 @@ class CacheItem(Generic[d]):
         self.normalize_data:tuple[Any|None,list[Trace.ErrorTrace]]|None = None
         self.get_tag_paths = False
         self.get_tag_paths_data:tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]|None = None
+        self.get_referenced_files = False
+        self.get_referenced_files_data:list[int]|None = None
         self.compare_text = False
         self.compare_text_data:tuple[Any,bool,list[Trace.ErrorTrace]]|None = None
         self.print_text = False
@@ -272,6 +299,15 @@ class CacheItem(Generic[d]):
     def set_get_tag_paths(self, data:tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]) -> None:
         self.get_tag_paths = True
         self.get_tag_paths_data = (data[0], [trace.copy() for trace in data[1]])
+
+    def get_get_referenced_files_data(self) -> Iterator[int]:
+        if self.get_referenced_files_data is None:
+            raise Exceptions.AttributeNoneError("get_referenced_files_data", self)
+        yield from self.get_referenced_files_data
+
+    def set_get_referenced_files(self, data:Iterator[int]) -> None:
+        self.get_referenced_files = True
+        self.get_referenced_files_data = list(set(data)) # remove duplicates, but keep fast iter speed.
 
     def get_get_similarity_data(self) -> float:
         if self.get_similarity_data is None:

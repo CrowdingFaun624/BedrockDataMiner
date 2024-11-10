@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Callable, Iterable, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -21,8 +21,8 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
     Not all Structures that have this behavior have to subclass this class.
     '''
 
-    def __init__(self, name: str, children_has_normalizer: bool) -> None:
-        super().__init__(name, children_has_normalizer)
+    def __init__(self, name: str, children_has_normalizer: bool, children_has_garbage_collection: bool) -> None:
+        super().__init__(name, children_has_normalizer, children_has_garbage_collection)
 
         self.structure:Structure.Structure[a]|None = None
         self.delegate:Union["Delegate.Delegate", None] = None
@@ -123,6 +123,10 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
         output, new_exceptions = self.structure.get_tag_paths(data, tag, data_path.copy(), environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
+
+    def get_referenced_files(self, data: a, environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+        if self.structure is not None and self.children_has_garbage_collection:
+            yield from self.structure.get_referenced_files(data, environment)
 
     def get_similarity(self, data1: a, data2: a, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         if self.structure is None:

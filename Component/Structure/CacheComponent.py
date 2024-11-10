@@ -37,6 +37,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.cache_check_all_types = data.get("cache_check_all_types", True)
         self.cache_normalize = data.get("cache_normalize", True)
         self.cache_get_tag_paths = data.get("cache_get_tag_paths", True)
+        self.cache_get_referenced_files = data.get("cache_get_referenced_files", True)
         self.cache_compare_text = data.get("cache_compare_text", True)
         self.cache_print_text = data.get("cache_print_text", True)
         self.cache_get_similarity = data.get("cache_get_similarity", True)
@@ -56,11 +57,13 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
             cache_check_all_types=self.cache_check_all_types,
             cache_normalize=self.cache_normalize,
             cache_get_tag_paths=self.cache_get_tag_paths,
+            cache_get_referenced_files=self.cache_get_referenced_files,
             cache_compare_text=self.cache_compare_text,
             cache_print_text=self.cache_print_text,
             cache_get_similarity=self.cache_get_similarity,
             cache_compare=self.cache_compare,
             children_has_normalizer=self.children_has_normalizer,
+            children_has_garbage_collection=self.children_has_garbage_collection,
         )
 
     def link_finals(self) -> list[Exception]:

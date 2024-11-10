@@ -1,7 +1,8 @@
 from types import EllipsisType
-from typing import Generic, TypeVar
+from typing import Any, Generic, Iterator, TypeVar
 
 import Serializer.Serializer as Serializer
+import Structure.DataPath as DataPath
 import Utilities.Exceptions as Exceptions
 import Utilities.FileStorageManager as FileStorageManager
 
@@ -22,24 +23,30 @@ def hash_str_to_int(hash_str:str) -> int:
     return int(hash_str, base=16)
 
 class AbstractFile(Generic[a]):
-    
+
     data:a
-    
+
     def __init__(self, display_name:str, data_hash:int) -> None:
         self.display_name = display_name
         self.hash = data_hash
 
     def read(self) -> None:
         ...
-    
+
     def __eq__(self, other:"AbstractFile") -> bool:
         return self is other or self.hash == other.hash
 
     def __hash__(self) -> int:
         return self.hash
-    
+
     def __repr__(self) -> str:
         return "<%s \"%s\" hash %s>" % (self.__class__.__name__, self.display_name, hash_int_to_str(self.hash))
+
+    def get_referenced_files(self) -> Iterator[int]:
+        '''
+        Uses the Serializer of this File to find any filse within it.
+        '''
+        return; yield
 
 class File(AbstractFile[a]):
 
@@ -72,9 +79,62 @@ class File(AbstractFile[a]):
 
     data = property(_get_data, _set_data, _del_data)
 
+    def get_referenced_files(self) -> Iterator[int]:
+        if self.serializer.can_contain_subfiles:
+            file_bytes = FileStorageManager.read_archived(hash_int_to_str(self.hash), "b")
+            yield from self.serializer.get_referenced_files(file_bytes)
+
+class EmptyFile(File[a]):
+
+    def __init__(
+        self,
+        serializer:Serializer.Serializer,
+        data_hash:int,
+        data:a|EllipsisType=..., # type: ignore idk
+    ) -> None:
+        super().__init__("empty_file", serializer, data_hash)
+        # when data is needed, it will read the file at `data_hash` using `serializer`, but
+        # then replace it with data of same type but empty.
+        if data is ...:
+            self._data:a|EllipsisType = ...
+        else:
+            self._data:a|EllipsisType = type(data)()
+
+    def __hash__(self) -> int:
+        # must have a different hash than the creating file for caching reasons
+        # but must remember what hash the creating file had so it knows the
+        # data type.
+        return 0
+
+    def _get_data(self) -> a:
+        if self._data is ...:
+            data:a = super()._get_data()
+            self._data = type(data)()
+        return self._data
+
 class FakeFile(AbstractFile[a]):
     '''Similar to a File, but it can be created anywhere and using any hash/data.'''
-    
+
     def __init__(self, display_name: str, data:a, data_hash: int) -> None:
         super().__init__(display_name, data_hash)
         self.data = data
+
+NoneType = type(None)
+
+def recursive_examine_data_for_files(data:Any) -> Iterator[int]:
+    match data:
+        case int() | str() | float() | bool() | NoneType():
+            return
+        case dict():
+            for value in data.values():
+                yield from recursive_examine_data_for_files(value)
+        case list():
+            for value in data:
+                yield from recursive_examine_data_for_files(value)
+        case AbstractFile():
+            yield data.hash
+            yield from data.get_referenced_files()
+        case DataPath.DataPath():
+            yield from recursive_examine_data_for_files(data.embedded_data)
+        case _:
+            raise TypeError("How do I recursively examine type %s for files?" % (data.__class__.__name__,))

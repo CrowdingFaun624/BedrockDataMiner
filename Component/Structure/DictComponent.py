@@ -90,6 +90,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             key_weight=self.key_weight,
             value_weight=self.value_weight,
             children_has_normalizer=self.children_has_normalizer,
+            children_has_garbage_collection=self.children_has_garbage_collection,
         )
 
     def link_finals(self) -> list[Exception]:

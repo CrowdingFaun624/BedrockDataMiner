@@ -105,6 +105,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             value_weight=self.value_weight,
             key_weights={key.key: key.weight for key in self.keys},
             children_has_normalizer=self.children_has_normalizer,
+            children_has_garbage_collection=self.children_has_garbage_collection,
         )
 
     def link_finals(self) -> list[Exception]:

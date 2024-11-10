@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     import Downloader.Accessor as Accessor
     import Downloader.Manager as Manager
     import Serializer.Serializer as Serializer
+    import Structure.DataPath as DataPath
     import Structure.Delegate.Delegate as Delegate
     import Structure.Difference as D
     import Structure.Normalizer as Normalizer
@@ -80,17 +81,15 @@ class CannotStringifyError(Exception):
 class EmptyFileError(Exception):
     "The file IO has no bytes."
 
-    def __init__(self, file:Optional["FileManager.FilePromise"]=None, message:Optional[str]=None) -> None:
+    def __init__(self, message:Optional[str]=None) -> None:
         '''
-        :file: The FilePromise that was opened to reveal no bytes.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(file, message)
-        self.file = file
+        super().__init__(message)
         self.message = message
 
     def __str__(self) -> str:
-        output = "File %r has no bytes" % (self.file,) if self.file is not None else "A file has no bytes"
+        output = "A file has no bytes"
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -1867,6 +1866,26 @@ class DiffKeyError(StructureException):
             output += " a new object"
         else:
             output += " a not_diff object"
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class InvalidFileHashType(StructureException):
+    "An is_file StructureTag references data that cannot be interpreted as a file hash."
+
+    def __init__(self, version:"Version.Version", structure_tag:"StructureTag.StructureTag", data_path:"DataPath.DataPath", message:Optional[str]=None) -> None:
+        '''
+        :version: The Version that has the invalid file hash.
+        :structure_tag: The StructureTag that has the invalid file hash.
+        :data_path: The DataPath whose embedded data is an invalid file hash.
+        '''
+        super().__init__(version, structure_tag, data_path, message)
+        self.version = version
+        self.structure_tag = structure_tag
+        self.data_path = data_path
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Data %s at path %s of %r of %r is not a valid file hash" % (self.data_path.embedded_data, self.data_path, self.structure_tag, self.version)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
