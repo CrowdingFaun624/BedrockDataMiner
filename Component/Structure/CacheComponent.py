@@ -58,7 +58,6 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
             cache_get_similarity=self.cache_get_similarity,
             cache_compare=self.cache_compare,
             children_has_normalizer=self.children_has_normalizer,
-            children_tags=self.children_tags,
         )
 
     def link_finals(self) -> list[Exception]:
@@ -69,5 +68,6 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
             structure=self.subcomponent_field.get_final(),
             delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
             types=types,
+            children_tags={tag.get_final() for tag in self.children_tags},
         )
         return exceptions

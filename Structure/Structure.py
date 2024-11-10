@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, Generic, Iterable, TypeVar, Union
 
 import Structure.DataPath as DataPath
+import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
@@ -13,7 +14,7 @@ a = TypeVar("a")
 class Structure(Generic[a]):
     "Modular piece that generates comparison reports of data."
 
-    def __init__(self, name:str, children_has_normalizer:bool, children_tags:set[str]) -> None:
+    def __init__(self, name:str, children_has_normalizer:bool) -> None:
         '''
         :name: The name of the Structure.
         :field: The string used to describe data with.
@@ -22,15 +23,17 @@ class Structure(Generic[a]):
         '''
         self.name = name
         self.children_has_normalizer = children_has_normalizer
-        self.children_tags = children_tags
         
         self.delegate:Union["Delegate.Delegate", None] = None
+        self.children_tags:set[StructureTag.StructureTag]|None = None
 
     def link_substructures(
         self,
         delegate:Union["Delegate.Delegate", None],
+        children_tags:set[StructureTag.StructureTag],
     ) -> None:
         self.delegate = delegate
+        self.children_tags = children_tags
 
     def finalize_delegate(self) -> None:
         if self.delegate is not None:
@@ -92,7 +95,7 @@ class Structure(Generic[a]):
         '''
         ...
 
-    def get_tag_paths(self, data:a, tag:str, data_path:DataPath.DataPath, environment:"StructureEnvironment.StructureEnvironment") -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data:a, tag:StructureTag.StructureTag, data_path:DataPath.DataPath, environment:"StructureEnvironment.StructureEnvironment") -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         '''
         Returns the DataPaths on which the given tag exists in the Structure for the given data and a list of ErrorTraces.
         :data: The data to get the tag paths from.

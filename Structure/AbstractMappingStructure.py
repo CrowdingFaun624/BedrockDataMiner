@@ -8,6 +8,7 @@ import Structure.ObjectStructure as ObjectStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
+import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.NbtTypes as NbtTypes
@@ -36,9 +37,8 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             key_weight:float,
             value_weight:float,
             children_has_normalizer:bool,
-            children_tags:set[str],
         ) -> None:
-        super().__init__(name, children_has_normalizer, children_tags)
+        super().__init__(name, children_has_normalizer)
 
         self.detect_key_moves = detect_key_moves
         self.sorting_function = sorting_function
@@ -58,8 +58,9 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
         required_keys:list[str],
+        children_tags:set[StructureTag.StructureTag],
     ) -> None:
-        super().link_substructures(delegate)
+        super().link_substructures(delegate, children_tags)
         self.delegate = delegate
         self.key_structure = key_structure
         self.normalizer = normalizer

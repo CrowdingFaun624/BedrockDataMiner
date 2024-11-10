@@ -5,6 +5,7 @@ import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
@@ -26,16 +27,15 @@ class StructureBase():
     def __init__(
             self,
             name:str,
-            children_tags:set[str],
         ) -> None:
 
         self.name = name
-        self.children_tags = children_tags
 
         self.structure:Structure.Structure|None = None
         self.delegate:Union["Delegate.Delegate[str,StructureBase,str]", None] = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.post_normalizer:list[Normalizer.Normalizer]|None = None
+        self.children_tags:set[StructureTag.StructureTag]|None = None
 
     def link_substructures(
         self,
@@ -44,12 +44,14 @@ class StructureBase():
         default_delegate:Union["Delegate.Delegate", None],
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
+        children_tags:set[StructureTag.StructureTag],
     ) -> None:
         self.structure = structure
         self.delegate = delegate
         self.default_delegate = default_delegate
         self.normalizer = normalizer
         self.post_normalizer = post_normalizer
+        self.children_tags = children_tags
 
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.name)
@@ -125,28 +127,48 @@ class StructureBase():
             raise Exceptions.AttributeNoneError("structure", self)
         self.structure.clear_caches(set())
 
-    def has_tag(self, tag:str) -> bool:
+    def has_tag(self, tag:StructureTag.StructureTag) -> bool:
         '''
         Returns if the tag can be found in the Structure.
         :tag: The name of the tag.
         '''
+        if self.children_tags is None:
+            raise Exceptions.AttributeNoneError("children_tags", self)
         return tag in self.children_tags
 
-    def get_tag_paths(self, data:Any, tag:str, environment:StructureEnvironment.PrinterEnvironment) -> list[DataPath.DataPath]:
+    def has_tags(self, tags:list[StructureTag.StructureTag]) -> bool:
+        '''
+        Returns if any tag can be found in the Structure.
+        :tags: The name of the tags.
+        '''
+        if self.children_tags is None:
+            raise Exceptions.AttributeNoneError("children_tags", self)
+        for tag in tags:
+            if tag in self.children_tags:
+                return True
+        return False
+
+    def get_tag_paths(self, data:Any, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment) -> dict[StructureTag.StructureTag,list[DataPath.DataPath]]:
         '''
         Returns the DataPaths on which the given tag exists in the Structure for the given data.
         :data: The data to get the tag paths from.
         :tag: The tag to search for.
-        :environment: The StructureEnvironment to use.
+        :environment: The PrinterEnvironment to use.
         '''
+        if not self.has_tags(tags):
+            # optimization: don't need to even normalize!
+            return {tag: [] for tag in tags}
         version_tuple:tuple["Version.Version",...] = (environment.version,) if environment.version is not None else ()
-        if not self.has_tag(tag):
-            return []
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
+        output:dict[StructureTag.StructureTag,list[DataPath.DataPath]] = {}
         normalized_data = self.normalize(data, environment)
-        output, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.name), environment.structure_environment)
-        self.print_exception_list(new_exceptions, version_tuple)
+        for tag in tags:
+            if not self.has_tag(tag):
+                output[tag] = []
+            if self.structure is None:
+                raise Exceptions.AttributeNoneError("structure", self)
+            paths, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.name), environment.structure_environment)
+            self.print_exception_list(new_exceptions, version_tuple)
+            output[tag] = paths
         return output
 
     def store(self, report:str, name:str) -> None:

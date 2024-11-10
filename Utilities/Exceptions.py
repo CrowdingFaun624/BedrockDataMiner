@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     import Structure.Structure as Structure
     import Structure.StructureBase as StructureBase
     import Structure.StructureSet as StructureSet
+    import Structure.StructureTag as StructureTag
     import Structure.Trace as Trace
     import Utilities.CustomJson as CustomJson
     import Utilities.DataFile as DataFile
@@ -1325,7 +1326,7 @@ class SoundFilesMetadataError(DataMinerException):
 class TagSearcherDependencyError(DataMinerException):
     "A tag exists in a DataMiner that is not a dependency of this one."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", tag:str, dataminer_collection:"DataMinerCollection.DataMinerCollection", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"DataMiner.DataMiner", tag:"StructureTag.StructureTag", dataminer_collection:"DataMinerCollection.DataMinerCollection", message:Optional[str]=None) -> None:
         '''
         :dataminer: The DataMiner that attempted to access the tag.
         :tag: The tag that was found in an inaccessible DataMinerCollection.
@@ -1339,7 +1340,7 @@ class TagSearcherDependencyError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r could find tag \"%s\" in %r, but it is not a dependency" % (self.dataminer, self.tag, self.dataminer_collection)
+        output = "%r could find %r in %r, but it is not a dependency" % (self.dataminer, self.tag, self.dataminer_collection)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -2059,6 +2060,25 @@ class TraceError(StructureException):
             output += "finalized"
         else:
             output += "not finalized"
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class UnrecognizedStructureTagError(StructureException):
+    "A StructureTag referenced in a tag expression does not exist."
+
+    def __init__(self, expression:str, tag_name:str, message:Optional[str]=None) -> None:
+        '''
+        :expression: The tag expression containing the unrecognized StructureTag.
+        :tag_name: The name of the unrecognized StructureTag.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(expression, tag_name, message)
+        self.expression = expression
+        self.tag_name = tag_name
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "Unrecognized tag \"%s\" referenced in expression \"%s\"" % (self.tag_name, self.expression)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

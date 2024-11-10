@@ -5,6 +5,7 @@ import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
@@ -18,13 +19,13 @@ class PrimitiveStructure(Structure.Structure[d]):
     Structure with no substructure.
     """
 
-    def __init__(self, name: str, children_has_normalizer: bool, children_tags: set[str]) -> None:
-        super().__init__(name, children_has_normalizer, children_tags)
+    def __init__(self, name: str, children_has_normalizer: bool) -> None:
+        super().__init__(name, children_has_normalizer, False)
 
         self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.pre_normalized_types:tuple[type,...]|None = None
-        self.tags:list[str]|None = None
+        self.tags:set[StructureTag.StructureTag]|None = None
 
     def link_substructures(
         self,
@@ -32,9 +33,10 @@ class PrimitiveStructure(Structure.Structure[d]):
         types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
-        tags:list[str],
+        tags:set[StructureTag.StructureTag],
+        children_tags:set[StructureTag.StructureTag],
     ) -> None:
-        super().link_substructures(delegate)
+        super().link_substructures(delegate, children_tags)
         self.types = types
         self.normalizer = normalizer
         self.pre_normalized_types = pre_normalized_types
@@ -86,7 +88,9 @@ class PrimitiveStructure(Structure.Structure[d]):
             data = cast(d, normalizer_output)
         return data, exceptions
 
-    def get_tag_paths(self, data: d, tag: str, data_path: DataPath.DataPath, environment: StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data: d, tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment: StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+        if self.children_tags is None:
+            raise Exceptions.AttributeNoneError("children_tags", self)
         if tag not in self.children_tags: return [], []
         if self.tags is None:
             raise Exceptions.AttributeNoneError("tags", self)

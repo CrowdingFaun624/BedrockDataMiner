@@ -8,6 +8,7 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Component.Field.Field as Field
+    import Component.Structure.StructureTagComponent as StructureTagComponent
 
 a = TypeVar("a")
 
@@ -27,7 +28,7 @@ class Component(Generic[a]):
         self.parents:list[Component] = []
         self.final:a|None = None
         self.children_has_normalizer = self.children_has_normalizer_default
-        self.children_tags:set[str] = set()
+        self.children_tags:set[StructureTagComponent.StructureTagComponent] = set()
         self.fields:list["Field.Field"] = []
         self.inline_components:list[Component]|None = None
         self.inline_component_count = 0

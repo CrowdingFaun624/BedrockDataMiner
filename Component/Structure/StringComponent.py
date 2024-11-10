@@ -32,6 +32,7 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
         self.types_field = TypeListField.TypeListField(data.get("types", "str"), ["types"])
         self.types_field.must_be(StructureComponent.STRING_TYPES)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
+        self.tags_field.add_to_tag_set(self.children_tags)
         self.fields.extend([self.delegate_field, self.normalizer_field, self.tags_field, self.types_field, self.pre_normalized_types_field])
 
     def create_final(self) -> None:
@@ -39,7 +40,6 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
         self.final = StringStructure.StringStructure(
             name=self.name,
             children_has_normalizer=self.children_has_normalizer,
-            children_tags=self.children_tags,
         )
 
     def link_finals(self) -> list[Exception]:
@@ -49,7 +49,8 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
             types=self.types_field.get_types(),
             normalizer=self.normalizer_field.get_finals(),
             pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.types_field.get_types(),
-            tags=self.tags_field.get_tags(),
+            tags=self.tags_field.get_finals(),
+            children_tags={tag.get_final() for tag in self.children_tags},
         )
         self.my_type = set(self.types_field.get_types())
         return exceptions

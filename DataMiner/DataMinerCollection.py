@@ -7,6 +7,7 @@ import DataMiner.DataMiner as DataMiner
 import Structure.DataPath as DataPath
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureTag as StructureTag
 import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
@@ -55,21 +56,19 @@ class DataMinerCollection():
         if data_path.exists():
             data_path.unlink()
 
-    def has_tag(self, tag:str) -> bool:
+    def has_tag(self, tag:StructureTag.StructureTag) -> bool:
         '''
         Returns True if the given tag could potentially be in this Version.
         :tag: The tag to test for.
         '''
         return self.get_structure().has_tag(tag)
 
-    def get_tag_paths(self, version:Version.Version, tag:str, environment:StructureEnvironment.PrinterEnvironment) -> list[DataPath.DataPath]:
-        if not self.get_structure().has_tag(tag):
-            return []
+    def get_tag_paths(self, version:Version.Version, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment) -> dict[StructureTag.StructureTag,list[DataPath.DataPath]]:
         dataminer = self.get_dataminer(version)
         if isinstance(dataminer, DataMiner.NullDataMiner):
-            return []
+            return {tag: [] for tag in tags}
         data = dataminer.get_data_file()
-        return self.get_structure().get_tag_paths(data, tag, environment)
+        return self.get_structure().get_tag_paths(data, tags, environment)
 
     def compare(
             self,

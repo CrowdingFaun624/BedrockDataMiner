@@ -48,7 +48,6 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         super().create_final()
         self.final = StructureBase.StructureBase(
             name=self.component_group,
-            children_tags=self.children_tags,
         )
 
     def link_finals(self) -> list[Exception]:
@@ -59,5 +58,6 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
             default_delegate=self.default_delegate_field.create_delegate(None, exceptions=exceptions),
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),
+            children_tags={tag.get_final() for tag in self.children_tags},
         )
         return exceptions

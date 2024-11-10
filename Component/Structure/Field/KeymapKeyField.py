@@ -9,11 +9,12 @@ import Component.Structure.Field.TypeListField as TypeListField
 
 if TYPE_CHECKING:
     import Component.Component as Component
+    import Component.Structure.StructureTagComponent as StructureTagComponent
     import Structure.Structure as Structure
 
 class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 
-    def __init__(self, data:ComponentTyping.KeymapKeyTypedDict, key:str, tag_set:set[str], path:list[str|int], source_component:"Component.Component", *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
+    def __init__(self, data:ComponentTyping.KeymapKeyTypedDict, key:str, tag_set:set["StructureTagComponent.StructureTagComponent"], path:list[str|int], source_component:"Component.Component", *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
         '''
         :data: A dictionary containing the keys {"type": str|list[str], "subcomponent": str|ComponentTyping.StructureComponentTypedDicts|None, tags:list[str]}
         :key: The key that this Field corresponds to.
@@ -46,7 +47,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         '''
         self.tags_field.import_from(tag_fields)
 
-    def add_to_tag_set(self, tag_set:set[str]) -> None:
+    def add_to_tag_set(self, tag_set:set["StructureTagComponent.StructureTagComponent"]) -> None:
         '''
         Makes this KeymapKeyField add its tags (in string form) to the given tag set.
         :tag_set: The set of strings to add to.

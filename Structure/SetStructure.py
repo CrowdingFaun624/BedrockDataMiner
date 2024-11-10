@@ -27,9 +27,8 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         sort:bool,
         min_similarity_threshold:float,
         children_has_normalizer:bool,
-        children_tags: set[str]
     ) -> None:
-        super().__init__(name, children_has_normalizer, children_tags)
+        super().__init__(name, children_has_normalizer)
 
         self.min_similarity_threshold=min_similarity_threshold
         self.sort = sort

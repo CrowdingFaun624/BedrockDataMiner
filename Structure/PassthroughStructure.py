@@ -6,6 +6,7 @@ import Structure.Normalizer as Normalizer
 import Structure.ObjectStructure as ObjectStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
@@ -20,8 +21,8 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
     Not all Structures that have this behavior have to subclass this class.
     '''
 
-    def __init__(self, name: str, children_has_normalizer: bool, children_tags: set[str]) -> None:
-        super().__init__(name, children_has_normalizer, children_tags)
+    def __init__(self, name: str, children_has_normalizer: bool) -> None:
+        super().__init__(name, children_has_normalizer)
 
         self.structure:Structure.Structure[a]|None = None
         self.delegate:Union["Delegate.Delegate", None] = None
@@ -38,8 +39,9 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
+        children_tags: set[StructureTag.StructureTag],
     ) -> None:
-        super().link_substructures(delegate)
+        super().link_substructures(delegate, children_tags)
         self.structure = structure
         self.types = types
         self.normalizer = normalizer
@@ -111,7 +113,9 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
         else:
             return None, exceptions
 
-    def get_tag_paths(self, data:a, tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data:a, tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+        if self.children_tags is None:
+            raise Exceptions.AttributeNoneError("children_tags", self)
         if tag not in self.children_tags: return [], []
         exceptions:list[Trace.ErrorTrace] = []
         if self.structure is None:

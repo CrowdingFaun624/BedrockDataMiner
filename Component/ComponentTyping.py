@@ -208,8 +208,9 @@ class StringTypedDict(TypedDict):
     type: NotRequired[Literal["Primitive"]]
     types: NotRequired[str|list[str]]
 
-class TagTypedDict(TypedDict):
-    type: NotRequired[Literal["Tag"]]
+class StructureTagTypedDict(TypedDict):
+    is_file: NotRequired[bool]
+    type: NotRequired[Literal["StructureTag"]]
 
 class TypeAliasTypedDict(TypedDict):
     type: NotRequired[Literal["TypeAlias"]]
@@ -274,7 +275,7 @@ ComponentTypedDicts:TypeAlias = Union[
     SerializerTypedDict,
     SetTypedDict,
     StringTypedDict,
-    TagTypedDict,
+    StructureTagTypedDict,
     TypeAliasTypedDict,
     VersionFileTypedDict,
     VersionFileTypeTypedDict,

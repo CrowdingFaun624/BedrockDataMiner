@@ -7,6 +7,7 @@ import Structure.PassthroughStructure as PassthroughStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
+import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
@@ -17,8 +18,8 @@ a = TypeVar("a")
 
 class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
 
-    def __init__(self, name: str, children_has_normalizer: bool, children_tags: set[str]) -> None:
-        super().__init__(name, children_has_normalizer, children_tags)
+    def __init__(self, name: str, children_has_normalizer: bool) -> None:
+        super().__init__(name, children_has_normalizer)
 
         self.substructures:dict[type,Structure.Structure|None]|None = None
 
@@ -40,8 +41,9 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
+        children_tags:set[StructureTag.StructureTag],
     ) -> None:
-        super().link_substructures(None, delegate, types, normalizer, post_normalizer, pre_normalized_types)
+        super().link_substructures(None, delegate, types, normalizer, post_normalizer, pre_normalized_types, children_tags)
         self.substructures = substructures
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
@@ -109,7 +111,9 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
         else:
             return None, exceptions
 
-    def get_tag_paths(self, data:a, tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data:a, tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+        if self.children_tags is None:
+            raise Exceptions.AttributeNoneError("children_tags", self)
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []

@@ -14,6 +14,7 @@ import Component.DataMiner.DataMinerImporterEnvironment as DataMinerImporterEnvi
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.Serializer.SerializerImporterEnvironment as SerializerImporterEnvironment
 import Component.Structure.StructureImporterEnvironment as StructureImporterEnvironment
+import Component.Structure.StructureTagImporterEnvironment as StructureTagImporterEnvironment
 import Component.Version.VersionFileTypeImporterEnvironment as VersionFileTypeImporterEnvironment
 import Component.Version.VersionImporterEnvironment as VersionImporterEnvironment
 import Component.VersionTag.LatestSlotImporterEnvironment as LatestSlotImporterEnvironment
@@ -28,6 +29,7 @@ if TYPE_CHECKING:
     import Downloader.AccessorType as AccessorType
     import Serializer.Serializer as Serializer
     import Structure.StructureBase as StructureBase
+    import Structure.StructureTag as StructureTag
     import Version.Version as Version
     import Version.VersionFileType as VersionFileType
     import Version.VersionTag.VersionTag as VersionTag
@@ -39,6 +41,7 @@ importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] =
     LatestSlotImporterEnvironment.LatestSlotImporterEnvironment,
     SerializerImporterEnvironment.SerializerImporterEnvironment,
     StructureImporterEnvironment.StructureImporterEnvironment,
+    StructureTagImporterEnvironment.StructureTagImporterEnvironment,
     VersionFileTypeImporterEnvironment.VersionFileTypeImporterEnvironment,
     VersionImporterEnvironment.VersionImporterEnvironment,
     VersionTagImporterEnvironment.VersionTagImporterEnvironment,
@@ -228,6 +231,7 @@ dataminer_collections:dict[str,"DataMinerCollection.DataMinerCollection"] = all_
 latest_slots:list[str] = all_component_groups["latest_slots"]
 serializers:dict[str,"Serializer.Serializer"] = all_component_groups["serializers"]
 structures:dict[str,"StructureBase.StructureBase"] = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}
+structure_tags:dict[str,"StructureTag.StructureTag"] = all_component_groups["structure_tags"]
 version_file_types:dict[str,"VersionFileType.VersionFileType"] = all_component_groups["version_file_types"]
 version_tags_order:"VersionTagOrder.VersionTagOrder" = all_component_groups["version_tags_order"]
 version_tags:dict[str,"VersionTag.VersionTag"] = all_component_groups["version_tags"]

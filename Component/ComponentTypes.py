@@ -16,7 +16,7 @@ import Component.Structure.PrimitiveComponent as PrimitiveComponent
 import Component.Structure.SequenceComponent as SequenceComponent
 import Component.Structure.SetComponent as SetComponent
 import Component.Structure.StringComponent as StringComponent
-import Component.Structure.TagComponent as TagComponent
+import Component.Structure.StructureTagComponent as StructureTagComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
 import Component.Version.VersionComponent as VersionComponent
 import Component.Version.VersionFileComponent as VersionFileComponent
@@ -46,7 +46,7 @@ component_types:list[type[Component.Component]] = [
     SetComponent.SetComponent,
     StringComponent.StringComponent,
     RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,
-    TagComponent.TagComponent,
+    StructureTagComponent.StructureTagComponent,
     TypeAliasComponent.TypeAliasComponent,
     VersionComponent.VersionComponent,
     VersionFileComponent.VersionFileComponent,

@@ -8,6 +8,7 @@ import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
+import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
@@ -34,14 +35,13 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             detect_key_moves:bool,
             key_weights:dict[str,int],
             children_has_normalizer:bool,
-            children_tags:set[str],
         ) -> None:
-        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer, children_tags)
+        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer)
 
         self.key_weights:dict[str,int] = key_weights
 
         self.keys:dict[str,Structure.Structure[d]|None]|None = None
-        self.tags:dict[str,list[str]]|None = None
+        self.tags:dict[str,set[StructureTag.StructureTag]]|None = None
         self.key_types:dict[str,tuple[type,...]]|None = None
         self.pre_normalized_types:tuple[type,...]|None = None
         self.keys_with_normalizers:list[str]|None = None
@@ -55,11 +55,12 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             normalizer:list[Normalizer.Normalizer],
             post_normalizer:list[Normalizer.Normalizer],
             pre_normalized_types:tuple[type,...],
-            tags:dict[str,list[str]],
+            tags:dict[str,set[StructureTag.StructureTag]],
             keys_with_normalizers:list[str],
             required_keys:list[str],
+            children_tags:set[StructureTag.StructureTag],
         ) -> None:
-        super().link_substructures(delegate, key_structure, normalizer, post_normalizer, required_keys)
+        super().link_substructures(delegate, key_structure, normalizer, post_normalizer, required_keys, children_tags)
         self.keys = keys
         self.key_types = key_types
         self.pre_normalized_types = pre_normalized_types
@@ -101,7 +102,9 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             return None, [Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value)]
         return output, []
 
-    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data: MutableMapping[str, d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+        if self.children_tags is None:
+            raise Exceptions.AttributeNoneError("children_tags", self)
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []

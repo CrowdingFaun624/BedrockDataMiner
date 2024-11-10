@@ -1,11 +1,15 @@
 import enum
 import re
+from collections import defaultdict
 from typing import Any, Callable
 
+import Component.Importer as Importer
 import DataMiner.DataMiner as DataMiner
+import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMiners as DataMiners
 import Structure.DataPath as DataPath
+import Structure.StructureTag as StructureTag
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -159,15 +163,22 @@ class TagSearcherDataMiner(DataMiner.DataMiner):
         self.none_okay = none_okay
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataPath.DataPath|Any]:
-        mentioned_tags:dict[str,set[DataPath.DataPath]] = {}
         dependencies = set(self.dependencies)
+        all_tags = Importer.structure_tags
         printer_environment = environment.get_printer_environment(self.version)
+        tag_dataminer_collections:defaultdict[DataMinerCollection.DataMinerCollection,list[StructureTag.StructureTag]] = defaultdict(lambda: [])
         for tag in self.tag_names:
-            mentioned_tags[tag] = set()
+            if tag not in all_tags:
+                raise Exceptions.UnrecognizedStructureTagError(self.tags, tag)
             for dataminer_collection in DataMiners.dataminers:
-                if dataminer_collection.has_tag(tag) and dataminer_collection not in dependencies:
-                    raise Exceptions.TagSearcherDependencyError(self, tag, dataminer_collection)
-                mentioned_tags[tag].update(dataminer_collection.get_tag_paths(self.version, tag, printer_environment))
+                if dataminer_collection.has_tag(all_tags[tag]):
+                    if dataminer_collection not in dependencies:
+                        raise Exceptions.TagSearcherDependencyError(self, all_tags[tag], dataminer_collection)
+                    tag_dataminer_collections[dataminer_collection].append(all_tags[tag])
+        mentioned_tags:defaultdict[str,set[DataPath.DataPath]] = defaultdict(lambda: set())
+        for dataminer_collection, tags in tag_dataminer_collections.items():
+            for tag, paths in dataminer_collection.get_tag_paths(self.version, tags, printer_environment).items():
+                mentioned_tags[tag.name].update(paths)
         output = self.tag_function(mentioned_tags)
 
         if not self.none_okay and len(output) == 0:

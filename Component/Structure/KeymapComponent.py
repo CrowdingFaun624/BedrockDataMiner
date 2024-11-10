@@ -105,7 +105,6 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             value_weight=self.value_weight,
             key_weights={key.key: key.weight for key in self.keys},
             children_has_normalizer=self.children_has_normalizer,
-            children_tags=self.children_tags,
         )
 
     def link_finals(self) -> list[Exception]:
@@ -122,6 +121,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys},
             keys_with_normalizers=[key.key for key in self.keys if (subcomponent := key.get_subcomponent()) is not None and subcomponent.children_has_normalizer] if self.children_has_normalizer else [],
             required_keys=[key.key for key in self.keys if key.required],
+            children_tags={tag.get_final() for tag in self.children_tags},
         )
         self.my_type = set(self.this_type_field.get_types())
         return exceptions

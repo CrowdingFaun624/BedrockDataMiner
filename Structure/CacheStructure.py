@@ -5,6 +5,7 @@ import Structure.Hashing as Hashing
 import Structure.PassthroughStructure as PassthroughStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
@@ -26,9 +27,8 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
             cache_get_similarity:bool,
             cache_compare:bool,
             children_has_normalizer:bool,
-            children_tags:set[str]
         ) -> None:
-        super().__init__(name, children_has_normalizer, children_tags)
+        super().__init__(name, children_has_normalizer)
 
         self.cache:dict[int,CacheItem[d]] = {}
         self.cache_check_all_types = cache_check_all_types
@@ -44,8 +44,9 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure:Structure.Structure[d]|None,
         delegate:Union["Delegate.Delegate", None],
         types:tuple[type,...],
+        children_tags:set[StructureTag.StructureTag],
     ) -> None:
-        super().link_substructures(structure, delegate, types, [], [], types)
+        super().link_substructures(structure, delegate, types, [], [], types, children_tags)
 
     def get_structure(self) -> Structure.Structure[d]:
         if self.structure is None:
@@ -90,7 +91,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         # to this data.
         return output
 
-    def get_tag_paths(self, data:d, tag:str, data_path:DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data:d, tag:StructureTag.StructureTag, data_path:DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
         structure = self.get_structure()
         if not environment.should_cache or not self.cache_get_tag_paths:
             return structure.get_tag_paths(data, tag, data_path, environment)

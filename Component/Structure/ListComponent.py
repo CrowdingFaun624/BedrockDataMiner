@@ -51,7 +51,6 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
         self.final = ListStructure.ListStructure(
             name=self.name,
             children_has_normalizer=self.children_has_normalizer,
-            children_tags=self.children_tags,
         )
 
     def link_finals(self) -> list[Exception]:
@@ -63,7 +62,8 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),
             pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
-            tags=self.tags_field.get_finals()
+            tags=self.tags_field.get_finals(),
+            children_tags={tag.get_final() for tag in self.children_tags},
         )
         self.my_type = set(self.this_type_field.get_types())
         return exceptions

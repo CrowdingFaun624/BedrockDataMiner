@@ -8,6 +8,7 @@ import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
+import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
@@ -33,14 +34,13 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             key_weight:float,
             value_weight:float,
             children_has_normalizer:bool,
-            children_tags:set[str],
         ) -> None:
-        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer, children_tags)
+        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer)
 
         self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None
         self.pre_normalized_types:tuple[type,...]|None = None
-        self.tags:list[str]|None = None
+        self.tags:set[StructureTag.StructureTag]|None = None
 
     def link_substructures(
         self,
@@ -51,10 +51,11 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
-        tags:list[str],
+        tags:set[StructureTag.StructureTag],
         required_keys:list[str],
+        children_tags:set[StructureTag.StructureTag],
     ) -> None:
-        super().link_substructures(delegate, key_structure, normalizer, post_normalizer, required_keys)
+        super().link_substructures(delegate, key_structure, normalizer, post_normalizer, required_keys, children_tags)
         self.structure = structure
         self.types = tuple(types)
         self.pre_normalized_types = tuple(pre_normalized_types)
@@ -70,7 +71,9 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         if not isinstance(value, self.types):
             return Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(value), "Value"), self.name, key, value)
 
-    def get_tag_paths(self, data: MutableMapping[str, d], tag: str, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data: MutableMapping[str, d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
+        if self.children_tags is None:
+            raise Exceptions.AttributeNoneError("children_tags", self)
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []

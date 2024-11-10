@@ -45,7 +45,6 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         self.final = GroupStructure.GroupStructure(
             name=self.name,
             children_has_normalizer=self.children_has_normalizer,
-            children_tags=self.children_tags,
         )
 
     def link_finals(self) -> list[Exception]:
@@ -64,5 +63,6 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
             normalizer=self.normalizer_field.get_finals(),
             post_normalizer=self.post_normalizer_field.get_finals(),
             pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else tuple(all_types),
+            children_tags={tag.get_final() for tag in self.children_tags},
         )
         return exceptions

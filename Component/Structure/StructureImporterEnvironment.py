@@ -16,6 +16,7 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str, Component.Component]]:
         output:dict[str,dict[str,Component.Component]] = {}
         output["versions"] = all_components["versions"]
+        output["structure_tags"] = all_components["structure_tags"]
         imports:list[ComponentTyping.ImportTypedDict]|None = None
         for component in components.values():
             if isinstance(component, BaseComponent.BaseComponent):

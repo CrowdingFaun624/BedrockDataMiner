@@ -1,6 +1,7 @@
 from typing import Any, Callable, TypeVar
 
 import Structure.Difference as D
+import Structure.StructureTag as StructureTag
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.Nbt.NbtTypes as NbtTypes
@@ -53,5 +54,6 @@ hash_type_table:dict[type,Callable] = { # I will have type hinting no matter how
     range: hash_table_item(lambda data: hash(data), range),
     set: hash_table_item(lambda data: hash(tuple(item for item in data)), set),
     str: hash_table_item(lambda data: hash(data), str),
+    StructureTag.StructureTag: hash_table_item(lambda data: hash(data), StructureTag.StructureTag),
     tuple: hash_table_item(lambda data: hash(tuple(hash_data(item) for item in data)), tuple),
 }

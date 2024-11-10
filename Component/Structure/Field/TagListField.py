@@ -5,13 +5,14 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
+import Structure.StructureTag as StructureTag
 
 if TYPE_CHECKING:
-    import Component.Structure.TagComponent as TagComponent
+    import Component.Structure.StructureTagComponent as StructureTagComponent
 
-TAG_PATTERN:Pattern.Pattern["TagComponent.TagComponent"] = Pattern.Pattern([{"is_tag": True}])
+TAG_PATTERN:Pattern.Pattern["StructureTagComponent.StructureTagComponent"] = Pattern.Pattern([{"is_structure_tag": True}])
 
-class TagListField(ComponentListField.ComponentListField["TagComponent.TagComponent"]):
+class TagListField(ComponentListField.ComponentListField["StructureTagComponent.StructureTagComponent"]):
 
     def __init__(self, subcomponents_strs:list[str]|str, path:list[str|int]) -> None:
         '''
@@ -19,7 +20,7 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         super().__init__(subcomponents_strs, TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
-        self.tag_sets:list[set[str]] = []
+        self.tag_sets:list[set["StructureTagComponent.StructureTagComponent"]] = []
         self.import_from_field:TagListField|None = None
 
     def set_field(
@@ -29,13 +30,13 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         imported_components:dict[str,dict[str,"Component.Component"]],
         functions:dict[str,Callable],
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list["TagComponent.TagComponent"],list["TagComponent.TagComponent"]]:
+    ) -> tuple[list["StructureTagComponent.StructureTagComponent"],list["StructureTagComponent.StructureTagComponent"]]:
         subcomponents, inline_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
         if self.import_from_field is not None:
             self.import_from_field.set_field(source_component, components, imported_components, functions, create_component_function)
             self.extend(self.import_from_field.get_components())
         for tag_set in self.tag_sets:
-            tag_set.update(self.get_tags())
+            tag_set.update(self.get_components())
         return subcomponents, inline_components
 
     def import_from(self, tag_list_field:"TagListField") -> None:
@@ -45,23 +46,16 @@ class TagListField(ComponentListField.ComponentListField["TagComponent.TagCompon
         '''
         self.import_from_field = tag_list_field
 
-    def add_to_tag_set(self, tag_set:set[str]) -> None:
+    def add_to_tag_set(self, tag_set:set["StructureTagComponent.StructureTagComponent"]) -> None:
         '''
-        Makes this TagListField add its tags (in string form) to the given tag set.
-        :tag_set: The set of strings to add to.
+        Makes this TagListField add its tags to the given tag set.
+        :tag_set: The set of StructureTags to add to.
         '''
         self.tag_sets.append(tag_set)
 
-    def get_tags(self) -> list[str]:
-        '''
-        Returns the tags that this TagListField refers to in the form of strings.
-        Can only be called after `set_field`.
-        '''
-        return [tag.name for tag in self.get_components()]
-
-    def get_finals(self) -> list[str]:
+    def get_finals(self) -> set[StructureTag.StructureTag]:
         '''
         Returns the `final` attribute of all tags in this TagListField.
         Can only be called after `set_field`.
         '''
-        return [tag.get_final() for tag in self.get_components()]
+        return {tag.get_final() for tag in self.get_components()}

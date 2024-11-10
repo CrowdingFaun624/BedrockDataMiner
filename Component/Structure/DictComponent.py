@@ -90,7 +90,6 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             key_weight=self.key_weight,
             value_weight=self.value_weight,
             children_has_normalizer=self.children_has_normalizer,
-            children_tags=self.children_tags,
         )
 
     def link_finals(self) -> list[Exception]:
@@ -105,6 +104,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
             tags=self.tags_field.get_finals(),
             required_keys=self.required_keys,
+            children_tags={tag.get_final() for tag in self.children_tags},
         )
         self.my_type = set(self.this_type_field.get_types())
         return exceptions
