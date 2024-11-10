@@ -232,7 +232,10 @@ class StructureBase():
         comparison_environment = StructureEnvironment.ComparisonEnvironment(environment, self.default_delegate, version1, version2, versions_between)
         if version1 is None:
             normalized_data2 = self.normalize(data2, comparison_environment[1])
-            normalized_data1 = type(normalized_data2)() # create new empty.
+            if hasattr(normalized_data2, "__copy_empty__"):
+                normalized_data1 = normalized_data2.__copy_empty__()
+            else:
+                normalized_data1 = type(normalized_data2)() # create new empty object.
         else:
             normalized_data1 = self.normalize(data1, comparison_environment[0])
             normalized_data2 = self.normalize(data2, comparison_environment[1])

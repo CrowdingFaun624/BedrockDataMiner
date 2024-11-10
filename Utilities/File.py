@@ -49,6 +49,12 @@ class AbstractFile(Generic[a]):
         '''
         return; yield
 
+    def __copy_empty__(self) -> "AbstractFile[a]":
+        '''
+        Creates a file with data of the same type as this file, but empty.
+        '''
+        ...
+
 class File(AbstractFile[a]):
 
     def __init__(self, display_name:str, serializer:Serializer.Serializer, data_hash:int) -> None:
@@ -79,6 +85,9 @@ class File(AbstractFile[a]):
         self._data = ...
 
     data = property(_get_data, _set_data, _del_data)
+
+    def __copy_empty__(self) -> AbstractFile[a]:
+        return EmptyFile(self.serializer, self.hash, self._data)
 
     def get_referenced_files(self) -> Iterator[int]:
         if self.serializer.can_contain_subfiles:
@@ -113,12 +122,19 @@ class EmptyFile(File[a]):
             self._data = type(data)()
         return self._data
 
+    def __copy_empty__(self) -> AbstractFile[a]:
+        return self
+
 class FakeFile(AbstractFile[a]):
     '''Similar to a File, but it can be created anywhere and using any hash/data.'''
 
     def __init__(self, display_name: str, data:a, data_hash: int) -> None:
         super().__init__(display_name, data_hash)
         self.data = data
+
+    def __copy_empty__(self) -> AbstractFile[a]:
+        return FakeFile("empty_file", type(self.data)(), 0) # FakeFile does not need data_hash.
+        # the `hash` attribute must be different for caching reasons, so it's just 0.
 
 class FileDiff(Generic[a]):
     '''

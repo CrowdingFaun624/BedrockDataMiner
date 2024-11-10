@@ -87,7 +87,10 @@ class DataMinerCollection():
         `data_cache` stores the output of `get_data_file`.'''
         if version1 is None:
             version2_data = self.get_data_file(version2)
-            version1_data = type(version2_data)() # create new empty object.
+            if hasattr(version2_data, "__copy_empty__"):
+                version1_data = version2_data.__copy_empty__()
+            else:
+                version1_data = type(version2_data)() # create new empty object.
         else:
             version1_data = self.get_data_file(version1)
             version2_data = self.get_data_file(version2)
