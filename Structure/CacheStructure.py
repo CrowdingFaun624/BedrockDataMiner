@@ -98,7 +98,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
             cache_item = new_cache_item
 
         output = structure.normalize(data, environment)
-        cache_item.set_normalize((data, output[1]))
+        cache_item.set_normalize((data, output[1]) if output[0] is None else output)
         # the data must be stored in the cache item because when the data is
         # being retrieved later, the substructure may have just returned None,
         # but none of the changes that the normalizer to that data were applied

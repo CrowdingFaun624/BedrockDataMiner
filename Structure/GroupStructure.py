@@ -52,8 +52,12 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
     def check_all_types(self, data: a, environment: StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         if not isinstance(data, self.get_types()):
             return [Trace.ErrorTrace(Exceptions.StructureTypeError(self.get_types(), type(data), "Data"), self.name, None, data)]
-        else:
-            return []
+        exceptions:list[Trace.ErrorTrace] = []
+        structure, new_exceptions = self.get_structure(None, data)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+        if structure is not None:
+            exceptions.extend(exception.add(self.name, None) for exception in structure.check_all_types(data, environment))
+        return exceptions
 
     def get_structure(self, key:None, value: a) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         output = self.get_substructures().get(type(value), ...)

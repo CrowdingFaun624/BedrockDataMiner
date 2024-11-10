@@ -985,7 +985,7 @@ class DataMinerDependencyOverwriteError(DataMinerException):
 
 class DataMinerDuplicateFileNameError(DataMinerException):
     "Two DataMinerCollections have the same file name."
-    
+
     def __init__(self, file_name:str, dataminers:list["DataMinerCollection.DataMinerCollection"], message:Optional[str]=None) -> None:
         '''
         :file_name: The file name shared by all of the DataMinerCollections.
@@ -996,7 +996,7 @@ class DataMinerDuplicateFileNameError(DataMinerException):
         self.file_name = file_name
         self.dataminers = dataminers
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "DataMinerCollections [%s] all have the same file name \"%s\"" % (", ".join(dataminer.name for dataminer in self.dataminers), self.file_name)
         output += "!" if self.message is None else " %s!" % (self.message,)
@@ -2095,7 +2095,7 @@ class UnrecognizedStructureTagError(StructureException):
         self.expression = expression
         self.tag_name = tag_name
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "Unrecognized tag \"%s\" referenced in expression \"%s\"" % (self.tag_name, self.expression)
         output += "!" if self.message is None else " %s!" % (self.message,)

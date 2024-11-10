@@ -27,7 +27,7 @@ class Delegate(Generic[a, b, c]):
     Object for displaying the output of Structures in different ways.
     Delegates are a Generic of three TypeVars.
     The first TypeVar (`a`) is the output of this Delegate.
-    The second TypeVar (`b`) is the Structure tyeps this Delegate works on. It can be a subclass of Structure or StructureBase.
+    The second TypeVar (`b`) is the Structure types this Delegate works on. It can be a subclass of Structure or StructureBase.
     The third TypeVar (`c`) is the data that is stored in CacheStructures with this Delegate.
     '''
 
