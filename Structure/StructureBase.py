@@ -240,6 +240,9 @@ class StructureBase():
             normalized_data1 = self.normalize(data1, comparison_environment[0])
             normalized_data2 = self.normalize(data2, comparison_environment[1])
 
+        self.check_types(normalized_data1, environment, (version1,) if version1 is not None else ())
+        self.check_types(normalized_data2, environment, (version2,))
+
         data_comparison, has_changes = self.compare(normalized_data1, normalized_data2, comparison_environment)
         if not has_changes: # skip compare_text part
             return "", False
