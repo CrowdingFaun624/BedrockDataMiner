@@ -3,7 +3,6 @@ import traceback
 from typing import BinaryIO
 
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 import Utilities.Nbt.DataReader as DataReader
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtTypes as NbtTypes
@@ -22,18 +21,6 @@ def unpack_file(data:BinaryIO, gzipped:bool=True, endianness:Endianness.End|None
     if endianness is None: endianness = Endianness.End.BIG
     if gzipped:
         return unpack_bytes(data.read(), gzipped=True, endianness=endianness)
-    data_reader = DataReader.DataFileReader(data)
-    name, output = NbtTypes.parse_compound_item_from_bytes(data_reader, endianness)
-    return name, output
-
-def unpack_file_promise(file:FileManager.FilePromise, endianness:Endianness.End|None=None) -> tuple[str|None, NbtTypes.TAG]:
-    '''
-    Returns the NBT data stored in a FilePromise. Does not call all_done on the FilePromise.
-    :file: The FilePromise to extract.
-    :endianness: The endianness of the NBT file.
-    '''
-    if endianness is None: endianness = Endianness.End.BIG
-    data:BinaryIO = file.open() # type: ignore
     data_reader = DataReader.DataFileReader(data)
     name, output = NbtTypes.parse_compound_item_from_bytes(data_reader, endianness)
     return name, output

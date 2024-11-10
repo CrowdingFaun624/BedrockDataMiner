@@ -89,20 +89,6 @@ class DownloadManager(Manager.Manager):
         for directory_to_remove in reversed(directories_to_remove):
             directory_to_remove.rmdir()
 
-    def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> FileManager.FilePromise:
-        if not self.installed.get():
-            self.install_all()
-        self.open_zip_file()
-        if self.zip_file is None:
-            raise Exceptions.AttributeNoneError("zip_file", self)
-        if mode == "b":
-            return FileManager.FilePromise(FunctionCaller(self.zip_file.open, [file_name]), file_name.split("/")[-1], mode)
-        else:
-            temp_path = FileManager.get_temp_file_path()
-            path_that_zipfile_puts_it_in = temp_path.joinpath(file_name)
-            self.zip_file.extract(file_name, temp_path)
-            return FileManager.FilePromise(FunctionCaller(open, [path_that_zipfile_puts_it_in, "rt"]), file_name.split("/")[-1], mode, FunctionCaller(self.clear_temp_file, [temp_path, path_that_zipfile_puts_it_in]))
-
     def install_all(self, destination:Path|None=None) -> None:
         if destination is None: destination = self.apk_location
         if not self.installed.get():

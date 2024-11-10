@@ -48,10 +48,6 @@ class StoredManager(Manager.Manager):
         self.read_index()
         return StoredVersionsManager.read_file(self.name, file_name, mode, self.index)
 
-    def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> FileManager.FilePromise:
-        self.read_index()
-        return StoredVersionsManager.get_file(self.name, file_name, mode, self.index)
-
     def all_done(self) -> None:
         if self.apk_location.exists():
             self.apk_location.unlink()

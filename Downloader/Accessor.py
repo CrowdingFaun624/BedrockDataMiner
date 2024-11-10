@@ -59,9 +59,6 @@ class DirectoryAccessor(Accessor):
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
         return self.manager.read(self.modify_file_name(file_name), mode)
 
-    def get_file(self, file_name:str, mode:Literal["b", "t"]="b") -> FileManager.FilePromise:
-        return self.manager.get_file(self.modify_file_name(file_name), mode)
-
     def __repr__(self) -> str:
         return "<%s id %i>" % (self.__class__.__name__, id(self))
 

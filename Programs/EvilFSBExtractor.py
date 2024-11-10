@@ -71,7 +71,7 @@ def extract_fsb_file(input_file:FileManager.FilePromise|bytes) -> dict[str,FileM
         result_file_hashes:dict[str,str] = {}
         for result_file_path in result_file_paths:
             with open(result_file_path, "rb") as f:
-                result_file_hashes[result_file_path.name] = FileStorageManager.archive_io(f, result_file_path.name)
+                result_file_hashes[result_file_path.name] = FileStorageManager.archive_data(f.read(), result_file_path.name)
         cache_new_item(fsb_file_hash, result_file_hashes)
 
         # return FilePromises

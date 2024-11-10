@@ -55,10 +55,6 @@ class Manager():
         '''Returns the contents of the given file name from the Version'''
         raise Exceptions.ManagerUndefinedMethodError(self, self.read)
 
-    def get_file(self, file_name:str, mode:Literal["b","t"]="b") -> "FileManager.FilePromise":
-        '''Returns a FilePromise object of the file.'''
-        raise Exceptions.ManagerUndefinedMethodError(self, self.get_file)
-
     def all_done(self) -> None:
         '''Removes all files that were created as part of the installation of this version.'''
         raise Exceptions.ManagerUndefinedMethodError(self, self.all_done)
