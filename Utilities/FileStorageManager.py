@@ -9,11 +9,6 @@ from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
 COMPRESSIBLE_FILES = ["json", "fsb", "txt", "lang", "tga", "xml", "bin", "fragment", "h", "vertex", "properties", "material", "ttf", "otf", "fontdata", "css", "js", "html", "dat", "wlist", "pdn", "so", "dex", "sf", "mf"]
 
-CACHE_LIMIT = 2 # how many times it has to miss the cache in order to cache the file.
-
-cache_counts:dict[str,int] = {}
-cache_data:dict[str,bytes|str] = {}
-
 def read_index() -> dict[str, bool]:
     '''Returns a dictionary of hex string hashes, and the file's zippability and a name it has.
     Should only be called once at the start of the program, and then the `index` variable should be used.'''
@@ -104,13 +99,6 @@ def read_archived(hex_string:str, mode:Literal["b"]) -> bytes: ...
 @overload
 def read_archived(hex_string:str, mode:Literal["t"]) -> str: ...
 def read_archived(hex_string:str, mode:Literal["t", "b"]) -> bytes|str:
-    cache_name = hex_string + "-" + mode
-    cached_file = cache_data.get(cache_name)
-    if cached_file is not None:
-        return cached_file
-    cache_counts[cache_name] = cache_counts.get(cache_name, 0) + 1
-    should_cache = cache_counts[cache_name] >= CACHE_LIMIT and cache_name not in cache_data
-
     archived_path = get_file_path(hex_string)
     is_zipped = index.get()[hex_string]
     output:str|bytes
@@ -123,6 +111,4 @@ def read_archived(hex_string:str, mode:Literal["t", "b"]) -> bytes|str:
     else:
         with open(archived_path, "r" + mode) as f:
             output = f.read()
-    if should_cache:
-        cache_data[cache_name] = output
     return output
