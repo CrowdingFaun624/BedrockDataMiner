@@ -29,6 +29,7 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
     class_name = "DataMinerCollection"
     my_capabilities = Capabilities.Capabilities(is_dataminer_collection=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
@@ -41,6 +42,7 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
         self.verify_arguments(data)
 
         self.file_name = data["file_name"]
+        self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
 
         self.structure_field = StructureField.StructureField(data["structure"], ["structure"])
@@ -60,6 +62,7 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
         self.final = DataMinerCollection.DataMinerCollection(
             file_name=self.file_name,
             name=self.name,
+            comparing_disabled=self.comparing_disabled,
         )
 
     def link_finals(self) -> list[Exception]:

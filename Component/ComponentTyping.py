@@ -48,6 +48,7 @@ class CacheTypedDict(TypedDict):
     types: Required[str|list[str]]
 
 class DataMinerCollectionTypedDict(TypedDict):
+    comparing_disabled: NotRequired[bool]
     dataminers: Required[list["DataMinerSettingsTypedDict"]]
     disabled: NotRequired[bool]
     file_name: Required[str]

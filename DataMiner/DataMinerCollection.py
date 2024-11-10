@@ -17,9 +17,10 @@ if TYPE_CHECKING:
 
 class DataMinerCollection():
 
-    def __init__(self, file_name:str, name:str) -> None:
+    def __init__(self, file_name:str, name:str, comparing_disabled:bool) -> None:
         self.name = name
         self.file_name = file_name
+        self.comparing_disabled = comparing_disabled
 
         self.dataminer_settings:list["DataMinerSettings.DataMinerSettings"]|None = None
         self.structure:StructureBase.StructureBase|None = None

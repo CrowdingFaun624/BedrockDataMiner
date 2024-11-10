@@ -71,7 +71,7 @@ def select_dataminers(dataminers:list[DataMinerCollection.DataMinerCollection]) 
         return [dataminer_names[selected_dataminer]]
 
 def main() -> None:
-    dataminers = DataMiners.dataminers
+    dataminers = [dataminer_collection for dataminer_collection in DataMiners.dataminers if not dataminer_collection.comparing_disabled]
     selected_dataminers = select_dataminers(dataminers)
     versions = Importer.versions
     version_tags = Importer.version_tags
