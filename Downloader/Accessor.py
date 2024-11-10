@@ -27,7 +27,9 @@ class Accessor():
 
 class DummyAccessor(Accessor):
     "Accessor that does nothing."
-    ...
+    
+    def all_done(self) -> None:
+        pass
 
 class DirectoryAccessor(Accessor):
 
