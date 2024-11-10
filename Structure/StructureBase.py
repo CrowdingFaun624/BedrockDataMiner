@@ -271,7 +271,7 @@ class StructureBase():
             texts.append(text)
         if len(traces) > 0:
             with open(FileManager.STRUCTURE_LOG_FILE, "at", encoding="utf-8") as f:
-                f.write("-------- EXCEPTIONS IN %s ON %s --------\n\n" % (self.name, ", ".join(version.name for version in versions)))
+                f.write("-------- %i EXCEPTIONS IN %s ON %s --------\n\n" % (len(traces), self.name, ", ".join(version.name for version in versions)))
                 f.write("".join(texts))
             raise Exceptions.StructureError(self)
 
