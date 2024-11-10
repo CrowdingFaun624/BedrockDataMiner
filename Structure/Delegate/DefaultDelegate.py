@@ -73,6 +73,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("passthrough", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_all", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("print_flat", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("show_item_key", "a bool or null", False, (bool, type(None))),
@@ -88,6 +89,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
         keys:dict[str,DefaultDelegateKeysTypedDict],
         field:str|None=None,
         measure_length:bool=False,
+        passthrough:bool=False,
         print_all:bool=False,
         print_flat:bool=False,
         show_item_key:bool|None=None,
@@ -95,6 +97,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
         super().__init__(structure, keys)
         self.field = field if field is not None else ("field" if isinstance(structure, AbstractMappingStructure.AbstractMappingStructure) else "item")
         self.measure_length = measure_length
+        self.passthrough = passthrough
         self.print_all = print_all
         self.print_flat = print_flat
         if show_item_key is None:
@@ -159,6 +162,8 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
         return index if self.show_item_key else None
 
     def print_item(self, index:a, substructure_output:list[Line], message:str="") -> list[Line]:
+        if self.passthrough:
+            return substructure_output
         substructure_output_length = len(substructure_output)
         item_key = self.get_item_key(index)
         if substructure_output_length == 0:
@@ -285,8 +290,12 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
             else:
                 output.append(Line("%s %s%s %s of %s.") % (message, self.field, post_message, self.stringify(key_str), stringified_data))
         else:
+            substructure_output:list[Line]
             substructure_output, new_exceptions = printer.print_text(data, environment)
             exceptions.extend(exception.add(self.get_structure().name, key_str) for exception in new_exceptions)
+            if self.passthrough:
+                output.extend(substructure_output)
+                return exceptions
             match len(substructure_output), key_str is None:
                 case 0, True:
                     output.append(Line("%s empty %s%s.") % (message, self.field, post_message))
@@ -330,6 +339,8 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
         printer1 = printers[D.DiffType.old]
         printer2 = printers[D.DiffType.new]
         exceptions:list[Trace.ErrorTrace] = []
+        substructure_output1:list[Line]
+        substructure_output2:list[Line]
         if printer1 is None:
             substructure_output1 = [Line(self.stringify(data1))]
         else:
@@ -340,6 +351,10 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
         else:
             substructure_output2, new_exceptions = printer2.print_text(data2, environment[1])
             exceptions.extend(exception.add(self.get_structure().name, key_str) for exception in new_exceptions)
+        if self.passthrough:
+            output.extend(substructure_output1)
+            output.extend(substructure_output2)
+            return exceptions
         if len(substructure_output1) == 0: substructure_output1 = [Line("empty")]
         if len(substructure_output2) == 0: substructure_output2 = [Line("empty")]
         match len(substructure_output1), len(substructure_output2), key_str is None:
