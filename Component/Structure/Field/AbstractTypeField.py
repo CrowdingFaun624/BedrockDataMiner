@@ -17,6 +17,7 @@ class AbstractTypeField(Field.Field):
         super().__init__(path)
         self.verify_with_component:VerifyComponentType|None=None
         self.must_be_types:set[type]|None = None
+        self.must_be_fail_message:str|None = None
         self.contained_by_field:AbstractTypeField|None = None
 
     def check(self, source_component:"Component.Component") -> list[Exception]:
@@ -35,7 +36,7 @@ class AbstractTypeField(Field.Field):
                     exceptions.append(Exceptions.ComponentMismatchedTypesError(source_component, sorted(component_types, key=lambda type: type.__name__), subcomponent, sorted(subcomponent.my_type, key=lambda type: type.__name__)))
         if self.must_be_types is not None:
             exceptions.extend(
-                Exceptions.ComponentTypeInvalidTypeError(source_component, type, self.must_be_types)
+                Exceptions.ComponentTypeInvalidTypeError(source_component, type, self.must_be_types, message=self.must_be_fail_message)
                 for type in self.get_types()
                 if type not in self.must_be_types
             )
@@ -64,12 +65,13 @@ class AbstractTypeField(Field.Field):
         '''
         self.verify_with_component = component_field
 
-    def must_be(self, types:set[type]) -> None:
+    def must_be(self, types:set[type], *, fail_message:str|None=None) -> None:
         '''
         Makes this TypeField check that all of its types are a member of `types`.
         :types: The tuple of types that this TypeField must be.
         '''
         self.must_be_types = types
+        self.must_be_fail_message = fail_message
 
     def contained_by(self, type_field:"AbstractTypeField") -> None:
         '''

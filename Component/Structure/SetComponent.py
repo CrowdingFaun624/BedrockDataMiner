@@ -47,7 +47,7 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "list"), ["this_type"])
         self.types_field.verify_with(self.subcomponent_field)
         if self.sort:
-            self.types_field.must_be(StructureComponent.SORTABLE_TYPES)
+            self.types_field.must_be(StructureComponent.SORTABLE_TYPES, fail_message="(due to being sorted)")
         self.tags_field.add_to_tag_set(self.children_tags)
         self.this_type_field.must_be(StructureComponent.ITERABLE_TYPES)
         self.this_type_field.contained_by(self.types_field)
