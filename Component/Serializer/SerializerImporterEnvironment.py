@@ -1,7 +1,6 @@
 import Component.Component as Component
 import Component.ImporterEnvironment as ImporterEnvironment
 import Serializer.Serializer as Serializer
-import Serializer.JsonSerializer as JsonSerializer
 import Utilities.FileManager as FileManager
 
 
@@ -14,8 +13,11 @@ class SerializerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict
 
     def get_output(self, components: dict[str, Component.Component], name: str) -> dict[str,Serializer.Serializer]:
         output = super().get_output(components, name)
-        output["json_default"] = JsonSerializer.DEFAULT_JSON_SERIALIZER
         return output
+
+    def get_assumed_used_components(self, components:dict[str,Component.Component], name:str) -> ImporterEnvironment.Iterable[Component.Component]:
+        # Serializers can be referenced in random data files or by string-y reference in other Serializers
+        return components.values()
 
     def get_component_group_name(self, file_path: ImporterEnvironment.Path) -> str:
         return "serializers"

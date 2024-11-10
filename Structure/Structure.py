@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Generic, Iterable, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, Iterable, Iterator, TypeVar, Union
 
 import Structure.DataPath as DataPath
 import Structure.StructureTag as StructureTag
@@ -105,6 +105,14 @@ class Structure(Generic[a]):
         :tag: The tag to search for.
         :data_path: The current path of data traversed through the Structures so far.
         :environment: The StructureEnvironment to use.
+        '''
+        ...
+
+    def get_referenced_files(self, data:a, environment:"StructureEnvironment.PrinterEnvironment") -> Iterator[int]:
+        '''
+        Returns any Files within the data.
+        :data: The data to search for Files.
+        :environment: The PrinterEnvironment to use.
         '''
         ...
 
