@@ -3,6 +3,7 @@ from typing import Any, Generic, Iterator, TypeVar
 
 import Serializer.Serializer as Serializer
 import Structure.DataPath as DataPath
+import Structure.Difference as D
 import Utilities.Exceptions as Exceptions
 import Utilities.FileStorageManager as FileStorageManager
 
@@ -118,6 +119,27 @@ class FakeFile(AbstractFile[a]):
     def __init__(self, display_name: str, data:a, data_hash: int) -> None:
         super().__init__(display_name, data_hash)
         self.data = data
+
+class FileDiff(Generic[a]):
+    '''
+    Similar to a FakeFile, but contains the data from two files.
+    This exists because it's easier to hash or something.
+    '''
+
+    def __init__(self, file1:AbstractFile[a], file2:AbstractFile[a], data:a|D.Diff[a,a]) -> None:
+        self.data = data
+        self.display_name1 = file1.display_name
+        self.display_name2 = file2.display_name
+        self.hash = hash((file1, file2))
+
+    def __hash__(self) -> int:
+        return self.hash
+
+    def __repr__(self) -> str:
+        if self.display_name1 == self.display_name2:
+            return "<%s \"%s\" hash %s>" % (self.__class__.__name__, self.display_name1, hash_int_to_str(self.hash))
+        else:
+            return "<%s \"%s\" and \"%s\" hash %s>" % (self.__class__.__name__, self.display_name1, self.display_name2, hash_int_to_str(self.hash))
 
 NoneType = type(None)
 
