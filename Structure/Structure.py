@@ -45,16 +45,18 @@ class Structure(Generic[a]):
     def __hash__(self) -> int:
         return id(self)
 
-    def clear_caches(self, memo:set["Structure"]) -> None:
+    def get_descendants(self, memo:set["Structure"]) -> Iterable["Structure"]:
         '''
-        Clears all the caches of this Structure and of its children.
-        :memo: The set of Structures already cleared.
+        Returns this Structure and all of its descendents.
+        :memo: The set of Structures already returned.
         '''
+        if self not in memo:
+            yield self
         for substructure in self.iter_structures():
             if substructure in memo:
                 continue
             memo.add(self)
-            substructure.clear_caches(memo)
+            yield from substructure.get_descendants(memo)
 
     def check_all_types(self, data:a, environment:"StructureEnvironment.StructureEnvironment") -> list[Trace.ErrorTrace]:
         '''

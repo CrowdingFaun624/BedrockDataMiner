@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Any, TypeVar, Union
 
+import Structure.CacheStructure as CacheStructure
 import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
@@ -35,6 +36,8 @@ class StructureBase():
         self.delegate:Union["Delegate.Delegate[str,StructureBase,str]", None] = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.post_normalizer:list[Normalizer.Normalizer]|None = None
+        self.cache_substructures:list[CacheStructure.CacheStructure] = []
+        '''List of all descendants that are CacheStructures.'''
         self.children_tags:set[StructureTag.StructureTag]|None = None
 
     def link_substructures(
@@ -63,6 +66,9 @@ class StructureBase():
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
         return self.structure
+
+    def finalize(self) -> None:
+        self.cache_substructures = [structure for structure in self.get_structure().get_descendants(set()) if isinstance(structure, CacheStructure.CacheStructure)]
 
     def finalize_delegate(self) -> None:
         if self.delegate is not None:
@@ -123,9 +129,13 @@ class StructureBase():
 
     def clear_caches(self) -> None:
         '''Clears all the caches of this Structure and of its children.'''
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
-        self.structure.clear_caches(set())
+        for cache_structure in self.cache_substructures:
+            cache_structure.clear_cache()
+
+    def clear_some_caches(self) -> None:
+        '''Clears items from caches of this Structure and all of its children that are too old.'''
+        for cache_structure in self.cache_substructures:
+            cache_structure.clear_old_items()
 
     def has_tag(self, tag:StructureTag.StructureTag) -> bool:
         '''

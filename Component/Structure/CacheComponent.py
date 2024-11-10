@@ -23,6 +23,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         TypeVerifier.TypedDictKeyTypeVerifier("cache_print_text", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("remove_threshold", "an int", False, int),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent or None", True, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a list or str", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -32,6 +33,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data)
 
+        self.remove_threshold = data.get("remove_threshold", 10)
         self.cache_check_all_types = data.get("cache_check_all_types", True)
         self.cache_normalize = data.get("cache_normalize", True)
         self.cache_get_tag_paths = data.get("cache_get_tag_paths", True)
@@ -50,6 +52,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         super().create_final()
         self.final = CacheStructure.CacheStructure(
             name=self.name,
+            cache_remove_threshold=self.remove_threshold,
             cache_check_all_types=self.cache_check_all_types,
             cache_normalize=self.cache_normalize,
             cache_get_tag_paths=self.cache_get_tag_paths,

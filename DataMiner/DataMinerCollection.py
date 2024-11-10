@@ -102,6 +102,10 @@ class DataMinerCollection():
         '''Clears all caches of this DataMinerCollection's Structure.'''
         self.get_structure().clear_caches()
 
+    def clear_some_caches(self) -> None:
+        '''Clears items from caches of this DataMinerCollection's Structure and all of its children that are too old.'''
+        self.get_structure().clear_some_caches()
+
     def get_dataminer_settings(self, version:Version.Version) -> "DataMinerSettings.DataMinerSettings":
         '''Returns a DataMinerSettings such that `version` is in the dataminer's VersionRange'''
         for dataminer_setting in self.get_all_dataminer_settings():

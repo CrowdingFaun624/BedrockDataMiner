@@ -46,6 +46,8 @@ def compare_all_of(
                     compare(None, version, dataminer_collection, undataminable_versions_between)
                 undataminable_versions_between = []
                 previous_successful_version = version
+                dataminer_collection.clear_some_caches()
+                # must occur AFTER comparing.
             else:
                 undataminable_versions_between.append(version)
     except Exception as e:

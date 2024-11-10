@@ -61,3 +61,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
             children_tags={tag.get_final() for tag in self.children_tags},
         )
         return exceptions
+
+    def finalize(self) -> None:
+        super().finalize()
+        self.get_final().finalize()

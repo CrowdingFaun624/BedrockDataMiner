@@ -43,6 +43,7 @@ class CacheTypedDict(TypedDict):
     cache_print_text: NotRequired[bool]
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
+    remove_threshold: NotRequired[int]
     subcomponent: Required[str]
     type: NotRequired[Literal["Cache"]]
     types: Required[str|list[str]]

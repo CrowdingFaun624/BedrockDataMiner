@@ -19,6 +19,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
     def __init__(
             self,
             name:str,
+            cache_remove_threshold:int,
             cache_check_all_types:bool,
             cache_normalize:bool,
             cache_get_tag_paths:bool,
@@ -30,6 +31,10 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         ) -> None:
         super().__init__(name, children_has_normalizer)
 
+        self.searches:int = 0
+        '''Increases each time `clear_old_items` is called.'''
+        self.cache_remove_threshold = cache_remove_threshold
+        '''How many consecutive times a cache item must be not retrieved for it to be removed.'''
         self.cache:dict[int,CacheItem[d]] = {}
         self.cache_check_all_types = cache_check_all_types
         self.cache_normalize = cache_normalize
@@ -58,11 +63,14 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         if not environment.should_cache or not self.cache_check_all_types:
             return structure.check_all_types(data, environment)
         data_hash = Hashing.hash_data(data)
-        cache_item = self.cache.get(data_hash)
-        if cache_item is not None and cache_item.check_all_types:
-            return cache_item.get_check_all_types_data()
-        if cache_item is None:
-            new_cache_item:CacheItem[d] = CacheItem(self.delegate)
+        cache_item = self.cache.pop(data_hash, None)
+        if cache_item is not None:
+            self.cache[data_hash] = cache_item # the point of this is to move it to the front.
+            cache_item.retrieve_index = self.searches
+            if cache_item.check_all_types:
+                return cache_item.get_check_all_types_data()
+        else:
+            new_cache_item:CacheItem[d] = CacheItem(self.delegate, self.searches)
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
@@ -75,11 +83,14 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         if not environment.structure_environment.should_cache or not self.cache_normalize:
             return structure.normalize(data, environment)
         data_hash = Hashing.hash_data(data)
-        cache_item = self.cache.get(data_hash)
-        if cache_item is not None and cache_item.normalize:
-            return cache_item.get_normalize_data()
-        if cache_item is None:
-            new_cache_item:CacheItem[d] = CacheItem(self.delegate)
+        cache_item = self.cache.pop(data_hash, None)
+        if cache_item is not None:
+            self.cache[data_hash] = cache_item
+            cache_item.retrieve_index = self.searches
+            if cache_item.normalize:
+                return cache_item.get_normalize_data()
+        else:
+            new_cache_item:CacheItem[d] = CacheItem(self.delegate, self.searches)
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
@@ -95,12 +106,15 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.should_cache or not self.cache_get_tag_paths:
             return structure.get_tag_paths(data, tag, data_path, environment)
-        data_hash = Hashing.hash_data(data)
-        cache_item = self.cache.get(data_hash)
-        if cache_item is not None and cache_item.get_tag_paths:
-            return cache_item.get_get_tag_paths_data()
-        if cache_item is None:
-            new_cache_item:CacheItem[d] = CacheItem(self.delegate)
+        data_hash = Hashing.hash_data((data, tag))
+        cache_item = self.cache.pop(data_hash, None)
+        if cache_item is not None:
+            self.cache[data_hash] = cache_item
+            cache_item.retrieve_index = self.searches
+            if cache_item.get_tag_paths:
+                return cache_item.get_get_tag_paths_data()
+        else:
+            new_cache_item:CacheItem[d] = CacheItem(self.delegate, self.searches)
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
@@ -113,11 +127,14 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         if not environment.structure_environment.should_cache or not self.cache_compare_text:
             return structure.compare_text(data, environment)
         data_hash = Hashing.hash_data(data)
-        cache_item = self.cache.get(data_hash)
-        if cache_item is not None and cache_item.compare_text:
-            return cache_item.get_compare_text_data(environment)
-        if cache_item is None:
-            new_cache_item:CacheItem[d] = CacheItem(self.delegate)
+        cache_item = self.cache.pop(data_hash, None)
+        if cache_item is not None:
+            self.cache[data_hash] = cache_item
+            cache_item.retrieve_index = self.searches
+            if cache_item.compare_text:
+                return cache_item.get_compare_text_data(environment)
+        else:
+            new_cache_item:CacheItem[d] = CacheItem(self.delegate, self.searches)
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
@@ -130,11 +147,14 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         if environment.structure_environment.should_cache or not self.cache_print_text:
             return structure.print_text(data, environment)
         data_hash = Hashing.hash_data(data)
-        cache_item = self.cache.get(data_hash)
-        if cache_item is not None and cache_item.print_text:
-            return cache_item.get_print_text_data(environment)
-        if cache_item is None:
-            new_cache_item:CacheItem[d] = CacheItem(self.delegate)
+        cache_item = self.cache.pop(data_hash, None)
+        if cache_item is not None:
+            self.cache[data_hash] = cache_item
+            cache_item.retrieve_index = self.searches
+            if cache_item.print_text:
+                return cache_item.get_print_text_data(environment)
+        else:
+            new_cache_item:CacheItem[d] = CacheItem(self.delegate, self.searches)
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
@@ -147,11 +167,14 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         if environment.structure_environment.should_cache or not self.cache_get_similarity:
             return structure.get_similarity(data1, data2, environment, exceptions)
         data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2)))
-        cache_item = self.cache.get(data_hash)
-        if cache_item is not None and cache_item.get_similarity:
-            return cache_item.get_get_similarity_data()
-        if cache_item is None:
-            new_cache_item:CacheItem[d] = CacheItem(self.delegate)
+        cache_item = self.cache.pop(data_hash, None)
+        if cache_item is not None:
+            self.cache[data_hash] = cache_item
+            cache_item.retrieve_index = self.searches
+            if cache_item.get_similarity:
+                return cache_item.get_get_similarity_data()
+        else:
+            new_cache_item:CacheItem[d] = CacheItem(self.delegate, self.searches)
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
@@ -164,11 +187,14 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         if environment.structure_environment.should_cache or not self.cache_compare:
             return structure.compare(data1, data2, environment)
         data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2)))
-        cache_item = self.cache.get(data_hash)
-        if cache_item is not None and cache_item.compare:
-            return cache_item.get_compare_data()
-        if cache_item is None:
-            new_cache_item:CacheItem[d] = CacheItem(self.delegate)
+        cache_item = self.cache.pop(data_hash, None)
+        if cache_item is not None:
+            self.cache[data_hash] = cache_item
+            cache_item.retrieve_index = self.searches
+            if cache_item.compare:
+                return cache_item.get_compare_data()
+        else:
+            new_cache_item:CacheItem[d] = CacheItem(self.delegate, self.searches)
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
@@ -176,16 +202,35 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         cache_item.set_compare(output)
         return output
 
-    def clear_caches(self, memo:set[Structure.Structure]) -> None:
-        super().clear_caches(memo)
+    def clear_old_items(self) -> None:
+        '''
+        Clears items that have not been accessed in too long.
+        Be careful where you use this, since calling this function
+        changes its future behavior.
+        '''
+        # this works because due to the popping and re-adding I do,
+        # all of the cache items are sorted in the dict by their
+        # retrieve index
+        items_to_remove:list[int] = [] # cannot change size of dict while iterating.
+        for data_hash, cache_item in self.cache.items():
+            if self.searches - cache_item.retrieve_index >= self.cache_remove_threshold:
+                items_to_remove.append(data_hash)
+            else:
+                break
+        for item in items_to_remove:
+            del self.cache[item]
+        self.searches += 1
+
+    def clear_cache(self) -> None:
         self.cache.clear()
 
 class CacheItem(Generic[d]):
 
-    def __init__(self, delegate:Union["Delegate.Delegate", None]) -> None:
+    def __init__(self, delegate:Union["Delegate.Delegate", None], creation_index:int) -> None:
         self.cache_store = delegate.cache_store if delegate is not None else lambda data, environment: data
         self.cache_retrieve = delegate.cache_retrieve if delegate is not None else lambda data, environment: data
-        
+        self.retrieve_index = creation_index
+
         self.check_all_types = False
         self.check_all_types_data:list[Trace.ErrorTrace]|None = None
         self.normalize = False
