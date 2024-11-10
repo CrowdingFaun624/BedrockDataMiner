@@ -36,7 +36,7 @@ class SequenceComponent(StructureComponent.StructureComponent[SequenceStructure.
 
         self.addition_cost = data.get("addition_cost", 1)
         self.deletion_cost = data.get("deletion_cost", 1)
-        self.substitution_cost = data.get("substitution_cost", 1)
+        self.substitution_cost = data.get("substitution_cost", 4)
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
