@@ -16,7 +16,14 @@ def hash_data(data:Any) -> int:
     if hash_function is not None:
         return hash_function(data)
     else:
-        raise Exceptions.CacheStructureHashError(data.__class__)
+        # if the type isn't recognized, scan through it to find a type that
+        # it is an instance of, and use that function (and remember it).
+        for key_type, function in hash_type_table.items():
+            if isinstance(data, key_type):
+                hash_type_table[type(data)] = function
+                return function(data)
+        else:
+            raise Exceptions.CacheStructureHashError(data.__class__)
 
 d = TypeVar("d")
 
