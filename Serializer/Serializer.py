@@ -23,6 +23,13 @@ class Serializer(Generic[a, b]):
     for each version.
     '''
 
+    empty_okay = False
+    '''
+    If False, an EmptyFileError will be raised if attempting to create a File
+    object with this Serializer with an empty bytes object.
+    '''
+
+
     def __init__(self, name:str, **kwargs:Any) -> None:
         self.name = name
 

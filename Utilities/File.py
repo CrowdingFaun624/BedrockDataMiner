@@ -7,9 +7,9 @@ import Utilities.FileStorageManager as FileStorageManager
 
 
 def new_file(data:bytes, file_name:str, serializer:Serializer.Serializer) -> "File":
-    if len(data) == 0:
+    if not serializer.empty_okay and len(data) == 0:
         raise Exceptions.EmptyFileError(message="(file \"%s\")" % (file_name,))
-    file_hash = hash_str_to_int(FileStorageManager.archive_data(data, file_name))
+    file_hash = hash_str_to_int(FileStorageManager.archive_data(data, file_name, empty_okay=serializer.empty_okay))
     return File(file_name, serializer, file_hash) # not create with value argument to not clog the memory.
 
 a = TypeVar("a")

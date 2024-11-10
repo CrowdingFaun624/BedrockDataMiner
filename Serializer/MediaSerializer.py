@@ -10,6 +10,8 @@ class MediaSerializer(Serializer.Serializer):
 
     store_as_file_default = False
 
+    empty_okay = True # 1.11.0.9 resource_packs/vanilla/textures/ui/book_arrowleft_hover.png
+
     def __init__(self, name: str) -> None:
         super().__init__(name)
         self.cached_data:dict[str,dict[str,str]]|None = None

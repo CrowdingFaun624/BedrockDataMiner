@@ -11,6 +11,8 @@ class LanguageObject(TypedDict):
 
 class LanguageSerializer(Serializer.Serializer[dict[str,LanguageObject],dict[str,LanguageObject]]):
 
+    empty_okay = True
+
     def serialize_json(self, data: dict[str, LanguageObject]) -> dict[str, LanguageObject]:
         return data # object is already in JSON-able form.
 
