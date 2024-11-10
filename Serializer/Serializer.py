@@ -26,6 +26,9 @@ class Serializer(Generic[a, b]):
     def __init__(self, name:str, **kwargs:Any) -> None:
         self.name = name
 
+    def finalize(self) -> None:
+        ...
+
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.name)
 

@@ -37,3 +37,7 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
         trace = TypeVerifier.make_trace([self.name, self.component_group])
         exceptions.extend(self.serializer_class_field.get_final().type_verifier.verify(self.arguments, trace))
         return exceptions
+
+    def finalize(self) -> None:
+        super().finalize()
+        self.get_final().finalize()
