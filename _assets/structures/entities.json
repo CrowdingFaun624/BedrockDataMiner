@@ -191,6 +191,7 @@
             "trigger": {"type": "str"},
             "weight": {"type": "int"},
             "add": {"type": "dict", "subcomponent": "component_groups_add_remove"},
+            "emit_particle": {"type": "dict", "subcomponent": "event:emit_particle"},
             "emit_vibration": {"type": "dict", "subcomponent": "event:emit_vibration"},
             "execute_event_on_home_block": {"type": "dict", "subcomponent": "event"},
             "filters": {"type": "dict", "subcomponent": "filter"},
@@ -240,6 +241,12 @@
         "subcomponents": {
             "list": "component_list",
             "str": null
+        }
+    },
+    "event:emit_particle": {
+        "type": "Keymap",
+        "keys": {
+            "particle": {"type": "str"}
         }
     },
     "event:emit_vibration": {
@@ -342,6 +349,7 @@
             "minecraft:can_join_raid": {"type": "dict", "subcomponent": "empty"},
             "minecraft:can_power_jump": {"type": "dict", "subcomponent": "empty"},
             "minecraft:can_swim": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
+            "minecraft:cannot_be_attacked": {"type": "dict", "subcomponent": "empty"},
             "minecraft:caster": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
             "minecraft:celebrate_hunt": {"type": "dict", "subcomponent": "component.celebrate_hunt"},
             "minecraft:collision_box": {"type": "dict", "subcomponent": "component.collision_box", "tags": ["not_in_documentation"]},
@@ -847,6 +855,7 @@
         "type": "Keymap",
         "keys": {
             "event": {"type": "str"},
+            "filter": {"type": "str"},
             "filters": {"type": "dict", "subcomponent": "filter"},
             "target": {"type": "str"}
         }
@@ -1663,7 +1672,7 @@
             "cause": {"type": "str", "delegate_arguments": {"always_print": true}},
             "damage_modifier": {"type": "decimal"},
             "damage_multiplier": {"type": "decimal"},
-            "deals_damage": {"type": "bool"},
+            "deals_damage": {"type": ["bool", "str"]},
             "on_damage": {"type": "dict", "subcomponent": "event_target_filters_or_filter_list"},
             "on_damage_sound_event": {"type": "str"}
         }

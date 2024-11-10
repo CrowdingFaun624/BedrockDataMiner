@@ -62,6 +62,7 @@
                 "sort": "by_component_order",
                 "keys": {
                     "description": {"type": "dict", "subcomponent": "description"},
+                    "events": {"type": ["dict", "null"], "subcomponent": "events", "tags": ["outdated"]},
                     "components": {"type": "dict", "subcomponent": "components", "weight": 2}
                 }
             }}
@@ -130,17 +131,34 @@
             "field": "block",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
+        "types": ["str", "dict"],
         "subcomponent": {
-            "type": "String"
+            "type": "Group",
+            "subcomponents": {
+                "str": {"type": "String"},
+                "dict": "block_list.item"
+            }
+        }
+    },
+    "block_list.item": {
+        "type": "Keymap",
+        "keys": {
+            "tags": {"type": "str", "subcomponent": {"type": "String"}}
         }
     },
     "block_list_or_block": {
         "type": "Group",
         "subcomponents": {
             "list": "block_list",
-            "str": null
+            "str": null,
+            "dict": "block_list.item"
+        }
+    },
+    "block": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "dict": "block_list.item"
         }
     },
     "empty": {
@@ -177,6 +195,73 @@
         "types": ["int"],
         "subcomponent": null
     },
+    "event": {
+        "type": "Keymap",
+        "keys": {
+            "event": {"type": "str"},
+            "target": {"type": "str"}
+        }
+    },
+    "events": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": {
+                "type": "Dict",
+                "types": "dict",
+                "subcomponent": "event_definition",
+                "delegate_arguments": {
+                    "field": "event",
+                    "measure_length": true
+                }
+            },
+            "null": null
+        }
+    },
+    "event_definition": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "add_mob_effect": {"type": "dict", "subcomponent": "event.add_mob_effect"},
+            "randomize": {"type": "list", "subcomponent": "event.randomize"},
+            "sequence": {"type": "list", "subcomponent": "event.sequence"},
+            "teleport": {"type": "dict", "subcomponent": "event.teleport"},
+            "weight": {"type": "int"} // in sub-events
+        }
+    },
+    "event.add_mob_effect": {
+        "type": "Keymap",
+        "keys": {
+            "effect": {"type": "str"},
+            "duration": {"type": "int"},
+            "amplifier": {"type": "int"},
+            "target": {"type": "str"}
+        }
+    },
+    "event.randomize": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "event",
+            "measure_length": true
+        },
+        "subcomponent": "event_definition"
+    },
+    "event.sequence": {
+        "type": "Sequence",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "event",
+            "measure_length": true
+        },
+        "subcomponent": "event_definition"
+    },
+    "event.teleport": {
+        "type": "Keymap",
+        "keys": {
+            "max_range": {"type": "list", "subcomponent": "vector_int"},
+            "target": {"type": "str"}
+        }
+    },
     "components": {
         "type": "Keymap",
         "delegate_arguments": {
@@ -205,7 +290,7 @@
             "minecraft:display_name": {"type": "dict", "subcomponent": "component.display_name"},
             "minecraft:door": {"type": "dict", "subcomponent": "component.door", "tags": ["outdated"]},
             "minecraft:durability": {"type": "dict", "subcomponent": "component.durability"},
-            "minecraft:dye_powder": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
+            "minecraft:dye_powder": {"type": "dict", "subcomponent": "component.dye_powder", "tags": ["outdated"]},
             "minecraft:dyeable": {"type": "dict", "subcomponent": "component.dyeable", "tags": ["outdated"]},
             "minecraft:enchantable": {"type": "dict", "subcomponent": "component.enchantable"},
             "minecraft:entity_placer": {"type": "dict", "subcomponent": "component.entity_placer"},
@@ -225,6 +310,7 @@
             "minecraft:icon": {"type": ["dict", "str"], "subcomponent": "component.icon"},
             "minecraft:ignores_permission": {"type": "bool", "tags": ["outdated"]},
             "minecraft:interact_button": {"type": ["bool", "str"]},
+            "minecraft:knockback_resistance": {"type": "dict", "subcomponent": "component.knockback_resistance", "tags": ["outdated"]},
             "minecraft:lead": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
             "minecraft:liquid_clipped": {"type": ["dict", "bool"], "subcomponent": "component.liquid_clipped"},
             "minecraft:map": {"type": "dict", "subcomponent": "component.map", "tags": ["outdated"]},
@@ -233,7 +319,9 @@
             "minecraft:mining_speed": {"type": "decimal", "tags": ["outdated"]},
             "minecraft:mirrored_art": {"type": "bool", "tags": ["outdated"]},
             "minecraft:mob_placer": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
+            "minecraft:mob_spawner_placer": {"type": "dict", "subcomponent": "component.mob_spawner_placer", "tags": ["outdated"]},
             "minecraft:name_tag": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
+            "minecraft:on_use": {"type": "dict", "subcomponent": "component.on_use", "tags": ["outdated"]},
             "minecraft:portfolio": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
             "minecraft:potion": {"type": "dict", "subcomponent": "component.potion", "tags": ["outdated"]},
             "minecraft:projectile": {"type": "dict", "subcomponent": "component.projectile"},
@@ -251,7 +339,10 @@
             "minecraft:skull": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
             "minecraft:stacked_by_data": {"type": "bool"},
             "minecraft:storage_item": {"type": "dict", "subcomponent": "component.storage_item"},
+            "tag:minecraft:is_axe": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
             "tag:minecraft:is_food": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
+            "tag:minecraft:is_hoe": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
+            "tag:minecraft:is_shovel": {"type": "dict", "subcomponent": "empty", "tags": ["outdated"]},
             "minecraft:tags": {"type": "dict", "subcomponent": "component.tags"},
             "minecraft:throwable": {"type": "dict", "subcomponent": "component.throwable"},
             "minecraft:use_animation": {"type": "str"},
@@ -388,7 +479,8 @@
             "dict": {
                 "type": "Keymap",
                 "keys": {
-                    "any_tag": {"type": "list", "subcomponent": "tag_list"}
+                    "any_tag": {"type": "list", "subcomponent": "tag_list"},
+                    "tags": {"type": "str"}
                 }
             }
         }
@@ -410,7 +502,9 @@
         "type": "Keymap",
         "keys": {
             "damage_chance": {"type": "dict", "subcomponent": "component.durability:damage_chance"},
-            "max_durability": {"type": "int", "delegate_arguments": {"always_print": true}}
+            "max_durability": {"type": "int", "delegate_arguments": {"always_print": true}},
+            "max_damage": {"type": "int", "delegate_arguments": {"always_print": true}, "tags": ["outdated"]},
+            "repair_items": {"type": "list", "subcomponent": "block_list"}
         }
     },
     "component.durability:damage_chance": {
@@ -418,6 +512,12 @@
         "keys": {
             "max": {"type": "int"},
             "min": {"type": "int"}
+        }
+    },
+    "component.dye_powder": {
+        "type": "Keymap",
+        "keys": {
+            "color": {"type": "str"}
         }
     },
     "component.dyeable": {
@@ -439,7 +539,8 @@
             "allowed_blocks": {"type": "list", "subcomponent": "block_list", "tags": ["outdated"]},
             "dispense_on": {"type": "list", "subcomponent": "block_list"},
             "entity": {"type": "str"},
-            "use_on": {"type": "list", "subcomponent": "block_list"}
+            "use_on": {"type": "list", "subcomponent": "block_list"},
+            "variant": {"type": "int"}
         }
     },
     "component.fertilizer": {
@@ -459,6 +560,7 @@
             "enchanted_effects": {"type": "list", "subcomponent": "component.food:effects", "tags": ["outdated"]},
             "is_meat": {"type": "bool", "tags": ["not_in_documentation"]},
             "nutrition": {"type": "int"},
+            "on_consume": {"type": "dict", "subcomponent": "event", "tags": ["outdated"]},
             "on_use_action": {"type": "str", "tags": ["not_in_documentation"]},
             "on_use_range": {"type": "list", "subcomponent": "vector_int", "tags": ["not_in_documentation"]},
             "remove_effects": {"type": "list", "subcomponent": "component.food:remove_effects", "tags": ["not_in_documentation"]},
@@ -517,6 +619,7 @@
             "dict": {
                 "type": "Keymap",
                 "keys": {
+                    "frame_index": {"type": "int"},
                     "texture": {"type": "str"},
                     "textures": {"type": "dict", "subcomponent": {
                         "type": "Keymap",
@@ -527,6 +630,12 @@
                 }
             },
             "str": null
+        }
+    },
+    "component.knockback_resistance": {
+        "type": "Keymap",
+        "keys": {
+            "protection": {"type": "decimal"}
         }
     },
     "component.liquid_clipped": {
@@ -545,6 +654,19 @@
         "type": "Keymap",
         "keys": {
             "empty": {"type": "bool"}
+        }
+    },
+    "component.mob_spawner_placer": {
+        "type": "Keymap",
+        "keys": {
+            "entity": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "block": {"type": ["dict", "str"], "subcomponent": "block"}
+        }
+    },
+    "component.on_use": {
+        "type": "Keymap",
+        "keys": {
+            "on_use": {"type": "dict", "subcomponent": "event"}
         }
     },
     "component.potion": {
@@ -571,14 +693,36 @@
     "component.repairable": {
         "type": "Keymap",
         "keys": {
-            "repair_items": {"type": "list", "subcomponent": "item_list"}
+            "repair_items": {"type": "list", "subcomponent": "component.repairable:repair_items"}
+        }
+    },
+    "component.repairable:repair_items": {
+        "type": "Set",
+        "types": ["str", "dict"],
+        "delegate_arguments": {
+            "field": "item",
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "str": {"type": "String"},
+                "dict": "component.repairable:repair_items.item"
+            }
+        }
+    },
+    "component.repairable:repair_items.item": {
+        "type": "Keymap",
+        "keys": {
+            "items": {"type": "list", "subcomponent": "item_list"},
+            "repair_amount": {"type": "str"}
         }
     },
     "component.seed": {
         "type": "Keymap",
         "keys": {
             "crop_result": {"type": "str"},
-            "plant_at": {"type": ["list", "str"], "subcomponent": "block_list_or_block"},
+            "plant_at": {"type": ["list", "str", "dict"], "subcomponent": "block_list_or_block"},
             "plant_at_any_solid_surface": {"type": "bool"},
             "plant_at_face": {"type": "str"}
         }

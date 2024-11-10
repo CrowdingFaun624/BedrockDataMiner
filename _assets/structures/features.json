@@ -48,24 +48,33 @@
         "type": "Keymap",
         "keys": {
             "name": {"type": "str", "delegate_arguments": {"always_print": true}},
-            "states": {"type": "dict", "subcomponent": "block_reference.states"}
+            "states": {"type": "dict", "subcomponent": "block_reference.states"},
+            "tags": {"type": "str"}
         }
     },
     "block_reference.states": {
         "type": "Keymap",
         "keys": {
+            "active": {"type": "bool"},
             "age": {"type": "int"},
+            "big_dripleaf_head": {"type": "bool"},
             "direction": {"type": "int"},
             "dirt_type": {"type": "str"},
             "double_plant_type": {"type": "str"},
             "facing_direction": {"type": "int", "tags": ["outdated"]},
+            "flower_type": {"type": "str"},
+            "growth": {"type": "int"},
+            "hanging": {"type": "bool"},
             "moisturized_amount":{ "type": "int"},
+            "natural": {"type": "bool"},
             "new_leaf_type": {"type": "str"},
             "new_log_type": {"type": "str"},
             "old_leaf_type": {"type": "str"},
             "old_log_type": {"type": "str"},
+            "pillar_axis": {"type": "str"},
             "stone_type": {"type": "str"},
             "tall_grass_type": {"type": "str"},
+            "tip": {"type": "bool"},
             "upper_block_bit": {"type": "bool"}
         }
     },
@@ -122,7 +131,9 @@
         },
         "keys": {
             "max": {"type": "decimal"},
-            "min": {"type": "decimal"}
+            "min": {"type": "decimal"},
+            "range_max": {"type": "decimal"},
+            "range_min": {"type": "decimal"}
         }
     },
     "range_dict_int": {
@@ -217,6 +228,7 @@
             "format_version": {"type": "str"},
             "defined_in": {"type": "list", "subcomponent": "defined_in"}, // used in features_behavior_packs
             "minecraft:aggregate_feature": {"type": "dict", "subcomponent": "feature.aggregate_feature"},
+            "minecraft:catalyst_feature": {"type": "dict", "subcomponent": "feature.catalyst_feature"},
             "minecraft:cave_carver_feature": {"type": "dict", "subcomponent": "feature.cave_carver_feature"},
             "minecraft:fossil_feature": {"type": "dict", "subcomponent": "feature.fossil_feature"},
             "minecraft:geode_feature": {"type": "dict", "subcomponent": "feature.geode_feature"},
@@ -247,6 +259,21 @@
             "description": {"type": "dict", "subcomponent": "description"},
             "early_out": {"type": "str"},
             "features": {"type": "list", "subcomponent": "feature_list"}
+        }
+    },
+    "feature.catalyst_feature": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description"},
+            "can_place_sculk_catalyst_on": {"type": "list", "subcomponent": "block_list"},
+            "central_block": {"type": "str"},
+            "central_patch_feature": {"type": "str"},
+            "max_patch_distance": {"type": "int"},
+            "patch_feature": {"type": "str"},
+            "pathes_count_max": {"type": "int"},
+            "pathes_count_min": {"type": "int"},
+            "vertical_range": {"type": "int"}
         }
     },
     "feature.cave_carver_feature": {
@@ -496,14 +523,21 @@
         "keys": {
             "description": {"type": "dict", "subcomponent": "description", "delegate_arguments": {"always_print": true}},
             "can_place_sculk_patch_on": {"type": "list", "subcomponent": "block_list"},
+            "cant_place_sculk_vein_on": {"type": "list", "subcomponent": "block_list"},
             "central_block": {"type": "str"},
             "central_block_placement_chance": {"type": "decimal"},
-            "cursor_count": {"type": "int"},
             "charge_amount": {"type": "int"},
-            "spread_attempts": {"type": "int"},
+            "cursor_count": {"type": "int"},
+            "extra_growth_chance": {"type": ["int", "dict"], "subcomponent": "range_int_or_int"},
+            "ground_block": {"type": "str"},
+            "growth_chance": {"type": "decimal"},
             "growth_rounds": {"type": "int"},
+            "horizontal_radius": {"type": ["int", "dict"], "subcomponent": "range_int_or_int"},
+            "replaceable_blocks": {"type": "list", "subcomponent": "block_list"},
+            "spread_attempts": {"type": "int"},
             "spread_rounds": {"type": "int"},
-            "extra_growth_chance": {"type": ["int", "dict"], "subcomponent": "range_int_or_int"}
+            "surface": {"type": "str"},
+            "vertical_range": {"type": "int"}
         }
     },
     "feature.search_feature": {
@@ -762,9 +796,11 @@
     "feature.tree_feature:mangrove_trunk.branches": {
         "type": "Keymap",
         "keys": {
+            "branch_canopy": {"type": "dict", "subcomponent": "feature.tree_feature:canopy"},
             "branch_length": {"type": ["int", "dict"], "subcomponent": "range_int_or_int"},
             "branch_steps": {"type": ["int", "dict"], "subcomponent": "range_int_or_int"},
-            "branch_chance": {"type": ["decimal", "dict"], "subcomponent": "fraction_or_decimal"}
+            "branch_chance": {"type": ["decimal", "dict"], "subcomponent": "fraction_or_decimal"},
+            "branch_position": {"type": ["int", "dict"], "subcomponent": "range_int_or_int"}
         }
     },
     "feature.tree_feature:mangrove_trunk.trunk_height": {

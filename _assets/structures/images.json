@@ -38,10 +38,8 @@
         "subcomponents": {
             "list": {
                 "type": "Set",
-                "types": "str",
-                "subcomponent": {
-                    "type": "String"
-                },
+                "types": ["str", "dict"],
+                "subcomponent": "texture",
                 "delegate_arguments": {
                     "field": "texture",
                     "measure_length": true
@@ -49,14 +47,28 @@
             },
             "dict": {
                 "type": "Dict",
-                "types": "str",
-                "subcomponent": null,
+                "types": ["str", "dict"],
+                "subcomponent": "texture",
                 "key_component": {
                     "type": "String"
                 },
                 "delegate_arguments": {
                     "field": "texture",
                     "measure_length": true
+                }
+            }
+        }
+    },
+    "texture": {
+        "type": "Group",
+        "subcomponents": {
+            "str": {"type": "String"},
+            "dict": {
+                "type": "Keymap",
+                "keys": {
+                    "texture": {"type": "str", "subcomponent": {"type": "String"}, "weight": 8, "delegate_arguments": {"always_print": true}},
+                    "bilinear": {"type": "bool"},
+                    "wrap": {"type": "bool"}
                 }
             }
         }

@@ -38,14 +38,15 @@ def get_namespaces_and_extensions(data:dict[str,File.File[dict[str,dict[str,Any]
             extensions[namespace][element_name] = (superclass_namespace, superclass_element_name)
     return namespaces, extensions, file_hashes
 
-def get_element_type(element_name:str, namespace:str, element_data:dict[str,Any], namespaces:dict[str,dict[str,dict[str,Any]]], extensions:dict[str,dict[str,tuple[str|None, str|None]]]) -> str|None:
+def get_element_type(element_name:str, namespace:str, element_data:dict[str,Any], namespaces:dict[str,dict[str,dict[str,Any]]], extensions:dict[str,dict[str,tuple[str|None, str|None]]]) -> str:
     current_element_name = element_name
     current_element_namespace = namespace
     current_element_data = element_data
     already_elements:set[tuple[str,str]] = set()
     while True:
         if (current_element_namespace, current_element_name) in already_elements:
-            raise RuntimeError("Encountered loop trying to find type of element \"%s\" of \"%s\"" % (element_name, namespace))
+            # raise RuntimeError("Encountered loop trying to find type of element \"%s\" of \"%s\"" % (element_name, namespace))
+            return "unknown"
         already_elements.add((current_element_namespace, current_element_name))
         if "type" in current_element_data:
             return current_element_data["type"]
@@ -70,7 +71,7 @@ def get_element_types(namespaces:dict[str,dict[str,dict[str,Any]]], extensions:d
         element_types[namespace] = {}
         for element_name, element_data in elements.items():
             element_type = get_element_type(element_name, namespace, element_data, namespaces, extensions)
-            if element_type is not None:    
+            if element_type is not None:
                 element_types[namespace][element_name] = element_type
     return element_types
 
@@ -106,12 +107,13 @@ def ui_normalize(data:dict[str,dict[str,File.File[dict[str,dict[str,Any]]]]]) ->
     files:dict[str,File.File[dict[str,dict[str,Any]]]] = {}
     for resource_pack, resource_pack_files in data.items():
         if len(common_files := (set(files) & set(resource_pack_files))) > 0:
-            raise RuntimeError("Duplicate files [%s]" % ", ".join(common_files))
+            continue
+            # raise RuntimeError("Duplicate files [%s]" % ", ".join(common_files))
         files.update(resource_pack_files)
     namespaces, extensions, file_hashes = get_namespaces_and_extensions(files)
     element_types = get_element_types(namespaces, extensions)
     parse_elements(namespaces, element_types)
-    
+
     output:dict[str,dict[str,dict[str,Any]]] = {}
     for namespace, elements in namespaces.items():
         output[namespace] = {}

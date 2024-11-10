@@ -14,7 +14,7 @@
             "list": {
                 "type": "List",
                 "subcomponent": null,
-                "types": "int",
+                "types": ["int", "float"],
                 "delegate_arguments": {
                     "print_flat": true,
                     "print_all": true
@@ -55,6 +55,7 @@
             "pack_id": {"type": "str", "tags": ["outdated"]},
             "packs_version": {"type": "str", "tags": ["outdated"]},
             "screenshots": {"type": "list", "subcomponent": "screenshots", "tags": ["outdated"]},
+            "metadata": {"type": "dict", "subcomponent": "metadata"},
             "store_offer_name": {"type": "str"}
         }
     },
@@ -75,7 +76,11 @@
             "key_art_path": {"type": "str", "tags": ["outdated"]},
             "screenshots": {"type": "list", "subcomponent": "screenshots", "tags": ["outdated"]},
             "modules": {"type": "list", "subcomponent": "modules"},
-            "dependencies": {"type": "list", "subcomponent": "dependencies"}
+            "dependencies": {"type": "list", "subcomponent": "dependencies"},
+            "module_name": {"type": "str", "subcomponent": {"type": "String"}, "tags": ["outdated"]},
+            "entry": {"type": "str", "tags": ["outdated"]},
+            "language": {"type": "str"},
+            "metadata": {"type": "dict", "subcomponent": "metadata"}
         }
     },
     "modules": {
@@ -117,6 +122,24 @@
         "type": "Keymap",
         "keys": {
             "path": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "metadata": {
+        "type": "Keymap",
+        "keys": {
+            "authors": {"type": "list", "subcomponent": "authors"},
+            "url": {"type": "str"}
+        }
+    },
+    "authors": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "author",
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "String"
         }
     }
 }

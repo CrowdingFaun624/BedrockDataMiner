@@ -4,6 +4,14 @@
         "delegate_arguments": {
             "name": "material_bins"
         },
+        "imports": [
+            {
+                "from": "structures/text_file",
+                "components": [
+                    {"component": "cache", "as": "cache_glsl"}
+                ]
+            }
+        ],
         "subcomponent": "files"
     },
     "vector_float": {
@@ -27,18 +35,34 @@
         "type": "Cache",
         "types": "file",
         "subcomponent": {
+            // MaterialBinSerializer returns another file containing many many references to other files.
             "type": "File",
             "file_types": "file",
-            "content_types": "dict",
-            "subcomponent": "file"
+            "content_types": "file",
+            "subcomponent": {
+                "type": "File",
+                "file_types": "file",
+                "content_types": "dict",
+                "subcomponent": "file"
+            }
         }
     },
     "file": {
         "type": "Keymap",
         "sort": "by_component_order",
         "keys": {
-            "data": {"type": "dict", "subcomponent": "main_data_file"},
+            "data": {"type": "file", "subcomponent": "cache_main_data_file"},
             "passes": {"type": "dict", "subcomponent": "passes"}
+        }
+    },
+    "cache_main_data_file": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "main_data_file"
         }
     },
     "main_data_file": {
@@ -53,7 +77,9 @@
             "samplerDefinitionMap": {"type": "dict", "subcomponent": "sampler_definition_map"},
             "propertyFieldMap": {"type": "dict", "subcomponent": "property_field_map"},
             "formatVersion": {"type": "str"},
-            "passes": {"type": "list", "subcomponent": "passes_list"}
+            "passes": {"type": "list", "subcomponent": "passes_list"},
+            "hasName2": {"type": "bool", "tags": ["outdated"]},
+            "name2": {"type": "str", "tags": ["outdated"]}
         }
     },
     "sampler_definition_map": {
@@ -74,23 +100,30 @@
             "allowUnorderedAccess": {"type": "bool"},
             "type": {"type": ["str", "int"]},
             "textureFormat": {"type": "str"},
-            "unknownInt": {"type": "int"},
-            "unknownByte": {"type": "int"},
-            "hasUnknownByte2": {"type": "bool"},
-            "unknownByte2": {"type": "int"},
             "hasDefaultTexture": {"type": "bool"},
             "defaultTexture": {"type": "str"},
             "hasUnknownInt": {"type": "bool"},
             "hasUnknownString": {"type": "bool"},
             "hasCustomTypeInfo": {"type": "bool"},
-            "customTypeInfo": {"type": "dict", "subcomponent": "custom_type_info"}
+            "customTypeInfo": {"type": "dict", "subcomponent": "custom_type_info"},
+            "unknownBool0": {"type": "bool", "tags": ["outdated"]},
+            "unknownBool1": {"type": "bool", "tags": ["outdated"]},
+            "unknownByte": {"type": "int"},
+            "unknownByte1": {"type": "int", "tags": ["outdated"]},
+            "hasUnknownByte2": {"type": "bool"},
+            "unknownByte2": {"type": "int"},
+            "unknownByte3": {"type": "int", "tags": ["outdated"]},
+            "unknownInt": {"type": "int"},
+            "unknownStr1": {"type": "str", "tags": ["outdated"]}
         }
     },
     "custom_type_info": {
         "type": "Keymap",
         "keys": {
             "name": {"type": "str"},
-            "size": {"type": "int"}
+            "size": {"type": "int"},
+            "unknownInt": {"type": "int", "tags": ["outdated"]},
+            "unknownStr": {"type": "str", "tags": ["outdated"]}
         }
     },
     "property_field_map": {
@@ -133,20 +166,30 @@
         "type": "Keymap",
         "sort": "by_component_order",
         "keys": {
-            "pass_info": {"type": "dict", "subcomponent": "pass_info"},
+            "pass_info": {"type": "file", "subcomponent": "cache_pass_info"},
             "glsl_files": {"type": "dict", "subcomponent": "glsl_files"}
+        }
+    },
+    "cache_pass_info": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "pass_info"
         }
     },
     "glsl_files": {
         "type": "Dict",
-        "types": "str",
+        "types": "file",
         "key_component": {
             "type": "String"
         },
         "delegate_arguments": {
             "field": "glsl file"
         },
-        "subcomponent": null
+        "subcomponent": "cache_glsl"
     },
     "pass_info": {
         "type": "Keymap",
@@ -159,7 +202,8 @@
             "hasBitSet": {"type": "bool"},
             "hasBlendMode": {"type": "bool"},
             "hasDefaultBlendMode": {"type": "bool"},
-            "variantList": {"type": "list", "subcomponent": "variant_list"}
+            "variantList": {"type": "list", "subcomponent": "variant_list"},
+            "unknownByte0": {"type": "int", "tags": ["outdated"]}
         }
     },
     "default_flag_modes": {
@@ -197,7 +241,8 @@
             "isSupported": {"type": "bool"},
             "flags": {"type": "dict", "subcomponent": "flag_values"},
             "flagModeList": {"type": "list", "subcomponent": "flag_mode_list"},
-            "shaderCodes": {"type": "list", "subcomponent": "shader_codes_list"}
+            "shaderCodes": {"type": "list", "subcomponent": "shader_codes_list"},
+            "unknownBool0": {"type": "bool", "tags": ["outdated"]}
         }
     },
     "flag_mode_list": {
@@ -239,7 +284,9 @@
             "stageName": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
             "platformName": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
             "stage": {"type": "str", "subcomponent": {"type": "String"}},
-            "platform": {"type": "str", "subcomponent": {"type": "String"}}
+            "platform": {"type": "str", "subcomponent": {"type": "String"}},
+            "type": {"type": "str", "tags": ["outdated"]},
+            "typeName": {"type": "str", "tags": ["outdated"]}
         }
     },
     "shader_code": {
@@ -248,7 +295,8 @@
         "keys": {
             "shaderInputMap": {"type": "dict", "subcomponent": "shader_input_map"},
             "sourceHash": {"type": "int"},
-            "bgfxShaderData": {"type": "dict", "subcomponent": "bgfx_shader_data"}
+            "bgfxShaderData": {"type": "dict", "subcomponent": "bgfx_shader_data"},
+            "unknownLong0": {"type": "int", "tags": ["outdated"]}
         }
     },
     "shader_input_map": {
@@ -268,7 +316,8 @@
             "isPerInstance": {"type": "bool"},
             "hasPrecisionConstraint": {"type": "bool"},
             "hasInterpolationConstraint": {"type": "bool"},
-            "interpolationConstraint": {"type": "str"}
+            "interpolationConstraint": {"type": "str"},
+            "isInstanceData": {"type": "bool", "tags": ["outdated"]}
         }
     },
     "bgfx_shader_data": {

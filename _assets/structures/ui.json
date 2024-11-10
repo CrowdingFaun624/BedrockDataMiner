@@ -42,6 +42,15 @@
         },
         "subcomponent": null
     },
+    "vector_decimal": {
+        "type": "List",
+        "types": "decimal",
+        "delegate_arguments": {
+            "print_flat": true,
+            "print_all": true
+        },
+        "subcomponent": null
+    },
     "str_or_decimal_or_vector_decimal_or_str": {
         "type": "Group",
         "subcomponents": {
@@ -58,14 +67,6 @@
             "print_all": true
         },
         "subcomponent": null
-    },
-    "str_or_decimal_or_vector_int": {
-        "type": "Group",
-        "subcomponents": {
-            "decimal": null,
-            "list": "vector_int",
-            "str": null
-        }
     },
     "vector_int": {
         "type": "List",
@@ -88,6 +89,20 @@
         "subcomponents": {
             "str": null,
             "list": "vector_int_or_str"
+        }
+    },
+    "str_or_vector_decimal_or_str": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": "vector_decimal_or_str"
+        }
+    },
+    "str_or_vector_decimal": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": "vector_decimal"
         }
     },
     "str_or_vector_float": {
@@ -113,6 +128,7 @@
             "type": "File",
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
+            "garbage_collect": false,
             "content_types": "dict",
             "normalizer": {
                 "function_name": "normalizers/ui_normalize"
@@ -254,7 +270,7 @@
             "binding_name_override": {"type": "str"},
             "binding_type": {"type": "str"},
             "ignored": {"type": "str"},
-            "resolve_sibling_scope": {"type": "bool"},
+            "resolve_sibling_scope": {"type": ["bool", "str"]},
             "source_control_name": {"type": "str"},
             "source_property_name": {"type": "str"},
             "target_property_name": {"type": "str"}
@@ -279,9 +295,12 @@
         "type": "Keymap",
         "keys": {
             "button_up_right_of_first_refusal": {"type": "bool"},
+            "condition": {"type": "str", "tags": ["outdated"]},
             "consume_event": {"type": "bool"},
+            "consumes_next_event": {"type": "bool", "tags": ["outdated"]},
+            "content_panel_scope": {"type": "bool", "tags": ["outdated"]},
             "from_button_id": {"type": "str", "subcomponent": {"type": "String"}},
-            "handle_deselect": {"type": "bool"},
+            "handle_deselect": {"type": ["bool", "str"]},
             "handle_select": {"type": "bool"},
             "ignore_input_scope": {"type": "str"},
             "ignored": {"type": "str"},
@@ -296,17 +315,21 @@
         "subcomponents": {
             "str": null,
             "dict": {
-                "type": "Keymap",
-                "keys": {
-                    "add_resource_dialog": {"type": "str"},
-                    "conflict_resolution_popup": {"type": "str"},
-                    "joincode_popup": {"type": "str"},
-                    "share_link_popup": {"type": "str"},
-                    "teams_share_link_popup": {"type": "str"},
-                    "teams_share_link_resource_popup": {"type": "str"},
-                    "teams_share_link_simple_popup": {"type": "str"}
-                }
+                "type": "Dict",
+                "types": "str",
+                "delegate_arguments": {
+                    "field": "control id",
+                    "measure_length": true
+                },
+                "subcomponent": null
             }
+        }
+    },
+    "str_or_control_list": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": "control_list"
         }
     },
     "control_list": {
@@ -364,8 +387,27 @@
                     "$variables": {"type": "dict", "subcomponent": "my_variables"},
                     "name": {"type": "str"},
                     "control_ids": {"type": ["dict", "str"], "subcomponent": "control_ids"},
-                    "factory_variables": {"type": "str"}
+                    "control_name": {"type": "str", "tags": ["outdated"]},
+                    "factory_variables": {"type": ["str", "list"], "subcomponent": "factory.factory_variables"},
+                    "insert_location": {"type": "str", "tags": ["outdated"]},
+                    "max_children_size": {"type": ["int", "str"], "tags": ["outdated"]},
+                    "max_size": {"type": "int"}
                 }
+            }
+        }
+    },
+    "factory.factory_variables": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": {
+                "type": "Set",
+                "types": "str",
+                "delegate_arguments": {
+                    "field": "variable",
+                    "measure_length": true
+                },
+                "subcomponent": {"type": "String"}
             }
         }
     },
@@ -435,20 +477,26 @@
     "property_bag.dict": {
         "type": "Keymap",
         "keys": {
+            "#anchored_offset_value": {"type": "decimal"},
             "#anchored_offset_value_x": {"type": "decimal"},
             "#anchored_offset_value_y": {"type": "decimal"},
             "#banner_colors": {"type": "str"},
             "#banner_patterns": {"type": "str"},
             "#block_position": {"type": "list", "subcomponent": "vector_int"},
             "#bottom_left_block": {"type": "list", "subcomponent": "vector_int"},
+            "#button_navigation": {"type": "int", "tags": ["outdated"]},
             "#buttons_visible": {"type": "bool"},
+            "#coin_prompt_color": {"type": "str", "tags": ["outdated"]},
+            "#collection_index": {"type": "int"},
             "#collection_name": {"type": "str"},
             "#collection_prefix": {"type": "str"},
-            "#common": {"type": "list", "subcomponent": "vector_float"},
+            "#common": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
+            "#control_name": {"type": "str", "tags": ["outdated"]},
             "#custom_rot_y": {"type": "float"},
+            "#default_prompt_color": {"type": "str", "tags": ["outdated"]},
             "#disabled_filter_visible": {"type": "bool"},
             "#entity_id": {"type": ["str", "int"]},
-            "#epic": {"type": "list", "subcomponent": "vector_float"},
+            "#epic": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
             "#filtered_light_multiplier": {"type": "float"},
             "#flying_item_renderer": {"type": "bool"}, // Note: not supported by wiki
             "#force_skin_update": {"type": "str"},
@@ -463,19 +511,20 @@
             "#include_players": {"type": "bool"},
             "#index": {"type": "int"},
             "#is_dropdown": {"type": "bool"},
-            "#is_left": {"type": "bool"},
-            "#is_skins": {"type": "bool"},
-            "#is_featured": {"type": "bool"},
+            "#is_featured": {"type": ["bool", "str"]},
+            "#is_left": {"type": ["bool", "str"]},
+            "#is_skins": {"type": ["bool", "str"]},
             "#item_custom_color": {"type": "int"},
             "#item_id_aux": {"type": "int"},
             "#item_pickup_time": {"type": "float"},
-            "#legendary": {"type": "list", "subcomponent": "vector_float"},
+            "#legendary": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
             "#look_at_cursor": {"type": "bool"},
+            "#max_upsell_offers": {"type": "int", "tags": ["outdated"]},
             "#modal_label_text": {"type": "str"},
             "#modal_title_text": {"type": "str"},
             "#no_buttons_visible": {"type": "bool"},
             "#open": {"type": "bool"},
-            "#owned_incompatible_prompt_color": {"type": "bool"},
+            "#owned_incompatible_prompt_color": {"type": ["bool", "str"]},
             "#pack_id": {"type": "int"},
             "#panel_title": {"type": "str"},
             "#player_uuid": {"type": "str"},
@@ -483,10 +532,10 @@
             "#progress_bar_tool_amount": {"type": "float"},
             "#progress_bar_visible": {"type": "bool"},
             "#property_field": {"type": "str"},
-            "#rare": {"type": "list", "subcomponent": "vector_float"},
+            "#rare": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
             "#remove_blocks": {"type": "bool"},
             "#reset_group": {"type": "str"},
-            "#should_host": {"type": "bool"},
+            "#should_host": {"type": ["bool", "str"]},
             "#single_button_visible": {"type": "bool"},
             "#size_binding_x": {"type": "decimal"},
             "#size_binding_y": {"type": "decimal"},
@@ -498,20 +547,23 @@
             "#sub_command": {"type": "str"},
             "#text": {"type": "str"},
             "#timer_duration": {"type": "decimal"},
-            "#timer_field_count_to_show": {"type": "decimal"},
+            "#timer_field_count_to_show": {"type": ["decimal", "str"]},
             "#toggle_state": {"type": "bool"},
             "#top_right_block": {"type": "list", "subcomponent": "vector_int"},
             "#tts_dialog_body": {"type": "str"},
             "#tts_dialog_title": {"type": "str"},
             "#two_buttons_visible": {"type": "bool"},
-            "#uncommon": {"type": "list", "subcomponent": "vector_float"},
+            "#uncommon": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
             "#use_heart_offset": {"type": "bool"},
             "#visible": {"type": "bool"},
+            "#visible_after_x_ratings": {"type": "str", "tags": ["outdated"]},
             "#x_padding": {"type": "decimal"},
-            "classic_radio_button_state": {"type": "str"},
+            "$tab_content": {"type": "str"},
+            "classic_radio_button_state": {"type": ["str", "bool"]},
+            "control_id": {"type": "str", "tags": ["outdated"]},
             "drop_shadow": {"type": "bool"}, // Note: not supported by wiki
             "entity_type": {"type": "str"},
-            "experimental_radio_button_state": {"type": "str"},
+            "experimental_radio_button_state": {"type": ["str", "bool"]},
             "flying_item_banner_patterns": {"type": "str"},
             "flying_item_banner_colors": {"type": "str"},
             "flying_item_count": {"type": "int"},
@@ -525,9 +577,11 @@
             "force_update": {"type": "bool"},
             "is_durability": {"type": "bool"},
             "is_fixed_inventory": {"type": "bool"},
-            "is_local": {"type": "bool"},
+            "is_local": {"type": ["bool", "str"]},
             "is_storage_bar": {"type": "bool"}, // Note: not supported by wiki
+            "name": {"type": "str", "tags": ["outdated"]},
             "opacity_override": {"type": "float"},
+            "reset_group": {"type": "str", "tags": ["outdated"]},
             "round_value": {"type": "bool"}
         }
     },
@@ -547,8 +601,9 @@
     "sound": {
         "type": "Keymap",
         "keys": {
+            "event_type": {"type": "str", "weight": 3, "delegate_arguments": {"always_print": true}},
             "min_seconds_between_plays": {"type": "float"},
-            "sound_name": {"type": "str"},
+            "sound_name": {"type": "str", "weight": 3, "delegate_arguments": {"always_print": true}},
             "sound_pitch": {"type": "float"},
             "sound_volume": {"type": "float"}
         }
@@ -573,7 +628,12 @@
         "type": "Keymap",
         "normalizer": "separate_variables",
         "keys": {
+            "font_scale_factor": {"type": "decimal", "tags": ["outdated"]},
+            "offset": {"type": "list", "subcomponent": "vector_int", "tags": ["outdated"]},
             "requires": {"type": "str"},
+            "scroll_report": {"type": "list", "subcomponent": "control_list", "tags": ["outdated"]},
+            "size": {"type": ["list", "str"], "subcomponent": "str_or_vector_decimal_or_str", "tags": ["outdated"]},
+            "visible": {"type": "bool"},
             "$variables": {"type": "dict", "subcomponent": "my_variables"}
         }
     },
@@ -633,7 +693,7 @@
             "modifications": {"type": "list", "subcomponent": "modifications"},
             "propagate_alpha": {"type": ["bool", "str"]},
             "property_bag": {"type": ["dict", "str"], "subcomponent": "property_bag"},
-            "scroll_report": {"type": "list", "subcomponent": "control_list", "tags": ["outdated"]},
+            "scroll_report": {"type": ["list", "str"], "subcomponent": "str_or_control_list", "tags": ["outdated"]},
             "selected": {"type": ["bool", "str"]},
             "use_child_anchors": {"type": ["bool", "str"]},
             "variables": {"type": ["list", "dict", "str"], "subcomponent": "variables"},
@@ -645,9 +705,10 @@
         "type": "Keymap",
         // may need stuff from https://wiki.bedrock.dev/json-ui/json-ui-documentation.html#specific-properties
         "keys": {
+            "background_color": {"type": "str", "tags": ["outdated"]},
             "camera_tilt_degrees": {"type": ["int", "str"]},
-            "color1": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
-            "color2": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
+            "color1": {"type": ["list", "str"], "subcomponent": "str_or_vector_decimal"},
+            "color2": {"type": ["list", "str"], "subcomponent": "str_or_vector_decimal"},
             "end_event": {"type": "str"},
             "full_storage_color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
             "hover_text_max_width": {"type": "str"},
@@ -655,8 +716,11 @@
             "renderer": {"type": "str"},
             "rotation": {"type": ["int", "str"]},
             "starting_rotation": {"type": ["int", "str"]},
+            "text_color": {"type": "str"},
+            "use_player_paperdoll": {"type": "bool", "tags": ["outdated"]},
             "use_selected_skin": {"type": ["bool", "str"]},
-            "use_skin_gui_scale": {"type": ["bool", "str"]}
+            "use_skin_gui_scale": {"type": ["bool", "str"]},
+            "use_uuid": {"type": "bool", "tags": ["outdated"]}
         }
     },
     "common.data_binding": {
@@ -698,11 +762,16 @@
             "focus_identifier": {"type": "str"},
             "focus_magnet_enabled": {"type": ["bool", "str"]},
             "focus_mapping": {"type": "list", "subcomponent": "focus_mapping"},
+            "focus_nagivation_mode_down": {"type": "str", "tags": ["outdated"]},
+            "focus_nagivation_mode_left": {"type": "str", "tags": ["outdated"]},
+            "focus_nagivation_mode_right": {"type": "str", "tags": ["outdated"]},
+            "focus_nagivation_mode_up": {"type": "str", "tags": ["outdated"]},
             "focus_navigation_mode_down": {"type": "str"},
             "focus_navigation_mode_left": {"type": "str"},
             "focus_navigation_mode_right": {"type": "str"},
             "focus_navigation_mode_up": {"type": "str"},
             "focus_wrap_enabled": {"type": ["bool", "str"]},
+            "persona_focus_precedence": {"type": "str", "tags": ["outdated"]},
             "use_last_focus": {"type": ["bool", "str"]}
         }
     },
@@ -758,8 +827,8 @@
             "inherit_max_sibling_width": {"type": "bool"},
             "max_size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int_or_str"},
             "min_size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int_or_str"},
-            "offset": {"type": ["list", "str"], "subcomponent": "str_or_vector_int_or_str"},
-            "size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int_or_str"},
+            "offset": {"type": ["list", "str"], "subcomponent": "str_or_vector_decimal_or_str"},
+            "size": {"type": ["list", "str"], "subcomponent": "str_or_vector_decimal_or_str"},
             "use_anchored_offset": {"type": "bool"}
         }
     },
@@ -796,17 +865,23 @@
             "dampening": {"type": "float", "tags": ["outdated"]},
             "gesture_control_enabled": {"type": ["bool", "str"]},
             "jump_to_bottom_on_update": {"type": ["bool", "str"]},
+            "lock_touch_scrolling": {"type": "str"},
             "scroll_box_and_track_panel": {"type": "str"},
             "scroll_content": {"type": "str"},
             "scroll_speed": {"type": ["decimal", "str"]},
             "scroll_view_port": {"type": "str"},
+            "scroll_view_space_to_add_on_focus_change_down": {"type": "str", "tags": ["outdated"]},
+            "scroll_view_space_to_add_on_focus_change_left": {"type": "str", "tags": ["outdated"]},
+            "scroll_view_space_to_add_on_focus_change_right": {"type": "str", "tags": ["outdated"]},
+            "scroll_view_space_to_add_on_focus_change_up": {"type": "str", "tags": ["outdated"]},
             "scrollbar_always_visible": {"type": ["bool", "str"]}, // Note: not supported by wiki
             "scrollbar_box": {"type": "str"},
             "scrollbar_box_track_button": {"type": "str", "tags": ["outdated"]},
             "scrollbar_track": {"type": "str"},
             "scrollbar_touch_button": {"type": "str"},
             "scrollbar_track_button": {"type": "str"},
-            "touch_mode": {"type": ["bool", "str"]}
+            "touch_mode": {"type": ["bool", "str"]},
+            "touch_scroll_box": {"type": "str", "tags": ["outdated"]}
         }
     },
     "common.selection_wheel": {
@@ -836,6 +911,7 @@
             "slider_collection_name": {"type": "str"},
             "slider_deselected_button": {"type": "str"},
             "slider_direction": {"type": "str"},
+            "slider_inverted": {"type": "bool", "tags": ["outdated"]},
             "slider_name": {"type": "str"},
             "slider_render_bar_background_color": {"type": "str", "tags": ["outdated"]},
             "slider_render_bar_background_hover_color": {"type": "str", "tags": ["outdated"]},
@@ -865,8 +941,8 @@
         "type": "Keymap",
         "keys": {
             "sound_name": {"type": "str"},
-            "sound_pitch": {"type": "float"},
-            "sound_volume": {"type": "float"},
+            "sound_pitch": {"type": ["float", "str"]},
+            "sound_volume": {"type": ["float", "str"]},
             "sounds": {"type": "list", "subcomponent": "sounds"}
         }
     },
@@ -879,17 +955,18 @@
             "clip_direction": {"type": "str"},
             "clip_pixelperfect": {"type": ["bool", "str"]},
             "clip_ratio": {"type": ["float", "str"]},
-            "color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"}, // Note: Not supported by wiki
+            "color": {"type": ["list", "str"], "subcomponent": "str_or_vector_decimal"}, // Note: Not supported by wiki
             "fill": {"type": ["bool", "str"]},
             "force_texture_reload": {"type": ["bool", "str"]},
             "grayscale": {"type": ["bool", "str"]},
             "keep_ratio": {"type": ["bool", "str"]},
-            "nineslice_size": {"type": ["decimal", "list", "str"], "subcomponent": "str_or_decimal_or_vector_int"},
+            "nineslice_size": {"type": ["decimal", "list", "str"], "subcomponent": "str_or_decimal_or_vector_decimal_or_str"},
+            "pixel_perfect": {"type": "bool"},
             "texture": {"type": "str"},
             "texture_file_system": {"type": "str"},
             "texture_source": {"type": "str", "tags": ["outdated"]},
             "tiled": {"type": ["bool", "str"]},
-            "tiled_scale": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
+            "tiled_scale": {"type": ["list", "str"], "subcomponent": "str_or_vector_decimal"},
             "uv": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
             "uv_size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
             "zip_folder": {"type": "str"}
@@ -904,6 +981,7 @@
     "common.tab": {
         "type": "Keymap",
         "keys": {
+            "tab_content": {"type": "str"},
             "tab_control": {"type": "str"},
             "tab_group": {"type": ["int", "str"]},
             "tab_index": {"type": ["int", "str"]}
@@ -914,7 +992,7 @@
         "keys": {
             "backup_font_type": {"type": "str"},
             "clip": {"type": ["bool", "str"], "tags": ["outdated"]},
-            "color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
+            "color": {"type": ["list", "str"], "subcomponent": "str_or_vector_decimal"},
             "enable_profanity_filter": {"type": ["bool", "str"]},
             "font_scale_factor": {"type": ["decimal", "str"]},
             "font_size": {"type": "str"},
@@ -927,6 +1005,7 @@
             "notify_on_ellipses": {"type": "list", "subcomponent": "control_list"},
             "place_holder_text": {"type": "str", "tags": ["outdated"]},
             "place_holder_text_color": {"type": "str", "tags": ["outdated"]},
+            "rune_font": {"type": "bool", "tags": ["outdated"]},
             "shadow": {"type": ["bool", "str"]},
             "text": {"type": "str"},
             "text_alignment": {"type": "str"},
@@ -963,7 +1042,7 @@
             "reset_on_lost_focus": {"type": ["bool", "str"]},
             "toggle_default_state": {"type": ["bool", "str"]},
             "toggle_grid_collection_name": {"type": ["bool", "str"]},
-            "toggle_group_forced_index": {"type": ["bool", "str"]},
+            "toggle_group_forced_index": {"type": ["bool", "str", "int"]},
             "toggle_group_default_selected": {"type": ["bool", "int", "str"]},
             "toggle_name": {"type": "str"},
             "toggle_off_button": {"type": "str"},
@@ -984,6 +1063,8 @@
             "tts_control_type_order_priority": {"type": ["int", "str"]},
             "tts_ignore_count": {"type": ["bool", "str"]},
             "tts_ignore_subsections": {"type": ["bool", "str"]},
+            "tts_index": {"type": "int", "tags": ["outdated"]},
+            "tts_index_order": {"type": "int", "tags": ["outdated"]},
             "tts_index_priority": {"type": ["int", "str"]},
             "tts_inherit_siblings": {"type": ["bool", "str"]},
             "tts_name": {"type": "str"},
@@ -1013,7 +1094,17 @@
         "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.tts"],
         "keys": {
             "debug": {"type": "str", "tags": ["outdated"]},
-            "follows_cursor_inside_parent": {"type": "bool"}
+            "follows_cursor_inside_parent": {"type": "bool"},
+            "toggle_manage_groups": {"type": "list", "subcomponent": {
+                "type": "Set",
+                "types": "str",
+                "delegate_arguments": {
+                    "field": "group",
+                    "measure_length": true
+                },
+                "subcomponent": null
+            }},
+            "toggle_manager_behavior": {"type": "str"}
         }
     },
     "element.carousel_label": {
@@ -1033,7 +1124,8 @@
     "element.custom": {
         "type": "Keymap",
         "normalizer": "separate_variables",
-        "imports": ["common.all", "common.control", "common.custom_render", "common.data_binding", "common.layout"]
+        // Note: [common.sprite] is not supported by wiki
+        "imports": ["common.all", "common.control", "common.custom_render", "common.data_binding", "common.layout", "common.sprite"]
     },
     "element.dropdown": {
         "type": "Keymap",
@@ -1057,6 +1149,7 @@
         // Note: [common.focus] is not supported by wiki
         "imports": ["common.all", "common.collection", "common.control", "common.data_binding", "common.focus", "common.grid", "common.layout", "common.tts"],
         "keys": {
+            "debug": {"type": "str", "tags": ["outdated"]},
             "factory": {"type": ["dict", "str"], "subcomponent": "factory", "tags": ["outdated"]}
         }
     },
@@ -1068,7 +1161,10 @@
     "element.image": {
         "type": "Keymap",
         "normalizer": "separate_variables",
-        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.layout", "common.sprite"]
+        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.layout", "common.sprite"],
+        "keys": {
+            "factory": {"type": ["dict", "str"], "subcomponent": "factory", "tags": ["outdated"]}
+        }
     },
     "element.image_cycler": {
         "type": "Keymap",
@@ -1096,8 +1192,8 @@
     "element.panel": {
         "type": "Keymap",
         "normalizer": "separate_variables",
-        // Note: [common.focus, common.tts] is not supported by wiki
-        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.layout", "common.tts"],
+        // Note: [common.focus, common.input, common.tts] is not supported by wiki
+        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.tts"],
         "keys": {
             "factory": {"type": ["dict", "str"], "subcomponent": "factory"},
             "ignoreCollectionItem": {"type": ["bool", "str"]}
@@ -1109,13 +1205,16 @@
         // Note: [common.input] is not supported by wiki
         "imports": ["common.all", "common.control", "common.data_binding", "common.input", "common.layout", "common.screen"],
         "keys": {
-            "factory": {"type": ["dict", "str"], "subcomponent": "factory", "tags": ["outdated"]}
+            "allow_scroll_override": {"type": "bool", "tags": ["outdated"]},
+            "factory": {"type": ["dict", "str"], "subcomponent": "factory", "tags": ["outdated"]},
+            "right_stick_scroll_disabled": {"type": "str", "tags": ["outdated"]}
         }
     },
     "element.scroll_track": {
         "type": "Keymap",
         "normalizer": "separate_variables",
-        "imports": ["common.all", "common.control", "common.focus", "common.input", "common.tts"]
+        // Note: [common.layout] is not supported by wiki
+        "imports": ["common.all", "common.control", "common.focus", "common.input", "common.layout", "common.tts"]
     },
     "element.scroll_view": {
         "type": "Keymap",

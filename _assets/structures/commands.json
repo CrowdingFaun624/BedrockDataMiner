@@ -50,10 +50,12 @@
         "type": "Keymap",
         "sort": "by_component_order",
         "keys": {
+            "allows_indirect_exec": {"type": "bool", "tags": ["outdated"]},
             "requires_edu": {"type": "bool"},
             "description": {"type": "str", "subcomponent": {"type": "String"}},
             "permission": {"type": "str"},
             "version": {"type": "int"},
+            "is_automation": {"type": "bool", "tags": ["outdated"]},
             "is_hidden": {"type": "bool"},
             "outputToSpeech": {"type": "bool"},
             "requiresChatPerms": {"type": "bool"},
@@ -117,7 +119,7 @@
             "type": {"type": "str"},
             "enum_type": {"type": "str"},
             "enum_values": {"type": "list", "subcomponent": "enum_values"},
-            "optional": {"type": "bool"},
+            "optional": {"type": ["bool", "str"]},
             "target_data": {"type": "dict", "subcomponent": "target_data"}
         }
     },
@@ -163,6 +165,10 @@
     },
     "format_string": {
         "type": "Keymap",
+        "pre_normalized_types": ["dict", "str"],
+        "normalizer": {
+            "function_name": "normalizers/commands_normalize_format_string"
+        },
         "keys": {
             "format": {"type": "str", "subcomponent": {"type": "String"}, "weight": 3},
             "color": {"type": "str"},
