@@ -16,7 +16,10 @@ class DataReader():
         return struct.unpack(format, self.read(amount))
 
     def unpack_tuple(self, format:str, amount:int, endianness:Endianness.End) -> Any:
-        return self.unpack(format, amount, endianness)[0]
+        format = (endianness.value + format) if endianness is not None else format
+        # duplicated because this function is called a zillion times
+        # and we don't need the extra function slowing it down.
+        return struct.unpack(format, self.read(amount))[0]
 
 class DataBytesReader(DataReader):
 
