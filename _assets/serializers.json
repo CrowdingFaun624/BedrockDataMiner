@@ -2,6 +2,9 @@
     "json": {
         "serializer_class": "JsonSerializer"
     },
+    "custom_json": {
+        "serializer_class": "CustomJsonSerializer"
+    },
     "language_serializer": {
         "serializer_class": "LanguageSerializer"
     },
@@ -22,48 +25,267 @@
             "gzipped": false
         }
     },
+    "profanity_filter_serializer": {
+        "serializer_class": "ProfanityFilterSerializer"
+    },
     "models_repairable_json": {
         "serializer_class": "RepairableJsonSerializer",
         "arguments": {
-            "remove_suffix": "\r\n\r\n}\r\n"
+            "rules": [
+                {
+                    "condition": {
+                        "type": "always"
+                    },
+                    "action": {
+                        "type": "remove_suffix",
+                        "content": "\r\n\r\n}\r\n"
+                    }
+                }
+            ]
         }
     },
     "resources_repairable_json": {
         "serializer_class": "RepairableJsonSerializer",
         "arguments": {
-            "replace_suffix_old": "\r\n}\r\n}",
-            "replace_suffix_new": "\r\n}"
+            "rules": [
+                {
+                    "condition": {
+                        "type": "suffix",
+                        "content": "\r\n}\r\n}"
+                    },
+                    "action": {
+                        "type": "sequence",
+                        "actions": [
+                            {
+                                "type": "remove_suffix",
+                                "content": "\r\n}\r\n}"
+                            },
+                            {
+                                "type": "append",
+                                "content": "\r\n}"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "loot_tables_repairable_json": {
+        "serializer_class": "RepairableJsonSerializer",
+        "arguments": {
+            "empty_okay": true,
+            "rules": [
+                {
+                    "condition": {
+                        "type": "exception"
+                    },
+                    "action": {
+                        "type": "replace",
+                        "content": "{}"
+                    }
+                }
+            ]
+        }
+    },
+    "texture_backwards_compatibility_mapping_repairable_json": {
+        "serializer_class": "RepairableJsonSerializer",
+        "arguments": {
+            "rules": [
+                {
+                    "condition": {
+                        "type": "always"
+                    },
+                    "action": {
+                        "type": "replace_some",
+                        "old_content": "}\r\n  \"",
+                        "new_content": "},\r\n  \"",
+                        "count": 1
+                    }
+                }
+            ]
+        }
+    },
+    "skin_geometries_repairable_json": {
+        "serializer_class": "RepairableJsonSerializer",
+        "arguments": {
+            "rules": [
+                {
+                    "condition": {
+                        "type": "always"
+                    },
+                    "action": {
+                        "type": "replace_some",
+                        "old_content": "[0, 95]",
+                        "new_content": "[0, 95],",
+                        "count": 1
+                    }
+                }
+            ]
         }
     },
     "sound_files_serializer": {
         "serializer_class": "SoundSerializer"
     },
     "media_serializer": {
-        "serializer_class": "MediaSerializer"
+        "serializer_class": "MediaSerializer",
+        "arguments": {
+            "metadata_serializer_name": "json",
+            "file_serializer_names": {
+                "unknown_file_type": "unknown_media_serializer",
+                "CUR":  "cur_serializer",
+                "GIF":  "gif_serializer",
+                "JPEG": "jpeg_serializer",
+                "M4A":  "m4a_serializer",
+                "MP3":  "mp3_serializer",
+                "MP4":  "mp4_serializer",
+                "OTF":  "otf_serializer",
+                "PNG":  "png_serializer",
+                "SVG":  "svg_serializer",
+                "TTC":  "ttc_serializer",
+                "TTF":  "ttf_serializer",
+                "WEBM": "webm_serializer"
+            }
+        }
     },
+    // BEGIN MEDIA SERIALIZER TYPES
+    "unknown_media_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "cur_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "gif_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "jpeg_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "m4a_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "mp3_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "mp4_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "otf_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "png_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "svg_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "ttc_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "ttf_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    "webm_serializer": {
+        "serializer_class": "DummySerializer",
+        "arguments": {
+            "empty_okay": true
+        }
+    },
+    // END MEDIA SERIALIZER TYPES
     "text_serializer": {
         "serializer_class": "TextSerializer"
     },
     "material_bin_serializer_0_9_1": {
         "serializer_class": "MaterialBinSerializer",
         "arguments": {
-            "version": "0.9.1"
+            "version": "0.9.1",
+            "subserializer_names": {
+                "data": "custom_json",
+                "main": "custom_json",
+                "pass_info": "json",
+                "glsl": "text_serializer"
+            }
+        }
+    },
+    "material_bin_serializer_0_9_0": {
+        "serializer_class": "MaterialBinSerializer",
+        "arguments": {
+            "version": "0.9.0",
+            "subserializer_names": {
+                "data": "custom_json",
+                "main": "custom_json",
+                "pass_info": "json",
+                "glsl": "text_serializer"
+            }
+        }
+    },
+    "material_bin_serializer_0_8_2": {
+        "serializer_class": "MaterialBinSerializer",
+        "arguments": {
+            "version": "0.8.2",
+            "subserializer_names": {
+                "data": "custom_json",
+                "main": "custom_json",
+                "pass_info": "json",
+                "glsl": "text_serializer"
+            }
         }
     },
     "material_bin_serializer_0_6_0": {
         "serializer_class": "MaterialBinSerializer",
         "arguments": {
-            "version": "0.6.0"
+            "version": "0.6.0",
+            "subserializer_names": {
+                "data": "custom_json",
+                "main": "custom_json",
+                "pass_info": "json",
+                "glsl": "text_serializer"
+            }
         }
     },
     "glyph_sizes_serializer": {
         "serializer_class": "GlyphSizesSerializer"
     },
     "javascript_serializer": {
-        "serializer_class": "TextSerializer"
+        "serializer_class": "JavascriptSerializer"
     },
     "css_serializer": {
-        "serializer_class": "TextSerializer"
+        "serializer_class": "CssSerializer"
     },
     "html_serializer": {
         "serializer_class": "TextSerializer"

@@ -1,9 +1,10 @@
 import enum
-from typing import Any, TypedDict
+from typing import Any, Iterator, TypedDict
 
 import Programs.EvilFSBExtractor as EvilFSBExtractor
 import Serializer.Serializer as Serializer
 import Utilities.Exceptions as Exceptions
+import Utilities.File as File
 import Utilities.FileManager as FileManager
 
 
@@ -73,6 +74,8 @@ class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDic
 
     store_as_file_default = False
 
+    can_contain_subfiles = True
+
     def deserialize(self, data: bytes) -> dict[str,SoundFilesTypedDict]:
         if data[:3] == b"FSB": # it's an FSB file
             wav_files = EvilFSBExtractor.extract_fsb_file(data)
@@ -84,3 +87,13 @@ class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDic
             return output
         else:
             return {"main": get_metadata(data)}
+
+    def get_referenced_files(self, data: bytes) -> Iterator[int]:
+        if data[:3] == b"FSB":
+            wav_files = EvilFSBExtractor.extract_fsb_file(data)
+            for wav_file_name, wav_file_promise in wav_files.items():
+                with wav_file_promise.open() as wav_file_data:
+                    yield File.hash_str_to_int(FileManager.stringify_sha1_hash(FileManager.get_hash(wav_file_data)))
+                wav_file_promise.all_done()
+        else:
+            yield File.hash_str_to_int(FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data)))
