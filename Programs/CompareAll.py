@@ -63,14 +63,26 @@ def compare_all_of(
         dataminer_collection.clear_caches()
 
 def select_dataminers(dataminers:list[DataMinerCollection.DataMinerCollection]) -> list[DataMinerCollection.DataMinerCollection]:
+    '''
+    Allows the user to select any DataMinerCollection.
+    :dataminers: Any DataMinerCollection that the user can pick.
+    '''
     dataminer_names = {dataminer.name: dataminer for dataminer in dataminers}
-    selected_dataminer = None
-    while selected_dataminer not in dataminer_names and selected_dataminer != "*":
-        selected_dataminer = input("Choose a DataMiner to compare (%s or \"*\" for all): " % list(dataminer_names.keys()))
-    if selected_dataminer == "*":
-        return dataminers
-    else:
-        return [dataminer_names[selected_dataminer]]
+    selected_dataminer_names:list[str] = []
+    print(list(dataminer_names.keys()))
+    while True:
+        user_input = input("Choose a/some DataMinerCollection(s) to compare (space-delimited) (\"*\" for all): ")
+        if user_input == "*":
+            selected_dataminer_names = list(dataminer_names.keys())
+        else:
+            selected_dataminer_names = user_input.split(" ")
+        unrecognized_dataminers:list[str] = [selected_dataminer for selected_dataminer in selected_dataminer_names if selected_dataminer not in dataminer_names]
+        if len(unrecognized_dataminers) > 0:
+            print("Unrecognized DataMinerCollection: [%s]" % ", ".join(unrecognized_dataminers))
+            continue
+        else:
+            break
+    return [dataminer_names[dataminer_name] for dataminer_name in selected_dataminer_names]
 
 def main() -> None:
     dataminers = [dataminer_collection for dataminer_collection in DataMiners.dataminers if not dataminer_collection.comparing_disabled]
