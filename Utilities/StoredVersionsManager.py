@@ -166,7 +166,7 @@ def archive(path:Path, hashes:dict[str,bytes], version_name:str|None=None) -> di
         file_hash = hashes[name]
 
         hex_hash = FileManager.stringify_sha1_hash(file_hash)
-        zip_info.filename = get_hash_file_path(hex_hash, True) # slightly evil code that makes it not spit thousands of directories everywhere
+        zip_info.filename = str(get_hash_file_path(hex_hash, True)) # slightly evil code that makes it not spit thousands of directories everywhere
         str_hash = FileManager.stringify_sha1_hash(file_hash)
         new_path = get_hash_file_path(hex_hash)
         do_write = not new_path.exists()
