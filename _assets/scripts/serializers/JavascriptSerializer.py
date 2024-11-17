@@ -35,5 +35,5 @@ class JavascriptSerializer(Serializer.Serializer):
     def deserialize(self, data: bytes) -> str:
         beautified_js = jsbeautifier.beautify(data.decode())
         lines = beautified_js.split("\n")
-        output = "".join(fix_indent(line) for line in lines if line != "")
+        output = "\n".join(fix_indent(line) for line in lines if line != "")
         return output
