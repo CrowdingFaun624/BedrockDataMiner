@@ -1,3 +1,4 @@
+import Programs.Test.CheckAllStructureTypes as CheckAllStructureTypes
 import Programs.Test.DataMinerClassesTest as DataMinerClassesTest
 import Programs.Test.DataMinerCollectionTest as DataMinerCollectionTest
 import Programs.Test.DataMinerSettingsTest as DataMinerSettingsTest
@@ -7,6 +8,7 @@ import Programs.Test.TestUtil as TestUtil
 
 def main() -> None:
     tests = {
+        "check_all_structure_types": CheckAllStructureTypes.check_all_structure_types,
         "dataminer_classes": TestUtil.create_test_function(DataMinerClassesTest.DataMinerClassPlan),
         "dataminer_collections": TestUtil.create_test_function(DataMinerCollectionTest.DataMinerCollectionPlan),
         "dataminer_settings": TestUtil.create_test_function(DataMinerSettingsTest.DataMinerSettingsPlan),

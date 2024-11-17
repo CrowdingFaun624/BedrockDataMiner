@@ -99,6 +99,14 @@ class DataMinerCollection():
             self.get_structure().store(report, self.name)
         return report
 
+    def check_types(self, version:Version.Version, environment:StructureEnvironment.PrinterEnvironment) -> None:
+        if not self.supports_version(version):
+            return
+        data = self.get_data_file(version)
+        structure = self.get_structure()
+        normalized_data = structure.normalize(data, environment)
+        structure.check_types(normalized_data, environment.structure_environment, (version,))
+
     def __hash__(self) -> int:
         return hash(self.name)
 
