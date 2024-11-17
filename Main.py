@@ -107,8 +107,9 @@ if __name__ == "__main__":
     main()
 
 pass
-# TODO: rescan all versions
-
+# TODO: make StructureBase be able to check types.
+# TODO: make logging of errors slightly better.
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
-# TODO: utilize https://archive.org/details/minecraft-iOS to fill in missing versions
+
 # TODO: make more domains
+# TODO: make comparisons out of HTML and fancy and collapsible and stuff.
