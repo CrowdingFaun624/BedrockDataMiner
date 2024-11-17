@@ -36,10 +36,6 @@ class Structure(Generic[a]):
         self.delegate = delegate
         self.children_tags = children_tags
 
-    def finalize_delegate(self) -> None:
-        if self.delegate is not None:
-            self.delegate.finalize()
-
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, self.name)
 

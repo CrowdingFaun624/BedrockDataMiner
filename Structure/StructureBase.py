@@ -72,10 +72,6 @@ class StructureBase():
     def finalize(self) -> None:
         self.cache_substructures = [structure for structure in self.get_structure().get_descendants(set()) if isinstance(structure, CacheStructure.CacheStructure)]
 
-    def finalize_delegate(self) -> None:
-        if self.delegate is not None:
-            self.delegate.finalize()
-
     def normalize(self, data:Any, environment:StructureEnvironment.PrinterEnvironment) -> Any:
         '''
         Manipulates the data before comparison.
