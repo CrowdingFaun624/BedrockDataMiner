@@ -225,6 +225,7 @@ class StringTypedDict(TypedDict):
     delegate_arguments: NotRequired[dict[str,Any]]
     max_similarity_ancestor_depth: NotRequired[int|None]
     normalizer: NotRequired[str|list[str]]
+    similarity_function: NotRequired[str|None]
     tags: NotRequired[str|list[str]]
     type: NotRequired[Literal["Primitive"]]
     types: NotRequired[str|list[str]]

@@ -22,6 +22,20 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
         
         self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
 
+    def link_substructures(
+        self,
+        delegate:Delegate.Delegate|None,
+        types:tuple[type,...],
+        normalizer:list[Normalizer.Normalizer],
+        pre_normalized_types:tuple[type,...],
+        tags:set[StructureTag.StructureTag],
+        similarity_function:Callable[[str],str]|None,
+        children_tags:set[StructureTag.StructureTag],
+    ) -> None:
+        super().link_substructures(delegate, types, normalizer, pre_normalized_types, tags, children_tags)
+        
+        self.similarity_function = similarity_function
+
     def get_levenshtein_distance(self, data1:str, data2:str) -> int:
         distances:list[list[int]] = [[0] * (len(data1) + 1) for y in range(len(data2) + 1)]
         for x in range(1, len(data1) + 1):
@@ -40,6 +54,9 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
     def get_similarity(self, data1: str, data2: str, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
             return float(data1 == data2)
+        if self.similarity_function is not None:
+            data1 = self.similarity_function(data1)
+            data2 = self.similarity_function(data2)
         if len(data1) * len(data2) > 1_000_000:
             raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
         if len(data1) == 0 and len(data2) == 0:
