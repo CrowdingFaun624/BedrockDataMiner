@@ -144,7 +144,7 @@
         "type": "Dict",
         "types": "dict",
         "delegate_arguments": {
-            "field": "file",
+            "field": "namespace",
             "measure_length": true
         },
         "sort": "by_key",
@@ -154,7 +154,7 @@
         "type": "Dict",
         "types": "dict",
         "delegate_arguments": {
-            "field": "file",
+            "field": "element",
             "measure_length": true
         },
         "sort": "by_key",
@@ -162,7 +162,9 @@
     },
     "element": {
         "type": "Keymap",
-        "delegate": null, // ui_normalize wraps each element with a dict of the element's type.
+        "delegate_arguments": {
+            "passthrough": true
+        }, // ui_normalize wraps each element with a dict of the element's type.
         // the type is only needed to choose which branch, so it is ignored.
         "keys": {
             "alpha": {"type": "dict", "subcomponent": "animation"},
@@ -179,6 +181,7 @@
             "flip_book": {"type": "dict", "subcomponent": "animation"},
             "grid": {"type": "dict", "subcomponent": "element.grid"},
             "grid_item": {"type": "dict", "subcomponent": "element.grid_item", "tags": ["outdated"]},
+            "grid_page_indicator": {"type": "dict", "subcomponent": "element.grid_page_indicator", "tags": ["outdated"]},
             "image": {"type": "dict", "subcomponent": "element.image"},
             "image_cycler": {"type": "dict", "subcomponent": "element.image_cycler"},
             "input_panel": {"type": "dict", "subcomponent": "element.input_panel"},
@@ -268,12 +271,14 @@
     },
     "bindings.item": {
         "type": "Keymap",
+        "normalizer": "separate_variables",
         "keys": {
+            "$variables": {"type": "dict", "subcomponent": "my_variables"},
             "binding_collection_name": {"type": "str"},
             "binding_collection_prefix": {"type": "str"},
             "binding_condition": {"type": "str"},
             "binding_name": {"type": "str"},
-            "binding_name_override": {"type": "str"},
+            "binding_name_override": {"type": ["bool", "str"]},
             "binding_type": {"type": "str"},
             "ignored": {"type": "str"},
             "resolve_sibling_scope": {"type": ["bool", "str"]},
@@ -300,7 +305,7 @@
     "button_mappings.item": {
         "type": "Keymap",
         "keys": {
-            "button_up_right_of_first_refusal": {"type": "bool"},
+            "button_up_right_of_first_refusal": {"type": ["bool", "str"]},
             "condition": {"type": "str", "tags": ["outdated"]},
             "consume_event": {"type": "bool"},
             "consumes_next_event": {"type": "bool", "tags": ["outdated"]},
@@ -308,7 +313,7 @@
             "from_button_id": {"type": "str", "subcomponent": {"type": "String"}},
             "handle_deselect": {"type": ["bool", "str"]},
             "handle_select": {"type": "bool"},
-            "ignore_input_scope": {"type": "str"},
+            "ignore_input_scope": {"type": ["bool", "str"]},
             "ignored": {"type": "str"},
             "input_mode_condition": {"type": "str"},
             "mapping_type": {"type": "str"},
@@ -379,6 +384,9 @@
         "types": "dict",
         "delegate_arguments": {
             "field": "element"
+        },
+        "key_component": {
+            "type": "String"
         },
         "subcomponent": "element"
     },
@@ -455,6 +463,27 @@
             "focus_change_right": {"type": "str"}
         }
     },
+    "images": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": {
+                "type": "Set",
+                "types": "dict",
+                "delegate_arguments": {
+                    "field": "image",
+                    "measure_length": true
+                },
+                "subcomponent": "images.item"
+            }
+        }
+    },
+    "images.item": {
+        "type": "Keymap",
+        "keys": {
+            "texture_path": {"type": "str", "subcomponent": {"type": "String"}}
+        }
+    },
     "modifications": {
         "type": "Set",
         "types": "null",
@@ -483,112 +512,120 @@
     "property_bag.dict": {
         "type": "Keymap",
         "keys": {
-            "#anchored_offset_value": {"type": "decimal"},
-            "#anchored_offset_value_x": {"type": "decimal"},
-            "#anchored_offset_value_y": {"type": "decimal"},
+            "#anchored_offset_value": {"type": ["decimal", "str"]},
+            "#anchored_offset_value_x": {"type": ["decimal", "str"]},
+            "#anchored_offset_value_y": {"type": ["decimal", "str"]},
             "#banner_colors": {"type": "str"},
             "#banner_patterns": {"type": "str"},
-            "#block_position": {"type": "list", "subcomponent": "vector_int"},
-            "#bottom_left_block": {"type": "list", "subcomponent": "vector_int"},
-            "#button_navigation": {"type": "int", "tags": ["outdated"]},
-            "#buttons_visible": {"type": "bool"},
+            "#block_position": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
+            "#bottom_left_block": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
+            "#button_navigation": {"type": ["int", "str"], "tags": ["outdated"]},
+            "#buttons_visible": {"type": ["bool", "str"]},
+            "#category": {"type": "str", "tags": ["outdated"]},
             "#coin_prompt_color": {"type": "str", "tags": ["outdated"]},
-            "#collection_index": {"type": "int"},
+            "#collection_index": {"type": ["int", "str"]},
             "#collection_name": {"type": "str"},
             "#collection_prefix": {"type": "str"},
             "#common": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
             "#control_name": {"type": "str", "tags": ["outdated"]},
-            "#custom_rot_y": {"type": "float"},
+            "#custom_rot_y": {"type": ["float", "str"]},
             "#default_prompt_color": {"type": "str", "tags": ["outdated"]},
-            "#disabled_filter_visible": {"type": "bool"},
+            "#disabled_filter_visible": {"type": ["bool", "str"]},
+            "#empty_star_texture": {"type": "str"},
             "#entity_id": {"type": ["str", "int"]},
             "#epic": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
-            "#filtered_light_multiplier": {"type": "float"},
-            "#flying_item_renderer": {"type": "bool"}, // Note: not supported by wiki
+            "#filled_star_texture": {"type": "str"},
+            "#filtered_light_multiplier": {"type": ["float", "str"]},
+            "#flying_item_renderer": {"type": ["bool", "str"]}, // Note: not supported by wiki
             "#force_skin_update": {"type": "str"},
             "#gesture_delta_source": {"type": "str"},
             "#gesture_mouse_delta_x": {"type": "str"},
-            "#has_focus": {"type": "bool"},
-            "#hover_slice": {"type": "int"},
+            "#has_focus": {"type": ["bool", "str"]},
+            "#hover_slice": {"type": ["int", "str"]},
             "#hover_text": {"type": "str"},
             "#hyperlink": {"type": "str"},
             "#image_name": {"type": "str"},
-            "#include_entities": {"type": "bool"},
-            "#include_players": {"type": "bool"},
-            "#index": {"type": "int"},
-            "#is_dropdown": {"type": "bool"},
+            "#include_entities": {"type": ["bool", "str"]},
+            "#include_players": {"type": ["bool", "str"]},
+            "#index": {"type": ["int", "str"]},
+            "#info_type": {"type": "str"},
+            "#is_cycle_button_focused": {"type": ["bool", "str"]},
+            "#is_dropdown": {"type": ["bool", "str"]},
             "#is_featured": {"type": ["bool", "str"]},
             "#is_left": {"type": ["bool", "str"]},
             "#is_skins": {"type": ["bool", "str"]},
-            "#item_custom_color": {"type": "int"},
-            "#item_id_aux": {"type": "int"},
-            "#item_pickup_time": {"type": "float"},
+            "#item_custom_color": {"type": ["int", "str"]},
+            "#item_id_aux": {"type": ["int", "str"]},
+            "#item_pickup_time": {"type": ["float", "str"]},
             "#legendary": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
-            "#look_at_cursor": {"type": "bool"},
-            "#max_upsell_offers": {"type": "int", "tags": ["outdated"]},
+            "#look_at_cursor": {"type": ["bool", "str"]},
+            "#max_upsell_offers": {"type": ["int", "str"], "tags": ["outdated"]},
             "#modal_label_text": {"type": "str"},
             "#modal_title_text": {"type": "str"},
-            "#no_buttons_visible": {"type": "bool"},
-            "#open": {"type": "bool"},
+            "#no_buttons_visible": {"type": ["bool", "str"]},
+            "#open": {"type": ["bool", "str"]},
             "#owned_incompatible_prompt_color": {"type": ["bool", "str"]},
-            "#pack_id": {"type": "int"},
+            "#pack_id": {"type": ["int", "str"]},
             "#panel_title": {"type": "str"},
             "#player_uuid": {"type": "str"},
             "#playername": {"type": "str"},
-            "#progress_bar_tool_amount": {"type": "float"},
-            "#progress_bar_visible": {"type": "bool"},
+            "#progress_bar_tool_amount": {"type": ["float", "str"]},
+            "#progress_bar_visible": {"type": ["bool", "str"]},
             "#property_field": {"type": "str"},
             "#rare": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
-            "#remove_blocks": {"type": "bool"},
+            "#remove_blocks": {"type": ["bool", "str"]},
             "#reset_group": {"type": "str"},
             "#should_host": {"type": ["bool", "str"]},
-            "#single_button_visible": {"type": "bool"},
-            "#size_binding_x": {"type": "decimal"},
-            "#size_binding_y": {"type": "decimal"},
-            "#skin_idx": {"type": "int"},
-            "#skin_rotation": {"type": "bool"},
-            "#slider_steps": {"type": "decimal"},
-            "#slider_value": {"type": "decimal"},
-            "#start_selected": {"type": "bool"},
+            "#single_button_visible": {"type": ["bool", "str"]},
+            "#size_binding_x": {"type": ["decimal", "str"]},
+            "#size_binding_y": {"type": ["decimal", "str"]},
+            "#skin_idx": {"type": ["int", "str"]},
+            "#skin_rotation": {"type": ["bool", "str"]},
+            "#slider_steps": {"type": ["decimal", "str"]},
+            "#slider_value": {"type": ["decimal", "str"]},
+            "#start_selected": {"type": ["bool", "str"]},
             "#sub_command": {"type": "str"},
             "#text": {"type": "str"},
-            "#timer_duration": {"type": "decimal"},
+            "#timer_duration": {"type": ["decimal", "str"]},
             "#timer_field_count_to_show": {"type": ["decimal", "str"]},
-            "#toggle_state": {"type": "bool"},
-            "#top_right_block": {"type": "list", "subcomponent": "vector_int"},
+            "#toggle_state": {"type": ["bool", "str"]},
+            "#top_right_block": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
             "#tts_dialog_body": {"type": "str"},
             "#tts_dialog_title": {"type": "str"},
-            "#two_buttons_visible": {"type": "bool"},
+            "#two_buttons_visible": {"type": ["bool", "str"]},
             "#uncommon": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
-            "#use_heart_offset": {"type": "bool"},
-            "#visible": {"type": "bool"},
+            "#use_heart_offset": {"type": ["bool", "str"]},
+            "#visible": {"type": ["bool", "str"]},
             "#visible_after_x_ratings": {"type": "str", "tags": ["outdated"]},
-            "#x_padding": {"type": "decimal"},
+            "#x_padding": {"type": ["decimal", "str"]},
             "$tab_content": {"type": "str"},
             "classic_radio_button_state": {"type": ["str", "bool"]},
             "control_id": {"type": "str", "tags": ["outdated"]},
-            "drop_shadow": {"type": "bool"}, // Note: not supported by wiki
+            "drop_shadow": {"type": ["bool", "str"]}, // Note: not supported by wiki
             "entity_type": {"type": "str"},
             "experimental_radio_button_state": {"type": ["str", "bool"]},
             "flying_item_banner_patterns": {"type": "str"},
             "flying_item_banner_colors": {"type": "str"},
-            "flying_item_count": {"type": "int"},
-            "flying_item_destination_scale": {"type": "float"},
-            "flying_item_destination_position_x": {"type": "float"},
-            "flying_item_destination_position_y": {"type": "float"},
-            "flying_item_custom_color": {"type": "int"},
-            "flying_item_origin_scale": {"type": "float"},
-            "flying_item_original_position_x": {"type": "float"},
-            "flying_item_original_position_y": {"type": "float"},
-            "force_update": {"type": "bool"},
-            "is_durability": {"type": "bool"},
-            "is_fixed_inventory": {"type": "bool"},
+            "flying_item_count": {"type": ["int", "str"]},
+            "flying_item_destination_scale": {"type": ["float", "str"]},
+            "flying_item_destination_position_x": {"type": ["float", "str"]},
+            "flying_item_destination_position_y": {"type": ["float", "str"]},
+            "flying_item_custom_color": {"type": ["int", "str"]},
+            "flying_item_origin_scale": {"type": ["float", "str"]},
+            "flying_item_original_position_x": {"type": ["float", "str"]},
+            "flying_item_original_position_y": {"type": ["float", "str"]},
+            "force_update": {"type": ["bool", "str"]},
+            "is_durability": {"type": ["bool", "str"]},
+            "is_fixed_inventory": {"type": ["bool", "str"]},
             "is_local": {"type": ["bool", "str"]},
-            "is_storage_bar": {"type": "bool"}, // Note: not supported by wiki
+            "is_storage_bar": {"type": ["bool", "str"]}, // Note: not supported by wiki
             "name": {"type": "str", "tags": ["outdated"]},
-            "opacity_override": {"type": "float"},
+            "opacity_override": {"type": ["float", "str"]},
             "reset_group": {"type": "str", "tags": ["outdated"]},
-            "round_value": {"type": "bool"}
+            "round_up": {"type": ["bool", "str"]},
+            "round_value": {"type": ["bool", "str"]},
+            "skin_pack_collection_name": {"type": "str"},
+            "timer_duration": {"type": ["int", "str"]}
         }
     },
     "separate_variables": {
@@ -614,6 +651,23 @@
             "sound_volume": {"type": "float"}
         }
     },
+    "text_labels": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": {
+                "type": "Set",
+                "types": "str",
+                "delegate_arguments": {
+                    "field": "label",
+                    "measure_length": true
+                },
+                "subcomponent": {
+                    "type": "String"
+                }
+            }
+        }
+    },
     "variables": {
         "type": "Group",
         "subcomponents": {
@@ -634,7 +688,12 @@
         "type": "Keymap",
         "normalizer": "separate_variables",
         "keys": {
+            "bindings": {"type": ["list", "str"], "subcomponent": "bindings"},
+            "focus_navigation_mode_left": {"type": "str", "tags": ["outdated"]},
+            "focus_container_custom_left": {"type": "str", "tags": ["outdated"]},
+            "focus_wrap_enabled": {"type": ["bool", "str"], "tags": ["outdated"]},
             "font_scale_factor": {"type": "decimal", "tags": ["outdated"]},
+            "ignored": {"type": "str"},
             "offset": {"type": "list", "subcomponent": "vector_int", "tags": ["outdated"]},
             "requires": {"type": "str"},
             "scroll_report": {"type": "list", "subcomponent": "control_list", "tags": ["outdated"]},
@@ -647,7 +706,7 @@
         "type": "Keymap",
         "keys": {
             "$variables": {"type": "dict", "subcomponent": "my_variables"},
-            "type": {"type": "str"}
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}}
         }
     },
     "common.button": {
@@ -721,6 +780,8 @@
             "primary_color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
             "renderer": {"type": "str"},
             "rotation": {"type": ["int", "str"]},
+            "rotation_x": {"type": ["int", "str"]},
+            "rotation_y": {"type": ["int", "str"]},
             "starting_rotation": {"type": ["int", "str"]},
             "text_color": {"type": "str"},
             "use_player_paperdoll": {"type": "bool", "tags": ["outdated"]},
@@ -748,7 +809,8 @@
         "type": "Keymap",
         "keys": {
             "control_ids": {"type": ["dict", "str"], "subcomponent": "control_ids"},
-            "control_name": {"type": "str"}
+            "control_name": {"type": "str"},
+            "factory_variables": {"type": ["str", "list"], "subcomponent": "factory.factory_variables", "tags": ["outdated"]}
         }
     },
     "common.focus": {
@@ -784,10 +846,13 @@
     "common.grid": {
         "type": "Keymap",
         "keys": {
+            "cycler_manager_size_control_target": {"type": "str", "tags": ["outdated"]},
             "grid_dimension_binding": {"type": "str"},
             "grid_dimensions": {"type": ["list", "str"], "subcomponent": "str_or_vector_int"},
             "grid_fill_direction": {"type": "str"},
             "grid_item_template": {"type": "str"},
+            "grid_item_when_current": {"type": "str", "tags": ["outdated"]},
+            "grid_item_when_not_current": {"type": "str", "tags": ["outdated"]},
             "grid_rescaling_type": {"type": "str"},
             "maximum_grid_items": {"type": ["int", "str"]},
             "precached_grid_item_count": {"type": ["int", "str"]}
@@ -796,7 +861,7 @@
     "common.image_cycler": {
         "type": "Keymap",
         "keys": {
-            "images": {"type": "str"}
+            "images": {"type": ["str", "list"], "subcomponent": "images"}
         }
     },
     "common.input": {
@@ -818,7 +883,8 @@
     "common.label_cycler": {
         "type": "Keymap",
         "keys": {
-            "text_labels": {"type": "str"}
+            "target_cycler_to_compare": {"type": "str"},
+            "text_labels": {"type": ["str", "list"], "subcomponent": "text_labels"}
         }
     },
     "common.layout": {
@@ -829,7 +895,7 @@
             "contained": {"type": "bool"},
             "draggable": {"type": "str"},
             "follows_cursor": {"type": "bool"},
-            "inherit_max_sibling_height": {"type": "bool"},
+            "inherit_max_sibling_height": {"type": ["bool", "str"]},
             "inherit_max_sibling_width": {"type": "bool"},
             "max_size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int_or_str"},
             "min_size": {"type": ["list", "str"], "subcomponent": "str_or_vector_int_or_str"},
@@ -866,6 +932,7 @@
     "common.scroll_view": {
         "type": "Keymap",
         "keys": {
+            "allow_scroll_even_when_content_fits": {"type": ["bool", "str"], "tags": ["outdated"]},
             "always_handle_scrolling": {"type": ["bool", "str"]},
             "content_panel": {"type": "str", "tags": ["outdated"]},
             "dampening": {"type": "float", "tags": ["outdated"]},
@@ -962,6 +1029,7 @@
             "clip_pixelperfect": {"type": ["bool", "str"]},
             "clip_ratio": {"type": ["float", "str"]},
             "color": {"type": ["list", "str"], "subcomponent": "str_or_vector_decimal"}, // Note: Not supported by wiki
+            "color_corrected": {"type": ["bool", "str"], "tags": ["outdated"]},
             "fill": {"type": ["bool", "str"]},
             "force_texture_reload": {"type": ["bool", "str"]},
             "grayscale": {"type": ["bool", "str"]},
@@ -1008,6 +1076,7 @@
             "localize": {"type": ["bool", "str"]},
             "locked_alpha": {"type": ["float", "str"]},
             "locked_color": {"type": ["list", "str"], "subcomponent": "str_or_vector_float"},
+            "notify_ellipses_sibling": {"type": ["bool", "str"]},
             "notify_on_ellipses": {"type": "list", "subcomponent": "control_list"},
             "place_holder_text": {"type": "str", "tags": ["outdated"]},
             "place_holder_text_color": {"type": "str", "tags": ["outdated"]},
@@ -1077,6 +1146,7 @@
             "tts_override_control_value": {"type": "str"},
             "tts_play_on_unchanged_focus_control": {"type": ["bool", "str"]},
             "tts_section_header": {"type": "str"},
+            "tts_skip_children": {"type": ["bool", "str"]},
             "tts_skip_message": {"type": ["bool", "str"]},
             "tts_toggle_off": {"type": "str"},
             "tts_toggle_on": {"type": "str"},
@@ -1090,7 +1160,8 @@
         "type": "Keymap",
         "keys": {
             "next_sub_page_button_name": {"type": "str"},
-            "prev_sub_page_button_name": {"type": "str"}
+            "prev_sub_page_button_name": {"type": "str"},
+            "reset_on_focus_lost": {"type": "str"}
         }
     },
     "element.button": {
@@ -1164,10 +1235,16 @@
         "normalizer": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.layout"]
     },
+    "element.grid_page_indicator": {
+        "type": "Keymap",
+        "normalizer": "separate_variables",
+        "imports": ["common.all", "common.collection", "common.grid", "common.layout"]
+    },
     "element.image": {
         "type": "Keymap",
         "normalizer": "separate_variables",
-        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.layout", "common.sprite"],
+        // Note: [common.tts] is not supported by wiki
+        "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.layout", "common.sprite", "common.tts"],
         "keys": {
             "factory": {"type": ["dict", "str"], "subcomponent": "factory", "tags": ["outdated"]}
         }
@@ -1175,7 +1252,8 @@
     "element.image_cycler": {
         "type": "Keymap",
         "normalizer": "separate_variables",
-        "imports": ["common.all", "common.image_cycler"]
+        // Note: [common.layout] is not supported by wiki
+        "imports": ["common.all", "common.image_cycler", "common.layout"]
     },
     "element.input_panel": {
         "type": "Keymap",
@@ -1193,7 +1271,8 @@
     "element.label_cycler": {
         "type": "Keymap",
         "normalizer": "separate_variables",
-        "imports": ["common.all", "common.label_cycler"]
+        // Note: [common.control, common.layout, common.text] is not supported by wiki
+        "imports": ["common.all", "common.control", "common.label_cycler", "common.layout", "common.text"]
     },
     "element.panel": {
         "type": "Keymap",
@@ -1201,6 +1280,7 @@
         // Note: [common.focus, common.input, common.tts] is not supported by wiki
         "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.tts"],
         "keys": {
+            "debug": {"type": "str"},
             "factory": {"type": ["dict", "str"], "subcomponent": "factory"},
             "ignoreCollectionItem": {"type": ["bool", "str"]}
         }
@@ -1295,6 +1375,7 @@
             "common.custom_render",
             "common.data_binding",
             "common.dropdown",
+            "common.factory",
             "common.focus",
             "common.grid",
             "common.input",
