@@ -90,6 +90,20 @@ class DictTypedDict(TypedDict):
     types: Required[str|list[str]]
     value_weight: NotRequired[float]
 
+class FileTypedDict(TypedDict):
+    content_types: Required[str|list[str]]
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
+    file_types: NotRequired[str|list[str]]
+    garbage_collect: NotRequired[bool]
+    max_similarity_ancestor_depth: NotRequired[int|None]
+    max_similarity_descendent_depth: NotRequired[int|None]
+    normalizer: NotRequired[str|list[str]]
+    post_normalizer: NotRequired[str|list[str]]
+    pre_normalized_types: NotRequired[str|list[str]]
+    subcomponent: Required[str|None]
+    type: NotRequired[Literal["Passthrough"]]
+
 class GroupTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
@@ -153,20 +167,6 @@ class NormalizerTypedDict(TypedDict):
     function_name: Required[str]
     type: NotRequired[Literal["Normalizer"]]
     version_range: NotRequired[list[str|None]]
-
-class FileTypedDict(TypedDict):
-    content_types: Required[str|list[str]]
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    file_types: NotRequired[str|list[str]]
-    garbage_collect: NotRequired[bool]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    max_similarity_descendent_depth: NotRequired[int|None]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    subcomponent: Required[str|None]
-    type: NotRequired[Literal["Passthrough"]]
 
 class PrimitiveTypedDict(TypedDict):
     delegate: NotRequired[str]
@@ -285,12 +285,12 @@ ComponentTypedDicts:TypeAlias = Union[
     DataMinerCollectionTypedDict,
     DataMinerSettingsTypedDict,
     DictTypedDict,
+    FileTypedDict,
     GroupTypedDict,
     KeymapTypedDict,
     LatestSlotTypedDict,
     ListTypedDict,
     NormalizerTypedDict,
-    FileTypedDict,
     PrimitiveTypedDict,
     RangeVersionTagAutoAssignerTypedDict,
     SequenceTypedDict,
