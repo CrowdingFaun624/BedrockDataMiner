@@ -109,6 +109,12 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
 
     def get_max_similarity_descendent_depth(self, key:str) -> int|None: ...
 
+    def get_unweighted_keys(self) -> set[str]:
+        '''
+        Returns keys that are unweighted and thus should not be used for similarity.
+        '''
+        return set()
+
     def get_similarity(self, data1: MutableMapping[str, d], data2: MutableMapping[str, d], depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
             return float(data1 == data2)
@@ -127,6 +133,8 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
             for hash1, hash2, key_similarity, value_similarity, key1, key2 in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys, depth, max_depth, environment, exceptions):
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes or not self.allow_key_move(key1, data1[key1], key2, data2[key2], exceptions):
+                    if len(already_data1_hashes) == len(data1_exclusive_items) or len(already_data2_hashes) == len(data2_exclusive_items):
+                        break
                     continue
                 already_data1_hashes.add(hash1)
                 already_data2_hashes.add(hash2)
@@ -208,8 +216,18 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
     ) -> list[tuple[int,int,float,float,str,str]]:
         keys1_hashes = {key1: (hash1, value1) for hash1, (key1, value1) in data1_exclusive_items.items()}
         keys2_hashes = {key2: (hash2, value2) for hash2, (key2, value2) in data2_exclusive_items.items()}
+        unweighted_keys = self.get_unweighted_keys()
         same_keys_list:list[tuple[int, int, float, float, str, str]] = [
-            (keys1_hashes[key][0], keys2_hashes[key][0], 1.0, self.get_value_similarity(key, keys1_hashes[key][1], key, keys2_hashes[key][1], environment, exceptions), key, key)
+            (
+                keys1_hashes[key][0],
+                keys2_hashes[key][0],
+                1.0,
+                (self.get_value_similarity(key, keys1_hashes[key][1], key, keys2_hashes[key][1], depth, max_depth, environment, exceptions) if key not in unweighted_keys else 1.0),
+                # if this is for similarity, then the 1.0 when unweighted won't matter because it'll be multiplied by 0 anyways.
+                # if this is for comparison, then these keys have to be together anyway, so it doesn't matter what the value similarity is.
+                key,
+                key,
+            )
             for key in same_keys
             if key in keys1_hashes # same_keys has all keys that are similar, not just ones with different values.
         ]
@@ -217,9 +235,9 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             similarities_list:list[tuple[int, int, float, float, str, str]] = [ # maps similarity of older items to newer items
                 (hash1, hash2, key_similarity, value_similarity, key1, key2)
                 for hash1, (key1, value1) in data1_exclusive_items.items()
-                if key1 not in same_keys
+                if key1 not in same_keys and key1 not in unweighted_keys
                 for hash2, (key2, value2) in data2_exclusive_items.items()
-                if key2 not in same_keys and self.allow_key_move(key1, value1, key2, value2, exceptions)
+                if key2 not in same_keys and key2 not in unweighted_keys and self.allow_key_move(key1, value1, key2, value2, exceptions)
                 # key1 cannot equal key2
                 if (key_similarity := self.get_key_similarity(key1, key2, depth, max_depth, environment, exceptions)) >= self.min_key_similarity_threshold
                 if (value_similarity := self.get_value_similarity(key1, value1, key2, value2, depth, max_depth, environment, exceptions)) > self.min_value_similarity_threshold
@@ -262,6 +280,8 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             for hash1, hash2, _, _, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys, 1, ..., environment, exceptions):
                 # I use max_depth=None because it'll be set to the correct value in get_value_similarity.
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
+                    if len(already_data1_hashes) == len(data1_exclusive_items) or len(already_data2_hashes) == len(data2_exclusive_items):
+                        break
                     continue # if either side is already involved in a change, it's unneeded.
                 already_data1_hashes.add(hash1)
                 already_data2_hashes.add(hash2)

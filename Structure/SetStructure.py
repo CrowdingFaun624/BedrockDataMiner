@@ -52,6 +52,8 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
             already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
             for hash1, hash2, item_similarity, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, self.structure, depth, max_depth, environment, exceptions):
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
+                    if len(already_data1_hashes) == len(data1_exclusive_items) or len(already_data2_hashes) == len(data2_exclusive_items):
+                        break
                     continue
                 already_data1_hashes.add(hash1)
                 already_data2_hashes.add(hash2)
@@ -109,6 +111,8 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         if self.structure is not None and len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
             for hash1, hash2, _, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, self.structure, 1, self.max_similarity_descendent_depth, environment, exceptions):
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
+                    if len(already_data1_hashes) == len(data1_exclusive_items) or len(already_data2_hashes) == len(data2_exclusive_items):
+                        break
                     continue # if either side is already involved in a change, it's unneeded.
                 already_data1_hashes.add(hash1)
                 already_data2_hashes.add(hash2)

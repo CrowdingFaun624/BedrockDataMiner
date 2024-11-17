@@ -44,6 +44,7 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, max_key_similarity_descendent_depth, max_similarity_ancestor_depth, children_has_normalizer, children_has_garbage_collection)
 
         self.key_weights:dict[str,int] = key_weights
+        self.unweighted_keys = {key for key, weight in self.key_weights.items() if weight == 0.0}
         self.default_max_similarity_descendent_depth = default_max_similarity_descendent_depth
         self.keys_max_similarity_descendent_depth = keys_max_similarity_descendent_depth
 
@@ -73,6 +74,9 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         self.pre_normalized_types = pre_normalized_types
         self.tags = tags
         self.keys_with_normalizers = keys_with_normalizers
+
+    def get_unweighted_keys(self) -> set[str]:
+        return self.unweighted_keys
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.keys is None:
