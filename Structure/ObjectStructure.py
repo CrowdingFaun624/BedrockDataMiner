@@ -19,7 +19,7 @@ class ObjectStructure(Structure.Structure[d]):
         '''
         ...
 
-    def choose_structure(self, key:Any, value:Any|D.Diff[Any,Any]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
+    def choose_structure(self, key:Any, value:Any|D.Diff[Any]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
         '''
         Returns a StructureSet of this Structure's substructure(s).
         '''

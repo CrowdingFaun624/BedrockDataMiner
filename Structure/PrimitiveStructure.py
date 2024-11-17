@@ -53,7 +53,7 @@ class PrimitiveStructure(Structure.Structure[d]):
         else:
             return []
 
-    def compare_text(self, data: d|D.Diff[d,d], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data: d|D.Diff[d], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
         if self.delegate is None:
             if environment.default_delegate is None:
                 raise Exceptions.AttributeNoneError("delegate", self)

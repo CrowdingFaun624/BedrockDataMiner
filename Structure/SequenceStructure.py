@@ -75,7 +75,7 @@ class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
             raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
         exceptions:list[Trace.ErrorTrace] = []
         similarity_function = self.structure.get_similarity if self.structure is not None else lambda data1, data2, depth, max_depth, environment, exceptions: float(data1 == data2)
-        compare_function:Callable[[d,d,StructureEnvironment.ComparisonEnvironment],tuple[d|D.Diff[d,d],bool,list[Trace.ErrorTrace]]] = \
+        compare_function:Callable[[d,d,StructureEnvironment.ComparisonEnvironment],tuple[d|D.Diff[d],bool,list[Trace.ErrorTrace]]] = \
             self.structure.compare if self.structure is not None else lambda data1, data2, environment: (data1, False, []) if data1 is data2 or data1 == data2 else (D.Diff(old=data1, new=data2), True, [])
 
         data1_hashes:list[int] = [Hashing.hash_data(item) for item in data1]

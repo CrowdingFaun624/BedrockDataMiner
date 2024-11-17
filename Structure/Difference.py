@@ -33,32 +33,30 @@ exist_change_type:dict[tuple[bool,bool],ChangeType] = {
 
 Dt1 = TypeVar("Dt1")
 Dt2 = TypeVar("Dt2")
-Dt3 = TypeVar("Dt3")
-Dt4 = TypeVar("Dt4")
 
-class Diff(Generic[Dt1,Dt2]):
+class Diff(Generic[Dt1]):
     "A difference in data from an old version to a new version."
 
-    def __init__(self, old:Dt1=NoExist, new:Dt2=NoExist) -> None:
+    def __init__(self, old:Dt1=NoExist, new:Dt1=NoExist) -> None:
         '''
         :old: The older version of data.
         :new: The newer version of data.
         '''
         self.old:Dt1 = old
-        self.new:Dt2 = new
+        self.new:Dt1 = new
         self.change_type = exist_change_type[old is not NoExist, new is not NoExist]
         self.is_addition = self.change_type == ChangeType.addition
         self.is_change = self.change_type == ChangeType.change
         self.is_removal = self.change_type == ChangeType.removal
 
-    def first_existing_property(self) -> Dt1|Dt2:
+    def first_existing_property(self) -> Dt1:
         '''Returns `self.new` if `self.new` is not NoExist, otherwise `self.old`.'''
         if self.is_removal:
             return self.old
         else:
             return self.new
 
-    def iter(self) -> list[tuple[Dt1|Dt2,DiffType]]:
+    def iter(self) -> list[tuple[Dt1,DiffType]]:
         "Returns each existing member of this Diff from oldest to newest."
         match self.change_type:
             case ChangeType.addition:
@@ -68,7 +66,7 @@ class Diff(Generic[Dt1,Dt2]):
             case ChangeType.removal:
                 return [(self.old, DiffType.old)]
 
-    def __getitem__(self, index:DiffType) -> Dt1|Dt2:
+    def __getitem__(self, index:DiffType) -> Dt1:
         match index:
             case DiffType.new:
                 if self.new is NoExist:
@@ -124,9 +122,8 @@ class Diff(Generic[Dt1,Dt2]):
 
 a = TypeVar("a")
 b = TypeVar("b")
-c = TypeVar("c")
 
-def first_existing_property(item:a|Diff[b,c]) -> a|b|c:
+def first_existing_property(item:a|Diff[b]) -> a|b:
     '''
     Returns the first existing property if the item is a diff,
     and just the item otherwise.
@@ -137,7 +134,7 @@ def first_existing_property(item:a|Diff[b,c]) -> a|b|c:
     else:
         return item
 
-def iter_diff(thing:a|Diff[Dt1,Dt2]) -> Sequence[tuple[a|Dt1|Dt2,DiffType]]:
+def iter_diff(thing:a|Diff[Dt1]) -> Sequence[tuple[a|Dt1,DiffType]]:
     '''
     Returns each existing member of this Diff from oldest to newest if it's a Diff,
     otherwise return the item with the `not_diff` DiffType.
@@ -148,7 +145,7 @@ def iter_diff(thing:a|Diff[Dt1,Dt2]) -> Sequence[tuple[a|Dt1|Dt2,DiffType]]:
     else:
         return [(thing, DiffType.not_diff)]
 
-def double_iter_diff(thing1:a|Diff[Dt1,Dt2], thing2:b|Diff[Dt3,Dt4]) -> list[tuple[a|Dt1|Dt2,b|Dt3|Dt4,DiffType,DiffType]]:
+def double_iter_diff(thing1:a|Diff[Dt1], thing2:b|Diff[Dt2]) -> list[tuple[a|Dt1,b|Dt2,DiffType,DiffType]]:
     '''
     Zips the existing members of `thing1` and `thing2`.
     :thing1: The first Diff or non-Diff to iterate over.

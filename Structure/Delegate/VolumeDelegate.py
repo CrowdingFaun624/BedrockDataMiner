@@ -21,9 +21,9 @@ class DataTypedDict(TypedDict):
     size: tuple[int,int,int]
 
 class DataDiffTypedDict(TypedDict):
-    states: dict[tuple[int,int,int]|D.Diff[tuple[int,int,int],tuple[int,int,int]],int|D.Diff[int,int]]
-    data: dict[tuple[int,int,int]|D.Diff[tuple[int,int,int],tuple[int,int,int]],MutableMapping[str,Any]|D.Diff[MutableMapping[str,Any],MutableMapping[str,Any]]]
-    size: tuple[int|D.Diff[int,int],int|D.Diff[int,int],int|D.Diff[int,int]]
+    states: dict[tuple[int,int,int]|D.Diff[tuple[int,int,int]],int|D.Diff[int]]
+    data: dict[tuple[int,int,int]|D.Diff[tuple[int,int,int]],MutableMapping[str,Any]|D.Diff[MutableMapping[str,Any]]]
+    size: tuple[int|D.Diff[int],int|D.Diff[int],int|D.Diff[int]]
 
 class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
 
@@ -122,7 +122,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
             exceptions.extend(exception.add(self.get_structure().name, layer) for exception in new_exceptions)
         return output, exceptions
 
-    def compare_text_size(self, size:tuple[int|D.Diff[int,int],int|D.Diff[int,int],int|D.Diff[int,int]]) -> tuple[list[DefaultDelegate.LineType], bool, list[Trace.ErrorTrace]]:
+    def compare_text_size(self, size:tuple[int|D.Diff[int],int|D.Diff[int],int|D.Diff[int]]) -> tuple[list[DefaultDelegate.LineType], bool, list[Trace.ErrorTrace]]:
         output:list[DefaultDelegate.LineType] = []
         any_changes = False
         if any(isinstance(axis, D.Diff) for axis in size):
@@ -134,7 +134,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
 
     def compare_text_layer(
             self,
-            data:dict[tuple[int,int,int],int|D.Diff[int,int]],
+            data:dict[tuple[int,int,int],int|D.Diff[int]],
             block_data_comparisons:list[list[DefaultDelegate.LineType]],
             layer:int, size:tuple[int,int,int],
             environment:StructureEnvironment.ComparisonEnvironment
@@ -177,7 +177,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
             output.extend(block_data_comparison)
         return output, exceptions
 
-    def compare_text_block(self, position:tuple[int,int,int], block_data:MutableMapping[str,Any]|D.Diff[MutableMapping[str,Any],MutableMapping[str,Any]], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[DefaultDelegate.LineType],bool,list[Trace.ErrorTrace]]:
+    def compare_text_block(self, position:tuple[int,int,int], block_data:MutableMapping[str,Any]|D.Diff[MutableMapping[str,Any]], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[DefaultDelegate.LineType],bool,list[Trace.ErrorTrace]]:
         output:list[DefaultDelegate.LineType] = []
         exceptions:list[Trace.ErrorTrace] = []
         any_changes = False
@@ -203,7 +203,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
                 output.extend((indentation + 1, line) for indentation, line in substructure_output)
         return output, any_changes, exceptions
 
-    def process_pos_dict(self, data:dict[tuple[int,int,int]|D.Diff[tuple[int,int,int],tuple[int,int,int]],a]) -> Iterator[tuple[tuple[int,int,int],a]]:
+    def process_pos_dict(self, data:dict[tuple[int,int,int]|D.Diff[tuple[int,int,int]],a]) -> Iterator[tuple[tuple[int,int,int],a]]:
         '''
         Yields the items of the data, removing the key from a Diff if it is in a Diff.
         '''

@@ -30,13 +30,13 @@ class ListStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         data1:Sequence[d],
         data2:Sequence[d],
         environment:StructureEnvironment.ComparisonEnvironment,
-    ) -> tuple[Sequence[d|D.Diff[D._NoExistType,d]|D.Diff[d,D._NoExistType]],bool,list[Trace.ErrorTrace]]:
+    ) -> tuple[Sequence[d|D.Diff[d|D._NoExistType]],bool,list[Trace.ErrorTrace]]:
         if data1 is data2 or data1 == data2:
             return data1, False, []
         has_changes = False
         exceptions:list[Trace.ErrorTrace] = []
 
-        output:list[d|D.Diff[D._NoExistType,d]|D.Diff[d,D._NoExistType]] = []
+        output:list[d|D.Diff[d|D._NoExistType]] = []
         exceptions:list[Trace.ErrorTrace] = []
         index = -1
         for index, (item1, item2) in enumerate(zip(data1, data2)):

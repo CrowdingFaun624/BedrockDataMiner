@@ -177,7 +177,7 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
 
             old_index:a; new_index:a
             if isinstance(index, D.Diff):
-                index_diff = cast(D.Diff[a,a], index)
+                index_diff = cast(D.Diff[a], index)
                 old_index, new_index = index_diff.old, index_diff.new
                 if index_diff.is_change:
                     can_print_print_all = False

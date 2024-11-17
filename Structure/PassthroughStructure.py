@@ -147,7 +147,7 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
             output = self.structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions)
             return output
 
-    def compare(self, data1:a, data2:a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1:a, data2:a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a|D.Diff[a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         if self.structure is None:
             if data1 is data2 or data1 == data2:
@@ -175,7 +175,7 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
-    def compare_text(self, data:a|D.Diff[a,a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:a|D.Diff[a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.choose_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)

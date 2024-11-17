@@ -85,7 +85,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         '''
         ...
 
-    def choose_structure(self, key:str|D.Diff[str,str], value:d|D.Diff[d,d]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]: ...
+    def choose_structure(self, key:str|D.Diff[str], value:d|D.Diff[d]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]: ...
 
     def check_all_types(self, data:MutableMapping[str,d], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
@@ -254,7 +254,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             data1:MutableMapping[str,d],
             data2:MutableMapping[str,d],
             environment:StructureEnvironment.ComparisonEnvironment,
-        ) -> tuple[MutableMapping[str|D.Diff[str,str],d|D.Diff[d,d]],bool,list[Trace.ErrorTrace]]:
+        ) -> tuple[MutableMapping[str|D.Diff[str],d|D.Diff[d]],bool,list[Trace.ErrorTrace]]:
 
         if data1 is data2 or data1 == data2:
             return cast(Any, data1), False, []

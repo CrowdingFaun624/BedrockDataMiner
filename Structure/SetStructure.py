@@ -86,7 +86,7 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         data1:Sequence[d],
         data2:Sequence[d],
         environment:StructureEnvironment.ComparisonEnvironment,
-    ) -> tuple[Sequence[d|D.Diff[d|D._NoExistType,d|D._NoExistType]],bool,list[Trace.ErrorTrace]]:
+    ) -> tuple[Sequence[d|D.Diff[d|D._NoExistType]],bool,list[Trace.ErrorTrace]]:
         if data1 is data2 or data1 == data2:
             return data1, False, []
         exceptions:list[Trace.ErrorTrace] = []
@@ -97,7 +97,7 @@ class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         same_hashes = [hash for hash in data1_hashes.keys() if hash in data2_hashes] # retain order
         data1_exclusive_items = {exclusive_hash: data1_hashes[exclusive_hash] for exclusive_hash in data1_hashes if exclusive_hash not in data2_hashes}
         data2_exclusive_items = {exclusive_hash: data2_hashes[exclusive_hash] for exclusive_hash in data2_hashes if exclusive_hash not in data1_hashes}
-        output:list[d|D.Diff[d|D.NoExist,d|D.NoExist]] = type(data1)() # type: ignore
+        output:list[d|D.Diff[d|D.NoExist]] = type(data1)() # type: ignore
         has_changes = len(data1_exclusive_items) > 0 or len(data2_exclusive_items) > 0
 
         # unchanged items

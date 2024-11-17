@@ -41,7 +41,7 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
         lines_before_buffer.clear()
         return output[0][0] if len(output) > 0 else None, [item[1] for item in output]
 
-    def get_maximum_index_length(self, data:list[str|D.Diff[str,str]]) -> int:
+    def get_maximum_index_length(self, data:list[str|D.Diff[str]]) -> int:
         old_lines = 0
         new_lines = 0
         for item in data:
@@ -72,7 +72,7 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
             new_index_string if show_new else " " * maximum_index_length,
         )
 
-    def compare_text(self, data: list[str|D.Diff[str,str]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[list[DefaultDelegate.LineType], bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data: list[str|D.Diff[str]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[list[DefaultDelegate.LineType], bool, list[Trace.ErrorTrace]]:
         output:list[DefaultDelegate.LineType] = []
         maximum_index_length = self.get_maximum_index_length(data) # determines the amount of spacing.
         # pre-text stuff takes the form of "[index] (+/-) [line]"

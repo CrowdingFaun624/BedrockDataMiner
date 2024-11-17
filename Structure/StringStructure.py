@@ -67,7 +67,7 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
         levenshtein_distance = self.get_levenshtein_distance(data1, data2)
         return 1 - (levenshtein_distance / max_length)
 
-    def compare(self, data1: str, data2: str, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str|D.Diff[str,str], bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1: str, data2: str, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str|D.Diff[str], bool, list[Trace.ErrorTrace]]:
         if data1 is data2 or data1 == data2:
             return data1, False, []
         else:

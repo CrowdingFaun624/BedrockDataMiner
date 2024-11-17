@@ -148,7 +148,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
         if structure is not None:
             yield from structure.get_referenced_files(data, environment)
 
-    def choose_structure(self, key:None, value:a|D.Diff[a,a]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
+    def choose_structure(self, key:None, value:a|D.Diff[a]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
         output:dict[D.DiffType,Structure.Structure|None] = {}
         exceptions:list[Trace.ErrorTrace] = []
         for item_iter, diff_type in D.iter_diff(value):
@@ -172,7 +172,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
             output = structure1.get_similarity(data1, data2, depth + 1, max_depth, environment, exceptions)
             return output
 
-    def compare(self, data1: a, data2: a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1: a, data2: a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a|D.Diff[a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure_set, new_exceptions = self.choose_structure(None, D.Diff(data1, data2))
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)

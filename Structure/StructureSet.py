@@ -69,7 +69,7 @@ class StructureSet(Generic[d]):
         else:
             return structure.compare_text(data, environment)
 
-    def compare(self, data1:d, data2:d, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[d|D.Diff[d,d],bool,list[Trace.ErrorTrace]]:
+    def compare(self, data1:d, data2:d, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[d|D.Diff[d],bool,list[Trace.ErrorTrace]]:
         '''
         Compares data using the Structure given by internal conditions.
         :data1: The data from the oldest Version.
