@@ -33,10 +33,15 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             min_value_similarity_threshold:float,
             key_weight:float,
             value_weight:float,
+            max_key_similarity_descendent_depth:int|None,
+            max_similarity_descendent_depth:int|None,
+            max_similarity_ancestor_depth:int|None,
             children_has_normalizer:bool,
             children_has_garbage_collection:bool,
         ) -> None:
-        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer, children_has_garbage_collection)
+        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, max_key_similarity_descendent_depth, max_similarity_ancestor_depth, children_has_normalizer, children_has_garbage_collection)
+
+        self.max_similarity_descendent_depth = max_similarity_descendent_depth
 
         self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None
@@ -150,3 +155,6 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
 
     def choose_structure(self, key:str|D.Diff[str,str], value:d|D.Diff[d,d]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
         return StructureSet.StructureSet({value_diff_type: self.structure for value_iter, value_diff_type in D.iter_diff(value)}), []
+
+    def get_max_similarity_descendent_depth(self, key: str) -> int | None:
+        return self.max_similarity_descendent_depth

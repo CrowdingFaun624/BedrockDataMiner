@@ -34,12 +34,18 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
             value_weight:float,
             detect_key_moves:bool,
             key_weights:dict[str,int],
+            max_similarity_ancestor_depth:int|None,
+            default_max_similarity_descendent_depth:int|None,
+            max_key_similarity_descendent_depth:int|None,
+            keys_max_similarity_descendent_depth:dict[str,int|None],
             children_has_normalizer:bool,
             children_has_garbage_collection:bool,
         ) -> None:
-        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, children_has_normalizer, children_has_garbage_collection)
+        super().__init__(name, detect_key_moves, sorting_function, min_key_similarity_threshold, min_value_similarity_threshold, key_weight, value_weight, max_key_similarity_descendent_depth, max_similarity_ancestor_depth, children_has_normalizer, children_has_garbage_collection)
 
         self.key_weights:dict[str,int] = key_weights
+        self.default_max_similarity_descendent_depth = default_max_similarity_descendent_depth
+        self.keys_max_similarity_descendent_depth = keys_max_similarity_descendent_depth
 
         self.keys:dict[str,Structure.Structure[d]|None]|None = None
         self.tags:dict[str,set[StructureTag.StructureTag]]|None = None
@@ -210,3 +216,6 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
                 continue
             output[value_diff_type] = structure
         return StructureSet.StructureSet(output), exceptions
+
+    def get_max_similarity_descendent_depth(self, key: str) -> int | None:
+        return self.keys_max_similarity_descendent_depth.get(key, self.default_max_similarity_descendent_depth)

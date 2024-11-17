@@ -20,6 +20,8 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("file_types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a list or str", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("garbage_collect", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_ancestor_depth", "an int or None", False, (int, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_descendent_depth", "an int or None", False, (int, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -32,6 +34,8 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         self.verify_arguments(data)
 
         self.children_has_garbage_collection = data.get("garbage_collect", False)
+        self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
+        self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
         self.file_types_field = TypeListField.TypeListField(data.get("file_types", "abstract_file"), ["file_types"])
@@ -48,6 +52,8 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         super().create_final()
         self.final = FileStructure.FileStructure(
             name=self.name,
+            max_similarity_descendent_depth=self.max_similarity_descendent_depth,
+            max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
             children_has_normalizer=self.children_has_normalizer,
             children_has_garbage_collection=self.children_has_garbage_collection,
         )

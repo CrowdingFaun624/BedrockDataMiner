@@ -24,10 +24,15 @@ class AbstractIterableStructure(ObjectStructure.ObjectStructure[Sequence[d]]):
     def __init__(
             self,
             name:str,
+            max_similarity_descendent_depth:int|None,
+            max_similarity_ancestor_depth:int|None,
             children_has_normalizer:bool,
             children_has_garbage_collection:bool,
         ) -> None:
         super().__init__(name, children_has_normalizer, children_has_garbage_collection)
+
+        self.max_similarity_descendent_depth = max_similarity_descendent_depth
+        self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
 
         self.structure:Structure.Structure[d]|None = None
         self.types:tuple[type,...]|None = None

@@ -29,6 +29,9 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("key_component", "a str, StructureComponent or None", False, (str, dict, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("key_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_key_similarity_descendent_depth", "an int or None", False, (int, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_ancestor_depth", "an int or None", False, (int, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_descendent_depth", "an int or None", False, (int, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("min_key_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("min_value_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
@@ -55,6 +58,9 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.value_weight = data.get("value_weight", DictStructure.VALUE_WEIGHT)
         self.sort = DictSorting[data.get("sort", "none")]
         self.required_keys = data.get("required_keys", [])
+        self.max_key_similarity_descendent_depth = data.get("max_key_similarity_descendent_depth", 6)
+        self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 6)
+        self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
@@ -85,6 +91,9 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             name=self.name,
             detect_key_moves=self.detect_key_moves,
             sorting_function=sorting_function,
+            max_key_similarity_descendent_depth=self.max_key_similarity_descendent_depth,
+            max_similarity_descendent_depth=self.max_similarity_descendent_depth,
+            max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
             min_key_similarity_threshold=self.min_key_similarity_threshold,
             min_value_similarity_threshold=self.min_value_similarity_threshold,
             key_weight=self.key_weight,

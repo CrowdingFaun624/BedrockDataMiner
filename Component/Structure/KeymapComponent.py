@@ -29,6 +29,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
     class_name = "Keymap"
     my_capabilities = Capabilities.Capabilities(has_importable_keys=True, has_keys=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("default_max_similarity_descendent_depth", "an int or None", False, (int, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("detect_key_moves", "a bool", False, bool),
@@ -37,12 +38,15 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         TypeVerifier.TypedDictKeyTypeVerifier("key_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("keys", "a dict", False, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
             TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
+            TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_descendent_depth", "an int or None", False, (int, type(None))),
             TypeVerifier.TypedDictKeyTypeVerifier("required", "a bool", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str, StructureComponent, or None", False, (str, dict, type(None))),
             TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
             TypeVerifier.TypedDictKeyTypeVerifier("type", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
             TypeVerifier.TypedDictKeyTypeVerifier("weight", "a int", False, int, lambda key, value: (value >= 0, "must be at least 0")),
         ), "a dict", "a str", "a dict")),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_key_similarity_descendent_depth", "an int or None", False, (int, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_ancestor_depth", "an int or None", False, (int, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("min_key_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("min_value_similarity_threshold", "a float", False, float, lambda key, value: (value > 0.0 and value <= 1.0, "must be in the range (0.0,1.0]")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
@@ -65,6 +69,9 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.key_weight = data.get("key_weight", KeymapStructure.KEY_WEIGHT)
         self.value_weight = data.get("value_weight", KeymapStructure.VALUE_WEIGHT)
         self.sort = KeymapSorting[data.get("sort", "none")]
+        self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
+        self.max_key_similarity_descendent_depth = data.get("max_key_similarity_descendent_depth", 4)
+        self.default_max_similarity_descendent_depth = data.get("default_max_similarity_descendent_depth", None)
 
         self.import_field = KeymapImportField.KeymapImportField(data.get("imports", []), ["imports"])
         self.keys = FieldListField.FieldListField([KeymapKeyField.KeymapKeyField(key_data, key, self.children_tags, ["keys", key], self) for key, key_data in data.get("keys", {}).items()], ["keys"])
@@ -104,6 +111,10 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             key_weight=self.key_weight,
             value_weight=self.value_weight,
             key_weights={key.key: key.weight for key in self.keys},
+            max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
+            default_max_similarity_descendent_depth=self.default_max_similarity_descendent_depth,
+            max_key_similarity_descendent_depth=self.max_key_similarity_descendent_depth,
+            keys_max_similarity_descendent_depth={key.key: key.max_similarity_descendent_depth for key in self.keys if key.max_similarity_descendent_depth is not ...},
             children_has_normalizer=self.children_has_normalizer,
             children_has_garbage_collection=self.children_has_garbage_collection,
         )

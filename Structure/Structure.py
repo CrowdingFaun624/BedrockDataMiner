@@ -125,11 +125,13 @@ class Structure(Generic[a]):
         '''
         ...
 
-    def get_similarity(self, data1:a, data2:a, environment:"StructureEnvironment.ComparisonEnvironment", exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1:a, data2:a, depth:int, max_depth:int|None, environment:"StructureEnvironment.ComparisonEnvironment", exceptions:list[Trace.ErrorTrace]) -> float:
         '''
         Returns the similarity of data1 to data2. Is at most the greater of the complexities of the data.
         :data1: The data from the oldest Version.
         :data2: The data from the newest Version.
+        :depth: The current count of get_similarity calls right now.
+        :max_depth: The maximum depth before simple equality checks are used.
         :environment: The ComparisonEnvironment to use.
         '''
         ...

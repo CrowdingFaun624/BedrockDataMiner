@@ -19,6 +19,8 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_ancestor_depth", "an int or None", False, (int, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_descendent_depth", "an int or None", False, (int, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -29,6 +31,9 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
     def __init__(self, data:ComponentTyping.GroupTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
         self.verify_arguments(data)
+
+        self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
+        self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
         self.subcomponents_field = FieldListField.FieldListField([
             GroupItemField.GroupItemField(type_str, subcomponent_str, ["subcomponents", index])
@@ -44,6 +49,8 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         super().create_final()
         self.final = GroupStructure.GroupStructure(
             name=self.name,
+            max_similarity_descendent_depth=self.max_similarity_descendent_depth,
+            max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
             children_has_normalizer=self.children_has_normalizer,
             children_has_garbage_collection=self.children_has_garbage_collection,
         )

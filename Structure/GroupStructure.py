@@ -18,8 +18,18 @@ a = TypeVar("a")
 
 class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
 
-    def __init__(self, name: str, children_has_normalizer: bool, children_has_garbage_collection:bool) -> None:
+    def __init__(
+        self,
+        name: str,
+        max_similarity_descendent_depth:int|None,
+        max_similarity_ancestor_depth:int|None,
+        children_has_normalizer: bool,
+        children_has_garbage_collection:bool,
+    ) -> None:
         super().__init__(name, children_has_normalizer, children_has_garbage_collection)
+
+        self.max_similarity_descendent_depth = max_similarity_descendent_depth
+        self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
 
         self.substructures:dict[type,Structure.Structure|None]|None = None
 
@@ -152,7 +162,9 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
             output[diff_type] = structure
         return StructureSet.StructureSet(output), exceptions
 
-    def get_similarity(self, data1: a, data2: a, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: a, data2: a, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
+            return float(data1 == data2)
         structure1, exceptions1 = self.get_structure(None, data1)
         structure2, exceptions2 = self.get_structure(None, data2)
         if len(exceptions1) > 0 or len(exceptions2) > 0:
@@ -160,7 +172,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
         if structure1 is not structure2 or structure1 is None or structure2 is None:
             return 0.0
         else:
-            output = structure1.get_similarity(data1, data2, environment, exceptions)
+            output = structure1.get_similarity(data1, data2, depth + 1, max_depth, environment, exceptions)
             return output
 
     def compare(self, data1: a, data2: a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:

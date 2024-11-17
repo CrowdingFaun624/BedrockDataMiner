@@ -1,3 +1,4 @@
+from types import EllipsisType
 from typing import (TYPE_CHECKING, Any, Callable, MutableMapping, TypeVar,
                     Union, cast)
 
@@ -23,7 +24,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
     Abstract class of dict-using Structures.
     In subclasses, must provide methods `iter_structures`, `check_type`,
     `get_structure`, `choose_structure`, `get_tag_paths`,
-    `get_referenced_files`, and `normalize`.
+    `get_referenced_files`, `normalize`, and `get_max_similarity_descendent_depth`.
     """
 
     valid_types = (dict, NbtTypes.TAG_Compound)
@@ -37,6 +38,8 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             min_value_similarity_threshold:float,
             key_weight:float,
             value_weight:float,
+            max_key_similarity_descendent_depth:int|None,
+            max_similarity_ancestor_depth:int|None,
             children_has_normalizer:bool,
             children_has_garbage_collection:bool,
         ) -> None:
@@ -48,6 +51,9 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         self.min_value_similarity_threshold = min_value_similarity_threshold
         self.key_weight = key_weight
         self.value_weight = value_weight
+        self.max_key_similarity_descendent_depth = max_key_similarity_descendent_depth
+        self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
+        # get_max_similarity_descendent_depth is defined by each subclass
 
         self.key_structure:Structure.Structure[str]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
@@ -101,7 +107,11 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
                 output.append(Trace.ErrorTrace(Exceptions.StructureRequiredKeyMissingError(self, key), self.name, None, data))
         return output
 
-    def get_similarity(self, data1: MutableMapping[str, d], data2: MutableMapping[str, d], environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_max_similarity_descendent_depth(self, key:str) -> int|None: ...
+
+    def get_similarity(self, data1: MutableMapping[str, d], data2: MutableMapping[str, d], depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
+            return float(data1 == data2)
         data1_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data1.items()}
         data2_hashes:dict[int,tuple[str,d]] = {Hashing.hash_data((key, value)): (key, value) for key, value in data2.items()}
 
@@ -115,7 +125,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0 and total_weight != 0:
             already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
             already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
-            for hash1, hash2, key_similarity, value_similarity, key1, key2 in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys, environment, exceptions):
+            for hash1, hash2, key_similarity, value_similarity, key1, key2 in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys, depth, max_depth, environment, exceptions):
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes or not self.allow_key_move(key1, data1[key1], key2, data2[key2], exceptions):
                     continue
                 already_data1_hashes.add(hash1)
@@ -126,7 +136,7 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
             exceptions.append(Trace.ErrorTrace(Exceptions.InvalidSimilarityError(self, similarity, data1, data2), self.name, None, (data1, data2)))
         return similarity
 
-    def get_key_similarity(self, key1:str, key2:str, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_key_similarity(self, key1:str, key2:str, depth:int, max_depth:int|None|EllipsisType, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         '''
         Gets the similarity between two keys of this Structure's data.
         :key1: The key of the older key-value pair.
@@ -136,11 +146,13 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         if key1 == key2:
             return 1.0
         elif self.key_structure is not None:
-            return self.key_structure.get_similarity(key1, key2, environment, exceptions)
+            if max_depth is ...:
+                max_depth = self.max_key_similarity_descendent_depth
+            return self.key_structure.get_similarity(key1, key2, depth + 1, max_depth, environment, exceptions)
         else:
             return 0.0
 
-    def get_value_similarity(self, key1:str, value1:d, key2:str, value2:d, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_value_similarity(self, key1:str, value1:d, key2:str, value2:d, depth:int, max_depth:int|None|EllipsisType, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         '''
         Gets the similarity between two values of this Structure's data.
         :key1: The key of the older key-value pair.
@@ -156,7 +168,14 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         exceptions.extend(exceptions1)
         exceptions.extend(exceptions2)
         if structure1 is structure2 and structure1 is not None:
-            output = structure1.get_similarity(value1, value2, environment, exceptions)
+            if max_depth is ...:
+                if key1 == key2:
+                    max_depth = self.get_max_similarity_descendent_depth(key1)
+                else:
+                    max_similarity_descendent_depth1 = self.get_max_similarity_descendent_depth(key1)
+                    max_similarity_descendent_depth2 = self.get_max_similarity_descendent_depth(key2)
+                    max_depth = (None if max_similarity_descendent_depth1 is None else max_similarity_descendent_depth1) if max_similarity_descendent_depth2 is None else (max_similarity_descendent_depth2 if max_similarity_descendent_depth1 is None else min(max_similarity_descendent_depth2, max_similarity_descendent_depth1))
+            output = structure1.get_similarity(value1, value2, depth + 1, max_depth, environment, exceptions)
         else:
             output = 0.0
         return output
@@ -182,6 +201,8 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         data1_exclusive_items:dict[int,tuple[str,d]],
         data2_exclusive_items:dict[int,tuple[str,d]],
         same_keys:set[str],
+        depth:int,
+        max_depth:int|None|EllipsisType,
         environment:StructureEnvironment.ComparisonEnvironment,
         exceptions:list[Trace.ErrorTrace],
     ) -> list[tuple[int,int,float,float,str,str]]:
@@ -200,8 +221,8 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
                 for hash2, (key2, value2) in data2_exclusive_items.items()
                 if key2 not in same_keys and self.allow_key_move(key1, value1, key2, value2, exceptions)
                 # key1 cannot equal key2
-                if (key_similarity := self.get_key_similarity(key1, key2, environment, exceptions)) >= self.min_key_similarity_threshold
-                if (value_similarity := self.get_value_similarity(key1, value1, key2, value2, environment, exceptions)) > self.min_value_similarity_threshold
+                if (key_similarity := self.get_key_similarity(key1, key2, depth, max_depth, environment, exceptions)) >= self.min_key_similarity_threshold
+                if (value_similarity := self.get_value_similarity(key1, value1, key2, value2, depth, max_depth, environment, exceptions)) > self.min_value_similarity_threshold
             ]
         else:
             similarities_list = []
@@ -238,7 +259,8 @@ class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[st
         already_data1_hashes:set[int] = set() # items of data1_hashes that have already been picked.
         already_data2_hashes:set[int] = set() # items of data2_hashes that have already been picked.
         if len(data1_exclusive_items) > 0 and len(data2_exclusive_items) > 0:
-            for hash1, hash2, _, _, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys, environment, exceptions):
+            for hash1, hash2, _, _, _, _ in self.get_similarities_list(data1_exclusive_items, data2_exclusive_items, same_keys, 1, ..., environment, exceptions):
+                # I use max_depth=None because it'll be set to the correct value in get_value_similarity.
                 if hash1 in already_data1_hashes or hash2 in already_data2_hashes:
                     continue # if either side is already involved in a change, it's unneeded.
                 already_data1_hashes.add(hash1)

@@ -18,8 +18,18 @@ a = TypeVar("a")
 
 class FileStructure(ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
 
-    def __init__(self, name: str, children_has_normalizer: bool, children_has_garbage_collection:bool) -> None:
+    def __init__(
+        self,
+        name: str,
+        max_similarity_descendent_depth:int|None,
+        max_similarity_ancestor_depth:int|None,
+        children_has_normalizer: bool,
+        children_has_garbage_collection:bool,
+    ) -> None:
         super().__init__(name, children_has_normalizer, children_has_garbage_collection)
+
+        self.max_similarity_descendent_depth = max_similarity_descendent_depth
+        self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
 
         self.structure:Structure.Structure[a]|None = None
         self.delegate:Union["Delegate.Delegate", None] = None
@@ -149,11 +159,15 @@ class FileStructure(ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
             # function it's a big deal because getting file data is expensive.
             yield from self.structure.get_referenced_files(data.data, environment)
 
-    def get_similarity(self, data1: File.AbstractFile[a], data2: File.AbstractFile[a], environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
-        if self.structure is None:
+    def get_similarity(self, data1: File.AbstractFile[a], data2: File.AbstractFile[a], depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
             return float(data1 == data2)
+        elif self.structure is None:
+            return float(data1 == data2)
+        elif data1 is data2 or data1 == data2:
+            return 1.0
         else:
-            output = self.structure.get_similarity(data1.data, data2.data, environment, exceptions)
+            output = self.structure.get_similarity(data1.data, data2.data, depth + 1, max_depth, environment, exceptions)
             return output
 
     def compare(self, data1:File.AbstractFile[a], data2:File.AbstractFile[a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[File.FileDiff, bool, list[Trace.ErrorTrace]]:
@@ -163,6 +177,8 @@ class FileStructure(ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
                 output, has_changes = File.FileDiff(data1, data2, D.Diff(data1.data, data2.data)), False
             else:
                 output, has_changes = File.FileDiff(data1, data2, D.Diff(data1.data, data2.data)), True
+        elif data1 is data2 or data1 == data2:
+            output, has_changes = File.FileDiff(data1, data2, data1.data), False
         else:
             comparison_output, has_changes, new_exceptions = self.structure.compare(data1.data, data2.data, environment)
             output = File.FileDiff(data1, data2, comparison_output)

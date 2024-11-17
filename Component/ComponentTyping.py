@@ -73,6 +73,9 @@ class DictTypedDict(TypedDict):
     detect_key_moves: NotRequired[bool]
     key_component: NotRequired[str]
     key_weight: NotRequired[float]
+    max_key_similarity_descendent_depth: NotRequired[int|None]
+    max_similarity_ancestor_depth: NotRequired[int|None]
+    max_similarity_descendent_depth: NotRequired[int|None]
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
@@ -90,6 +93,8 @@ class DictTypedDict(TypedDict):
 class GroupTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
+    max_similarity_ancestor_depth: NotRequired[int|None]
+    max_similarity_descendent_depth: NotRequired[int|None]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[list[str]]
@@ -98,6 +103,7 @@ class GroupTypedDict(TypedDict):
 
 class KeymapKeyTypedDict(TypedDict):
     delegate_arguments: NotRequired[dict[str,Any]]
+    max_similarity_descendent_depth: NotRequired[int|None]
     required: NotRequired[bool]
     subcomponent: NotRequired[Union[str,None,"StructureTypedDicts"]]
     tags: NotRequired[str|list[str]]
@@ -105,6 +111,7 @@ class KeymapKeyTypedDict(TypedDict):
     weight: NotRequired[int]
 
 class KeymapTypedDict(TypedDict):
+    default_max_similarity_descendent_depth: NotRequired[int|None]
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
     detect_key_moves: NotRequired[bool]
@@ -112,6 +119,8 @@ class KeymapTypedDict(TypedDict):
     key_component: NotRequired[str]
     key_weight: NotRequired[float]
     keys: Required[dict[str,KeymapKeyTypedDict]]
+    max_key_similarity_descendent_depth: NotRequired[int|None]
+    max_similarity_ancestor_depth: NotRequired[int|None]
     min_key_similarity_threshold: NotRequired[float]
     min_value_similarity_threshold: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
@@ -128,6 +137,8 @@ class LatestSlotTypedDict(TypedDict):
 class ListTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
+    max_similarity_ancestor_depth: NotRequired[int|None]
+    max_similarity_descendent_depth: NotRequired[int|None]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
@@ -149,6 +160,8 @@ class FileTypedDict(TypedDict):
     delegate_arguments: NotRequired[dict[str,Any]]
     file_types: NotRequired[str|list[str]]
     garbage_collect: NotRequired[bool]
+    max_similarity_ancestor_depth: NotRequired[int|None]
+    max_similarity_descendent_depth: NotRequired[int|None]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
@@ -174,6 +187,8 @@ class SequenceTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
     deletion_cost: NotRequired[int|float]
+    max_similarity_ancestor_depth: NotRequired[int|None]
+    max_similarity_descendent_depth: NotRequired[int|None]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]
@@ -192,6 +207,8 @@ class SerializerTypedDict(TypedDict):
 class SetTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
+    max_similarity_ancestor_depth: NotRequired[int|None]
+    max_similarity_descendent_depth: NotRequired[int|None]
     min_similarity_threshold: NotRequired[float]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
@@ -206,6 +223,7 @@ class SetTypedDict(TypedDict):
 class StringTypedDict(TypedDict):
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
+    max_similarity_ancestor_depth: NotRequired[int|None]
     normalizer: NotRequired[str|list[str]]
     tags: NotRequired[str|list[str]]
     type: NotRequired[Literal["Primitive"]]

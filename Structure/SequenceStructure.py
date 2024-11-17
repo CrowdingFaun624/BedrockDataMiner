@@ -23,17 +23,29 @@ class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
     Sequential data structure. Uses levenshtein distance for comparing.
     '''
 
-    def __init__(self, name: str, addition_cost:float, deletion_cost:float, substitution_cost:float, children_has_normalizer: bool, children_has_garbage_collection:bool) -> None:
-        super().__init__(name, children_has_normalizer, children_has_garbage_collection)
+    def __init__(
+        self,
+        name: str,
+        addition_cost:float,
+        deletion_cost:float,
+        substitution_cost:float,
+        max_similarity_descendent_depth:int|None,
+        max_similarity_ancestor_depth:int|None,
+        children_has_normalizer: bool,
+        children_has_garbage_collection:bool,
+    ) -> None:
+        super().__init__(name, max_similarity_descendent_depth, max_similarity_ancestor_depth, children_has_normalizer, children_has_garbage_collection)
 
         self.addition_cost = addition_cost
         self.deletion_cost = deletion_cost
         self.substitution_cost = substitution_cost
 
-    def get_similarity(self, data1: Sequence[d], data2: Sequence[d], environment: StructureEnvironment.ComparisonEnvironment, exceptions: list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: Sequence[d], data2: Sequence[d], depth:int, max_depth:int|None, environment: StructureEnvironment.ComparisonEnvironment, exceptions: list[Trace.ErrorTrace]) -> float:
+        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
+            return float(data1 == data2)
         if len(data1) * len(data2) > 10_000_000:
             raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
-        similarity_function = self.structure.get_similarity if self.structure is not None else lambda data1, data2, environment, exceptions: float(data1 == data2)
+        similarity_function = self.structure.get_similarity if self.structure is not None else lambda data1, data2, depth, max_depth, environment, exceptions: float(data1 == data2)
         distances = numpy.zeros((len(data2) + 1, len(data1) + 1), numpy.float32)
         # distances:list[list[float]] = [[0] * (len(data1) + 1) for y in range(len(data2) + 1)]
         for x in range(1, len(data1) + 1):
@@ -45,7 +57,7 @@ class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
                 distances[y + 1, x + 1] = min(
                     distances[y + 1, x] + 1,
                     distances[y, x + 1] + 1,
-                    distances[y, x] + similarity_function(data1[x], data2[y], environment, exceptions),
+                    distances[y, x] + similarity_function(data1[x], data2[y], depth + 1, max_depth, environment, exceptions),
                 )
         levenshtein_distance = distances[len(data2)][len(data1)]
         max_length = len(data1) if len(data1) > len(data2) else len(data2)
@@ -62,7 +74,7 @@ class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         if len(data1) * len(data2) > 10_000_000:
             raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
         exceptions:list[Trace.ErrorTrace] = []
-        similarity_function = self.structure.get_similarity if self.structure is not None else lambda data1, data2, environment, exceptions: float(data1 == data2)
+        similarity_function = self.structure.get_similarity if self.structure is not None else lambda data1, data2, depth, max_depth, environment, exceptions: float(data1 == data2)
         compare_function:Callable[[d,d,StructureEnvironment.ComparisonEnvironment],tuple[d|D.Diff[d,d],bool,list[Trace.ErrorTrace]]] = \
             self.structure.compare if self.structure is not None else lambda data1, data2, environment: (data1, False, []) if data1 is data2 or data1 == data2 else (D.Diff(old=data1, new=data2), True, [])
 
@@ -91,7 +103,7 @@ class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
                     substitution_cost = 0
                     substitution_direction = DIAGONAL_NO_CHANGE
                 else:
-                    substitution_cost = (1 - similarity_function(data1[x + prefix_len], data2[y + prefix_len], environment, exceptions)) * self.substitution_cost
+                    substitution_cost = (1 - similarity_function(data1[x + prefix_len], data2[y + prefix_len], 1, self.max_similarity_descendent_depth, environment, exceptions)) * self.substitution_cost
                     substitution_direction = DIAGONAL_SUBSTITUTION
                 if substitution_cost < addition_cost and substitution_cost < deletion_cost:
                     cost = substitution_cost

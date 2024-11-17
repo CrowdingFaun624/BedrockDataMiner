@@ -17,6 +17,7 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_ancestor_depth", "an int or None", False, (int, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", True, str),
@@ -25,6 +26,8 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
 
     def __init__(self, data:ComponentTyping.PrimitiveTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
+
+        self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", 3) # it's common to have a set of dicts with a significant string like [{"name": "bob"}, {"name": "alice"}]
 
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate"), data.get("delegate_arguments", {}), ["delegate"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
@@ -39,6 +42,7 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
         super().create_final()
         self.final = StringStructure.StringStructure(
             name=self.name,
+            max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
             children_has_normalizer=self.children_has_normalizer,
         )
 

@@ -18,6 +18,8 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_ancestor_depth", "an int or None", False, (int, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_descendent_depth", "an int or None", False, (int, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("min_similarity_threshold", "a float", False, float),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
@@ -36,6 +38,8 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
 
         self.sort = data.get("sort", False)
         self.min_similarity_threshold = data.get("min_similarity_threshold", SetStructure.MIN_SIMILARITY_THRESHOLD)
+        self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
+        self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
@@ -58,6 +62,8 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         self.final = SetStructure.SetStructure(
             name=self.name,
             sort=self.sort,
+            max_similarity_descendent_depth=self.max_similarity_descendent_depth,
+            max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
             min_similarity_threshold=self.min_similarity_threshold,
             children_has_normalizer=self.children_has_normalizer,
             children_has_garbage_collection=self.children_has_garbage_collection,

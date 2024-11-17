@@ -13,12 +13,14 @@ class ListStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
     Ordered data structure.
     """
 
-    def get_similarity(self, data1: Sequence[d], data2: Sequence[d], environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: Sequence[d], data2: Sequence[d], depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
+            return float(data1 == data2)
         maximum_length = max(len(data1), len(data2))
         if self.structure is None:
             similarity = sum(item1 == item2 for item1, item2 in zip(data1, data2)) / maximum_length
         else:
-            similarity = sum(self.structure.get_similarity(item1, item2, environment, exceptions) for item1, item2 in zip(data1, data2)) / maximum_length
+            similarity = sum(self.structure.get_similarity(item1, item2, depth + 1, max_depth, environment, exceptions) for item1, item2 in zip(data1, data2)) / maximum_length
         if similarity < 0.0 or similarity > 1.0:
             exceptions.append(Trace.ErrorTrace(Exceptions.InvalidSimilarityError(self, similarity, data1, data2), self.name, None, (data1, data2)))
         return similarity

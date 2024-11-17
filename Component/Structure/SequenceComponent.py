@@ -19,6 +19,8 @@ class SequenceComponent(StructureComponent.StructureComponent[SequenceStructure.
         TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("deletion_cost", "a float or int", False, (float, int)),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_ancestor_depth", "an int or None", False, (int, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("max_similarity_descendent_depth", "an int or None", False, (int, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -37,6 +39,8 @@ class SequenceComponent(StructureComponent.StructureComponent[SequenceStructure.
         self.addition_cost = data.get("addition_cost", 1)
         self.deletion_cost = data.get("deletion_cost", 1)
         self.substitution_cost = data.get("substitution_cost", 4)
+        self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
+        self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", 1) # really expensive
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
@@ -59,6 +63,8 @@ class SequenceComponent(StructureComponent.StructureComponent[SequenceStructure.
             addition_cost=self.addition_cost,
             deletion_cost=self.deletion_cost,
             substitution_cost=self.substitution_cost,
+            max_similarity_descendent_depth=self.max_similarity_descendent_depth,
+            max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
             children_has_normalizer=self.children_has_normalizer,
             children_has_garbage_collection=self.children_has_garbage_collection,
         )
